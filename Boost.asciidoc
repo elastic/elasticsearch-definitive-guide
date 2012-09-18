@@ -1,2 +1,41 @@
 [[boost]]
 == Boost – tuning search relevance
+
+The question “which documents are most relevant” seldom depends purely on 
+whether the search terms appear in a document. Instead, a `title` field may be 
+more relevant than the `body` field, recently published results may be more 
+relevant than results from 2 years ago, or results that are geographically 
+closer to the user may be of more interest than those from Timbuktu. 
+
+This chapter explains how to tune search relevance.
+
+=== What is “search relevance”?
+=== What is “boost”?
+=== Using boost
+==== When defining the mapping
+* Boosting a field
+
+==== When indexing
+* Boosting a document
+* Boosting a field
+
+==== When searching
+* Boosting an index
+* Boosting a field
+* Boosting any query clause
+* Query DSL to control boosting
+** bool
+** dis_max
+** boosting
+** custom_score
+** custom_filters_score
+
+==== When sorting
+* combining relevance with other sort parameters
+* using scripting to control sorting
+
+=== Explain – debugging search results
+
+=== Example – boosting recently published documents
+
+

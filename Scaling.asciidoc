@@ -1,2 +1,17 @@
 [[scale]]
 == Big data - Designing for scale
+
+elasticsearch is designed to work well with a small dataset and to scale
+to big data.  However, there are a few design decisions that need to be made
+to take advantage of this scale.  This chapter discusses the techniques
+that are available to make scaling easy.
+
+=== The problem
+
+=== Overallocation: the Kagillion shards solution
+
+=== Time-based indices
+=== Index-per user
+* Using aliases with routing and filters
+* Handling one big client
+

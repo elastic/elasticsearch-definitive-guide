@@ -1,2 +1,25 @@
 [[geoloc]]
 == Geolocation
+
+The web is increasingly location aware – users expect to see local results, 
+or to be able to filter results by their position on a map. 
+
+This chapter explains how to use geolocation in elasticsearch, including
+optimization tips.
+
+
+=== Adding geolocation to your documents
+* Mapping the geo-point type
+* Indexing documents with geo-points
+
+=== Geolocation-aware search
+* geo-distance and geo-distance-range filters
+* geo-bounding-box filter
+* geo-polygon filter
+
+=== Sorting by distance
+
+=== Geo-shapes
+
+=== Optimizing geo-queries
+

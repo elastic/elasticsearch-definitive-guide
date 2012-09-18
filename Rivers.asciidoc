@@ -1,0 +1,19 @@
+[[rivers]]
+== Rivers - pulling instead of pushing
+
+Normally an application pushes data to elasticsearch. Sometimes, it makes
+more sense for elasticsearch to pull the data from the application or from
+another data store. This service is called a river. elasticsearch comes
+with officially supported rivers for CouchDB, Twitter and RabbitMQ. Various
+other rivers are available as plugins.
+
+=== What are rivers
+
+=== Twitter river
+
+=== CouchDB river
+
+=== RabbitMQ river
+
+
+

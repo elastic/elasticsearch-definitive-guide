@@ -1,2 +1,48 @@
 [[dsl]]
 == Query DSL – powerful search language
+
+elasticsearch provides an expressive, powerful structured query language which 
+allows us to tailor our searches to our exact requirements. This chapter 
+explains each part of the query DSL and how to combine these individual 
+parts to create complex but efficient queries. 
+
+Some more complex parts of the Query DSL are dealt with in later chapters.
+
+=== Queries vs filters
+
+=== Basic structure
+* Query only
+* Filter only
+* Query with filter
+
+=== Filters
+* equality
+* ranges
+* Boolean and | or | not
+* Null values exists | missing
+* Other filters
+
+=== Queries
+==== Text queries vs Term queries
+
+==== Match - the general purpose query
+
+==== Other text queries
+* query_string and field queries
+* more_like_this
+* fuzzy_like_this
+
+==== Term queries
+* term / terms
+* range
+* prefix
+* fuzzy
+* wildcard
+
+==== Compound queries
+* bool query
+* dismax query
+* boosting query
+
+==== Other queries
+==== Building a complex query
