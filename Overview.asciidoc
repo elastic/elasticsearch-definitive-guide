@@ -1,0 +1,26 @@
+= elasticsearch
+
+== Proposal
+
+elasticsearch is a powerful piece of software which is easy to start using, 
+but quickly requires the user to come to grips with unfamiliar design patterns 
+and new ways of thinking.
+
+This book will be suitable both for users with no prior search experience and 
+for experienced users who are looking for more advanced techniques. 
+
+Each chapter will tackle a particular facet of elasticsearch, and will be
+divided into sections of general interest and sections for the more advanced 
+reader. The advanced techniques are not required reading for the beginner, but 
+can  be revisited once he has a solid understanding of the the basics.
+
+Explanations will be accompanied by code examples (using command-line `curl` 
+statements) which together will demonstrate a simple application.  
+
+The most  commonly used options in the API will be explained, but this book 
+won't attempt to be an exhaustive reference. Instead, the intention is to help 
+the user understand the fundamental concepts necessary to use elastisearch
+effectively, linking to the separate reference documentation.
+
+This book probably fits best into the "Animal" Books series.
+
