@@ -12,6 +12,8 @@ extensions to the interface that allows us to take advantage of these
 relationships.
 
 === Limitations of a NoSQL database
+.
+
 === Parent-child vs Nested documents
 * use cases
 * pros and cons
@@ -19,7 +21,7 @@ relationships.
 === Nested documents
 * Mapping
 * Indexing, retrieving and deleting documents
-* Searching:
+* Searching
 ** nested queries
 ** nested filters
 ** nested facets
@@ -27,7 +29,7 @@ relationships.
 === Parent-child relationship
 * Mapping
 * Indexing, retrieving and deleting documents
-* Searching:
+* Searching
 ** has_child query / filter
 ** has_parent query / filter
 ** top_children query

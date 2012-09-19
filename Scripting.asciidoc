@@ -9,7 +9,9 @@ integral to elasticsearch.
 In this chapter we explore the scripting functionality, discuss where we can 
 use scripting and provide commonly used example scripts.
 
-=== scripting in elasticsearch
+=== Scripting in elasticsearch
+.
+
 ==== default scripting language mvel
 * passing parameters
 * accessing document fields
@@ -22,12 +24,18 @@ use scripting and provide commonly used example scripts.
 * native Java scripts
 
 === script fields
+.
+
 
 === Query DSL
 * script filters
 * relevance custom score and custom_filters_score
 
 === sorting
+.
+
 
 === Scripting and facets
+.
+
 

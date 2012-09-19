@@ -9,7 +9,7 @@ your data is indexed exactly as required.
 * Dynamic field detection
 * How dynamic detection can fail
 
-=== Mapping APIs:
+=== Mapping APIs
 * PUT mapping
 * GET mapping
 * DELETE mapping
@@ -23,6 +23,7 @@ your data is indexed exactly as required.
 * Properties – field definitions
 
 === Core field types
+
 ==== Common settings
 * type
 * index
@@ -33,9 +34,17 @@ your data is indexed exactly as required.
 * null_value
 
 ==== String fields
+.
+
 ==== Numeric fields
+.
+
 ==== Date fields
+.
+
 ==== Boolean fields
+.
+
 ==== Binary fields
 
 === Multi-level documents
@@ -48,10 +57,16 @@ your data is indexed exactly as required.
 ** path
 
 ==== Arrays
+.
+
 
 ==== Nested objects
+.
+
 
 === Multi-fields
+.
+
 
 === Root object settings
 * Enabled, include_in_all
@@ -73,11 +88,14 @@ your data is indexed exactly as required.
 ** _meta
 
 === Customizing the default root object
+.
+
 === Other field types
 * Geo-point
 * Attachment
 * IP address
 
 === Updating mappings
+.
 
 
