@@ -1,15 +1,62 @@
 [[dsl]]
 == Query DSL – powerful search language
 
-elasticsearch provides an expressive, powerful structured query language which 
-allows us to tailor our searches to our exact requirements. This chapter 
-explains each part of the query DSL and how to combine these individual 
-parts to create complex but efficient queries. 
+elasticsearch provides an expressive, powerful query language called
+the Query DSL (Domain Specific Language) which exposes much of the power
+of Lucene through a simple JSON interface.
 
-Some more complex parts of the Query DSL are dealt with in later chapters.
+It is tuned for full text search, but is in no way limited just to that. It 
+also provides very fast and flexible filters, ranges, geo-location and more.
 
-=== Queries vs filters
-.
+=== Queries vs Filters
+
+There are two basic constructs available in the Query DSL: 
+
+* Filter
+* Query
+
+A _filter_ asks a `yes/no` question of every document:
+
+* is the `created` date in the range `2011` .. `2012`?
+* does the `tags` field contain the word `"foo"`?
+* is the `geolocation` field within `10km` of a specified point?
+
+A _query_ is like a filter, but also asks the question: 
+``How *well* does this document match?''
+
+In other words, a query calculates how _relevant_ each document is and, by 
+default, sorts the results by the relevance score.
+This concept of relevance is ideal for full text search, for which there is
+seldom a completely ``correct'' answer.
+
+For example, find documents:
+
+* which best match the words: `full text search`
+* which contain the word `run`, but include `runs` and `running` 
+* containing the words `quick`, `brown` and `fox` within
+  10 words of each — the closer they are, the more relevant
+* tagged as `lucene` or `search`, and consider documents with
+  both tags to be more relevant than those with a single tag
+  
+Because queries are often associated with full text queries, many query clauses
+have an analysis phase, where the full text query string is analyzed to 
+produce the terms or tokens that are stored in elasticsearch. 
+
+Filters are faster than queries because (a) they don't have to calculate
+relevance, and (b) they are cacheable.
+
+.Queries vs Filters — When to use which
+[options="header"]
+|=========================================
+|Filters            | Queries
+|Exact matching     | Exact matching and full text search
+|Yes/No questions   | Relevance scoring
+|Faster             | Slower
+|Cacheable          | Not cacheable
+|=========================================
+
+
+
 
 
 === Basic structure
