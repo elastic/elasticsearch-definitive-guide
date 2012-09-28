@@ -1,0 +1,99 @@
+=== Structure of a query
+
+The search API requires a query. If none is specified, then it defaults to
+a `match_all` query which, unsurprisingly, matches all documents.
+
+==== A simple query
+
+A simple `match` query clause which searches the `title` field for the words
+`"search is cool"` would look like this:
+
+    {
+        "match":  { "title": "search is cool" }
+    }
+
+This query clause should be used as the value of the `query` parameter in the
+search API:
+
+    curl -XGET localhost:9200/_search -d '
+    {
+        "query": {
+            "match":  { "title": "search is cool" }
+        }
+    }
+    '
+
+==== Filtering a query
+
+To limit the results to only those documents whose `status` field is set to
+the value `"active"`, you can combine your query clause with a filter clause
+using a `filtered` query:
+
+    {
+        "filtered": {
+            "query":    { "match": { "title":  "search is cool" }},
+            "filter":   { "term":  { "status": "active" }}
+        }
+    }
+
+The full request would look like this:
+
+    curl -XGET localhost:9200/_search -d '
+    {
+        "query": {
+            "filtered": {
+                "query":    { "match": { "title":  "search is cool" }},
+                "filter":   { "term":  { "status": "active" }}
+            }
+        }
+    }
+    '
+
+==== A filter without a query
+
+What if you wanted to apply just the `status is "active"` filter without any
+associated query? The `query` parameter only accepts a query, so you need
+to *wrap your filter in a query*.  One possibility is the `filtered` query
+mentioned above:
+
+    {
+        "filtered": {
+            "query":    { "match_all: {}},
+            "filter":   { "term":  { "status": "active" }}
+        }
+    }
+
+However, a more efficient query for this case is the `constant_score` query,
+which skips the relevance scoring phase complete, and instead returns a score
+of `1` for every document:
+
+    {
+        "constant_score": {
+            "filter":   { "term":  { "status": "active" }}
+        }
+    }
+
+The full request would look like this:
+
+    curl -XGET localhost:9200/_search -d '
+    {
+        "query":     {
+            "constant_score": {
+                "filter":   { "term":  { "status": "active" }}
+            }
+        }
+    }
+    '
+
+[NOTE]
+===============================
+As will be explained in the rest of this chapter, query and filter clauses
+are building blocks which can be combined and nested in complex and
+interesting ways. However, the search API expects a *single* query clause to
+be passed as the value of the `query` parameter.
+
+We will not be repeating the full `curl` statement for every query clause,
+as it should already be obvious from the above examples how to pass queries to
+the search API.
+===============================
+

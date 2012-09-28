@@ -1,0 +1,41 @@
+=== Queries vs Filters
+
+There are two basic constructs available in the Query DSL:
+
+* Filter
+* Query
+
+A _filter_ asks a `yes/no` question of every document:
+
+* is the `created` date in the range `2011` .. `2012`?
+* does the `tags` field contain the word `"foo"`?
+* is the `geolocation` field within `10km` of a specified point?
+
+A _query_ is like a filter, but also asks the question:
+``How *well* does this document match?''
+
+In other words, a query calculates how _relevant_ each document is and, by
+default, sorts the results by the relevance score.
+This concept of relevance is ideal for full text search, for which there is
+seldom a completely ``correct'' answer.
+
+For example, find documents:
+
+* which best match the words: `full text search`
+* which contain the word `run`, but include `runs` and `running`
+* containing the words `quick`, `brown` and `fox` within
+  10 words of each — the closer they are, the more relevant
+* tagged as `lucene` or `search`, and consider documents with
+  both tags to be more relevant than those with a single tag
+
+Because queries are often associated with full text queries, many query clauses
+have an analysis phase, where the full text query string is analyzed to
+produce the terms or tokens that are stored in elasticsearch.
+
+Filters are faster than queries because (a) they don't have to calculate
+relevance, and (b) they are cacheable.
+
+In summary, the general rule is: use queries for full text search or for
+any condition that should affect the relevance score, and filters
+for everything else.
+
