@@ -1,3 +1,4 @@
+[[query_structure]]
 === Structure of a query
 
 The search API requires a query. If none is specified, then it defaults to
@@ -64,7 +65,7 @@ mentioned above:
     }
 
 However, a more efficient query for this case is the `constant_score` query,
-which skips the relevance scoring phase complete, and instead returns a score
+which skips the relevance scoring phase completely, and instead returns a score
 of `1` for every document:
 
     {
