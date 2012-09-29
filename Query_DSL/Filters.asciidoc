@@ -1,0 +1,59 @@
+[[filters]]
+=== Filters
+
+include::Filters/Term_filter.asciidoc[]
+
+include::Filters/Terms_filter.asciidoc[]
+
+include::Filters/Range_filter.asciidoc[]
+
+include::Filters/Null_values.asciidoc[]
+
+* Boolean and | or | not
+* Null values exists | missing
+* Other filters
+
+
+Equality
+
+    exists
+    missing
+    numeric_range
+    prefix
+    range
+    term
+    terms
+
+
+Geo
+    geo_bbox
+    geo_distance
+    geo_distance_range
+    geo_polygon
+
+
+Combining
+    and
+    bool
+    not
+    or
+
+
+
+Relationships
+    has_child
+    nested
+
+Scripting
+    script
+
+
+Other
+    match_all
+    limit
+    query
+
+
+??
+    ids
+    type

@@ -12,14 +12,10 @@ include::Query_DSL/Queries_vs_Filters.asciidoc[]
 
 include::Query_DSL/Structure_of_a_Query.asciidoc[]
 
-=== Filters
-* equality
-* ranges
-* Boolean and | or | not
-* Null values exists | missing
-* Other filters
+include::Query_DSL/Filters.asciidoc[]
 
 === Queries
+
 ==== Text queries vs Term queries
 .
 

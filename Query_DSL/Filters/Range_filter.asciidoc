@@ -1,0 +1,61 @@
+[[range_filter]]
+==== Range and numeric range filters
+
+`range` filters are used to match fields which contain values within a certain
+range, for instance:
+
+    {
+        "range": {
+            "created": {
+                "from":  "2011-01-01",
+                "to":    "2012-01-01"
+        }
+    }
+
+Ranges can also be applied to string fields:
+
+    {
+        "range": {
+            "title": {
+                "from":  "apple",
+                "to":    "orange"
+        }
+    }
+
+There are two groups of comparison operators. The first is explicit:
+
+`gte`:: Greater than or equal to
+`gt`:: Greater than
+`lte`:: Less then or equal to
+`lt`:: Less than
+
+The second group is easier to read and to use, as long as you understand what
+the operators mean:
+
+`from`:: The same as `gte`
+`to`:: The same as `lt` (*not* `lte`)
+
+The `to` value means _up to but not including_, so a range
+of `{ "from": 0, "to": 100 }` includes the range `0..99`, not `0..100`.
+
+[[numeric_range_filter]]
+===== Numeric range filter
+
+    {
+        "numeric_range": {
+            "last_modified": {
+                "from":  "2012-01-01 00:00:00",
+                "to":    "2012-01-01 01:00:00"
+        }
+    }
+
+The `numeric_range` filter is a special type of `range` filter which may
+perform better for:
+
+* fields which have many many values, e.g. a `timestamp` field
+* fields that are also being used to sort results
+
+The first time that a `numeric_range` filter is used, elasticsearch
+has to build a _field cache_, which caches all the values for that field in
+memory.  Building the cache can be slow, but once it is built it can
+make future `numeric_range` filters faster.
