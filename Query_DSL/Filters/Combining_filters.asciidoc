@@ -1,0 +1,75 @@
+[[combining_filters]]
+=== Combining filter clauses
+
+When you want to combine multiple filter clauses together you need to be
+specific about how they relate to each other, in the same way as you would
+in SQL:
+
+    WHERE status = "active" AND count > 5
+
+
+[[and_or_filter]]
+==== `and` | `or` filters
+
+The `and` and `or` filters combine two or more filter clauses with `AND` or
+`OR` logic respectively. They can accept a list of any other filters, including
+other `and` or `or` clauses.
+
+For example, this SQL query:
+
+    WHERE status = "active" AND (count < 5 OR count > 10)
+
+could be written as:
+
+    {
+        "and":  [
+            { "term":  { "status":      "active" }},
+            { "or": [
+                { "range": { "count": { "lt": 5  }},
+                { "range": { "count": { "gt": 10 }}
+              ]
+            }
+        ]
+    }
+
+[NOTE]
+====
+The order of the filter clauses is important because both the `and` and `or`
+filters short-circuit. In other words, they do the least amount of work
+necessary to satisfy the `AND`|`OR` condition.
+The `and` filter starts with the first filter clause, checks each document
+in turn and discards any documents that don't match.  It then repeats the
+process with the next filter, but only checks the documents that have not
+already been excluded.
+The `or` filter works similarly, but if any filter clause matches a document,
+then that document is immediately accepted and no further clauses are checked.
+
+This means that it is more efficient to put the least specific filters first
+for the `or` filter, and the most specific filters first for the `and` filter.
+====
+
+[[not_filter]]
+==== `not` filter
+
+The `not` filter negates any other filter. For example, `WHERE count <> 5`
+could be written as:
+
+    {
+        "not": { "term": { "count": 5 }}
+    }
+
+However, the `not` filter only accepts a single filter.  To negate multiple
+filters, you need to be explicit about how those filters should be combined.
+That is, you should wrap them in an `and` or `or` filter (((and_or_filter))):
+
+    {
+        "not": {
+            "or": [
+                { "term": { "status": "inactive" }},
+                { "term": { "status": "pending"  }}
+            ]
+        }
+    }
+
+[[bool_filter]]
+==== `bool` filter
