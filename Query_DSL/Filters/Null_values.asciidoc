@@ -1,19 +1,19 @@
 [[null_values]]
-==== Null values
+=== Null values
 
-A field in elasticsearch can have zero or more values.  It can't index
+A field can have zero or more values.  elasticsearch can't index
 a `null` or undefined value. Instead, if a field is set to `null`, it
 has zero values.
 
 [[exists_filter]]
-===== Exists filter
+==== Exists filter
 
 To check whether a field has a value, use the `exists` filter:
 
     { "exists": { "field": "field_name" }}
 
 [[missing_filter]]
-===== Missing filter
+==== Missing filter
 
 The inverse of the `exists` filter is the `missing` filter, which checks
 whether the field has no values:

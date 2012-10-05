@@ -1,5 +1,5 @@
 [[range_filter]]
-==== Range and numeric range filters
+=== Range filters
 
 `range` filters are used to match fields which contain values within a certain
 range, for instance:
@@ -22,20 +22,16 @@ Ranges can also be applied to string fields:
         }
     }
 
-There are two groups of comparison operators. The first is explicit:
+The comparison operators are as follows:
 
 `gte`:: Greater than or equal to
 `gt`:: Greater than
 `lte`:: Less then or equal to
 `lt`:: Less than
-
-The second group is easier to read and to use, as long as you understand what
-the operators mean:
-
 `from`:: The same as `gte`
 `to`:: The same as `lt` (*not* `lte`)
 
-The `to` value means _up to but not including_, so a range
+The `to` operator means _up to but not including_, so a range
 of `{ "from": 0, "to": 100 }` includes the range `0..99`, not `0..100`.
 
 [[numeric_range_filter]]

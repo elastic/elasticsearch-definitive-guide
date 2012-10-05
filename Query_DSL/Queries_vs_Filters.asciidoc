@@ -3,8 +3,8 @@
 
 There are two basic constructs available in the Query DSL:
 
-* Filter
-* Query
+* Filter clause
+* Query clause
 
 A _filter_ asks a `yes/no` question of every document:
 
@@ -23,10 +23,10 @@ seldom a completely ``correct'' answer.
 For example, find documents:
 
 * which best match the words: `full text search`
-* which contain the word `run`, but include `runs` and `running`
+* which contain the word `run`, but include the words `runs` and `running`
 * containing the words `quick`, `brown` and `fox` within
   10 words of each — the closer they are, the more relevant
-* tagged as `lucene` or `search`, and consider documents with
+* tagged with `lucene` or `search`, and consider documents with
   both tags to be more relevant than those with a single tag
 
 Because queries are usually used to search full text, many query clauses
@@ -36,7 +36,7 @@ the same terms or tokens that are stored in elasticsearch.
 Filters are faster than queries because (a) they don't have to calculate
 relevance, and (b) they are cacheable.
 
-In summary, the general rule is: use queries for full text search or for
+*In summary:* as a general rule, use queries for full text search or for
 any condition that should affect the relevance score, and filters
 for everything else.
 

@@ -1,9 +1,11 @@
 [[filters]]
 === Filters
 
-include::Filters/Term_filter.asciidoc[]
+In the rest of this chapter, we will discuss the most commonly used
+filter and query clauses. We start with filters because they are simpler,
+and more similar to the types of queries we can write with SQL.
 
-include::Filters/Terms_filter.asciidoc[]
+include::Filters/Equality_filters.asciidoc[]
 
 include::Filters/Range_filter.asciidoc[]
 
