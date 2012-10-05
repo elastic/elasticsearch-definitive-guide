@@ -77,8 +77,8 @@ That is, you should wrap them in an <<and_or_filter,`and` or `or` filter>>:
 While the <<and_or_filter,`and` and `or` filters>> are the most obvious
 choice for combining filter clauses, there is another option, called the
 `bool` filter. The `bool` filter performs the same job as `and`, `or` and
-`not`, but it does so in a different way with different performance
-implications.
+`not`, but it does so in a different way with <<bool_vs_and_or,different
+performance implications).
 
 The `bool` query takes three parameters: `must`, `should` and `must_not`, which
 correspond to `and`, `or` and `not` respectively.
@@ -92,12 +92,12 @@ could be written as:
 
     {
         "bool": {
-            "must":   { "term": { "status": "active" }},
-            "should": [
+            "must":     { "term": { "status": "active" }},
+            "should":   [
                 { "range": { "created": { "gte": "2012-01-01" }}},
                 { "term":  { "featured": 1 }}
             ],
-            must_not: { "term": { "hidden": 1 }}
+            "must_not": { "term": { "hidden": 1 }}
         }
     }
 
