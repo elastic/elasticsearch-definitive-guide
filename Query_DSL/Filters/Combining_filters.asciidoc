@@ -35,8 +35,9 @@ could be written as:
 [NOTE]
 ====
 The order of the filter clauses is important because both the `and` and `or`
-filters short-circuit. In other words, they do the least amount of work
-necessary to satisfy the `AND`|`OR` condition.
+filters __short-circuit__. In other words, they do the least amount of work
+necessary to satisfy the `AND` or `OR` condition.
+
 The `and` filter starts with the first filter clause, checks each document
 in turn and discards any documents that don't match.  It then repeats the
 process with the next filter, but only checks the documents that have not
@@ -120,15 +121,15 @@ document in the index.  If a document matches a filter, its bit will bet
 set to `1`.  If it doesn't match, its bit will be set to `0`. These bitsets
 are usually cached.
 
-A `bool` filter works by combining these bitsets using `AND`, `OR` or `NOT` bit
-logic, which is very fast and efficient. However, it needs to perform this
-operation on all documents.
+A `bool` filter works by combining these cached bitsets using `AND`, `OR` or
+`NOT` bit logic, which is very fast and efficient. However, it needs to
+perform this operation on all documents.
 
 The `and` and `or` filters (as explained <<and_or_filter,above>>) work document
 by document, short-circuiting when possible.
 
-There are two factors to take into account when choosing between `bool` and
-`and`|`or`:
+This means that there are two factors to take into account when choosing
+between `bool` and `and`|`or`:
 
 bitsets::
     do the filters wrapped by `bool` or `and`|`or` generate bitsets or
@@ -138,7 +139,7 @@ number of matching documents::
     if you have a small (for `and`) or large (for
     `or`) number of documents that are likely to match, then you may be better
     off using the short-circuiting functionality of `and`|`or` instead of the
-    check-all-documents functionality of `bool`.
+    _check-all-documents_ functionality of `bool`.
 
 That said, the best way to decide which to use is by testing it against
 your data.  See which performs best for your use cases.
