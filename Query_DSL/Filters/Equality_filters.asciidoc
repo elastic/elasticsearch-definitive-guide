@@ -60,7 +60,7 @@ The default value for `execution` is `"plain"`. It can also be set to `"bool"`,
 which (like `plain`) checks for ANY of the listed values, but it has
 different performance characteristics.
 The final result of the `plain` query is cached, while under `bool` execution,
-the result for each individual term is cached.  Iif you regularly
+the result for each individual term is cached.  If you regularly
 filter on the same combination of terms then `plain` execution is preferred.
 But if the combination of terms varies, then the `bool` execution might
 be faster.

@@ -35,7 +35,7 @@ The `to` operator means _up to but not including_, so a range
 of `{ "from": 0, "to": 100 }` includes the range `0..99`, not `0..100`.
 
 [[numeric_range_filter]]
-===== Numeric range filter
+==== Numeric range filter
 
     {
         "numeric_range": {
