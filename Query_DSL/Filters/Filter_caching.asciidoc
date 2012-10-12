@@ -42,7 +42,7 @@ that have many unique values, such as a timestamp. Timestamp ranges
 are likely to change frequently, so caching the results for a particular
 range makes little sense.
 If you do want the results to be cached, you should probably consider
-using a <<range_filter>> instead.
+using a <<range_filter,`range` filter>> instead.
 
 Script filters::
 
@@ -69,7 +69,7 @@ which allows you to override the default.  For instance:
         }
     }
 
-The only exception to this format is the `query` filter, which would need
+The only exception to this format is the `query` filter, which needs
 the query to be wrapped in an extra `fquery` layer:
 
     {
