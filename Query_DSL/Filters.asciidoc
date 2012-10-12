@@ -15,14 +15,9 @@ include::Filters/Combining_filters.asciidoc[]
 
 include::Filters/Prefix_filter.asciidoc[]
 
-    exists
-    missing
-    numeric_range
-    prefix
-    range
-    term
-    terms
+include::Filters/Other_filters.asciidoc[]
 
+* Other filters
 
 Geo
     geo_bbox
@@ -30,12 +25,6 @@ Geo
     geo_distance_range
     geo_polygon
 
-
-Combining
-    and
-    bool
-    not
-    or
 
 
 
