@@ -1,0 +1,83 @@
+[[filter_caching]]
+=== Filter caching
+
+One of the reasons that filters are so efficient is that they are
+cacheable. The cache itself is a data structure called a _bitset_,
+which uses one bit to represent each document in the index.  If a document
+matches a filter, its bit will be set to `1`.  If it doesn't match, its bit
+will be set to `0`.
+
+This is very space efficient.  On a 64-bit machine, 1 million documents can
+be cached in only 16kB of memory. Also, combining bitsets from different
+filters can be performed rapidly using bitwise operations like
+`AND`, `OR` and `NOT`.
+
+However, it doesn't make sense to cache all filters.  Take this filter
+as an example:
+
+    {
+        "and": [
+            { "term": { "tag":    "elasticsearch" }},
+            { "term": { "status": "active"        }},
+        ]
+    }
+
+It makes sense to cache the individual `term` filters, but not the
+final result of the `and` filter, as this is easy to calculate from the
+two cached `term` filters.
+
+It also doesn't make sense to cache the output from filters which are unlikely
+to be reusable:
+
+Geolocation filters::
+
+<<geoloc_filters,Geolocation filters>> will seldom use the same
+latitude/longitude point; it is more probable that every search will be
+different.
+
+Numeric range filters::
+
+The <<numeric_range_filter,`numeric_range` filter>> is intended for fields
+that have many unique values, such as a timestamp. Timestamp ranges
+are likely to change frequently, so caching the results for a particular
+range makes little sense.
+If you do want the results to be cached, you should probably consider
+using a <<range_filter>> instead.
+
+Script filters::
+
+The script in a <<script_filter,`script` filter>> is opaque to elasticsearch,
+which has no way of knowing whether the script would produce the same results
+if run a second time.
+
+Other filters::
+
+The results from a query are not cached and thus, the results from
+a `query` filter are not cached either. Similarly,
+<<nested_filter,`nested` filters>> can be based on complex conditions and
+are not cached.
+
+==== Controlling filter caching
+
+All filters accept a `_cache` parameter which can be set to `true` or `false`,
+which allows you to override the default.  For instance:
+
+    {
+        "term": {
+            "status":   "active",
+            "_cache":   false
+        }
+    }
+
+The only exception to this format is the `query` filter, which would need
+the query to be wrapped in an extra `fquery` layer:
+
+    {
+        "query": {
+            "fquery": {
+                "query":  { ... }
+                "_cache": true
+            }
+        }
+    }
+
