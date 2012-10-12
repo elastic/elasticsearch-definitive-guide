@@ -79,7 +79,7 @@ While the <<and_or_filter,`and` and `or` filters>> are the most obvious
 choice for combining filter clauses, there is another option, called the
 `bool` filter. The `bool` filter performs the same job as `and`, `or` and
 `not`, but it does so in a different way with <<bool_vs_and_or,different
-performance implications).
+performance implications>>.
 
 The `bool` query takes three parameters: `must`, `should` and `must_not`, which
 correspond to `and`, `or` and `not` respectively.
@@ -124,7 +124,6 @@ are usually cached.
 A `bool` filter works by combining these cached bitsets using `AND`, `OR` or
 `NOT` bit logic, which is very fast and efficient. However, it needs to
 perform this operation on all documents.
-
 The `and` and `or` filters (as explained <<and_or_filter,above>>) work document
 by document, short-circuiting when possible.
 
@@ -132,14 +131,15 @@ This means that there are two factors to take into account when choosing
 between `bool` and `and`|`or`:
 
 bitsets::
-    do the filters wrapped by `bool` or `and`|`or` generate bitsets or
+    Do the filters wrapped by `bool` or `and`|`or` generate bitsets or
     not? In elasticsearch, all filters except for the geolocation filters and
     the <<numeric_range,`numeric_range` filter>> produce bitsets.
+
 number of matching documents::
-    if you have a small (for `and`) or large (for
+    If you have a small (for `and`) or large (for
     `or`) number of documents that are likely to match, then you may be better
     off using the short-circuiting functionality of `and`|`or` instead of the
     _check-all-documents_ functionality of `bool`.
 
 That said, the best way to decide which to use is by testing it against
-your data.  See which performs best for your use cases.
+your data.  See which performs best for your use case.
