@@ -1,29 +1,11 @@
 [[other_filters]]
 === Other filters
 
-Filters for use with geo-location are discussed in <<geoloc>>, the
-`has_child` and `nested` filters in <<relations>> and the `script` filter
-in <<scripting>>.
+There are three other families of filters which are discussed in the
+chapters relevant to each:
 
-Geo
-    geo_bbox
-    geo_distance
-    geo_distance_range
-    geo_polygon
+ * Geolocation filters in <<geoloc>>
+ * `has_child` and `nested` filters in <<relations>>, and
+ * the `script` filter in <<scripting>>
 
-
-
-
-Relationships
-    has_child
-    nested
-
-Scripting
-    script
-
-
-Other
-    match_all
-    limit
-    query
 
