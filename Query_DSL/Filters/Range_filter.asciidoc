@@ -53,5 +53,5 @@ perform better for:
 
 The first time that a `numeric_range` filter is used, elasticsearch
 has to build a _field cache_, which caches all the values for that field in
-memory.  Building the cache can be slow, but once it is built it can
+memory.  Building the field cache can be slow, but once it is built it can
 make future `numeric_range` filters faster.
