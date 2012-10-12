@@ -1,0 +1,30 @@
+[[prefix_filter]]
+=== Prefix filter
+
+The `prefix` filter asks the question: ``Does field `foo` contain any term
+which begins with `prefix`?''
+
+For instance, the example below will match documents whose `postcode`
+field contains the terms `N1V` or `N1Y`, but will not match `N`, `N2`
+or the lower case `n1`:
+
+    { "prefix": { "postcode": "N1" }}
+
+The prefix filter can be used only on fields of type `string`.
+
+
+[NOTE]
+====
+*Beware:* This filter works by loading all unique terms into memory,
+finding those terms that begin with the desired prefix, then running a separate
+<<term_filter,term filter>> on each of those terms. If the
+specified field contains many unique terms, this can result in poor
+performance or even consume all available memory!
+
+While you can use the prefix filter on fields which contain a small number
+of unique terms, the better solution is to prepare your data correctly so
+that it is optimized for querying.
+
+TODO: LINK TO NGRAM EXAMPLE
+====
+

@@ -13,12 +13,7 @@ include::Filters/Null_values.asciidoc[]
 
 include::Filters/Combining_filters.asciidoc[]
 
-* Boolean and | or | not
-* Null values exists | missing
-* Other filters
-
-
-Equality
+include::Filters/Prefix_filter.asciidoc[]
 
     exists
     missing
