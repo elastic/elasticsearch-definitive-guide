@@ -8,7 +8,7 @@ The most basic filter is the `term` filter, which asks: ``Does field `foo`
 contain the exact value `bar`?'' It it similar to the SQL statement:
 `WHERE foo = bar`.
 
-For instance, does field `status` contain the string `"active"`:
+For instance, does the field `status` contain the string `"active"`:
 
     { "term": { "status": "active" }}
 
