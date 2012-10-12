@@ -1,7 +1,7 @@
 [[queries_vs_filters]]
 === Queries vs Filters
 
-There are two basic constructs available in the Query DSL:
+There are two basic building blocks available in the Query DSL:
 
 * Filter clause
 * Query clause
@@ -29,9 +29,10 @@ For example, find documents:
 * tagged with `lucene` or `search`, and consider documents with
   both tags to be more relevant than those with a single tag
 
-Because queries are usually used to search full text, many query clauses
-have an analysis phase which converts the full text query string into
-the same terms or tokens that are stored in elasticsearch.
+Some queries are used to search full text and have an analysis phase which
+converts the full text query string into the same terms or tokens that are
+stored in elasticsearch. Filters have no analysis phase.  They are used
+for exact matching only.
 
 Filters are faster than queries because (a) they don't have to calculate
 relevance, and (b) they are cacheable.
