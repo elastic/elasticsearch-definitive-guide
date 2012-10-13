@@ -1,0 +1,61 @@
+[[queries]]
+=== Queries
+
+While filters provide the same `yes|no` matching capabilities that you would
+expect from SQL, queries are about relevance, about how well each document
+matches. This concept of relevance is perfectly suited to the imprecise
+nature of full text search.
+
+That said, relevance is not just about full text search. It can equally be
+applied to `yes|no` clauses, where the more clauses that match, the more
+relevant, or to geolocation queries, where closer is better.
+
+    match_all
+
+Text
+    match
+    multi_match
+    field
+    query_string
+
+Complex
+    flt
+    flt_field
+    mlt
+    mlt_field
+
+Combining
+    bool
+    dis_max
+    filtered
+    indices
+
+Boosting
+    boosting
+    custom_boost_factor
+    custom_filters_score
+    custom_score
+    constant_score
+
+Term
+    term
+    terms
+    range
+
+Multi-term
+    fuzzy
+    prefix
+    wildcard
+
+Relational
+    has_child
+    has_parent
+    top_children
+    nested
+
+Span
+    span_first
+    span_near
+    span_not
+    span_or
+    span_term

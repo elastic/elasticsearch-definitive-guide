@@ -14,35 +14,8 @@ include::Query_DSL/Structure_of_a_Query.asciidoc[]
 
 include::Query_DSL/Filters.asciidoc[]
 
-=== Queries
+include::Query_DSL/Queries.asciidoc[]
 
-==== Text queries vs Term queries
-.
-
-
-==== Match - the general purpose query
-.
-
-
-==== Other text queries
-* query_string and field queries
-* more_like_this
-* fuzzy_like_this
-
-==== Term queries
-* term / terms
-* range
-* prefix
-* fuzzy
-* wildcard
-
-==== Compound queries
-* bool query
-* dismax query
-* boosting query
-
-==== Other queries
-.
 
 ==== Building a complex query
 .
