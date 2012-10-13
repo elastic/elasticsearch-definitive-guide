@@ -13,9 +13,9 @@ or the lower case `n1`:
 The prefix filter can be used only on fields of type `string`.
 
 
-[NOTE]
+[CAUTION]
 ====
-*Beware:* This filter works by loading all unique terms into memory,
+This filter works by loading all unique terms into memory,
 finding those terms that begin with the desired prefix, then running a separate
 <<term_filter,term filter>> on each of those terms. If the
 specified field contains many unique terms, this can result in poor
