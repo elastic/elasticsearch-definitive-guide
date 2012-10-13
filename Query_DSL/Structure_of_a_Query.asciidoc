@@ -2,7 +2,7 @@
 === Structure of a query
 
 The filter and query clauses described in this chapter can be combined
-with other clauses to form complex queries, but the search API expects a
+with each other to form complex queries, but the search API expects a
 single `query` parameter. If none is specified, then it defaults to a
 `match_all` query which, unsurprisingly, matches all documents.
 
