@@ -1,0 +1,91 @@
+[[query_types]]
+=== Types of queries
+
+There are many different query clauses available in elasticsearch. To make them
+easier to navigate, we can group them by type:
+
+Helper queries::
+
+The helper queries are simple, commonly used queries, which are not very
+interesting by themselves, but are very useful:
+
+** `match_all`
+** `filtered`
+
+Full text queries::
+
+These queries have an _analysis phase_ which converts their ``full text''
+query string into the same terms that are stored in the index.  They are the
+bread-and-butter of full text search:
+
+** `match` | `multi_match`
+** `field` | `query_string`
+
+Term queries::
+
+Term queries search for the exact term that is specified in the query
+-- they have no analysis phase -- and are thus similar to filters except
+that they can be used to alter the relevance `_score`:
+
+** `term` | `terms`
+** `range`
+
+Multi-term queries::
+
+Like term queries, multi-term queries also search for exact values, and do not
+have an analysis phase. However,  the list of exact values they search for
+is built up by expanding the query term into a list of terms which could match:
+
+** `fuzzy`
+** `prefix`
+** `wildcard`
+
+Combining queries::
+
+Combining queries allow us to join multiple queries together --
+the difference between them is how the final relevance `_score` is calculated:
+
+** `bool`
+** `dis_max`
+** `indices`
+
+Boosting queries::
+
+Boosting queries, which are discussed in <<boost>> are all about manipulating
+the relevance score:
+
+** `constant_score`
+** `custom_score`
+** `custom_filters_score`
+** `boosting`
+** `custom_boost_factor`
+
+Complex full text queries::
+
+Complex full text queries combine a number of different full text and
+multi-term query techniques to find the most relevant documents:
+
+** `mlt` | `mlt_field`
+** `flt` | `flt_field`
+
+Relational queries::
+
+Relational queries are used with _nested_ documents or with _parent-child_
+relationships and are discussed in <<relations>>.
+
+** `nested`
+** `has_child`
+** `has_parent`
+** `top_children`
+
+Span queries::
+
+Span queries are a family of low level term queries which are useful for
+searching for terms in a particular order or proximity:
+
+** `span_term`
+** `span_first`
+** `span_near`
+** `span_not`
+** `span_or`
+

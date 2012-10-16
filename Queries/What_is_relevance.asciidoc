@@ -1,0 +1,28 @@
+.What is relevance?
+****
+When searching, documents are returned in a particular order.  They
+could be sorted on the `last_modified` time, but the default is to sort
+them from most relevant to least relevant. This relevance score is called
+`_score`.
+
+Each query clause generates a `_score` which is combined with the other
+scores from the other query clauses to calculate a final `_score`.
+Each type of query clause can calculate
+its score in a different way depending on its purpose. Typical factors that
+are taken into account with full text search are:
+
+Term frequency::
+  How often does each term appear in the field? The more often, the more
+  relevant.
+
+Inverse document frequency::
+  How often does each term appear in the index?  The more often, the *less*
+  relevant.
+
+Length norm::
+  How long is the field? The longer it is, the less likely it is to be
+  relevant.
+
+We will discuss how relevance is calculated in more detail in <<boost>>.
+
+****
