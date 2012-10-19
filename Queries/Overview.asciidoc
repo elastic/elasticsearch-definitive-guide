@@ -1,10 +1,10 @@
 [[query_types]]
-=== Types of queries
+=== Query families
 
 There are many different query clauses available in elasticsearch. To make them
-easier to navigate, we can group them by type:
+easier to navigate, we can group them into families:
 
-Helper queries::
+<<helper_queries,Helper queries>>::
 
 The helper queries are simple, commonly used queries, which are not very
 interesting by themselves, but are very useful:
