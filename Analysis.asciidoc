@@ -1,9 +1,9 @@
 [[analysis]]
 == Analysis – preparing data for searching
 
-Textual data comes in many different forms: prose, computer code, different 
-languages, URLs, emails, file paths, postcodes etc. elasticsearch makes sense 
-of these different formats by analysing textual data into terms. This chapter 
+Textual data comes in many different forms: prose, computer code, different
+languages, URLs, emails, file paths, postcodes etc. elasticsearch makes sense
+of these different formats by analysing textual data into terms. This chapter
 explains the analysis process and how to customize to suit the data and
 seach requirements.
 
@@ -69,6 +69,7 @@ seach requirements.
 * Reverse
 
 === Living in a Unicode world – ICU plugin
+
 ==== Normalization
 ==== Case and diacritic folding
 ==== Collation

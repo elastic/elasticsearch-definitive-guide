@@ -133,7 +133,7 @@ between `bool` and `and`|`or`:
 bitsets::
     Do the filters wrapped by `bool` or `and`|`or` generate bitsets or
     not? In elasticsearch, all filters except for the geolocation filters and
-    the <<numeric_range,`numeric_range` filter>> produce bitsets.
+    the <<numeric_range_filter,`numeric_range` filter>> produce bitsets.
 
 number of matching documents::
     If you have a small (for `and`) or large (for
