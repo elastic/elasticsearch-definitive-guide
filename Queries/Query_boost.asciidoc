@@ -1,0 +1,47 @@
+.Query boost
+****
+We will discuss _boost_ in greater detail in <<boost>>, but we need to
+introduce the concept briefly here because all query clauses accept a
+`boost` parameter.
+
+Each query clause returns a relevance score for each document -- the
+higher the `_score`, the more ``relevant'' is that document.  However, not
+all clauses are created equal.  For instance, keywords in the `title`
+field are probably more relevant than keywords in the `content` field.
+We need a way of telling elasticsearch to make the `title` clause
+more important than the `content` clause.
+
+We can use the `boost` parameter to change the relative importance of a
+query clause. The default `boost` value is `1`. Any value above `1`
+increases the relevance score, and any value between `0` and  `1` decreases the
+score.
+
+Using the example mentioned above, we can search the `content` field
+for the words `"full text search"` with this query clause:
+
+    { "match": { "content": "full text search" }}
+
+In reality, that is just a short way of writing a `match` query. The
+longer version is:
+
+    {
+        "match": {
+            "content": {
+                "query" : "full text search"
+            }
+        }
+    }
+
+The query clause for the `title` field, which we want to boost, could be
+written as:
+
+    {
+        "match": {
+            "title": {
+                "query" : "full text search",
+                "boost" : 2
+            }
+        }
+    }
+
+****
