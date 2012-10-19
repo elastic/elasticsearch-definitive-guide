@@ -1,5 +1,5 @@
-.What is relevance?
-****
+=== What is relevance?
+
 When searching, documents are returned in a particular order.  They
 could be sorted on the `last_modified` time, but the default is to sort
 them from most relevant to least relevant. This relevance score is called
@@ -24,5 +24,3 @@ Length norm::
   relevant.
 
 We will discuss how relevance is calculated in more detail in <<boost>>.
-
-****

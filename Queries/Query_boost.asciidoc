@@ -1,7 +1,7 @@
-.Query boost
-****
+=== Query boost
+
 We will discuss _boost_ in greater detail in <<boost>>, but we need to
-introduce the concept briefly here because all query clauses accept a
+introduce the concept briefly here because almost all query clauses accept a
 `boost` parameter.
 
 Each query clause returns a relevance score for each document -- the
@@ -44,4 +44,3 @@ written as:
         }
     }
 
-****
