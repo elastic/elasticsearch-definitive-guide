@@ -1,0 +1,90 @@
+[[helper_queries]]
+=== Helper queries
+
+The _helper_ queries are simple, commonly used queries. Unlike most queries,
+they have little to do with relevance.
+
+[[match_all_query]]
+==== `match_all` query
+
+This simply matches all documents and returns a `_score` of 1 for all of them.
+It is the default query that is run if no query is passed to a search request.
+So these two search requests are equivalent:
+
+    curl -XGET http://localhost:9200/_search
+
+
+    curl -XGET http://localhost:9200/_search -d '
+    {
+        "match_all" : {}
+    }
+    '
+
+The `match_all` query, when used by itself, will always return a `_score` of
+1.  However, when combining it with other queries, you can boost the
+importance of the `match_all` clause as follows:
+
+     { "match_all": { "boost": 2 }}
+
+
+.Document boosting at index time
+****
+The `match_all` query can be used to boost individual documents based
+on the value of a field within each document. For instance, to prefer
+more recently published documents over less recently published, you
+could store a `publish_date` field and pass it to the `match_all`
+query as the `norms_field`:
+
+    {
+        "match_all" : {
+            "norms_field" : "publish_date"
+        }
+    }
+
+Be aware, however, that using the `norms_field` requires the query to
+examine that field for every document, which has a performance cost.
+
+[TODO] CHECK IF THE ABOVE EXAMPLE WORKS ONCE THE norms_field WORKS CORRECTLY.
+
+See the section on <<document_boost,document boosting>> for other techniques.
+****
+
+[[filtered_query]]
+==== `filtered` query
+
+The `filtered` query (as explained in <<query_structure>>) is used to combine
+a filters with queries.
+
+    {
+        "filtered" : {
+            "query" :  {
+                "match" : { "title":  "quick brown fox" }
+            },
+            "filter" : {
+                "term" :  { "status": "active" }
+            }
+        }
+    }
+
+It accepts a single filter clause and a single query clause. However,
+you can pass it a <<combining_queries,combining query>> or
+<<combining_filters, combining filter>> which *can* contain multiple
+sub-clauses:
+
+    {
+        "filtered" : {
+            "query" :  {
+                "match" : { "title" :  "quick brown fox" }
+            },
+            "filter" : {
+                "and" : [
+                   { "term" :  { "status" :   "active" }},
+                   { "term" :  { "featured" : true     }}
+               ]
+            }
+        }
+    }
+
+
+
+
