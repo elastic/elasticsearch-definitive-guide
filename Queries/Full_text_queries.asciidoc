@@ -1,0 +1,31 @@
+[[full_text_queries]]
+=== Full text queries
+
+Up until now, we have dealt only with matching exact values.
+The _full text query_ family performs the semi-magical job of finding the
+documents that best match an unstructured natural language query string.
+
+But of course, it isn't magic -- internally, a full text query runs
+a number of *exact match* (or _term_) queries and combines their results to
+provide the final answer. But, an exact search for the term `dogs` won't
+match the term `dog`, and `CAT` won't match `cat`.
+
+The key to full text search is to ensure that _we search for exactly the same
+terms as would be stored in our index_.  In other words, both the full
+text data in the index and the full text query string need to be normalized.
+
+This process is called _Analysis_ and will be discussed fully in <<analysis>>.
+For now it is enough to know that, by default, all string fields are analyzed
+before being indexed, and that full text query strings undergo the same
+analysis process.
+
+For example, at index time a field with the phrase `"The Quick Brown Fox"`
+would be indexed as the terms `["quick", "brown", "fox"]`, while at search time
+the query string `"A QUICK FOX!"` would become a search for the
+terms `["quick", "fox"]`.
+
+All of the queries in the full text family have an analysis phase. However,
+they are not limited to searching only full text.  They can also be used
+for fields that contain numbers or dates, or strings which are not analyzed,
+such as tags or zip codes.
+

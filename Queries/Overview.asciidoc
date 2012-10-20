@@ -12,11 +12,12 @@ interesting by themselves, but are very useful:
 ** `match_all`
 ** `filtered`
 
-Full text queries::
+<<full_text_queries,Full text queries>::
 
 These queries have an _analysis phase_ which converts their ``full text''
 query string into the same terms that are stored in the index.  They are the
-bread-and-butter of full text search:
+bread-and-butter of full text search. However, they are not limited to
+just full text -- they can also be used on numbers, dates and enum strings:
 
 ** `match` | `multi_match`
 ** `field` | `query_string`
