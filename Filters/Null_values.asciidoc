@@ -10,7 +10,7 @@ has zero values.
 
 To check whether a field has a value, use the `exists` filter:
 
-    { "exists": { "field": "field_name" }}
+    { "exists" : { "field" : "field_name" }}
 
 [[missing_filter]]
 ==== `missing` filter
@@ -18,7 +18,7 @@ To check whether a field has a value, use the `exists` filter:
 The inverse of the `exists` filter is the `missing` filter, which checks
 whether the field has no values:
 
-    { "missing": { "field": "field_name" }}
+    { "missing" : { "field" : "field_name" }}
 
 [NOTE]
 =====

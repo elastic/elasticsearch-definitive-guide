@@ -24,7 +24,7 @@ The `match_all` query, when used by itself, will always return a `_score` of
 1.  However, when combining it with other queries, you can boost the
 importance of the `match_all` clause as follows:
 
-     { "match_all": { "boost": 2 }}
+     { "match_all" : { "boost" : 2 }}
 
 
 .Document boosting at index time
@@ -58,10 +58,10 @@ a filter with a query.
     {
         "filtered" : {
             "query" :  {
-                "match" : { "title":  "quick brown fox" }
+                "match" : { "title" :  "quick brown fox" }
             },
             "filter" : {
-                "term" :  { "status": "active" }
+                "term" :  { "status" : "active" }
             }
         }
     }

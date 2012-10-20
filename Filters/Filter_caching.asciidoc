@@ -16,9 +16,9 @@ However, it doesn't make sense to cache all filters.  Take this filter
 as an example:
 
     {
-        "and": [
-            { "term": { "tag":    "elasticsearch" }},
-            { "term": { "status": "active"        }},
+        "and" : [
+            { "term" : { "tag" :    "elasticsearch" }},
+            { "term" : { "status" : "active"        }},
         ]
     }
 
@@ -63,9 +63,9 @@ All filters accept a `_cache` parameter which can be set to `true` or `false`,
 which allows you to override the default.  For instance:
 
     {
-        "term": {
-            "status":   "active",
-            "_cache":   false
+        "term" : {
+            "status" :   "active",
+            "_cache" :   false
         }
     }
 
@@ -73,10 +73,10 @@ The only exception to this format is the `query` filter, which needs
 the query to be wrapped in an extra `fquery` layer:
 
     {
-        "query": {
-            "fquery": {
-                "query":  { ... }
-                "_cache": true
+        "query" : {
+            "fquery" : {
+                "query" :  { ... }
+                "_cache" : true
             }
         }
     }

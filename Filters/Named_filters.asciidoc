@@ -8,18 +8,18 @@ falls into. This can be done by assigning each filter a name, with the
 
 
     {
-        "or": [
-            { "range": {
+        "or" : [
+            { "range" : {
                   "_name" : "child",
-                  "age"   : { "to":  12 }
+                  "age"   : { "to" :  12 }
             }},
-            { "range": {
+            { "range" : {
                   "_name" : "teenager",
-                  "age"   : { "from": 13, "to":  18 }
+                  "age"   : { "from" : 13, "to" :  18 }
             }},
-            { "range": {
+            { "range" : {
                   "_name" : "adult",
-                  "age"   : { "from":  18 }
+                  "age"   : { "from" :  18 }
             }}
         ]
     }
@@ -28,12 +28,12 @@ Each result that matches a named filter will include a `matched_filters`
 key with the names of the matching filters:
 
     {
-        "_index":           "myindex",
-        "_type":            "user",
-        "_id":              "1",
-        "matched_filters": ["teenager"],
-        "_source": {
-            "age":   15,
+        "_index" :           "myindex",
+        "_type" :            "user",
+        "_id" :              "1",
+        "matched_filters" : ["teenager"],
+        "_source" : {
+            "age" :   15,
             ...
         }
     }
@@ -42,10 +42,10 @@ The only exception to this format is the `query` filter, which needs
 the query to be wrapped in an extra `fquery` layer:
 
     {
-        "query": {
-            "fquery": {
-                "query":  { ... }
-                "_name":  "foo"
+        "query" : {
+            "fquery" : {
+                "query" :  { ... }
+                "_name" :  "foo"
             }
         }
     }

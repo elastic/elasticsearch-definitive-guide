@@ -22,11 +22,11 @@ For example, this SQL query:
 could be written as:
 
     {
-        "and":  [
-            { "term":  { "status":      "active" }},
-            { "or": [
-                { "range": { "count": { "lt": 5  }},
-                { "range": { "count": { "gt": 10 }}
+        "and" :  [
+            { "term" :  { "status" :      "active" }},
+            { "or" : [
+                { "range" : { "count" : { "lt" : 5  }},
+                { "range" : { "count" : { "gt" : 10 }}
               ]
             }
         ]
@@ -56,7 +56,7 @@ The `not` filter negates any other filter. For example, `WHERE count <> 5`
 could be written as:
 
     {
-        "not": { "term": { "count": 5 }}
+        "not" : { "term" : { "count" : 5 }}
     }
 
 However, the `not` filter only accepts a single filter.  To negate multiple
@@ -64,10 +64,10 @@ filters, you need to be explicit about how those filters should be combined.
 That is, you should wrap them in an <<and_or_filter,`and` or `or` filter>>:
 
     {
-        "not": {
-            "or": [
-                { "term": { "status": "inactive" }},
-                { "term": { "status": "pending"  }}
+        "not" : {
+            "or" : [
+                { "term" : { "status" : "inactive" }},
+                { "term" : { "status" : "pending"  }}
             ]
         }
     }
@@ -92,13 +92,13 @@ For instance, this SQL statement:
 could be written as:
 
     {
-        "bool": {
-            "must":     { "term": { "status": "active" }},
-            "should":   [
-                { "range": { "created": { "gte": "2012-01-01" }}},
-                { "term":  { "featured": 1 }}
+        "bool" : {
+            "must" :     { "term" : { "status" : "active" }},
+            "should" :   [
+                { "range" : { "created" : { "gte" : "2012-01-01" }}},
+                { "term" :  { "featured" : 1 }}
             ],
-            "must_not": { "term": { "hidden": 1 }}
+            "must_not" : { "term" : { "hidden" : 1 }}
         }
     }
 

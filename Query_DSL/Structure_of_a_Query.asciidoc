@@ -15,7 +15,7 @@ A simple `match` query clause which searches the `title` field for the words
 `"search is cool"` would look like this:
 
     {
-        "match":  { "title": "search is cool" }
+        "match" :  { "title" : "search is cool" }
     }
 
 This query clause should be used as the value of the `query` parameter in the
@@ -23,8 +23,8 @@ search API:
 
     curl -XGET localhost:9200/_search -d '
     {
-        "query": {
-            "match":  { "title": "search is cool" }
+        "query" : {
+            "match" :  { "title" : "search is cool" }
         }
     }
     '
@@ -36,9 +36,9 @@ the value `"active"`, you can combine your query clause with a filter clause
 using a `filtered` query:
 
     {
-        "filtered": {
-            "query":    { "match": { "title":  "search is cool" }},
-            "filter":   { "term":  { "status": "active" }}
+        "filtered" : {
+            "query" :    { "match" : { "title" :  "search is cool" }},
+            "filter" :   { "term" :  { "status" : "active" }}
         }
     }
 
@@ -46,10 +46,10 @@ The full request would look like this:
 
     curl -XGET localhost:9200/_search -d '
     {
-        "query": {
-            "filtered": {
-                "query":    { "match": { "title":  "search is cool" }},
-                "filter":   { "term":  { "status": "active" }}
+        "query" : {
+            "filtered" : {
+                "query" :    { "match" : { "title" :  "search is cool" }},
+                "filter" :   { "term" :  { "status" : "active" }}
             }
         }
     }
@@ -63,9 +63,9 @@ to *wrap your filter in a query*.  One possibility is the `filtered` query
 mentioned above:
 
     {
-        "filtered": {
-            "query":    { "match_all: {}},
-            "filter":   { "term":  { "status": "active" }}
+        "filtered" : {
+            "query" :    { "match_all: {}},
+            "filter" :   { "term" :  { "status" : "active" }}
         }
     }
 
@@ -74,8 +74,8 @@ which skips the relevance scoring phase completely, and instead returns a score
 of `1` for every document:
 
     {
-        "constant_score": {
-            "filter":   { "term":  { "status": "active" }}
+        "constant_score" : {
+            "filter" :   { "term" :  { "status" : "active" }}
         }
     }
 
@@ -83,9 +83,9 @@ The full request would look like this:
 
     curl -XGET localhost:9200/_search -d '
     {
-        "query":     {
-            "constant_score": {
-                "filter":   { "term":  { "status": "active" }}
+        "query" :     {
+            "constant_score" : {
+                "filter" :   { "term" :  { "status" : "active" }}
             }
         }
     }

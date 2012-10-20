@@ -19,14 +19,14 @@ score.
 Using the example mentioned above, we can search the `content` field
 for the words `"full text search"` with this query clause:
 
-    { "match": { "content": "full text search" }}
+    { "match" : { "content" : "full text search" }}
 
 In reality, that is just a short way of writing a `match` query. The
 longer version is:
 
     {
-        "match": {
-            "content": {
+        "match" : {
+            "content" : {
                 "query" : "full text search"
             }
         }
@@ -36,8 +36,8 @@ The query clause for the `title` field, which we want to boost, could be
 written as:
 
     {
-        "match": {
-            "title": {
+        "match" : {
+            "title" : {
                 "query" : "full text search",
                 "boost" : 2
             }

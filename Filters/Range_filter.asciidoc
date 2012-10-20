@@ -5,20 +5,20 @@ A `range` filter is used to match fields which contain values within a certain
 range, for instance:
 
     {
-        "range": {
-            "created": {
-                "from":  "2011-01-01",
-                "to":    "2012-01-01"
+        "range" : {
+            "created" : {
+                "from" :  "2011-01-01",
+                "to" :    "2012-01-01"
         }
     }
 
 Ranges can also be applied to string fields:
 
     {
-        "range": {
-            "title": {
-                "from":  "apple",
-                "to":    "orange"
+        "range" : {
+            "title" : {
+                "from" :  "apple",
+                "to" :    "orange"
         }
     }
 
@@ -32,16 +32,16 @@ The comparison operators are as follows:
 `to`:: The same as `lt` (*not* `lte`)
 
 The `to` operator means _up to but not including_, so a range
-of `{ "from": 0, "to": 100 }` includes the range `0..99`, not `0..100`.
+of `{ "from" : 0, "to" : 100 }` includes the range `0..99`, not `0..100`.
 
 [[numeric_range_filter]]
 ==== Numeric range filter
 
     {
-        "numeric_range": {
-            "last_modified": {
-                "from":  "2012-01-01 00:00:00",
-                "to":    "2012-01-01 01:00:00"
+        "numeric_range" : {
+            "last_modified" : {
+                "from" :  "2012-01-01 00:00:00",
+                "to" :    "2012-01-01 01:00:00"
         }
     }
 
