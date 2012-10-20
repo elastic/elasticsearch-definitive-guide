@@ -12,7 +12,7 @@ interesting by themselves, but are very useful:
 ** `match_all`
 ** `filtered`
 
-<<full_text_queries,Full text queries>::
+<<full_text_queries,Full text queries>>::
 
 These queries have an _analysis phase_ which converts their ``full text''
 query string into the same terms that are stored in the index.  They are the
