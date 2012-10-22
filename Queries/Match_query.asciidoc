@@ -1,0 +1,223 @@
+[[match_query]]
+==== `match` query
+
+The `match` query is the default query that you should use unless you have
+a good reason to use anything else. It can be used to match:
+
+* full text
+
+    { "match" : { "title" : "A guide to full text search" }}
+
+* exact values, or enums
+
+    { "match" : { "status" : "active" }}
+
+* numbers
+
+    { "match" : { "count" : 5 }}
+
+* dates
+
+    { "match" : { "created" : "2012-05-01" }}
+
+* booleans
+
+    { "match" : { "featured" : true }}
+
+For any field other than a full text field, the `match` query runs an
+``exact match'' (or <<term_query,`term`>>) query. For full text fields,
+the query string is analyzed and a full text query is run.
+
+===== Structure of the `match` query
+
+If no field name is provided, then the query searches the special
+<<all_field,`_all` field>>, which we will discuss in <<mapping>>.
+That means that these two queries are exactly equivalent:
+
+    { "match" : "A guide to full text search" }
+
+    { "match" : { "_all" : "A guide to full text search" }}
+
+Also, the structure can change slightly to allow the passing of parameters
+which affect the behaviour of the query. These two forms are exactly
+equivalent to the two queries above:
+
+    {
+        "match" : {
+            "query" : "A guide to full text search"
+        }
+    }
+
+    {
+        "match" : {
+            "_all" : {
+                "query" : "A guide to full text search"
+            }
+        }
+    }
+
+===== Boosting a `match` clause
+
+As explained in <<query_boost>>, the relative importance of any query clause
+can be altered by passing the `boost` parameter, where a value greater than
+`1` increases the importance, and a value between `0` and `1` decreases
+the importance:
+
+    {
+        "match" : {
+            "title" : {
+                "query" : "A guide to full text search",
+                "boost" : 2
+            }
+        }
+    }
+
+===== The `match` query and full text search
+
+There are three sub-types of `match` query which are useful for full text
+search: <<match_boolean,`boolean`>> (the default),
+<<match_phrase,`phrase`>> and <<match_phrase_prefix,`phrase_prefix`>>.
+Each `type` accepts certain parameters which can be used to tailor the
+behaviour of the search.
+
+`analyzer`::
+
+Regardless of the `type`, the query string is analyzed by the defined
+`search_analyzer` for the field (see <<analysis>> for more), but this
+can be overridden by passing the `analyzer` parameter:
+
+    {
+        "match" : {
+            "title" : {
+                "query"    : "A guide to full text search",
+                "analyzer" : "my_custom_analyzer"
+            }
+        }
+    }
+
+[[match_boolean]]
+===== `boolean`
+
+The default `type` for a `match` query is `boolean` which, when presented
+with a query string like `"quick brown fox"`, translates that into a query
+for `"quick OR brown OR fox"`. That is, it finds *any* of the specified
+words.
+
+`operator`::
+
+The `operator` parameter (which defaults to `or`) can be changed to `and`
+to match only documents that have *all* of the specified words,
+as in `"quick AND brown AND fox"`:
+
+    {
+        "match" : {
+            "title" : {
+                "operator" : "and",
+                "query"    : "quick brown fox"
+            }
+        }
+    }
+
+`fuzziness`::
+
+What happens if the user misspells a word, and searches for `"quick brawn fox"`
+by mistake?  We can allow for a certain amount of ``fuzzy matching'' by
+specifying a `fuzziness` value greater than `0` (very fuzzy) but less than
+`1` (slightly fuzzy).
++
+    {
+        "match" : {
+            "title" : {
+                "query"     : "quick brawn fox",
+                "fuzziness" : 0.5
+            }
+        }
+    }
++
+We discuss fuzzy matching (and the associated parameters `prefix_length` and
+`max_expansions`) more fully in <<fuzzy_query>>. For now, it is
+enough to know that it is a useful stopgap, but can be more efficiently
+achieved using an `ngram` analyzer, as explained in
+[TODO]: ADD LINK TO NGRAM EXAMPLE].
+
+[[match_phrase]]
+===== `phrase`
+
+Instead of just matching the words in the query string, we can also
+match a _phrase_, that is: all the words, in the *same order*. For instance,
+the phrase `"quick fox"` would not match a document with
+`"quick brown fox"`.
+
+    {
+        "match" : {
+            "title: {
+                "type"  : "phrase",
+                "query" : "quick brown fox"
+            }
+        }
+    }
+
+`slop`::
+
+The `slop` parameter allows us to relax the strict _same order_ constraint,
+and allows the `phrase` `match` query to behave more like a _proximity_ query,
+i.e. the nearer the words are to each other, the more relevant.
++
+It behaves like an ``edit distance'', but based on word positions instead
+of single character changes.  So, to make the phrase `"quick fox"` match
+`"quick brown fox"` requires a `slop` of `1`. A `slop` of `3` would allow
+`"fox quick"` to match, albeit with a lower relevance `_score` than
+`"quick fox"`.
++
+    {
+        "match" : {
+            "title: {
+                "type"  : "phrase",
+                "query" : "quick fox",
+                "slop"  : 5
+            }
+        }
+    }
+
+
+[[match_phrase_prefix]]
+===== `phrase_prefix`
+
+This query is particularly useful for _find-as-you-type_ queries.  It
+works in the same way as the <<match_phrase,`phrase` `match` query>>
+but adds a <<prefix_query,`prefix` query>> to the last word in the query string,
+much like adding a wildcard (`*`) to the final word.  The example below would
+match `"quick brown fox"` and `"quick brown furry animals"`:
+
+    {
+        "match" : {
+            "title: {
+                "type"  : "phrase_prefix",
+                "query" : "quick brown f"
+            }
+        }
+    }
+
+The `phrase_prefix` query (like the
+<<phrase_match_query,`phrase` `match` query>>) accepts the `slop` parameter,
+to allow the words to be near, but not necessarily in the same order.
+
+`max_expansions`::
+
+The prefix part of the query can generate many sub-queries. For performance
+reasons, you can limit the number of sub-queries with `max_expansions`:
++
+    {
+        "match" : {
+            "title: {
+                "type"           : "phrase_prefix",
+                "query"          : "quick brown f",
+                "max_expansions" : 10
+            }
+        }
+    }
+
+
+
+
+
