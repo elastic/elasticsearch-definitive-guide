@@ -1,0 +1,45 @@
+[[multi_match_query]]
+==== `multi_match` query
+
+The `multi_match` query works in exactly the same way as the
+<<match_query,`match` query>>, but allows you to run the same query
+on several fields at the same time.
+
+    {
+        "multi_match" : {
+            "query"   : "quick brown fox",
+            "fields"  : ["title", "content"]
+        }
+    }
+
+===== Boosting individual fields
+
+If, in the example above,  the `title` field should be considered more
+relevant than the `content` field, then you can <<query_boost,`boost>>
+each field by appending `^` plus a number to the field name:
+
+    {
+        "multi_match" : {
+            "query"   : "quick brown fox",
+            "fields"  : ["title^2", "content"]
+        }
+    }
+
+===== Wildcard field names
+
+You can use wildcards (`*`) in the field name to match several fields at once.
+For instance, the query below would search the fields `father.name`,
+`wife.name` and `child.name`:
+
+    {
+        "multi_match" : {
+            "query"   : "quick brown fox",
+            "fields"  : ["*.name"]
+        }
+    }
+
+===== `bool` vs `dis_max`
+
+
+
+
