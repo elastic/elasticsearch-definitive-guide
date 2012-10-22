@@ -27,5 +27,26 @@ terms `["quick", "fox"]`.
 All of the queries in the full text family have an analysis phase. However,
 they are not limited to searching only full text.  They can also be used
 for fields that contain numbers or dates, or strings which are not analyzed,
-such as tags or zip codes.
+such as tags or zip codes. These queries do ``the right thing'' based upon
+the field definition, or _mapping_, which will be explained in <<mapping>>.
+
+.`analyzed` vs `not_analyzed` text fields
+****
+String fields can either contain _full text_, (like the body of an email)
+which requires analysis in order to be searchable, or _exact values_
+(like enums, post codes, product numbers, or tags) which are not analyzed
+before being indexed.
+
+By default, elasticsearch assumes that all string fields contain
+full text. They are defined (or ``mapped'') as:
+
+    { "type": "string", "index": "analyzed" }
+
+String fields which contain exact values have to be manually defined as:
+
+    { "type": "string", "index": "not_analyzed" }
+
+We will explain how to setup `not_analyzed` fields in <<mapping>>, but for
+now, it is important to know the distinction between the two.
+****
 
