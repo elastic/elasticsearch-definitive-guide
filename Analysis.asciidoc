@@ -2,12 +2,12 @@
 == Analysis – preparing data for searching
 
 Textual data comes in many different forms: prose, computer code, different
-languages, URLs, emails, file paths, postcodes etc. elasticsearch makes sense
+languages, URLs, emails, file paths, postcodes etc. Elasticsearch makes sense
 of these different formats by analysing textual data into terms. This chapter
 explains the analysis process and how to customize to suit the data and
 seach requirements.
 
-=== How does elasticsearch store our data?
+=== How does Elasticsearch store our data?
 * “text” vs “terms”
 * Analysis of data and search terms
 * Inverted index

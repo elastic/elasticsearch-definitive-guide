@@ -46,7 +46,7 @@ using a <<range_filter,`range` filter>> instead.
 
 Script filters::
 
-The script in a <<script_filter,`script` filter>> is opaque to elasticsearch,
+The script in a <<script_filter,`script` filter>> is opaque to Elasticsearch,
 which has no way of knowing whether the script would produce the same results
 if run a second time.
 

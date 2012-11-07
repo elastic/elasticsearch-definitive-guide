@@ -31,7 +31,7 @@ For example, find documents:
 
 Some queries are used to search full text and have an analysis phase which
 converts the full text query string into the same terms or tokens that are
-stored in elasticsearch. Filters have no analysis phase.  They are used
+stored in Elasticsearch. Filters have no analysis phase.  They are used
 for exact matching only.
 
 Filters are faster than queries because (a) they don't have to calculate

@@ -52,7 +52,7 @@ perform better for:
 * fields which have many many values, e.g. a `timestamp` field
 * fields that are also being used to sort results
 
-The first time that a `numeric_range` filter is used, elasticsearch
+The first time that a `numeric_range` filter is used, Elasticsearch
 has to build a _field cache_, which caches all the values for that field in
 memory.  Building the field cache can be slow, but once it is built it can
 make future `numeric_range` filters faster.
