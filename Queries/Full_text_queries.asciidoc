@@ -3,7 +3,7 @@
 
 Up until now, we have dealt only with matching exact values.
 The _full text query_ family performs the semi-magical job of finding the
-documents that best match an unstructured natural language query string.
+documents that best match a natural language query string.
 
 But of course, it isn't magic -- internally, a full text query runs
 a number of *exact match* (or _term_) queries and combines their results to
@@ -11,33 +11,40 @@ provide the final answer. But, an exact search for the term `dogs` won't
 match the term `dog`, and `CAT` won't match `cat`.
 
 The key to full text search is to ensure that _we search for exactly the same
-terms as would be stored in our index_.  In other words, both the full
-text data in the index and the full text query string need to be normalized.
+terms as are stored in our index_.  In other words, both the full
+text data in our documents and the full text query string need to be normalized.
 
 This process is called _Analysis_ and will be discussed fully in <<analysis>>.
-For now it is enough to know that, by default, all string fields are analyzed
-before being indexed, and that full text query strings undergo the same
-analysis process.
+For now it is enough to know that:
 
-For example, at index time a field with the phrase `"The Quick Brown Fox"`
-would be indexed as the terms `["quick", "brown", "fox"]`, while at search time
-the query string `"A QUICK FOX!"` would become a search for the
-terms `["quick", "fox"]`.
+ * By default, string fields are _analyzed_ before being indexed, so
+   a field with the phrase `"The Quick Brown Fox"`
+   would be indexed as the terms:
 
-All of the queries in the full text family have an analysis phase. However,
-they are not limited to searching only full text.  They can also be used
-for fields that contain numbers or dates, or strings which are not analyzed,
-such as tags or zip codes. These queries do ``the right thing'' based upon
-the field definition, or _mapping_, which will be explained in <<mapping>>.
+   ["quick", "brown", "fox"]
+
+ * Full text query strings are analyzed before searching, so
+   the query string `"A QUICK FOX!"` would become a search for the
+   terms:
+
+   ["quick", "fox"]
+
+Because both the indexed data and the search terms have been normalized into
+the same form, it is now easy to find documents in our index that match
+our search terms.
 
 .`analyzed` vs `not_analyzed` text fields
 ****
-String fields can either contain _full text_, (like the body of an email)
-which requires analysis in order to be searchable, or _exact values_
-(like enums, post codes, product numbers, or tags) which are not analyzed
-before being indexed.
+String fields can contain either:
 
-By default, elasticsearch assumes that all string fields contain
+*  _full text_, (like the body of an email)
+which requires analysis in order to be searchable, or
+
+* _exact values_
+(like enums, post codes, product numbers, or tags) which are *not* analyzed
+but are indexed exactly as they are.
+
+By default, Elasticsearch assumes that all string fields contain
 full text. They are defined (or ``mapped'') as:
 
     { "type": "string", "index": "analyzed" }
@@ -49,6 +56,12 @@ String fields which contain exact values have to be manually defined as:
 We will explain how to setup `not_analyzed` fields in <<mapping>>, but for
 now, it is important to know the distinction between the two.
 ****
+
+All of the queries in the full text family have an analysis phase. However,
+they are not limited to searching only full text.  They can also be used
+for fields that contain numbers or dates, or strings which are not analyzed,
+such as tags or zip codes. Full text queries do ``the right thing'' based upon
+the field definition, or _mapping_, which will be explained in <<mapping>>.
 
 include::Match_query.asciidoc[]
 

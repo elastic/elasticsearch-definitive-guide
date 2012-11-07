@@ -16,7 +16,9 @@ So these two search requests are equivalent:
 
     curl -XGET http://localhost:9200/_search -d '
     {
-        "match_all" : {}
+        "query": {
+            "match_all" : {}
+        }
     }
     '
 
@@ -29,7 +31,7 @@ importance of the `match_all` clause as follows:
 
 .Document boosting at index time
 ****
-The `match_all` query can be used to boost individual documents based
+The `match_all` query can also be used to boost individual documents based
 on the value of a field within each document. For instance, to prefer
 more recently published documents over less recently published, you
 could store a `publish_date` field and pass it to the `match_all`
@@ -57,12 +59,8 @@ a filter with a query.
 
     {
         "filtered" : {
-            "query" :  {
-                "match" : { "title" :  "quick brown fox" }
-            },
-            "filter" : {
-                "term" :  { "status" : "active" }
-            }
+            "query" :  { ANY QUERY CLAUSE  },
+            "filter" : { ANY FILTER CLAUSE }
         }
     }
 

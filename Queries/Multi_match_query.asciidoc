@@ -15,7 +15,7 @@ on several fields at the same time.
 ===== Boosting individual fields
 
 If, in the example above,  the `title` field should be considered more
-relevant than the `content` field, then you can <<query_boost,`boost>>
+relevant than the `content` field, then you can <<query_boost,`boost`>>
 each field by appending `^` plus a number to the field name:
 
     {
@@ -34,11 +34,12 @@ For instance, the query below would search the fields `father.name`,
     {
         "multi_match" : {
             "query"   : "quick brown fox",
-            "fields"  : ["*.name"]
+            "fields"  : [ "*.name" ]
         }
     }
 
-===== `bool` vs `dis_max`
+
+[TODO] LINK TO BOOL VS DISMAX
 
 
 

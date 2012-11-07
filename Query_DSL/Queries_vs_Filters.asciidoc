@@ -34,8 +34,8 @@ converts the full text query string into the same terms or tokens that are
 stored in Elasticsearch. Filters have no analysis phase.  They are used
 for exact matching only.
 
-Filters are faster than queries because (a) they don't have to calculate
-relevance, and (b) they are cacheable.
+Filters are usually faster than queries because (a) they don't have to
+calculate relevance, and (b) they are cacheable.
 
 *In summary:* as a general rule, use queries for full text search or for
 any condition that should affect the relevance score, and filters
