@@ -41,9 +41,9 @@ is built up by expanding the query term into a list of terms which could match:
 ** `prefix`
 ** `wildcard`
 
-Combining queries::
+Compound queries::
 
-Combining queries allow us to join multiple queries together --
+Compound queries allow us to join multiple queries together --
 the difference between them is how the final relevance `_score` is calculated:
 
 ** `bool`

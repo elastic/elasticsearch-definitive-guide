@@ -67,8 +67,8 @@ a filter with a query.
     }
 
 It accepts a single filter clause and a single query clause. However,
-you can pass it a <<combining_queries,combining query>> or
-<<combining_filters, combining filter>> which *can* contain multiple
+you can pass it a <<compound_queries,compound query>> or
+<<compound_filters, compound filter>> which can contain multiple
 sub-clauses:
 
     {

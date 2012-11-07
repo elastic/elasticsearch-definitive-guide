@@ -5,6 +5,12 @@ Filters answer `yes|no` questions - documents either match a filter, or they
 don't.  They are fast and efficient, and should be used instead of queries
 whenever possible.
 
+Multiple filter clauses can be combined using one of the
+<<compound_filters,Compound filters>> such as `and` or `or`.  Any of the
+filters explained below can be used wherever in the API a parameter includes
+the word `filter`, such as the <<filtered_query,`filtered` query>>
+or in a <<facet_filter,`facet_filter`>>.
+
 In the rest of this chapter, we will discuss the most commonly used
 filter clauses. We start with filters because they are simpler than queries,
 and more similar to the logic that we can express in SQL.
@@ -15,7 +21,7 @@ include::Filters/Range_filter.asciidoc[]
 
 include::Filters/Null_values.asciidoc[]
 
-include::Filters/Combining_filters.asciidoc[]
+include::Filters/Compound_filters.asciidoc[]
 
 include::Filters/Prefix_filter.asciidoc[]
 

@@ -1,5 +1,5 @@
-[[combining_filters]]
-=== Combining filter clauses
+[[compound_filters]]
+=== Compound filter clauses
 
 When you want to combine multiple filter clauses together you need to be
 specific about how they relate to each other, in the same way as you would
@@ -38,12 +38,14 @@ The order of the filter clauses is important because both the `and` and `or`
 filters __short-circuit__. In other words, they do the least amount of work
 necessary to satisfy the `AND` or `OR` condition.
 
-The `and` filter starts with the first filter clause, checks each document
-in turn and discards any documents that don't match.  It then repeats the
-process with the next filter, but only checks the documents that have not
-already been excluded.
-The `or` filter works similarly, but if any filter clause matches a document,
-then that document is immediately accepted and no further clauses are checked.
+Each document is checked in turn. An `and` filter starts with the first
+filter clause and checks whether the document matches that clause.  If it
+doesn't, then the document is immediately discarded and no further filters
+are checked.  Otherwise it repeats the process for the remaining filter
+clauses.
+
+The `or` clause works in a similar way, but stops checking as soon as
+it finds a filter that matches the document.
 
 This means that it is more efficient to put the least specific filters first
 for the `or` filter, and the most specific filters first for the `and` filter.
@@ -76,7 +78,7 @@ That is, you should wrap them in an <<and_or_filter,`and` or `or` filter>>:
 ==== `bool` filter
 
 While the <<and_or_filter,`and` and `or` filters>> are the most obvious
-choice for combining filter clauses, there is another option, called the
+choice for compound filter clauses, there is another option, called the
 `bool` filter. The `bool` filter performs the same job as `and`, `or` and
 `not`, but it does so in a different way with <<bool_vs_and_or,different
 performance implications>>.
@@ -112,10 +114,10 @@ above example). At least one of the `should` clauses must match.
 [NOTE]
 ====
 Read this section only if you need to squeeze every last drop of performance
-out of elasticsearch. Otherwise, feel free to ignore it.
+out of Elasticsearch. Otherwise, feel free to ignore it.
 ====
 
-Most of the filters in elasticsearch do their work by generating _bitsets_,
+Most of the filters in Elasticsearch do their work by generating _bitsets_,
 where a bitset is a data structure which uses one bit to represent each
 document in the index.  If a document matches a filter, its bit will be
 set to `1`.  If it doesn't match, its bit will be set to `0`. These bitsets
@@ -132,7 +134,7 @@ between `bool` and `and`|`or`:
 
 bitsets::
     Do the filters wrapped by `bool` or `and`|`or` generate bitsets or
-    not? In elasticsearch, all filters except for the geolocation filters and
+    not? In Elasticsearch, all filters except for the geolocation filters and
     the <<numeric_range_filter,`numeric_range` filter>> produce bitsets.
 
 number of matching documents::

@@ -10,6 +10,11 @@ That said, relevance is not just about full text search. It can equally be
 applied to `yes|no` clauses where the more clauses that match, the more
 relevant, or to geolocation queries, where closer is better.
 
+Multiple query clauses can be combined using one of the
+<<compound_queries,Compound queries>> such as `bool` or `dismax`.  Any of the
+queries explained below can be used wherever in the API a parameter includes
+the word `query`, such as the <<search_api,`search` API>>
+or in a <<query_facet,`query` facet>>.
 include::Queries/What_is_relevance.asciidoc[]
 
 include::Queries/Overview.asciidoc[]
