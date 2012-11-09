@@ -54,7 +54,7 @@ See the section on <<document_boost,document boosting>> for other techniques.
 [[filtered_query]]
 ==== `filtered` query
 
-The `filtered` query (as explained in <<query_structure>>) is used to combine
+The `filtered` query, as explained in <<query_structure>>, is used to combine
 a filter with a query.
 
     {
