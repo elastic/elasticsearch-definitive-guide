@@ -37,11 +37,13 @@ our search terms.
 ****
 String fields can contain either:
 
-*  _full text_, (like the body of an email)
-which requires analysis in order to be searchable, or
+_full text_::
 
-* _exact values_
-(like enums, post codes, product numbers, or tags) which are *not* analyzed
+like the body of an email, which requires analysis in order to be searchable, or
+
+_exact values_::
+
+like enums, post codes, product numbers, or tags, which are *not* analyzed
 but are indexed exactly as they are.
 
 By default, Elasticsearch assumes that all string fields contain
