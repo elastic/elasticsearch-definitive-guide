@@ -29,28 +29,6 @@ importance of the `match_all` clause as follows:
      { "match_all" : { "boost" : 2 }}
 
 
-.Document boosting at index time
-****
-The `match_all` query can also be used to boost individual documents based
-on the value of a field within each document. For instance, to prefer
-more recently published documents over less recently published, you
-could store a `publish_date` field and pass it to the `match_all`
-query as the `norms_field`:
-
-    {
-        "match_all" : {
-            "norms_field" : "publish_date"
-        }
-    }
-
-Be aware, however, that using the `norms_field` requires the query to
-examine that field for every document, which has a performance cost.
-
-[TODO] CHECK IF THE ABOVE EXAMPLE WORKS ONCE THE norms_field WORKS CORRECTLY.
-
-See the section on <<document_boost,document boosting>> for other techniques.
-****
-
 [[filtered_query]]
 ==== `filtered` query
 
