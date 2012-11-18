@@ -43,7 +43,7 @@ or for exposing only a few of the ``advanced'' features of the query syntax
 by cleaning up the query string in your application before running the query.
 ****
 
-.`default_field`
+===== `default_field`
 
 In the query syntax, it is possible to target specific fields by specifying
 the field name, followed by a colon. For instance:
@@ -79,7 +79,7 @@ two queries:
        }
     }
 
-.`fields`
+===== `fields`
 
 Like the <<multi_match_query,`multi_match` query>>, it is possible to run
 the `query_string` query against multiple ``default'' fields, as follows:
@@ -103,7 +103,7 @@ boosting (`^`) syntax as the `multi_match` query:
 
 [TODO] Mention use_dis_max and tie_breaker.
 
-.`default_operator`
+===== `default_operator`
 
 By default, each query term is optional. In other words, the query
 string `"quick brown fox"` is interpreted as `"quick OR brown OR fox"`, where
@@ -119,7 +119,7 @@ This behaviour can be changed by changing the `default_operator` from
         }
     }
 
-===== Query parser syntax
+==== Query string parser syntax
 
 The query string is parsed into a series of ``terms'' and ``operators''. A
 term can be a single word (`quick` or `brown`), or a phrase, surrounded by
@@ -129,7 +129,7 @@ phrase, in the same order.
 Operators allow you to customize the search -- the available options are
 explained below.
 
-.Field names
+===== Field names
 
 As mentioned above, the `default_field` is searched for the search terms, but
 it is possible to specify other fields in the query syntax:
@@ -159,7 +159,7 @@ it is possible to specify other fields in the query syntax:
 
     _exists:title
 
-.Wildcards
+===== Wildcards
 
 Wildcard searches can be run on individual terms, using `?` to replace
 a single character, and `*` to replace zero or more characters:
@@ -190,7 +190,7 @@ the term list for matching terms.
 [TODO] LINK TO REWRITE
 
 
-.Fuzziness
+===== Fuzziness
 
 As explained in [TODO] LINK TO FUZZINESS, we can search for terms that are
 similar to, but not exactly like our search terms, using the ``fuzzy''
@@ -210,7 +210,7 @@ misspellings. An edit distance of `1` can be specified as:
 
     quikc~1
 
-.Proximity searches
+===== Proximity searches
 
 While a phrase query (eg `"john smith"`) expects all of the terms in exactly
 the same order, a proximity query allows the specified words to be further
@@ -225,7 +225,7 @@ query string, the more relevant that document is considered to be. When
 compared to the above example query, the phrase `"quick fox"` would be
 considered more relevant than `"quick brown fox"`.
 
-.Ranges
+===== Ranges
 
 Ranges can be specified for date, numeric or string fields. Inclusive ranges
 are specified with square brackets `[min TO max]` and exclusive ranges with
@@ -255,7 +255,7 @@ The parsing of ranges in query strings can be complex and error prone. It is
 much more reliable to use an explicit <<range_query,`range` query>> or
 <<range_filter,`range` filter>>.
 
-.Boosting
+===== Boosting
 
 Use the _boost_ operator `^` to make one term more relevant than another.
 For instance, if we want to find all documents about foxes, but we are
@@ -270,7 +270,7 @@ Boosts can also be applied to phrases or to groups:
 
     "john smith"^2   (foo bar)^4
 
-.Boolean operators
+===== Boolean operators
 
 By default, all terms are optional, as long as one term matches.  A search
 for `foo bar baz` will find any document that contains one or more of
@@ -330,7 +330,7 @@ would look like this:
 
 ****
 
-.Grouping
+===== Grouping
 
 Multiple terms or clauses can be grouped together with parentheses, to form
 sub-queries:
@@ -342,7 +342,7 @@ of a sub-query:
 
     status:(active OR pending) title:(full text search)^2
 
-.Reserved characters
+===== Reserved characters
 
 If you need to use any of the characters which function as operators in your
 query itself (and not as operators), then you should escape them with

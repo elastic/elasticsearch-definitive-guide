@@ -1,5 +1,5 @@
 [[fuzziness]]
-=== Fuzziness
+==== Fuzziness
 
 Fuzzy matching is a useful techinque for matching words that have been
 misspelled or have an alternate spelling. Compare:
@@ -7,7 +7,7 @@ misspelled or have an alternate spelling. Compare:
 * `bieber`    vs `beiber`     vs `beaber`
 * `esophagus` vs `oesophagus` vs `œsophagus`
 
-.How do we measure fuzziness?
+===== How do we measure fuzziness?
 
 There are many ways to match strings approximately. We could use a
 phonetic algorithm like http://en.wikipedia.org/wiki/Soundex[Soundex] or
@@ -39,7 +39,7 @@ all the substrings in your index.  We will examine this further in [TODO] ADD
 LINK TO NGRAMS EXAMPLE.
 ****
 
-.Generating a fuzzy query
+===== Generating a fuzzy query
 
 Unfortunately, the use of an inverted index -- the structure that makes
 Elasticsearch as fast as it is -- requires us to know exactly which terms to
@@ -56,6 +56,8 @@ distance is too large. This may be naive, but this was the way that
 the fuzzy query was implemented in Lucene up until version 4.  As a
 consequence, the fuzzy query could perform very badly.
 
+===== Enter the automaton
+
 Lucene version 4 uses a different approach -- it processes the search terms
 and calculates all possible variations that have a maximum edit distance
 of 2, and stores them in a very efficient structure called a
@@ -69,7 +71,7 @@ exist in the index, it wraps the ``most important'' terms in a
 <<bool_query,boolean query>> and searches for all of them. Terms with a lower
 edit distance are considered to be more relevant.
 
-.No such thing as a free lunch
+===== No such thing as a free lunch
 
 While fuzzy queries now perform very much better than they did, they still have
 a cost: the DFA data structure is very large and consumes a lot of memory.

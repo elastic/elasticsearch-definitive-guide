@@ -31,7 +31,7 @@ For any field other than a full text field, the `match` query runs an
 ``exact match'' (or <<term_query,`term`>>) query. For full text fields,
 the query string is analyzed and a full text query is run.
 
-.Structure of the `match` query
+===== Structure of the `match` query
 ****
 
 If no field name is provided, then the query searches the special
@@ -88,7 +88,7 @@ set to `"or"` (match *any* terms -- the default) or `"and"` (match *all* terms):
         }
     }
 
-.`minimum_should_match`
+===== `minimum_should_match`
 
 When using the default `"or"` operator, the relevance `_score` from each
 matching term is combined togther to produce the final `_score` -- the
@@ -130,7 +130,7 @@ the phrase `"quick fox"` would not match a document containing
         }
     }
 
-.`slop`
+===== `slop`
 
 The `slop` parameter allows us to relax the strict _same order_ constraint,
 and allows the `match_phrase` query to behave more like a _proximity_ query,
@@ -176,7 +176,7 @@ parameter, to allow the words to be near to each other, without necessarily
 being in the same order. However, only the last word in the query string
 is used for the prefix query.
 
-.`max_expansions`
+===== `max_expansions`
 
 The prefix part of the query can generate many sub-queries. For performance
 reasons, you can limit the number of sub-queries with `max_expansions`:
@@ -215,25 +215,4 @@ them in a <<bool_query,`bool` query>>.
 
 [TODO] FIGURE OUT HOW THE NEW FUZZY QUERY WORKS AND DOCUMENT IT SOMEWHERE
 
-`fuzziness`::
-
-What happens if the user misspells a word, and searches for `"quick brawn fox"`
-by mistake?  We can allow for a certain amount of ``fuzzy matching'' by
-specifying a `fuzziness` value greater than `0` (very fuzzy) but less than
-`1` (slightly fuzzy).
-+
-    {
-        "match" : {
-            "title" : {
-                "query"     : "quick brawn fox",
-                "fuzziness" : 0.5
-            }
-        }
-    }
-+
-We discuss fuzzy matching (and the associated parameters `prefix_length` and
-`max_expansions`) more fully in <<fuzzy_query>>. For now, it is
-enough to know that it is a useful stopgap, but can be more efficiently
-achieved using an `ngram` analyzer, as explained in
-[TODO]: ADD LINK TO NGRAM EXAMPLE].
 
