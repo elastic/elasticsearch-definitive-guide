@@ -2,7 +2,7 @@
 ==== `match` query
 
 The `match` query is the default query that you should use for matching
-on any field. It does The Right Thing for each field based on its
+on almost any field. It does The Right Thing for each field based on its
 _mapping_ (or field definition), which we will discuss in <<mapping>>.
 
 It can be used to match:
@@ -65,13 +65,13 @@ equivalent to the two queries above:
 
 ==== `match` query and full text search
 
-The `match` query, when used on full text string fields, first analyzes
-the query string into terms:
+The `match` query comes into its own when used on full text string fields.
+First, it analyzes the query string into terms:
 
 `"Quick Brown Fox"` -> `["quick", "brown", "fox"]`
 
-A query clause is generated for each of these terms, and then combined together
-in one of these forms:
+Then it generates a query clause for each of these terms, and combines them
+together in one of these forms:
 
  * `"quick" OR  "brown" OR  "fox"`
  * `"quick" AND "brown" AND "fox"`
@@ -88,7 +88,7 @@ set to `"or"` (match *any* terms -- the default) or `"and"` (match *all* terms):
         }
     }
 
-===== Using `minimum_should_match`
+.`minimum_should_match`
 
 When using the default `"or"` operator, the relevance `_score` from each
 matching term is combined togther to produce the final `_score` -- the
@@ -114,6 +114,8 @@ specify that at least `70%` of the terms should be present:
 The `minimum_should_match` parameter can take a variety of formats, which
 are explained in <<minimum_should_match>>.
 
+[TODO] DOCUMENT ANALYZER, REWRITE ETC
+
 [[match_phrase_query]]
 ==== `match_phrase` query
 
@@ -128,7 +130,7 @@ the phrase `"quick fox"` would not match a document containing
         }
     }
 
-===== The `slop` parameter
+.`slop`
 
 The `slop` parameter allows us to relax the strict _same order_ constraint,
 and allows the `match_phrase` query to behave more like a _proximity_ query,
@@ -174,7 +176,7 @@ parameter, to allow the words to be near to each other, without necessarily
 being in the same order. However, only the last word in the query string
 is used for the prefix query.
 
-===== The `max_expansions` parameter
+.`max_expansions`
 
 The prefix part of the query can generate many sub-queries. For performance
 reasons, you can limit the number of sub-queries with `max_expansions`:
