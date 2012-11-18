@@ -4,7 +4,8 @@
 The filter and query clauses described in this chapter can be combined
 with each other to form complex queries, but the search API expects a
 single `query` parameter. If none is specified, then it defaults to a
-`match_all` query which, unsurprisingly, matches all documents.
+<<match_all_query,`match_all` query>> which, unsurprisingly, matches
+all documents.
 
 Later on we will discuss the options available for combining clauses, but
 as a simple introduction, let's consider three simple cases:
@@ -69,9 +70,9 @@ mentioned above:
         }
     }
 
-However, a more efficient query for this case is the `constant_score` query,
-which skips the relevance scoring phase completely, and instead returns a score
-of `1` for every document:
+Another possibility is to use the
+<<constant_score_query,`constant_score` query>>, which wraps the filter
+without requiring any query clause:
 
     {
         "constant_score" : {
