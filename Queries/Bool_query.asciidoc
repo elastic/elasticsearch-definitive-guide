@@ -1,0 +1,148 @@
+[[bool_query]]
+=== Combining multiple query clauses
+
+The simplest way to combine multiple query clauses is by wrapping them in
+a `bool` query which combines the relevance `_score` from each sub-query
+into a final single `_score` for the `bool` query.
+
+The <<multi_match_query,multi-field query>> that we saw in the previous section
+could be rewritten as:
+
+    {
+        "bool": {
+            "should": [
+                { "match": { "title":   "quick brown fox"}},
+                { "match": { "content": "quick brown fox"}}
+            ]
+        }
+    }
+
+The `bool` query accepts three parameters which can contain query clauses:
+
+`must`::        documents must match these clauses
+`must_not`::    documents that match any of these clauses will be excluded
+`should`::      if a document matches any of these optional clauses, it will be
+                considered to be more relevant than if it didn't
+
+You may wonder why something called a ``boolean'' query doesn't use
+`and`, `or` and `not`. The reason is that the `bool` query is not dealing
+just with *whether* a document matches -- a binary `0` or `1` --
+but with how *well* the document matches, which is represented as a floating
+point relevance `_score`.
+
+The use of `should` clauses is much more powerful than is immediately
+obvious.  Although you can write any Boolean expression with `must`,
+`should` and `must_not`, the concept of _optional-clauses-influencing-relevance_
+is not expressible with pure Boolean logic.
+
+As an example, the following query states that :
+
+--
+ * the `title` field must contain at least one of the words:
+   `quick`, `brown` or `fox`
+ * the `status` field must not contain `private`
+ * the document shoud be considered more relevant if:
+ **  the `content` field also contains any of the words:
+     `quick`, `brown` or `fox`
+ ** the `tags` field contains either `animal` or `popular` or both
+--
+
+    {
+        "bool": {
+            "must":     { "match": { "title": "quick brown fox" }},
+            "must_not": { "match": { "status": "private" }}
+            "should": [
+                { "match": { "content": "quick brown fox" }}
+                { "match": { "tags": "animal"  }},
+                { "match": { "tags": "popular" }}
+            ],
+        }
+    }
+
+[NOTE]
+====
+Any of the `must`, `must_not` or `should` parameters can accept one or more
+query clauses.  If multiple clauses are passed, then they must be wrapped
+in an array `[{...}, {...}, ...]` but a single clause can be passed without
+the square brackets.
+====
+
+==== `minimum_should_match`
+
+Additionally, you can control the minimum number of optional `should` clauses
+that must match for a document to be included in the result set. For instance,
+you could specify that only documents matching at least 2 of the 3 specified
+tags should be included:
+
+    {
+        "bool": {
+            "must":   { "match": { "title": "full text search" }},
+            "should": [
+                  { "match": { "tags": "perl"   }},
+                  { "match": { "tags": "python" }},
+                  { "match": { "tags": "ruby"   }}
+            ],
+            "minimum_should_match": 2
+        }
+    }
+
+This is a powerful relevance tuning mechanism.  It means that we aren't
+caught between the two extremes of _everything-**must**-match_ and
+_anything-that-matches_. Instead, we can control the level at which a document
+is considered to be relevant enough.
+
+The default value for `minimum_should_match` depends on whether a
+`must` clause has been specified or not.  If there is a `must` clause,
+then the default is `0` -- all `should` clauses are considered optional.
+If there is no `must` clause, then the default is `1` -- at least one
+`should` clause must match for the document to be included in the result set.
+
+[[minimum_should_match_formats]]
+.`minimum_should_match` formats
+****
+The `minimum_should_match` parameter appears in several queries in the Query DSL.
+While for the `bool` query, it is easy to count how many `should` clauses exist,
+for other queries it can be trickier.
+
+A `match` query for the words `"the time of our lives"` could
+result in anywhere between 1 and dozens of sub-queries, depending on how the
+field is analyzed.
+
+Wherever `minimum_should_match` appears, you can use any of the following
+specification formats to control the number of optional `should` clauses which
+are considered mandatory:
+
+Positive integer::
+    At least this number of clauses must match, e.g. `2`
+
+Negative integer::
+    All clauses are required, except for this number.  If there are a total
+    of 5 optional clauses, and we specify `-2`, then at least 3 clauses must
+    match
+
+Positive percentage::
+    At least this percentage of clauses must match. The percentage is
+    rounded down based on the total number of clauses, so `80%` of 4 clauses
+    would be interpreted as `75%`
+
+Negative percentage::
+    All clauses are required, except for this percentage. The percentage is
+    rounded down so `-40%` of 4 clauses would be interpreted as `-25%` i.e.
+    one of the four clauses is optional.
+
+Threshold::
+    A positive integer followed by a `<` followed by any of the previous
+    formats specifies a minimum threshold based on the total number of optional
+    clauses. For instance, `"3<75%"` means that, if there are 3 or fewer
+    optional clauses, then *all* are required, but if there are 4 or more, then
+    only 75% of them are required
+
+Multi-threshold::
+    Multiple ``thresholds'' may be specified, separated by spaces, with the
+    minimum threshold increasing from left to right. This specification
+    `"2<75% 8<-3"` would mean:
+        * for 1 or 2 clauses, both are required
+        * for 3 to 8 clauses, 75% of them are required
+        * for 9 or more clauses, all but three of them are required
+
+****

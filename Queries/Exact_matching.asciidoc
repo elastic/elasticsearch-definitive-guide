@@ -1,0 +1,96 @@
+[[exact_queries]]
+=== Querying exact values
+
+To match against numeric fields, date field, boolean fields or `not_analyzed`
+string fields (see <<analyzed_vs_not,`analyzed` vs `not_analyzed`>>) we use
+the `match` query.
+
+It does The Right Thing for each field based on its _mapping_ (or field
+definition), which we will discuss in <<mapping>>:
+
+* `not_analyzed` (enum) string fields
+
+    { "match" : { "status" : "active" }}
+
+* numbers
+
+    { "match" : { "count" : 5 }}
+
+* dates
+
+    { "match" : { "created" : "2012-05-01" }}
+
+* booleans
+
+    { "match" : { "featured" : true }}
+
+
+[[analyzed_vs_not]]
+.`analyzed` vs `not_analyzed` string fields
+****
+String fields can contain either:
+
+_full text_::
+
+like the body of an email, which requires analysis in order to be searchable, or
+
+_exact values_::
+
+like enums, post codes, product numbers, or tags, which are *not* analyzed
+but are indexed exactly as they are.
+
+By default, Elasticsearch assumes that all string fields contain
+full text. They are defined (or ``mapped'') as:
+
+    { "type": "string", "index": "analyzed" }
+
+String fields which contain exact values have to be manually defined as:
+
+    { "type": "string", "index": "not_analyzed" }
+
+We will explain how to setup `not_analyzed` fields in <<mapping>>, but for
+now, it is important to know the distinction between the two.
+****
+
+Normally, we would use filters for exact value matches as these clauses seldom
+contribute to the relevance `_score`.  Instead, they usually function as
+`yes|no` questions: ``is the `status` field `active`?'' or
+``is the `published` date `2012-01-01`?''.
+
+However, sometimes we *do* want them to contribute to relevance.  For instance,
+a user on a job website searches for the tags `html5`, `css3` and `jquery`.
+We want at least one of these tags to match, but the more tags that match,
+the better. This could be written as:
+
+    {
+        "match": {
+            "tag": [ "html5", "css3", "jquery" ]
+        }
+    }
+
+To have more control over this query -- for instance, to require that at least
+two of the tags are present -- we could use the <<bool_query,`bool` query>>:
+
+    {
+        "bool": {
+            "minimum_should_match": 2,
+            "should": [
+                { "match": { "tag": "html5"  },
+                { "match": { "tag": "css3"   },
+                { "match": { "tag": "jquery" }
+            ]
+        }
+    }
+
+[NOTE]
+====
+Later, we will discuss the <<custom_filters_score_query,`custom_filters_score` query>>
+which provides a way to use filters to influence the relevance `_score`
+more efficiently.
+====
+
+[[range_query]]
+==== Ranges of values
+
+[TODO] DO I EVEN BOTHER MENTIONING RANGE QUERIES? HOW OFTEN ARE THEY USEFUL?
+

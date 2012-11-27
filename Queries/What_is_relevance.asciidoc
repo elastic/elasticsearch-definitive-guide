@@ -25,3 +25,8 @@ Length norm::
   relevant.
 
 We will discuss how relevance is calculated in more detail in <<boost>>.
+
+That said, relevance is not just about full text search. It can equally be
+applied to `yes|no` clauses where the more clauses that match, the more
+relevant, or to geolocation queries, where closer is better.
+

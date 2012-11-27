@@ -6,26 +6,90 @@ expect from SQL, queries are about relevance, about how well each document
 matches. This concept of relevance is perfectly suited to the imprecise
 nature of full text search.
 
-That said, relevance is not just about full text search. It can equally be
-applied to `yes|no` clauses where the more clauses that match, the more
-relevant, or to geolocation queries, where closer is better.
+include::Queries/What_is_relevance.asciidoc[]
 
-Multiple query clauses can be combined using one of the
-<<compound_queries,Compound queries>> such as `bool` or `dismax`.  Any of the
-queries explained below can be used wherever in the API a parameter includes
-the word `query`, such as the <<search_api,`search` API>>
-or in a <<query_facet,`query` facet>>.
+include::Queries/Using_query_clauses.asciidoc[]
+
+include::Queries/Common_queries.asciidoc[]
 
 include::Queries/Overview.asciidoc[]
 
-include::Queries/Query_boost.asciidoc[]
-
 include::Queries/Helper_queries.asciidoc[]
 
-include::Queries/Full_text_queries.asciidoc[]
+include::Queries/Exact_matching.asciidoc[]
+
+include::Queries/Full_text_search.asciidoc[]
+
+include::Queries/Match_query.asciidoc[]
+
+include::Queries/Match_phrase_query.asciidoc[]
+
+include::Queries/Multi_match_query.asciidoc[]
+
+include::Queries/Bool_query.asciidoc[]
+
+include::Queries/Query_boost.asciidoc[]
+
+include::Queries/Dismax_query.asciidoc[]
+
+****
+
+LIST OF TOPICS:
+
+query string syntax
+
+fuzziness
+? wildcard/prefix
+query_string/field
+rewriting
 
 
 
+match_all
+combine with filters
 
+exact values
+ - match / term
+ranges
+full text
+ - match / multi-match
+ - query_string / field
 
+Compound
+ - bool
+ - dis_max
+ - indices
 
+Multi-term
+ - fuzzy
+ - prefix
+ - wildcard
+
+Complex full text queries
+    Complex full text queries combine a number of different full text and multi-term query techniques to find the most relevant documents:
+        mlt | mlt_field
+        flt | flt_field
+
+Boosting queries
+    Boosting queries, which are discussed in [boost] are all about manipulating the relevance score:
+        constant_score
+        custom_score
+        custom_filters_score
+        boosting
+        custom_boost_factor
+
+Relational queries
+    Relational queries are used with nested documents or with parent-child relationships and are discussed in [relations].
+        nested
+        has_child
+        has_parent
+        top_children
+
+Span queries
+    Span queries are a family of low level term queries which are useful for searching for terms in a particular order or proximity:
+        span_term
+        span_first
+        span_near
+        span_not
+        span_or
+****

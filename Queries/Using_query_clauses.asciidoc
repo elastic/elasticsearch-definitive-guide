@@ -1,0 +1,44 @@
+=== Using query clauses
+
+Like the filter clauses, each query clause is a standalone element that
+can be used wherever in the API a parameter includes the word `query`,
+such as the <<search_api,`search` API>> or in a <<query_facet,`query` facet>>.
+
+For instance, this  `match` query clause:
+
+    { "match": { "title": "fox" }}
+
+could be used as the query in a search request, as follows:
+
+    curl -XGET http://localhost:9200/_search -d '
+    {
+        "query": { "match": { "title": "fox" }}
+    }
+    '
+
+This simple `match` query could be combined with other query clauses using,
+for instance, the compound <<bool_query,`bool` query>>:
+
+    {
+        "bool": {
+            "should": [
+                   { "match": { "title": "fox" }},
+                   { "match": { "body":  "fox" }}
+            ]
+        }
+    }
+
+which could, in turn, be used as the query in a search request:
+
+    curl -XGET http://localhost:9200/_search -d '
+    {
+        "query": {
+            "bool": {
+                "should": [
+                       { "match": { "title": "fox" }},
+                       { "match": { "body":  "fox" }}
+                ]
+            }
+        }
+    }
+    '

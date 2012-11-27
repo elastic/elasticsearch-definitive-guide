@@ -1,71 +1,9 @@
 [[match_query]]
-==== `match` query
+=== `match` query and full text search
 
-The `match` query is the default query that you should use for matching
-on almost any field. It does The Right Thing for each field based on its
-_mapping_ (or field definition), which we will discuss in <<mapping>>.
+The `match` query, which we have already encountered in <<exact_queries>>,
+comes into its own when used on full text string fields.
 
-It can be used to match:
-
-* full text (`analyzed`) string fields
-
-    { "match" : { "title" : "A guide to full text search" }}
-
-* exact value (`not_analyzed`) string fields
-
-    { "match" : { "status" : "active" }}
-
-* numbers
-
-    { "match" : { "count" : 5 }}
-
-* dates
-
-    { "match" : { "created" : "2012-05-01" }}
-
-* booleans
-
-    { "match" : { "featured" : true }}
-
-For any field other than a full text field, the `match` query runs an
-``exact match'' (or <<term_query,`term`>>) query. For full text fields,
-the query string is analyzed and a full text query is run.
-
-===== Structure of the `match` query
-****
-
-If no field name is provided, then the query searches the special
-<<all_field,`_all` field>>, which we will discuss in <<mapping>>.
-That means that these two queries are exactly equivalent:
-
-    { "match" : "A guide to full text search" }
-
-    { "match" : { "_all" : "A guide to full text search" }}
-
-Also, the structure can change slightly to allow the passing of parameters
-which affect the behaviour of the query. The following two examples are exactly
-equivalent to the two queries above:
-
-    {
-        "match" : {
-            "query" : "A guide to full text search",
-            "boost" : 1
-        }
-    }
-
-    {
-        "match" : {
-            "_all" : {
-                "query" : "A guide to full text search",
-                "boost" : 1
-            }
-        }
-    }
-****
-
-==== `match` query and full text search
-
-The `match` query comes into its own when used on full text string fields.
 First, it analyzes the query string into terms:
 
 `"Quick Brown Fox"` -> `["quick", "brown", "fox"]`
@@ -88,15 +26,15 @@ set to `"or"` (match *any* terms -- the default) or `"and"` (match *all* terms):
         }
     }
 
-===== `minimum_should_match`
+==== `minimum_should_match`
 
-When using the default `"or"` operator, the relevance `_score` from each
-matching term is combined togther to produce the final `_score` -- the
-more terms that match, the more relevant.
+Requiring ALL terms may be too strict. When using the default `"or"` operator,
+the relevance `_score` from each matching term is combined to produce
+the final `_score` -- the more terms that match, the more relevant.
 
 However, documents which only match one of several terms would still be
 included in our search results, even though they do not appear terribly relevant.
-We can control how strictly or loosely to match using the
+We can control how strictly or leniently to match using the
 `minimum_should_match` parameter.
 
 For instance, we could
@@ -111,108 +49,21 @@ specify that at least `70%` of the terms should be present:
         }
     }
 
-The `minimum_should_match` parameter can take a variety of formats, which
-are explained in <<minimum_should_match>>.
+The `minimum_should_match` parameter can accept a variety of formats, which
+are explained in <<minimum_should_match_formats>>.
 
-[TODO] DOCUMENT ANALYZER, REWRITE ETC
-
-[[match_phrase_query]]
-==== `match_phrase` query
-
-Instead of just matching the words in the query string, we can also
-match a _phrase_, that is: all the words, in the *same order*. For instance,
-the phrase `"quick fox"` would not match a document containing
-`"quick brown fox"`.
-
-    {
-        "match_phrase" : {
-            "title" : "quick fox"
-        }
-    }
-
-===== `slop`
-
-The `slop` parameter allows us to relax the strict _same order_ constraint,
-and allows the `match_phrase` query to behave more like a _proximity_ query,
-i.e. the nearer the words are to each other, the more relevant.
-
-    {
-        "match_phrase" : {
-            "title: {
-                "query" : "quick fox",
-                "slop"  : 5
-            }
-        }
-    }
-
+.`"type: boolean"`
 ****
-_Slop_ behaves like a Levenshtein ``edit distance'', but based on word
-positions instead of single character changes.  To make the phrase
-`"quick fox"` match `"quick brown fox"` requires a `slop` of `1`.
-A `slop` of `3` would allow `"fox quick"` to match, albeit with a
-lower relevance `_score` than `"quick fox"`.
+The individual sub-queries for `quick`, `brown` and `fox` are wrapped in a
+<<bool_query,`bool` query>>, which we will discuss later. The `bool` query
+combines the relevance `_score` for each sub-query into a final `_score` for
+all three words. In fact, the `minimum_should_match` parameter comes from
+the `bool` query.
+
+For this reason, the default `match` query is `"type": "boolean"`. Below
+we discuss the other two types:
+<<match_phrase_query,`phrase`>> and
+<<match_phrase_prefix_query,`phrase_prefix`>>.
 ****
-
-[[match_phrase_prefix_query]]
-==== `match_phrase_prefix`
-
-This query is particularly useful for _find-as-you-type_ queries.  It
-works in the same way as the <<match_phrase_query,`match_phrase` query>>
-but adds a <<prefix_query,`prefix` query>> to the last word in the query string
--- much like adding a wildcard (`*`) to the final word.  The example below would
-match `"quick brown fox"` and `"quick brown furry animals"`:
-
-    {
-        "match_phrase_prefix" : {
-            "title: {
-                "query" : "quick brown f"
-            }
-        }
-    }
-
-The `match_phrase_prefix` query (like the
-<<match_phrase_query,`match_phrase` query>>) accepts the `slop`
-parameter, to allow the words to be near to each other, without necessarily
-being in the same order. However, only the last word in the query string
-is used for the prefix query.
-
-===== `max_expansions`
-
-The prefix part of the query can generate many sub-queries. For performance
-reasons, you can limit the number of sub-queries with `max_expansions`:
-
-    {
-        "match_phrase_prefix" : {
-            "title: {
-                "query"          : "quick brown f",
-                "max_expansions" : 10
-            }
-        }
-    }
-
-[NOTE]
-====
-The <<match_phrase_query,`match_phrase` query>> and the
-<<match_phrase_prefix_query,`match_phrase_prefix` query>> are
-sub-types of the <<match_query,`match` query>>, and can also be written
-using the `match` query with a `"type"` parameter:
-
-    {
-        "match": {
-            "title": {
-                "type"  : "phrase_prefix",
-                "query" : "quick brown f"
-            }
-        }
-    }
-
-The default `"type"` is `"boolean"` because the query clauses that are
-generated for each term in the `match` query string are combined by wrapping
-them in a <<bool_query,`bool` query>>.
-
-====
-
-
-[TODO] FIGURE OUT HOW THE NEW FUZZY QUERY WORKS AND DOCUMENT IT SOMEWHERE
 
 

@@ -1,6 +1,8 @@
 [[multi_match_query]]
-==== `multi_match` query
+=== Querying multiple fields
 
+Often we want to search multiple fields for the same query string. For instance,
+we might want to search the `title` and the `content` fields of an email.
 The `multi_match` query works in exactly the same way as the
 <<match_query,`match` query>>, but allows you to run the same query
 on several fields at the same time.
@@ -12,11 +14,30 @@ on several fields at the same time.
         }
     }
 
-===== Boosting individual fields
+Multi-field <<match_phrase_query,phrase>> and
+<<match_phrase_prefix_query,phrase-prefix>> queries can be run by passing
+the same `type` parameter that the <<match_query,`match` query>> accepts:
 
-If, in the example above,  the `title` field should be considered more
-relevant than the `content` field, then you can <<query_boost,`boost`>>
-each field by appending `^` plus a number to the field name:
+    {
+        "multi_match" : {
+            "type"    : "phrase_prefix",
+            "query"   : "quick brown f",
+            "fields"  : ["title", "content"],
+            "slop"    : 10
+        }
+    }
+
+==== Boosting fields
+
+A document that contains our search keywords in the `title` field
+is probably more relevant than a document that only contains those words
+in the `content` field, and a document that has those words in BOTH fields
+is more relevant still.
+
+We can control the relative importance of each field by specifying a `boost`
+value -- the higher the `boost`, the more important the field. In
+the `multi_match` query we can boost a field by appending `^` plus
+a number to the field name:
 
     {
         "multi_match" : {
@@ -25,7 +46,11 @@ each field by appending `^` plus a number to the field name:
         }
     }
 
-===== Wildcard field names
+The default `boost` value is `1`. Values greater than 1 increase the relative
+importance of that field, and values between `0` and `1` decrease the
+relative importance.
+
+==== Wildcard field names
 
 You can use wildcards (`*`) in the field name to match several fields at once.
 For instance, the query below would search the fields `father.name`,
@@ -38,8 +63,6 @@ For instance, the query below would search the fields `father.name`,
         }
     }
 
-
-[TODO] LINK TO BOOL VS DISMAX
 
 
 

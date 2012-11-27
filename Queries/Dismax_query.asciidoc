@@ -1,0 +1,118 @@
+=== Tuning multi-field queries
+
+Imagine we have these two documents:
+
+    {
+        "title":    "Quick elephants",
+        "content":  "Quick! Brown the elephants"
+    }
+
+    {
+        "title":    "Quick brown fox",
+        "content":  "I like foxes"
+    }
+
+And we run this query:
+
+    {
+      "bool" : {
+         "should" : [
+            { "match" : { "title" :   "quick brown fox" }},
+            { "match" : { "content" : "quick brown fox" }}
+         ]
+    }
+
+The `"Quick elephants"` document scores higher than the `"Quick brown fox"`
+document.  Why? To our eyes, the second document is obviously more relevant
+than the first.
+
+The reason for this is the way that the `bool` query calculates its score:
+
+ * The first document matches on `quick` in the `title` field,
+   and `quick` and `brown` in the `content` field.
+ * The second document matches `quick`, `brown` and `fox` in the `title` field,
+   but nothing in the `content` field.
+ * The `bool` query calculates the `_score` for each clause (i.e. each field
+   in this case) then divides by the total number of clauses (i.e. 2)
+   before *combining* the scores from both clauses.
+
+The result is that, although the `title` field of the second document
+matches our query well (and thus has a high `_score`), its value is diluted
+by the non-matching `content` field.
+
+What can we do about this?
+
+[[dismax_query]]
+==== Disjunction max query
+
+There is a query designed specifically to deal with this situation,
+called the _Disjunction Max_ or `dis_max` query.
+Do not be taken aback by the name -- the concept is quite simple.
+
+``Disjunction'' simply refers to the logical `OR` operator.  In other words,
+the `dis_max` query matches if *any* of its clauses match, but instead of
+combining the `_score` from each clause, it uses the highest or ``max'' `_score`.
+
+    {
+      "dis_max" : {
+         "queries" : [
+            { "match" : { "title" :   "quick brown fox" }},
+            { "match" : { "content" : "quick brown fox" }}
+         ]
+    }
+
+In this case, the second document matches the `title` clause very well
+-- better than either the `title` or `content` clause in the first
+document -- so the second document is more relevant than the first.
+
+What happens if we add a third document:
+
+    {
+        "title":    "Quick brown fox",
+        "content":  "Quick brown fox"
+    }
+
+This new document should be even more relevant than the second but, because
+the `dis_max` query uses the single highest `_score` only, the fact that
+another clause matches is just ignored.
+
+We can still take these less relevant clauses into account by passing in
+the `tie_breaker` parameter:
+
+    {
+      "dis_max" : {
+         "queries" : [
+            { "match" : { "title" :   "quick brown fox" }},
+            { "match" : { "content" : "quick brown fox" }}
+         ],
+         "tie_breaker": 0.2
+    }
+
+The relevance calculation becomes:
+
+* the `_score` from the best matching clause, plus
+* the `_score` from each lesser matching clause multiplied by the `tie_breaker`
+
+The `tie_breaker` should be a number between `0` and `1`. The closer it is
+to `1`, the more impact these ``lesser clauses'' have on the final score.
+A reasonable value might be `0.1` to `0.3`.
+
+.Using `dis_max` with `multi_match`
+****
+The <<multi_match_query,`multi_match` query>>,  when querying multiple fields,
+run a separate query on each field and, by default, combines these sub-queries
+with a `bool` query.
+
+However, you can choose to use a `dis_max` query instead by setting
+`use_dis_max` to `true`. The example query above could be rewritten as:
+
+    {
+        "multi_match": {
+            "query":       "Quick brown fox",
+            "fields":      ["title", "content"],
+            "use_dis_max": true,
+            "tie_breaker": 0.2
+        }
+    }
+****
+

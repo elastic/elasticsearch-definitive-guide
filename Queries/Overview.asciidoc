@@ -1,6 +1,6 @@
 [[query_types]]
-=== Query families
-
+.Query families
+****
 There are many different query clauses available in Elasticsearch. To make them
 easier to navigate, we can group them into families:
 
@@ -90,3 +90,4 @@ searching for terms in a particular order or proximity:
 ** `span_not`
 ** `span_or`
 
+****

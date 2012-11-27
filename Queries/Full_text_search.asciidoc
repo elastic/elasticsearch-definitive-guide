@@ -1,5 +1,5 @@
-[[full_text_queries]]
-=== Full text queries
+[[full_text_search]]
+=== Full text search
 
 Up until now, we have dealt only with matching exact values.
 The _full text query_ family performs the semi-magical job of finding the
@@ -17,13 +17,13 @@ text data in our documents and the full text query string need to be normalized.
 This process is called _Analysis_ and will be discussed fully in <<analysis>>.
 For now it is enough to know that:
 
- * By default, string fields are _analyzed_ before being indexed, so
+ * by default, string fields are _analyzed_ before being indexed, so
    a field with the phrase `"The Quick Brown Fox"`
    would be indexed as the terms:
 
    ["quick", "brown", "fox"]
 
- * Full text query strings are analyzed before searching, so
+ * full text query strings are analyzed before searching, so
    the query string `"A QUICK FOX!"` would become a search for the
    terms:
 
@@ -33,44 +33,9 @@ Because both the indexed data and the search terms have been normalized into
 the same form, it is now easy to find documents in our index that match
 our search terms.
 
-.`analyzed` vs `not_analyzed` text fields
-****
-String fields can contain either:
-
-_full text_::
-
-like the body of an email, which requires analysis in order to be searchable, or
-
-_exact values_::
-
-like enums, post codes, product numbers, or tags, which are *not* analyzed
-but are indexed exactly as they are.
-
-By default, Elasticsearch assumes that all string fields contain
-full text. They are defined (or ``mapped'') as:
-
-    { "type": "string", "index": "analyzed" }
-
-String fields which contain exact values have to be manually defined as:
-
-    { "type": "string", "index": "not_analyzed" }
-
-We will explain how to setup `not_analyzed` fields in <<mapping>>, but for
-now, it is important to know the distinction between the two.
-****
-
 All of the queries in the full text family have an analysis phase. However,
 they are not limited to searching only full text.  They can also be used
 for fields that contain numbers or dates, or strings which are not analyzed,
 such as tags or zip codes. Full text queries do ``the right thing'' based upon
 the field definition, or _mapping_, which will be explained in <<mapping>>.
-
-include::Match_query.asciidoc[]
-
-include::Multi_match_query.asciidoc[]
-
-include::Fuzziness.asciidoc[]
-
-include::Query_string_query.asciidoc[]
-
 

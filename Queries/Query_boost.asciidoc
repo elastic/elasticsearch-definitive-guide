@@ -1,34 +1,44 @@
 [[query_boost]]
-.Query boost
-****
+=== Boosting query clauses
+
 Each query clause returns a relevance score for each document -- the
 higher the `_score`, the more ``relevant'' is that document.  However, not
-all clauses are created equal.  For instance, keywords in the `title`
+all clauses are created equal -- keywords in the `title`
 field are probably more relevant than keywords in the `content` field.
 We need a way of telling Elasticsearch to make the `title` clause
 more important than the `content` clause.
 
-Almost all query clauses accept a `boost` parameter which we can use to alter
+We have already seen how to do this when searching multiple fields for
+the same query string, with the <<multi_match_query,`multi_match` query>>:
+
+    {
+        "multi_match": {
+            "query":  "full text search",
+            "fields": ["title^2", "content"]
+        }
+    }
+
+All query clauses accept a `boost` parameter which can be used to alter
 the relative importance of that clause. The default `boost` value is `1`.
 Any value above `1` increases the relevance score, and any value between
 `0` and  `1` decreases the score.
 
-Using the example mentioned above, we can search the `content` field
-for the words `"full text search"` with this query clause:
-
-    { "match" : { "content" : "full text search" }}
-
-We can perform the same search on the `title` field, but make this
-clause more relevant by writing the query as follows:
+The `multi_match` example above could be written out in full as:
 
     {
-        "match" : {
-            "title" : {
-                "query" : "full text search",
-                "boost" : 2
-            }
+        "bool": {
+            "should": [
+                { "match": { "content": "full text search" }},
+                { "match": {
+                    "title": {
+                        "query": "full text search",
+                        "boost": 2
+                    }
+                }}
+            ]
         }
     }
 
+*Note:* the structure of the `title` clause had to change to a longer form in
+order to accept the `boost` parameter.
 
-****

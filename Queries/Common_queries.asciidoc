@@ -1,0 +1,64 @@
+[[common_queries]]
+=== Commonly used queries
+
+While there are many different query clauses available in Elasticsearch
+(see <<query_types>>), most of the time your needs will be covered with
+these commonly used queries:
+
+==== `match` query family
+
+The `match` query is the default query that you should use for matching
+on almost any field.
+
+It can be used to match exact values like enums, numbers, dates and booleans,
+or for full text queries on unstructured natural language text.
+It does The Right Thing for each field based on its
+_mapping_ (or field definition), which we will discuss in <<mapping>>.
+
+It supports fuzzy (approximate string) matching, exact phrase and proximity
+matching (with the `match_phrase` variant) and _find-as-you-type_ functionality
+(with the `match_phrase_prefix` variant) to return search results instantly.
+
+The `multi_match` variant allows you to run the same query on multiple fields.
+
+==== `bool` query
+
+The `bool` or Boolean query allows you to combine multiple query clauses
+together and calculates the overall relevance `_score` for all of the
+sub-clauses that it contains.  Clauses can be required (`must` clauses),
+disallowed (`must_not` clauses) or optional (`should` clauses).  Optional
+clauses are not required but increase the relevance `_score` if they
+match.
+
+==== `filtered` query
+
+The `filtered` query is a wrapper which combines any query clause with
+any filter clause. This allows you to benefit from filter caching and
+to restrict the relevance calculation just to the ``interesting'' parts
+of the query.
+
+==== `match_all` query
+
+The `match_all` query simply returns all documents with a relevance
+`_score` of 1. It is the default query if no query has been specified.
+
+==== `range` query
+
+The `range` query, in exactly the same way as the
+<<range_filter,`range` filter>>, matches numeric ranges, date ranges, or
+alphabetical ranges of terms. The filter version is usually to be preferred
+because its results are cached.
+
+==== `query_string` and `field` queries
+
+These queries treat the query string as a ``mini-language'' to express
+complex queries succinctly, e.g.
+
+    title:(+quick brown +fox) +status:active"
+
+They are useful when you need to describe complex queries in a single string,
+but are fragile and potentially dangerous, and the `match` query family should
+normally be preferred.  The only difference between the `field` and
+`query_string` queries is the way in which you specify which ``default field''
+to search against.
+
