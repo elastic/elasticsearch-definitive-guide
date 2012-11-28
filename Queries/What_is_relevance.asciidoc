@@ -5,12 +5,14 @@ could be sorted on the `last_modified` time, but the default is to sort
 them from most relevant to least relevant. This relevance value is called
 the `_score`.
 
-Each query clause generates a `_score` which is combined with the
-scores from other query clauses to calculate the final `_score`.
-Each type of query clause can calculate
-its score in a different way depending on its purpose.
+Each query clause generates a `_score`. When multiple query clauses are
+wrapped together using a compound query, the `_score` from each
+of these query clauses is combined to calculate the final `_score`
+for the document. How the `_score` is calculated for each query type
+depends on the purpose of the query.
 
-Typical factors that are taken into account with full text search are:
+Typical factors that are taken into account with full text search
+queries are:
 
 Term frequency::
   How often does each term appear in the field? The more often, the more

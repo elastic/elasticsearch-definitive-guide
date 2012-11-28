@@ -91,7 +91,8 @@ the `tie_breaker` parameter:
 The relevance calculation becomes:
 
 * the `_score` from the best matching clause, plus
-* the `_score` from each lesser matching clause multiplied by the `tie_breaker`
+* the sum of the scores from the ``lesser matching'' clauses multiplied by the
+  `tie_breaker`
 
 The `tie_breaker` should be a number between `0` and `1`. The closer it is
 to `1`, the more impact these ``lesser clauses'' have on the final score.
