@@ -34,32 +34,30 @@ include::Queries/Dismax_query.asciidoc[]
 
 include::Queries/Query_string_query.asciidoc[]
 
+include::Queries/Partial_words.asciidoc[]
+
+include::Queries/Prefix_queries.asciidoc[]
+
+include::Queries/Wildcard_queries.asciidoc[]
+
+include::Queries/Fuzzy_matching.asciidoc[]
+
 ****
 
 LIST OF TOPICS:
 
-query string syntax
 
 fuzziness
 ? wildcard/prefix
 query_string/field
 rewriting
+debugging with validate and explain
 
 
 
-match_all
-combine with filters
-
-exact values
- - match / term
 ranges
-full text
- - match / multi-match
- - query_string / field
 
 Compound
- - bool
- - dis_max
  - indices
 
 Multi-term

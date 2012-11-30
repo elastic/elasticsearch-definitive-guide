@@ -1,0 +1,47 @@
+[[prefix_queries]]
+=== Prefix queries
+
+A prefix query looks for any term that begins with the specified string.  For
+instance: ``find all documents containing terms that begin with `brow`''.
+
+In order to run this query, Elasticsearch has to find all terms in the index
+that start with `brow` and query all of them, something like:
+
+    brow OR browband OR browbeat OR brown OR....
+
+The longer the prefix is, the fewer matching terms there are likely to be,
+and the less work this query needs to do.  Imagine
+querying a site like Wikipedia for all words beginning with `"a"`!
+
+[WARNING]
+====
+This can be a very heavy, very memory intensive and very slow query.
+Use with caution!
+====
+
+There are two queries which provide the `prefix` functionality. The first,
+the `match_phrase_prefix` we have already discussed in
+<<match_phrase_prefix_query>>.
+
+The second is the `prefix` query, which is a type of query that we haven't
+encountered yet -- a _term-based_ query.
+
+include::Term_based_queries.asciidoc[]
+
+The `prefix` query simply finds all terms in the index beginning with
+the specified prefix and queries all documents containing those terms.
+The following example finds all documents whose `part_number` field
+begins with the exact value `"XYZ-"`. The relevance `_score` for all matching
+documents is `1`.
+
+    {
+        "prefix" {
+            "part_number": "XYZ-"
+        }
+    }
+
+This simple looking query is rewritten into a much more complicated query
+-- one for each matching term.  The way the query is rewritten can
+be controlled with the `rewrite` parameter (which defaults to
+`constant_score_default`) and which is explained in
+<<multi_term_rewrite>>.

@@ -1,0 +1,40 @@
+.Term-based queries
+[[term_queries]]
+****
+Term based queries are distinct from full text queries like the
+<<match_query,`match`>> and <<query_string_query,`query_string`>> queries.
+
+Full text queries::
+
+    consider the _mapping_ or field definition for the field(s) being queried,
+    and apply the appropriate _analysis_ to the query string. In other words,
+    they convert the full text query string into a list of _terms_ or tokens
+    in a canonical format,
+    then search the index for those exact terms -- a query string of
+    `"Foo Bar"` might result in queries for the two terms
+    `"foo"` and `"bar"`.
+
+Term-based queries::
+
+    have no analysis phase.  A term query for `"Foo"` will search
+    for that *exact term* -- it won't match the indexed term `"foo"`.
+
+As explained in <<exact_queries>>, we would normally use a `match` query
+for exact matching, as it can use the field mapping to decide whether the field
+contains full text or exact values and query it appropriately . While the
+`term` query exists, the only time we would need to use it is when we want to
+do an exact term match on a field that contains analyzed full text.
+
+The term-based queries are:
+http://www.elasticsearch.org/guide/reference/query-dsl/term-query.html[`term`],
+http://www.elasticsearch.org/guide/reference/query-dsl/terms-query.html[`terms`],
+http://www.elasticsearch.org/guide/reference/query-dsl/range-query.html[`range`],
+http://www.elasticsearch.org/guide/reference/query-dsl/prefix-query.html[`prefix`],
+http://www.elasticsearch.org/guide/reference/query-dsl/wildcard-query.html[`wildcard`]
+and the
+http://www.elasticsearch.org/guide/reference/query-dsl/span-term-query.html[`span`]-family
+of queries. None of these queries has an analysis phase
+-- they expect their search term to be in the same format as the terms
+in the index.
+
+****

@@ -104,8 +104,7 @@ of the <<match_query,`match` query>> and can be written as:
 ==== `max_expansions`
 
 The prefix part of the query can generate many sub-queries. For performance
-reasons, you can limit the number of sub-queries with `max_expansions`,
-which defaults to 1,024:
+reasons, you can limit the number of sub-queries with `max_expansions`.
 
     {
         "match_phrase_prefix" : {
@@ -117,4 +116,8 @@ which defaults to 1,024:
     }
 
 In the above example, if there are more than 10 terms that begin with `f` in
-our index, it will search for just the first 10 that occur in alphabetical order.
+our index, it will search for just the first 10 that occur in alphabetical
+order. If no `max_expansions` is set, and there are more than 1,024
+possible matching terms, an error will be thrown.  Always set
+`max_expansions`.
+

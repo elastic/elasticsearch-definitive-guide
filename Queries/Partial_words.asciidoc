@@ -1,0 +1,40 @@
+[[partial_queries]]
+=== Partial word matching
+
+Frequently we need to match part of a word, whether it is:
+
+* Prefixes: all part numbers beginnging with `"XYZ-123"`
+* Wildcards:  all URLs containing `"MyBrandName"`
+* Fuzzy matching:  misspellings of `"Bieber"`
+
+Unfortunately, the use of an inverted index -- the data structure that makes
+Elasticsearch as fast as it is -- requires us to know exactly which terms to
+look for *before* searching.
+
+This leaves us with two options:
+
+1. Ensure that the fields in our indexed are analyzed in a way that the
+   terms `xyz-123`, `mybrandname` and variations on the spelling
+   of `bieber` already exist in the index, or
+
+2. Examine the list of all terms that exist in our index to build a list of
+   those that match our query, then search for documents that contain those
+   terms.
+
+The first method requires us to predict the need for partial matching
+before we index our documents.  It costs us slightly more at *index time*,
+and we use more disk storage.
+
+The second method gives us the flexibility to do _ad hoc_ queries without
+having planned ahead, but costs us significantly more time and memory at
+*search time*, that is *every time we search*.
+
+Given that we typically write seldom and read often, it makes more sense
+to use the first method, but that is not always possible.  For this reason,
+Elasticsearch exposes `prefix`, `wildcard` and `fuzzy` functionality to
+perform these types of queries on the fly.
+
+We will explain the first method in TODO ADD LINK TO NGRAMS EXAMPLE because
+it requires a combination of tools which we haven't discussed yet. Below
+we will focus on the queries that are available to perform _ad hoc_
+`prefix`, `wildcard` and `fuzzy` matching.
