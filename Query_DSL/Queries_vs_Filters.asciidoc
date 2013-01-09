@@ -6,38 +6,90 @@ There are two basic building blocks available in the Query DSL:
 * Filter clause
 * Query clause
 
-A _filter_ asks a `yes/no` question of every document:
+==== What is a filter?
+
+A _filter_ asks a `yes|no` question of every document:
 
 * is the `created` date in the range `2011` .. `2012`?
 * does the `tags` field contain the word `"foo"`?
 * is the `geolocation` field within `10km` of a specified point?
 
+==== What is a query?
+
 A _query_ is like a filter, but also asks the question:
-``How *well* does this document match?''
+How *well* does this document match?
 
-In other words, a query calculates how _relevant_ each document is and, by
-default, sorts the results by the relevance score.
-This concept of relevance is ideal for full text search, for which there is
-seldom a completely ``correct'' answer.
+In other words, a query calculates how
+_relevant_ each document is and assigns it a relevance `_score`, which
+is later used for sorting. This concept of relevance is well suited to
+full text search, where there is seldom a completely ``correct'' answer.
 
-For example, find documents:
+For example, use queries to find documents:
 
-* which best match the words: `full text search`
-* which contain the word `run`, but include the words `runs` and `running`
-* containing the words `quick`, `brown` and `fox` within
-  10 words of each — the closer they are, the more relevant
-* tagged with `lucene` or `search`, and consider documents with
-  both tags to be more relevant than those with a single tag
+* that best match the words: `full text search`
+* that contain the word `run`, but also search for `runs`, `running`,
+  `jog` or `sprint`
+* containing the words `quick`, `brown` and `fox` — the closer together they
+  are, the more relevant the document
+* tagged with `lucene`,  `search` or `java` -- the more tags, the more
+  relevant the document
 
-Some queries are used to search full text and have an analysis phase which
-converts the full text query string into the same terms or tokens that are
-stored in Elasticsearch. Filters have no analysis phase.  They are used
-for exact matching only.
+==== Performance differences
 
-Filters are usually faster than queries because (a) they don't have to
-calculate relevance, and (b) they are cacheable.
+The output from most filters -- a simple list of the documents that match
+the filter -- is quick to calculate and can be cached in a compact data
+structure in memory, using only one bit per document.
+These cached filters can be reused and combined very efficiently for subsequent
+requests.
 
-*In summary:* as a general rule, use queries for full text search or for
-any condition that should affect the relevance score, and filters
+Queries not only have to find matching documents, but have to calculate how
+relevant each document is.  This _scoring phase_ increases the work that
+a query has to do compared to a filter, and the results cannot be stored
+as compactly as can those from filters.
+
+The fact that queries are repeated less often than filters, combined with the
+greater size of their output, means that it doesn't make sense to cache query
+results. Instead, the results for a query are recalculated every time it is run.
+
+Queries perform well because they use a data structure called an
+_inverted index_ to retrieve their results efficiently,
+but they cannot outperform a cached filter.
+
+==== Full text search
+
+Filters and non-full text queries can only be used to match the exact values
+that are stored in the Elasticsearch index. A filter for the word `'CAT'` would
+not match the indexed value `'cat'`.
+
+While this is suitable for matching discreet values (such as the enum value
+of a `status` field), it is not sufficiently flexible to cope with full
+text search, where a query string might come in all shapes and sizes.
+
+Each query in the ``full text family'' has an _analysis phase_
+which passes the query string through an _analyzer_ (which we
+discuss in detail in <<analysis>>). This emits a stream of
+normalized tokens -- the same tokens are that actually stored in the index. It
+runs a simple query for each emitted token and combines their results
+to produce the final result for the query.
+
+Filters and non-full text queries do not have an analysis phase.
+
+==== When to use which
+
+Query and filter clauses are standalone building blocks that can be
+combined and nested in clever and complex ways.  Compound query clauses can
+combine multiple query clauses. Compound filter clauses can combine multiple
+filter clauses.
+
+Throughout the Elasticsearch API, you will see references to `query` and
+`filter` parameters. These expect a single argument containing a
+single `query` or `filter` clause respectively. In other words, they
+establish the outer ``context'' as _query context_ or _filter context_.
+
+However, queries can wrap filter clauses and filters can wrap query clauses.
+It is important to choose the correct combination of query and filter clauses
+to achieve your goal in the most efficient way.
+
+*As a general rule*, use query clauses for full text search or for
+any condition that should affect the relevance score, and filter clauses
 for everything else.
-
