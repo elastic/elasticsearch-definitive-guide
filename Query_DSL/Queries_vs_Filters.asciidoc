@@ -86,7 +86,8 @@ Throughout the Elasticsearch API, you will see references to `query` and
 single `query` or `filter` clause respectively. In other words, they
 establish the outer ``context'' as _query context_ or _filter context_.
 
-However, queries can wrap filter clauses and filters can wrap query clauses.
+However, queries can wrap filter clauses and filters can wrap query clauses,
+thus switching from _query context_ to _filter context_ or vice versa.
 It is important to choose the correct combination of query and filter clauses
 to achieve your goal in the most efficient way.
 

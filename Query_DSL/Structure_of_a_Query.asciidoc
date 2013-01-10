@@ -1,26 +1,34 @@
 [[query_structure]]
 === Structure of a query
 
-The filter and query clauses described in this chapter can be combined
-with each other to form complex queries, but the search API expects a
-single `query` parameter. If none is specified, then it defaults to a
-<<match_all_query,`match_all` query>> which, unsurprisingly, matches
-all documents.
+As mentioned above, there are references to `query` and `filter` parameters
+throughout the Elasticsearch API.  In this section, we will focus on
+the most common use for queries: searching for relevant documents.
 
-Later on we will discuss the options available for combining clauses, but
-as a simple introduction, let's consider three simple cases:
+For this we use the `query` parameter in the `search` API:
+
+    curl -XGET localhost:9200/_search -d '{
+        "query": YOUR_QUERY_HERE
+    }
+    '
+
+The `query` parameter implies _query context_, which means that it can accept
+any single query clause. If none is provided, then it defaults to the
+`match_all` query which, unsurprisingly, matches all documents:
+
+    curl -XGET localhost:9200/_search -d '{
+        "query": { "match_all": {} }
+    }
+    '
 
 ==== A simple query
 
 A simple `match` query clause which searches the `title` field for the words
-`"search is cool"` would look like this:
+`"search is cool"` can be written as:
 
-    {
-        "match" :  { "title" : "search is cool" }
-    }
+    { "match" :  { "title" : "search is cool" }}
 
-This query clause should be used as the value of the `query` parameter in the
-search API:
+We can pass that as our single query clause to `search` as follows:
 
     curl -XGET localhost:9200/_search -d '
     {
@@ -30,11 +38,41 @@ search API:
     }
     '
 
+==== A simple filter
+
+To return only documents whose `status` field is set to the value `"active"`,
+we can use a `term` filter clause:
+
+    { "term" :  { "status" : "active" }}
+
+However, our `query` parameter implies _query context_, which only accepts a
+query clause.  To switch into _filter context_ we can wrap our filter in  a
+`constant_score` query clause:
+
+    {
+        "constant_score" : {
+            "filter" :   { "term" :  { "status" : "active" }}
+        }
+    }
+
+The full search request would be:
+
+    curl -XGET localhost:9200/_search -d '
+    {
+        "query" :     {
+            "constant_score" : {
+                "filter" :   { "term" :  { "status" : "active" }}
+            }
+        }
+    }
+    '
+
 ==== Filtering a query
 
-To limit the results to only those documents whose `status` field is set to
-the value `"active"`, you can combine your query clause with a filter clause
-using a `filtered` query:
+Now, to combine our query for `"search is cool"` with our filter for
+`status=active`, we need a single query clause which can accept both
+a `query` and a `filter` -- the `filtered` query:
+
 
     {
         "filtered" : {
@@ -43,7 +81,7 @@ using a `filtered` query:
         }
     }
 
-The full request would look like this:
+The full search request would look like this:
 
     curl -XGET localhost:9200/_search -d '
     {
@@ -56,51 +94,16 @@ The full request would look like this:
     }
     '
 
-==== A filter without a query
-
-What if you wanted to apply just the `status is "active"` filter without any
-associated query? The `query` parameter only accepts a query, so you need
-to *wrap your filter in a query*.  One possibility is the `filtered` query
-mentioned above:
-
-    {
-        "filtered" : {
-            "query" :    { "match_all: {}},
-            "filter" :   { "term" :  { "status" : "active" }}
-        }
-    }
-
-Another possibility is to use the
-<<constant_score_query,`constant_score` query>>, which wraps the filter
-without requiring any query clause:
-
-    {
-        "constant_score" : {
-            "filter" :   { "term" :  { "status" : "active" }}
-        }
-    }
-
-The full request would look like this:
-
-    curl -XGET localhost:9200/_search -d '
-    {
-        "query" :     {
-            "constant_score" : {
-                "filter" :   { "term" :  { "status" : "active" }}
-            }
-        }
-    }
-    '
-
 [NOTE]
 ===============================
-As will be explained in the following chapters, query and filter clauses
-are building blocks which can be combined and nested in complex and
-interesting ways. However, the search API expects a *single* query clause to
-be passed as the value of the `query` parameter.
+As has been explained above, query and filter clauses
+are building blocks which can be used throughout the Elasticsearch
+API, wherever a parameter called `query` or `filter` is accepted.
+It is not limited just to the `search` API.
 
-We will not be repeating the full `curl` statement for every query clause,
-as it should already be obvious from the above examples how to pass queries to
-the search API.
+In the examples above, we have shown you the syntax of a complete search
+request.  In the following chapters, which explain the various query and filter
+clauses that are available, we will no longer include the full `curl` statement,
+as it should be obvious now how to pass a query clause to the
+`query` parameter of the `search` API.
 ===============================
-
