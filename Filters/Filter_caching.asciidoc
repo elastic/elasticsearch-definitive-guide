@@ -7,8 +7,8 @@ which uses one bit to represent each document in the index.  If a document
 matches a filter, its bit will be set to `1`.  If it doesn't match, its bit
 will be set to `0`.
 
-This is very space efficient.  On a 64-bit machine, 1 million documents can
-be cached in only 16kB of memory. Also, combining bitsets from different
+This is very space efficient.  One million documents can be cached in only
+122kB of memory. Also, combining bitsets from different
 filters can be performed rapidly using bitwise operations like
 `AND`, `OR` and `NOT`.
 
@@ -16,23 +16,25 @@ However, it doesn't make sense to cache all filters.  Take this filter
 as an example:
 
     {
-        "and" : [
-            { "term" : { "tag" :    "elasticsearch" }},
-            { "term" : { "status" : "active"        }}
-        ]
+        "bool" : {
+            "must": [
+                { "term" : { "tag" :    "elasticsearch" }},
+                { "term" : { "status" : "active"        }}
+            ]
+        }
     }
 
 It makes sense to cache the individual `term` filters, but not the
-final result of the `and` filter, as this is easy to calculate from the
+final result of the `bool` filter, as this is quick to calculate from the
 two cached `term` filters.
 
 It also doesn't make sense to cache the output from filters which are unlikely
-to be reusable:
+to be reusable, such as:
 
 Geolocation filters::
 
 <<geoloc_filters,Geolocation filters>> will seldom use the same
-latitude/longitude point; it is more probable that every search will be
+latitude/longitude point; it is likely that every search will be
 different.
 
 Numeric range filters::
@@ -55,7 +57,7 @@ Other filters::
 The results from a query are not cached and thus, the results from
 a `query` filter are not cached either. Similarly,
 <<nested_filter,`nested` filters>> can be based on complex conditions and
-are not cached.
+are not cached either.
 
 ==== Controlling filter caching
 
@@ -81,3 +83,72 @@ the query to be wrapped in an extra `fquery` layer:
         }
     }
 
+==== Optimizing filter reuse
+
+In order for filters to be reused, we need to apply exactly the same filter
+each time.  If the filter changes even slightly, then it can no longer be
+reused.
+
+Consider an example where you have millions of documents, but want to show only
+the count of documents that have been added in the last 60 minutes (or 3,600
+seconds).
+
+If we naively apply a `range` filter which uses just the value for
+`now() - 3600`, then our filter changes every second, which means that
+Elasticsearch has to reexamine millions of documents every second!
+
+Instead, we could use two filters:
+
+* one which filters out all documents up until `00h00` this morning, which we
+  cache
+* one which filters out all documents up until `now() - 3600`, which we don't
+  cache
+
+    {
+        "bool": {
+            "must": [
+                { "range": {
+                    "created": { "gte": "2013/02/01 00:00:00" }
+                }},
+                { "range": {
+                    "_cache":  false,
+                    "created": { "gte": "2013/02/01 16:52:38" }
+                }},
+            ]
+        }
+    }
+
+The first filter efficiently excludes all documents except for those created
+today, meaning that the second filter has to do much less work.
+
+==== Reducing cache memory usage
+
+When caching the results of a filter, the bitset representing the documents
+forms only part of the memory that is required.  The other major part consists
+of the unique cache key which is used to identify the filter.
+
+Normally, the size of the cache key is negligible. But if your filter
+consists of 1,000 UUIDs, each of which is 22 characters long, the cache
+key can consume a significant amount of memory.
+
+In these exceptional cases, you can provide your own short cache key,
+e.g. `"Friends of John"`.
+
+    {
+        "terms": {
+            "_id":        [ "xxxxxxx", "yyyyyy", ..... ],
+            "_cache_key": "Friends of John"
+        }
+    }
+
+[WARNING]
+====
+If you change the filter, but you don't update the `_cache_key`, then you
+will see stale, incorrect results. Use custom cache keys only where it
+makes sense in your application.
+
+====
+
+Given these caveats, this may not seem to be a very useful feature.
+However, when we discuss the use of filtered aliases in <<scale>>, the space
+savings of `_cache_key` will buy us cache space without adding complexity.

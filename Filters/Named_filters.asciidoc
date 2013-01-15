@@ -8,20 +8,22 @@ falls into. This can be done by assigning each filter a name, with the
 
 
     {
-        "or" : [
-            { "range" : {
-                  "_name" : "child",
-                  "age"   : { "to" :  12 }
-            }},
-            { "range" : {
-                  "_name" : "teenager",
-                  "age"   : { "from" : 13, "to" :  18 }
-            }},
-            { "range" : {
-                  "_name" : "adult",
-                  "age"   : { "from" :  18 }
-            }}
-        ]
+        "bool" : {
+            "should": [
+                { "range" : {
+                      "_name" : "child",
+                      "age"   : { "to" :  12 }
+                }},
+                { "range" : {
+                      "_name" : "teenager",
+                      "age"   : { "from" : 13, "to" :  18 }
+                }},
+                { "range" : {
+                      "_name" : "adult",
+                      "age"   : { "from" :  18 }
+                }}
+            ]
+        }
     }
 
 Each result that matches a named filter will include a `matched_filters`

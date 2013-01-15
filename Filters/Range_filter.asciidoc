@@ -1,12 +1,12 @@
 [[range_filter]]
 === `range` filters
 
-A `range` filter is used to match fields which contain values within a certain
+A `range` filter is used to match fields which contain a value within a certain
 range, for instance:
 
     {
         "range" : {
-            "created" : {
+            "publish_date" : {
                 "from" :  "2011-01-01",
                 "to" :    "2012-01-01"
         }
@@ -33,7 +33,7 @@ The comparison operators are as follows:
 `to`:: The same as `lt` (*not* `lte`)
 
 The `to` operator means _up to but not including_, so a range
-of `{ "from" : 0, "to" : 100 }` includes the range `0..99`, not `0..100`.
+of `{ "from" : 1, "to" : 10 }` includes the range `1..9`, not `1..10`.
 
 [[numeric_range_filter]]
 ==== Numeric range filter
@@ -56,3 +56,5 @@ The first time that a `numeric_range` filter is used, Elasticsearch
 has to build a _field cache_, which caches all the values for that field in
 memory.  Building the field cache can be slow, but once it is built it can
 make future `numeric_range` filters faster.
+
+TODO Add link to field value cache explanation

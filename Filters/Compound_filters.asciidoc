@@ -7,13 +7,87 @@ in SQL:
 
     WHERE status = "active" AND count > 5
 
+There are two options in Elasticsearch for combining filters with AND, OR
+and NOT logic: the `bool` filter, and the `and`, `or` and `not` filters.
+
+The `bool` filter is the preferred choice as it is able to make smarter
+decisions about how to combine filters optimally.
+
+[[bool_filter]]
+==== `bool` filter
+
+****
+The `bool` or _boolean_ filter is a simpler version of the
+<<bool_query,`bool` query>>, which we will explain in detail in <<queries>>.
+****
+
+The `bool` filter accepts three parameters, each of which can contain
+one or more filter clauses:
+
+[horizontal]
+`must`::     Documents must match *all* of these clauses (like AND)
+`must_not`:: Documents must not match *any* of these clauses (like NOT)
+`should`::   Documents must match *at least one* of these clauses (like OR)
+
+For instance, this SQL statement:
+
+    WHERE status = 'active'
+    AND ( created >= '2013-01-01' OR featured = 1 )
+    AND   hidden <> 1
+
+could be written as:
+
+    {
+        "bool" : {
+            "must" :     { "term" : { "status" : "active" }},
+            "should" :   [
+                { "range" : { "created" : { "gte" : "2013-01-01" }}},
+                { "term" :  { "featured" : 1 }}
+            ],
+            "must_not" : { "term" : { "hidden" : 1 }}
+        }
+    }
+
+Each of `must`, `should` and `must_not` accepts either a single filter or
+an array of filters, as demonstrated in the `should` clause in the
+above example.
+
+===== Nesting `bool` filters
+
+A `bool` filter is just a type of filter, which means that `bool` filters
+can be passed as arguments to `must`, `should` or `must_not`.  This
+allows `bool` filters to be nested.
+
+As an example, this SQL statement:
+
+    WHERE status = "featured"
+    OR    status = "active"   AND created >= '2013-01-01'
+
+could be written as:
+
+    {
+      "bool": {
+        "should": [
+          { "term": { "status": "featured" }},
+          {
+            "bool": {
+              "must": [
+                { "term":  { "status": "active"}},
+                { "range": { "created": { "gte": "2013-01-01" }}}
+              ]
+            }
+          }
+        ]
+      }
+    }
+
 
 [[and_or_filter]]
 ==== `and` | `or` filters
 
 The `and` and `or` filters combine two or more filter clauses with `AND` or
-`OR` logic respectively. They can accept a list of any other filters, including
-other `and` or `or` clauses.
+`OR` logic respectively. They can accept one or more filter clauses of any
+type, including other `and` or `or` clauses.
 
 For example, this SQL query:
 
@@ -32,24 +106,20 @@ could be written as:
         ]
     }
 
-[NOTE]
-====
 The order of the filter clauses is important because both the `and` and `or`
 filters __short-circuit__. In other words, they do the least amount of work
 necessary to satisfy the `AND` or `OR` condition.
 
 Each document is checked in turn. An `and` filter starts with the first
 filter clause and checks whether the document matches that clause.  If it
-doesn't, then the document is immediately discarded and no further filters
-are checked.  Otherwise it repeats the process for the remaining filter
-clauses.
+does, then it moves on to check the next filter. If it doesn't, then the
+document is immediately discarded and no further filters are checked.
 
 The `or` clause works in a similar way, but stops checking as soon as
 it finds a filter that matches the document.
 
 This means that it is more efficient to put the least specific filters first
 for the `or` filter, and the most specific filters first for the `and` filter.
-====
 
 [[not_filter]]
 ==== `not` filter
@@ -63,7 +133,8 @@ could be written as:
 
 However, the `not` filter only accepts a single filter.  To negate multiple
 filters, you need to be explicit about how those filters should be combined.
-That is, you should wrap them in an <<and_or_filter,`and` or `or` filter>>:
+That is, you should wrap them in a <<bool_filter,`bool` filter>> or
+in an <<and_or_filter,`and` or `or` filter>>:
 
     {
         "not" : {
@@ -74,68 +145,36 @@ That is, you should wrap them in an <<and_or_filter,`and` or `or` filter>>:
         }
     }
 
-[[bool_filter]]
-==== `bool` filter
-
-While the <<and_or_filter,`and` and `or` filters>> are the most obvious
-choice for compound filter clauses, there is another option, called the
-`bool` filter. The `bool` filter performs the same job as `and`, `or` and
-`not`, but it does so in a different way with <<bool_vs_and_or,different
-performance implications>>.
-
-The `bool` query takes three parameters: `must`, `should` and `must_not`, which
-correspond to `and`, `or` and `not` respectively.
-For instance, this SQL statement:
-
-    WHERE status = 'active'
-    AND ( created >= '2012-01-01' OR featured = 1 )
-    AND   hidden <> 1
-
-could be written as:
-
-    {
-        "bool" : {
-            "must" :     { "term" : { "status" : "active" }},
-            "should" :   [
-                { "range" : { "created" : { "gte" : "2012-01-01" }}},
-                { "term" :  { "featured" : 1 }}
-            ],
-            "must_not" : { "term" : { "hidden" : 1 }}
-        }
-    }
-
-Each of `must`, `should` and `must_not` accept either a single filter or
-a list of filters (as an array, as demonstrated in the `should` clause in the
-above example). At least one of the `should` clauses must match.
-
-[[bool_vs_and_or]]
-==== `bool` vs `and`|`or`
-
-[NOTE]
-====
-Read this section only if you need to squeeze every last drop of performance
-out of Elasticsearch. Otherwise, feel free to ignore it.
-====
-
-Most of the filters in Elasticsearch do their work by generating _bitsets_,
-where a bitset is a data structure which uses one bit to represent each
-document in the index.  If a document matches a filter, its bit will be
-set to `1`.  If it doesn't match, its bit will be set to `0`. These bitsets
-are usually cached.
-
-A `bool` filter works by combining these cached bitsets using `AND`, `OR` or
-`NOT` bit logic, which is very fast and efficient. However, it needs to
-perform this operation on all documents.
+.`bool` vs `and`|`or`
+****
 The `and` and `or` filters (as explained <<and_or_filter,above>>) work document
 by document, short-circuiting when possible.
 
-This means that there are two factors to take into account when choosing
-between `bool` and `and`|`or`:
+However, most filters in Elasticsearch do their work by generating _bitsets_
+--  a data structure which uses one bit to represent each
+document in the index.  If a document matches a filter, its bit will be
+set to `1`.  If it doesn't match, its bit will be set to `0`. These bitsets
+are compact and easy to cache.
 
-bitsets::
-    Do the filters wrapped by `bool` or `and`|`or` generate bitsets or
-    not? In Elasticsearch, all filters except for the geolocation filters and
-    the <<numeric_range_filter,`numeric_range` filter>> produce bitsets.
+A `bool` filter works by combining these bitsets using `AND`, `OR` or
+`NOT` bit logic, which is very fast and efficient. However, to generate
+a bitset, each document needs to be checked against the filter.
+
+Some filter clauses do not produce bitsets. Typically these are filters which
+require a heavier calculation or which are unsuitable for caching:
+
+* <<geoloc_filters,geolocation filters>>
+* the <<script_filter,`script` filter>>
+* the <<numeric_range_filter,`numeric_range` filter>>
+
+In order to optimize performance, the `bool` filter executes in two phases:
+
+1. The first phase processes all of the filters which generate bitsets.
+2. The second phase runs the heavier filters, but only on the docs
+   that have not already been discarded in the first phase.
+
+There are three factors to take into account when choosing
+between `bool` and `and`|`or`:
 
 number of matching documents::
     If you have a small (for `and`) or large (for
@@ -143,5 +182,45 @@ number of matching documents::
     off using the short-circuiting functionality of `and`|`or` instead of the
     _check-all-documents_ functionality of `bool`.
 
-That said, the best way to decide which to use is by testing it against
-your data.  See which performs best for your use case.
+caching::
+    Do you want to cache the results of the compound filter,
+    or do you want to cache the results of a filter which does not normally
+    generate a bitset? If so, then use the `bool` filter -- Elasticsearch
+    has to generate a bitset in order to cache, so it makes sense to
+    reuse it in the `bool` filter.
+
+bitsets::
+    Do the filters that you want to combine generate bitsets or not?
+    If yes, then prefer the `bool` filter.  Alternatively, you can
+    wrap just the non-bitset filters in a separate `and` or `or` clause
+    which you pass into the main `bool` filter:
+
+    {
+        "bool": {
+            "must": [
+                { "term": { "status": "active" }},
+                { "term": { "tag": "elasticsearch" }},
+
+                { "or": [
+                    { "geo_distance": {
+                        "distance": "20km",
+                        "location": {
+                            "lat": 40.77,
+                            "lon": 73.98
+                    }}},
+                    { "geo_distance": {
+                        "distance": "20km",
+                        "location": {
+                            "lat": 51.5,
+                            "lon": -0.12
+                    }}}
+                ]}
+            ]
+     }}
+
+
+*As a general rule*: use the `bool` filter. If you are trying to
+squeeze the last drop of performance out of Elasticsearch, then compare
+the speed of the `and`|`or` filters vs the `bool` filter, and see which
+works best for your use case.
+****

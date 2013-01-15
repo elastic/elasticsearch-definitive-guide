@@ -1,19 +1,24 @@
 [[filters]]
 == Query DSL - Filters
 
-Filters answer `yes|no` questions - documents either match a filter, or they
-don't.  They are fast and efficient, and should be used instead of queries
-whenever possible.
+Filters answer `yes|no` questions -- a document either matches a filter, or it
+doesn't. They are fast, efficient and cacheable, and should be used instead of
+queries wherever possible.
 
-Multiple filter clauses can be combined using one of the
-<<compound_filters,Compound filters>> such as `and` or `or`.  Any of the
-filters explained below can be used wherever in the API a parameter includes
-the word `filter`, such as the <<filtered_query,`filtered` query>>
-or in a <<facet_filter,`facet_filter`>>.
+A filter clause can be used wherever _filter context_ applies:
+
+ * as the argument for any parameter in the Elasticsearch API called
+   `filter` or `facet_filter`
+
+ * in a compound filter clause (such as the <<bool_filter,`bool` filter>>)
+   which expects one or more filter clauses
+
+ * in any query clause which accepts a `filter` argument, such as the
+   <<filtered_query,`filtered` query>>
 
 In the rest of this chapter, we will discuss the most commonly used
-filter clauses. We start with filters because they are simpler than queries,
-and more similar to the logic that we can express in SQL.
+filter clauses. We start with filters because they are simpler than queries
+and can be used to express similar conditions to those supported in SQL.
 
 include::Filters/Equality_filters.asciidoc[]
 
@@ -31,3 +36,4 @@ include::Filters/Filter_caching.asciidoc[]
 
 include::Filters/Named_filters.asciidoc[]
 
+[TODO] ADD INDICES FILTER https://github.com/Elasticsearch/Elasticsearch/issues/1787

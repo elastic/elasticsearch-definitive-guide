@@ -4,15 +4,15 @@
 [[term_filter]]
 ==== `term` filter
 
-The most basic filter is the `term` filter, which asks: ``Does field `foo`
-contain the exact value `bar`?'' It it similar to the SQL statement:
+The most basic filter is the `term` filter, which asks: Does field `foo`
+contain the exact value `bar`? It it similar to the SQL statement:
 `WHERE foo = bar`.
 
 For instance, does the field `status` contain the string `"active"`:
 
     { "term" : { "status" : "active" }}
 
-Does field `count` contain `5`:
+Does field `count` contain the number `5`:
 
     { "term" : { "count" : 5 }}
 
@@ -26,11 +26,17 @@ contains `ACTIVE` then the term filter will not match.
 
 [NOTE]
 ====
-A term filter checks if the field *contains* the value, rather than if
+A `term` filter checks if the field *contains* the value, rather than if
 the field is *equal to* the value, because a field might contain multiple
-values.  For instance, an array of `tags`:
+values.
 
-        { "tags" : [ "elasticsearch", "lucene", "nosql" ]}
+For instance, a document whose `tags` field contains an array of tags:
+
+    { "tags" : [ "elasticsearch", "lucene", "nosql" ]}
+
+will match a filter looking for just one of those tags:
+
+    { "term": { "tags": "elasticsearch" }}
 
 ====
 
@@ -43,9 +49,9 @@ it checks whether the field contains *ANY* of the listed values:
 
     { "terms" : { "status" : [ "active", "pending" ] }}
 
-As mentioned above, a field may contain *multiple* values. You can set the
-`execution` option to `"and"` to check whether the field contains *ALL* of the
-listed values:
+As mentioned above, a field may contain multiple values. You can
+check whether the field contains *ALL* of the listed values by seting the
+`execution` parameter to `"and"`:
 
     {
         "terms" : {
@@ -54,14 +60,29 @@ listed values:
         }
     }
 
-[NOTE]
-====
-The default value for `execution` is `"plain"`. It can also be set to `"bool"`,
-which (like `plain`) checks for ANY of the listed values, but it has
-different performance characteristics.
-The final result of the `plain` query is cached, while under `bool` execution,
-the result for each individual term is cached.  If you regularly
-filter on the same combination of terms then `plain` execution is preferred.
-But if the combination of terms varies, then the `bool` execution might
-be faster.
-====
+===== `execution`
+
+The `execution` parameter accepts a variety of arguments, which
+are documented in the
+http://www.elasticsearch.org/guide/reference/query-dsl/terms-filter.html[`terms` filter reference],
+but the most useful values are:
+
+`plain`::
+
+This is the default value.  The `terms` filter checks for *ANY* of the
+listed terms, and caches the result of the whole filter. Use `plain`
+if you typically filter on the same combination of terms.
+
+`bool`::
+
+The `terms` filter runs a `term` query for each listed term and combines their
+results, looking for *ANY* matching term.  The final result of the filter is
+not cached, but the result for each individual term *is* cached.
+Use `bool` if the combination of terms you filter on varies often.
+
+`and`::
+
+The `terms` filter runs a `term` query for each listed term and combines their
+results, looking for *ALL* matching terms.  The final result of the filter is
+not cached, but the result for each individual term *is* cached. Use `and`
+if you need to check that all terms are present.

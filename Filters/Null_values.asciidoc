@@ -5,6 +5,13 @@ A field can have zero or more values.  Elasticsearch can't index
 a `null` or undefined value. Instead, if a field is set to `null`, it
 has zero values.
 
+If you store an array of values, one of which is `null`, only the non-null
+values will be indexed.  For instance:
+
+    { count: [ 1, 3, null, 5] }
+
+The `count` field would have the values 1, 3 and 5 indexed.
+
 [[exists_filter]]
 ==== `exists` filter
 
@@ -20,12 +27,32 @@ whether the field has no values:
 
     { "missing" : { "field" : "field_name" }}
 
-[NOTE]
-=====
-If you store an array of values, one of which is `null`, only the non-null
-values will be indexed.  For instance:
+.Objects and existence
+****
+Elasticsearch can index multi-level docs (known in JSON as _objects_), such as:
 
-    { count: [ 1, 3, null, 5] }
+    {
+        "person": {
+            "name": {
+                "first": "John",
+                "last":  "Smith"
+            }
+        }
+    }
 
-The field `count` would have the values 1, 3 and 5 indexed.
-====
+It does this by flattening the data structure, transforming the above document
+into a list of key-value pairs:
+
+    {
+        "person.name.first": "John",
+        "person.name.last":  "Smith"
+    }
+
+Values are only indexed for the `person.name.first` and `person.name.last`
+fields -- fields which contain scalar values.
+
+This means that the `missing` and `exists` filter clauses will only work on
+these ``final'' fields. They can't be used on the intermediate keys
+`person` and `name`, that is, on any field which is of type `object` or
+`nested`.
+****
