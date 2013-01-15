@@ -81,11 +81,12 @@ the `tie_breaker` parameter:
 
     {
       "dis_max" : {
-         "queries" : [
-            { "match" : { "title" :   "quick brown fox" }},
-            { "match" : { "content" : "quick brown fox" }}
-         ],
-         "tie_breaker": 0.2
+           "queries" : [
+                { "match" : { "title" :   "quick brown fox" }},
+                { "match" : { "content" : "quick brown fox" }}
+            ],
+            "tie_breaker": 0.2
+        }
     }
 
 The relevance calculation becomes:
