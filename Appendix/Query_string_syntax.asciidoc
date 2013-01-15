@@ -57,7 +57,7 @@ Be aware that wildcard queries can use an enormous amount of memory and
 perform very badly -- just think how many terms need to be queried to
 match the query string `"a* b* c*"`.
 
-[CAUTION]
+[WARNING]
 ====
 Allowing a wildcard at the beginning of a word (eg `"*ing"`) is particularly
 heavy, because all terms in the index need to be examined, just in case

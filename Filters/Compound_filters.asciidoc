@@ -200,7 +200,6 @@ bitsets::
             "must": [
                 { "term": { "status": "active" }},
                 { "term": { "tag": "elasticsearch" }},
-
                 { "or": [
                     { "geo_distance": {
                         "distance": "20km",

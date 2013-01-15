@@ -13,7 +13,7 @@ or the lower case `n1`:
 The prefix filter can be used only on fields of type `string`.
 
 
-[CAUTION]
+[WARNING]
 ====
 This filter works by loading all unique terms into memory,
 finding those terms that begin with the desired prefix, then running a separate
