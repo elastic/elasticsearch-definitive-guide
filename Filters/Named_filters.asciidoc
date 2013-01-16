@@ -12,7 +12,7 @@ falls into. This can be done by assigning each filter a name, with the
             "should": [
                 { "range" : {
                       "_name" : "child",
-                      "age"   : { "to" :  12 }
+                      "age"   : { "to" :  13 }
                 }},
                 { "range" : {
                       "_name" : "teenager",

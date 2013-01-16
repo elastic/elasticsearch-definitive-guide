@@ -61,8 +61,8 @@ are not cached either.
 
 ==== Controlling filter caching
 
-All filters accept a `_cache` parameter which can be set to `true` or `false`,
-which allows you to override the default.  For instance:
+All filters accept a `_cache` which can be set to `true` or `false`,
+allowing you to override the default.  For instance:
 
     {
         "term" : {
