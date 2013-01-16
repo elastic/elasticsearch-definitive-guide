@@ -1,15 +1,15 @@
 === What is relevance?
 
-When searching, documents are returned in a particular order.  They
+The results of a query are returned in a particular order. They
 could be sorted on the `last_modified` time, but the default is to sort
-them from most relevant to least relevant. This relevance value is called
-the `_score`.
+them from most relevant to least relevant.
 
-Each query clause generates a `_score`. When multiple query clauses are
-wrapped together using a compound query, the `_score` from each
-of these query clauses is combined to calculate the final `_score`
-for the document. How the `_score` is calculated for each query type
-depends on the purpose of the query.
+The relevance of each document is represented by a positive floating point
+number called the `_score` -- the higher the `_score`, the more relevant.
+
+A query clause generates a `_score` for each document.  How that score
+is calculated depends on the type of query clause -- different query
+clauses are used for different purposes.
 
 Typical factors that are taken into account with full text search
 queries are:
@@ -23,12 +23,16 @@ Inverse document frequency::
   relevant.
 
 Length norm::
-  How long is the field? The longer it is, the less likely it is to be
-  relevant.
-
-We will discuss how relevance is calculated in more detail in <<boost>>.
+  How long is the field? The longer it is, the less likely it is
+  that words in the field will be relevant.
 
 That said, relevance is not just about full text search. It can equally be
-applied to `yes|no` clauses where the more clauses that match, the more
-relevant, or to geolocation queries, where closer is better.
+applied to `yes|no` clauses, where the more clauses that match, the more
+relevant.
+
+When multiple query clauses are combined using a compound query,
+the `_score` from each of these query clauses is combined to calculate the
+overall `_score` for the document.
+
+We will discuss how relevance is calculated in more detail in <<boost>>.
 

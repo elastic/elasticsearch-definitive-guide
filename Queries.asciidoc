@@ -1,10 +1,27 @@
 [[queries]]
 == Query DSL - Queries
 
-While filters provide the same `yes|no` matching capabilities that you would
-expect from SQL, queries are about relevance, about how well each document
-matches. This concept of relevance is perfectly suited to the imprecise
-nature of full text search.
+In <<filters>>, we have discussed how to use filters to perform the simple
+`yes|no` searches that we typically associate with SQL queries.
+But Elasticsearch is capable of much more than this.
+
+Users today are no longer prepared to tweak a long list of filters in
+order to find the information they want. They expect to be able to enter their
+query in natural language and to get the right answer.
+
+But what is the ``right answer''?
+
+Compare a query for +``fox hunting news''+ with one for +``fox news hunting''+.
+They have the same words, but signal different intents.  What about a
+query for +``raspberry pie''+? Is the user really interested in the
+Raspberry Pi device, or are they looking for a recipe?
+
+Often, there IS no right answer.  Instead, we try to return the
+_best_ answer, that is, the _most relevant_ answer.
+
+Queries are not just about whether a document matches, but about _how well_ it
+matches -- how relevant it is. This concept of relevance is perfectly suited
+to the imprecise nature of full text search.
 
 include::Queries/What_is_relevance.asciidoc[]
 
