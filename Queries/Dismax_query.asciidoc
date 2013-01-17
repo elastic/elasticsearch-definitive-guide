@@ -43,11 +43,11 @@ by the non-matching `content` field.
 What can we do about this?
 
 [[dismax_query]]
-==== Disjunction max query
+=== Disjunction max query
 
 There is a query designed specifically to deal with this situation,
 called the _Disjunction Max_ or `dis_max` query.
-Do not be taken aback by the name -- the concept is quite simple.
+Don't be taken aback by the name -- the concept is quite simple.
 
 ``Disjunction'' simply refers to the logical `OR` operator.  In other words,
 the `dis_max` query matches if *any* of its clauses match, but instead of
@@ -64,6 +64,8 @@ combining the `_score` from each clause, it uses the highest or ``max'' `_score`
 In this case, the second document matches the `title` clause very well
 -- better than either the `title` or `content` clause in the first
 document -- so the second document is more relevant than the first.
+
+==== `tie_breaker`
 
 What happens if we add a third document:
 

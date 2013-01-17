@@ -13,7 +13,7 @@ on almost any field.
 It can be used to match exact values like enums, numbers, dates and booleans,
 or for full text queries on unstructured natural language text.
 It does The Right Thing for each field based on its
-_mapping_ (or field definition), which we will discuss in <<mapping>>.
+_mapping_ (or field definition), which we will explain in detail in <<mapping>>.
 
 It supports fuzzy (approximate string) matching, exact phrase and proximity
 matching (with the `match_phrase` variant) and _find-as-you-type_ functionality
@@ -28,26 +28,19 @@ together and calculates the overall relevance `_score` for all of the
 sub-clauses that it contains.  Clauses can be required (`must` clauses),
 disallowed (`must_not` clauses) or optional (`should` clauses).  Optional
 clauses are not required but increase the relevance `_score` if they
-match.
+match.  Boolean clauses can be nested.
 
 ==== `filtered` query
 
 The `filtered` query is a wrapper which combines any query clause with
 any filter clause. This allows you to benefit from filter caching and
-to restrict the relevance calculation just to the ``interesting'' parts
+to restrict the relevance calculation to just the ``interesting'' parts
 of the query.
 
 ==== `match_all` query
 
 The `match_all` query simply returns all documents with a relevance
 `_score` of 1. It is the default query if no query has been specified.
-
-==== `range` query
-
-The `range` query, in exactly the same way as the
-<<range_filter,`range` filter>>, matches numeric ranges, date ranges, or
-alphabetical ranges of terms. The filter version is usually to be preferred
-because its results are cached.
 
 ==== `query_string` and `field` queries
 

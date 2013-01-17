@@ -1,14 +1,20 @@
 === Using query clauses
 
 Like the filter clauses, each query clause is a standalone element that
-can be used wherever in the API a parameter includes the word `query`,
-such as the <<search_api,`search` API>> or in a <<query_facet,`query` facet>>.
+can be used wherever _query_context_ applies:
+
+  * as the argument for any parameter in the Elasticsearch API called `filter`
+  * in a compound query clause (such as the <<bool_query,`bool` query) which
+    expects one or more query clauses
+  * in any filter clause which accepts a `query` argument, such as the
+    `query` filter
 
 For instance, this  `match` query clause:
 
     { "match": { "title": "fox" }}
 
-could be used as the query in a search request, as follows:
+could be used as the argument to the `query` parameter in a `search` request,
+as follows:
 
     curl -XGET http://localhost:9200/_search -d '
     {
@@ -22,21 +28,21 @@ for instance, the compound <<bool_query,`bool` query>>:
     {
         "bool": {
             "should": [
-                   { "match": { "title": "fox" }},
-                   { "match": { "body":  "fox" }}
+                { "match": { "title": "fox" }},
+                { "match": { "body":  "fox" }}
             ]
         }
     }
 
-which could, in turn, be used as the query in a search request:
+which could, again, be passed to the `query` parameter in a `search` request:
 
     curl -XGET http://localhost:9200/_search -d '
     {
         "query": {
             "bool": {
                 "should": [
-                       { "match": { "title": "fox" }},
-                       { "match": { "body":  "fox" }}
+                    { "match": { "title": "fox" }},
+                    { "match": { "body":  "fox" }}
                 ]
             }
         }

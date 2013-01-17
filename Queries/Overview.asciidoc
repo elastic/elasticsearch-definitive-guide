@@ -6,27 +6,29 @@ easier to navigate, we can group them into families:
 
 <<helper_queries,Helper queries>>::
 
-The helper queries are simple, commonly used queries, which are not very
+The helper queries are simple, commonly used queries, which are not terribly
 interesting by themselves, but are very useful:
 
-** `match_all`
-** `filtered`
+** <<match_all_query,`match_all`>>
+** <<filtered_query,`filtered`>>
 
 <<full_text_queries,Full text queries>>::
 
-These queries have an _analysis phase_ which converts their ``full text''
-query string into the same terms that are stored in the index.  They are the
-bread-and-butter of full text search. However, they are not limited to
-just full text -- they can also be used on numbers, dates and enum strings:
+These queries have an _analysis phase_ which normalizes the ``full text''
+query string into the same tokens or terms that are stored in the index.  They
+are the bread-and-butter of full text search. However, they are not limited to
+just full text -- they can also be used on numbers, dates, booleans and enum
+strings:
 
-** `match` | `multi_match`
-** `field` | `query_string`
+** <<match_query,`match`>> | <<multi_match_query,`multi_match`>>
+** <<query_string_query,`field` | `query_string`>>
 
 Term queries::
 
 Term queries search for the exact term that is specified in the query
--- they have no analysis phase -- and are thus similar to filters except
-that they can be used to alter the relevance `_score`:
+-- they have no analysis phase -- and are thus similar to the
+<<term_filter,`term`>> and <<range_filter,`range`>> filters except
+that they are not cached can be used to alter the relevance `_score`:
 
 ** `term` | `terms`
 ** `range`
@@ -48,7 +50,6 @@ the difference between them is how the final relevance `_score` is calculated:
 
 ** `bool`
 ** `dis_max`
-** `indices`
 
 Boosting queries::
 

@@ -1,8 +1,8 @@
 [[multi_match_query]]
 === Querying multiple fields
 
-Often we want to search multiple fields for the same query string. For instance,
-we might want to search the `title` and the `content` fields of an email.
+Often we want to search multiple fields for the same query string.
+We might want to search the `title` and the `content` fields of an email.
 The `multi_match` query works in exactly the same way as the
 <<match_query,`match` query>>, but allows you to run the same query
 on several fields at the same time.

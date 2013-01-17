@@ -3,10 +3,11 @@
 
 Each query clause returns a relevance score for each document -- the
 higher the `_score`, the more ``relevant'' is that document.  However, not
-all clauses are created equal -- keywords in the `title`
-field are probably more relevant than keywords in the `content` field.
-We need a way of telling Elasticsearch to make the `title` clause
-more important than the `content` clause.
+all clauses are created equal:
+
+Keywords in the `title` field are probably more relevant than keywords in
+the `content` field, so we need a way of telling Elasticsearch to make the
+`title` clause more important than the `content` clause.
 
 We have already seen how to do this when searching multiple fields for
 the same query string, with the <<multi_match_query,`multi_match` query>>:

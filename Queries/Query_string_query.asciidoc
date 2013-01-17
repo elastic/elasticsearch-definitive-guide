@@ -4,7 +4,7 @@
 The `query_string` query is similar in kind to the
 <<match_query,`match` query>>. Where it differs is in how it treats its
 query string. For the `match` family of queries, the query string is
-just text.  The `query_string` query treat the query string
+just text.  The `query_string` query, on the other hand, treats the query string
 as a ``mini-language'', which can be used to describe complex queries
 succinctly.
 
@@ -18,19 +18,21 @@ is translated into a compound query in which:
 * a word beginning with `quic` should be present in the ``default field''
 * a word similar to `brawn` should be present in the ``default field''
 * the word `fox` must be present in the ``default field''
-* the `status` field should be set to `active`
+* the `status` field should contain the word `active`
 * the `author` field must contain the phrase `"joe bloggs"`
 * the `date` field must be a date from 2012 onwards
 
-The full syntax for this mini-language is explain in <<query_string_syntax>>.
+The full syntax for this mini-language is explained in <<query_string_syntax>>.
 
 .Danger, Will Robinson!
 ****
 From the above, it should be obvious that, although these queries offer
 a potentially powerful concise query syntax, they quickly become difficult
-to read and debug.  The query string is first parsed as a mini-language --
-a ``pre-tokenization'' step that can interfere with the analysis step
-and thus producing unexpected results. Worse than that, incorrect formatting
+to read and debug.
+
+The query string is first parsed as a mini-language --
+a ``pre-tokenization'' step that can interfere with the analysis step,
+producing unexpected results. Worse than that, incorrect formatting
 of the query string will cause a syntax error, preventing the query from
 running at all.
 
@@ -54,8 +56,8 @@ the field name, followed by a colon. For instance:
     status:active  date:2012/01/01  title:(quick fox) lazy dog
 
 However, the parts of the query for which no field name has been specified
-(`lazy dog` in the above example), are matched against the `default_field`,
-which defaults to the special <<all_field,`_all` field>>, which we will discuss
+(`lazy dog` in the above example), are matched against the `default_field`.
+This defaults to the special <<all_field,`_all` field>>, which we will discuss
 in <<mapping>>.
 
 It is possible to specify a different `default_field` as follows:
@@ -139,9 +141,9 @@ to use a <<dismax_query,`dis_max` query>> instead:
 .Multi-field `multi_match` vs `query_string`
 ****
 The `query_string` and `multi_match` queries rewrite multi-field queries in
-quite different ways. While the `multi_match` query queries *each field
-separately*, the `query_string` query treats all fields specified in
-the `fields` parameter as a *single field*.
+quite different ways. While the `multi_match` query queries _each field
+separately_, the `query_string` query treats all fields specified in
+the `fields` parameter as a _single field_.
 
 This `multi_match` query:
 

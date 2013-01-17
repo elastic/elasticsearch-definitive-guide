@@ -36,20 +36,27 @@ a filter with a query.
     }
 
 It accepts a single filter clause and a single query clause. However,
-you can pass it a <<compound_queries,compound query>> or
-<<compound_filters, compound filter>> which can contain multiple
+you can pass it a <<bool_query,compound query>> or
+<<compound_filters,compound filter>> which can contain multiple
 sub-clauses:
 
     {
         "filtered" : {
             "query" :  {
-                "match" : { "title" :  "quick brown fox" }
+                "bool": {
+                    "should": [
+                        { "match" : { "title" :  "quick brown fox" },
+                        { "match" : { "body" :   "quick brown fox" }
+                    ]
+                }
             },
             "filter" : {
-                "and" : [
-                   { "term" :  { "status" :   "active" }},
-                   { "term" :  { "featured" : true     }}
-               ]
+                "bool" : {
+                    "must": [
+                        { "term" :  { "status" :   "active" }},
+                        { "term" :  { "featured" : true     }}
+                    ]
+                }
             }
         }
     }

@@ -17,18 +17,20 @@ could be rewritten as:
         }
     }
 
-The `bool` query accepts three parameters which can contain query clauses:
+The `bool` query, like the <<bool_filter,`bool` filter>> accepts three
+parameters which can contain query clauses:
 
-`must`::        documents must match these clauses
+`must`::        documents must match these clauses (like `AND`)
 `must_not`::    documents that match any of these clauses will be excluded
+                like `NOT`)
 `should`::      if a document matches any of these optional clauses, it will be
                 considered to be more relevant than if it didn't
+                (like `OR` but more powerful)
 
 You may wonder why something called a ``boolean'' query doesn't use
 `and`, `or` and `not`. The reason is that the `bool` query is not dealing
 just with *whether* a document matches -- a binary `0` or `1` --
-but with how *well* the document matches, which is represented as a floating
-point relevance `_score`.
+but with how *well* the document matches.
 
 The use of `should` clauses is much more powerful than is immediately
 obvious.  Although you can write any Boolean expression with `must`,

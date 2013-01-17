@@ -4,7 +4,7 @@
 
 Instead of just matching the words in the query string, we can also
 match a _phrase_, that is: all the words, in the *same order and position*.
-For instance, the phrase `"quick fox"` would not match a document containing
+The phrase `"quick fox"` would not match a document containing
 `"quick brown fox"`.
 
     {
@@ -31,7 +31,7 @@ written as:
 ==== `slop`
 
 The `slop` parameter allows us to relax the strict _same order_ constraint,
-and allows the `match_phrase` query to behave more like a _proximity_ query,
+and causes the `match_phrase` query to behave more like a _proximity_ query,
 i.e. the nearer the words are to each other, the more relevant.
 
     {
@@ -43,24 +43,24 @@ i.e. the nearer the words are to each other, the more relevant.
         }
     }
 
-_Slop_ behaves like a Levenshtein edit distance, but based on word
-positions instead of single character changes.  To make the phrase
+_Slop_ behaves like a Levenshtein edit distance without deletions, but based
+on word positions instead of single character changes.  To make the phrase
 `"quick fox"` match `"quick brown fox"` requires a `slop` of `1`:
 
-1.  `1:quick 2:fox` -> `1:quick 2:-- 3:fox`
+1.  `[ 1:quick 2:fox ]` -> `[ 1:quick 2:___ 3:fox ]`
 
 A `slop` of `3` would allow `"fox quick"` to match, albeit with a
 lower relevance `_score` than `"quick fox"`.
 
-1. `1:fox 2:quick` -> `1:fox 1:quick`
-2. `1:fox 1:quick` -> `1:quick 2:fox`
-3. `1:quick 2:fox` -> `1:quick 2:-- 3:fox`
+1. `[ 1:fox 2:quick ]` -> `[ 1:fox 1:quick ]`
+2. `[ 1:fox 1:quick ]` -> `[ 1:quick 2:fox ]`
+3. `[ 1:quick 2:fox ]` -> `[ 1:quick 2:___ 3:fox ]`
 
 [TIP]
 ====
 Use a `match_phrase` query with a high `slop` value to find all specified words,
-in any order, but giving preference to those documents where the words order
-is more closely related to the order in the query string.
+in any order, but giving preference to those documents where the word order
+is most similar to the order in the query string.
 ====
 
 
@@ -70,8 +70,10 @@ is more closely related to the order in the query string.
 The `match_phrase_prefix` query is a specialization of the
 <<match_phrase_query,`match_phrase` query>> which is particularly useful
 for _find-as-you-type_ searches.  It works in the same way as the
-`match_phrase` query, but adds a wildcard (`*`) to the final word.  The example
-below would match `"quick brown fox"` and `"quick brown furry animals"`:
+`match_phrase` query, but adds a wildcard (`*`) to the final word.
+
+The example below would match `"quick brown fox"` and
+`"quick brown furry animals"`:
 
     {
         "match_phrase_prefix" : {
