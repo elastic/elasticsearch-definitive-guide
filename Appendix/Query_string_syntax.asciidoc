@@ -139,8 +139,7 @@ curly brackets `{min TO max}`.
     date:{* TO 2012/01/01}
 
 The parsing of ranges in query strings can be complex and error prone. It is
-much more reliable to use an explicit <<range_query,`range` query>> or
-<<range_filter,`range` filter>>.
+much more reliable to use an explicit <<range_filter,`range` filter>>.
 
 === Boosting
 
