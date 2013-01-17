@@ -32,7 +32,7 @@ one or more filter clauses:
 For instance, this SQL statement:
 
     WHERE status = 'active'
-    AND ( created >= '2013-01-01' OR featured = 1 )
+    AND ( created >= '2013/01/01' OR featured = 1 )
     AND   hidden <> 1
 
 could be written as:
@@ -41,7 +41,7 @@ could be written as:
         "bool" : {
             "must" :     { "term" : { "status" : "active" }},
             "should" :   [
-                { "range" : { "created" : { "gte" : "2013-01-01" }}},
+                { "range" : { "created" : { "gte" : "2013/01/01" }}},
                 { "term" :  { "featured" : 1 }}
             ],
             "must_not" : { "term" : { "hidden" : 1 }}
@@ -61,7 +61,7 @@ allows `bool` filters to be nested.
 As an example, this SQL statement:
 
     WHERE status = "featured"
-    OR    status = "active"   AND created >= '2013-01-01'
+    OR    status = "active"   AND created >= '2013/01/01'
 
 could be written as:
 
@@ -73,7 +73,7 @@ could be written as:
             "bool": {
               "must": [
                 { "term":  { "status": "active"}},
-                { "range": { "created": { "gte": "2013-01-01" }}}
+                { "range": { "created": { "gte": "2013/01/01" }}}
               ]
             }
           }

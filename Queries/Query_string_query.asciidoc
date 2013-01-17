@@ -11,7 +11,7 @@ succinctly.
 For instance, this query string:
 
     quic* brawn~ +fox status:active +author:"Joe Bloggs"
-    AND date:[2012-01-01 TO *]
+    AND date:[2012/01/01 TO *]
 
 is translated into a compound query in which:
 
@@ -51,7 +51,7 @@ by cleaning up the query string in your application before running the query.
 In the query syntax, it is possible to target specific fields by specifying
 the field name, followed by a colon. For instance:
 
-    status:active  date:2012-01-01  title:(quick fox) lazy dog
+    status:active  date:2012/01/01  title:(quick fox) lazy dog
 
 However, the parts of the query for which no field name has been specified
 (`lazy dog` in the above example), are matched against the `default_field`,

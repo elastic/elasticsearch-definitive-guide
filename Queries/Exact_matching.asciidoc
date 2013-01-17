@@ -18,7 +18,7 @@ definition), which we will discuss in <<mapping>>:
 
 * dates
 
-    { "match" : { "created" : "2012-05-01" }}
+    { "match" : { "created" : "2013/05/01" }}
 
 * booleans
 
@@ -55,7 +55,7 @@ now, it is important to know the distinction between the two.
 Normally, we would use filters for exact value matches as these clauses seldom
 contribute to the relevance `_score`.  Instead, they usually function as
 `yes|no` questions: ``is the `status` field `active`?'' or
-``is the `published` date `2012-01-01`?''.
+``is the `published` date `2012/01/01`?''.
 
 However, sometimes we *do* want them to contribute to relevance.  For instance,
 a user on a job website searches for the tags `html5`, `css3` and `jquery`.

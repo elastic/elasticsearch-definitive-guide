@@ -16,9 +16,9 @@ Does field `count` contain the number `5`:
 
     { "term" : { "count" : 5 }}
 
-Does field `publish_date` contain the date `2012-01-01`:
+Does field `publish_date` contain the date `2013/01/01`:
 
-    { "term" : { "publish_date" : "2012-01-01" }}
+    { "term" : { "publish_date" : "2013/01/01" }}
 
 Term filters work for all simple data types (e.g. strings, numbers, dates).
 They only match *exact* values: if you search for `active` but your field
