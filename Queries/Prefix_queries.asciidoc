@@ -28,6 +28,9 @@ encountered yet -- a _term-based_ query.
 
 include::Term_based_queries.asciidoc[]
 
+[[prefix_query]]
+==== `prefix` query
+
 The `prefix` query simply finds all terms in the index beginning with
 the specified prefix and queries all documents containing those terms.
 The following example finds all documents whose `part_number` field

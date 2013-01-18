@@ -6,8 +6,8 @@ Term based queries are distinct from full text queries like the
 
 Full text queries::
 
-    consider the _mapping_ or field definition for the field(s) being queried,
-    and apply the appropriate _analysis_ to the query string. In other words,
+    consider the _mapping_ or field definition of the field being queried,
+    and applies the appropriate _analysis_ to the query string. In other words,
     they convert the full text query string into a list of _terms_ or tokens
     in a canonical format,
     then search the index for those exact terms -- a query string of
@@ -30,11 +30,16 @@ http://www.elasticsearch.org/guide/reference/query-dsl/term-query.html[`term`],
 http://www.elasticsearch.org/guide/reference/query-dsl/terms-query.html[`terms`],
 http://www.elasticsearch.org/guide/reference/query-dsl/range-query.html[`range`],
 http://www.elasticsearch.org/guide/reference/query-dsl/prefix-query.html[`prefix`],
-http://www.elasticsearch.org/guide/reference/query-dsl/wildcard-query.html[`wildcard`]
+http://www.elasticsearch.org/guide/reference/query-dsl/wildcard-query.html[`wildcard`],
+http://www.elasticsearch.org/guide/reference/query-dsl/regexp-query.html[`regexp`],
+http://www.elasticsearch.org/guide/reference/query-dsl/fuzzy-query.html[`fuzzy`]
 and the
 http://www.elasticsearch.org/guide/reference/query-dsl/span-term-query.html[`span`]-family
 of queries. None of these queries has an analysis phase
 -- they expect their search term to be in the same format as the terms
 in the index.
 
+Most of the term-based queries have a filter equivalent, which should usually
+be used instead. Use the query form if the clause should affect the relevance
+`_score` of the document, or if no equivalent filter exists.
 ****
