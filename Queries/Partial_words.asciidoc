@@ -10,7 +10,7 @@ Wildcards::
     URLs containing `"MyBrandName"`
 
 Regular expressions::
-    email addresses matching the regex: `/joh?n.*(google|yahoo)/`
+    email addresses matching the regexp: `/joh?n.*(google|yahoo)/`
 
 Fuzzy matching::
     misspellings of `"Bieber"`
@@ -21,7 +21,7 @@ look for *before* searching.
 
 This leaves us with two options:
 
-1. Ensure that the fields in our indexed are analyzed in a way that the
+1. Ensure that our fields are analyzed in a way that the
    terms `xyz-123`, `mybrandname` and variations on the spelling
    of `bieber` already exist in the index, or
 

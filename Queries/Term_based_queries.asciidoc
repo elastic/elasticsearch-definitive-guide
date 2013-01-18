@@ -21,7 +21,7 @@ Term-based queries::
 
 As explained in <<exact_queries>>, we would normally use a `match` query
 for exact matching, as it can use the field mapping to decide whether the field
-contains full text or exact values and query it appropriately . While the
+contains full text or exact values and query it appropriately . While a
 `term` query exists, the only time we would need to use it is when we want to
 do an exact term match on a field that contains analyzed full text.
 

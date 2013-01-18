@@ -18,10 +18,10 @@ substrings and compare them to all of the substrings of all terms in our index.
 The way that Lucene and Elasticsearch have chosen to measure fuzziness
 is with the
 http://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance[Damerau-Levenshtein edit distance],
-which counts the number of changes that have to be made to one string in order
-to convert it into the target string.  A change could be the insertion, deletion
-or substitution of a single character, or the transposition of two adjacent
-characters.
+which counts the number of changes (_edit distance_) that have to be made to
+one string in order to convert it into the target string.  A change could be
+the insertion, deletion or substitution of a single character, or the
+transposition of two adjacent characters.
 
 To use our example above, `beaber` -> `bieber` has an edit distance of 2:
 
@@ -41,9 +41,8 @@ LINK TO NGRAMS EXAMPLE.
 
 ==== Generating a fuzzy query
 
-Unfortunately, the use of an inverted index -- the structure that makes
-Elasticsearch as fast as it is -- requires us to know exactly which terms to
-look for before searching.
+As we have mentioned before, the use of an inverted index requires us to know
+exactly which terms to look for before searching.
 
 That means that, in order to be able to perform fuzzy matches, we need to know
 ahead of time which of the terms in our index might match a fuzzy version of
@@ -54,12 +53,12 @@ The naive way to build this term list is to calculate the edit distance between
 the search term and every term in the index, discarding those whose edit
 distance is too large. This may be naive, but this was the way that
 the fuzzy query was implemented in Lucene up until version 4.  As a
-consequence, the fuzzy query could perform very badly.
+consequence, the fuzzy query could perform badly.
 
 ==== Enter the automaton
 
 Lucene version 4 uses a different approach -- it processes the search terms
-and calculates all possible variations that have a maximum edit distance
+to calculate all possible variations that have a maximum edit distance
 of 2, and stores them in a very efficient structure called a
 _Deterministic Finite Automaton_ (DFA). This DFA makes it possible to check
 which of these terms actually exist in the term dictionary in a much more
@@ -70,6 +69,77 @@ Once Elasticsearch has gatherered a list of all possible matching terms that
 exist in the index, it wraps the ``most important'' terms in a
 <<bool_query,boolean query>> and searches for all of them. Terms with a lower
 edit distance are considered to be more relevant.
+
+Wildcard and regular expression queries use this same DFA functionality
+to improve their performance.
+
+[[fuzzy_query]]
+==== `fuzzy` query
+
+The `fuzzy` query, like the <<prefix_query,`prefix` query>>, is a
+<<term_queries,term-based query>>, which has no analysis phase.  Unlike
+the other partial matching queries, it doesn't return a relevance
+`_score` of 1. Instead, it tries to calculate a `_score` based upon
+how similar the query term and the fuzzy term are.
+
+
+    { "fuzzy": { "name": "jon" }}
+
+The degree of fuzziness can be controlled by setting the `min_similarity`
+parameter to `1` (1 edit allowed) or `2` (1 or 2 edits allowed).
+
+    {
+        "fuzzy": {
+            "name": {
+                "value":          "jon",
+                "min_similarity": 2
+            }
+        }
+    }
+
+
+This simple looking query is rewritten into a much more complicated query
+-- one for each matching term.  The way the query is rewritten can
+be controlled with the `rewrite` parameter (which defaults to
+`top_terms`) and which is explained in
+<<multi_term_rewrite>>.
+
+==== Fuzzy `match` queries
+
+The <<match_query,`match` query>> (but not the `match_phrase` or
+`match_phrase_prefix` queries) also supports fuzzy matching. Specify
+the maximum number of edits (`1` or `2`) with the `fuzziness` parameter:
+
+    {
+        "match": {
+            "title": {
+                "query":    "Full Tekst Saerch",
+                "fuzziness": 2
+            }
+        }
+    }
+
+The `match` query will analyze the query string before trying to ``fuzzify''
+it.
+
+==== Fuzzy `query_string` queries
+
+The <<query_string,`query_string` query>> mini-language supports fuzzy
+matching using the `~` symbol, but only on individual words. For instance:
+
+    {
+        "query_string": {
+            "default_field": "title",
+            "query":         "Full tekst~2 saerch~2"
+        }
+    }
+
+[NOTE]
+====
+The `query_string` query does not analyze the fuzzy terms before
+searching -- it behaves just like the `fuzzy` query.  For this reason, in the
+above example, the `T` and `S` have been lowercased.
+====
 
 ==== No such thing as a free lunch
 
@@ -83,7 +153,9 @@ Before using fuzzy queries, you should:
 * make sure that you have ample free memory
 * restrict your use of fuzziness to a single field and a few search terms
 * use the `prefix_length` parameter to reduce the number of edits that
-  have to be calculated
+  have to be calculated. Most people will make their typos towards the
+  end of the word, not the beginning, so not fuzzifying the first few
+  letters probably won't make much difference
 * consider using the `max_expansions` parameter to reduce the number of
   generated fuzzy terms which will be searched on -- the default is 50
 * consider using an edit distance of 1 instead of the default 2, as this

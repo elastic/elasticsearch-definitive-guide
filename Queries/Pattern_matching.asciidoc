@@ -32,14 +32,23 @@ expressions to match terms. A regular expression (_regexp_) like
 The full supported syntax is explained in <<regexp_syntax>>.
 
 Wildcard queries are really just simplified regular expression
-queries. The wilcard example given above could be rewritten with this
+queries. The wildcard example given above could be rewritten with this
 regular expression: `b.o.*n`
+
+Like the `prefix` query, the `wildcard` and `regexp` queries:
+
+--
+* are <<term_queries,term-based>> -- they does no analysis on the
+  query string
+* return a `_score` of 1 for all matching documents
+* are rewritten into multiple queries, as explained in <<multi_term_rewrite>>.
+--
 
 ****
 Wildcard and regexp queries have the same mechanism and limitations as the
 <<prefix_queries,`prefix` queries>> -- they need to find all
-of the terms in the index which match the pattern in the wildcard or regular
-expression query and run a `term` query against each of them.
+of the terms in the index which match the specified pattern
+and run a `term` query against each of them.
 
 These can be very heavy, very memory intensive queries. Use with caution!
 
@@ -50,15 +59,6 @@ number of unique terms.
 
 The longer the prefix, the less work the query needs to do.
 ****
-
-Like the `prefix` query, the `wildcard` and `regexp` queries:
-
---
-* are <<term_queries,term-based>> -- they does no analysis on the
-  query string
-* return a `_score` of 1 for all matching documents
-* are rewritten into multiple queries, as explained in <<multi_term_rewrite>>.
---
 
 ==== Pattern matching with the `query_string` query
 
@@ -72,8 +72,8 @@ slashes (`"/"`):
 
     "quick /brown|red|green|gr[ea]y/ fox"
 
-The `query_string` query accepts three parameters which are related
-to wildcard and regexp queries:
+The query accepts three parameters which are related to wildcard and
+regexp queries:
 
 `allow_leading_wildcards`::
     This defaults to `true`, allowing queries like `"*ing"`.  As explained
