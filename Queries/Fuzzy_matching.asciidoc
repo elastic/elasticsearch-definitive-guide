@@ -34,8 +34,9 @@ to the original string.
 
 ****
 The substring comparison approach, although it appears to be very
-computationally heavy, actually works very well as long as you have precomputed
-all the substrings in your index.  We will examine this further in [TODO] ADD
+computationally heavy, actually works very well.  It does require preparation
+though -- you need to have precomputed all the substrings (or _grams_) in your
+index.  We will examine this further in [TODO] ADD
 LINK TO NGRAMS EXAMPLE.
 ****
 
@@ -130,15 +131,14 @@ matching using the `~` symbol, but only on individual words. For instance:
     {
         "query_string": {
             "default_field": "title",
-            "query":         "Full tekst~2 saerch~2"
+            "query":         "Full Tekst~2 Saerch~2"
         }
     }
 
 [NOTE]
 ====
 The `query_string` query does not analyze the fuzzy terms before
-searching -- it behaves just like the `fuzzy` query.  For this reason, in the
-above example, the `T` and `S` have been lowercased.
+searching, but it does respect the `lowercase_expanded_terms` parameter.
 ====
 
 ==== No such thing as a free lunch
