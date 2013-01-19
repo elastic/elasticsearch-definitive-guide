@@ -8,8 +8,8 @@ matches a filter, its bit will be set to `1`.  If it doesn't match, its bit
 will be set to `0`.
 
 This is very space efficient.  One million documents can be cached in only
-122kB of memory. Also, combining bitsets from different
-filters can be performed rapidly using bitwise operations like
+122kB of memory: `1,000,000 / 1024 / 8`. Also, combining bitsets from
+different filters can be performed rapidly using bitwise operations like
 `AND`, `OR` and `NOT`.
 
 However, it doesn't make sense to cache all filters.  Take this filter
