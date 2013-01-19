@@ -86,14 +86,14 @@ how similar the query term and the fuzzy term are.
 
     { "fuzzy": { "name": "jon" }}
 
-The degree of fuzziness can be controlled by setting the `min_similarity`
+The degree of fuzziness can be controlled by setting the `max_edits`
 parameter to `1` (1 edit allowed) or `2` (1 or 2 edits allowed).
 
     {
         "fuzzy": {
             "name": {
-                "value":          "jon",
-                "min_similarity": 2
+                "value":     "jon",
+                "max_edits": 2
             }
         }
     }
@@ -109,13 +109,13 @@ be controlled with the `rewrite` parameter (which defaults to
 
 The <<match_query,`match` query>> (but not the `match_phrase` or
 `match_phrase_prefix` queries) also supports fuzzy matching. Specify
-the maximum number of edits (`1` or `2`) with the `fuzziness` parameter:
+the maximum number of edits (`1` or `2`) with the `max_edits` parameter:
 
     {
         "match": {
             "title": {
-                "query":    "Full Tekst Saerch",
-                "fuzziness": 2
+                "query":     "Full Tekst Saerch",
+                "max_edits": 2
             }
         }
     }
@@ -158,8 +158,8 @@ Before using fuzzy queries, you should:
   letters probably won't make much difference
 * consider using the `max_expansions` parameter to reduce the number of
   generated fuzzy terms which will be searched on -- the default is 50
-* consider using an edit distance of 1 instead of the default 2, as this
-  creates a much smaller DFA
+* consider using an edit distance (`max_edits`) of 1 instead of the
+  default 2, as this creates a much smaller DFA
 * consider using the approach outlined in the [TODO] ADD LINK TO NGRAM
   EXAMPLE instead of using fuzzy queries
 
