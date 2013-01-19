@@ -23,7 +23,7 @@ strings:
 ** <<match_query,`match`>> | <<multi_match_query,`multi_match`>>
 ** <<query_string_query,`field` | `query_string`>>
 
-Term queries::
+<<term_queries,Term queries>>::
 
 Term queries search for the exact term that is specified in the query
 -- they have no analysis phase -- and are thus similar to the
@@ -33,23 +33,24 @@ that they are not cached can be used to alter the relevance `_score`:
 ** `term` | `terms`
 ** `range`
 
-Multi-term queries::
+<<partial_queries,Multi-term queries>>::
 
 Like term queries, multi-term queries also search for exact values, and do not
 have an analysis phase. However,  the list of exact values they search for
 is built up by expanding the query term into a list of terms which could match:
 
-** `fuzzy`
-** `prefix`
-** `wildcard`
+** <<prefix_query,`prefix`>>
+** <<wildcard_query,`wildcard`>>
+** <<regexp_query,`regexp`>>
+** <<fuzzy_query,`fuzzy`>>
 
 Compound queries::
 
 Compound queries allow us to join multiple queries together --
 the difference between them is how the final relevance `_score` is calculated:
 
-** `bool`
-** `dis_max`
+** <<bool_query,`bool`>>
+** <<dismax_query,`dis_max`>>
 
 Boosting queries::
 
