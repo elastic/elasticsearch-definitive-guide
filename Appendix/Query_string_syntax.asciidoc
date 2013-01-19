@@ -72,10 +72,25 @@ is missing some of its letters.  However, by setting `analyze_wildcard` to
 `true`, an attempt will be made to analyze wildcarded words before searching
 the term list for matching terms.
 
-[TODO] LINK TO NGRAM EXAMPLE.
+=== Regular expressions
 
-[TODO] LINK TO REWRITE
+Regular expression patterns can be embedded in the query string by
+wrapping them in forward-slashes (`"/"`):
 
+    name:/joh?n(ath[oa]n)/
+
+The supported regular expression syntax is explained in <<regexp_syntax>>.
+
+[WARNING]
+====
+The `allow_leading_wildcard` parameter does not have any control over
+regular expressions.  A query string such as the following would force
+Elasticsearch to visit every term in the index:
+
+    /.*n/
+
+Use with caution!
+====
 
 === Fuzziness
 
@@ -92,8 +107,8 @@ two changes, where a change is the insertion, deletion
 or substitution of a single character, or transposition of two adjacent
 characters.
 
-The default _edit distance_ of `2` is sufficient to catch 80% of all human
-misspellings. An edit distance of `1` can be specified as:
+The default _edit distance_ is `2`, but an edit distance of `1` should be
+sufficient to catch 80% of all human misspellings. It can be specified as:
 
     quikc~1
 
