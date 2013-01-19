@@ -4,7 +4,7 @@ Like the filter clauses, each query clause is a standalone element that
 can be used wherever _query_context_ applies:
 
   * as the argument for any parameter in the Elasticsearch API called `filter`
-  * in a compound query clause (such as the <<bool_query,`bool` query) which
+  * in a compound query clause (such as the <<bool_query,`bool` query>>) which
     expects one or more query clauses
   * in any filter clause which accepts a `query` argument, such as the
     `query` filter
