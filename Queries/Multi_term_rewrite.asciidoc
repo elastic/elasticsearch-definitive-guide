@@ -1,0 +1,134 @@
+[[multi_term_rewrite]]
+=== Multi-term query rewriting
+
+Many query clauses that look simple are rewritten into more complex queries.
+For example, the following simple `prefix` query:
+
+    { "prefix": { "name": "jon" }}
+
+could  be rewritten internally into a query that looks like this:
+
+    {
+        "bool": {
+            "should": [
+                { "term": { "name": "jon"   }},
+                { "term": { "name": "jonah" }},
+                { "term": { "name": "jonas" }},
+                { "term": { "name": "jonathon" }},
+                { "term": { "name": "joni" }},
+                { "term": { "name": "jonis" }},
+                { "term": { "name": "jono" }},
+                etc
+            ]
+        }
+    }
+
+It is easy to see how a `prefix` query on `"a"` could generate too many
+queries and perform badly.
+
+There are various _multi-term query rewrite_ methods available for limiting
+these fulminant queries, while still attempting to maintain the desired
+search semantics.
+
+On most queries that support rewriting, the method can be changed using
+the `rewrite` or `fuzzy_rewrite` parameter:
+
+    {
+        "prefix": {
+            "name": {
+                "value":   "jon",
+                "rewrite": "top_terms_50"
+            }
+        }
+    }
+
+.Boolean `max_clause_count`
+****
+A number of the methods listed below result in a `bool` query containing
+multiple `term` queries.  There is a soft limit on the number of query
+clauses that a `bool` query can contain, which defaults to 1,024.
+
+This limit can be changed at startup by adding the following to the config
+file:
+
+
+    index.query.bool.max_clause_count: 3000
+
+However, it is strongly recommended that you _don't increase this value_
+as it can lead to poor performance. Instead, reconsider the types of
+queries that you are running, the `rewrite` method that you are using
+and how your data is indexed.
+
+In fact, 1,024 clauses is usually too many anyway. For most purposes,
+you can limit the maximum clauses (with the `max_expansions` parameter) to a
+more reasonable number like 50, without any perceived loss of functionality.
+****
+
+The available rewrite methods are:
+
+`constant_score_auto`::
+
+This is the default for all multi-term queries except for
+<<fuzzy_search,`fuzzy` search>>, which defaults to `top_terms_N`
+instead.  It analyzes the query and, if the number of terms
+and documents is small enough, uses the `constant_score_boolean` method.
+If not, it uses the `constant_score_filter` method.
+
+`constant_score_boolean`::
+
+This method generates a `term` query for each term, but doesn't
+attempt to calculate the `_score` for each term.  Instead, any matching
+document receives a `_score` equivalent to the `boost` value for the
+query, which defaults to `1`.
++
+If there are more than `max_clause_count` terms, this method will
+throw an error. On most queries, you can use the `max_expansions`
+parameter to set a limit below the `max_clause_count`.
+
+`constant_score_filter`::
+
+This method is not limited by the `max_clause_count` and is chosen
+automatically by `constant_score_auto` when there are too many clauses
+for the `constant_score_boolean` method.
++
+It creates a private filter, visits each term in sequence and adds
+any matching docs to the bitset.
++
+Like the `constant_score_boolean`, no scoring is attempted -- any matching
+document receives a `_score` equivalent to the `boost` value for the
+query, which defaults to `1`.
+
+`scoring_boolean`::
+
+This method is similar to the `constant_score_boolean`. The only
+difference is that it attempts to calculate the `_score` for
+matching terms.
++
+Given that query rewriting may result in many `term` queries,
+calculating the `_score` for each of them can be computationally
+heavy.  Also, these scores are seldom meaningful to the user.
+It is almost always better to use the `constant_score_auto`
+method instead.
+
+`top_terms_N`::
+
+This method is similar to `scoring_boolean`, except that it limits
+itself to the top-scoring `N` terms, so it will not exceed the
+`max_clause_count`.  This  is the default method used by
+<<fuzzy_queries,`fuzzy` queries>>.
++
+`N` should be an integer indicating the maximum number of terms
+to consider -- which overrides the value set in `max_expansions`
+-- but it will never exceed the `max_clause_count`.
+
+`top_terms_boost_N`::
+
+This method is a combination of `top_terms_N` and
+`constant_score_boolean`. It limits itself to the `N` top-scoring terms
+so that it won't exceed the `max_clause_count`, but then doesn't
+attempt to calculate the `_score`. Instead it just uses the the
+`boost` value for any matching documents.
+
+
+You seldom need to set the `rewrite` or `fuzzy_rewrite`  parameter
+yourself -- the defaults usually work well.
