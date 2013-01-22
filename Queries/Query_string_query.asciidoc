@@ -1,8 +1,8 @@
-[[query_string_query]]
+[[query-string-query]]
 === Query string mini-language
 
 The `query_string` query is similar in kind to the
-<<match_query,`match` query>>. Where it differs is in how it treats its
+<<match-query,`match` query>>. Where it differs is in how it treats its
 query string. For the `match` family of queries, the query string is
 just text.  The `query_string` query, on the other hand, treats the query string
 as a ``mini-language'', which can be used to describe complex queries
@@ -22,7 +22,7 @@ is translated into a compound query in which:
 * the `author` field must contain the phrase `"joe bloggs"`
 * the `date` field must be a date from 2012 onwards
 
-The full syntax for this mini-language is explained in <<query_string_syntax>>.
+The full syntax for this mini-language is explained in <<query-string-syntax>>.
 
 .Danger, Will Robinson!
 ****
@@ -40,7 +40,7 @@ Exposing the `query_string` query to users can be risky -- it allows them
 to search on any field in your index and to run slow, heavy queries which
 might result in your nodes running out of memory and crashing.
 
-*Note:* It is almost always better to use a <<match_query,`match` query>>
+*Note:* It is almost always better to use a <<match-query,`match` query>>
 instead.
 
 That said, the `query_string` query can be useful for trusted power users,
@@ -57,7 +57,7 @@ the field name, followed by a colon. For instance:
 
 However, the parts of the query for which no field name has been specified
 (`lazy dog` in the above example), are matched against the `default_field`.
-This defaults to the special <<all_field,`_all` field>>, which we will discuss
+This defaults to the special <<all-field,`_all` field>>, which we will discuss
 in <<mapping>>.
 
 It is possible to specify a different `default_field` as follows:
@@ -105,7 +105,7 @@ This behaviour can be changed by changing the `default_operator` from
 
 ==== `fields`
 
-Like the <<multi_match_query,`multi_match` query>>, it is possible to run
+Like the <<multi-match-query,`multi_match` query>>, it is possible to run
 the `query_string` query against multiple ``default'' fields, as follows:
 
     {
@@ -126,8 +126,8 @@ boosting (`^`) syntax as the `multi_match` query:
     }
 
 By default, queries run on multiple fields are wrapped in a
-<<bool_query,`bool` query>>. Like the `multi_match` query, you can choose
-to use a <<dismax_query,`dis_max` query>> instead:
+<<bool-query,`bool` query>>. Like the `multi_match` query, you can choose
+to use a <<dismax-query,`dis_max` query>> instead:
 
     {
         "query_string" : {

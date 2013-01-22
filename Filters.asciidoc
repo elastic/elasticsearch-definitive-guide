@@ -10,11 +10,11 @@ A filter clause can be used wherever _filter context_ applies:
  * as the argument for any parameter in the Elasticsearch API called
    `filter` or `facet_filter`
 
- * in a compound filter clause (such as the <<bool_filter,`bool` filter>>)
+ * in a compound filter clause (such as the <<bool-filter,`bool` filter>>)
    which expects one or more filter clauses
 
  * in any query clause which accepts a `filter` argument, such as the
-   <<filtered_query,`filtered` query>>
+   <<filtered-query,`filtered` query>>
 
 In the rest of this chapter, we will discuss the most commonly used
 filter clauses. We start with filters because they are simpler than queries

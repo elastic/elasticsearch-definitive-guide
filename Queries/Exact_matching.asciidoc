@@ -1,8 +1,8 @@
-[[exact_queries]]
+[[exact-queries]]
 === Querying exact values
 
 To match against numeric, date, boolean or `not_analyzed`
-string fields -- see <<analyzed_vs_not,`analyzed` vs `not_analyzed`>> below
+string fields -- see <<analyzed-vs-not,`analyzed` vs `not_analyzed`>> below
 -- we use the `match` query.
 
 It does The Right Thing for each field based on its _mapping_ (or field
@@ -25,7 +25,7 @@ definition), which we will discuss in <<mapping>>:
     { "match" : { "featured" : true }}
 
 
-[[analyzed_vs_not]]
+[[analyzed-vs-not]]
 .`analyzed` vs `not_analyzed` string fields
 ****
 String fields can contain either:
@@ -67,7 +67,7 @@ We want at least one of these tags to match, but the more tags that match,
 the better.
 
 We could write this by combining three `match` clauses with a
-<<bool_query,`bool` query>>:
+<<bool-query,`bool` query>>:
 
     {
         "bool": {
@@ -85,7 +85,7 @@ show up as being particularly relevant.
 [NOTE]
 ====
 Later, we will discuss the
-<<custom_filters_score_query,`custom_filters_score` query>> which provides a
+<<custom-filters-score-query,`custom_filters_score` query>> which provides a
 way to use filters to influence the relevance `_score` more efficiently.
 ====
 

@@ -1,4 +1,4 @@
-[[query_boost]]
+[[query-boost]]
 === Boosting query clauses
 
 Each query clause returns a relevance score for each document -- the
@@ -10,7 +10,7 @@ the `content` field, so we need a way of telling Elasticsearch to make the
 `title` clause more important than the `content` clause.
 
 We have already seen how to do this when searching multiple fields for
-the same query string, with the <<multi_match_query,`multi_match` query>>:
+the same query string, with the <<multi-match-query,`multi_match` query>>:
 
     {
         "multi_match": {

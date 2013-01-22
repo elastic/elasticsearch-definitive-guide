@@ -42,7 +42,7 @@ by the non-matching `content` field.
 
 What can we do about this?
 
-[[dismax_query]]
+[[dismax-query]]
 === Disjunction max query
 
 There is a query designed specifically to deal with this situation,
@@ -103,7 +103,7 @@ A reasonable value might be `0.1` to `0.3`.
 
 .Using `dis_max` with `multi_match`
 ****
-The <<multi_match_query,`multi_match` query>>,  when querying multiple fields,
+The <<multi-match-query,`multi_match` query>>,  when querying multiple fields,
 run a separate query on each field and, by default, combines these sub-queries
 with a `bool` query.
 

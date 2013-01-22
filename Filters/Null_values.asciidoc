@@ -1,4 +1,4 @@
-[[null_values]]
+[[null-values]]
 === Null values
 
 A field can have zero or more values.  Elasticsearch can't index
@@ -12,14 +12,14 @@ values will be indexed.  For instance:
 
 The `count` field would have the values 1, 3 and 5 indexed.
 
-[[exists_filter]]
+[[exists-filter]]
 ==== `exists` filter
 
 To check whether a field has a value, use the `exists` filter:
 
     { "exists" : { "field" : "field_name" }}
 
-[[missing_filter]]
+[[missing-filter]]
 ==== `missing` filter
 
 The inverse of the `exists` filter is the `missing` filter, which checks

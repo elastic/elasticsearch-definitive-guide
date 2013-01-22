@@ -1,7 +1,7 @@
-[[pattern_queries]]
+[[pattern-queries]]
 === Pattern matching: Wildcards and regular expressions
 
-[[wildcard_query]]
+[[wildcard-query]]
 ==== `wildcard` query
 
 A wildcard query allows the substitution of a single character with `"?"`
@@ -15,7 +15,7 @@ and zero or more characters with `"*"`, for instance `b?o*n` would match
         }
     }
 
-[[regexp_query]]
+[[regexp-query]]
 ==== `regexp` query
 
 A regular expression query supports the use of Lucene-style regular
@@ -29,7 +29,7 @@ expressions to match terms. A regular expression (_regexp_) like
         }
     }
 
-The full supported syntax is explained in <<regexp_syntax>>.
+The full supported syntax is explained in <<regexp-syntax>>.
 
 Wildcard queries are really just simplified regular expression
 queries. The wildcard example given above could be rewritten with this
@@ -38,15 +38,15 @@ regular expression: `b.o.*n`
 Like the `prefix` query, the `wildcard` and `regexp` queries:
 
 --
-* are <<term_queries,term-based>> -- they does no analysis on the
+* are <<term-queries,term-based>> -- they does no analysis on the
   query string
 * return a `_score` of 1 for all matching documents
-* are rewritten into multiple queries, as explained in <<multi_term_rewrite>>.
+* are rewritten into multiple queries, as explained in <<multi-term-rewrite>>.
 --
 
 ****
 Wildcard and regexp queries have the same mechanism and limitations as the
-<<prefix_queries,`prefix` queries>> -- they need to find all
+<<prefix-queries,`prefix` queries>> -- they need to find all
 of the terms in the index which match the specified pattern
 and run a `term` query against each of them.
 
@@ -62,7 +62,7 @@ The longer the prefix, the less work the query needs to do.
 
 ==== Pattern matching with the `query_string` query
 
-The <<query_string_query,`query_string` query>> mini-language understands
+The <<query-string-query,`query_string` query>> mini-language understands
 wildcards:
 
     "quick b.o*n fox"

@@ -1,5 +1,5 @@
 
-[[match_phrase_query]]
+[[match-phrase-query]]
 === Phrase matching
 
 Instead of just matching the words in the query string, we can also
@@ -64,11 +64,11 @@ is most similar to the order in the query string.
 ====
 
 
-[[match_phrase_prefix_query]]
+[[match-phrase-prefix-query]]
 === Find-as-you-type
 
 The `match_phrase_prefix` query is a specialization of the
-<<match_phrase_query,`match_phrase` query>> which is particularly useful
+<<match-phrase-query,`match_phrase` query>> which is particularly useful
 for _find-as-you-type_ searches.  It works in the same way as the
 `match_phrase` query, but adds a wildcard (`*`) to the final word.
 
@@ -90,7 +90,7 @@ is used for the prefix query.
 
 ****
 Like the `match_phrase` query, the `match_phrase_prefix` query is a variant
-of the <<match_query,`match` query>> and can be written as:
+of the <<match-query,`match` query>> and can be written as:
 
     {
         "match" : {

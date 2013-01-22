@@ -1,7 +1,7 @@
-[[equality_filters]]
+[[equality-filters]]
 === Equality filters
 
-[[term_filter]]
+[[term-filter]]
 ==== `term` filter
 
 The most basic filter is the `term` filter, which asks: Does field `foo`
@@ -40,7 +40,7 @@ will match a filter looking for just one of those tags:
 
 ====
 
-[[terms_filter]]
+[[terms-filter]]
 ==== `terms` filter
 
 The `terms` filter is like the `term` filter but allows you to check for
