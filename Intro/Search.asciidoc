@@ -1,0 +1,61 @@
+=== Easy search
+
+Now that our documents are indexed we can search for them. We can do a simple
+query-string search using the special `_all` field, which indexes all
+of the fields in our document:
+
+    curl -XGET 'http://localhost:9200/_search?pretty&q=john'
+
+Or we can search a specific field:
+
+    curl -XGET 'http://localhost:9200/_search?pretty&q=name.first:john'
+
+.Near real-time search
+****
+Documents become ``visible'' to search within 1 second of being indexed or
+updated. This _refresh interval_ is configurable, and a refresh can be
+forced more frequently, at the cost of performance.
+****
+
+While the query string search is useful for simple queries, we can use the
+the _Query DSL_ -- Elasticsearch's custom query language -- to express
+more complex and specific queries in JSON:
+
+    curl -XGET http://localhost:9200/_search?pretty -d '
+    {
+        "query": {
+            "bool": {
+                "must": { "match": { "name.first": "john" }},
+                "should": [
+                    { "match": { "interests": "whales" }},
+                    { "match": { "bio": "eco warrior" }},
+                    { "range": { "age": { "from": 20   }}}
+                ]
+            }
+        }
+    }
+    '
+
+Elasticsearch not only returns the list of which documents match, but also
+returns the document itself. There is no need to have a separate phase to 
+fetch the matching documents from another datasource.
+
+The search API supports other related functionality, such as the ability
+to return highlighted search snippets which show the search terms
+in the context of the document:
+
+    curl -XGET http://localhost:9200/_search?pretty -d '
+    {
+        "query": { "match": { "bio": "eco warrior" }},
+        "highlight": {
+            "fields": {
+                "bio": {}
+            }
+        }
+    }
+    '
+
+The above query returns snippets like: 
+``__Eco-warrior__ and defender of the weak''
+
+   

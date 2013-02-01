@@ -1,0 +1,116 @@
+=== Data in -- Data out
+
+Pretty much any object in any language can be serialized into JSON, which is
+simple, concise and easy to read. JSON has become the standard format for
+data in the NoSQL movement.
+
+Our objects (or _documents_ as they are known in Elasticsearch) can contain
+complex values such as other objects or arrays. Consider this document 
+representing a user:
+
+    {
+        "email":     "john@smith.com",
+        "name": {
+            "first": "John",
+            "last":  "Smith"
+        },
+        "bio":       "Eco-warrior and defender of the weak",    
+        "age":       25,
+        "join_date": "2013/05/01",
+        "interests": ["dolphins", "whales"]
+    }
+
+Before we can store this document in Elasticsearch, we need to decide
+where to store the document -- in which _index_ -- and what _type_
+of document it is. 
+
+.Index, type and ID
+****
+For the moment, think of an _index_ as being like a database in 
+a relational database, and a _type_ as being like a table in that database.
+
+A document ID must be unique across the index and the type, otherwise
+you may overwrite an existing document. IDs will be auto-generated
+if not specified.  
+****
+
+We are going to store it in the `blogs` index, as type `user`, and we
+can assign this user the unique ID `johnsmith`:
+
+    curl -XPUT 'http://localhost:9200/blogs/user/johnsmith?pretty' -d '
+    {
+        "email":     "john@smith.com",
+        "name": {
+            "first": "John",
+            "last":  "Smith"
+        },
+        "bio":       "Eco-warrior and defender of the weak",    
+        "age":       25,
+        "join_date": "2013/05/01",
+        "interests": ["dolphins", "whales"]
+    }
+    ' 
+
+And we receive the following response, which confirms that our document
+has been indexed correctly:
+
+    {
+      "ok" : true,
+      "_index" : "blogs",
+      "_type" : "user",
+      "_id" : "johnsmith",
+      "_version" : 1
+    }
+
+.Persistence
+****        
+Document changes are persistent -- in other words, if the whole cluster
+suffers a power failure immediately after indexing a document, the change
+will still be there when the cluster is restarted.
+****
+
+We can retrieve the document using the same `index`, `type` and `id`:
+
+    curl -XGET 'http://localhost:9200/blogs/user/johnsmith?pretty'
+
+.Real-time GET
+****        
+Elasticsearch has _realtime GET_. In other words, as soon as the document
+is indexed, it can be retrieved from any node in the cluster.
+****
+
+It returns the exact same JSON document that we indexed, as the `_source`
+field, plus some extra metadata:
+    
+    {
+        "_index" :    "blogs",
+        "_type" :     "user",
+        "_id" :       "johnsmith",
+        "_version" :  1,
+        "exists" :    true, 
+        "_source" :   {
+             "email":     "john@smith.com",
+             "name": {
+                 "first": "John",
+                 "last":  "Smith"
+             },
+             "bio":       "Eco-warrior and defender of the weak",    
+             "age":       25,
+             "join_date": "2013/05/01",
+             "interests": ["dolphins", "whales"]
+        }    
+    }    
+    
+.Document oriented and schema free
+****
+Elasticsearch can store complex objects or documents, without us having
+to flatten them into key-value pairs. Not only that, but we haven't had
+to specify our document structure or schema before indexing. We didn't
+even have to create the index -- that was done for us.
+
+Later, we will want more control over this process, but Elasticsearch
+makes it easy for us to start experimenting without having to plan
+ahead.
+****
+
+

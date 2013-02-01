@@ -1,0 +1,58 @@
+=== Gettting started
+
+The easiest way to understand what Elasticsearch can do for you is to
+play with it, so let's get started!
+
+The only requirement for installing Elasticsearch is a recent version of Java.
+Preferably, you should install the latest version of the official Java
+from http://www.java.com[www.java.com].
+
+Now you can download the latest version of Elasticsearch:
+
+    curl -L -O http://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-0.20.2.tar.gz
+    tar -xzf elasticsearch-*.tar.gz
+    cd  elasticsearch-*
+
+Elasticsearch is now ready to run. You can start it up in the foreground
+with:
+
+    ./bin/elasticsearch -f
+
+Test it out by opening another console and running:
+
+    curl 'http://localhost:9200/?pretty'
+
+You should see a response like this:
+
+    {
+      "tagline" : "You Know, for Search",
+      "ok" : true,
+      "status" : 200,
+      "name" : "Contrary",
+      "version" : {
+        "number" : "0.20.2",
+        "snapshot_build" : false
+      }
+    }
+
+This means that your Elasticsearch _cluster_ is up and running, and we can
+start experimenting with it.
+
+.Clusters and nodes
+****
+A _node_ is a running instance of Elasticsearch. A _cluster_ is a group
+of nodes that are working together to share data and to provide failover and
+scale.
+****
+        
+.Running Elasticsearch in production
+[NOTE]
+====
+Before we put Elasticsearch into production, there are a few other things
+that we need to configure, such as the amount of memory that Elasticsearch
+is allowed to use, the name of the cluster, and various operating system 
+specific parameters.
+
+We will explain all of this later, but in order to test Elasticsearch out,
+the process described above is sufficient.
+====

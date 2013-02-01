@@ -1,0 +1,55 @@
+=== Talking to Elasticsearch
+
+How you talk to Elasticsearch depends on whether you are using Java or not.
+
+If you are using Java, then Elasticsearch provides two built-in clients
+which you can use in your code:
+
+Node client::
+    The node client joins a local cluster as a _non-data node_. In other
+    words, it doesn't hold any data itself, but it knows what data lives
+    on which node in the cluster, and can forward requests directly
+    to the correct node.
+    
+Transport client::
+    The lighter weight transport client can be used to send requests to
+    a remote cluster. It doesn't join the cluster itself, but simply
+    forwards requests to a node in the cluster.
+    
+Both Java clients talk to the cluster over *port 9300*, using the native
+Elasticsearch protocol.  
+
+
+[NOTE]
+==== 
+The Java client must be the same version as the server, otherwise they 
+may not understand each other.
+====
+
+All other languages can use the 
+Elasticsearch provides two Java clients, both of which talk to the
+cluster using the native Elasticsearch protocol, over port 9300:
+
+Transport client::
+    A lightweight client that can be used to talk to a remote cluster.
+      
+Node client::
+    A node client joins the cluster as a _non-data node_.  This means that
+    it is fully aware 
+    
+* the Java API
+*  
+.A RESTful API with JSON over HTTP
+****
+All requests to Elasticsearch consist of an HTTP request with the
+appropriate method (`GET`, `POST`, `PUT`, `HEAD` or `DELETE`), 
+a  RESTful URI and possibly a request body, encoded as JSON, and 
+query string parameters.  
+
+The response consists of an HTTP status code and a response body encoded in 
+JSON, except for `HEAD` requests which have no body.
+
+Any request can be run from the command line with the simple `curl` utility,
+which we use in all of our examples.
+****
+
