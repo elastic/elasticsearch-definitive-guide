@@ -2,6 +2,8 @@
 
 How you talk to Elasticsearch depends on whether you are using Java or not.
 
+==== Java API
+
 If you are using Java, then Elasticsearch provides two built-in clients
 which you can use in your code:
 
@@ -10,46 +12,71 @@ Node client::
     words, it doesn't hold any data itself, but it knows what data lives
     on which node in the cluster, and can forward requests directly
     to the correct node.
-    
+
 Transport client::
     The lighter weight transport client can be used to send requests to
     a remote cluster. It doesn't join the cluster itself, but simply
     forwards requests to a node in the cluster.
-    
-Both Java clients talk to the cluster over *port 9300*, using the native
-Elasticsearch protocol.  
 
+Both Java clients talk to the cluster over *port 9300*, using the native
+Elasticsearch protocol.  The nodes in the cluster also communicate
+over port 9300, so if this port is not open, then your nodes will
+not be able to form a cluster.
 
 [NOTE]
-==== 
-The Java client must be the same version as the server, otherwise they 
-may not understand each other.
+====
+The Java client must be from the same version of Elasticsearch as the nodes,
+otherwise they may not be able to understand each other.
 ====
 
-All other languages can use the 
-Elasticsearch provides two Java clients, both of which talk to the
-cluster using the native Elasticsearch protocol, over port 9300:
+==== RESTful API with JSON over HTTP
 
-Transport client::
-    A lightweight client that can be used to talk to a remote cluster.
-      
-Node client::
-    A node client joins the cluster as a _non-data node_.  This means that
-    it is fully aware 
-    
-* the Java API
-*  
-.A RESTful API with JSON over HTTP
-****
-All requests to Elasticsearch consist of an HTTP request with the
-appropriate method (`GET`, `POST`, `PUT`, `HEAD` or `DELETE`), 
-a  RESTful URI and possibly a request body, encoded as JSON, and 
-query string parameters.  
+All other languages can use any simple HTTP client to communicate with
+the cluster over *port 9200*. In fact, as you have seen above, you can
+even talk to Elasticsearch from the command line, using the
+`curl` command.
 
-The response consists of an HTTP status code and a response body encoded in 
-JSON, except for `HEAD` requests which have no body.
+All requests consist of:
 
-Any request can be run from the command line with the simple `curl` utility,
-which we use in all of our examples.
-****
+* an appropriate HTTP method: `GET`, `POST`, `PUT`, `HEAD` or `DELETE`
+* the protocol and hostname of any node in the cluster,
+  eg: `http://localhost:9200`
+* the path of the resource you want to use, eg: `/_count`
+* any optional query string parameters, eg `?pretty=true`
+* a JSON encoded request body (if the request needs one)
 
+For instance, to count the number of documents in the cluster, we could
+use:
+
+    curl -XGET 'http://localhost:9200/_count?pretty=true' -d '
+    {
+        "match_all": {}
+    }
+    '
+
+All responses consist of:
+
+* an HTTP status code, eg: `200 OK`
+* a response body encoded in JSON (except for `HEAD` requests, which don't
+  return a body)
+
+The above `curl` request would respond with something like the following:
+
+    {
+        "count" : 0,
+        "_shards" : {
+            "total" : 5,
+            "successful" : 5,
+            "failed" : 0
+        }
+    }
+
+We don't see the HTTP headers in the response because we didn't ask `curl` to
+display them. To see the headers, use the `curl` command with the `-D`
+switch:
+
+    curl -D - -XGET 'http://...'
+
+We use this `curl` format in all of our examples because it is easy to
+read and easy to translate into a request using the HTTP library of your
+choice.

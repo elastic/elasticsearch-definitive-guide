@@ -1,0 +1,39 @@
+=== Document oriented
+
+Objects in an application are seldom just a simple list of keys and values.
+More often than not they are complex data structures which may contain other
+objects, or lists of values.
+
+When using a relational database to store these objects, you have to flatten
+the object so that it fits into a table, with one field per column. When
+retrieving the object from the database, you have to reconstruct it
+from its flat representation.
+
+Elasticsearch is _document oriented_, meaning that it stores and
+indexes _documents_. It requires those documents to be in JSON format, so
+that it can make sense out of the content.
+
+Fortunately, pretty much any object in any language can be serialized into
+a JSON document. For this reason it has become the standard format used by the
+NoSQL movement. It is simple, concise and easy to read.
+
+Consider this JSON document which represents a user object:
+
+    {
+        "email":     "john@smith.com",
+        "name": {
+            "first": "John",
+            "last":  "Smith"
+        },
+        "bio":       "Eco-warrior and defender of the weak",
+        "age":       25,
+        "join_date": "2013/05/01",
+        "interests": ["dolphins", "whales"]
+    }
+
+Although the original user object was complex, the
+structure of the object has been retained in the JSON version.
+Converting an object to and from JSON for storage and indexing in Elasticsearch
+is much simpler than the equivalent process for a flat table structure.
+
+

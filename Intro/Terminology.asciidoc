@@ -1,0 +1,99 @@
+=== Terminology
+
+Before we demonstrate how the distributed nature of Elasticsearch works,
+we need to explain some terms:
+
+Cluster::
+
+A cluster consists of one or more nodes that are working together to share
+their data and workload.  All nodes in the cluster must have the same
+cluster name set in their config file, and must be able to talk to each
+other.
+
+Node::
+
+A node is a running instance of Elasticsearch. By default, a new node uses
+multicast to automagically discover an existing cluster with the same cluster
+name, but it can also configured to use unicast or Amazon's EC2 discovery
+instead.
++
+Every node in the cluster knows about every other node in the cluster
+and what data it is responsible for. You can send your requests to any node
+in the cluster and it will forward that request to the appropriate node.
++
+For testing purposes, you can run more than one node on a single server, but
+it is not recommended for production.
+
+Master node::
+
+A master node is automatically elected by the cluster -- any node can
+become the master, and if the current master node fails, another node in the
+cluster will be elected automatically.
++
+A master node is in charge of any cluster-level changes, for instance
+the addition of a new node, or the creation of a new index. However, it does
+not need to be involved in document level changes or searches, which means
+that the master node will not become a bottleneck as traffic increases.
+
+Shard::
+
+A shard is a single Lucene instance -- a low-level ``worker'' unit
+which is a complete search engine in its own right. Our documents are
+stored and indexed in a shard, but we don't talk to shards directly.  Instead,
+we talk to an index, which is a logical namespace governing a group of shards.
++
+A shard is the basic unit of scale.  When the cluster state changes, e.g. a new
+node is added or a new index created, the cluster can move shards automatically
+from one node to another in order to balance out the load.
++
+While it is normal for each node to hold multiple shards, a single shard
+is capable of using all the resources available on a single node.
+This means that your cluster can grow to contain one node (or server) for
+every shard.
++
+A shard can be either a _primary_ shard or a _replica_ shard, as explained
+below.
+
+Index::
+
+An index is like a ``database'' in a relational database. In reality,
+it is a logical namespace which contains one or more _primary shards_,
+each of which can have zero or more _replica shards_.
++
+When we index a document in an index, the index will forward that document to
+the appropriate primary shard.
++
+A new index defaults to having five primary shards, each of which has one
+replica shard. This results in a total of 10 shards:
++
+    5 * (1 primary + 1 replica) = 10 shards
+
+Primary shard::
+
+Each document is stored on a single primary shard. Any changes to a document
+must first be made on the primary shard before being copied to any replica
+shards.
++
+An index has a fixed number of primary shards -- this number cannot
+be changed after the index is created.  The more primary shards,
+the more data the index can hold.
+
+Replica shard::
++
+--
+A replica shard is an exact copy of its primary shard. This means that,
+if the primary shard fails because the node hosting it suffers a power failure,
+the master node will instantly promote one of the replica shards to be
+a primary shard instead. A replica shard will never be placed on the
+same node as its primary shard.
+
+The number of replicas per primary shard is not fixed -- it can be
+changed dynamically on a live index. The more replica shards you have,
+the more nodes you can afford to lose without losing any data, and
+the more search requests your cluster can serve.
+
+NOTE: Just increasing the number of replicas without increasing the
+number of nodes will not increase search throughput.  The ability
+to increase the number of replicas on the fly simply gives you the
+ability to take advantage of extra hardware.
+--

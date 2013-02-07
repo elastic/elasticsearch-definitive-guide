@@ -9,30 +9,64 @@ include::Intro/Installing_ES.asciidoc[]
 
 include::Intro/API.asciidoc[]
 
+include::Intro/Document.asciidoc[]
+
 include::Intro/CRUD.asciidoc[]
 
 include::Intro/Bulk.asciidoc[]
 
 include::Intro/Search.asciidoc[]
 
-include::Intro/Multi_tenancy.asciidoc[]
-
 include::Intro/Mapping.asciidoc[]
 
+include::Intro/Multi_tenancy.asciidoc[]
+
+include::Intro/Distributed.asciidoc[]
+
+include::Intro/Availability.asciidoc[]
+
+include::Intro/Terminology.asciidoc[]
+
+include::Intro/Multiple_nodes.asciidoc[]
+
+
+
+Cluster
+ > Node
+ : cluster, node
+ > Create an index
+ : index, shard, primary, replica
+
+ -> unassigned, yellow
+ > Start a second node
+ -> replicas assigned, green
+ -> failover
+ > Start a third node
+ -> Reallocation
+ -> scale load
+ > increase replicas
+ -> more failover
+ > kill master node
+ -> new master
+
+Scale:
+ - start a second node
+  -> replicas
+    -> failover - always available
+ - start a third node
+  -> reallocation
+    -> scale load
+ - increase replicas
+   -> more failover
+ - kill master node
+
+
+
 Always available
-Real time search
-Multi tenancy
 Built for the cloud - distributed, faile over,Scale to hundreds
 
 
 
-
-=== A simple demonstration
-
-* Loading data
-* Searching
-** Query string search
-** The query DSL
 * Using facets
 ** Popular terms
 ** Visualizing your data

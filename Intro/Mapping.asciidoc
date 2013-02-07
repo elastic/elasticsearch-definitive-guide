@@ -1,8 +1,16 @@
-=== Schema mapping
+=== Schema free vs Schema mapping
 
-We've said that Elasticsearch is schema-free, but in order to query your
-data meaningfully, Elasticsearch needs to understand what type of data each 
-field contains.
+Not only can Elasticsearch store complex objects or documents, but we haven't
+had to specify our document structure or _schema_ before indexing.   We didn't
+even have to create the index -- that was done for us.
+
+Later, we will want more control over this process, but by not requiring
+a schema -- by being _schema free_ -- Elasticsearch makes
+it easy for us to start experimenting without having to plan ahead.
+
+However, in order to make sense of our document so that it can be queried,
+Elasticsearch has tried to understand the structure of our object, and has
+generated its own schema automatically.
 
 We can see how our fields from the example have been interpreted by retrieving
 the current _mapping_ or schema definition:
@@ -32,11 +40,11 @@ which looks like this:
             }
     }}}}
 
-We can see that Elasticsearch has done a reasonable job of interpreting our 
+We can see that Elasticsearch has done a reasonable job of interpreting our
 data types:
 
 * the numeric field `age` has been assigned type `long`
-* string fields, including the multi-value field `interests`, are 
+* string fields, including the multi-value field `interests`, are
   assigned type `string`
 * the string field `join_date` has correctly been recognised as type `date`
 * the embedded object `name` has two string fields: `first` and `last`
@@ -52,13 +60,9 @@ adding for example:
  * language specific analysis to the `title` and `content` fields
  * geo-location information for results-near-you
 
-.Schema mapping
-****
 Instead of relying on the dynamic detection of fields, we can
-specify our own custom analyzers and field mapping, taking control over 
+specify our own custom analyzers and field mapping, taking control over
 how the value for each field should be analyzed and indexed.
-****
 
 
- 
-    
+

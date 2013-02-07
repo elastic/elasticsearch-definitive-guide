@@ -1,23 +1,32 @@
 === Easy search
 
-Now that our documents are indexed we can search for them. We can do a simple
-query-string search using the special `_all` field, which indexes all
-of the fields in our document:
+Now that our documents are indexed we can search for them.
+For simple _ad hoc_ searches, we can use the _query string_ search
+method:
 
     curl -XGET 'http://localhost:9200/_search?pretty&q=john'
 
-Or we can search a specific field:
+The above query returns our document as a result, but what we have actually
+searched?
+
+Elasticsearch adds a magical `_all` field to our document, which contains
+the values from all the other fields in the document.  By default, the
+`q=keywords` query string search looks for matches in this `_all` field.
+
+Alternatively, we can search against a specific field:
 
     curl -XGET 'http://localhost:9200/_search?pretty&q=name.first:john'
 
 .Near real-time search
 ****
-Documents become ``visible'' to search within 1 second of being indexed or
-updated. This _refresh interval_ is configurable, and a refresh can be
-forced more frequently, at the cost of performance.
+While documents can be retrieved immediately after being indexed
+-- real-time GET -- they only become ``visible'' to search within 1 second of
+being indexed or updated. This is known as  _near real-time search_.
 ****
 
-While the query string search is useful for simple queries, we can use the
+=== Powerful search
+
+While the query string search is useful for simple queries, we can use
 the _Query DSL_ -- Elasticsearch's custom query language -- to express
 more complex and specific queries in JSON:
 
@@ -37,8 +46,10 @@ more complex and specific queries in JSON:
     '
 
 Elasticsearch not only returns the list of which documents match, but also
-returns the document itself. There is no need to have a separate phase to 
+returns the document itself. There is no need to have a separate phase to
 fetch the matching documents from another datasource.
+
+=== Snippet highlighting
 
 The search API supports other related functionality, such as the ability
 to return highlighted search snippets which show the search terms
@@ -55,7 +66,6 @@ in the context of the document:
     }
     '
 
-The above query returns snippets like: 
+The above query returns snippets like:
 ``__Eco-warrior__ and defender of the weak''
 
-   
