@@ -2,7 +2,7 @@
 
 Objects in an application are seldom just a simple list of keys and values.
 More often than not they are complex data structures which may contain other
-objects, or lists of values.
+objects, or arrays of values.
 
 When using a relational database to store these objects, you have to flatten
 the object so that it fits into a table, with one field per column. When
@@ -10,8 +10,8 @@ retrieving the object from the database, you have to reconstruct it
 from its flat representation.
 
 Elasticsearch is _document oriented_, meaning that it stores and
-indexes _documents_. It requires those documents to be in JSON format, so
-that it can make sense out of the content.
+indexes entire _documents_. It requires those documents to be in JSON format,
+so that it can understand the structure of the document content.
 
 Fortunately, pretty much any object in any language can be serialized into
 a JSON document. For this reason it has become the standard format used by the

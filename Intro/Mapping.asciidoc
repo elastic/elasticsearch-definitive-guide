@@ -4,7 +4,7 @@ Not only can Elasticsearch store complex objects or documents, but we haven't
 had to specify our document structure or _schema_ before indexing.   We didn't
 even have to create the index -- that was done for us.
 
-Later, we will want more control over this process, but by not requiring
+Later, we will want more control over this process but, by not requiring
 a schema -- by being _schema free_ -- Elasticsearch makes
 it easy for us to start experimenting without having to plan ahead.
 
@@ -44,7 +44,7 @@ We can see that Elasticsearch has done a reasonable job of interpreting our
 data types:
 
 * the numeric field `age` has been assigned type `long`
-* string fields, including the multi-value field `interests`, are
+* string fields, including the array field `interests`, are
   assigned type `string`
 * the string field `join_date` has correctly been recognised as type `date`
 * the embedded object `name` has two string fields: `first` and `last`
@@ -53,8 +53,8 @@ With the mapping as it is, we are already well positioned to add a search
 service to our blogging website.
 
 But search engines are sophisticated.  With the domain specific knowledge
-that you have about your own data, you can tailor the mapping to your needs,
-adding for example:
+that you have about your own data, you can tailor the mapping to your needs
+adding, for example:
 
  * autocomplete searches to the `title` field
  * language specific analysis to the `title` and `content` fields

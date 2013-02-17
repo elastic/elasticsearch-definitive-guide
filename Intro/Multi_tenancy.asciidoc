@@ -20,7 +20,7 @@ This gives us enormous flexibility when scaling an application.
 
 Imagine we are indexing logs into Elasticsearch. We can start with a small index
 and limited hardware.  As our application becomes more popular and we need
-to grow, we are free to create a new index with more capacity  but we can
-still query all of our logging indices as if they were a *single index*.
+to grow, we are free to create a new index with more capacity  but we are still
+able to search all of our logging indices as if they were a *single index*.
 
 

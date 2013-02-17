@@ -103,12 +103,14 @@ Let's increase the number of replicas from the default of `1` to `2`:
     '
 
 As can be seen in <<cluster-three-nodes-two-replicas>>, the `blogs` index
-now has 9 shards: 3 primaries and 6 replicas. A 9-node cluster could now
-handle 50% more search requests than a 6-node cluster.
+now has 9 shards: 3 primaries and 6 replicas.
 
 [[cluster-three-nodes-two-replicas]]
 .Increasing the `number_of_replicas` to 2
 image::images/cluster_node1_node2_node3_replicas_2.svg["A three-node cluster with two replica shards"]
+
+Running a 9-node cluster would now allow us to handle 50% more search requests
+than a 6-node cluster.
 
 Of course, just having more replica shards on the same number of nodes doesn't
 increase our performance, but it does mean that we have more redundancy.
@@ -116,4 +118,24 @@ We can now afford to lose two nodes without losing any data.
 
 ==== Coping with failure
 
-KILL NODES
+We've said that Elasticsearch can cope with failed nodes, so let's go
+ahead and try it out. If we kill the first node -- just press `Ctrl-C` to
+end the process -- our cluster looks like <<cluster-post-kill>>.
+
+[[cluster-post-kill]]
+.Cluster after killing one node
+image::images/cluster_node2_node3.svg["The cluster after killing one node"]
+
+Replica shards on `Node 2` and `Node 3` have been promoted to primary shards
+to replace the two primaries that were lost with `Node 1`. We still have
+all 3 primary shards, but we are now running with one replica of each primary
+instead of with two.
+
+Also, `Node 2` has been promoted to the _master node_.  Any node can serve
+this role.  A master node is just an ordinary node that has been elected
+by the cluster to manage cluster-level changes, such as adding or
+removing nodes, or creating or deleting an index.
+
+Were we to kill `Node 2`, then our application could still keep running without
+data loss because `Node 3` contains a copy of every shard.
+

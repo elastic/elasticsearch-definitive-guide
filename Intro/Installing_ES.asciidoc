@@ -18,7 +18,7 @@ with:
 
     ./bin/elasticsearch -f
 
-Test it out by opening another console and running:
+Test it out by opening another terminal window and running:
 
     curl 'http://localhost:9200/?pretty'
 
@@ -42,17 +42,5 @@ start experimenting with it.
 ****
 A _node_ is a running instance of Elasticsearch. A _cluster_ is a group
 of nodes that are working together to share data and to provide failover and
-scale.
+scale, although a single node can form a cluster by itself.
 ****
-        
-.Running Elasticsearch in production
-[NOTE]
-====
-Before we put Elasticsearch into production, there are a few other things
-that we need to configure, such as the amount of memory that Elasticsearch
-is allowed to use, the name of the cluster, and various operating system 
-specific parameters.
-
-We will explain all of this later, but in order to test Elasticsearch out,
-the process described above is sufficient.
-====

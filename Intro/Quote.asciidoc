@@ -3,22 +3,22 @@ Banon, the original author of Elasticsearch has this to say:
 
 [quote]
 ____
-So we build a web site or an application and want to add search to it, 
-and then it hits us: *getting search working is hard*. We want our 
-search solution to be *fast*, we want a painless setup and a completely 
-*free search schema*, we want to be able to index data simply using 
+So we build a web site or an application and want to add search to it,
+and then it hits us: *getting search working is hard*. We want our
+search solution to be *fast*, we want a painless setup and a completely
+*free search schema*, we want to be able to index data simply using
 *JSON over HTTP*, we want our search server to be *always available*, we
-want to be able to start with one machine and *scale to hundreds*, we want 
-*real-time search*, we want simple *multi-tenancy*, and we want a solution 
+want to be able to start with one machine and *scale to hundreds*, we want
+*real-time search*, we want simple *multi-tenancy*, and we want a solution
 that is *built for the cloud*.
 
 *"This should be easier"*, we declared, *"and cool, bonsai cool"*.
 
-Elasticsearch aims to solve all these problems and more. 
-It is an Open Source (Apache 2), Distributed, RESTful, Search Engine built on 
-top of Apache Lucene. 
+Elasticsearch aims to solve all these problems and more.
+It is an Open Source (Apache 2), Distributed, RESTful, Search Engine built on
+top of Apache Lucene.
 ____
 
-That's a lot of promises in a small amount of text. In this chapter, 
-we're going to give you a quick introduction to Elasticsearch and to explain 
-a bit more about what these promises mean.
+That's a lot of promises in a small amount of text. In this chapter,
+we're going to give you a taste of what Elasticsearch can do for you, and to
+explain a bit more about what these promises mean.

@@ -7,18 +7,182 @@ or buying more servers (_horizontal scale_ or _scaling out_).
 While Elasticsearch can benefit from more powerful hardware, vertical
 scale has its limits. Real scalability comes from horizontal scale
 -- the ability to add more nodes to the cluster and to spread
-load and reliability between them.  With most databases, scaling horizontally
+load and reliability between them.
+
+With most databases, scaling horizontally
 usually requires a major overhaul of your application to take advantage
 of these extra boxes.
 
-Elasticsearch, however,  is _distributed_ by nature. In other
+Elasticsearch, on the other hand,  is _distributed_ by nature. In other
 words, it natively knows how to use and manage multiple nodes to provide
 scale and high availability.  This also means that your application
 doesn't need to care about it.
 
-As users, we can talk any node in the Elasticsearch cluster. That node knows
-how to route the request to the nodes that hold the data we are interested in.
-It is all managed transparently by Elasticsearch.
-
-The easiest way to explain how the distributed nature of Elastisearch works, it
+The easiest way to explain how the distributed nature of Elastisearch works, is
 to demonstrate it.
+
+include::Multiple_nodes.asciidoc[]
+
+==== An empty cluster
+
+If we start a single node, with no data, our cluster looks like <<img-cluster>>.
+
+[[img-cluster]]
+.A cluster with one empty node
+image::images/cluster.svg["A cluster with one empty node"]
+
+A _node_ is a running instance of Elasticsearch, while a _cluster_ consists of
+one or more nodes that are working together to share their data and workload.
+As nodes are added to or remove from the cluster, the cluster reorganizes
+itself to spread the data evenly.
+
+As users, we can talk any node in the cluster. Each node knows how to route
+our request to the nodes that hold the data we are interested in. It is all
+managed transparently by Elasticsearch.
+
+==== Add an index
+
+In order to add data to Elasticsearch, we need an _index_, where
+an index is like a ``database'' in a relational database. Actually,
+an index is really just a ``logical namespace'' which points to one or
+more shards.
+
+A _shard_ is a low-level ``worker unit''. Each shard is an instance of Lucene,
+and is a complete search engine in its own right. Our documents are
+stored and indexed in shards, but we don't talk to them directly.  Instead,
+we talk to an index.
+
+A shard can be either a _primary_ shard or a _replica_ shard, where a replica
+shard is a copy of the primary shard. The number of primary shards in an index
+is fixed at the time that an index is created, but the number of replica
+shards can be changed at any time.
+
+Let's create an index called `blogs` in our empty one-node cluster.
+
+By default, indices are assigned 5 primary shards, but for the purpose of this
+demonstration, we'll assign just 3 primary shards:
+
+    curl -XPUT 'http://127.0.0.1:9200/blogs/?pretty'  -d '
+    {
+       "settings" : {
+          "number_of_shards" : 3
+       }
+    }
+    '
+
+[[cluster-one-node]]
+.A single-node cluster with an index
+image::images/cluster_node1.svg["A single-node cluster with an index"]
+
+Our cluster now looks like <<cluster-one-node>> -- all 3 primary shards have
+been allocated to `Node 1`. There are no replica shards allocated yet, as
+there is no point in having both a primary shard and its replica allocated
+to the same node.  If the server were to fail, you would lose both copies
+of your data.
+
+==== Add failover
+
+Running a single node means that you have a single point of failure -- there
+is no redundancy. A new node will join the cluster automatically as long
+as it has the same cluster name set in its config file, and it can
+talk to the other nodes.
+
+If we start a second node, our cluster would look like <<cluster-two-nodes>>.
+
+[[cluster-two-nodes]]
+.A two-node cluster -- all primary and replica shards are allocated
+image::images/cluster_node1_node2.svg["A two-node cluster"]
+
+The second node has joined the cluster and a _replica shard_ has been allocated
+to it for each primary shard.  That means that we can lose either node and
+all of our data will be intact.
+
+Any document that is added to our index is first indexed to the primary
+shard and then in parallel to any replica shards, ensuring that our
+document is immediately available from any node in the cluster.
+
+==== Scale horizontally
+
+Now our cluster is _always available_, but what about scaling as the demand
+for our application grows? If we start a third node, our cluster reorganizes
+itself to look like <<cluster-three-nodes>>.
+
+[[cluster-three-nodes]]
+.A three-node cluster -- shards have been reallocated to spread the load
+image::images/cluster_node1_node2_node3.svg["A three-node cluster"]
+
+One shard each from `Node 1` and `Node 2` have moved to the new
+`Node 3`, meaning that we now have two shards per node, instead of three.
+This means that the hardware resources (CPU, RAM, I/O) of each node
+are being shared between fewer shards, allowing each shard to perform
+better.
+
+A shard is a fully fledged search engine in its own right, and is
+capable of using all of the resources of a single node.  With our
+total of 6 shards (3 primaries and 3 replicas) our index can span
+a maximum of 6 nodes, each with just one shard that has the
+full resources of the server at its disposal.
+
+==== Then scale some more
+
+But what if we want to scale our search to more than 6 nodes?
+
+The number of primary shards is fixed at the moment an index is created.
+Effectively, that number defines the limit of the total amount of data that
+can be stored in the index.  (The actual limit depends on your data, your
+hardware and your use case).
+
+However, searches or document retrieval can be handled by a primary _or_
+a replica shard, so the more copies of data that have, the more
+search throughput we can handle.
+
+We can change the number of replica shards dynamically, on a live cluster,
+allowing us to scale up or down as demand requires.
+
+Let's increase the number of replicas from the default of `1` to `2`:
+
+    curl -XPUT 'http://127.0.0.1:9200/blogs/_settings?pretty'  -d '
+    {
+       "index" : {
+          "number_of_replicas" : 2
+       }
+    }
+    '
+
+[[cluster-three-nodes-two-replicas]]
+.Increasing the `number_of_replicas` to 2
+image::images/cluster_node1_node2_node3_replicas_2.svg["A three-node cluster with two replica shards"]
+
+As can be seen in <<cluster-three-nodes-two-replicas>>, the `blogs` index
+now has 9 shards: 3 primaries and 6 replicas.
+Running a 9-node cluster would now allow us to handle 50% more search requests
+than a 6-node cluster.
+
+Of course, just having more replica shards on the same number of nodes doesn't
+increase our performance, but it does mean that we have more redundancy.
+We can now afford to lose two nodes without losing any data.
+
+==== Coping with failure
+
+We've said that Elasticsearch can cope when nodes fail, so let's go
+ahead and try it out. If we kill the first node -- just press `Ctrl-C` to
+end the process -- our cluster looks like <<cluster-post-kill>>.
+
+[[cluster-post-kill]]
+.Cluster after killing one node
+image::images/cluster_node2_node3.svg["The cluster after killing one node"]
+
+Replica shards on `Node 2` and `Node 3` have been promoted instantly to
+primary shards in order to replace the two primaries that were lost with
+`Node 1`. We still have all 3 primary shards, but we are now running with
+one replica of each primary instead of with two.
+Were we to kill `Node 2`, then our application could still keep running without
+data loss because `Node 3` contains a copy of every shard.
+
+Also, `Node 2` has been promoted to the _master node_.  Any node can serve
+this role.  A master node is just an ordinary node that has been elected
+by the cluster to manage cluster-level changes, such as adding or
+removing nodes, or creating or deleting an index.
+However, it does not need to be involved in document level changes or searches,
+which means that the master node will not become a bottleneck as traffic
+increases.

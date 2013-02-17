@@ -1,10 +1,8 @@
+==== Running multiple nodes locally
 
-=== Running multiple nodes
-
-For demonstration purposes, we are going to start multiple Elasticsearch
-nodes on the same machine. This is not recommended in production, but is fine
-for our purposes. Multiple nodes can be run from the same directory,
-with the same configuration and paths.
+If you want to try out the demonstration below, you can run multiple
+Elasticsearch nodes on the same server or workstation. This is not
+recommended in production, but is fine for testing purposes.
 
 If you have followed the instructions above, then you are already running
 an Elasticsearch node. To start another node, open a new terminal window,
@@ -21,54 +19,32 @@ nodes have not been able to detect each other:
 
     [INFO ][cluster.service] [Harpy] new_master [Harpy]
 
+Multiple nodes can be run from the same directory, with the same configuration
+and paths. The first node will bind to port `9300` for cluster transport (for
+communication between the nodes), and port `9200` for HTTP transport.
+The second node will use ports `9301` and `9201` respectively, etc.
 
-==== Troubleshooting
+This means that, in order to form a cluster, your nodes need to be able to talk
+to each other over ports `9300` to `9399` on the machine's public IP address. If your local machine
+has a firewall in place you will either need to open up these ports, or you
+can force Elasticsearch to bind to `localhost` instead, which usually
+isn't protected by the firewall.
 
-To ensure that your nodes can form a cluster, you need to check the following.
-After making any changes to the configuration files, kill the existing nodes
-with `Ctrl-C` and restart them.
-
-===== Cluster name
-
-All the nodes in our cluster must have the same name, which is configured
-in `./config/elasticsearch.yml`. The default is:
-
-    cluster.name: elasticsearch
-
-You may want to change the name to avoid forming a cluster with other nodes
-on the same network.
-
-===== Firewall
-
-By default, a node tries to bind to the public IP address of the
-host machine. It uses port `9300` for communication between nodes, and port
-`9200` for HTTP requests. If these ports are already being used, then it
-will try ports `9301` to `9400` and `9201` to `9300` respectively.
-
-Often, the public IP address will be protected by a firewall, which prevents
-the nodes from communicating and forming a cluster.
-
-Either you should open up ports 9300-9400 or you can force Elasticsearch
-to just use `localhost`, which isn't usually protected by the firewall.
-You can do this by adding the following line to `./config/elasticsearch.yml`:
-
-    network.host: 127.0.0.1
-
-Alternatively, you can set this temporarily by starting Elasticsearch as
-follows:
+First, shut down any running nodes by pressing `Ctrl-C`, open two console
+windows and start a node in each window using the same command:
 
     ./bin/elasticsearch -f -Des.network.host=127.0.0.1
 
-===== Multicast
+Now your nodes should be able to see each other and form a cluster.
 
-By default, new nodes detect an existing cluster using multicast.  Multicast
-is enabled on most modern machines, but if your nodes are still unable
-to detect each other, then you can try using unicast instead.
+[TODO] CHANGE URL TO PERMANENT LOCATION
 
-When using unicast, you need to provide one or more hostnames or IP addresses
-that the node should try to contact.  For our purposes, you can add
-the following line to `./config/elasticsearch.yml`:
+To follow the steps below exactly, stop the second node with `Ctrl-C`, then
+remove all data from your cluster, by deleting all indices:
 
-    discovery.zen.ping.unicast.hosts: ["localhost"]
+    curl -XDELETE localhost:9200/_all
+
+You can visualize the changes happening in the cluster by opening the page
+http://bl.ocks.org/d/4709186/ in a browser.
 
 

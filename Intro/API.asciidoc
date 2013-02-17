@@ -20,7 +20,7 @@ Transport client::
 
 Both Java clients talk to the cluster over *port 9300*, using the native
 Elasticsearch protocol.  The nodes in the cluster also communicate
-over port 9300, so if this port is not open, then your nodes will
+with each other over port 9300. If this port is not open, then your nodes will
 not be able to form a cluster.
 
 [NOTE]
@@ -42,7 +42,8 @@ All requests consist of:
 * the protocol and hostname of any node in the cluster,
   eg: `http://localhost:9200`
 * the path of the resource you want to use, eg: `/_count`
-* any optional query string parameters, eg `?pretty=true`
+* any optional query string parameters, eg `?pretty=true` will _pretty-print_
+  the JSON response to make it easier to read
 * a JSON encoded request body (if the request needs one)
 
 For instance, to count the number of documents in the cluster, we could
@@ -60,7 +61,8 @@ All responses consist of:
 * a response body encoded in JSON (except for `HEAD` requests, which don't
   return a body)
 
-The above `curl` request would respond with something like the following:
+The above `curl` request would respond with a JSON body like the
+following:
 
     {
         "count" : 0,
@@ -77,6 +79,6 @@ switch:
 
     curl -D - -XGET 'http://...'
 
-We use this `curl` format in all of our examples because it is easy to
+We will use this `curl` format in all of our examples because it is easy to
 read and easy to translate into a request using the HTTP library of your
 choice.

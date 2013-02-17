@@ -1,41 +1,38 @@
 === What is Elasticsearch?
 
-The ability to filter data by dates, postcodes or other exact values is a 
+The ability to filter data by dates, postcodes or other exact values is a
 solved problem -- any database can do it.  However, full text search
--- processing a natural language query to find the most relevant results in 
+-- processing a natural language query to find the most relevant results in
 unstructured data -- is a much more complicated undertaking.
 
-The few databases which support full text search either (a) hand it over
-entirely to a dedicated full text search engine, or (b) do it badly.
+The few databases which support full text search either hand it over
+entirely to a dedicated full text search engine, or do it badly.
 
-Elasticsearch is a search engine built on top of Apache Lucene.
+``Elasticsearch is a search engine built on top of Apache Lucene.''
+
 So what is Lucene?
 
 [quote,'http://lucene.apache.org/core/[lucene.apache.org/core]']
 ____
-Apache Lucene(TM) is a high-performance, full-featured text search engine 
+Apache Lucene(TM) is a high-performance, full-featured text search engine
 library written entirely in Java.
 ____
 
 Lucene is really really powerful. The problem with it is that it is just
-a library. If you want to use it, you need to:
-
-1. write your code in Java
-2. understand lots of low level details about _information retrieval_
-3. tightly couple the Lucene libraries with your code
-4. write more custom code to make it scale as your userbase grows
+a library. If you want to use it, you need to understand a lot about
+_information retrieval_, your only choice of programming language
+and your code has to be tightly coupled with the Lucene libraries.
 
 Elasticsearch is based on Lucene, which means that it uses Lucene internally
-for its indexing and search.  However,  it is a standalone server
-that your application can talk to via a simple API. 
+for its indexing and search, and it excels at full text search.  However,
+it is much more than just Lucene. It is a distributed document store and
+distributed search engine with real-time analytics, capable of scaling to
+hundreds of servers and terrabytes of data. And it packages up all of this
+functionality into a standalone service that your application can talk to
+via a simple API, whichever programming language you choose to use.
 
-While Elasticsearch excels at full text search, it is in no way limited
-to just text.  It can query dates, numbers, enums, geo-locations and 
-geo-shapes efficiently and generate real-time analytics summarizing
-huge amounts of data. 
-
-It is easy to get started with Elasticsearch. It requires you to know just 
-enough to make use of the functionality you need. As your requirements grow, 
+It is easy to get started with Elasticsearch. It requires you to know just
+enough to make use of the functionality you need. As your requirements grow,
 so you will need to learn more.
 
 
