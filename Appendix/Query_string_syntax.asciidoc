@@ -1,12 +1,12 @@
-[[query_string_syntax]]
+[[query-string-syntax]]
 [appendix]
 == Query string parser syntax
 
 The query string ``mini-language'' is used by the
-<<query_string_query,`query_string` and `field` queries>>, by the
-`q` query string parameter in the <<search_api,`search` API>> and
-by the `percolate` parameter  in the <<index_api,`index`>> and
-<<bulk_api,`bulk`>> APIs.
+<<query-string-query,`query_string` and `field` queries>>, by the
+`q` query string parameter in the <<search-api,`search` API>> and
+by the `percolate` parameter  in the <<index-api,`index`>> and
+<<bulk-api,`bulk`>> APIs.
 
 The query string is parsed into a series of _terms_ and _operators_. A
 term can be a single word -- `quick` or `brown` -- or a phrase, surrounded by
@@ -18,7 +18,7 @@ explained below.
 
 === Field names
 
-As mentioned in <<query_string_query>>, the `default_field` is searched for the
+As mentioned in <<query-string-query>>, the `default_field` is searched for the
 search terms, but it is possible to specify other fields in the query syntax:
 
 * where the `status` field contains `active`
@@ -79,7 +79,7 @@ wrapping them in forward-slashes (`"/"`):
 
     name:/joh?n(ath[oa]n)/
 
-The supported regular expression syntax is explained in <<regexp_syntax>>.
+The supported regular expression syntax is explained in <<regexp-syntax>>.
 
 [WARNING]
 ====
@@ -94,7 +94,7 @@ Use with caution!
 
 === Fuzziness
 
-As explained in <<fuzzy_matching,`fuzzy` matching>>, we can search for terms that are
+As explained in <<fuzzy-matching,`fuzzy` matching>>, we can search for terms that are
 similar to, but not exactly like our search terms, using the ``fuzzy''
 operator:
 
@@ -154,7 +154,7 @@ curly brackets `{min TO max}`.
     date:{* TO 2012/01/01}
 
 The parsing of ranges in query strings can be complex and error prone. It is
-much more reliable to use an explicit <<range_filter,`range` filter>>.
+much more reliable to use an explicit <<range-filter,`range` filter>>.
 
 === Boosting
 
@@ -218,7 +218,7 @@ query.
 This form now replicates the logic from the original query correctly, but
 the relevance scoring bares little resemblance to the original.
 
-In contrast, the same query rewritten using the <<match_query,`match` query>>
+In contrast, the same query rewritten using the <<match-query,`match` query>>
 would look like this:
 
     {

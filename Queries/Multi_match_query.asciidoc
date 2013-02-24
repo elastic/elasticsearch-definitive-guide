@@ -1,10 +1,10 @@
-[[multi_match_query]]
+[[multi-match-query]]
 === Querying multiple fields
 
 Often we want to search multiple fields for the same query string.
 We might want to search the `title` and the `content` fields of an email.
 The `multi_match` query works in exactly the same way as the
-<<match_query,`match` query>>, but allows you to run the same query
+<<match-query,`match` query>>, but allows you to run the same query
 on several fields at the same time.
 
     {
@@ -14,9 +14,9 @@ on several fields at the same time.
         }
     }
 
-Multi-field <<match_phrase_query,phrase>> and
-<<match_phrase_prefix_query,phrase-prefix>> queries can be run by passing
-the same `type` parameter that the <<match_query,`match` query>> accepts:
+Multi-field <<match-phrase-query,phrase>> and
+<<match-phrase-prefix-query,phrase-prefix>> queries can be run by passing
+the same `type` parameter that the <<match-query,`match` query>> accepts:
 
     {
         "multi_match" : {

@@ -1,0 +1,32 @@
+=== Bulk operations
+
+For extra speed, if you can group document changes (create, update
+or delete) then you can use the _bulk_ APIs to process several operations
+in a single request.
+
+In this request, we index two new documents into the `blogs2` index:
+
+    curl -XPOST 'http://localhost:9200/_bulk?pretty'  -d '
+    {"index" :     {"_index" : "blogs2", "_type" : "user", "_id": 1}}
+    {"interests" : ["whales", "golf"], "fullname" : "Mary Jones"}
+    {"index" :     {"_index" : "blogs2", "_type" : "user", "_id": 2}}
+    {"interests" : ["golf", "wine", "cinema"], "fullname" : "Jack Jones"}
+    '
+
+Combining multiple operations into one reduces the amount of information that
+we have to send over the network, which can give a big performance boost.
+This is ideal for write-heavy applications, like indexing log data in
+Elasticsearch.
+
+Similarly, you can retrieve multiple documents at once with the _multi-GET_
+API:
+
+    curl -XGET 'http://localhost:9200/_mget?pretty'  -d '
+    {
+       "docs" : [
+          { "_index": "blogs2", "_type": "user", "_id": "1" }
+          { "_index": "blogs2", "_type": "user", "_id": "2" }
+          { "_index": "blogs",  "_type": "user", "_id": "johnsmith" }
+       ]
+    }
+    '

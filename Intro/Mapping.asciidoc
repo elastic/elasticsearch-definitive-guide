@@ -1,0 +1,68 @@
+=== Schema free vs Schema mapping
+
+Not only can Elasticsearch store complex objects or documents, but we haven't
+had to specify our document structure or _schema_ before indexing.   We didn't
+even have to create the index -- that was done for us.
+
+Later, we will want more control over this process but, by not requiring
+a schema -- by being _schema free_ -- Elasticsearch makes
+it easy for us to start experimenting without having to plan ahead.
+
+However, in order to make sense of our document so that it can be queried,
+Elasticsearch has tried to understand the structure of our object, and has
+generated its own schema automatically.
+
+We can see how our fields from the example have been interpreted by retrieving
+the current _mapping_ or schema definition:
+
+    curl -XGET 'http://localhost:9200/blogs/_mapping?pretty'
+
+which looks like this:
+
+    {
+      "blogs" : {
+        "user" : {
+          "properties" : {
+            "age" :       { "type" : "long"   },
+            "bio" :       { "type" : "string" },
+            "email" :     { "type" : "string" },
+            "interests" : { "type" : "string" },
+            "join_date" : {
+                "type" : "date",
+                "format" : "yyyy/MM/dd HH:mm:ss||yyyy/MM/dd"
+            },
+            "name" : {
+                "dynamic" : "true",
+                "properties" : {
+                  "first" : { "type" : "string" },
+                  "last" :  { "type" : "string" }
+                }
+            }
+    }}}}
+
+We can see that Elasticsearch has done a reasonable job of interpreting our
+data types:
+
+* the numeric field `age` has been assigned type `long`
+* string fields, including the array field `interests`, are
+  assigned type `string`
+* the string field `join_date` has correctly been recognised as type `date`
+* the embedded object `name` has two string fields: `first` and `last`
+
+With the mapping as it is, we are already well positioned to add a search
+service to our blogging website.
+
+But search engines are sophisticated.  With the domain specific knowledge
+that you have about your own data, you can tailor the mapping to your needs
+adding, for example:
+
+ * autocomplete searches to the `title` field
+ * language specific analysis to the `title` and `content` fields
+ * geo-location information for results-near-you
+
+Instead of relying on the dynamic detection of fields, we can
+specify our own custom analyzers and field mapping, taking control over
+how the value for each field should be analyzed and indexed.
+
+
+

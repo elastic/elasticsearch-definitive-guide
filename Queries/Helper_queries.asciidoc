@@ -1,10 +1,10 @@
-[[helper_queries]]
+[[helper-queries]]
 === Helper queries
 
 The _helper_ queries are simple, commonly used queries. Unlike most queries,
 they have little to do with relevance.
 
-[[match_all_query]]
+[[match-all-query]]
 ==== `match_all` query
 
 This simply matches all documents and returns a `_score` of 1 for all of them.
@@ -22,10 +22,10 @@ So these two search requests are equivalent:
     }
     '
 
-[[filtered_query]]
+[[filtered-query]]
 ==== `filtered` query
 
-The `filtered` query, as explained in <<query_structure>>, is used to combine
+The `filtered` query, as explained in <<query-structure>>, is used to combine
 a filter with a query.
 
     {
@@ -36,8 +36,8 @@ a filter with a query.
     }
 
 It accepts a single filter clause and a single query clause. However,
-you can pass it a <<bool_query,compound query>> or
-<<compound_filters,compound filter>> which can contain multiple
+you can pass it a <<bool-query,compound query>> or
+<<compound-filters,compound filter>> which can contain multiple
 sub-clauses:
 
     {

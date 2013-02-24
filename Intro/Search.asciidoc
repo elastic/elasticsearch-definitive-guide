@@ -1,0 +1,144 @@
+=== Easy search
+
+Now that our documents are indexed we can search for them.
+For simple _ad hoc_ searches, we can use the _query string_ search
+method:
+
+    curl -XGET 'http://localhost:9200/_search?pretty&q=john'
+
+The above query returns our `johnsmith` document as a result, but what we have
+actually searched?
+
+Elasticsearch adds a magical `_all` field to our document, which combines
+the values from all the other fields in the document.  By default, the
+`q=keywords` query string search looks for matches in this `_all` field.
+
+Alternatively, we could search in a specific field:
+
+    curl -XGET 'http://localhost:9200/_search?pretty&q=first:john'
+
+Every single field in a document is indexed and searchable by default. It's
+the equivalent a database having an index on every column in
+every table, and be able to use multiple indices in a single request!
+
+.Near real-time search
+****
+While documents can be retrieved immediately after being indexed
+-- real-time GET -- they only become ``visible'' to search within 1 second of
+being indexed or updated. This is known as  _near real-time search_.
+****
+
+=== Powerful search
+
+The query string search is useful for simple queries, but we can use
+the _Query DSL_ -- Elasticsearch's custom query language -- to express
+more complex and specific queries in JSON:
+
+    curl -XGET http://localhost:9200/_search?pretty -d '
+    {
+        "query": {
+            "bool": {
+                "must": { "match": { "name.first": "john" }},
+                "should": [
+                    { "match": { "interests": "whales" }},
+                    { "match": { "bio": "eco warrior"  }},
+                    { "range": { "age": { "from": 20   }}}
+                ]
+            }
+        }
+    }
+    '
+
+Elasticsearch not only returns the list of which documents match, but also
+returns the document itself. There is no need to have a separate phase to
+fetch the matching documents from another datasource.
+
+=== Snippet highlighting
+
+The search API supports other related functionality, such as the ability
+to return highlighted search snippets which show the search terms
+in the context of the document:
+
+    curl -XGET http://localhost:9200/_search?pretty -d '
+    {
+        "query": { "match": { "bio": "eco warrior" }},
+        "highlight": {
+            "fields": {
+                "bio": {}
+            }
+        }
+    }
+    '
+
+The above query returns snippets like:
+
+    <em>Eco</em>-<em>warrior</em> and defender of the weak
+
+=== Near real-time analytics
+
+While search returns the ``best-matching'' documents, we can use _facets_
+to generate analytics by summarizing all the documents that match the query.
+It's a bit like using `GROUP BY` in SQL.
+
+Facets can answer questions like:
+
+* What are the most popular tags or categories?
+* How many comments have been left per hour, day or month?
+* What is the average rating of a hotel?
+* How many houses are for sale within 5, 10 or 50km of the user's location?
+
+In other products, _map-reduce_ is used to calculate analytics using offline
+batch jobs running in parallel. The results from map-reduce reflect the state
+of the data at the time the map-reduce job began, which may be hours, days
+or weeks before.
+
+Facets in Elasticsearch, however, summarise the data based on current search
+results, which means that they are produced in near real-time. As soon as
+a new document is visible to search, its data is also available to facets.
+
+A simple example of facets in action is _faceted navigation_: a user
+does a search which returns a list of results, plus a list of popular
+categories which can then be used to narrow down the results.
+
+The following query returns all objects of type `user` in all indices,
+and summarizes the most popular values in the `interests` field:
+
+    curl -XGET 'http://localhost:9200/_all/user/_search?pretty=1'  -d '
+    {
+       "query" : {
+          "match_all" : {}
+       },
+       "facets" : {
+          "interests" : {
+             "terms" : {
+                "field" : "interests"
+             }
+          }
+       }
+    }
+    '
+
+The `facets` section of the JSON response to the above looks like this:
+
+    "facets" : {
+       "interests" : {
+          "_type" : "terms",
+          "total" : 7
+          "terms" : [
+             { "count" : 2, "term" : "whales"   },
+             { "count" : 2, "term" : "golf"     },
+             { "count" : 1, "term" : "wine"     },
+             { "count" : 1, "term" : "dolphins" },
+             { "count" : 1, "term" : "cinema"   }
+          ],
+          "other" : 0,
+          "missing" : 0,
+       }
+    },
+
+The two most popular interests are `whales` and `golf`. Our user could choose
+to repeat their search, but limiting the results to just users who are
+interested in whales.
+
+The output from facets can often be presented visually, as a pie chart or
+a histogram, or geographic results can be overlaid on a map.

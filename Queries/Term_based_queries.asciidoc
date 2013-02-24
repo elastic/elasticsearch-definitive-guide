@@ -1,8 +1,8 @@
 .Term-based queries
-[[term_queries]]
+[[term-queries]]
 ****
 Term based queries are distinct from full text queries like the
-<<match_query,`match`>> and <<query_string_query,`query_string`>> queries.
+<<match-query,`match`>> and <<query-string-query,`query_string`>> queries.
 
 Full text queries::
 
@@ -19,7 +19,7 @@ Term-based queries::
     have no analysis phase.  A term query for `"Foo"` will search
     for that *exact term* -- it won't match the indexed term `"foo"`.
 
-As explained in <<exact_queries>>, we would normally use a `match` query
+As explained in <<exact-queries>>, we would normally use a `match` query
 for exact matching, as it can use the field mapping to decide whether the field
 contains full text or exact values and query it appropriately . While a
 `term` query exists, the only time we would need to use it is when we want to

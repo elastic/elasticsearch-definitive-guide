@@ -1,4 +1,4 @@
-[[filter_caching]]
+[[filter-caching]]
 === Filter caching
 
 One of the reasons that filters are so efficient is that they are
@@ -33,22 +33,22 @@ to be reusable, such as:
 
 Geolocation filters::
 
-<<geoloc_filters,Geolocation filters>> will seldom use the same
+<<geoloc-filters,Geolocation filters>> will seldom use the same
 latitude/longitude point; it is likely that every search will be
 different.
 
 Numeric range filters::
 
-The <<numeric_range_filter,`numeric_range` filter>> is intended for fields
+The <<numeric-range-filter,`numeric_range` filter>> is intended for fields
 that have many unique values, such as a timestamp. Timestamp ranges
 are likely to change frequently, so caching the results for a particular
 range makes little sense.
 If you do want the results to be cached, you should probably consider
-using a <<range_filter,`range` filter>> instead.
+using a <<range-filter,`range` filter>> instead.
 
 Script filters::
 
-The script in a <<script_filter,`script` filter>> is opaque to Elasticsearch,
+The script in a <<script-filter,`script` filter>> is opaque to Elasticsearch,
 which has no way of knowing whether the script would produce the same results
 if run a second time.
 
@@ -56,7 +56,7 @@ Other filters::
 
 The results from a query are not cached and thus, the results from
 a `query` filter are not cached either. Similarly,
-<<nested_filter,`nested` filters>> can be based on complex conditions and
+<<nested-filter,`nested` filters>> can be based on complex conditions and
 are not cached either.
 
 ==== Controlling filter caching

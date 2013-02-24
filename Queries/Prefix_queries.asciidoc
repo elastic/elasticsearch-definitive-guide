@@ -1,4 +1,4 @@
-[[prefix_queries]]
+[[prefix-queries]]
 === Prefix queries
 
 A prefix query looks for any term that begins with the specified string.  For
@@ -20,14 +20,14 @@ This can be a very heavy, very memory intensive query. Use with caution!
 
 There are two queries which provide the `prefix` functionality. The first,
 the `match_phrase_prefix` we have already discussed in
-<<match_phrase_prefix_query>>.
+<<match-phrase-prefix-query>>.
 
 The second is the `prefix` query, which is a type of query that we haven't
 encountered yet -- a _term-based_ query.
 
 include::Term_based_queries.asciidoc[]
 
-[[prefix_query]]
+[[prefix-query]]
 ==== `prefix` query
 
 The `prefix` query simply finds all terms in the index beginning with
@@ -46,4 +46,4 @@ This simple looking query is rewritten into a much more complicated query
 -- one for each matching term.  The way the query is rewritten can
 be controlled with the `rewrite` parameter (which defaults to
 `constant_score_default`) and which is explained in
-<<multi_term_rewrite>>.
+<<multi-term-rewrite>>.

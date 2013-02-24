@@ -1,4 +1,4 @@
-[[compound_filters]]
+[[compound-filters]]
 === Compound filter clauses
 
 When you want to combine multiple filter clauses together you need to be
@@ -13,12 +13,12 @@ and NOT logic: the `bool` filter, and the `and`, `or` and `not` filters.
 The `bool` filter is the preferred choice as it is able to make smarter
 decisions about how to combine filters optimally.
 
-[[bool_filter]]
+[[bool-filter]]
 ==== `bool` filter
 
 ****
 The `bool` or _boolean_ filter is a simpler version of the
-<<bool_query,`bool` query>>, which we will explain in detail in <<queries>>.
+<<bool-query,`bool` query>>, which we will explain in detail in <<queries>>.
 ****
 
 The `bool` filter accepts three parameters, each of which can contain
@@ -82,7 +82,7 @@ could be written as:
     }
 
 
-[[and_or_filter]]
+[[and-or-filter]]
 ==== `and` | `or` filters
 
 The `and` and `or` filters combine two or more filter clauses with `AND` or
@@ -121,7 +121,7 @@ it finds a filter that matches the document.
 This means that it is more efficient to put the least specific filters first
 for the `or` filter, and the most specific filters first for the `and` filter.
 
-[[not_filter]]
+[[not-filter]]
 ==== `not` filter
 
 The `not` filter negates any other filter. For example, `WHERE count <> 5`
@@ -133,8 +133,8 @@ could be written as:
 
 However, the `not` filter only accepts a single filter.  To negate multiple
 filters, you need to be explicit about how those filters should be combined.
-That is, you should wrap them in a <<bool_filter,`bool` filter>> or
-in an <<and_or_filter,`and` or `or` filter>>:
+That is, you should wrap them in a <<bool-filter,`bool` filter>> or
+in an <<and-or-filter,`and` or `or` filter>>:
 
     {
         "not" : {
@@ -147,7 +147,7 @@ in an <<and_or_filter,`and` or `or` filter>>:
 
 .`bool` vs `and`|`or`
 ****
-The `and` and `or` filters (as explained <<and_or_filter,above>>) work document
+The `and` and `or` filters (as explained <<and-or-filter,above>>) work document
 by document, short-circuiting when possible.
 
 However, most filters in Elasticsearch do their work by generating _bitsets_
@@ -163,9 +163,9 @@ a bitset, each document needs to be checked against the filter.
 Some filter clauses do not produce bitsets. Typically these are filters which
 require a heavier calculation or which are unsuitable for caching:
 
-* <<geoloc_filters,geolocation filters>>
-* the <<script_filter,`script` filter>>
-* the <<numeric_range_filter,`numeric_range` filter>>
+* <<geoloc-filters,geolocation filters>>
+* the <<script-filter,`script` filter>>
+* the <<numeric-range-filter,`numeric_range` filter>>
 
 In order to optimize performance, the `bool` filter executes in two phases:
 

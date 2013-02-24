@@ -1,11 +1,11 @@
-[[bool_query]]
+[[bool-query]]
 === Combining multiple query clauses
 
 The simplest way to combine multiple query clauses is by wrapping them in
 a `bool` query which combines the relevance `_score` from each sub-query
 into a final single `_score` for the `bool` query.
 
-The <<multi_match_query,multi-field query>> that we saw in the previous section
+The <<multi-match-query,multi-field query>> that we saw in the previous section
 could be rewritten as:
 
     {
@@ -17,7 +17,7 @@ could be rewritten as:
         }
     }
 
-The `bool` query, like the <<bool_filter,`bool` filter>> accepts three
+The `bool` query, like the <<bool-filter,`bool` filter>> accepts three
 parameters which can contain query clauses:
 
 `must`::        documents must match these clauses (like `AND`)
@@ -99,7 +99,7 @@ then the default is `0` -- all `should` clauses are considered optional.
 If there is no `must` clause, then the default is `1` -- at least one
 `should` clause must match for the document to be included in the result set.
 
-[[minimum_should_match_formats]]
+[[minimum-should-match-formats]]
 .`minimum_should_match` formats
 ****
 The `minimum_should_match` parameter appears in several queries in the Query DSL.

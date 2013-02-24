@@ -1,4 +1,4 @@
-[[fuzzy_matching]]
+[[fuzzy-matching]]
 === Fuzzy matching
 
 Fuzzy matching is a useful techinque for matching words that have been
@@ -68,17 +68,17 @@ used to be.
 
 Once Elasticsearch has gatherered a list of all possible matching terms that
 exist in the index, it wraps the ``most important'' terms in a
-<<bool_query,boolean query>> and searches for all of them. Terms with a lower
+<<bool-query,boolean query>> and searches for all of them. Terms with a lower
 edit distance are considered to be more relevant.
 
 Wildcard and regular expression queries use this same DFA functionality
 to improve their performance.
 
-[[fuzzy_query]]
+[[fuzzy-query]]
 ==== `fuzzy` query
 
-The `fuzzy` query, like the <<prefix_query,`prefix` query>>, is a
-<<term_queries,term-based query>>, which has no analysis phase.  Unlike
+The `fuzzy` query, like the <<prefix-query,`prefix` query>>, is a
+<<term-queries,term-based query>>, which has no analysis phase.  Unlike
 the other partial matching queries, it doesn't return a relevance
 `_score` of 1. Instead, it tries to calculate a `_score` based upon
 how similar the query term and the fuzzy term are.
@@ -103,11 +103,11 @@ This simple looking query is rewritten into a much more complicated query
 -- one for each matching term.  The way the query is rewritten can
 be controlled with the `rewrite` parameter (which defaults to
 `top_terms`) and which is explained in
-<<multi_term_rewrite>>.
+<<multi-term-rewrite>>.
 
 ==== Fuzzy `match` queries
 
-The <<match_query,`match` query>> (but not the `match_phrase` or
+The <<match-query,`match` query>> (but not the `match_phrase` or
 `match_phrase_prefix` queries) also supports fuzzy matching. Specify
 the maximum number of edits (`1` or `2`) with the `max_edits` parameter:
 
@@ -125,7 +125,7 @@ it.
 
 ==== Fuzzy `query_string` queries
 
-The <<query_string,`query_string` query>> mini-language supports fuzzy
+The <<query-string,`query_string` query>> mini-language supports fuzzy
 matching using the `~` symbol, but only on individual words. For instance:
 
     {

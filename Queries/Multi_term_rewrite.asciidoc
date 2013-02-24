@@ -1,4 +1,4 @@
-[[multi_term_rewrite]]
+[[multi-term-rewrite]]
 === Multi-term query rewriting
 
 Many query clauses that look simple are rewritten into more complex queries.
@@ -69,7 +69,7 @@ The available rewrite methods are:
 `constant_score_auto`::
 
 This is the default for all multi-term queries except for
-<<fuzzy_matching,fuzzy queries>>, which default to `top_terms_N`
+<<fuzzy-matching,fuzzy queries>>, which default to `top_terms_N`
 instead.  It analyzes the query and, if the number of terms
 and documents is small enough, uses the `constant_score_boolean` method.
 If not, it uses the `constant_score_filter` method.
@@ -115,7 +115,7 @@ method instead.
 This method is similar to `scoring_boolean`, except that it limits
 itself to the top-scoring `N` terms, so it will not exceed the
 `max_clause_count`.  This  is the default method used by
-<<fuzzy_queries,fuzzy queries>>.
+<<fuzzy-queries,fuzzy queries>>.
 +
 `N` should be an integer indicating the maximum number of terms
 to consider -- which overrides the value set in `max_expansions`

@@ -1,9 +1,9 @@
-[[regexp_syntax]]
+[[regexp-syntax]]
 [appendix]
 == Regular expression syntax
 
 Regular expression queries are supported by the `regexp` and the `query_string`
-queries (see <<pattern_queries>>).  The Lucene regular expression engine
+queries (see <<pattern-queries>>).  The Lucene regular expression engine
 is not Perl-compatible but supports a smaller range of operators.
 
 [NOTE]

@@ -1,0 +1,26 @@
+=== Multi-tenancy
+
+Did you notice that we have indexed documents into two different indices:
+`blogs` and `blogs2`?
+
+Elasticsearch supports _multi-tenancy_. In other words, just like a
+relational database can have multiple independent ``databases'',
+Elasticsearch can have multiple independent indices. We can run
+multiple applications off a single Elasticsearch cluster.
+
+Also, just like a database can contain multiple tables, each index can have
+multiple types, each with its own mapping or schema.
+
+Unlike a relational database, Elasticsearch can search across
+multiple types, and across multiple indices. Try this query:
+
+    curl -XGET 'http://localhost:9200/blogs,blogs2/_search?pretty'
+
+This gives us enormous flexibility when scaling an application.
+
+Imagine we are indexing logs into Elasticsearch. We can start with a small index
+and limited hardware.  As our application becomes more popular and we need
+to grow, we are free to create a new index with more capacity  but we are still
+able to search all of our logging indices as if they were a *single index*.
+
+

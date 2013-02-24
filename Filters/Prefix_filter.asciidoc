@@ -1,4 +1,4 @@
-[[prefix_filter]]
+[[prefix-filter]]
 === `prefix` filter
 
 The `prefix` filter asks the question: ``Does field `foo` contain any term
@@ -17,7 +17,7 @@ The prefix filter can be used only on fields of type `string`.
 ====
 This filter works by loading all unique terms into memory,
 finding those terms that begin with the desired prefix, then running a separate
-<<term_filter,term filter>> on each of those terms. If the
+<<term-filter,term filter>> on each of those terms. If the
 specified field contains many unique terms, this can result in poor
 performance or even consume all available memory!
 
