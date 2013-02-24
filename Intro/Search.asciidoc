@@ -17,6 +17,10 @@ Alternatively, we could search in a specific field:
 
     curl -XGET 'http://localhost:9200/_search?pretty&q=first:john'
 
+Every single field in a document is indexed and searchable by default. It's
+the equivalent a database having an index on every column in
+every table, and be able to use multiple indices in a single request!
+
 .Near real-time search
 ****
 While documents can be retrieved immediately after being indexed
