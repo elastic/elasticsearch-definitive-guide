@@ -1,0 +1,17 @@
+Elasticsearch is a distributed document store. It can
+store and retrieve objects represented by JSON documents in real-time.
+In other words, as soon as a document has been stored in Elasticsearch,
+it can be retrieved by ID from any node in the cluster.
+
+In this chapter we will discuss the APIs that we use to create, retrieve,
+update and delete documents. We will explain how Elasticsearch ensures
+that your changes are persistent and available in real-time, not just
+on a single node but across a multi-node cluster.
+
+We will discuss how Elasticsearch uses optimistic version
+control to ensure that changes are applied consistently, and finally
+we will look at TODO DISCUSS ROUTING HERE OR LEAVE IT TO ITS OWN CHAPTER?
+
+
+
+
