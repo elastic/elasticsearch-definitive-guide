@@ -1,0 +1,80 @@
+[[index-doc]]
+=== Indexing a document
+
+As discussed above, before we can store a document in Elasticsearch, we need
+to choose an `_index` name, a `_type` name and decide whether we will provide
+our own `_id` or let Elasticsearch generate one for us.
+
+==== Using our own ID
+
+If we choose our own `_id`, then the form of the request is:
+
+    curl -XPUT localhost:9200/_index/_type/_id -d '
+    {
+      "field": "value",
+      ...
+    }
+    '
+
+For example, if we use `_index: website`, `_type: blog` and `_id: 123`, then
+the index request looks like this:
+
+    curl -XPUT localhost:9200/website/blog/123 -d '
+    {
+      "title": "My first blog entry",
+      "text":  "Just trying this out..."
+    }
+    '
+
+Elasticsearch would respond with:
+
+    {
+      "ok" : true,
+      "_index"   : "website",
+      "_type"    : "blog",
+      "_id"      : "123",
+      "_version" : 1
+    }
+
+The response indicates that the indexing request has been successful with
+`{"ok": true}`, returns the `_index`, `_type` and `_id` metadata, and
+includes a new element: `_version`.
+
+Every document in Elasticsearch has a version number. Every time a change
+is made to a document (including deleting it), the `_version` number
+is incremented.  In <<version-control>> we will discuss
+how to use the `_version` number to ensure that one part of your application
+doesn't overwrite changes made by another part.
+
+==== Auto-generating IDs
+
+If we don't have an `_id` already and want Elasticsearch to
+auto-generate one for us, then the structure of the request changes:
+instead of using the `PUT` verb -- ``store this document at this URL'' --
+we use the `POST` verb -- ``store this document as a *child* of this URL''.
+
+The URL now contains just the `_index` and the `_type`:
+
+    curl -XPOST localhost:9200/website/blog/ -d '
+    {
+      "title": "My second blog entry",
+      "text":  "Still trying this out..."
+    }
+    '
+
+The response is similar to what we saw before, except that the `_id`
+field has been generated for us:
+
+    {
+      "ok" :       true,
+      "_index" :   "website",
+      "_type" :    "blog",
+      "_id" :      "R9xqebnFQW--2loIo7lAXA",
+      "_version" : 1
+    }
+
+Auto-generated IDs are 22 character long URL-safe Base64-encoded string UUIDs.
+
+
+
+

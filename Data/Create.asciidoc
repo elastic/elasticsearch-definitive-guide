@@ -1,0 +1,47 @@
+[[create-doc]]
+=== Creating a new document
+
+How can we be sure, when we index a document, that we are creating a new
+document and not overwriting an existing one?
+
+Remember that the combination of `_index`, `_type` and `_id` uniquely
+identifies a document.  So, the easiest way to ensure that our document
+is new is by relying on Elasticsearch to auto-generate a new unique `_id`,
+using the `POST` version of the index request:
+
+    curl -XPOST localhost:9200/website/blog/ -d '
+    { ... }
+    '
+
+However, if we already have an `_id` that we want to use, then we have
+to tell Elasticsearch that it should only accept our index request if
+a document with the same `_index`, `_type` and `_id` combination
+doesn't exist already.
+
+There are two ways of doing this, which amount to the same thing. Use
+whichever method is more convenient for you.
+
+The first method uses the `op_type` query string parameter:
+
+    curl -XPUT localhost:9200/website/blog/123?op_type=create -d '
+    { ... }
+    '
+
+And the second uses the `/_create` endpoint in the URL:
+
+    curl -XPUT localhost:9200/website/blog/123/_create -d '
+    { ... }
+    '
+
+If the request succeeds -- a new document has been created -- then
+Elasticsearch will return the by now familiar metadata
+and an HTTP response code of `201 Created`.
+
+If a document with the same `_index`, `_type` and `_id` already exists,
+Elasticsearch will respond with a `409 Conflict` response code, and an
+error message like the following:
+
+    {
+      "error" : "DocumentAlreadyExistsException[[website][4] [blog][123]: document already exists]",
+      "status" : 409
+    }

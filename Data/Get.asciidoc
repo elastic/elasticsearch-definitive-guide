@@ -1,0 +1,57 @@
+[[get-doc]]
+=== Retrieving a document
+
+To get the document out of Elasticsearch, we use the the same `_index`, `_type`
+and `_id`, but the HTTP verb changes to `GET`:
+
+    curl -XGET localhost:9200/website/blog/123?pretty
+
+The response includes the now familiar metadata elements, plus the `_source`
+field, which contains the original JSON document that we sent to Elasticsearch
+when we indexed it.
+
+    {
+      "_index" :   "website",
+      "_type" :    "blog",
+      "_id" :      "123",
+      "_version" : 1,
+      "exists" :   true,
+      "_source" : {
+          "title": "My first blog entry",
+          "text":  "Just trying this out..."
+      }
+    }
+
+.`pretty`
+****
+By adding `pretty` to the query string parameters for any request, as in the
+above example, Elasticsearch _pretty-prints_ the JSON response to make it more
+readable. The `_source` field, however, isn't pretty-printed -- instead
+we get back exactly the same JSON string that we passed in.
+****
+
+The response to the GET request also includes the flag `{"exists": true}`.
+This confirms that the document was found.  If we were to request a document
+that doesn't exist, we would still get a JSON response, but `exists` would be
+set to `false`.
+
+Also, the HTTP response code would be `'404 Not Found'` instead of `'200 OK'`.
+We can see this with the following request, including `-i` to see the
+response headers:
+
+    curl -i -XGET localhost:9200/website/blog/124?pretty
+
+The response now looks like this:
+
+    HTTP/1.1 404 Not Found
+    Content-Type: application/json; charset=UTF-8
+    Content-Length: 83
+
+    {
+      "_index" : "website",
+      "_type" : "blog",
+      "_id" : "124",
+      "exists" : false
+    }
+
+

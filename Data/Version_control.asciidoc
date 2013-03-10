@@ -1,0 +1,210 @@
+[[version-control]]
+=== Dealing with conflicts
+
+When we update a document using the `index` API, we update the whole document
+in one go. The most recent indexing request wins -- whichever document was
+indexed last is what is stored in Elasticsearch. If anybody else has changed
+the document in the meantime, their changes have been lost.
+
+Many times, this is not a problem.  Perhaps our main data store is a relational
+database, and we just copy the data into Elasticsearch to make it searchable.
+Perhaps there is little chance of two people changing the same
+document at the same time. Or perhaps it doesn't really matter to our
+business if we lose changes occasionally.
+
+But sometimes losing a change *is* very important.  Imagine that
+we're using Elasticsearch to store the number of widgets that we have
+in stock in our online store. Every time that we sell a widget,
+we decrement the stock count in Elasticsearch.
+
+One day, management decides to put the widgets on sale. Suddenly, we are
+selling several widgets every second. Imagine two web processes, running in
+parallel, both processing the sale of one widget each:
+
+1. `web_1`: get `stock_count` -> `100`
+2. `web_2`: get `stock_count` -> `100`
+3. `web_1`: set `stock_count` to `(100 - 1)` -> `99`
+4. `web_2`: set `stock_count` to `(100 - 1)` -> `99`  `# WRONG`
+
+The change that `web_1` made to the `stock_count` has been lost
+because `web_2` is unaware that its copy of the `stock_count` is out of date.
+The result is that we think we have more widgets than we actually do.
+
+The more frequently that changes are applied, or the longer the gap
+between reading data and updating it, the more likely it is that we
+will lose changes.
+
+There are two approaches to ensuring that changes are not lost when
+making concurrent updates.
+
+_Pessimistic concurrency control_, which is widely used by relational databases,
+assumes that conflicting changes are likely to happen, and so blocks
+access to a resource in order to prevent conflicts. A typical
+example of this is locking a row before reading its data, ensuring that
+only the thread which placed the lock is able to change the data in that row.
+
+_Optimistic concurrency control_, which is used by Elasticsearch,
+assumes that conflicts are unlikely to happen and doesn't block operations
+from being attempted. However, if the underlying
+data has been modified between reading and writing, the update will fail.
+It is then up to the application to decide how it should resolve the conflict.
+For instance, it could reattempt the update, using the fresh
+data, or it could report failure to the user.
+
+=== Optimistic concurrency control
+
+Elasticsearch is distributed.  When documents are
+created, updated or deleted, the new version of the document has to be
+replicated to other nodes in the cluster.  Elasticsearch is also highly
+concurrent, meaning that multiple changes may results in several ``new''
+versions arriving at their destination out of sequence. It needs a way of
+ensuring that an older version of a document never overwrites a newer version.
+
+When discussing `index`, `get` and `delete` requests above, we pointed
+out that every document has a `_version` number which is incremented whenever
+a document is changed. Elasticsearch uses this `_version` number to ensure
+that changes are applied in the correct order. Older versions of a document
+can simply be ignored.
+
+We can take advantage of the `_version` number to ensure that conflicting
+changes made in our application do not result in data loss.
+We do this by specifying the version number of the document that we wish
+to change.  If that version is no longer current, our request fails.
+
+Let's create a new blog post:
+
+    curl -XPUT localhost:9200/website/blog/1/_create -d '
+    {
+      "title": "My first blog entry",
+      "text":  "Just trying this out..."
+    }
+    '
+
+The response body tells us that this newly created document has `_version`
+number `1`.  Now imagine that we want to edit the document: we load its data
+into a web form, make our changes, then save the new version.
+
+First we retrieve the document:
+
+    curl -XGET localhost:9200/website/blog/1
+
+The response body includes the same `_version` number of `1`:
+
+    {
+      "_index" :   "website",
+      "_type" :    "blog",
+      "_id" :      "1",
+      "_version" : 1,
+      "exists" :   true,
+      "_source" : {
+          "title": "My first blog entry",
+          "text":  "Just trying this out..."
+      }
+    }
+
+Now, when we try to save our changes by reindexing the document, we specify
+the `version` to which our changes should be applied:
+
+    curl -XPUT localhost:9200/website/blog/1?version=1 -d '
+    {
+      "title": "My first blog entry",
+      "text":  "Starting to get the hang of this..."
+    }
+    '
+
+This request succeeds, and the response body tells us that the `_version`
+has been incremented to `2`:
+
+    {
+      "ok":       true,
+      "_index":   "website",
+      "_type":    "blog",
+      "_id":      "1",
+      "_version": 2
+    }
+
+However, if we were to rerun the same index request, still specifying
+`version=1`, Elasticsearch would respond with a `409 Conflict` HTTP response
+code, and a body like the following:
+
+    {
+      "error" : "VersionConflictEngineException[[website][2] [blog][1]:
+                 version conflict, current [2], provided [1]]",
+      "status" : 409
+    }
+
+This tells us that the current `_version` number of the document in
+Elasticsearch is `2`, but that we specified that we were updating version `1`.
+
+What we do now depends upon our application requirements.  We could tell
+the user that somebody else has already made changes to the document,
+and that they should review the changes before trying to save them again.
+Alternatively, as in the case of the widget `stock_count` above, we could
+retrieve the newer document and try to reapply the change.
+
+Any API which updates or deletes a document accepts a `version`
+parameter, which allows you to apply optimistic concurrency control
+to the parts of your code where it makes sense.
+
+==== Using versions from an external system
+
+If you are indexing data from another database into Elasticsearch, you
+may already have a version number in your external system.  If so,
+you can reuse these same version numbers in Elasticsearch by adding
+`version_type=external` to the query string. Version numbers must
+be integers greater than zero and less than about 9.2e+18.
+
+The way external version numbers are handled is a bit different to what
+we have discussed above.  Instead of checking that the current `_version`
+is _the same_ as the one specified in the request, Elasticsearch checks
+that the current `_version` is _less than_ the specified version.
+If the request succeeds, the external version number
+is stored as the document's new current `_version`.
+
+This means that external version numbers can be specified not only on
+updates and deletes, but also when _creating_ new documents.
+
+For instance, to create a new blog post with an external version number
+of `5`, we can do the following:
+
+    curl -XPUT 'localhost:9200/website/blog/2?version=5&version_type=external' -d '
+    {
+      "title": "My first external blog entry",
+      "text":  "Starting to get the hang of this..."
+    }
+    '
+
+In the response, we can see that the current `_version` number is now `5`:
+
+    {
+      "ok":       true,
+      "_index":   "website",
+      "_type":    "blog",
+      "_id":      "2",
+      "_version": 5
+    }
+
+Now we update this document, but specifying a new `version` number of `10`:
+
+    curl -XPUT 'localhost:9200/website/blog/2?version=10&version_type=external' -d '
+    {
+      "title": "My first external blog entry",
+      "text":  "This is a piece of cake..."
+    }
+    '
+
+This request succeeds and sets the new current `_version` to `10`:
+
+    {
+      "ok":       true,
+      "_index":   "website",
+      "_type":    "blog",
+      "_id":      "2",
+      "_version": 10
+    }
+
+If you were to rerun this request, it would fail with the same conflict
+error we saw above, because the specified version is not greater than
+the current version in Elasticsearch.
+
+

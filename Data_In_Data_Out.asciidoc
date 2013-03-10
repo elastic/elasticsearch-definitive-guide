@@ -2,45 +2,25 @@
 == Data in, data out
 
 include::Data/Intro.asciidoc[]
+
 include::Data/Document.asciidoc[]
 
-// This chapter explains how to use Elasticsearch as a NoSQL-style document
-// store. It shows how to create, update, retrieve and delete documents using
-// both the single- and multi-document APIs. It discusses optimistic version
-// control and how to use versioning to ensure data consistency, then finishes
-// with some more advanced topics.
-//
-// === How data is organised
-//
-// * index
-// * type
-// * document
-// * fields
-//
-// === Document metadata
-//
-// === Single document APIs
-//
-// * Indexing documents
-// ** `index` vs `create`
-// ** reindexing
-//
-// * Retrieving documents
-// * Deleting documents
-// * Updating documents
-//
-// === Near real time aspect
-//
-// * How changes are persisted
-// * Refresh
-// ** Automated vs Manual
-// ** Disabling refresh
-//
-// === Version control
-//
-// * Optimistic version control
-// * Internal vs External version numbers
-// * Ensuring data integrity
+include::Data/Index.asciidoc[]
+
+include::Data/Get.asciidoc[]
+
+include::Data/Update.asciidoc[]
+
+include::Data/Create.asciidoc[]
+
+include::Data/Delete.asciidoc[]
+
+include::Data/Version_control.asciidoc[]
+
+include::Data/Partial_update.asciidoc[]
+
+
+
 //
 // === Multi-document APIs
 //
