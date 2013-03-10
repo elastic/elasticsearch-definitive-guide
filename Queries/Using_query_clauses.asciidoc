@@ -16,7 +16,7 @@ For instance, this  `match` query clause:
 could be used as the argument to the `query` parameter in a `search` request,
 as follows:
 
-    curl -XGET http://localhost:9200/_search -d '
+    curl -XGET localhost:9200/_search -d '
     {
         "query": { "match": { "title": "fox" }}
     }
@@ -36,7 +36,7 @@ for instance, the compound <<bool-query,`bool` query>>:
 
 which could, again, be passed to the `query` parameter in a `search` request:
 
-    curl -XGET http://localhost:9200/_search -d '
+    curl -XGET localhost:9200/_search -d '
     {
         "query": {
             "bool": {

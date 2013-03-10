@@ -11,10 +11,10 @@ This simply matches all documents and returns a `_score` of 1 for all of them.
 It is the default query that is run if no query is passed to a search request.
 So these two search requests are equivalent:
 
-    curl -XGET http://localhost:9200/_search
+    curl -XGET localhost:9200/_search
 
 
-    curl -XGET http://localhost:9200/_search -d '
+    curl -XGET localhost:9200/_search -d '
     {
         "query": {
             "match_all" : {}

@@ -15,7 +15,7 @@ generated its own schema automatically.
 We can see how our fields from the example have been interpreted by retrieving
 the current _mapping_ or schema definition:
 
-    curl -XGET 'http://localhost:9200/blogs/_mapping?pretty'
+    curl -XGET 'localhost:9200/blogs/_mapping?pretty'
 
 which looks like this:
 
@@ -58,7 +58,7 @@ adding, for example:
 
  * autocomplete searches to the `title` field
  * language specific analysis to the `title` and `content` fields
- * geo-location information for results-near-you
+ * geolocation information for results-near-you
 
 Instead of relying on the dynamic detection of fields, we can
 specify our own custom analyzers and field mapping, taking control over

@@ -17,7 +17,7 @@ will be auto-generated for you.
 We are going to store it in the `blogs` index, as type `user`, and we
 can assign this user the unique ID `johnsmith`:
 
-    curl -XPUT 'http://localhost:9200/blogs/user/johnsmith?pretty' -d '
+    curl -XPUT 'localhost:9200/blogs/user/johnsmith?pretty' -d '
     {
         "email":     "john@smith.com",
         "name": {
@@ -54,7 +54,7 @@ change would still be there when the cluster is restarted.
 We can retrieve (or `GET`) the document using the same `index`, `type` and `id`
 that we specified when indexing it:
 
-    curl -XGET 'http://localhost:9200/blogs/user/johnsmith?pretty'
+    curl -XGET 'localhost:9200/blogs/user/johnsmith?pretty'
 
 The response contains the exact same JSON document that we indexed, as the
 `_source` field, plus some extra metadata:

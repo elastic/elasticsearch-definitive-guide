@@ -14,7 +14,7 @@ multiple types, each with its own mapping or schema.
 Unlike a relational database, Elasticsearch can search across
 multiple types, and across multiple indices. Try this query:
 
-    curl -XGET 'http://localhost:9200/blogs,blogs2/_search?pretty'
+    curl -XGET 'localhost:9200/blogs,blogs2/_search?pretty'
 
 This gives us enormous flexibility when scaling an application:
 

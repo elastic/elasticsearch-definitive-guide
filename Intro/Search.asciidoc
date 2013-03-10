@@ -4,7 +4,7 @@ Now that our documents are indexed we can search for them.
 For simple _ad hoc_ searches, we can use the _query string_ search
 method:
 
-    curl -XGET 'http://localhost:9200/_search?pretty&q=john'
+    curl -XGET 'localhost:9200/_search?pretty&q=john'
 
 The above query returns our `johnsmith` document as a result, but what we have
 actually searched?
@@ -15,7 +15,7 @@ the values from all the other fields in the document.  By default, the
 
 Alternatively, we could search in a specific field:
 
-    curl -XGET 'http://localhost:9200/_search?pretty&q=first:john'
+    curl -XGET 'localhost:9200/_search?pretty&q=first:john'
 
 Every single field in a document is indexed and searchable by default. It's
 the equivalent a database having an index on every column in
@@ -34,7 +34,7 @@ The query string search is useful for simple queries, but we can use
 the _Query DSL_ -- Elasticsearch's custom query language -- to express
 more complex and specific queries in JSON:
 
-    curl -XGET http://localhost:9200/_search?pretty -d '
+    curl -XGET localhost:9200/_search?pretty -d '
     {
         "query": {
             "bool": {
@@ -59,7 +59,7 @@ The search API supports other related functionality, such as the ability
 to return highlighted search snippets which show the search terms
 in the context of the document:
 
-    curl -XGET http://localhost:9200/_search?pretty -d '
+    curl -XGET localhost:9200/_search?pretty -d '
     {
         "query": { "match": { "bio": "eco warrior" }},
         "highlight": {
@@ -103,7 +103,7 @@ categories which can then be used to narrow down the results.
 The following query returns all objects of type `user` in all indices,
 and summarizes the most popular values in the `interests` field:
 
-    curl -XGET 'http://localhost:9200/_all/user/_search?pretty=1'  -d '
+    curl -XGET 'localhost:9200/_all/user/_search?pretty=1'  -d '
     {
        "query" : {
           "match_all" : {}

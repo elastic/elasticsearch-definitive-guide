@@ -40,7 +40,7 @@ All requests consist of:
 
 * an appropriate HTTP method: `GET`, `POST`, `PUT`, `HEAD` or `DELETE`
 * the protocol and hostname of any node in the cluster,
-  eg: `http://localhost:9200`
+  eg: `http://localhost:9200` or even just `localhost:9200`
 * the path of the resource you want to use, eg: `/_count`
 * any optional query string parameters, eg `?pretty=true` will _pretty-print_
   the JSON response to make it easier to read
@@ -49,7 +49,7 @@ All requests consist of:
 For instance, to count the number of documents in the cluster, we could
 use:
 
-    curl -XGET 'http://localhost:9200/_count?pretty=true' -d '
+    curl -XGET 'localhost:9200/_count?pretty=true' -d '
     {
         "match_all": {}
     }
@@ -74,10 +74,10 @@ following:
     }
 
 We don't see the HTTP headers in the response because we didn't ask `curl` to
-display them. To see the headers, use the `curl` command with the `-D`
+display them. To see the headers, use the `curl` command with the `-i`
 switch:
 
-    curl -D - -XGET 'http://...'
+    curl -i -XGET 'localhost:9200/'
 
 We will use this `curl` format in all of our examples because it is easy to
 read and easy to translate into a request using the HTTP library of your
