@@ -1,0 +1,214 @@
+[[bulk]]
+=== Cheaper in bulk
+
+As fast as Elasticsearch is, it can be faster still. Combining multiple
+actions in a single request avoids the network overhead of processing each
+request individually.
+
+The `bulk` API allows us to send multiple `create`, `index` or `delete`
+requests in one.  The request body has the following format :
+
+    { action: { metadata }}\n
+    { document            }\n
+    { action: { metadata }}\n
+    { document            }\n
+    ...
+
+Two important points to note about the format:
+
+* Every line must end with a newline character `"\n"`, *including the last
+  line*. These are used as markers for efficient line separation.
+
+* The lines cannot *contain* embedded newline characters, as they would
+  interfere with parsing -- the JSON must *not* be pretty-printed.
+
+The _action/metadata_ line specifies *what action* to do to *which document*.
+
+The _action_ must be one of `index`, `create` or `delete`.
+The _metadata_ should specify the `_index`, `_type` and `_id` of the document
+to be indexed, created or deleted.
+
+For instance, a `delete` request could look like this:
+
+    { "delete": { "_index": "website", "_type": "blog", "_id": "123" }}
+
+The _document_ line consists of the document `_source` itself -- the fields and values
+that the document contains.  It is only required for `index` or `create`,
+not `delete`.
+
+    { "index":  { "_index": "website", "_type": "blog", "_id": "123" }}
+    { "title":    "My first blog post" }
+
+
+If no `_id` is specified, then an ID will be auto-generated:
+
+    { "create": { "_index": "website", "_type": "blog" }}
+    { "title":    "My second blog post" }
+
+
+To put it all together, a complete `bulk` request has this form:
+
+    curl -XPOST localhost:9200/_bulk -d '
+    { "delete": { "_index": "website", "_type": "blog", "_id": "123" }}
+    { "index":  { "_index": "website", "_type": "blog", "_id": "123" }}
+    { "title":    "My first blog post" }
+    { "create": { "_index": "website", "_type": "blog" }}
+    { "title":    "My second blog post" }
+    '
+
+Elasticsearch returns the `items` array which contains the result of each
+request, in the same order as we requested them.  It also reports how many
+milliseconds it `took` to perform the whole `bulk` request:
+
+    {
+      "took" : 1,
+      "items" : [
+        { "delete" : {
+            "_index" :   "website",
+            "_type" :    "blog",
+            "_id" :      "123",
+            "_version" : 5,
+            "ok" :       true
+        }},
+        { "index" : {
+            "_index" :   "website",
+            "_type" :    "blog",
+            "_id" :      "123",
+            "_version" : 6,
+            "ok" :       true
+        }},
+        { "create" : {
+            "_index" :   "website",
+            "_type" :    "blog",
+            "_id" :      "YUYRnsC4T2yePAnMy-pqAA",
+            "_version" : 1,
+            "ok" :       true
+        }}
+      ]
+    }
+
+If any of the requests fail, then the error will be returned in `items` --
+it won't stop the other requests from being processed:
+
+    curl -XPOST localhost:9200/_bulk -d '
+    { "create": { "_index": "website", "_type": "blog", "_id": "123" }}
+    { "title":    "Cannot create - it already exists" }
+    { "index":  { "_index": "website", "_type": "blog", "_id": "123" }}
+    { "title":    "But we can update it" }
+    '
+
+In the response we can see that it failed to `create` document `123`
+because it already exists. However, the subsequent `index` request, also
+on document `123`, succeeded:
+
+    {
+      "took" : 1,
+      "items" : [
+        { "create" : {
+            "_index" :   "website",
+            "_type" :    "blog",
+            "_id" :      "123",
+            "error" :    "DocumentAlreadyExistsException[[website][4] [blog][123]: document already exists]"
+        }},
+        { "index" : {
+            "_index" :   "website",
+            "_type" :    "blog",
+            "_id" :      "123",
+            "_version" : 7,
+            "ok" :       true
+        }}
+      ]
+    }
+
+==== Don't repeat yourself
+
+Often you will want to bulk index documents in the same index, and maybe even
+of the same type. Perhaps you are indexing logging data in batches of
+a hundred documents at a time.  Having to specify the same metadata for each
+document is a waste.
+
+Instead, we can specify a default `_index` in the URL, or even a default
+`_index` and a default `_type`.
+
+    # default index:
+    # /index/_bulk
+
+    curl -XPOST localhost:9200/website/_bulk -d '
+    { "index": { "_type": "log" }}
+    { "event": "User signed on" }
+    '
+
+You can still override the `_index` and `_type` in the metadata line, but it
+will use the URL defaults if no override is specified:
+
+    # default index and type
+    # /index/type/_bulk
+
+    curl -XPOST localhost:9200/website/log/_bulk -d '
+    { "index": {}}
+    { "event": "User signed on" }
+    { "index": { "_type": "blog" }
+    { "title": "Overriding the default type" }}
+    '
+
+==== Conflict control
+
+We can use `_version` numbers to avoid overwriting data in the same
+way as do for single `index` or `delete` requests (see <<version-control>>).
+
+The `_version` number must be specified in the metadata:
+
+    curl -XPOST localhost:9200/website/blog/_bulk -d '
+    { "create": { "_id": "125" }}
+    { "title":    "Create a new blog post, with version 1" }
+    { "index":  { "_id": "125", "_version": 1 }}
+    { "title":    "This update succeeds" }
+    { "index":  { "_id": "125", "_version": 1 }}
+    { "title":    "This update fails with a Conflict error" }
+    '
+
+The metadata also understands the `_version_type` parameter, if you wish
+to use `external` version numbers.
+
+
+==== Why the funny format?
+
+You may have asked yourself: ``Why does the `bulk` API require the funny format
+with the newline characters, instead of just sending the requests wrapped in
+a JSON array?''
+
+Documents are stored and indexed in shards. An index is just a logical namespace
+which points to one or more shards.  On top of that, you may have multiple
+indices. Elasticsearch uses the `_index`, `_type` and `_id` of the document
+to determine which shard it should belong to.
+
+If you are running a cluster with more than one node, then it is likely that
+your shards will be allocated to different nodes. Each _action_ inside a `bulk`
+request needs to be forwarded to the correct shard on the correct node.
+
+If the individual requests were wrapped up in a JSON array, that would mean
+that we would need to:
+
+ * parse the JSON into an array (including the document data, which
+   can be very large)
+ * look at each request to determine which shard it should go to
+ * create an array for every shard with requests
+ * reformat the arrays into the internal transport format
+ * send the requests to each shard
+
+That would work, but it uses a lot of RAM and creates a lot of data
+structures, which the JVM then has to spend time garbage collecting.
+
+Instead, Elasticsearch reaches up into the networking buffer, where
+the raw request has been received to read the data directly. It uses the
+newline characters to identify and parse just the small _action/metadata_ lines
+in order to decide which shard should handle each request.
+
+These raw requests are then forwarded directly to the correct shard. There
+is no redundant copying of data, no wasted data structures. The entire
+request process is handled in the smallest amount of memory possible.
+
+This is a good example of just how much effort the Elasticsearch authors
+have put in to optimizing performance.
+
+

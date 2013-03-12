@@ -3,18 +3,19 @@
 
 We said in <<update-doc>> that the way to update a document is to retrieve
 it, change it, then reindex the whole document. This is true. However,
-we can make partial updates to a document, such as incrementing a counter,
-in a single client request by using  the `update` API.
+using the `update` API, we can make partial updates to a document
+in a single client request, such as incrementing a counter.
 
 We also said that documents are immutable -- they cannot be changed, only
-replaced.  The `update` API obeys the same rules.  While we can use it to
-request what looks like a partial update to a document, really Elasticsearch
-is following the same _retrieve-change-reindex_ process that we have described.
+replaced.  The `update` API has to obey the same rules.  While we can use it to
+make what looks like a partial update to a document, really Elasticsearch
+is following the same _retrieve-change-reindex_ process that we have
+already described.
 
 The only difference is that it is doing it all inside Elasticsearch, thus
 avoiding the network overhead of multiple requests. By reducing the time
-between the _retrieve_ and _reindex_ steps, we also reduce the likelihood of
-receiving conflicting changes from another process.
+between the _retrieve_ and _reindex_ steps, we can reduce the likelihood of
+conflicting changes from other processes.
 
 The simplest form of the `update` request accepts a partial document
 as the `"doc"` parameter, which will be merged into the existing document.
@@ -30,7 +31,7 @@ with:
     }
     '
 
-By default, if the request succeeds, we see a similar response to that
+By default, if the request succeeds, we see a response similar to that
 of the `index` request:
 
     {
@@ -54,7 +55,8 @@ to see the whole document, then request the `_source` field:
     }
     '
 
-Now you can see that our fields have been added to the document:
+Now you can see that our `tags` and `views` fields have been added to the
+document:
 
     {
       "ok" :       true,
@@ -111,7 +113,7 @@ incremented:
 We can also use a script to add a new tag to the `tags` array.  In this
 example we specfiy the new tag as a parameter rather than hard coding
 it in the script itself. This allows Elasticsearch to reuse the script
-in the future, without having to compile a new version for every new tag:
+in the future, without having to compile a new script for every new tag:
 
     curl -XPOST localhost:9200/website/blog/1/_update?fields=tags  -d '
     {
@@ -171,8 +173,8 @@ document that should be created if it doesn't already exist:
     }
     '
 
-The first time we run this request, a new document is inserted and the
-`views` field is initialized to `0`:
+The first time we run this request, a new document is inserted which
+initializes the `views` field to `0`:
 
     {
       "ok" :       true,
@@ -208,7 +210,7 @@ is applied instead:
 ==== Updates and conflicts
 
 In the introduction to this section, we said that the smaller window
-between the _retrieve_ and _reindex_ steps reduced the opportunity for
+between the _retrieve_ and _reindex_ steps, the smaller the opportunity for
 conflicting changes. But it doesn't eliminate it completely.
 It is still possible that a request from another process could change the
 document before `update` has managed to reindex it.

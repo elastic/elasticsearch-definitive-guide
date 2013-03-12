@@ -142,9 +142,10 @@ and that they should review the changes before trying to save them again.
 Alternatively, as in the case of the widget `stock_count` above, we could
 retrieve the newer document and try to reapply the change.
 
-Any API which updates or deletes a document accepts a `version`
+Almost all APIs which updates or deletes a document accepts a `version`
 parameter, which allows you to apply optimistic concurrency control
-to the parts of your code where it makes sense.
+to the parts of your code where it makes sense. The only exception
+is the `update` API, which we will discuss in the next section.
 
 ==== Using versions from an external system
 
@@ -152,7 +153,8 @@ If you are indexing data from another database into Elasticsearch, you
 may already have a version number in your external system.  If so,
 you can reuse these same version numbers in Elasticsearch by adding
 `version_type=external` to the query string. Version numbers must
-be integers greater than zero and less than about 9.2e+18.
+be integers greater than zero and less than about `9.2e+18` -- a positive
+`long` value in Java.
 
 The way external version numbers are handled is a bit different to what
 we have discussed above.  Instead of checking that the current `_version`
@@ -193,7 +195,7 @@ Now we update this document, but specifying a new `version` number of `10`:
     }
     '
 
-This request succeeds and sets the new current `_version` to `10`:
+The request succeeds and sets the new current `_version` to `10`:
 
     {
       "ok":       true,

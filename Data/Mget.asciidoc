@@ -1,0 +1,7 @@
+=== Retrieving multiple documents
+
+As fast as Elasticsearch is, it can be faster still when processing
+multiple requests at once.  If you know that you want to retrieve multiple
+documents, then retrieving them in a single request avoids the network
+overhead of multiple requests.
+
