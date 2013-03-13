@@ -4,7 +4,7 @@
 The syntax for deleting a document follows the pattern that we have seen
 above, but uses the `DELETE` method :
 
-    curl -XDELETE localhost:9200/website/blog/123?pretty
+    curl -XDELETE localhost:9200/website/blog/123
 
 If the document is found, Elasticsearch will return an HTTP response code
 of `200 OK` and a response body like the following. Note that the `_version`

@@ -33,7 +33,7 @@ And the second uses the `/_create` endpoint in the URL:
     { ... }
     '
 
-If the request succeeds -- a new document has been created -- then
+If the request succeeds in creating a new document, then
 Elasticsearch will return the by now familiar metadata
 and an HTTP response code of `201 Created`.
 

@@ -1,12 +1,14 @@
 [[bulk]]
 === Cheaper in bulk
 
-As fast as Elasticsearch is, it can be faster still. Combining multiple
-actions in a single request avoids the network overhead of processing each
-request individually.
+In the same way that `mget` allows us to retrieve multiple documents at once,
+the `bulk` API allows us to make multiple `create`, `index` or `delete` requests
+in a single step.
 
-The `bulk` API allows us to send multiple `create`, `index` or `delete`
-requests in one.  The request body has the following format :
+This is particularly useful if you need to index a data stream such as
+log events, which can be queued up and indexed in batches of 100 or 1000.
+
+The `bulk` request body has the following, slightly unusual, format:
 
     { action: { metadata }}\n
     { document            }\n
@@ -19,8 +21,9 @@ Two important points to note about the format:
 * Every line must end with a newline character `"\n"`, *including the last
   line*. These are used as markers for efficient line separation.
 
-* The lines cannot *contain* embedded newline characters, as they would
-  interfere with parsing -- the JSON must *not* be pretty-printed.
+* The lines cannot contain embedded newline characters, as they would
+  interfere with parsing -- that means that the JSON must *not* be
+  pretty-printed.
 
 The _action/metadata_ line specifies *what action* to do to *which document*.
 
@@ -33,8 +36,8 @@ For instance, a `delete` request could look like this:
     { "delete": { "_index": "website", "_type": "blog", "_id": "123" }}
 
 The _document_ line consists of the document `_source` itself -- the fields and values
-that the document contains.  It is only required for `index` or `create`,
-not `delete`.
+that the document contains.  It is only required for `index` or `create`
+requests, not for `delete`.
 
     { "index":  { "_index": "website", "_type": "blog", "_id": "123" }}
     { "title":    "My first blog post" }
@@ -120,18 +123,17 @@ on document `123`, succeeded:
       ]
     }
 
+That also means that `bulk` requests are not atomic.  They cannot be used
+to implement transactions.  Each request is processed separately, so the
+failure of one request will not interfere with the others.
+
 ==== Don't repeat yourself
 
-Often you will want to bulk index documents in the same index, and maybe even
-of the same type. Perhaps you are indexing logging data in batches of
-a hundred documents at a time.  Having to specify the same metadata for each
-document is a waste.
+Perhaps you are batch indexing logging data into the same `index`, and with the
+same `type`. Having to specify the same metadata for each document is a waste.
 
-Instead, we can specify a default `_index` in the URL, or even a default
-`_index` and a default `_type`.
-
-    # default index:
-    # /index/_bulk
+Instead, just as for the `mget` API, we can specify a default `/_index` in the
+URL, or even a default `/_index/_type`.
 
     curl -XPOST localhost:9200/website/_bulk -d '
     { "index": { "_type": "log" }}
@@ -141,15 +143,14 @@ Instead, we can specify a default `_index` in the URL, or even a default
 You can still override the `_index` and `_type` in the metadata line, but it
 will use the URL defaults if no override is specified:
 
-    # default index and type
-    # /index/type/_bulk
-
     curl -XPOST localhost:9200/website/log/_bulk -d '
     { "index": {}}
     { "event": "User signed on" }
     { "index": { "_type": "blog" }
     { "title": "Overriding the default type" }}
     '
+
+Unlike the `mget` API, the `_type` parameter is not optional.
 
 ==== Conflict control
 
@@ -170,20 +171,37 @@ The `_version` number must be specified in the metadata:
 The metadata also understands the `_version_type` parameter, if you wish
 to use `external` version numbers.
 
+==== How big is too big?
+
+There is an optimal size of `bulk` request. Above that size, performance
+no longer improves and may even drop off. Also, the entire bulk request
+needs to be loaded into memory, so the bigger the request, the less
+memory available for other requests.
+
+The optimal size, however, is not a fixed number. It depends entirely on your
+hardware, your document size and complexity, and your indexing and search
+load.  Fortunately, it is easy to find the _sweetspot_:
+
+Try indexing typical documents in batches of increasing size. When
+performance starts to drop, your batch size is too big.
+
+A good place to start is with batches of between 1,000 and 5,000 documents.
 
 ==== Why the funny format?
 
 You may have asked yourself: ``Why does the `bulk` API require the funny format
 with the newline characters, instead of just sending the requests wrapped in
-a JSON array?''
+a JSON array, like the `mget` API?''
+
+To answer this, we need to explain a little background:
 
 Documents are stored and indexed in shards. An index is just a logical namespace
-which points to one or more shards.  On top of that, you may have multiple
-indices. Elasticsearch uses the `_index`, `_type` and `_id` of the document
-to determine which shard it should belong to.
+which points to one or more shards.  On top of that, a cluster may contain
+multiple indices. Elasticsearch uses the `_index`, `_type` and `_id` of the
+document to determine which shard it should belong to.
 
 If you are running a cluster with more than one node, then it is likely that
-your shards will be allocated to different nodes. Each _action_ inside a `bulk`
+these shards will be allocated to different nodes. Each _action_ inside a `bulk`
 request needs to be forwarded to the correct shard on the correct node.
 
 If the individual requests were wrapped up in a JSON array, that would mean
@@ -196,19 +214,19 @@ that we would need to:
  * reformat the arrays into the internal transport format
  * send the requests to each shard
 
-That would work, but it uses a lot of RAM and creates a lot of data
-structures, which the JVM then has to spend time garbage collecting.
+It would work, but would need a lot of RAM to hold copies of essentially
+the same data, and would create many more data structures that the JVM
+would have to spend time garbage collecting.
 
 Instead, Elasticsearch reaches up into the networking buffer, where
-the raw request has been received to read the data directly. It uses the
+the raw request has been received and reads the data directly. It uses the
 newline characters to identify and parse just the small _action/metadata_ lines
 in order to decide which shard should handle each request.
 
-These raw requests are then forwarded directly to the correct shard. There
+These raw requests are forwarded directly to the correct shard. There
 is no redundant copying of data, no wasted data structures. The entire
 request process is handled in the smallest amount of memory possible.
 
-This is a good example of just how much effort the Elasticsearch authors
-have put in to optimizing performance.
-
+This is a good example of just how much thought and effort the Elasticsearch
+authors have put in to optimizing performance.
 

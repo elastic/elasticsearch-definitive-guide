@@ -37,13 +37,13 @@ will lose changes.
 There are two approaches to ensuring that changes are not lost when
 making concurrent updates.
 
-_Pessimistic concurrency control_, which is widely used by relational databases,
-assumes that conflicting changes are likely to happen, and so blocks
+_Pessimistic concurrency control_, widely used by relational databases,
+assumes that conflicting changes are likely to happen and so blocks
 access to a resource in order to prevent conflicts. A typical
 example of this is locking a row before reading its data, ensuring that
 only the thread which placed the lock is able to change the data in that row.
 
-_Optimistic concurrency control_, which is used by Elasticsearch,
+_Optimistic concurrency control_, used by Elasticsearch,
 assumes that conflicts are unlikely to happen and doesn't block operations
 from being attempted. However, if the underlying
 data has been modified between reading and writing, the update will fail.
@@ -60,11 +60,11 @@ concurrent, meaning that multiple changes may results in several ``new''
 versions arriving at their destination out of sequence. It needs a way of
 ensuring that an older version of a document never overwrites a newer version.
 
-When discussing `index`, `get` and `delete` requests above, we pointed
+When we discussed `index`, `get` and `delete` requests above, we pointed
 out that every document has a `_version` number which is incremented whenever
 a document is changed. Elasticsearch uses this `_version` number to ensure
-that changes are applied in the correct order. Older versions of a document
-can simply be ignored.
+that changes are applied in the correct order. If an older version of
+a document arrives after a new version, it can simply be ignored.
 
 We can take advantage of the `_version` number to ensure that conflicting
 changes made in our application do not result in data loss.

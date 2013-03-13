@@ -9,6 +9,8 @@ include::Data/Index.asciidoc[]
 
 include::Data/Get.asciidoc[]
 
+include::Data/Exists.asciidoc[]
+
 include::Data/Update.asciidoc[]
 
 include::Data/Create.asciidoc[]
@@ -19,26 +21,6 @@ include::Data/Version_control.asciidoc[]
 
 include::Data/Partial_update.asciidoc[]
 
-include::Data/Bulk.asciidoc[]
-
 include::Data/Mget.asciidoc[]
 
-
-//
-// === Multi-document APIs
-//
-// * Bulk changes
-// * Multi-get
-// * Delete-by-query
-// * Update-by-query
-//
-// === Indexing attachments
-// .
-//
-// === Advanced topics
-//
-// * Persistence
-// * Consistency
-// * Routing
-//
-//
+include::Data/Bulk.asciidoc[]

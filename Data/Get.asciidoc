@@ -54,4 +54,34 @@ The response now looks like this:
       "exists" : false
     }
 
+==== Retrieving part of a document
 
+By default, a `get` request will return the whole document, as stored in
+the `_source` field. But perhaps all you are interested in is the
+`title` field.
+
+Individual fields can be requested using the `fields` parameter:
+
+    curl -XGET localhost:9200/website/blog/123?fields=title
+
+The response no longer contains the `_source` field, but does contain
+the `title` field:
+
+    {
+      "_index" :   "website",
+      "_type" :    "blog",
+      "_id" :      "123",
+      "_version" : 1,
+      "exists" :   true,
+      "fields" : {
+          "title": "My first blog entry",
+          "text":  "Just trying this out..."
+      }
+    }
+
+Multiple fields can be specified in a comma-separated list:
+
+    curl -XGET localhost:9200/website/blog/123?fields=title,text
+
+The metadata elements (`_index` etc) will always be returned. These
+cannot be disabled.
