@@ -1,0 +1,289 @@
+[[distributed-docs]]
+=== Distributed document store
+
+Up until this point, we have been discussing the document store APIs
+available to your application.   Now we are going to dive into the
+internals to understand where and how your data is stored in a distributed
+system.
+
+.Content warning
+****
+The information presented below is for your understanding, but it
+is not knowledge that you require in order to use Elasticsearch.
+The options that are discussed are for advanced users only.
+
+Read the section to gain a taste for how things work, and to know where
+the information is in case you need to refer to it in the future,
+but don't be overwhelmed by the detail.
+****
+
+As we have said already, our application stores documents in an index,
+but an index is just a logical namespace which points to one or more shards.
+
+An index can have one or more primary shards. A primary shard is the official
+home of a document. The more primary shards you have, the more data you
+can store in your index.
+
+Each primary shards can have zero or more replica shards. A replica shard is
+a complete copy of its primary shard, and can be promoted to a primary
+shard in case disaster strikes and the primary shard is lost. Replicas
+can also be serve read requests. The more replica shards, the greater
+our search capacity.
+
+By default, an index has 5 primary shards, each of which has
+one replica.
+
+==== Mapping a document to a shard.
+
+How does Elasticsearch know which shard a document belongs to?  When we
+create a new document, how does it know whether it should store that
+document on shard 1 or shard 2?
+
+The answer boils down to a simple formula:
+
+    shard = hash(routing) mod number_of_primary_shards
+
+The `routing` value is an arbtrary string, which defaults to the document's
+`_id`, but can also be set to a custom value. This `routing` string
+is passed through a hashing function to generate a number, which is
+divided by the number of primary shards in the index, and returns the
+_modulo_ or remainder.
+
+This explains why the number of primary shards can only be set
+when an index is created, as changing the number later
+would completely change the document-to-shard mapping.
+
+All document APIs (`get`, `index`, `delete`, `bulk`, `update` and `mget`)
+accept a `routing` parameter that can be used to customize the
+document-to-shard mapping. We discuss in detail why you may want to do
+this in <<scaling>>.
+
+==== Explaining shard interaction
+
+For explanation purposes, let's imagine that we have a cluster
+consisting of 3 nodes. It contains one index called `blogs` which has
+two primary shards. Each primary shard has two replicas. Copies of
+the same shard are never allocated to the same node, so our cluster
+looks something like <<img-distrib>>.
+
+[[img-distrib]]
+.A cluster with three nodes and one index
+image::images/distrib.svg["A cluster with three nodes and one index"]
+
+We can send our requests to any node in the cluster. Each node knows
+about all of the other nodes in the cluster, and will forward the request
+to the appropriate node. In the examples below, we will send all of our
+requests to `Node 1`, which we will refer to as  the _requesting node_.
+
+NOTE: When sending requests, it is good practice to round-robin through all the
+nodes in the cluster, in order to spread the load.
+
+[[distrib-write]]
+==== Creating, indexing and deleting a document
+
+Create, index and delete requests must be executed on the primary shard
+before being copied to the replicas. The shard interaction is depicted
+in <<img-distrib-write>>.
+
+[[img-distrib-write]]
+.Creating, indexing or deleting a single document
+image::images/distrib_single_write.svg["Creating, indexing or deleting a single document"]
+
+1. The client sends a create, index or delete request to `Node_1`.
+
+2. The node uses the document's `_id` to determine that the document
+   belongs to shard `0`. It forwards the request to `Node 3`,
+   where primary shard `0` is currently allocated.
+
+3. `Node 3` executes the request on the primary shard. If it
+    is successful, it forwards the request in parallel to the replica shards on
+   `Node 1` and `Node 2`. Once a _quorum_ (majority) of replica shards
+   reports success, `Node 3` reports success to the requesting node, which
+   reports success to the client.
+
+By the time the client receives a succesful response, the document change
+has been executed on the primary shard and on the majority of replica shards.
+Your change is safe.
+
+There are a number of optional request parameters which allow you to influence
+this process, possibly increasing performance at the cost of data security.
+These options are seldom used because Elasticsearch is already fast, but
+they are explained here for the sake of completeness.
+
+`replication`::
+
+The default value for replication is `sync`. This causes the primary
+shard to wait for successful responses from the replica shards before
+returning.
++
+If you set `replication` to `async`, then it will return success to the
+client as soon as the request has been executed on the primary shard.
+It will still forward the request to the replicas, but you will not
+know if the replicas succeeded or not.
+
+`consistency`::
+
+By default, the primary shard requires a _quorum_ or majority of replica
+shards to return success before reporting success to the client, where
+a quorum is defined as:
++
+    int( number_of_replicas / 2 ) + 1
++
+The allowed values for `consistency` are `quorum`, `one` and `all`.
++
+Note that the `number_of_replicas` is the number of replicas specified in
+the index settings, not the number of replicas that are currently live.
+If you have specified that an index should have 4 replicas, but only start
+2 nodes, then there will be insufficient replicas to satisfy the quorum and
+you will be unable to change any documents.
++
+It is common to run a single node during development but, by default,
+an index is set to have one replica.  That means that a `quorum` actually
+requires at least two nodes.  This scenario is special-cased to allow
+`quorum` and `one` to succeed, even though there may not be sufficient
+replicas.
+
+`timeout`::
+
+What happens if insufficient replica shards are available? Elasticsearch
+waits, in the hope that they will appear.  By default it will wait up
+to one minute. If you need to, you can use the `timeout` parameter
+to make it abort sooner: `100` is 100 milliseconds, `30s` is 30 seconds.
+
+[[distrib-read]]
+==== Retrieving a document
+
+A document can be retrieved from a primary shard or any of its replicas.
+The request process is depicted in <<img-distrib-read>>.
+
+[[img-distrib-read]]
+.Retrieving a single document
+image::images/distrib_single_read.svg["Retrieving a single document"]
+
+1. The client sends a get request to `Node 1`.
+
+2. The node uses the document's `_id` to determine that the document
+   belongs to shard `0`. Copies of shard `0` exist on all three nodes.
+   In this instance, it forwards the request to `Node 2`, which returns
+   the document.
+
+For read requests, the requesting node will choose a different copy of the
+shard on each subsequent request -- it round-robins through the nodes.
+
+It is possible that a document has been indexed on the primary shard but
+has not yet been copied to the replica shards. In this case a replica
+might report that the document doesn't exist, while the primary would have
+returned the document succesfully.
+
+The `preference` parameter can be used to control which node handles the
+retrieval request:
+
+Default::
+
+If `preference` is not specified, then read requests will be sent to
+each shard in turn, in a round-robin fashion.
+
+`_local`::
+
+If a copy of the shard exists on the requesting node, then this will be
+used to handle the read request, otherwise the request will be forwarded
+to another node.
+
+`_primary`::
+
+The read request will be handled only by the primary shard.  This can
+be useful when you are using <<version-control,`_version` numbers>> to
+avoid data loss from conflicting changes. Retrieving the latest version
+from the primary shard reduces (but does not eliminate) the chances
+of conflict.
+
+Arbitrary string::
+
+The `preference` parameter can be set to any arbitrary string, such as
+the session ID of a user, which would ensure that the user always gets
+results from the same node.  While this is less useful when retrieving
+individual documents, it can be very useful when searching: two documents that
+are ranked as equally relevant by a search query may be returned in
+a different order by different shards. Always returning results from
+the same shard means that the user will see the results
+in a consistent order.
+
+==== Partial updates to a document
+
+The `update` API, depicted in <<img-distr-update>>,  combines the read and
+write patterns explained above.
+
+[[img-distrib-write]]
+.Partial updates to a document
+image::images/distrib_single_update.svg["Partial updates to a document"]
+
+1. The client sends an update request to `Node_1`.
+
+2. It forwards the request to `Node 3`, where the primary shard is allocated.
+
+3. `Node 3` retrieves the document from the primary shard, changes the JSON
+   in the `_source` field, and reindexes the document on the primary shard.
+   If the document has already been changed by another process, it retries
+   step 3 up to `retry_on_conflict` times, before giving up.
+
+4.  If `Node 3` has managed to update the document successfully, it forwards
+    the new version of the document in parallel to the replica shards on
+    `Node 1` and `Node 2` to be reindexed. Once a quorum of replica shards
+    reports success, `Node 3` reports success to the requesting node,
+    which reports success to the client.
+
+The `update` API also accepts the `routing`, `replication`, `consistency` and
+`timeout` parameters that are explained in <<distrib-write>>.
+
+==== Multi-document patterns
+
+The patterns for the `mget` and `bulk` APIs are similar to those
+for individual documents. The difference is that the requesting node
+knows in which shard each document lives. It breaks up the multi-document
+request into a multi-document request _per shard_, and forwards these
+in parallel to the participating nodes.
+
+Once it receives answers from each node, it collates the responses
+into a single response, which it returns to the client.
+
+The pattern for the `mget` API is depicted in <<img-distr-mget>>.
+
+[[img-distrib-mget]]
+.Retrieving multiple documents with `mget`
+image::images/distrib_mget.svg["Retrieving multiple documents with mget"]
+
+1. The client sends an `mget` request to `Node_1`.
+
+2. `Node 1` builds a multi-get request per shard, and forwards these
+   requests in parallel to the nodes hosting each required primary or replica
+   shard. Once all replies have beeen received, `Node 3` builds the response
+   and returns it to the client.
+
+A `routing` parameter can be set for each document in the `docs` array,
+and the `preference` parameter can be set for the top-level `mget`
+request.
+
+The pattern for the `bulk` API is depicted in <<img-distr-bulk>>.
+
+[[img-distrib-bulk]]
+.Multiple document changes with `bulk`
+image::images/distrib_bulk.svg["Multiple document changes with bulk"]
+
+1. The client sends a `bulk` request to `Node_1`.
+
+2. `Node 1` builds a bulk request per shard, and forwards these
+   requests in parallel to the nodes hosting each involved primary shard.
+
+3. Once a request has been executed successfully on a primary shard,
+   it is forwarded in parallel to its replica shards on the other nodes.
+   Once a _quorum_ (majority) of replica shards reports success, the node
+   reports success to the requesting node, which collates the responses
+   and returns them to the client.
+
+The `bulk` API also accepts the `replication` and `consistency` parameters
+at the top-level for the whole `bulk` request, and the `routing` parameter
+in the metadata for each request.
+
+
+
+

@@ -29,7 +29,8 @@ a string which represents a date, or an object which represents a geolocation:
 
 Often, we use the terms _object_ and _document_ interchangeably. However,
 there is a distinction.  An object is just a JSON object -- similar to
-a hashmap in other languages. Objects may contain other objects.
+what is known as a hash, hashmap or associative array.
+Objects may contain other objects.
 
 In Elasticsearch, the term _document_ has a specific meaning. It refers
 to the top-level or _root object_ which is serialized into JSON and

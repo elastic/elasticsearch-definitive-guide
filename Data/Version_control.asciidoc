@@ -164,7 +164,7 @@ If the request succeeds, the external version number
 is stored as the document's new current `_version`.
 
 This means that external version numbers can be specified not only on
-updates and deletes, but also when _creating_ new documents.
+index and delete requests, but also when _creating_ new documents.
 
 For instance, to create a new blog post with an external version number
 of `5`, we can do the following:
@@ -206,7 +206,7 @@ The request succeeds and sets the new current `_version` to `10`:
     }
 
 If you were to rerun this request, it would fail with the same conflict
-error we saw above, because the specified version is not greater than
-the current version in Elasticsearch.
+error we saw above, because the specified external version number is not
+higher than the current version in Elasticsearch.
 
 
