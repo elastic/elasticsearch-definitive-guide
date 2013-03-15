@@ -210,10 +210,10 @@ in a consistent order.
 
 ==== Partial updates to a document
 
-The `update` API, depicted in <<img-distr-update>>,  combines the read and
+The `update` API, depicted in <<img-distrin-update>>,  combines the read and
 write patterns explained above.
 
-[[img-distrib-write]]
+[[img-distrib-update]]
 .Partial updates to a document
 image::images/distrib_single_update.svg["Partial updates to a document"]
 
@@ -246,7 +246,7 @@ in parallel to the participating nodes.
 Once it receives answers from each node, it collates the responses
 into a single response, which it returns to the client.
 
-The pattern for the `mget` API is depicted in <<img-distr-mget>>.
+The pattern for the `mget` API is depicted in <<img-distrib-mget>>.
 
 [[img-distrib-mget]]
 .Retrieving multiple documents with `mget`
@@ -263,7 +263,7 @@ A `routing` parameter can be set for each document in the `docs` array,
 and the `preference` parameter can be set for the top-level `mget`
 request.
 
-The pattern for the `bulk` API is depicted in <<img-distr-bulk>>.
+The pattern for the `bulk` API is depicted in <<img-distrib-bulk>>.
 
 [[img-distrib-bulk]]
 .Multiple document changes with `bulk`
