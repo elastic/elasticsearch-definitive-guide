@@ -56,7 +56,7 @@ would completely change the document-to-shard mapping.
 All document APIs (`get`, `index`, `delete`, `bulk`, `update` and `mget`)
 accept a `routing` parameter that can be used to customize the
 document-to-shard mapping. We discuss in detail why you may want to do
-this in <<scaling>>.
+this in <<scale>>.
 
 ==== Explaining shard interaction
 
