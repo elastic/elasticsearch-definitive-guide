@@ -1,9 +1,9 @@
 === What is a document?
 
-Most objects in most applications can be serialized into a JSON object,
-with keys and values, where the _key_ is the name of a _field_ or _property_,
-and the _value_ can be a string, a number, a boolean, another object or
-an array of values, or some other specialized type, such as
+Most entities or objects in most applications can be serialized into a
+JSON document, with keys and values, where the _key_ is the name of a
+_field_ or _property_, and the _value_ can be a string, a number, a boolean,
+another object or an array of values, or some other specialized type, such as
 a string which represents a date, or an object which represents a geolocation:
 
     {
@@ -29,8 +29,8 @@ a string which represents a date, or an object which represents a geolocation:
 
 Often, we use the terms _object_ and _document_ interchangeably. However,
 there is a distinction.  An object is just a JSON object -- similar to
-what is known as a hash, hashmap or associative array.
-Objects may contain other objects.
+what is known as a hash, hashmap or associative array. Objects may contain
+other objects.
 
 In Elasticsearch, the term _document_ has a specific meaning. It refers
 to the top-level or _root object_ which is serialized into JSON and

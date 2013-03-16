@@ -20,11 +20,11 @@ but don't be overwhelmed by the detail.
 As we have said already, our application stores documents in an index,
 but an index is just a logical namespace which points to one or more shards.
 
-An index can have one or more primary shards. A primary shard is the official
-home of a document. The more primary shards you have, the more data you
-can store in your index.
+An index can have one or more primary shards, where a primary shard is the
+official home of a document. The more primary shards you have, the more data
+you can store in your index.
 
-Each primary shards can have zero or more replica shards. A replica shard is
+Each primary shard can have zero or more replica shards. A replica shard is
 a complete copy of its primary shard, and can be promoted to a primary
 shard in case disaster strikes and the primary shard is lost. Replicas
 can also be serve read requests. The more replica shards, the greater

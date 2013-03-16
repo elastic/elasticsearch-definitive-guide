@@ -1,11 +1,59 @@
-Elasticsearch is a distributed document store. It can
-store and retrieve objects -- represented by JSON documents -- in real-time.
-In other words, as soon as a document has been stored in Elasticsearch,
-it can be retrieved by ID from any node in the cluster.
+Whatever program we write, the intention is the same: to organize data in
+a way that serves our purposes.  But data doesn't consist just of random bits
+and bytes.  We relate data elements to each other in order to represent
+entities or ``things'' that exist in the real world.  A name and an
+email address have more meaning if we know that they are related to the same
+person.
+
+In the real world, though, not all entities of the same type look
+the same.  One person might have a home telephone number, while
+another person only has a cellphone number, and another person might have
+both.  One person might have three email addresses, while another has none.
+A Spanish person will probably have two last names, while an English person
+will probably have only one.
+
+One of the reasons that object-oriented programming languages are so popular
+is that objects help us to represent and manipulate real world entities with
+potentially complex data structures. So far so good.
+
+The problem comes when we need to store these entities. Traditionally, we
+have stored our data in columns and rows in a relational database, the
+equivalent of using a spreadsheet.  All the flexibility that we gained
+by using objects is lost to us, because of the inflexibility of our
+storage medium.
+
+But what if we could store our objects as objects?  Instead of having to
+model our application according to what we can squeeze into our data store,
+we can focus on what we want to do with our data. The flexibility of using
+objects is returned to us.
+
+An object is a language-specific in-memory data structure. In order to
+send it across the network or to store it, we need to be able to represent it
+in some standard format.
+
+http://en.wikipedia.org/wiki/Json:"JSON (JavaScript Object Notation)" is
+a way of representing objects in human-readable text.  It has become
+the _de facto_ standard for exchanging data in the NoSQL world.
+When an object has been serialized into JSON it is known as a _JSON document_.
+
+Elasticsearch is a distributed _document_ store. It can
+store and retrieve complex data structures -- serialized as JSON documents
+-- in _real-time_. In other words, as soon as a document has been stored in
+Elasticsearch, it can be retrieved by ID from any node in the cluster.
+
+Of course, we don't only need to store data, we also need to be able to
+query it, _en masse_ and at speed. While a number of NoSQL solutions
+exist which allow us to store objects as documents, we still have to think
+about how we want to query our data, and which fields we should index
+in order to make them searchable.
+
+In Elasticsearch, all data in every field is indexed by default. And, unlike
+most other databases, it will make use of all of those indices in the same
+query, in order to return results at breath taking speed.
 
 In this chapter we will discuss the APIs that we use to create, retrieve,
 update and delete documents. For the moment, we don't care about
-what is inside the document or how we can search for it. All we care about
+the data inside our documents or how to query it. All we care about
 is how to store our documents safely in Elasticsearch, and how to get
 them back again.
 
