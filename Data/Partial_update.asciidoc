@@ -240,7 +240,6 @@ to `0`.
     '
 
 NOTE: The `update` API does not accept the `version` parameter. You should
-only use it for changes that should be applied regardless
-of whether the document might have changed since the last time you
-requested it, or not.
+only use `update` for changes that should be applied regardless
+of the current version of the document.
 
