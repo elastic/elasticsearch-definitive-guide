@@ -9,7 +9,7 @@ system.
 .Content warning
 ****
 The information presented below is for your interest. You are not
-required to understand everything in order to use Elasticsearch.
+required to understand and remember all the detail in order to use Elasticsearch.
 The options that are discussed are for advanced users only.
 
 Read the section to gain a taste for how things work, and to know where
@@ -43,7 +43,7 @@ The answer boils down to a simple formula:
 
     shard = hash(routing) mod number_of_primary_shards
 
-The `routing` value is an arbtrary string, which defaults to the document's
+The `routing` value is an arbitrary string, which defaults to the document's
 `_id` but can also be set to a custom value. This `routing` string
 is passed through a hashing function to generate a number, which is
 divided by the number of primary shards in the index to return the
@@ -103,7 +103,7 @@ image::images/distrib_single_write.svg["Creating, indexing or deleting a single 
    reports success, `Node 3` reports success to the requesting node, which
    reports success to the client.
 
-By the time the client receives a succesful response, the document change
+By the time the client receives a successful response, the document change
 has been executed on the primary shard and on the majority of replica shards.
 Your change is safe.
 
@@ -176,7 +176,7 @@ shard on each subsequent request -- it round-robins through the nodes.
 It is possible that a document has been indexed on the primary shard but
 has not yet been copied to the replica shards. In this case a replica
 might report that the document doesn't exist, while the primary would have
-returned the document succesfully.
+returned the document successfully.
 
 The `preference` parameter can be used to control which node handles the
 retrieval request:
@@ -259,7 +259,7 @@ image::images/distrib_mget.svg["Retrieving multiple documents with mget"]
 
 2. `Node 1` builds a multi-get request per shard, and forwards these
    requests in parallel to the nodes hosting each required primary or replica
-   shard. Once all replies have beeen received, `Node 3` builds the response
+   shard. Once all replies have been received, `Node 3` builds the response
    and returns it to the client.
 
 A `routing` parameter can be set for each document in the `docs` array,

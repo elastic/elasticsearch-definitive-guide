@@ -111,7 +111,7 @@ incremented:
     }
 
 We can also use a script to add a new tag to the `tags` array.  In this
-example we specfiy the new tag as a parameter rather than hard coding
+example we specify the new tag as a parameter rather than hard coding
 it in the script itself. This allows Elasticsearch to reuse the script
 in the future, without having to compile a new script for every new tag:
 
@@ -218,7 +218,7 @@ document before `update` has managed to reindex it.
 To avoid losing data, the `update` API retrieves the current `_version`
 of the document in the _retrieve_ step, and passes that to the `index` request
 during the _reindex_ step.
-If another process has changed the document inbetween _retrieve_ and _reindex_,
+If another process has changed the document in between _retrieve_ and _reindex_,
 then the `_version` number won't match and the update request will fail.
 
 For many uses of partial update, it doesn't matter that a document has been

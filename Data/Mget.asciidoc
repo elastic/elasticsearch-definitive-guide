@@ -10,7 +10,7 @@ _multi-get_ or `mget` API, instead of document-by-document.
 
 The `mget` API expects a `docs` array, each element of
 which specifies the `_index`, `_type` and `_id` metadata of the document
-you wish to retrieve. You can also specify a `fields` parmeter if you
+you wish to retrieve. You can also specify a `fields` parameter if you
 just want to retrieve one or more specific fields:
 
     curl -XGET localhost:9200/_mget  -d '
@@ -125,8 +125,8 @@ but without specifying the `_type`, then we would get back both documents.
 However, this assumes that documents of different types do not
 share IDs.
 
-What would the following request return if we had a `blog` with ID `1` and a
-`pageview` with ID `1`?
+What would the following request return if we had a `blog` document with
+ID `1` and a `pageviews` document also with ID `1`?
 
     curl -XGET localhost:9200/website/_mget  -d '
     {
