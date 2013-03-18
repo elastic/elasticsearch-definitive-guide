@@ -30,7 +30,6 @@ objects is returned to us.
 An object is a language-specific in-memory data structure. In order to
 send it across the network or to store it, we need to be able to represent it
 in some standard format.
-
 http://en.wikipedia.org/wiki/Json:[JSON (JavaScript Object Notation)] is
 a way of representing objects in human-readable text.  It has become
 the _de facto_ standard for exchanging data in the NoSQL world.
@@ -43,11 +42,11 @@ Elasticsearch, it can be retrieved by ID from any node in the cluster.
 
 Of course, we don't only need to store data, we also need to be able to
 query it, _en masse_ and at speed. While a number of NoSQL solutions
-exist which allow us to store objects as documents, we still have to think
-about how we want to query our data, and which fields we should index
-in order to make them searchable.
+exist which allow us to store objects as documents, they still require
+us to think about how we want to query our data, and which fields we
+should index in order to make them searchable.
 
-In Elasticsearch, all data in every field is indexed by default. And, unlike
+In Elasticsearch, *all data in every field* is *indexed by default*. And, unlike
 most other databases, it will make use of all of those indices in the same
 query, in order to return results at breath taking speed.
 
