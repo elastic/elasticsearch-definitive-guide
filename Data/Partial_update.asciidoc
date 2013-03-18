@@ -1,7 +1,7 @@
 [[partial-updates]]
 === Partial updates to documents
 
-We said in <<update-doc>> that the way to update a document is to retrieve
+In <<update-doc>>, we said that the way to update a document is to retrieve
 it, change it, then reindex the whole document. This is true. However,
 using the `update` API, we can make partial updates to a document
 in a single client request, such as incrementing a counter.
@@ -14,8 +14,8 @@ already described.
 
 The only difference is that it is doing it all inside Elasticsearch, thus
 avoiding the network overhead of multiple requests. By reducing the time
-between the _retrieve_ and _reindex_ steps, we can reduce the likelihood of
-conflicting changes from other processes.
+between the _retrieve_ and _reindex_ steps, we reduce the likelihood of
+there being conflicting changes from other processes.
 
 The simplest form of the `update` request accepts a partial document
 as the `"doc"` parameter, which will be merged into the existing document.
@@ -31,7 +31,7 @@ with:
     }
     '
 
-By default, if the request succeeds, we see a response similar to that
+If the request succeeds, we see a response similar to that
 of the `index` request:
 
     {
@@ -158,8 +158,8 @@ We can even choose to delete a document based on it contents:
 
 Imagine that we need to store a pageview counter in Elasticsearch. Every
 time a user views a page, we increment the counter for that page.  But if
-it is a new page, we can't be sure that a counter already exists.
-If we try to update a non-existent document, the update will fail.
+it is a new page, we can't be sure that a counter already exists, and
+if we try to update a non-existent document, the update will fail.
 
 In cases like these, we can use the `upsert` parameter to specify the
 document that should be created if it doesn't already exist:
@@ -218,12 +218,12 @@ document before `update` has managed to reindex it.
 To avoid losing data, the `update` API retrieves the current `_version`
 of the document in the _retrieve_ step, and passes that to the `index` request
 during the _reindex_ step.
-If another process has changed the document in between _retrieve_ and _reindex_,
+If another process has changed the document inbetween _retrieve_ and _reindex_,
 then the `_version` number won't match and the update request will fail.
 
 For many uses of partial update, it doesn't matter that a document has been
 changed.  For instance, if two processes are both incrementing the page
-view counter, it doesn't matter in which order it happens.  If a conflict
+view counter, it doesn't matter in which order it happens -- if a conflict
 occurs, the only thing we need to do is to reattempt the update.
 
 This can be done automatically by setting the `retry_on_conflict` parameter to

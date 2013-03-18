@@ -1,10 +1,10 @@
 === Retrieving multiple documents
 
 As fast as Elasticsearch is, it can be faster still. Combining multiple
-reqeusts into one avoids the network overhead of processing each
+requests into one avoids the network overhead of processing each
 request individually.
 
-If you know that you want to retrieve multiple documents from Elasticsearch,
+If you know that you need to retrieve multiple documents from Elasticsearch,
 it is faster to retrieve them all in a single request using the
 _multi-get_ or `mget` API, instead of document-by-document.
 
@@ -32,8 +32,8 @@ just want to retrieve one or more specific fields:
     '
 
 The response body also contains a `docs` array which contains a response
-per document, in the same order as our request. Each of these responses
-is the same response body that we would expect from an individual
+per document, in the same order as specified in the request. Each of these
+responses is the same response body that we would expect from an individual
 <<get-doc,`get` request>>:
 
     {
@@ -62,8 +62,8 @@ is the same response body that we would expect from an individual
        ]
     }
 
-If the documents you wish to retrieve are all from the same `_index` (and maybe
-even of the same `_type` then you can specify a default `/_index` or a default
+If the documents you wish to retrieve are all in the same `_index` (and maybe
+even of the same `_type`) then you can specify a default `/_index` or a default
 `/_index/_type` in the URL.
 
 You can still override these values in the individual requests:
@@ -93,7 +93,8 @@ can just pass an array of `ids` instead of the full `docs` array:
     '
 
 Note that the second document that we requested doesn't exist. We
-specified type `blog`, but the document with ID `1` is of type `pageviews`:
+specified type `blog`, but the document with ID `1` is of type `pageviews`.
+This non-existence is reported in the response body:
 
     {
       "docs" : [
@@ -134,7 +135,9 @@ What would the following request return if we had a `blog` with ID `1` and a
     '
 
 Elasticsearch would return the first matching document that it finds. On one
-run you may get back the `blog` and on another run the `pageviews`.
+run you may get back the `blog` document and on another run the `pageviews`
+document.
 
-You either need to be sure that all of your document IDs are unique, or you
-should explicitly specify the `_type` of document that you are after.
+You either need to be sure that all of your document IDs in an index are
+unique across all types, or you should explicitly specify the `_type` of
+document that you are after.

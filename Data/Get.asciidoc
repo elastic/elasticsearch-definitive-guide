@@ -6,7 +6,7 @@ and `_id`, but the HTTP verb changes to `GET`:
 
     curl -XGET localhost:9200/website/blog/123?pretty
 
-The response includes the now familiar metadata elements, plus the `_source`
+The response includes the by now familiar metadata elements, plus the `_source`
 field, which contains the original JSON document that we sent to Elasticsearch
 when we indexed it.
 
@@ -30,14 +30,14 @@ readable. The `_source` field, however, isn't pretty-printed -- instead
 we get back exactly the same JSON string that we passed in.
 ****
 
-The response to the GET request also includes the flag `{"exists": true}`.
+The response to the GET request includes `{"exists": true}`.
 This confirms that the document was found.  If we were to request a document
 that doesn't exist, we would still get a JSON response, but `exists` would be
 set to `false`.
 
 Also, the HTTP response code would be `'404 Not Found'` instead of `'200 OK'`.
-We can see this with the following request, including `-i` to see the
-response headers:
+We can see this by passing the `-i` argument to `curl`, which causes is to
+display the response headers:
 
     curl -i -XGET localhost:9200/website/blog/124?pretty
 
@@ -60,12 +60,14 @@ By default, a `get` request will return the whole document, as stored in
 the `_source` field. But perhaps all you are interested in is the
 `title` field.
 
-Individual fields can be requested using the `fields` parameter:
+Individual fields can be requested using the `fields` parameter. Multiple
+fields can be specified in a comma-separated list:
 
-    curl -XGET localhost:9200/website/blog/123?fields=title
+    curl -XGET localhost:9200/website/blog/123?fields=title,text
 
 The response no longer contains the `_source` field, but does contain
-the `title` field:
+the `title` and `text` fields, which Elasticsearch has extracted from
+the `_source`:
 
     {
       "_index" :   "website",
@@ -78,10 +80,6 @@ the `title` field:
           "text":  "Just trying this out..."
       }
     }
-
-Multiple fields can be specified in a comma-separated list:
-
-    curl -XGET localhost:9200/website/blog/123?fields=title,text
 
 The metadata elements (`_index` etc) will always be returned. These
 cannot be disabled.

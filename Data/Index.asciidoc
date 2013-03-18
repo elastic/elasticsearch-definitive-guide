@@ -7,7 +7,7 @@ our own `_id` or let Elasticsearch generate one for us.
 
 ==== Using our own ID
 
-If we choose our own `_id`, then the form of the request is:
+If we want to specify our own `_id`, then the form of the request is:
 
     curl -XPUT localhost:9200/_index/_type/_id -d '
     {
@@ -16,8 +16,8 @@ If we choose our own `_id`, then the form of the request is:
     }
     '
 
-For example, if we use `_index: website`, `_type: blog` and `_id: 123`, then
-the index request looks like this:
+For example, if our `_index` is called `"website"`, our `_type` is called
+`"blog"` and we choose the `_id` `"123"`, then the index request looks like this:
 
     curl -XPUT localhost:9200/website/blog/123 -d '
     {
@@ -37,8 +37,8 @@ Elasticsearch would respond with:
     }
 
 The response indicates that the indexing request has been successful with
-`{"ok": true}`, returns the `_index`, `_type` and `_id` metadata, and
-includes a new element: `_version`.
+`{"ok": true}`, it includes the `_index`, `_type` and `_id` metadata, and
+a new element: `_version`.
 
 Every document in Elasticsearch has a version number. Every time a change
 is made to a document (including deleting it), the `_version` number
@@ -51,7 +51,7 @@ doesn't overwrite changes made by another part.
 If we don't have an `_id` already and want Elasticsearch to
 auto-generate one for us, then the structure of the request changes:
 instead of using the `PUT` verb -- ``store this document at this URL'' --
-we use the `POST` verb -- ``store this document as a *child* of this URL''.
+we use the `POST` verb -- ``store this document *under* this URL''.
 
 The URL now contains just the `_index` and the `_type`:
 
@@ -73,7 +73,8 @@ field has been generated for us:
       "_version" : 1
     }
 
-Auto-generated IDs are 22 character long URL-safe Base64-encoded string UUIDs.
+Auto-generated IDs are 22 character long, URL-safe, Base64-encoded string
+_universally unique identifiers_, or http://en.wikipedia.org/wiki/Uuid[UUIDs] .
 
 
 

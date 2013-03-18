@@ -8,8 +8,8 @@ system.
 
 .Content warning
 ****
-The information presented below is for your understanding, but it
-is not knowledge that you require in order to use Elasticsearch.
+The information presented below is for your interest. You are not
+required to understand everything in order to use Elasticsearch.
 The options that are discussed are for advanced users only.
 
 Read the section to gain a taste for how things work, and to know where
@@ -27,7 +27,7 @@ you can store in your index.
 Each primary shard can have zero or more replica shards. A replica shard is
 a complete copy of its primary shard, and can be promoted to a primary
 shard in case disaster strikes and the primary shard is lost. Replicas
-can also be serve read requests. The more replica shards, the greater
+can serve search and read requests, so the more replica shards, the greater
 our search capacity.
 
 By default, an index has 5 primary shards, each of which has
@@ -44,12 +44,14 @@ The answer boils down to a simple formula:
     shard = hash(routing) mod number_of_primary_shards
 
 The `routing` value is an arbtrary string, which defaults to the document's
-`_id`, but can also be set to a custom value. This `routing` string
+`_id` but can also be set to a custom value. This `routing` string
 is passed through a hashing function to generate a number, which is
-divided by the number of primary shards in the index, and returns the
-_modulo_ or remainder.
+divided by the number of primary shards in the index to return the
+_modulo_ or remainder. The modulo will always be in the range `0` to
+`number_of_primary_shards - 1`.  This gives us the number of the shard where
+a particular document lives.
 
-This explains why the number of primary shards can only be set
+It also explains why the number of primary shards can only be set
 when an index is created, as changing the number later
 would completely change the document-to-shard mapping.
 
@@ -93,7 +95,7 @@ image::images/distrib_single_write.svg["Creating, indexing or deleting a single 
 
 2. The node uses the document's `_id` to determine that the document
    belongs to shard `0`. It forwards the request to `Node 3`,
-   where primary shard `0` is currently allocated.
+   where the primary copy of shard `0` is currently allocated.
 
 3. `Node 3` executes the request on the primary shard. If it
     is successful, it forwards the request in parallel to the replica shards on
@@ -129,7 +131,8 @@ a quorum is defined as:
 +
     int( number_of_replicas / 2 ) + 1
 +
-The allowed values for `consistency` are `quorum`, `one` and `all`.
+The allowed values for `consistency` are `quorum` (the majority),
+`one` (just one replica) and `all` (all replicas must report success).
 +
 Note that the `number_of_replicas` is the number of replicas specified in
 the index settings, not the number of replicas that are currently live.
@@ -146,14 +149,14 @@ replicas.
 `timeout`::
 
 What happens if insufficient replica shards are available? Elasticsearch
-waits, in the hope that they will appear.  By default it will wait up
-to one minute. If you need to, you can use the `timeout` parameter
+waits, in the hope that more replica shards will appear.  By default it will
+wait up to one minute. If you need to, you can use the `timeout` parameter
 to make it abort sooner: `100` is 100 milliseconds, `30s` is 30 seconds.
 
 [[distrib-read]]
 ==== Retrieving a document
 
-A document can be retrieved from a primary shard or any of its replicas.
+A document can be retrieved from a primary shard or from any of its replicas.
 The request process is depicted in <<img-distrib-read>>.
 
 [[img-distrib-read]]
@@ -164,7 +167,7 @@ image::images/distrib_single_read.svg["Retrieving a single document"]
 
 2. The node uses the document's `_id` to determine that the document
    belongs to shard `0`. Copies of shard `0` exist on all three nodes.
-   In this instance, it forwards the request to `Node 2`, which returns
+   On this occasion, it forwards the request to `Node 2`, which returns
    the document.
 
 For read requests, the requesting node will choose a different copy of the
@@ -210,7 +213,7 @@ in a consistent order.
 
 ==== Partial updates to a document
 
-The `update` API, depicted in <<img-distrin-update>>,  combines the read and
+The `update` API, depicted in <<img-distrib-update>>,  combines the read and
 write patterns explained above.
 
 [[img-distrib-update]]
@@ -243,7 +246,7 @@ knows in which shard each document lives. It breaks up the multi-document
 request into a multi-document request _per shard_, and forwards these
 in parallel to the participating nodes.
 
-Once it receives answers from each node, it collates the responses
+Once it receives answers from each node, it collates their responses
 into a single response, which it returns to the client.
 
 The pattern for the `mget` API is depicted in <<img-distrib-mget>>.

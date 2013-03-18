@@ -1,8 +1,8 @@
 === What is a document?
 
 Most entities or objects in most applications can be serialized into a
-JSON document, with keys and values, where the _key_ is the name of a
-_field_ or _property_, and the _value_ can be a string, a number, a boolean,
+JSON object, with keys and values. A _key_ is the name of a
+_field_ or _property_, and a _value_ can be a string, a number, a boolean,
 another object or an array of values, or some other specialized type, such as
 a string which represents a date, or an object which represents a geolocation:
 
@@ -53,16 +53,16 @@ An _index_ is a like a ``database'' in a relational database -- it is the place
 we store and index our data.
 
 Actually, in Elasticsearch, our data is stored and indexed in shards,
-while an index is really a logical namespace which
-groups together one or more shards. However, this is an internal detail.
-Our application shouldn't care about shards at all.  Instead, as far as our
+while an index is just a logical namespace which
+groups together one or more shards. However, this is an internal detail --
+our application shouldn't care about shards at all.  Instead, as far as our
 application is concerned, our documents live in an _index_ -- Elasticsearch
 takes care of the details.
 
 We will discuss how to create and manage indices ourselves in <<index-admin>>,
 but for now we will let Elasticsearch create the index for us.  All we have
 to do is to choose a name, which must be lower case, cannot begin with
-an underscore and cannot contain commas, e.g. `my_index`.
+an underscore and cannot contain commas, e.g. `website`.
 
 ==== `_type`
 
@@ -74,27 +74,27 @@ email address.
 
 In a relational database, we usually store objects of the same class in the same
 table, because they share the same data structure. In Elasticsearch,
-for the same reason, we use the same _type_ for objects which represent
+for the same reason, we use the same _type_ for documents which represent
 the same class of ``thing'', because they share the same data structure.
 
 Every _type_ has its own <<mapping,mapping>> or schema definition, which
-defines the data structure for objects of that type, much like the columns
+defines the data structure for documents of that type, much like the columns
 in a database table. Documents of all types can be stored
 in the same index, but the _mapping_ for the type tells Elasticsearch
 how the data in the document should be indexed.
 
 We will discuss how to specify and manage mappings in <<mapping>>, but
-for now we will rely on Elasticsearch to detect our document's structure
+for now we will rely on Elasticsearch to detect our document's data structure
 automatically.
 
-The `_type` names can be lower or upper case, but shouldn't begin with
+A `_type` name can be lower or upper case, but shouldn't begin with
 an underscore, or contain commas, eg `user`.
 
 ==== `_id`
 
 The _id_ is a string that, when combined with the `_index` and `type`,
 identifies a unique document in Elasticsearch. When creating a new
-document, you can either provide your own `_id` or rely on Elasticsearch to
+document, you can either provide your own `_id` or let Elasticsearch
 generate one for you.
 
 ==== Other metadata

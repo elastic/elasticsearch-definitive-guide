@@ -1,8 +1,8 @@
 [[delete-doc]]
 === Deleting a document
 
-The syntax for deleting a document follows the pattern that we have seen
-above, but uses the `DELETE` method :
+The syntax for deleting a document follows the same pattern that we have seen
+already, but uses the `DELETE` method :
 
     curl -XDELETE localhost:9200/website/blog/123
 
@@ -31,7 +31,7 @@ a body like:
       "_version" : 4
     }
 
-Even though the document no longer exists -- `"found"` is `false` --  the
+Even though the document doesn't exist -- `"found"` is `false` --  the
 `_version` number has been incremented. This is part of the internal
 book-keeping which ensures that changes are applied in the correct order
 across multiple nodes.

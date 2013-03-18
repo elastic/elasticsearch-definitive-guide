@@ -3,7 +3,7 @@
 
 Documents in Elasticsearch are immutable -- we cannot change them. Instead,
 if we need to update a document, we *reindex* or replace it, which we can
-do with the same index API that we have already discussed.
+do using the same index API that we have already discussed.
 
     curl -XPUT localhost:9200/website/blog/123 -d '
     {
