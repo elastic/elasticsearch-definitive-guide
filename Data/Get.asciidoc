@@ -36,7 +36,7 @@ that doesn't exist, we would still get a JSON response, but `exists` would be
 set to `false`.
 
 Also, the HTTP response code would be `'404 Not Found'` instead of `'200 OK'`.
-We can see this by passing the `-i` argument to `curl`, which causes is to
+We can see this by passing the `-i` argument to `curl`, which causes it to
 display the response headers:
 
     curl -i -XGET localhost:9200/website/blog/124?pretty
