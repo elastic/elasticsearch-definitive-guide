@@ -1,0 +1,100 @@
+[[empty-search]]
+=== The empty search
+
+The most basic form of the search API is the _empty search_, which doesn't
+specfiy any query to match, but simply returns all documents in all
+indices in the cluster:
+
+    curl -XGET localhost:9200/_search
+
+The response (edited for brevity) looks something like this:
+
+    {
+       "hits" : {
+          "total" :       14,
+          "hits" : [
+            {
+              "_index" :  "gb",
+              "_type" :   "tweet",
+              "_id" :     "3",
+              "_source" : {... TRIMMED ...},
+              "_score" :  1.0
+            },
+            {
+              "_index" :  "us",
+              "_type" :   "user",
+              "_id" :     "1",
+              "_source" : {... TRIMMED ...},
+              "_score" :  1.0
+            },
+            ... 8 RESULTS REMOVED ...
+          ],
+          "max_score" :   1
+       },
+       "took" :           4,
+       "_shards" : {
+          "failed" :      0,
+          "successful" :  10,
+          "total" :       10
+       },
+       "timed_out" :      false
+    }
+
+==== `hits`
+
+The most important section of the response is `hits`, which contains the
+`total` number of documents in the cluster that match our
+query, and a `hits` array containing the first 10 of those matching
+documents -- the results.
+
+Each result in the `hits` array contains the `_index`, `_type` and `_id`
+of the document, plus the `_source` field.  This means
+that the whole document is immediately available to us directly from
+the search results. We don't need to use the document ID to fetch the
+document body in a separate step.
+
+Each element also has a `_score`.  This is the _relevance score_, which
+is a measure of how well each result matches our query.  By
+default, results are returned with the most relevant documents first;
+that is, in descending order of `_score`.
+In this case, we didn't specify any query so all documents are equally
+relevant, hence the standard `_score` of `1` for all results.
+
+The `max_score` value is the highest `_score` of any document matching our
+query.
+
+==== `took`
+
+The `took` value tells us how many milliseconds the entire search request took
+to execute.
+
+==== `shards`
+
+The `_shards` value tells us the `total` number of shards that were involved in
+the query and how many were `succesful` or how many `failed`.
+
+We wouldn't normally expect shards to fail, but it can happen.
+For instance, if we were to suffer a major disaster which kills
+the two servers responsible for hosting both the primary and replica of a
+single shard, then that shard cannot respond to search requests.
+In this case, Elasticsearch will report the shard as `failed`, but continue
+to return results from the remaining shards.
+
+==== `timeout`
+
+The `timed_out` value tells us whether the query timed out or not.  By
+default, search requests do not timeout.  If response time is more
+important to you than correct results, then can specify a `timeout` as
+`10` or `"10ms"` (10 milliseconds), or `"1s"` (1 second):
+
+    curl -XGET localhost:9200/_search?timeout=10ms
+
+Elasticsearch will return any results that it has managed to gather before
+the request timed out.
+
+
+
+
+
+
+

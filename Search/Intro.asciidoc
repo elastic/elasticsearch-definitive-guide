@@ -1,0 +1,36 @@
+So far, we have learned how to use Elasticsearch as a dumb document store
+-- we can store trillions of JSON documents and retrieve each one by ID. But
+the real power of Elasticsearch lies in its ability to make sense out of chaos --
+to turn Big Data into Big Information.
+
+This is the reason that we use structured JSON documents, rather than
+amorphous blobs of data.  Elasticsearch doesn't only _store_ the document,
+it also _indexes_ the content of the document in order to make it searchable.
+
+*Every field in a document is indexed and can be queried*.  Not only that,
+but all indices can be used during a single query, to return results
+at breath-taking speed.  That's something that you could never consider
+doing with a relational database.
+
+A _search_ can be:
+
+* a full text query, which finds all documents matching the search keywords,
+  and returns them sorted by _relevance_
+* a structured query on concrete fields like `gender` or `age`,
+  sorted by `join_date`, similar to a query that you could construct in SQL
+* or a combination of the two
+
+While many searches will work out of the box, in order to use Elasticsearch to
+its full potential you need to understand three subjects:
+
+[horizontal]
+
+_Mapping_::     how the data in each field is interpreted
+_Analysis_::    how full text is processed to make it searchable
+_Query DSL_::   the flexible, powerful query language used by Elasticsearch
+
+Each of the above is a big subject in its own right and we explain them
+in full in their own chapters. This chapter will introduce the basic concepts
+of all three -- just enough to help you to get an overall understanding.
+
+We will start by explaining the `search` API in its simplest form.

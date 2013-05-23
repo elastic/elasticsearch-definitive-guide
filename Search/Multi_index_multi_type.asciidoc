@@ -1,0 +1,58 @@
+[[multi-index-multi-type]]
+=== Multi-index, multi-type
+
+Did you notice that the results from the <<empty-search,empty search>> above
+contained documents of different types -- `user` and `tweet` -- from two
+different indices -- `us` and `gb`?
+
+By not limiting our search to a particular index or type, we have searched
+across *all* documents in the cluster. Elasticsearch forwarded the search
+request in parallel to a primary or replica of every shard in the cluster,
+gathered the results to select the top ten, and returned them to us.
+
+Usually, however, you will want to search one or more specific indices, and
+probably one or more specific types. We can do this by  specifying the
+index and type in the URL, as follows:
+
+[horizontal]
+`/gb/_search`::
+
+    search all types in the `gb` index
+
+`/gb,us/_search`::
+
+    search all types in the `gb` and `us` indices
+
+`/g*,u*/_search`::
+
+    search all types in any indices beginning with `g` or beginning with `u`
+
+`/gb/user/_search`::
+
+    search type `user` in the `gb` index
+
+`/gb,us/user,tweet/_search`::
+
+    search types `user` and `tweet` in the `gb` and `us` indices
+
+`/_all/_search`::
+
+    search all types in all indices
+
+`/_all/user,tweet/_search`::
+
+    search types `user` and `tweet` in all indices
+
+
+When you search within a single index, Elasticsearch forwards
+the search request to a primary or replica of every shard in that index, then
+gather the results from each shard.  Searching within multiple indices works
+in exactly the same way.
+
+****
+Searching one index which has 5 primary shards is *exactly equivalent*
+to searching 5 indices which have one primary shard each.
+
+Later, you will see how this simple fact makes it easy to scale flexibly
+as your requirements change.
+****

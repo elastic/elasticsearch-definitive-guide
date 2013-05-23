@@ -1,0 +1,124 @@
+=== Query DSL
+
+The Query DSL is a flexible, expressive search language that Elasticsearch
+uses to expose most of the power of Lucene through a simple JSON interface.
+It is what you should be using to write your queries in production.
+It makes your queries more flexible, more precise, easier to read and easier
+to debug.
+
+To use the query DSL, pass a query in the `query` parameter:
+
+    curl localhost:9200/_search -d '
+    {
+        "query": YOUR_QUERY_HERE
+    }
+    '
+
+The ``empty search'' -- `{}` -- is functionally equivalent to using the
+`match_all` query clause. As the name suggests, it matches all documents:
+
+    curl localhost:9200/_search -d '
+    {
+        "query": {
+            "match_all": {}
+        }
+    }
+    '
+
+==== Structure of a query clause
+
+A query clause typically has the structure:
+
+    {
+        QUERY_NAME: {
+            ARGUMENT: VALUE,
+            ARGUMENT: VALUE,...
+        }
+    }
+
+or, if it references one particular field:
+
+    {
+        QUERY_NAME: {
+            FIELD_NAME: {
+                ARGUMENT: VALUE,
+                ARGUMENT: VALUE,...
+            }
+        }
+    }
+
+
+For instance, you can use a `match` query clause to find tweets that
+mention `"elasticsearch"` in the `tweet` field:
+
+    {
+        "match": {
+            "tweet": "elasticsearch"
+        }
+    }
+
+The full search request would look like this:
+
+    curl localhost:9200/_search -d '
+    {
+        "query": {
+            "match": {
+                "tweet": "elasticsearch"
+            }
+        }
+    }
+    '
+
+****
+The `match` query does not understand the query syntax that we used in
+query string search, eg `"+user_id:2 +tweet:search"`. It is safe to
+expose to your users via a search field: you control what fields they can
+query and it is not prone to throwing syntax errors.
+****
+
+==== Combining multiple clauses
+
+Query clauses are simple building blocks, that can be combined with each
+other to create complex queries. Clauses can be:
+
+* _leaf clauses_ (like the `match` clause) that are used to
+  compare a field (or fields) to a query string.
+
+* _compound_ clauses that are used to combine other query clauses.
+  For instance, a `bool` clause allows you to combine other clauses that
+  either `must` match,  `must_not` match, or `should` match if possible:
+
+    {
+        "bool": {
+            "must":     { "match": { "tweet": "elasticsearch" }},
+            "must_not": { "match": { "name":  "john" }},
+            "should":   { "match": { "tweet": "full text" }}
+        }
+    }
+
+It is important to note that a compound clause can combine *any* other
+query clauses, including other compound clauses. This means that compound
+clauses can be nested within each other, allowing the expression
+of very complex logic.
+
+As an example, the following query looks for emails that contain
+`"business opportunity"` and must either be starred, or both be in the Inbox
+and not be marked as spam:
+
+    {
+        "bool": {
+            "must": { "match":      { "email": "business opportunity" }},
+            "should": [
+                 { "match":         { "starred": true }},
+                 { "bool": {
+                       "must":      { "folder": "inbox" }},
+                       "must_not":  { "spam": true }}
+                 }
+            ],
+            "minimum_should_match": 1
+        }
+    }
+
+Don't worry about the details of this example yet -- we will explain in
+full later. The important thing to take away is that compound query
+clauses can be used to wrap several clauses into a single query.

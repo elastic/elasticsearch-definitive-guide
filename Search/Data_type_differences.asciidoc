@@ -1,0 +1,64 @@
+[[data-type-differences]]
+=== Data type differences
+
+Something seems to be broken.  Given that we have 12 tweets in our indices,
+and only one of them has the date `2013-09-15`, have a look at the
+`total` hits for the following queries:
+
+    curl -XGET localhost:9200/_search?q=2013              # 12 results
+    curl -XGET localhost:9200/_search?q=2013-09-15        # 12 results !
+    curl -XGET localhost:9200/_search?q=date:2013-09-15   # 1  result
+    curl -XGET localhost:9200/_search?q=date:2013         # 0  results !
+
+Why does querying the `_all` field for the full date return all
+tweets, and querying the `date` field for just the year return no
+results? Why do our results differ when searching within the `_all` field or
+the `date` field? Presumably it is because the way our data has been indexed
+in the `_all` field is different to how it has been indexed in the `date` field.
+
+So let's take a look at how Elasticsearch has interpreted our document
+structure, by requesting the _mapping_ (or schema definition)
+for the `tweet` type in the `gb` index:
+
+    curl -XGET localhost:9200/gb/tweet/_mapping
+
+which gives us:
+
+    {
+      "tweet" : {
+        "properties" : {
+          "date" : {
+            "type" :   "date",
+            "format" : "dateOptionalTime"
+          },
+          "name" : {
+            "type" :   "string"
+          },
+          "tweet" : {
+            "type" :   "string"
+          },
+          "user_id" : {
+            "type" :   "long"
+          }
+        }
+      }
+    }
+
+Elasticsearch has dynamically generated a mapping for us, based on
+what it could guess about our field types.
+
+The response shows us that the `date` field has been recognised as a field
+of type `date`. The `_all` field isn't mentioned because
+it is a default field but we know that the `_all` field is of type `string`.
+
+So fields of type `date` and fields of type `string` are indexed differently,
+and can thus be searched differently.  That's not entirely surprising.
+You might expect that each of the core data types -- strings, numbers, booleans
+and dates -- might be indexed slightly differently. And this is true;
+there are slight differences.
+
+But by far the biggest difference is actually between fields that represent
+_exact values_ (which can include `string` fields) and fields that
+represent _full text_. This distinction is really important -- it's the thing
+that separates a search engine from all other databases.
+

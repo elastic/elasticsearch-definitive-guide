@@ -1,0 +1,56 @@
+=== Full body search
+
+Search _lite_ -- query string search --  is useful for ad hoc queries
+from the command line. To harness the full power of search, however,
+you should use the _request body_ `search` API, so called because most
+parameters are passed in the JSON request body instead of the query string.
+
+Request body search (henceforth known as just `search`) not only
+handles the query itself, but also allows you to return highlighted
+snippets from your results, aggregate analytics across all results
+or subsets of results, and return _did-you-mean?_ suggestions,
+which will help guide your users to the best results quickly.
+
+==== Empty search
+
+Let's start with the simplest form of the `search` API, the empty search,
+which returns all documents in all indices.
+
+    curl localhost:9200/_search -d '{}'
+
+Just as for the query-string search, you can search on one, many or `_all`
+indices, and one, many or all types:
+
+    curl 'localhost:9200/index_2013*/type1,type2/_search' -d '{}'
+
+And you can use the `from` and `size` parameters for pagination:
+
+    curl localhost:9200/_search -d '
+    {
+        "from": 30,
+        "size": 10
+    }
+    '
+
+[NOTE]
+====
+Some languages, such as Javascript, don't allow request bodies with
+a `GET` request. For this reason, the `search` API can also be used as a
+`POST` request:
+
+    curl -XPOST localhost:9200/_search -d '{}'
+
+Alternatively, you can use a `GET` request and pass the body in the query
+string, as the `source` parameter:
+
+    curl localhost:9200/_search?source=%7B%7D  # equivalent of {}
+
+However, request bodies can be quite long and may exceed the maximum
+query string length which can be as low as 2,000 bytes.
+====
+
+We will talk about highlighting, aggregations, and _did-you-mean?_ suggestions
+in later chapters. For now, we're going to focus just on the query.
+Instead of the cryptic query-string approach, request body search allows us
+to write queries using the _Query Domain Specific Language_, or Query DSL.
+

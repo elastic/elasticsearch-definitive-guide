@@ -1,0 +1,30 @@
+=== Pagination
+
+Our <<empty-search,empty search above>> told us that there 14 documents in
+the cluster which match our (empty) query.  But there were only 10 documents
+in the `hits` array.  How can we see the other documents?
+
+In the same way as SQL uses the `LIMIT` keyword, Elasticsearch accepts
+the `from` and `size` parameters:
+
+[horizontal]
+`size`:: How many results should be returned, defaults to `10`
+`from`:: How many initial results should be skipped, defaults to `0`
+
+If you wanted to show 5 results per page, then pages 1 to 3
+could be requested as:
+
+    curl -XGET 'localhost:9200/_search?size=5'
+    curl -XGET 'localhost:9200/_search?size=5&from=5'
+    curl -XGET 'localhost:9200/_search?size=5&from=10'
+
+Beware of paging too deep or requesting too many results at once.
+
+There is a good reason that web search engines never return more than 1,000
+results for any query -- the cost of sorting results in a distributed system
+grows exponentially with the number of results requested.
+
+In [TODO - LINK TO SCANNING] we will explain in detail why deep paging is
+expensive and what alternatives are available. For now, it is
+sufficient to know that the deeper you page, the more costly and
+slower the search.
