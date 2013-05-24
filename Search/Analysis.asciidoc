@@ -104,24 +104,24 @@ converted the date into the three terms: `"2013"`, `"09"` and `"15"`.
 When we query the `_all` field for `2013`, it matches all 12 tweets,
 because all of them contain the term `2013`:
 
-    curl -XGET localhost:9200/_search?q=2013              # 12 results
+    curl localhost:9200/_search?q=2013              # 12 results
 
 When we query the `_all` field for `2013-09-15`, it first analyzes the
 query string to produce a query which matches any of the terms `2013`, `09`
 or `15`. This also matches all 12 tweets, because all of them contain
 the term `2013`:
 
-    curl -XGET localhost:9200/_search?q=2013-09-15        # 12 results !
+    curl localhost:9200/_search?q=2013-09-15        # 12 results !
 
 When we query the `_date` field for `2013-09-15`, it looks for that
 exact date, and finds one tweet only:
 
-    curl -XGET localhost:9200/_search?q=date:2013-09-15   # 1  result
+    curl localhost:9200/_search?q=date:2013-09-15   # 1  result
 
 When we query the `_date` field for `2013`, it finds no documents
 because none contain that exact date:
 
-    curl -XGET localhost:9200/_search?q=date:2013         # 0  results !
+    curl localhost:9200/_search?q=date:2013         # 0  results !
 
 ==== Testing analyzers
 
@@ -158,7 +158,7 @@ instead of 2.  This is because position 2 was occupied by the stopword
 `"to"`, which has been removed.
 
 The `start_offset` and `end_offset` indicate the character positions
-that the original word occupies in the original string.
+that the original word occupied in the original string.
 
 The `analyze` API is really useful tool for understanding what is happening
 inside Elasticsearch indices, and we will talk more about it as
@@ -173,7 +173,7 @@ with the `standard` analyzer.
 You don't always want this. Perhaps you want to apply a different analyzer
 which suits the language your data is in. And sometimes you want a
 string field to be just a string field -- to index the exact value that
-you pass in, without any analysis, for instance a string user ID or an
+you pass in, without any analysis, such as a string user ID or an
 internal status field or tag.
 
 In order to achieve this, we have to configure these fields manually

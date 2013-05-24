@@ -14,17 +14,31 @@ the `from` and `size` parameters:
 If you wanted to show 5 results per page, then pages 1 to 3
 could be requested as:
 
-    curl -XGET 'localhost:9200/_search?size=5'
-    curl -XGET 'localhost:9200/_search?size=5&from=5'
-    curl -XGET 'localhost:9200/_search?size=5&from=10'
+    curl 'localhost:9200/_search?size=5'
+    curl 'localhost:9200/_search?size=5&from=5'
+    curl 'localhost:9200/_search?size=5&from=10'
 
 Beware of paging too deep or requesting too many results at once.
+Results are sorted before being returned. But each shard generates
+its own sorted results, which then need to be sorted centrally to ensure that
+the order is correct.
 
-There is a good reason that web search engines never return more than 1,000
-results for any query -- the cost of sorting results in a distributed system
-grows exponentially with the number of results requested.
+****
+To understand why deep paging is problematic, let's imagine that we
+are searching within a single index which has 5 primary shards.  When we
+request the first page of results (results 0 to 9),
+each shard produces its top 10 results and returns them to the _requesting
+node_, which then sorts all 50 results in order to select the overall top 10.
 
-In [TODO - LINK TO SCANNING] we will explain in detail why deep paging is
-expensive and what alternatives are available. For now, it is
-sufficient to know that the deeper you page, the more costly and
-slower the search.
+Now imagine that we ask for page 999 -- results 9,990 to 9,999. Everything
+works in the same way except that each shard has to produce 10,000 results.
+The requesting node then sorts through 50,000 results and discards 49,990 of
+them.
+
+You can see that, in a distributed system, the cost of sorting results
+grows exponentially the deeper we page.  There is a very good reason
+why web search engines don't return more than 1,000 results for any query.
+****
+
+In [TODO - LINK TO SCANNING] we will explain how you can retrieve large
+numbers of documents efficiently.

@@ -31,7 +31,7 @@ Typical uses for a query would be to find documents:
 
 A query calculates how _relevant_ each document is to the
 query, and assigns it a relevance `_score`, which is later used to
-return matching documents sorted by relevance. This concept of relevance is
+sort matching documents by relevance. This concept of relevance is
 well suited to full text search where there is seldom a completely
 ``correct'' answer.
 

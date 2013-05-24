@@ -69,13 +69,6 @@ The full search request would look like this:
     }
     '
 
-****
-The `match` query does not understand the query syntax that we used in
-query string search, eg `"+user_id:2 +tweet:search"`. It is safe to
-expose to your users via a search field: you control what fields they can
-query and it is not prone to throwing syntax errors.
-****
-
 ==== Combining multiple clauses
 
 Query clauses are simple building blocks, that can be combined with each
@@ -103,7 +96,7 @@ of very complex logic.
 
 As an example, the following query looks for emails that contain
 `"business opportunity"` and must either be starred, or both be in the Inbox
-and not be marked as spam:
+and not marked as spam:
 
     {
         "bool": {
@@ -113,7 +106,7 @@ and not be marked as spam:
                  { "bool": {
                        "must":      { "folder": "inbox" }},
                        "must_not":  { "spam": true }}
-                 }
+                 }}
             ],
             "minimum_should_match": 1
         }

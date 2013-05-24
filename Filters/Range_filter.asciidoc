@@ -30,7 +30,9 @@ The comparison operators are as follows:
 `lte`:: Less then or equal to
 `lt`:: Less than
 `from`:: The same as `gte`
-`to`:: The same as `lt` (*not* `lte`)
+`to`:: The same as `lt` (*not* `lte`)  *** INCORRECT ***
+
+
 
 The `to` operator means _up to but not including_, so a range
 of `{ "from" : 1, "to" : 10 }` includes the range `1..9`, not `1..10`.

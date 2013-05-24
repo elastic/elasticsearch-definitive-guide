@@ -11,7 +11,7 @@ containing:
 1. ``The quick brown fox jumped over the lazy dog''
 2. ``Quick brown foxes leap over lazy dogs in summer''
 
-To create an inverted index, first we split the `content` field of each
+To create an inverted index, we first split the `content` field of each
 document into separate words (which we call _terms_ or _tokens_), create a
 sorted list of all the unique terms, then list in which document each term
 appears. The result looks like this:
@@ -48,8 +48,8 @@ to find the documents in which each term appears:
 
 Both documents match, but the first document has more matches than the second.
 If we apply a naive _similarity algorithm_ which just counts the number of
-matching terms, the first document is probably a better match, or more
-relevant to our query, than the second document.
+matching terms, then we can say that the first document is a better match,
+or more relevant to our query, than the second document.
 
 Bu there are a few problems with our current inverted index:
 

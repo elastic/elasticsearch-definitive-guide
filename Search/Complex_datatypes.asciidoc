@@ -1,8 +1,8 @@
 === Complex core field types
 
-Besides the simple scalar values that we mentioned above, JSON also
-supports `null` values and two complex data types, arrays and objects, all of
-which are supported in Elasticsearch:
+Besides the simple scalar datatypes that we mentioned above, JSON also
+has `null` values, arrays and objects, all of which are supported by
+Elasticsearch:
 
 ==== Multi-value fields
 
@@ -150,8 +150,8 @@ result will look like this:
         "followers.name":   [alex, jones, lisa, smith, mary, white]
     }
 
-The correlation between `{age: 35}` and `{name: Mary White}` has been lost.
-Each multi-value field is just a bag of values, not an ordered array.  This
+The correlation between `{age: 35}` and `{name: Mary White}` has been lost as
+each multi-value field is just a bag of values, not an ordered array.  This
 is sufficient for us to ask  _“Is there a follower called Alex Jones?”_,
 but we can't get an accurate answer to
 “Is there a follower called Alex Jones _who is 26 years old?”_.

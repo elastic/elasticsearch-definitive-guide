@@ -1,26 +1,27 @@
 [[data-type-differences]]
 === Data type differences
 
-Something seems to be broken.  Given that we have 12 tweets in our indices,
-and only one of them has the date `2013-09-15`, have a look at the
+Something seems to be broken: we have 12 tweets in our indices,
+and only one of them has the date `2013-09-15`, but have a look at the
 `total` hits for the following queries:
 
-    curl -XGET localhost:9200/_search?q=2013              # 12 results
-    curl -XGET localhost:9200/_search?q=2013-09-15        # 12 results !
-    curl -XGET localhost:9200/_search?q=date:2013-09-15   # 1  result
-    curl -XGET localhost:9200/_search?q=date:2013         # 0  results !
+    curl localhost:9200/_search?q=2013              # 12 results
+    curl localhost:9200/_search?q=2013-09-15        # 12 results !
+    curl localhost:9200/_search?q=date:2013-09-15   # 1  result
+    curl localhost:9200/_search?q=date:2013         # 0  results !
 
 Why does querying the `_all` field for the full date return all
 tweets, and querying the `date` field for just the year return no
 results? Why do our results differ when searching within the `_all` field or
-the `date` field? Presumably it is because the way our data has been indexed
-in the `_all` field is different to how it has been indexed in the `date` field.
+the `date` field?
 
+Presumably it is because the way our data has been indexed in the `_all`
+field is different to how it has been indexed in the `date` field.
 So let's take a look at how Elasticsearch has interpreted our document
 structure, by requesting the _mapping_ (or schema definition)
 for the `tweet` type in the `gb` index:
 
-    curl -XGET localhost:9200/gb/tweet/_mapping
+    curl localhost:9200/gb/tweet/_mapping
 
 which gives us:
 

@@ -4,7 +4,8 @@ We've mentioned that, by default, results are returned in descending
 order of relevance. But what is relevance? How is it calculated?
 
 The relevance of each document is represented by a positive floating point
-number called the `_score` -- the higher the `_score`, the more relevant.
+number called the `_score` -- the higher the `_score`, the more relevant
+the document.
 
 A query clause generates a `_score` for each document.  How that score
 is calculated depends on the type of query clause -- different query
@@ -37,8 +38,6 @@ the `_score`.
 When multiple query clauses are combined using a compound query like the
 `bool` query, the `_score` from each of these query clauses is combined to
 calculate the overall `_score` for the document.
-
-We will discuss how relevance is calculated in more detail in <<boost>>.
 
 ==== Understanding the score
 

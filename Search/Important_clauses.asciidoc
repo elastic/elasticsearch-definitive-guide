@@ -46,8 +46,8 @@ The operators that it accepts are:
 `lte`::     less than or equal to
 
 It can also be used on string fields, where the ranges are lexicographic
-(alphabetical) instead of numeric. For all tags from `a` up to but not
-including `m`:
+(alphabetical) instead of numeric. For all tags from `"a"` up to but not
+including `"m"`:
 
     {
         "range": {
@@ -99,7 +99,7 @@ of filter clauses:
 
 ==== `match_all` query
 
-The `match_all` query simples matches all documents. It is the default
+The `match_all` query simply matches all documents. It is the default
 query which is used if no query has been specified.
 
     { "match_all": {}}
@@ -131,6 +131,11 @@ exact value:
 
 Remember, however, that for exact value searches, you probably want to use
 a filter instead of a query, as a filter will be cached.
+
+The `match` query does not understand the query syntax that we used in
+query string search, eg `"+user_id:2 +tweet:search"`. It is safe to
+expose to your users via a search field: you control what fields they can
+query and it is not prone to throwing syntax errors.
 
 ==== `multi_match` query
 

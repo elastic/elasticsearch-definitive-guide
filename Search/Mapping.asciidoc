@@ -2,7 +2,7 @@
 
 As explained in <<data-in-data-out>>, each document in an index has a _type_.
 Every type has its own _mapping_ or _schema definition_. A mapping
-defines the fields that a type contains, the datatype for each field,
+defines the fields within a type, the datatype for each field,
 and how the field should be handled by Elasticsearch. A mapping is also used
 to configure metadata associated with the type.
 
@@ -51,7 +51,7 @@ types in one or more indices using the `/_mapping` end point.
 In <<data-type-differences>> we already retrieved the mapping for
 type `tweet` in index `gb`:
 
-    curl -XGET localhost:9200/gb/tweet/_mapping
+    curl localhost:9200/gb/tweet/_mapping
 
 This shows us the mapping for the fields (called _properties_) that
 Elasticsearch generated dynamically from the documents that we indexed:

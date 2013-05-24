@@ -14,7 +14,7 @@ in some human language, like the text of a tweet or the body of an email.
 
 ****
 Full text is often referred to as ``unstructured data'', which is a misnomer --
-natural language is highly structured. The problem is that it the rules of
+natural language is highly structured. The problem is that the rules of
 natural languages are complex, which makes them difficult for computers to
 parse correctly. For instance, consider this sentence:
 
@@ -23,7 +23,7 @@ parse correctly. For instance, consider this sentence:
 Does it refer to to months or to people?
 ****
 
-Exact values are easy to query - the decision is binary.  A value either
+Exact values are easy to query. The decision is binary -- a value either
 matches the query, or it doesn't. This kind of query is easy to
 express with SQL:
 
@@ -53,8 +53,8 @@ understand our intent:
   while `"fox hunting news"` should return news stories about fox hunting.
 
 In order to facilitate these types of queries on full text fields,
-Elasticsearch first _analyzes_ the text, then stores the results
-in an _inverted index_. We will discuss the inverted index and the
+Elasticsearch first _analyzes_ the text, then uses the results to build
+an _inverted index_. We will discuss the inverted index and the
 analysis process in the next two sections.
 
 

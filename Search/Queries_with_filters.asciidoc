@@ -9,7 +9,8 @@ outer ``context'' as _query context_ or _filter context_.
 
 Compound query clauses can wrap other query clauses and compound
 filter clauses can wrap other filter clauses. However, it is often
-useful to apply a filter to a query, or to use a full text query as a filter.
+useful to apply a filter to a query or, less frequently, to use a full
+text query as a filter.
 
 To do this, there are dedicated query clauses which wrap filter clauses and
 vice versa, thus allowing us to switch from one context to another. It is
@@ -34,7 +35,7 @@ query:
     {
         "filtered": {
             "query":  { "match": { "email": "business opportunity" }},
-            "filter": { "term": { "folder": "inbox" }}
+            "filter": { "term":  { "folder": "inbox" }}
         }
     }
 

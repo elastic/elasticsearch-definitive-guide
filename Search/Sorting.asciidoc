@@ -4,7 +4,7 @@ By default, results are returned sorted by _relevance_ -- with the most
 relevant docs first. The _relevance score_ is represented by a number
 returned as the `_score`, so the default sort order is `_score` descending.
 
-However, sometimes you don't have a meaningful relevance score. For instance,
+Sometimes, though, you don't have a meaningful relevance score. For instance,
 the following query just returns all tweets whose `user_id` field has
 the value `2`:
 
@@ -18,12 +18,12 @@ the value `2`:
     }
     '
 
-==== Sorting by field values
-
 The missing-but-implied `match_all` query just sets the `_score` to `1`
 for all documents, and filters don't have any effect on the score. This
 means that all of our results have the meaningless `_score` of `1` -- they
 are all equally relevant.
+
+==== Sorting by field values
 
 In this case, we probably want to sort the results by recency, with the most
 recent tweets first.  We can do this with the `sort` parameter:
@@ -62,7 +62,7 @@ The long number `1379894400000` is equivalent to `2013-09-23 00:00:00 UTC`.
 
 The second is that the `_score` and `max_score` are `null`.  Calculating the
 `_score` is quite expensive and usually its only purpose is for
-sorting. If we're not sorting by relevance, it doesn't make
+sorting -- we're not sorting by relevance, so it doesn't make
 sense to keep track of the `_score`.  If you want the `_score` to be
 calculated regardless, then you can set the `track_score` parameter to `true`.
 
@@ -105,7 +105,7 @@ argument from the above query could be written as:
 ==== Sorting on multi-value fields
 
 When sorting on field with more than one value, remember that the values do not
-have any intrinsic order -- a multi-value field just has a bag of values.
+have any intrinsic order -- a multi-value field is just a bag of values.
 Which one do you choose to sort on?
 
 For numbers and dates, you can reduce a multi-value field to a single value
