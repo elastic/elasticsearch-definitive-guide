@@ -62,10 +62,10 @@ Bu there are a few problems with our current inverted index:
 3. `"jumped"` and `"leap"`, while not from the same root word, are similar
    in meaning
 
-With the above index, a search for `"+Quick +fox"` wouldn't match any documents.
-Both the term `"Quick"` and the term `"fox"` have to be in the same document
-in order to satisfy the query, but the first doc contains `"quick fox"` and the
-second doc contains `"Quick foxes"`. Our user would probably expect
+With the above index, a search for `"+Quick +foxes"` wouldn't match any documents.
+Both the term `"Quick"` and the term `"foxes"` have to be in the same document
+in order to satisfy the query, but the first doc contains `"Quick fox"` and the
+second doc contains `"quick foxes"`. Our user would probably expect
 both documents to match the query.
 
 We can do better. If we normalize the terms into a standard format,
@@ -97,7 +97,7 @@ Now the index looks like this:
      the     |   X   |  X
     ------------------------
 
-But we're not there yet. Our search for `"+Quick +fox"` would *still* fail,
+But we're not there yet. Our search for `"+Quick +foxes"` would *still* fail,
 because we no longer have the exact term `"Quick"` in our index. However, if we
 apply the same normalization rules that we used on the `content` field to
 our query string, it would become a query for `"+quick +fox"`, which
