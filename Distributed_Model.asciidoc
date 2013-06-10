@@ -4,6 +4,11 @@
 A key feature of Elasticsearch is its ability to scale out of the box. This
 chapter explains how the distributed model works.
 
+include::Distributed/Cluster.asciidoc[]
+
+include::Distributed/CRUD.asciidoc[]
+
+
 === Shards and indices
 * Shards – the basic unit of scale
 * What is an index?
