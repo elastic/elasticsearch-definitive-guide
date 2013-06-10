@@ -103,7 +103,7 @@ categories which can then be used to narrow down the results.
 The following query returns all objects of type `user` in all indices,
 and summarizes the most popular values in the `interests` field:
 
-    curl -XGET 'localhost:9200/_all/user/_search?pretty=1'  -d '
+    curl -XGET 'localhost:9200/_all/user/_search?pretty'  -d '
     {
        "query" : {
           "match_all" : {}

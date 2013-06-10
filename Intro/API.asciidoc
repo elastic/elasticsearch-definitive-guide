@@ -42,14 +42,14 @@ All requests consist of:
 * the protocol and hostname of any node in the cluster,
   eg: `http://localhost:9200` or even just `localhost:9200`
 * the path of the resource you want to use, eg: `/_count`
-* any optional query string parameters, eg `?pretty=true` will _pretty-print_
+* any optional query string parameters, eg `?pretty` will _pretty-print_
   the JSON response to make it easier to read
 * a JSON encoded request body (if the request needs one)
 
 For instance, to count the number of documents in the cluster, we could
 use:
 
-    curl -XGET 'localhost:9200/_count?pretty=true' -d '
+    curl -XGET 'localhost:9200/_count?pretty' -d '
     {
         "match_all": {}
     }
