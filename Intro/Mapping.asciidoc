@@ -1,16 +1,17 @@
-=== Schema free vs Schema mapping
+=== Schema free
 
-Not only can Elasticsearch store complex objects or documents, but we haven't
-had to specify our document structure or _schema_ before indexing.   We didn't
-even have to create the index -- that was done for us.
+When you create a new table in a relational database, the first thing you
+have to do is define the data type of each column. But we've been playing
+with Elasticsearch -- indexing, searching, faceting -- and haven't defined
+one schema yet. Did we hide that step from the intro?
+
+The answer is no: we didn't hide that step. Elasticsearch is _schema free_
+-- it will automatically detect the datatype of each field in your document
+and build a schema for you.
 
 Later, we will want more control over this process but, by not requiring
 a schema -- by being _schema free_ -- Elasticsearch makes
 it easy for us to start experimenting without having to plan ahead.
-
-However, in order to make sense of our document so that it can be queried,
-Elasticsearch has tried to understand the structure of our object, and has
-generated its own schema automatically.
 
 We can see how our fields from the example have been interpreted by retrieving
 the current _mapping_ or schema definition:

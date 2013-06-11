@@ -15,7 +15,9 @@ will be auto-generated for you.
 ****
 
 We are going to store it in the `blogs` index, as type `user`, and we
-can assign this user the unique ID `johnsmith`:
+can assign this user the unique ID `johnsmith`. Notice how
+the `index`, `type` and `id` are specified in the path of the URI, rather
+than in the document itself:
 
     curl -XPUT 'localhost:9200/blogs/user/johnsmith?pretty' -d '
     {
@@ -41,6 +43,8 @@ has been indexed correctly:
       "_id" : "johnsmith",
       "_version" : 1
     }
+
+Congratulations! You just indexed your first document! How easy was that?
 
 === Real-time GET
 

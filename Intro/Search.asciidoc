@@ -1,4 +1,4 @@
-=== Easy search
+=== Search _Lite_
 
 Now that our documents are indexed we can search for them.
 For simple _ad hoc_ searches, we can use the _query string_ search
@@ -9,8 +9,8 @@ method:
 The above query returns our `johnsmith` document as a result, but what we have
 actually searched?
 
-Elasticsearch adds a magical `_all` field to our document, which combines
-the values from all the other fields in the document.  By default, the
+Elasticsearch adds a special `_all` field to our document, which combines
+the string values from all the other fields in the document.  By default, the
 `q=keywords` query string search looks for matches in this `_all` field.
 
 Alternatively, we could search in a specific field:
@@ -21,6 +21,10 @@ Every single field in a document is indexed and searchable by default. It's
 the equivalent a database having an index on every column in
 every table, and be able to use multiple indices in a single request!
 
+The search response contains not only the list of which documents match, but
+also returns the document itself. There is no need to have a separate phase to
+fetch the matching documents from another datasource.
+
 .Near real-time search
 ****
 While documents can be retrieved immediately after being indexed
@@ -28,11 +32,11 @@ While documents can be retrieved immediately after being indexed
 being indexed or updated. This is known as  _near real-time search_.
 ****
 
-=== Powerful search
+=== Full body search
 
 The query string search is useful for simple queries, but we can use
-the _Query DSL_ -- Elasticsearch's custom query language -- to express
-more complex and specific queries in JSON:
+the _Query DSL_ -- Elasticsearch's rich and flexible query language -- to
+express more complex and specific queries in JSON:
 
     curl -XGET localhost:9200/_search?pretty -d '
     {
@@ -49,15 +53,16 @@ more complex and specific queries in JSON:
     }
     '
 
-Elasticsearch not only returns the list of which documents match, but also
-returns the document itself. There is no need to have a separate phase to
-fetch the matching documents from another datasource.
+The Query DSL gives you complete control over how your query is executed.
+Individual clauses are like building blocks which can be put together
+in different ways to suit your search needs and performance requirements.
+We'll cover how to construct more complicated queries using the Query DSL later.
 
 === Snippet highlighting
 
-The search API supports other related functionality, such as the ability
-to return highlighted search snippets which show the search terms
-in the context of the document:
+The search API supports other related functionality, such as highlighting
+search snippets to show matching terms in the context of the document
+content:
 
     curl -XGET localhost:9200/_search?pretty -d '
     {

@@ -14,7 +14,7 @@ In this request, we index two new documents into the `blogs2` index:
     '
 
 Combining multiple operations into one reduces the amount of information that
-we have to send over the network, which can give a big performance boost.
+is sent over the network, which can give a big performance boost.
 This is ideal for write-heavy applications, like indexing log data in
 Elasticsearch.
 
