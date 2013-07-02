@@ -24,11 +24,10 @@ and paths. The first node will bind to port `9300` for cluster transport (for
 communication between the nodes), and port `9200` for HTTP transport.
 The second node will use ports `9301` and `9201` respectively, etc.
 
-This means that, in order to form a cluster, your nodes need to be able to talk
-to each other over ports `9300` to `9399` on the machine's public IP address. If your local machine
-has a firewall in place you will either need to open up these ports, or you
-can force Elasticsearch to bind to `localhost` instead, which usually
-isn't protected by the firewall.
+To form a cluster, ports `9300`-`9399` must be open on your test machine's
+firewall, so that the nodes can talk to each other. Alternatively, you can
+force Elasticsearch to bind to `localhost` instead, which usually isn't
+protected by the firewall.
 
 First, shut down any running nodes by pressing `Ctrl-C`, open two console
 windows and start a node in each window using the same command:

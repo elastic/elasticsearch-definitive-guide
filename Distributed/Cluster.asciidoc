@@ -13,13 +13,9 @@ With most databases, scaling horizontally
 usually requires a major overhaul of your application to take advantage
 of these extra boxes.
 
-Elasticsearch, on the other hand,  is _distributed_ by nature. In other
-words, it natively knows how to use and manage multiple nodes to provide
-scale and high availability.  This also means that your application
-doesn't need to care about it.
-
-The easiest way to explain how the distributed nature of Elastisearch works, is
-to demonstrate it.
+In contrast, Elasticsearch  is _distributed_ by nature. It knows how
+manage multiple nodes to provide scale and high availability.  This
+also means that your application doesn't need to care about it.
 
 include::Multiple_nodes.asciidoc[]
 
@@ -33,7 +29,7 @@ image::images/cluster.svg["A cluster with one empty node"]
 
 A _node_ is a running instance of Elasticsearch, while a _cluster_ consists of
 one or more nodes that are working together to share their data and workload.
-As nodes are added to or remove from the cluster, the cluster reorganizes
+As nodes are added to or removed from the cluster, the cluster reorganizes
 itself to spread the data evenly.
 
 As users, we can talk any node in the cluster. Each node knows how to route
@@ -42,15 +38,21 @@ managed transparently by Elasticsearch.
 
 ==== Add an index
 
-In order to add data to Elasticsearch, we need an _index_, where
-an index is like a ``database'' in a relational database. Actually,
-an index is really just a ``logical namespace'' which points to one or
-more shards.
+To add data to Elasticsearch, we need an _index_, where
+an index is like a ``database'' in a relational database - a place
+to store related data.  In reality, an index is just a ``logical namespace''
+which points to one or more physical shards.
 
 A _shard_ is a low-level ``worker unit''. Each shard is an instance of Lucene,
 and is a complete search engine in its own right. Our documents are
 stored and indexed in shards, but we don't talk to them directly.  Instead,
 we talk to an index.
+
+Shards are how Elasticsearch distributes data around your cluster. Think of
+shards as containers for data. Documents are stored in shards, and shards are
+allocated to nodes in your cluster. As your cluster grows or shrinks,
+Elasticsearch will automatically migrate shards between nodes so that the
+cluster remains balanced.
 
 A shard can be either a _primary_ shard or a _replica_ shard, where a replica
 shard is a copy of the primary shard. The number of primary shards in an index
@@ -93,12 +95,12 @@ If we start a second node, our cluster would look like <<cluster-two-nodes>>.
 .A two-node cluster -- all primary and replica shards are allocated
 image::images/cluster_node1_node2.svg["A two-node cluster"]
 
-The second node has joined the cluster and a _replica shard_ has been allocated
-to it for each primary shard.  That means that we can lose either node and
-all of our data will be intact.
+The second node has joined the cluster and three _replica shards_ have been
+allocated to it -- one for each primary shard.  That means that we can lose
+either node and all of our data will be intact.
 
-Any document that is added to our index is first indexed to the primary
-shard and then in parallel to any replica shards, ensuring that our
+Any newly indexed document will first be stored on the primary shard,
+then copied in parallel to any replica shards. This ensures that our
 document is immediately available from any node in the cluster.
 
 ==== Scale horizontally
@@ -112,7 +114,7 @@ itself to look like <<cluster-three-nodes>>.
 image::images/cluster_node1_node2_node3.svg["A three-node cluster"]
 
 One shard each from `Node 1` and `Node 2` have moved to the new
-`Node 3`, meaning that we now have two shards per node, instead of three.
+`Node 3` --  we now have two shards per node, instead of three.
 This means that the hardware resources (CPU, RAM, I/O) of each node
 are being shared between fewer shards, allowing each shard to perform
 better.
