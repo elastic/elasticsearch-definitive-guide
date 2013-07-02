@@ -7,20 +7,18 @@ using the `update` API, we can make partial updates to a document
 in a single client request, such as incrementing a counter.
 
 We also said that documents are immutable -- they cannot be changed, only
-replaced.  The `update` API has to obey the same rules.  While we can use it to
-make what looks like a partial update to a document, really Elasticsearch
-is following the same _retrieve-change-reindex_ process that we have
-already described.
-
-The only difference is that it is doing it all inside Elasticsearch, thus
-avoiding the network overhead of multiple requests. By reducing the time
-between the _retrieve_ and _reindex_ steps, we reduce the likelihood of
-there being conflicting changes from other processes.
+replaced.  The `update` API has to obey the same rules.  Externally,
+it appears as if we are partially updating a document in place.
+Internally, the `update` API simply manages the same _retrieve-change-reindex_
+process that we have already described, thus avoiding the network overhead of
+multiple rexquests. By reducing the time between the _retrieve_ and
+_reindex_ steps, we reduce the likelihood of there being conflicting
+changes from other processes.
 
 The simplest form of the `update` request accepts a partial document
-as the `"doc"` parameter, which will be merged into the existing document.
-For instance, we could add a `tags` field and a `views` field to our blog post
-with:
+as the `"doc"` parameter -- objects are merged together, existing scalar fields
+are overwritten and new fields are added. For instance, we could add a
+`tags` field and a `views` field to our blog post with:
 
     curl -XPOST localhost:9200/website/blog/1/_update  -d '
     {

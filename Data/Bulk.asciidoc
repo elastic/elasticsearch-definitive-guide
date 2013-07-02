@@ -187,7 +187,8 @@ load.  Fortunately, it is easy to find the _sweetspot_:
 Try indexing typical documents in batches of increasing size. When
 performance starts to drop, your batch size is too big.
 
-A good place to start is with batches of between 1,000 and 5,000 documents.
+A good place to start is with batches of between 1,000 and 5,000 documents or,
+if your documents are very large, with even smaller batches.
 
 ==== Why the funny format?
 

@@ -134,7 +134,20 @@ could be written as:
 However, the `not` filter only accepts a single filter.  To negate multiple
 filters, you need to be explicit about how those filters should be combined.
 That is, you should wrap them in a <<bool-filter,`bool` filter>> or
-in an <<and-or-filter,`and` or `or` filter>>:
+in an <<and-or-filter,`and` or `or` filter>>. For instance, this SQL
+statement:
+
+    WHERE status <> "inactive"
+      AND status <> "pending"
+
+could be written in either of these two ways:
+
+    {
+        "and" : [
+          { "not": { "term" : { "status" : "inactive" }}},
+          { "not": { "term" : { "status" : "pending"  }}}
+        ]
+    }
 
     {
         "not" : {

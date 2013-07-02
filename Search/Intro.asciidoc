@@ -9,7 +9,7 @@ amorphous blobs of data.  Elasticsearch doesn't only _store_ the document,
 it also _indexes_ the content of the document in order to make it searchable.
 
 *Every field in a document is indexed and can be queried*.  And it's
-not jus that. During a single query, Elasticsearch can use *all* of these
+not just that. During a single query, Elasticsearch can use *all* of these
 indices, to return results at breath-taking speed.  That's something that
 you could never consider doing with a traditional database.
 
@@ -21,7 +21,7 @@ A _search_ can be:
   sorted by `join_date`, similar to a query that you could construct in SQL
 * or a combination of the two
 
-While many searches will work out of the box, in order to use Elasticsearch to
+While many searches will just work out of the box, to use Elasticsearch to
 its full potential you need to understand three subjects:
 
 [horizontal]

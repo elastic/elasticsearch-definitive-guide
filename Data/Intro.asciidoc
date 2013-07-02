@@ -18,17 +18,17 @@ potentially complex data structures. So far so good.
 
 The problem comes when we need to store these entities. Traditionally, we
 have stored our data in columns and rows in a relational database, the
-equivalent of using a spreadsheet.  All the flexibility that we gained
-by using objects is lost to us, because of the inflexibility of our
+equivalent of using a spreadsheet.  All the flexibility gained
+from using objects is lost due to the inflexibility of our
 storage medium.
 
-But what if we could store our objects as objects?  Instead of having to
-model our application according to what we can squeeze into our data store,
-we can focus on what we want to do with our data. The flexibility of using
+But what if we could store our objects as objects?  Instead of modeling
+our application around the limitations of spreadsheets, we can
+instead focus on actually *using* the data. The flexibility of
 objects is returned to us.
 
-An object is a language-specific in-memory data structure. In order to
-send it across the network or to store it, we need to be able to represent it
+An object is a language-specific, in-memory data structure. To
+send it across the network, or store it, we need to be able to represent it
 in some standard format.
 http://en.wikipedia.org/wiki/Json:[JSON (JavaScript Object Notation)] is
 a way of representing objects in human-readable text.  It has become
@@ -40,15 +40,15 @@ store and retrieve complex data structures -- serialized as JSON documents
 -- in _real-time_. In other words, as soon as a document has been stored in
 Elasticsearch, it can be retrieved by ID from any node in the cluster.
 
-Of course, we don't only need to store data, we also need to be able to
+Of course, we don't only need to store data, we must also
 query it, _en masse_ and at speed. While a number of NoSQL solutions
 exist which allow us to store objects as documents, they still require
 us to think about how we want to query our data, and which fields we
 should index in order to make them searchable.
 
 In Elasticsearch, *all data in every field* is *indexed by default*. And, unlike
-most other databases, it will make use of all of those indices in the same
-query, in order to return results at breath taking speed.
+most other databases, it can *use all those indices in the same
+query*, in order to return results at breath taking speed.
 
 In this chapter we will discuss the APIs that we use to create, retrieve,
 update and delete documents. For the moment, we don't care about

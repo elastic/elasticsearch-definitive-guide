@@ -11,7 +11,7 @@ and zero or more characters with `"*"`, for instance `b?o*n` would match
 
     {
         "wildcard": {
-            "tag": "b.o*n"
+            "tag": "b?o*n"
         }
     }
 
@@ -65,7 +65,7 @@ The longer the prefix, the less work the query needs to do.
 The <<query-string-query,`query_string` query>> mini-language understands
 wildcards:
 
-    "quick b.o*n fox"
+    "quick b?o*n fox"
 
 and regexps, which are indicated by surrounding the pattern with forward
 slashes (`"/"`):

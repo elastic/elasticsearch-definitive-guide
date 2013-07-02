@@ -113,5 +113,6 @@ and not marked as spam:
     }
 
 Don't worry about the details of this example yet -- we will explain in
-full later. The important thing to take away is that compound query
-clauses can be used to wrap several clauses into a single query.
+full later. The important thing to take away is that a compound query
+clause can combine multiple clauses -- both leaf clauses and other
+compound clauses -- into a single query.
