@@ -1,0 +1,41 @@
+[[full-text-search]]
+== Full text search
+
+=== The `match` query
+
+=== Improving precision
+
+operator: and
+
+minimum_should_match
+
+=== Combining queries
+
+bool query
+
+=== Boosting clauses
+
+boost
+
+=== How does it work
+
+ match -> analyzer -> bool with term queries
+
+=== Controlling analysis
+
+analyzer, default analyzer mapping
+
+=== Matching on multiple fields
+
+multi_match
+
+bool vs dis_max
+
+=== `query_string` query
+
+=== `query_string` vs `multi_match`
+
+mapping:path, index_name
+
+indexing multiple fields into one index
+

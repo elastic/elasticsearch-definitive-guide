@@ -1,0 +1,43 @@
+[[relevance]]
+== Controlling relevance
+
+=== Similarity
+
+TF/IDF
+BM25
+
+=== Boosting at index time
+
+norms? doc boost
+
+=== Boosting at query time
+
+boost
+
+disable_coord
+
+index_boost
+
+boosting_query
+
+custom_boost_factor
+
+=== Ignoring relevance
+
+constant_score
+
+=== Boosting with filters
+
+custom_filters_score
+
+=== Boosting with scripts
+
+custom_score
+
+distance_score
+
+min_score
+
+=== Boosting and performance
+
+rescore phase

@@ -1,0 +1,41 @@
+[[languages]]
+== Languages
+
+=== Language-aware analysis
+
+language analyzers
+stemming
+keyword marker, keyword repeat
+
+=== Diacritic-free search
+
+asciifolding filter
+
+=== Multi-lingual indexes
+
+_analyzer field
+
+analyzer param to queries
+
+=== Language-per-index
+
+=== Living in a Unicode world
+
+ICU
+
+=== ICU Tokenizer
+
+=== Normalizing Unicode
+
+also see NFKC_Casefold http://wiki.apache.org/solr/AnalyzersTokenizersTokenFilters
+
+=== Case and diacritic folding
+
+=== Language-sensitive sorting
+
+=== Other tools
+
+ - compound word
+ - elision
+ - hunspell
+ - normalization

@@ -6,27 +6,39 @@ include::Data_In_Data_Out.asciidoc[]
 
 include::Search.asciidoc[]
 
-include::Searching.asciidoc[]
+include::Index_Mgmt.asciidoc[]
 
-include::Filters.asciidoc[]
+include::Structured_Search.asciidoc[]
 
-include::Queries.asciidoc[]
+include::Dates.asciidoc[]
 
-include::Analysis.asciidoc[]
+include::Full_Text_Search.asciidoc[]
 
-include::Mapping.asciidoc[]
+include::Proximity_Matching.asciidoc[]
 
-include::Complex_query.asciidoc[]
+include::Partial_Matching.asciidoc[]
 
-include::Boost.asciidoc[]
+include::Synonyms_Stopwords.asciidoc[]
 
-include::Geolocation.asciidoc[]
+include::Multilingual.asciidoc[]
 
-include::Related_Documents.asciidoc[]
+include::Fuzzy_Matching.asciidoc[]
 
-include::Facets.asciidoc[]
+include::Relevance.asciidoc[]
+
+include::Non_Prose.asciidoc[]
 
 include::Scripting.asciidoc[]
+
+include::Aggregations.asciidoc[]
+
+include::Relationships.asciidoc[]
+
+include::Time_Based.asciidoc[]
+
+include::Index_Per_User.asciidoc[]
+
+include::Geolocation.asciidoc[]
 
 include::Percolation.asciidoc[]
 
@@ -44,10 +56,3 @@ include::Lucene.asciidoc[]
 
 include::Glossary.asciidoc[]
 
-include::Appendix/Query_string_syntax.asciidoc[]
-
-include::Appendix/Regexp_syntax.asciidoc[]
-
-include::Clients.asciidoc[]
-
-include::Cloud.asciidoc[]

@@ -1,0 +1,49 @@
+[[structured-search]]
+== Structured search
+
+mapping: not_analyzed
+
+use filters
+
+=== Finding exact values
+
+term/terms
+
+contains, not equals
+
+matching only XYZ, excluding other values
+
+=== Null values
+
+exists & missing filters
+
+null value mapping
+
+exists on objects
+
+=== Ranges
+
+=== Combining filters
+
+bool, and/or/not
+
+=== Normalizing exact values
+
+keyword, trim, lowercase, ignore_above, truncate, unique, limit
+
+stopwords
+
+omit_norms, index_options
+
+=== Filter caching
+
+per segment bitsets
+
+=== Social-graph filter
+
+terms lookup filter
+
+=== Cache key
+
+=== Exact value queries
+
