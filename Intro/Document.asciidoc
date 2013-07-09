@@ -5,18 +5,24 @@ More often than not they are complex data structures which may contain other
 objects, or arrays of values.
 
 When using a relational database to store these objects, you flatten
-the object to fit the table schema -- usually one field per column. When
+the object to fit the table schema (usually one field per column). When
 retrieving the object from the database, you have to reconstruct it
-from its flat representation.
+from the flat representation.
 
 Elasticsearch is _document oriented_, meaning that it stores and
-indexes entire _documents_. In order to index the document contents sensibly,
-it needs to understand the structure of the document -- what type of
-data each field represents.
+indexes entire _documents_.  In Elasticsearch, you index, search,
+sort and filter documents...not rows of data.  This is a fundamentally different
+ way of thinking about data and is one of the reasons Elasticsearch can
+ perform complex full text search.
 
-Fortunately, most programming languages can serialize pretty much any object
-into a JSON document. For this reason it has become the standard format used
-by the NoSQL movement. It is simple, concise and easy to read.
+
+[NOTE]
+====
+Elasticsearch uses JSON as the serialization format for documents.
+
+JSON serialization is supported by most programming languages, and has become
+the standard format used by the NoSQL movement. It is simple, concise and easy
+to read.
 
 Consider this JSON document which represents a user object:
 
@@ -36,5 +42,5 @@ Although the original user object was complex, the
 structure of the object has been retained in the JSON version.
 Converting an object to JSON for indexing in Elasticsearch
 is much simpler than the equivalent process for a flat table structure.
-
+====
 

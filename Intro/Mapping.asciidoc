@@ -1,7 +1,7 @@
 === Schema free
 
 When you create a new table in a relational database, the first thing you
-have to do is define the data type of each column. But we've been playing
+do is define the data type of each column. But we've been playing
 with Elasticsearch -- indexing, searching, faceting -- and haven't defined
 one schema yet. Did we hide that step from the intro?
 
@@ -14,7 +14,7 @@ a schema -- by being _schema free_ -- Elasticsearch makes
 it easy for us to start experimenting without having to plan ahead.
 
 We can see how our fields from the example have been interpreted by retrieving
-the current _mapping_ or schema definition:
+the current _mapping_ (aka the schema definition):
 
     curl -XGET 'localhost:9200/blogs/_mapping?pretty'
 

@@ -31,9 +31,9 @@ otherwise they may not be able to understand each other.
 
 ==== RESTful API with JSON over HTTP
 
-All other languages can use any simple HTTP client to communicate with
-the cluster over *port 9200*. In fact, as you have seen above, you can
-even talk to Elasticsearch from the command line, using the
+All other languages can communicate with Elasticsearch over *port 9200* using
+a RESTful API, accessible with your favorite HTTP library. In fact, as you have
+seen above, you can even talk to Elasticsearch from the command line, using the
 `curl` command.
 
 All requests consist of:

@@ -1,3 +1,33 @@
 === Distributed nature
 
-Brief intro to distributed nature, high availability, scale, failover
+Elasticsearch is distributed by nature.  While it will happily run a cluster with
+a single node on your laptop, it is designed to scale out to dozens (or even hundreds!)
+of machines.
+
+The distributed aspect of Elasticsearch is largely transparent.  It just works.
+Some of the operations happening under the hood include:
+
+- automatically balancing data between your nodes
+- routing search requests
+- indexing data to the correct node
+- transparently moving data around if a node fails
+- seamlessly integrating new nodes as your cluster grows
+
+So how does Elasticsearch do all this?  The core concept to understand is known as a
+_shard_.  Every index is composed of one or more shards.
+
+Shards are basically containers for documents.  They are independent and mobile: if a
+new node joins the cluster, Elasticsearch may opt to rearrange shards so that load is balanced across the cluster.
+
+A shard may also be duplicated in the cluster (known as a _replica shard_), which gives
+you higher availability. If a node were to suddenly catch on fire, a replica shard on a different
+node will automatically be used to prevent downtime and data loss.  More replicas means more
+availability.
+
+Lastly, shards help your application to scale. Since shards are the fundamental
+unit of data distribution, increasing the number of shards means you can
+split your data amongst more nodes.  More nodes means your cluster can scale to more
+queries per second.
+
+Later in the book, we'll discuss how to choose an appropriate number of shards. For now, just
+keep in mind that shards are how Elasticsearch manages a distributed environment.

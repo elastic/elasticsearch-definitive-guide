@@ -1,20 +1,20 @@
 === Indexing documents
 
-Before we can _index_ -- that is, store and make searchable --  our
-user document in Elasticsearch, we need to decide what _type_ of document it
-is, and where -- in which _index_ -- to store it.
+Before we can _index_ (store) our user document in Elasticsearch, we need
+to decide what the document represents, and where to store it.
 
-.Index, type and ID
-****
-Think of an _index_ as being like a database in a relational database, and
-a _type_ as being like a table in that database.
+In Elasticsearch, a document belongs to a _type_, and those types live inside
+an _index_. You can draw some (rough) parallels to a traditional relational database:
 
-A document ID must be unique across the `index` and the `type`, otherwise
-you may overwrite an existing document. If you don't specify an ID, a unique ID
-will be auto-generated for you.
-****
+ - RDBM         => Databases => Tables => Columns/Rows
+ - Elasticsearch => Indices   => Types  => Documents with Fields
 
-We are going to store it in the `blogs` index, as type `user`, and we
+An Elasticsearch cluster can contain multiple Indices (databases), which in
+turn contain multiple Types (tables). These types hold multiple Documents (rows),
+and each document has Fields (columns).
+
+==== An example
+We are going to store a document in the `blogs` index, as type `user`, and we
 can assign this user the unique ID `johnsmith`. Notice how
 the `index`, `type` and `id` are specified in the path of the URI, rather
 than in the document itself:

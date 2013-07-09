@@ -1,19 +1,14 @@
 === Search _Lite_
 
-Now that our documents are indexed we can search for them.
-For simple _ad hoc_ searches, we can use the _query string_ search
+Let's try a search now -- after all, search is one of the reasons you are interested
+in Elasticsearch! For simple _ad hoc_ searches, we can use the _query string_ search
 method:
 
     curl -XGET 'localhost:9200/_search?pretty&q=john'
 
-The above query returns our `johnsmith` document as a result, but what we have
-actually searched?
-
-Elasticsearch adds a special `_all` field to our document, which combines
-the string values from all the other fields in the document.  By default, the
-`q=keywords` query string search looks for matches in this `_all` field.
-
-Alternatively, we could search in a specific field:
+The above query returns our `johnsmith` document as a result. By default, Elasticsearch
+is searching all the fields in your document.  If you want to search a specific field,
+you can specify it as a URI parameter:
 
     curl -XGET 'localhost:9200/_search?pretty&q=first:john'
 
@@ -27,16 +22,15 @@ fetch the matching documents from another datasource.
 
 .Near real-time search
 ****
-While documents can be retrieved immediately after being indexed
--- real-time GET -- they only become ``visible'' to search within 1 second of
+While documents can be retrieved immediately after being indexed (real-time GET) they only become ``visible'' to search within 1 second of
 being indexed or updated. This is known as  _near real-time search_.
 ****
 
 === Full body search
 
-The query string search is useful for simple queries, but we can use
-the _Query DSL_ -- Elasticsearch's rich and flexible query language -- to
-express more complex and specific queries in JSON:
+The query string search is useful for simple queries from the command line, but we can use
+the _Query DSL_  to express more complex and specific queries in JSON.  The Query DSL is
+Elasticsearch's rich and flexible query language and looks like this:
 
     curl -XGET localhost:9200/_search?pretty -d '
     {
@@ -92,14 +86,15 @@ Facets can answer questions like:
 * What is the average rating of a hotel?
 * How many houses are for sale within 5, 10 or 50km of the user's location?
 
-In other products, _map-reduce_ is used to calculate analytics using offline
+These questions are often answered with _map-reduce_, which uses offline
 batch jobs running in parallel. The results from map-reduce reflect the state
 of the data at the time the map-reduce job began, which may be hours, days
 or weeks before.
 
 Facets in Elasticsearch, however, summarise the data based on current search
-results, which means that they are produced in near real-time. As soon as
-a new document is visible to search, its data is also available to facets.
+results.  This makes analytics derived from Facets near real-time, instead of hours
+or days stale. As soon as a new document is visible to search, its data is also available
+to facets.
 
 A simple example of facets in action is _faceted navigation_: a user
 does a search which returns a list of results, plus a list of popular
