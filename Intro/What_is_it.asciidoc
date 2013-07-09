@@ -1,15 +1,16 @@
 
 
-You have some data...and you'd like to use this data for some
-purpose. Perhaps to gain insight into your business, or to
-display products to your customers.
+You have data, and you want to interrogate it to answer some question.
+Perhaps you are trying to gain insight into your business by analyzing
+metrics.  Or maybe you are just letting customers look through your product
+catalogue.
 
-Traditional databases can filter by date, postcode or exact values. This
-is a solved problem. Any database can do it, and do it quickly.
+How do you access your data?  A traditional databases can filter by date, postcode or
+exact values. This is a solved problem. Any database can do it, and do it quickly.
 
-But how about full text search?  Full text search must find 'relevant' results
-in unstructured data using a natural language query. This is a task that
-modern databases simply cannot handle.
+But how about full text search?  Full text search must find results
+in unstructured data using a natural language query, and then rank them by
+'relevancy'. This is a task that modern databases simply cannot handle.
 
 Enter Elasticsearch.
 
