@@ -1,12 +1,19 @@
+
+
+You have some data...and you'd like to use this data for some
+purpose. Perhaps to gain insight into your business, or to
+display products to your customers.
+
+Traditional databases can filter by date, postcode or exact values. This
+is a solved problem. Any database can do it, and do it quickly.
+
+But how about full text search?  Full text search must find 'relevant' results
+in unstructured data using a natural language query. This is a task that
+modern databases simply cannot handle.
+
+Enter Elasticsearch.
+
 === What is Elasticsearch?
-
-The ability to filter data by dates, postcodes or other exact values is a
-solved problem -- any database can do it.
-
-However, full text search -- processing a natural language query to find
-the most relevant results in unstructured data -- is a much more complicated
-undertaking. The few databases which support full text search either hand it
-over entirely to a dedicated full text search engine, or do it badly.
 
 [quote]
 Elasticsearch is a search engine built on top of Apache Lucene.
@@ -20,15 +27,22 @@ library written entirely in Java.
 ____
 
 Lucene is really, really powerful -- but it is just a library. If you want to
-use Lucene, you need a degree in _information retrieval_, must work
-entirely in Java and must tightly couple your code to the Lucene libraries.
+use Lucene, you must...
 
-Elasticsearch is based on Lucene, which means that it uses Lucene internally
-for its indexing and search, and it excels at full text search.
+ - ...have a degree in information retrieval
+ - ...work entirely in Java
+ - ...tightly couple your code to the Lucene libraries
+
+Those are some pretty onerous constraints.
+
+Elasticsearch aims to make full text search easy.  It is is based on Lucene,
+which means that it uses Lucene internally for its indexing and search. Elasticsearch
+enjoys all the power of Lucene for full text search.
+
 However, it is much more than just Lucene and much more than ``just'' full
 text search.
 
-It is:
+Elasticsearch is also:
 
 * a distributed document store where every field is indexed and
    searchable
@@ -37,12 +51,12 @@ It is:
   and unstructured data.
 
 And it packages up all of this functionality into a standalone service
-that your application can talk to via a simple API, using whichever
-programming language you choose to use.
+that your application can talk to via a simple API.  Use
+your favorite programming language, Elasticsearch doesn't care.
 
 It is easy to get started with Elasticsearch. It ships with
 sensible defaults and hides complicated search theory from beginners.
-It just works, right out of the box. With minimal understanding,
+It _just works_, right out of the box. With minimal understanding,
 you can soon become productive.
 
 As your knowledge grows, you can leverage more of Elasticsearch's
