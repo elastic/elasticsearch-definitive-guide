@@ -1,9 +1,11 @@
 [[structured-search]]
 == Structured search
 
-mapping: not_analyzed
+include::StructuredSearch/structuredsearch.asciidoc[]
 
-use filters
+include::StructuredSearch/not_analyzed.asciidoc[]
+
+include::StructuredSearch/filters.asciidoc[]
 
 === Finding exact values
 
