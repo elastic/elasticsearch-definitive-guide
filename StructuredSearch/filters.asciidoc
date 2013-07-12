@@ -1,5 +1,5 @@
 
-=== Filters are Perfect for Structured Search
+=== Filters
 
 As mentioned before, structured search is usually concerned with yes/no questions.
 Similarly, Filters in Elasticsearch are all about one thing: including/excluding documents.
@@ -7,8 +7,8 @@ Similarly, Filters in Elasticsearch are all about one thing: including/excluding
 Filters do not contribute to the scoring or sorting of the search results.  Because of this,
 they enjoy some considerable performance boosts over queries.
 
-If you find yourself requiring a condition (_All documents must include the term ``Arkansas''_), but
-that condition doesn't affect the score in any way...this is what filters are designed for.
+If you find yourself requiring a condition (_All documents must include the term `Arkansas'_), but
+that condition doesn't affect the score in any way...use a filter.
 
 Taking it a step further, you can _usually_ construct all of your structured search with just filters.
 Most queries have a filter equivalent (e.g. Term query and Term filter), so it should be very

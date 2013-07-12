@@ -17,13 +17,13 @@ something either belongs to your query or it does not.  In many cases, structure
 not concern itself with relevance so much as including or excluding.
 
 .Traditional Databases
-====
+****
 You may notice some parallels to traditional, relational databases here.
 
 RDBMs are typically very good at structured search.  `SELECT * FROM table WHERE date > 07/10/2013`.
 RDBMs are good at these questions because they don't require relevance calculations.
 
 But don't worry, Elasticsearch is very good at structured search too!
-====
+****
 
 

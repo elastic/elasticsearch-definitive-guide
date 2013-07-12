@@ -3,13 +3,13 @@
 
 In many structured search situations, it makes sense to map a field
 as `not_analyzed`.  The `not_analyzed` property does what it says on the tin...
-it prevents a field from being analyzed by one of the various analyzers.
+it prevents a field from being analyzed by the default analyzer.
 
 The string will go into the index exactly as it appears: capitalization, punctuation
 and all.  Phrased another way, `not_analyzed` ensures that only exact matches will
 be returned.  Let's look at an example of when you might want to do this.
 
-This document represents an electronic device, and has a serial number of some type:
+This document represents an electronic device, and has an associated serial number:
 
     {
         "product_name" : "Widget ABC",
@@ -19,41 +19,15 @@ This document represents an electronic device, and has a serial number of some t
 If you were to index that document with the Standard Analyzer, your serial number would
 be indexed as the following tokens:
 
-    $ curl -XGET 'localhost:9200/_analyze?analyzer=standard&pretty' -d '12JE7612-19238-BJ#J/XY9'
+    $ curl -XGET 'localhost:9200/_analyze?analyzer=standard&pretty' -d
+    '12JE7612-19238-BJ#J/XY9' | grep token
 
-    {
-      "tokens" : [ {
-        "token" : "12je7612",
-        "start_offset" : 0,
-        "end_offset" : 8,
-        "type" : "<ALPHANUM>",
-        "position" : 1
-      }, {
-        "token" : "19238",
-        "start_offset" : 9,
-        "end_offset" : 14,
-        "type" : "<NUM>",
-        "position" : 2
-      }, {
-        "token" : "bj",
-        "start_offset" : 15,
-        "end_offset" : 17,
-        "type" : "<ALPHANUM>",
-        "position" : 3
-      }, {
-        "token" : "j",
-        "start_offset" : 18,
-        "end_offset" : 19,
-        "type" : "<ALPHANUM>",
-        "position" : 4
-      }, {
-        "token" : "xy9",
-        "start_offset" : 20,
-        "end_offset" : 23,
-        "type" : "<ALPHANUM>",
-        "position" : 5
-      } ]
-    }
+    "token" : "12je7612",
+    "token" : "19238",
+    "token" : "bj",
+    "token" : "j",
+    "token" : "xy9",
+
 
 As you can see, the Standard Analyzer interpreted each hyphen, hash mark and slash as a place to
 split the string into a new token.  It also lowercased all the characters.
@@ -76,14 +50,8 @@ If instead you map that field as not analyzed:
 
 Then the serial number will only be indexed as a single token:
 
-    {
-      "tokens" : [ {
-        "token" : "12JE7612-19238-BJ#J/XY9",
-        "start_offset" : 0,
-        "end_offset" : 23,
-        "type" : "word",
-        "position" : 1
-      } ]
-    }
+
+    "token" : "12JE7612-19238-BJ#J/XY9",
+
 
 And now only exact matches will actually match. Great!
