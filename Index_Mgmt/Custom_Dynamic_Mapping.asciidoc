@@ -1,0 +1,125 @@
+[[custom-dynamic-mapping]]
+=== Customising dynamic mapping
+
+If you know that you are going to be adding new fields on the fly, then
+you probably want to leave dynamic mapping enabled.  At times, though,
+the dynamic mapping ``rules'' can be a bit blunt.  Fortunately, there
+are settings that you can use to customise these rules to better
+suit your data.
+
+[[date-detection]]
+==== `date_detection`
+
+When Elasticsearch encounters a new string field, it checks to see if the
+string contains a recognisable date, like `"2013-01-01"`. If it looks
+like a date, then the field is added as type `date`. Otherwise it is
+added as type `string`.
+
+Sometimes this behaviour can lead to problems.  Imagine that you index
+a document like this:
+
+    { "note": "2013-01-01" }
+
+Assuming that this is the first time that the `note` field has been seen,
+it will be added as a `date` field.  But what if the next document looks
+like this:
+
+    { "note": "Logged out" }
+
+This clearly isn't a date, but it is too late.  The field is already
+a date field and so this ``malformed date'' will cause an exception to be
+thrown.
+
+Date detection can be turned off by setting `date_detection` to `false`
+on the root object:
+
+    curl -XPUT localhost:9200/my_index -d '
+    {
+        "mappings": {
+            "my_type": {
+                "date_detection": false
+            }
+        }
+    }
+    '
+
+With this mapping in place, a string will always be a `string`.  If you need
+a `date` field, you can add it manually.
+
+[NOTE]
+====
+Elasticsearch's idea of what strings look like dates can be altered
+with the `dynamic_date_formats` setting, which we will discuss in
+<<dates>>.
+====
+
+[[dynamic-templates]]
+==== `dynamic_templates`
+
+With `dynamic_templates`, you can take complete control over the
+mapping that is generated for newly detected fields. You
+can even apply a different mapping depending on the field name
+or datatype.
+
+Each template has a name, which you can use to describe what the template
+does, a `mapping` to specify the mapping that should be applied, and
+at least one parameter (such as `match`) to define which fields the template
+should apply to.
+
+Templates are checked in order -- the first template that matches is
+applied. For instance, we could specify two templates for `string` fields:
+
+[horizontal]
+`es`:: field names ending in `_es` should use the `spanish` analyzer
+`en`:: all others should use the `english` analyzer
+
+
+We put the `es` template first, because it is more specific than the
+catch-all `en` template, which matches all string fields:
+
+    curl -XPUT localhost:9200/my_index -d '
+    {
+        "mappings": {
+            "my_type": {
+                "dynamic_templates": [
+                    { "es": {
+                          "match":              "*_es",
+                          "match_mapping_type": "string",
+                          "mapping": {
+                              "type":           "string",
+                              "analyzer":       "spanish"
+                          }
+                    }},
+                    { "en": {
+                          "match":              "*",
+                          "match_mapping_type": "string",
+                          "mapping": {
+                              "type":           "string",
+                              "analyzer":       "english"
+                          }
+                    }}
+                ]
+    }}}
+    '
+
+The `match_mapping_type`  allows you to apply the template only
+to fields of the specified type, as detected by the standard dynamic
+mapping rules, eg `string`, `long` etc.
+
+The `match` parameter matches just the field name and the `match_path`
+parameter matches the full path to a field in an object, so
+the pattern `"address.*.name"` would match a field like this:
+
+    {
+        "address":
+            "city":
+                "name": "New York"
+            }
+        }
+    }
+
+The `unmatch` and `unmatch_path` patterns can be used to exclude fields
+that would otherwise match.
+
+More configuration options can be found on
+http://www.elasticsearch.org/guide/reference/mapping/object-type/[].

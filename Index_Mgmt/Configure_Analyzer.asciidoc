@@ -1,0 +1,66 @@
+=== Configuring analyzers
+
+The third important index setting is `analysis`, which is used
+to configure existing analyzers or to create new custom analyzers
+specific to your index.
+
+In <<analysis-intro>> we introduced some of the built in analyzers,
+which are used to convert full text strings into an inverted index,
+suitable for searching.
+
+The `standard` analyzer, which is the default analyzer
+used for full text fields, is a good choice for most Western languages.
+It consists of:
+
+* the `standard` tokenizer, which splits the input text on word boundaries
+* the `standard` token filter, which is intended to tidy up the the tokens
+  emitted by the tokenizer, but currently is a no-op
+* the `lowercase` token filter which converts all tokens into lowercase
+* the `stop` token filter which removes English stopwords -- common words
+  that have little impact on search relevance, such as `a`, `the`, `and`,
+  `is` etc.
+
+Of course, the `standard` analyzer can be used on text from languages
+other than English, so the default choice of English stopwords may not be
+appropriate.
+
+In order to use the correct stopwords list for your documents, you
+need to customize the `standard` analyzer, by creating your own analyzer.
+This new analyzer will be based on the `standard` analyzer,
+but have a custom stopwords list. In the following example,
+we create a new analyzer called the `es_std` analyzer, which
+uses the predefined list of Spanish stopwords:
+
+    curl -XPUT localhost:9200/spanish_docs -d '
+    {
+        "settings": {
+            "analysis": {
+                "analyzer": {
+                    "es_std": {
+                        "type":      "standard",
+                        "stopwords": "_spanish_"
+                    }
+                }
+            }
+        }
+    }
+    '
+
+The `es_std` analyzer only exists in the `spanish_docs` index where we
+have defined it.  It is not global.  To test it using the `analyze` API, we
+must specify the index name:
+
+    curl -XPOST localhost:9200/spanish_docs/_analyze?analyzer=es_std -d '
+    El rápido zorro marrón
+    '
+
+The abbreviated results show that the Spanish stopword `"El"` has been
+removed correctly:
+
+    {
+      "tokens" : [
+        { "token" :    "rápido",  "position" : 2 },
+        { "token" :    "zorro",   "position" : 3 },
+        { "token" :    "marrón",  "position" : 4 }
+      ]
+    }

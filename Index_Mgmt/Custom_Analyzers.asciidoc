@@ -1,0 +1,167 @@
+[[custom-analyzers]]
+=== Custom analyzers
+
+While Elasticsearch comes with a number of analyzers available out of the box,
+the real power comes from the ability to create your own custom analyzers
+by combining character filters, tokenizers and token filters in a
+configuration which suits your particular data.
+
+In <<analysis-intro>> we said that _analyzer_ is a wrapper which combines
+three functions into a single package, which are executed in sequence:
+
+Character filters::
+
+Character filters are used to ``tidy up'' a text field before it is
+tokenized.  For instance, if our text is in HTML format, it will contains
+HTML tags like `<p>` or `<div>` that we don't want to be indexed.
+We can use the `html_strip` character filter to remove all HTML tags and to
+convert HTML entities like `&Aacute;` into the corresponding Unicode
+character: `Á`.
++
+An analyzer may have zero or more character filters.
+
+Tokenizers::
+
+An analyzer must have a single tokenizer.  The tokenizer breaks the
+text string into individual terms or tokens. The `standard` tokenizer,
+which is used in the `standard` analyzer, breaks up a string into
+invidual terms on word boundaries, and removes most punctuation, but
+other tokenizers exist which have different behaviour.
++
+For instance, the `keyword` tokenizer just returns the exact same string
+as was passed in, without any tokenization. The `whitespace` tokenizer
+splits text on whitespace only. The `pattern` tokenizer can
+be used to split text on a matching regular expression.
+
+Token filters::
+
+After tokenization, the ``token stream'' is passed through any
+specified token filters, in the order in which they are specified.
++
+Token filters may change, add or remove tokens.  We have already mentioned
+the `lowercase` and `stop` token filters, but there are many more available
+in Elasticsearch. Stemming token filters ``stem'' words to their root form.
+The `ascii_folding` filter removes diacritcs, converting a term like `"très"`
+into `"tres"`. The `ngram` and `edge_ngram` token filters can produce
+tokens suitable for partial matching or autocomplete.
+
+In the following chapters, we will discuss examples of where and how to use
+these tokenizers and filters.  But first, we need to explain how to
+create a custom analyzer.
+
+==== Creating a custom analyzer
+
+In the same way as we configured the `es_std` analyzer above, we can
+configure character filters, tokenizers and token filters in the
+appropriate sections in the `analysis` index settings:
+
+    curl -XPUT localhost:9200/my_index -d '
+    {
+        "settings": {
+            "analysis": {
+                "char_filter": { ... custom character filters ... },
+                "tokenizer":   { ... custom tokenizers        ... },
+                "filter":      { ... custom token filters     ... },
+                "analyzer":    { ... custom analyzers         ... }
+            }
+        }
+    }
+    '
+
+As an example, let's set up a custom analyzer which will:
+
+1. Strip out HTML using the `html_strip` character filter.
+
+2. Replace `&` characters with `" and "`, using a custom `mapping`
+   character filter:
+
+    "char_filter": {
+        "&_to_and": {
+            "type":       "mapping",
+            "mappings": [ "&=> and "]
+        }
+    }
+
+3. Tokenize words, using the `standard` tokenizer.
+
+4. Lowercase terms, using the `lowercase` token filter.
+
+5. Remove a custom list of stopwords, using a custom `stop` token filter:
+
+    "filter": {
+        "my_stopwords": {
+            "type":        "stop",
+            "stopwords": [ "the", "a" ]
+        }
+    }
+
+Now we can define our custom analyer, combining the predefined tokenizer
+and filters with the custom filters that we have configured above:
+
+    "analyzer": {
+        "my_analyzer": {
+            "type":           "custom",
+            "char_filter":  [ "html_strip", "&_to_and" ],
+            "tokenizer":      "standard",
+            "filter":       [ "lowercase", "my_stopwords" ]
+        }
+    }
+
+To put it all together, the whole `create-index` request looks like this:
+
+    curl -XPUT localhost:9200/my_index -d '
+    {
+        "settings": {
+            "analysis": {
+                "char_filter": {
+                    "&_to_and": {
+                        "type":       "mapping",
+                        "mappings": [ "&=> and "]
+                }},
+                "filter": {
+                    "my_stopwords": {
+                        "type":       "stop",
+                        "stopwords": [ "the", "a" ]
+                }},
+                "analyzer": {
+                    "my_analyzer": {
+                        "type":         "custom",
+                        "char_filter":  [ "html_strip", "&_to_and" ],
+                        "tokenizer":    "standard",
+                        "filter":       [ "lowercase", "my_stopwords" ]
+                }},
+    }}}
+    '
+
+After creating the index, use the `analyze` API to test the new analyzer:
+
+    curl localhost:9200/my_index/_analyze?analyzer=my_analyzer -d '
+    The quick & brown fox
+    '
+
+The abbreviated results below show that our analyzer is working correctly:
+
+    {
+      "tokens" : [
+          { "token" :   "quick",    "position" : 2 },
+          { "token" :   "and",      "position" : 3 },
+          { "token" :   "brown",    "position" : 4 },
+          { "token" :   "fox",      "position" : 5 }
+        ]
+    }
+
+And it can be applied to a `string` field with a mapping such as:
+
+    curl -XPUT localhost:9200/my_index/my_type/_mapping -d '
+    {
+        "my_type": {
+            "properties": {
+                "title": {
+                    "type":      "string",
+                    "analyzer":  "my_analyzer"
+                }
+            }
+        }
+    }
+    '
+

@@ -190,6 +190,7 @@ performance starts to drop, your batch size is too big.
 A good place to start is with batches of between 1,000 and 5,000 documents or,
 if your documents are very large, with even smaller batches.
 
+[[bulk-format]]
 ==== Why the funny format?
 
 You may have asked yourself: ``Why does the `bulk` API require the funny format

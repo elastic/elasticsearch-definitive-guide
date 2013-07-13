@@ -1,57 +1,39 @@
 [[index-management]]
 == Index Management
 
-=== Creating and deleting indices
+We have seen how Elasticsearch makes it easy to start developing a new
+application without requiring any advance planning.  However, it doesn't take
+long before we need to fine-tune the indexing and search process
+to better suit our particular use case.
 
-=== Index settings
+Almost all of these customizations happen in the _index_, and in the _types_
+which it contains.  In this chapter we will discuss the APIs
+for managing indices and type _mappings_, and the most important settings.
 
-Common settings: number_of_shards, number_of_replicas
+include::Index_Mgmt/Create_Delete.asciidoc[]
 
-=== Configuring analyzers
+include::Index_Mgmt/Settings.asciidoc[]
 
-=== Custom analyzers
+include::Index_Mgmt/Configure_Analyzer.asciidoc[]
 
-=== Mappings
+include::Index_Mgmt/Custom_Analyzers.asciidoc[]
 
-What is a type?
+include::Index_Mgmt/Mappings.asciidoc[]
 
-=== The root object
+include::Index_Mgmt/Root_Object.asciidoc[]
 
-`enabled`
+include::Index_Mgmt/Dynamic_Mapping.asciidoc[]
 
-Properties
+include::Index_Mgmt/Custom_Dynamic_Mapping.asciidoc[]
 
-=== Core fields
+include::Index_Mgmt/Default_Mapping.asciidoc[]
 
-`index`
+include::Index_Mgmt/Reindexing.asciidoc[]
 
-`store`
+include::Index_Mgmt/Aliases.asciidoc[]
 
-=== Objects
+include::Index_Mgmt/Conclusion.asciidoc[]
 
-=== Multi-fields
-
-=== Metadata
-
-`_source`
-
-`_all`
-
-`_index / _type / _id / _uid`
-
-=== Default mapping
-
-=== Dynamic mapping
-
-=== Dynamic templates
-
-=== Reindexing
-
-scan/scroll
-
-timestamp field
-
-=== Aliases
 
 
 

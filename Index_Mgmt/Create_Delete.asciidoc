@@ -1,0 +1,61 @@
+=== Creating an index
+
+Up until now, we have created a new index by simply indexing a document
+into it.  The index is created with the default settings, and new
+fields are added to the type mapping using dynamic detection.
+
+Often, though, we want more control over the process: we want to ensure
+that the index has been created with the correct number of primary shards,
+that analyzers and mappings are set up *before* we index any data.
+
+To do this, we can create the index manually, passing in any settings
+or type mappings in the request body, as follows:
+
+    curl -XPUT localhost:9200/my_index -d '
+    {
+        "settings": { ... any settings ... },
+        "mappings": {
+            "type_one": { ... any mappings ... },
+            "type_two": { ... any mappings ... },
+            ...
+        }
+    }
+    '
+
+In fact, you can prevent the automatic creation of indices by adding the
+following setting to the `config/elasticsearch.yaml` file on each node:
+
+    action.auto_create_index: false
+
+Later, we will discuss how you can use <<index-templates,index templates>>
+to pre-configure automatically created indices. This is particularly
+useful when indexing log data, allowing you to roll over to a new
+automatically created index every day.
+
+=== Deleting an index
+
+To delete an index, use the following request:
+
+    curl -XDELETE localhost:9200/my_index
+
+You can delete multiple indices with:
+
+    curl -XDELETE loclahost:9200/index_one,index_two
+    curl -XDELETE localhost:9200/index_*
+
+You can even delete *ALL* indices with:
+
+    curl -XDELETE localhost:9200/
+
+*Do yourself a favour:* add the following setting to your
+`config/elasticsearch.yaml` file now:
+
+    action.disable_delete_all_indices: true
+
+It will save you much heartache later on when you are tired
+and your fingers are clumsy. With this setting in effect, you will only be
+able to delete all indices by being explicit:
+
+    curl -XDELETE localhost:9200/index_one,index_two
+
+

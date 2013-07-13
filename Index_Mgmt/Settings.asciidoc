@@ -1,0 +1,43 @@
+=== Index Settings
+
+There are many many knobs that you can twiddle to
+customize index behaviour, which you can read about on:
+http:/www.elasticsearch.org/guide/reference/index-modules/[]
+
+*But remember*: Elasticsearch comes with good defaults. Don't fiddle
+with these knobs until you really need to.
+
+Two of the most important settings are:
+
+`number_of_shards`::
+
+    The number of primary shards that an index should have,
+    which defaults to `5`.  This setting cannot be changed
+    after index creation.
+
+`number_of_replicas`::
+
+    The number of replica shards (copies) that each primary shard
+    should have, which defaults to `1`.  This setting can be changed
+    at any time on a live index.
+
+For instance, we could create a new small index with no replica shards
+with the following request:
+
+    curl -XPUT localhost:9200/my_temp_index -d '
+    {
+        "settings": {
+            "number_of_shards" :   1,
+            "number_of_replicas" : 0
+        }
+    }
+    '
+
+If we wanted to change the number of replica shards later on, we could use
+the `update-index-settings` API as follows:
+
+    curl -XPUT localhost/9200/my_temp_index/_settings -d '
+        "number_of_replicas": 1
+    }
+    '
+

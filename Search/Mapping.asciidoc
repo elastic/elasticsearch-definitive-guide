@@ -1,3 +1,4 @@
+[[mapping-intro]]
 === Mapping
 
 As explained in <<data-in-data-out>>, each document in an index has a _type_.
@@ -9,6 +10,7 @@ to configure metadata associated with the type.
 We discuss mappings in detail in <<mapping>>. In this section we're going
 to look at just enough to get you started.
 
+[[core-fields]]
 ==== Core simple field types
 
 Elasticsearch supports the following simple field types:
@@ -21,7 +23,7 @@ Boolean:        ::  `boolean`
 Date:           ::  `date`
 
 When you index a document which contains a new field -- one previously not
-seen -- Elasticsearch will use _dynamic mapping_ to try
+seen -- Elasticsearch will use <<dynamic-mapping,_dynamic mapping_>> to try
 to guess the field type from the basic datatypes available in JSON,
 using the following rules:
 
@@ -47,7 +49,7 @@ the string into a long, and throw an error if it can't.
 ==== Viewing the mapping
 
 We can view the mapping that Elasticsearch has for one or more
-types in one or more indices using the `/_mapping` end point.
+types in one or more indices using the `/_mapping` endpoint.
 In <<data-type-differences>> we already retrieved the mapping for
 type `tweet` in index `gb`:
 

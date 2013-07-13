@@ -1,0 +1,96 @@
+=== Index aliases and zero downtime
+
+The problem with the reindexing process described above is that you need
+to update your application to use the new index name.  Index _aliases_
+to the rescue!
+
+An index _alias_ can point to one or more indices, and can be used in any
+API that expects an index name.  Aliases give us an enormous amount of
+flexibility. They allow us:
+
+ * to switch between one index and another on a running cluster
+ * to group multiple indices, eg `last_three_months`
+ * and to create ``views'' on a subset of the documents in an index.
+
+We will talk more about the other uses for aliases later in the book. For now
+we will explain how to use them to switch from an old index to a new index
+with zero downtime.
+
+There are two endpoints for managing aliases: `_alias` for single
+operations, and `_aliases` to perform multiple operations atomically.
+
+In this scenario, we will assume that your application is talking to an
+index called `my_index`. In reality, `my_index` will be an alias whichs
+points to the current real index.  We will include a version number in the
+name of the real index: `my_index_v1`, `my_index_v2` etc.
+
+To start off, we create the index `my_index_v1`, and setup the alias
+`my_index` to point to `my_index_v1`:
+
+    curl -XPUT localhost:9200/my_index_v1
+    curl -XPUT localhost:9200/my_index_v1/_alias/my_index
+
+You can check which index the alias points to with:
+
+    curl 'localhost:9200/*/_alias/my_index'
+
+Or which aliases point to the index with:
+
+    curl 'localhost:9200/my_index_v1/_alias/*'
+
+Both of these return:
+
+    {
+        "my_index_v1" : {
+            "aliases" : {
+                "my_index" : { }
+            }
+        }
+    }
+
+Later, we decide that we want to change the mappings for a field in our index.
+Of course, we can't change the existing mapping, so we need to reindex
+our data.  To start, we create a new version of our index with the new
+mappings:
+
+    curl -XPUT localhost:9200/my_index_v2 -d '
+    {
+        "mappings": {
+            "my_type": {
+                "tags": {
+                    "type":   "string",
+                    "index":  "not_analyzed"
+                }
+            }
+        }
+    }
+    '
+
+Then we reindex our data from `my_index_v1` to `my_index_v2`, following
+the process described in <<reindex>>.  When we are satisfied that our
+documents have been reindexed correctly, we switch our alias
+to point just to the new index.
+
+An alias can point to multiple indices, so we need to remove the alias
+from the old index at the same time as we add it to the new index.  The
+change needs to be atomic, which means that we must use the `_aliases`
+endpoint:
+
+    curl -XPOST localhost:9200/_aliases -d '
+    {
+        "actions": [
+            { "remove": { "index": "my_index_v1", "alias": "my_index" }},
+            { "add":    { "index": "my_index_v2", "alias": "my_index" }}
+        ]
+    }
+    '
+
+Your application has switched from using the old index to the new
+index transparently, with zero downtime.
+
+Even when you think that your current index design is perfect, it is likely
+that you will find that you need to make some change later on, when your index
+is already being used in production.  Be prepared: use aliases instead of
+indices in your application, then you will be able to reindex
+whenever you need to. Aliases are cheap and can be used liberally.
+

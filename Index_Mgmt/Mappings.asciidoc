@@ -1,0 +1,130 @@
+[[mapping]]
+=== Types and Mappings
+
+A _type_ in Elasticsearch represents a class of similar documents.
+A type consists of a _name_ -- such as `user` or `blopost` -- and a
+_mapping_. The mapping, like a database schema, describes the fields or
+_properties_ that documents of that type may have, the datatype of
+each field -- `string`, `integer`, `date` etc --
+and how those fields should be indexed and stored by Lucene.
+
+In <<document>>, we said that a type is
+like a table in a relational database. While this is a useful way to
+think about types initially, it is worth explaining in more detail exactly
+what a type is and how they are implemented on top of Lucene.
+
+==== How Lucene sees documents
+
+A document in Lucene consists of a simple list of field-value
+pairs. A field must have at least one value, but any field can contain
+multiple values. Similarly, a single string value may be converted
+into multiple values by the analysis process.  Lucene doesn't care if the
+values are strings or numbers or dates -- all values are just treated as
+``opaque bytes''.
+
+When we index a document in Lucene, the values for each field are added to
+the inverted index for the associated field.  Optionally, the original value(s)
+may also be _stored_ unchanged so that they can be retrieved later.
+
+==== How types are implemented
+
+Elasticsearch types are implemented on top of this simple foundation.
+An index may have several types, each with their own mapping, and
+documents of any of these types may be stored in the same index.
+
+Because Lucene has no concept of document types, the type name
+of each document is stored with the document in a metadata field called
+`_type`. When we search for documents of a particular type, Elasticsearch
+simply uses a filter on the `_type` field to restrict results to that type.
+
+Lucene also has no concept of mappings. Mappings are the layer
+that Elasticsearch uses to _map_ complex JSON documents into the
+simple flat documents that Lucene expects to receive.
+
+For instance the mapping for the `name` field in the `user` type may declare
+that the field is a `string` field, and that its value should be analyzed
+by the `whitespace` analyzer before being indexed into the inverted
+index called `name`.
+
+    "name": {
+        "type":     "string",
+        "analyzer": "whitespace"
+    }
+
+==== Avoiding type gotchas
+
+The fact that documents of different types can be added to the same index
+introduces some unexpected complications.
+
+Imagine that we have two types in our index: `blog_en` for blog posts in
+English, and `blog_es` for blog posts in Spanish.  Both types have a
+`title` field, but one type uses the `english` analyzer and
+the other type uses the `spanish` analyzer.
+
+The problem is illustrated by the following query:
+
+    curl localhost:9200/_search -d '
+    {
+        "query": {
+            "match": {
+                "title": "The quick brown fox"
+            }
+        }
+    }
+    '
+
+We are searching in the `title` field in both types.  The query string needs
+to be analyzed, but which analyzer does it use: `spanish` or `english`?
+It will just use the analyzer for the first `title` field that it finds,
+which will be correct for some docs and incorrect for the others.
+
+We can avoid this problem either by naming the fields differently -- eg
+`title_en` and `title_es` -- or by explicitly including the type name
+in the field name and querying each field separately:
+
+    curl localhost:9200/_search -d '
+    {
+        "query": {
+            "multi_match": {
+                "query":    "The quick brown fox",
+                "fields": [ "blog_en.title", "blog_es.title" ]
+            }
+        }
+    }
+    '
+
+Our new query uses the `english` analyzer for the field `blog_en.title` and
+the `spanish` analyzer for the field `blog_es.title`.
+
+This solution can help when both fields have the same datatype, but
+consider what would happen if you indexed these two documents into
+the same index:
+
+    # type: user
+    { "login": "john_smith" }
+
+    # type: event
+    { "login": "2013-06-01" }
+
+Lucene doesn't care that one field contains a string and the other field
+contains a date -- it will happily index the byte values from both fields.
+
+However, if we try to sort on the `event.login` field then Elasticsearch
+needs to load the values in the `login` field into memory. But it loads the
+values for  *all documents* in the index regardless of their type.
+
+It will either try to load these values as a string or as a date,
+depending on which `login` field it sees first. This will either
+produce unexpected results or fail outright.
+
+.Best practice
+****
+To ensure that you don't run into these conflicts, it is
+advisable to ensure that fields with the same name are mapped in the same way
+in every type in an index.
+****
+
+
+
+
+

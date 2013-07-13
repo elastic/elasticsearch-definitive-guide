@@ -1,0 +1,71 @@
+[[source-field]]
+==== Metadata: `_source` field
+
+By default, Elasticsearch stores the JSON string representing the
+document body in the `_source` field. Like all stored fields, the `_source`
+field is compressed before being written to disk.
+
+This is almost always desired functionality because it means that:
+
+* the full document is available directly from the search results -- no need
+  for a separate round trip to fetch the document from another datastore
+
+* `update` requests will not function without the `_source` field
+
+* when your mapping changes and you need to reindex your data, you can
+  do so directly from Elasticsearch instead of having to retrieve all of your
+  documents from another (usually slower) datastore
+
+* individual fields can be extracted from the `_source` field and returned
+  in `get` or `search` requests when you don't need see the whole document
+
+* it is easier to debug queries because you can see exactly what each
+  document contains, rather than having to guess from a list of IDs
+
+That said, storing the `_source` field does use disk space.  If none of the
+above reasons are important to you, you can disable the `_source` field
+with the following mapping:
+
+    curl -XPUT localhost:9200/my_index -d '
+    {
+        "mappings": {
+            "my_type": {
+                "_source": {
+                    "enabled":  false
+                }
+            }
+        }
+    }
+    '
+
+One field setting which we haven't discussed yet is `{"store": true|false}`.
+Besides indexing the values of a field, you can also choose to store the
+original value for later retrieval. Users with a Lucene background
+use `store` to choose which fields they would like to be able to return
+in their search results. In fact the `_source` field is a stored field.
+
+In Elasticsearch, setting individual document fields to be stored is usually
+a false optimization. It is almost always better to just extract the fields
+that you need from the  `_source` field. Every stored field that you
+retrieve requires a separate disk seek (4ms) which is the equivalent of
+reading *2 megabytes* of `_source` field from disk! While returning a single
+stored field may be slightly faster than extracting it from `_source`,
+retrieving more than one field is likely to be slower.
+
+The only time when it may be useful to set document fields to
+`{"store": true }` is when you have a very large `_source` field and you only
+want to retrieve one or two small fields, such as the `title` and the
+`created` date.
+
+In a search request, you can ask for just certain fields by specifying the
+`fields` parameter in the request body:
+
+    curl localhost:9200/_search -d '
+    {
+        "query":  { "match_all": {}},
+        "fields": [ "title", "created" ]
+    }
+    '
+
+Values for these fields will either be loaded from disk (if they are
+stored) or extracted from the `_source` field.

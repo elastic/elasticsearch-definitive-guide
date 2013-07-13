@@ -1,0 +1,47 @@
+[[root-object]]
+=== The root object
+
+The uppermost level of a mapping is known as the _root object_. It may
+contain:
+
+* a _properties_ section which lists the mapping for each field that a
+  document may contain.
+
+* various metadata fields, all of which start with an underscore, such
+  as `_type`, `_id` and `_source`. The default handling of these metadata
+  fields can be customized via the root object.
+
+* settings which control how the dynamic detection of new fields
+  is handled, such as `analyzer`, `dynamic_date_formats` and
+  `dynamic_templates`
+
+* other settings which can be applied both to the root object and to fields
+  of type `object`, such as `enabled`, `dynamic`, and `include_in_all`.
+
+==== Properties
+
+We have already discussed the three most important settings for document
+fields or properties in <<core-fields>> and <<complex-core-fields>>:
+
+[horizontal]
+`type`::        The datatype that the field contains, such as `string` or
+                `date`.
+
+`index`::       Whether a field should be searchable as full text (`analyzed`),
+                searchable as an exact value (`not_analyzed`) or not searchable
+                at all (`no`).
+
+`analyzer`::    Which `analyzer` to use for a full text field, both at index
+                time and at query time.
+
+We will discuss other field types such as `multi_field`, `ip`, `geo_point`,
+`geo_shape`, and `binary` in the appropriate sections later
+in the book.
+
+include::Metadata_source.asciidoc[]
+
+include::Metadata_all.asciidoc[]
+
+include::Metadata_ID.asciidoc[]
+
+include::Metadata_Other.asciidoc[]

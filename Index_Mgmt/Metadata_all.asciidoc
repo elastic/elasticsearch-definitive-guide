@@ -1,0 +1,88 @@
+[[all-field]]
+==== Metadata: `_all` field
+
+In <<search-lite>> we introduced the `_all` field: a special field that
+indexes the values from all other fields as strings. The `query_string`
+query clause (and searches performed as `?q=john`) defaults to searching in the
+`_all` field if no other field is specified.
+
+The `_all` field is useful during the exploratory phase of a new application,
+while you are unsure what final structure your documents will have. You
+can just throw any query string at it and you have a good chance of
+finding the document you're after:
+
+    curl localhost:9200/_search -d '
+    {
+        "match": {
+            "_all": "john smith marketing"
+        }
+    }
+    '
+
+As your application evolves and your search requirements become more
+exacting, you will find yourself using the `_all` field less and less.
+The `_all` field is shotgun approach to search. By querying individual
+fields, you have more flexbility, power and fine-grained control over
+which results are considered to be most relevant.
+
+One of the important factors taken into account by the relevance algorithm
+is the length of the field: the shorter the field, the more important.
+For instance, a term that appears in a (short) `title` field
+is likely to be more important than the same term which appears somewhere
+in a (long) `content` field. This distinction between fields disappears
+in the `_all` field.
+
+If you decide that you no longer need the `_all` field, you can
+disable it with this mapping:
+
+    curl -XPUT localhost:9200/my_index/my_type/_mapping -d '
+    {
+        "my_type": {
+            "_all": { "enabled": false }
+        }
+    }
+    '
+
+Inclusion in the `_all` field can be controlled on a field-by-field basis
+using the `include_in_all` setting, which defaults to `true`.  Setting
+`include_in_all` on an object (or on the root object) changes the
+default for all fields within that object.
+
+You may find that you want to keep the `_all` field around to use
+as a catch-all full text field just for specific fields, such as
+`title`, `overview`, `summary`, `tags` etc. Instead of disabling the `_all`
+field completely, disable `include_in_all` for all fields by default,
+and enable it only on the fields you choose:
+
+    curl -XPUT localhost:9200/my_index/my_type/_mapping -d '
+    {
+        "my_type": {
+            "include_in_all": false,
+            "properties": {
+                "title": {
+                    "type":           "string",
+                    "include_in_all": true
+                },
+                ...
+            }
+        }
+    }
+    '
+
+Remember that the `_all` field is just an analyzed `string` field.  It
+uses the default analyzer to analyze its values, regardless of which
+analyzer has been set on the fields where the values originate.  And
+like any `string` field, you can configure which analyzer the `_all`
+field should use:
+
+    curl -XPUT localhost:9200/my_index/my_type/_mapping -d '
+    {
+        "my_type": {
+            "_all": { "analyzer": "whitespace" }
+        }
+    }
+    '
+
+
+
+
