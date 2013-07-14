@@ -38,6 +38,7 @@ We can change the number of replica shards later on, using the
 `update-index-settings` API as follows:
 
     curl -XPUT localhost/9200/my_temp_index/_settings -d '
+    {
         "number_of_replicas": 1
     }
     '

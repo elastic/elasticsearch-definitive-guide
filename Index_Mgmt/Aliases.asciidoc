@@ -68,7 +68,7 @@ our data.  To start, we create `my_index_v2` with the new mappings:
 Then we reindex our data from `my_index_v1` to `my_index_v2`, following
 the process described in <<reindex>>.  Once we are satisfied that our
 documents have been reindexed correctly, we switch our alias
-to point just to the new index.
+to point to the new index.
 
 An alias can point to multiple indices, so we need to remove the alias
 from the old index at the same time as we add it to the new index.  The

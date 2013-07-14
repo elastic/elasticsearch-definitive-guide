@@ -69,10 +69,8 @@ should apply to.
 Templates are checked in order -- the first template that matches is
 applied. For instance, we could specify two templates for `string` fields:
 
-[horizontal]
-`es`:: field names ending in `_es` should use the `spanish` analyzer
-`en`:: all others should use the `english` analyzer
-
+* `es`: field names ending in `_es` should use the `spanish` analyzer
+* `en`: all others should use the `english` analyzer
 
 We put the `es` template first, because it is more specific than the
 catch-all `en` template, which matches all string fields:
