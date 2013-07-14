@@ -94,7 +94,8 @@ in the field name and querying each field separately:
     '
 
 Our new query uses the `english` analyzer for the field `blog_en.title` and
-the `spanish` analyzer for the field `blog_es.title`.
+the `spanish` analyzer for the field `blog_es.title` and combines the
+results from both fields into an overall relevance score.
 
 This solution can help when both fields have the same datatype, but
 consider what would happen if you indexed these two documents into

@@ -14,13 +14,13 @@ and the `_id` and `_index` fields are neither indexed nor stored, meaning
 they don't really exist.
 
 In spite of this, you can query the `_id` field as though it were a real
-field.  Elasticsearch uses the `_uid` field to derive the '_id'. While you
+field.  Elasticsearch uses the `_uid` field to derive the `_id`. While you
 can change the `index` and `store` settings for these fields, you almost
 never need to do so.
 
 The `_id` field does have one setting that you may want to use: the `path`
 setting tells Elasticsearch that it should extract the value for the
-document `_id` from a field in the document itself.
+`_id` from a field within the document itself.
 
     curl -XPUT localhost:9200/my_index -d '
     {

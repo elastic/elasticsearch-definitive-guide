@@ -8,8 +8,8 @@ the field and automatically adds the new field to the type mapping.
 Sometimes this is the desired behaviour and sometimes it isn't. Perhaps
 you don't know what fields will be added to your documents later on,
 but you want them to be indexed automatically.  Perhaps you just want
-to ignore them.  Or, especially if you are using Elasticsearch as a
-primary datastore, perhaps you want unknown fields to throw an exception
+to ignore them.  Or -- especially if you are using Elasticsearch as a
+primary datastore -- perhaps you want unknown fields to throw an exception
 to alert you to the problem.
 
 Fortunately, you can control this behaviour with the `dynamic` setting,

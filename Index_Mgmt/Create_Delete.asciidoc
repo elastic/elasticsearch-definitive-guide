@@ -4,11 +4,11 @@ Up until now, we have created a new index by simply indexing a document
 into it.  The index is created with the default settings, and new
 fields are added to the type mapping using dynamic detection.
 
-Often, though, we want more control over the process: we want to ensure
-that the index has been created with the correct number of primary shards,
-that analyzers and mappings are set up *before* we index any data.
+Now we need more control over the process: we want to ensure that the index
+has been created with the correct number of primary shards, that analyzers
+and mappings are set up *before* we index any data.
 
-To do this, we can create the index manually, passing in any settings
+To do this, we have to create the index manually, passing in any settings
 or type mappings in the request body, as follows:
 
     curl -XPUT localhost:9200/my_index -d '
@@ -27,10 +27,12 @@ following setting to the `config/elasticsearch.yaml` file on each node:
 
     action.auto_create_index: false
 
+****
 Later, we will discuss how you can use <<index-templates,index templates>>
 to pre-configure automatically created indices. This is particularly
 useful when indexing log data, allowing you to roll over to a new
 automatically created index every day.
+****
 
 === Deleting an index
 
@@ -45,16 +47,15 @@ You can delete multiple indices with:
 
 You can even delete *ALL* indices with:
 
-    curl -XDELETE localhost:9200/
+    curl -XDELETE localhost:9200/_all
 
-*Do yourself a favour:* add the following setting to your
-`config/elasticsearch.yaml` file now:
+You may want to disable the ability to delete all indices, by adding
+this setting to your `config/elasticsearch.yaml` file:
 
     action.disable_delete_all_indices: true
 
-It will save you much heartache later on when you are tired
-and your fingers are clumsy. With this setting in effect, you will only be
-able to delete all indices by being explicit:
+With this setting in effect, you will only be able to delete indices
+by being explicit:
 
     curl -XDELETE localhost:9200/index_one,index_two
 

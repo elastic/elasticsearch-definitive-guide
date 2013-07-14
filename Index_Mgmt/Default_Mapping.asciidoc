@@ -16,14 +16,10 @@ For instance, we can disable the `_all` field for all types, using the
     curl -XPUT localhost:9200/my_index -d '
     {
         "_default_": {
-            "_all": {
-                "enabled":  false
-            }
+            "_all": { "enabled":  false }
         },
         "blog": {
-            "_all": {
-                "enabled": true
-            }
+            "_all": { "enabled":  true  }
         }
     }
     '

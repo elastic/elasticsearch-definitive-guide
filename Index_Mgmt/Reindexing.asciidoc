@@ -16,7 +16,7 @@ have to rebuild your index from the database, which is usually much
 slower.
 
 In order to reindex all of our documents in the old index efficiently,
-we use _scan & scroll_, in combination with the `bulk` API.
+we use _scroll & scan_, in combination with the `bulk` API.
 
 [[scroll]]
 ==== `scroll`
@@ -26,9 +26,9 @@ batches of results from Elasticsearch until there are no more results left.
 It's a bit like a _cursor_ in a traditional database.
 
 A scrolled search takes a snapshot in time -- it doesn't see any changes
-that are made to the index after it has begun. It does this by keeping
-the old datafiles around, so that it can preserve its ``view'' on what the
-index looked like at the time it started.
+that are made to the index after the initial search request. It does this by
+keeping the old datafiles around, so that it can preserve its ``view'' on
+what the index looked like at the time it started.
 
 We start a scroll request by passing the `scroll` parameter to the search
 request, telling Elasticsearch how long it should keep the scroll open.
@@ -78,7 +78,7 @@ for us to reindex the current batch of results, not all of the documents
 in the index.
 
 The response to this scroll request returns a batch of results, which
-we can index into the new index with the the `bulk` API. We just need
+we can index into the new index with the the `bulk` API -- we just need
 to update the `_index` parameter of each document to have the new
 index name.
 
@@ -97,10 +97,10 @@ memory in Elasticsearch, which means that less memory is available
 for other functions like responding to search requests.
 
 Also, the `size` parameter that we specified in the scrolled search request
-is somewhat misleading.  Instead of receiving a maximum of 1,000 results
+is somewhat misleading.  Instead of receiving a maximum of `size` results
 at a time, we receive `size * number_of_shards` results.  If our index
-has 5 primary shards, this means that we receive up to 5,000 results from
-every scroll request.
+has 5 primary shards, this means that the above query would return up to
+5,000 results from every scroll request.
 
 Fortunately, finding a good value for `size` is easy:  Start with a small
 `size` like 500 or 1,000 and measure the reindexing speed.  Increase the
@@ -134,7 +134,8 @@ into smaller jobs by filtering on a date field instead:
 
 Also, if you continue making changes to the old index, you will want to make
 sure that you include the newly added documents in your new index as well.
-This can be done by rerunning the reindex process, but only requesting documents
-that have been added since the last reindex process started.
+This can be done by rerunning the reindex process, but again filtering
+on a date field to only match documents that have been added since the
+last reindex process started.
 
 

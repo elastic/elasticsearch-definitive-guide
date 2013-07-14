@@ -121,5 +121,6 @@ the pattern `"address.*.name"` would match a field like this:
 The `unmatch` and `unmatch_path` patterns can be used to exclude fields
 that would otherwise match.
 
-More configuration options can be found on
-http://www.elasticsearch.org/guide/reference/mapping/object-type/[].
+More configuration options can be found in the
+http://www.elasticsearch.org/guide/reference/mapping/root-object-type/[
+reference documentation for the root object].

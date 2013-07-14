@@ -1,11 +1,12 @@
 === Index Settings
 
 There are many many knobs that you can twiddle to
-customize index behaviour, which you can read about on:
-http:/www.elasticsearch.org/guide/reference/index-modules/[]
+customize index behaviour, which you can read about in the
+http:/www.elasticsearch.org/guide/reference/index-modules/[Index Modules
+reference documentation].
 
-*But remember*: Elasticsearch comes with good defaults. Don't fiddle
-with these knobs until you really need to.
+*But remember*: Elasticsearch comes with good defaults. Don't twiddle
+these knobs until you really need to.
 
 Two of the most important settings are:
 
@@ -33,8 +34,8 @@ with the following request:
     }
     '
 
-If we wanted to change the number of replica shards later on, we could use
-the `update-index-settings` API as follows:
+We can change the number of replica shards later on, using the
+`update-index-settings` API as follows:
 
     curl -XPUT localhost/9200/my_temp_index/_settings -d '
         "number_of_replicas": 1

@@ -28,14 +28,14 @@ which is used in the `standard` analyzer, breaks up a string into
 invidual terms on word boundaries, and removes most punctuation, but
 other tokenizers exist which have different behaviour.
 +
-For instance, the `keyword` tokenizer just returns the exact same string
-as was passed in, without any tokenization. The `whitespace` tokenizer
+For instance, the `keyword` tokenizer outputs exactly the same string
+as it received, without any tokenization. The `whitespace` tokenizer
 splits text on whitespace only. The `pattern` tokenizer can
 be used to split text on a matching regular expression.
 
 Token filters::
 
-After tokenization, the ``token stream'' is passed through any
+After tokenization, the resulting _token stream_ is passed through any
 specified token filters, in the order in which they are specified.
 +
 Token filters may change, add or remove tokens.  We have already mentioned
@@ -52,17 +52,17 @@ create a custom analyzer.
 ==== Creating a custom analyzer
 
 In the same way as we configured the `es_std` analyzer above, we can
-configure character filters, tokenizers and token filters in the
-appropriate sections in the `analysis` index settings:
+configure character filters, tokenizers and token filters in their
+respective sections under `analysis`:
 
     curl -XPUT localhost:9200/my_index -d '
     {
         "settings": {
             "analysis": {
                 "char_filter": { ... custom character filters ... },
-                "tokenizer":   { ... custom tokenizers        ... },
-                "filter":      { ... custom token filters     ... },
-                "analyzer":    { ... custom analyzers         ... }
+                "tokenizer":   { ...    custom tokenizers     ... },
+                "filter":      { ...   custom token filters   ... },
+                "analyzer":    { ...    custom analyzers      ... }
             }
         }
     }
