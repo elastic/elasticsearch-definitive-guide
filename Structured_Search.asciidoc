@@ -13,11 +13,11 @@ include::StructuredSearch/termterms.asciidoc[]
 
 include::StructuredSearch/contains.asciidoc[]
 
-=== Null values
+=== Dealing with Null values
 
 include::StructuredSearch/existsmissing.asciidoc[]
 
-null value mapping
+include::StructuredSearch/null_value.asciidoc[]
 
 exists on objects
 

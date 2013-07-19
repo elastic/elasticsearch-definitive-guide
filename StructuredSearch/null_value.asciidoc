@@ -1,0 +1,34 @@
+
+==== Default values for null fields
+
+By default, Elasticsearch ignores null values.  If a document is indexed with
+a `null` as the value of a field, the field is simply not added to the document.
+
+Sometimes this is inconvenient and you want to specify a default value. Most core
+types (String, Number, Boolean, Date) support an option to define a null value
+called, unsurprisingly, `null_value`.
+
+In this mapping, we define a string ("NA") as the default when a `null` is
+encountered:
+
+    {
+       "tweet" : {
+          "properties" : {
+             "message" : {"type" : "string", "null_value" : "NA"}
+          }
+    }
+
+And now, when we index this document, the string "NA" will be indexed and stored
+in the `message` field:
+
+    { "message" : null }
+
+.Only works for explicit nulls!
+****
+An important note: this is a default that is applied _only_ when an explicit
+null is provided as the value of a field.  It is not a default if the field
+is omitted entirely.
+
+If "message" is not present in the document at all, the default value _is not_
+applied and no "message" field will be indexed.
+****
