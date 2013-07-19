@@ -17,8 +17,9 @@ since the second document does not have a "middle_name" field.
 ==== Missing Filter
 
 The Missing filter is essentially the inverse of the Exists filter: it returns
-documents where there is _no_ value for a particular field.  A Missing filter
-on the documents above, only the second one ("Noah") will be returned.
+documents where there is _no_ value for a particular field.  If you used a
+Missing filter on the "middle_name" field with the documents above, only
+the second one ("Noah") will be returned.
 
 Missing filter has a few additional options that Exists doesn't have. By default,
 the filter only matches documents that are literally missing a field.  If the
@@ -27,3 +28,17 @@ field is present but `null`, it won't match the filter.
 If you'd like to change this behavior, the `null_value` option can be set to
 `true`. This makes Missing also match documents where the field is present,
 but the value is a `null`.
+
+==== Exists/Missing on Objects
+
+The Exists and Missing filters also work on objects, not just core types.  If
+you have the following document:
+
+    {
+       "foo" : {
+          "bar" : "baz"
+       }
+    }
+
+You can check for the existence of "foo".  If the inner object "foo" exists,
+Existing filter matches while Missing does not.
