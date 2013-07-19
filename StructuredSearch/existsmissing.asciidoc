@@ -1,6 +1,4 @@
 
-=== Checking for Existence
-
 Since Elasticsearch allows you to dynamically add new fields, it is sometimes
 difficult to know what fields any particular document may have.  Elasticsearch
 has two filters which can help: Exists and Missing.
