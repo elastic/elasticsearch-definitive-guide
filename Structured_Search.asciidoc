@@ -13,11 +13,9 @@ include::StructuredSearch/termterms.asciidoc[]
 
 include::StructuredSearch/contains.asciidoc[]
 
-matching only XYZ, excluding other values
-
 === Null values
 
-exists & missing filters
+include::StructuredSearch/existsmissing.asciidoc[]
 
 null value mapping
 

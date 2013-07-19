@@ -1,0 +1,31 @@
+
+=== Checking for Existence
+
+Since Elasticsearch allows you to dynamically add new fields, it is sometimes
+difficult to know what fields any particular document may have.  Elasticsearch
+has two filters which can help: Exists and Missing.
+
+==== Exists Filter
+
+The Exists filter will return documents that have values in the specified field.
+For example, given these two documents:
+
+    { "first_name" : "Zachary, "middle_name" : "Joseph }
+    { "first_name" : "Noah }
+
+An exists filter checking for "middle_name" will only return the first document,
+since the second document does not have a "middle_name" field.
+
+==== Missing Filter
+
+The Missing filter is essentially the inverse of the Exists filter: it returns
+documents where there is _no_ value for a particular field.  A Missing filter
+on the documents above, only the second one ("Noah") will be returned.
+
+Missing filter has a few additional options that Exists doesn't have. By default,
+the filter only matches documents that are literally missing a field.  If the
+field is present but `null`, it won't match the filter.
+
+If you'd like to change this behavior, the `null_value` option can be set to
+`true`. This makes Missing also match documents where the field is present,
+but the value is a `null`.
