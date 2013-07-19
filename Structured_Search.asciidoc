@@ -25,7 +25,13 @@ include::StructuredSearch/ranges.asciidoc[]
 
 === Combining filters
 
-bool, and/or/not
+include::StructuredSearch/compoundfilters.asciidoc[]
+
+=== Bitsets: the secret sauce
+
+include::StructuredSearch/bitsets.asciidoc[]
+
+per segment bitsets
 
 === Normalizing exact values
 
@@ -35,9 +41,7 @@ stopwords
 
 omit_norms, index_options
 
-=== Filter caching
 
-per segment bitsets
 
 === Social-graph filter
 

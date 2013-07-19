@@ -1,0 +1,60 @@
+
+Without a doubt, you will encounter a situation where you need to use several
+filters at the same time.  You need to find all documents where "age" is greater
+than 25 AND "gender" is "male".
+
+Elasticsearch offers two different types of boolean logic filters: Boolean
+Filter and the And/Or/Not set of filters.
+
+==== Bool Filter
+
+The Bool filter is composed of three sections:
+
+    {
+       "bool" : {
+          "must" : [],
+          "should" : [],
+          "must_not" : [],
+       }
+    }
+
+ - Must: These clauses are required for the document to be returned
+ as a match. Effectively, this is equivalent to ANDing all clauses inside the
+ `must`.
+
+ - Should: These clauses are optional.  If a `must` clause was not specified, at
+ least one of the `should` clauses must match.  If a `must` clause was specified,
+ all `should` clauses are considered optional (and in fact, it is not even necessary
+ to include the `should` clause anymore).
+
+ - Must_not: A document won't be returned if any of these clauses match.  Effectively,
+ this is a set of NOT clauses.
+
+Each section of the Bool filter is optional, and each section can containe one
+or more filters.
+
+By default, the Bool filter _is not_ cached, unlike the majority of other filters.
+There is a good reason for this: usually, compound filters combine a number
+of dynamically generated conditions.
+
+Caching the "total set" of filters just wastes memory and disk i/o, since that
+particular combination of filters is unlikely to surface again.
+
+Sometimes, however, it makes sense to cache the compound filter.  If you find
+yourself always specifying the same combination of filters inside a Bool,
+consider caching the entire compound set by setting `_cache` to true.
+
+==== And/Or/Not Filters
+
+There is another set of filters - And/Or/Not - which provide boolean logic.
+They work exactly as they are named:
+
+ - And: All clauses are required to match
+ - Or: Clauses are optional, but at least one must match.
+ - Not: Inverse of And, all clauses must not match
+
+Like the Bool filter, these filters are not cached by default, but can be
+enabled by setting `_cache` to true.
+
+So wait, which set of boolean filters should you use?  Are they equivalent?
+To answer that question, we need to take a quick detour into filter bitsets...
