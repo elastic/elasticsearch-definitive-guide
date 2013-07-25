@@ -1,0 +1,40 @@
+At this point, you've seen repeated recommendations to use filters whenever,
+due to their performance benefit. But you may be wondering *why* filters are
+more performant.
+
+We are going to take a quick detour and talk about how filters work internally.
+A good understanding of the internals will let you optimize your queries for
+maximum performance.
+
+Filters operate on data structures known as bitsets, which are really nothing
+more than arrays of bits (0's and 1's).  The first time a filter is executed,
+it iterates over each document and evaluates the filter: _"Does this document
+match?"_
+
+If the answer is Yes, a 1 is placed in the bitset for that document; otherwise,
+a 0 is recorded.  This is repeated for all the documents in your index.
+
+When the filter is finished, you will have an array of bits representing the
+matching status of each document.
+
+The real performance advantage comes the next time the filter is used.  Instead
+of iterating over each document, Elasticsearch merely looks at the array of bits
+and finds all positions with a 1.
+
+.Independent filter caching
+****
+Filters are cached independently from the query, which makes them reusable
+in many different contexts.  If two different queries use the same filter,
+the same filter bitset will be reused.
+****
+
+Furthermore, bitsets can be combined using logical bitwise operations.  If you
+have two filters that Must match, the two underlying bitsets are logically
+ANDed together. This returns a single bitset that is the intersection of the
+two previous bitsets.
+
+Logical bitwise operations are _really fast_.  CPUs have dedicated circuits that
+perform bitwise operations, meaning these operations are orders of magnitude
+faster than loading documents from disk and evaluating their values.
+
+
