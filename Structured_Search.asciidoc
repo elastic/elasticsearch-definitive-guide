@@ -23,15 +23,15 @@ include::StructuredSearch/null_value.asciidoc[]
 
 include::StructuredSearch/ranges.asciidoc[]
 
-=== Combining filters
-
-include::StructuredSearch/compoundfilters.asciidoc[]
-
 === Bitsets: the secret sauce
 
 include::StructuredSearch/bitsets.asciidoc[]
 
 include::StructuredSearch/persegmentbitsets.asciidoc[]
+
+=== Combining filters
+
+include::StructuredSearch/compoundfilters.asciidoc[]
 
 === Normalizing exact values
 
