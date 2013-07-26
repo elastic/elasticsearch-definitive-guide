@@ -22,10 +22,8 @@ The Bool filter is composed of three sections:
  as a match. Effectively, this is equivalent to ANDing all clauses inside the
  `must`.
 
- - Should: These clauses are optional.  If a `must` clause was not specified, at
- least one of the `should` clauses must match.  If a `must` clause was specified,
- all `should` clauses are considered optional (and in fact, it is not even necessary
- to include the `should` clause anymore).
+ - Should: These clauses are optional, but one needs to match.  Effectively,
+ this is a set of OR clauses.
 
  - Must_not: A document won't be returned if any of these clauses match.  Effectively,
  this is a set of NOT clauses.
@@ -37,7 +35,7 @@ By default, the Bool filter _is not_ cached, unlike the majority of other filter
 There is a good reason for this: usually, compound filters combine a number
 of dynamically generated conditions.
 
-Caching the "total set" of filters just wastes memory and disk i/o, since that
+Caching the "total set" of filters just wastes memory and disk I/O, since that
 particular combination of filters is unlikely to surface again.
 
 Sometimes, however, it makes sense to cache the compound filter.  If you find
@@ -67,7 +65,7 @@ relevant values into Field Data, then iterate over the list checking for matches
 
 The Bool filter, in contrast, uses the bitsets that we talked about earlier.
 This means that any filter which produces bitsets (the majority of filters)
-will get the best performance from being placed inside a Bool filter.
+will have the best performance from being placed inside a Bool filter.
 
 And/Or/Not should be used with the following filters:
 

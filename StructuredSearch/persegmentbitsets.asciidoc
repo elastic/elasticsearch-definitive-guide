@@ -10,16 +10,16 @@ And since segments are immutable, that means the associated filter bitsets also
 never change.
 
 This has huge performance implications.  Cached filters will remain useful until
-the segment is merged.  For large segments that rarely merge, this means your
+the segment is merged.  For large segments that rarely merge, the associated
 cached filters will have a very long life-time.  Ultimately, a long lifetime
-equates to less CPU and disk I/O spent on evictions and reloading the same data.
+equates to less CPU and disk I/O wasted on evictions and reloading the same data.
 
-Per-segment bitsets also allow incremental updates.  In a B-Tree index (like
+Per-segment bitsets also allow fast incremental updates.  In a B-Tree index (like
 those used in relational databases), every insert updates the B-Tree.  For very
 large indices, this operation can be very slow.
 
 In Lucene, bitsets are only built for new segments.  Time (and computational
-resources) is not wasted on updating the index of older segments.
+resources) are not wasted on updating the index of older segments.
 
 Lastly, a nice side-effect of per-segment bitsets is if a particular segment doesn't
 contain any documents that match the filter (a bitset entirely of zeros). In

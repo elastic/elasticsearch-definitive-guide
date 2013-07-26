@@ -1,12 +1,12 @@
-At this point, you've seen repeated recommendations to use filters whenever,
-due to their performance benefit. But you may be wondering *why* filters are
+At this point, you've seen repeated recommendations to use filters whenever possible,
+due to their performance benefit. But you may be wondering _why_ filters are
 more performant.
 
 We are going to take a quick detour and talk about how filters work internally.
 A good understanding of the internals will let you optimize your queries for
 maximum performance.
 
-Filters operate on data structures known as bitsets, which are really nothing
+Filters operate on data structures known as bitsets, which are nothing
 more than arrays of bits (0's and 1's).  The first time a filter is executed,
 it iterates over each document and evaluates the filter: _"Does this document
 match?"_
@@ -31,7 +31,7 @@ the same filter bitset will be reused.
 Furthermore, bitsets can be combined using logical bitwise operations.  If you
 have two filters that Must match, the two underlying bitsets are logically
 ANDed together. This returns a single bitset that is the intersection of the
-two previous bitsets.
+two filters.
 
 Logical bitwise operations are _really fast_.  CPUs have dedicated circuits that
 perform bitwise operations, meaning these operations are orders of magnitude
