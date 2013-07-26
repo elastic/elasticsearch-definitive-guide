@@ -1,0 +1,84 @@
+Often you'll want to normalize values so that exact matches are easier to find.
+
+Many normalization schemes will use the `Keyword analyzer.  This analyzer
+takes your entire text and outputs it as a single token.  If you _only_ applied
+the `Keyword` analyzer and nothing else, it would be functionally identical
+to setting the field as `not_analyzed`.
+
+==== Cleaning up data
+
+By itself, `Keyword` is not very useful.  But you can combine it with a number of
+other token filters to normalize the single token.  Two useful filters to include
+with Keyword are:
+
+- `Lowercase` - all characters will be lowercased
+- `Trim` - Removes any whitespace before and after the text in the token
+
+Those two filters help to clean up data and avoid missing documents because of a
+stray capital letter or leading whitespace.
+
+Keyword + lowercase is a very common way to prepare data for faceting and sorting.
+If you are faceting, you probably want "New York" and "new york" to be grouped
+together.  Keyword + lowercase gives you case insensitivity (which `not_analyzed`
+does not).
+
+==== Truncating tokens
+
+In some situations, you may have long fields but only care about the first portion.
+For example, you have product serial numbers where the first 10 characters refer
+to the product category, while the rest is just unique characters specific to that
+particular product.
+
+By combining `Keyword` analyzer with the `Truncate` filter, you can selectively
+index just the portion you are interested in.
+
+A related filter is the `Length` filter.  Truncate is oblivious to connotation -
+if the token is too long it gets chopped, even if that is in the middle of a word.
+
+In contrast, the `Length` filter is configured to remove tokens that are either
+too small or too large.  The filter will inspect each token and either keep it
+in the token stream, or remove the entire word.
+
+==== Selectively ignoring tokens
+
+Due to the flexible nature of documents in Elasticsearch, it is easy to index
+relatively anomalous data.  Perhaps the majority of your values are 20
+characters...but sometimes you get a monster that is 10,000 characters long.
+
+Depending on your use-case, you can choose to ignore fields that are over a certain
+size.  When you create an analyzer, the `ignore_above` setting decides the cut-off.
+
+    {
+        "tweet" : {
+            "properties" : {
+                "message" : {
+                    "type" : "string",
+                    "analyzer" : "not_analyzed",
+                    "ignore_above" : 200
+                }
+            }
+        }
+    }
+
+If a particular field has a value larger than the configured `ignore_above`
+setting, it is ignored and not indexed at all.  It is equivalent to setting
+`index: no` for that field in that particular document.
+
+Effectively, this protects your not_analyzed fields from indexing a giant piece
+of text that is likely never going to be found (since it is `not_analyzed`, only
+an exact match will return it).
+
+==== Pruning and limiting the token stream
+
+Imagine you allow users to enter tags for a blog post.  It is entirely possible
+that the user will enter the same token twice. If you are using this token for
+exact matches (e.g. no scoring), that duplicate token is just a waste of space.
+
+By applying a `Unique` token filter after your tokenization step (whitespace, etc),
+Elasticsearch will keep only the tokens that are unique.  All duplicate tokens
+will be removed.
+
+Similarly, what if your user adds 10,000 tags to the blog post?  If you need to
+limit the number of tokens, you can add the `Limit` filter.  If the number of
+tokens is greater than the configured limit, the additional tokens will be removed.
+
