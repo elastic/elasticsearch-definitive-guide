@@ -35,9 +35,9 @@ include::StructuredSearch/compoundfilters.asciidoc[]
 
 === Normalizing exact values
 
-keyword, trim, lowercase, ignore_above, truncate, unique, limit
+include::StructuredSearch/normalizing.asciidoc[]
 
-stopwords
+include::StructuredSearch/stopwords.asciidoc[]
 
 omit_norms, index_options
 
