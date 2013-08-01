@@ -35,7 +35,7 @@ include::StructuredSearch/compoundfilters.asciidoc[]
 
 === Normalizing exact values
 
-include::StructuredSearch/normalizing.asciidoc[]
+include::StructuredSearch/normalizingexact.asciidoc[]
 
 include::StructuredSearch/stopwords.asciidoc[]
 
@@ -43,9 +43,11 @@ include::StructuredSearch/omit_norms.asciidoc[]
 
 === Social-graph filter
 
-terms lookup filter
+include::StructuredSearch/termslookup.asciidoc[]
 
 === Cache key
+
+include::StructuredSearch/cachekey.asciidoc[]
 
 === Exact value queries
 
