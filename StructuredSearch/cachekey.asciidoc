@@ -1,0 +1,21 @@
+In the Lookup example, we saw an option called `_cache_key`.  This isn't unique
+to the Terms Lookup filter...its an option that can be set for any filter.
+It allows you to give filters human-sensible names, which Elasticsearch will
+then use internally.
+
+Other than convenience, why might this be useful?  Internally, Elasticsearch
+is storing cached filters in a hash. The name of the filter is how Elasticsearch
+retrieves the filter, and so each name must uniquely identify the filter.
+
+For speed reasons, Elasticsearch takes the simplest naming approach: concatenate
+the elements of the filter together and use that as a name.  If you have a Terms
+filter with three terms ("judy", "sally", "sue"), the filter name will be
+something like "termsfilter_judy_sally_sue".
+
+This is good for speed, but can be bad for memory. If your list of terms is
+10,000 long...you now have a hash name that is 10,000 terms long.  That's a lot
+of wasted space!
+
+In these situations, it may make sense to manually specify a `_cache_key`. By
+giving the filter a sensible name based on your business logic, you can decrease
+essentially wasted memory consumption.
