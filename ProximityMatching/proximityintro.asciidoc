@@ -1,0 +1,13 @@
+
+Proximity search, also known as phrase matching, is an important part of many
+search applications.  Phrase matching helps ensure search results are relevant,
+since phrases are both rarer than terms and also carry additional context.
+
+"Sue ate alligator" and "alligator ate Sue" are very different sentences
+(especially if you are Sue!), but searching for ["ate" AND "aligator"] will return
+both.
+
+When Elasticsearch analyzes your text into tokens, it stores the positions of
+each token. A search for "ate alligator" as a phrase implies that "ate" comes
+before "alligator" in the position list, and thus excludes documents where
+that condition is not true.
