@@ -13,9 +13,11 @@ include::ProximityMatching/slop.asciidoc[]
 
 === Multi-value string fields
 
+include::ProximityMatching/position_offset_gap.asciidoc[]
+
 index_options: position
 
-position_offset_gap
+
 
 === Proximity at index time
 
