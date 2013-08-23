@@ -1,0 +1,30 @@
+
+In the last section we say that Elasticsearch rewrote a prefix query into a regular expression utilizing a wildcard star.  Does that mean you can use wildcards in other places?  And regular expressions?
+
+You bet!
+
+Elasticsearch has a dedicated Wildcard query, which allows you to specify arbitrary wildcards:
+
+    {
+        "wildcard" : { "keyword" : "h*e" }
+    }
+
+The wildcard asterisk is acts like a /.*/ regular expression, meaning it will match zero or more character sequences.  It is greedy and will match as many characaters as possible.  So, the above query will match "he", "hoe" and "house".
+
+If you were to replace the asterisk with a question mark ("h?e"), the query acts like a /.?/ regex.  It will match 0 or 1 characters only, reducing the previous matches down to "he" and "hoe".
+
+The Wildcard query operates just like the Prefix query internally.  It is first rewritten to find appropriate matches in the term dictionary, then searched against your index.
+
+==== Leading Wildcards are slow
+
+However, since you are free to place your wildcards, there is a very real danger of destroying performance with an ill-placed asterisk.  Consider this query:
+
+    {
+        "wildcard" : { "keyword" : "*er" }
+    }
+
+That is effectively asking Elasticsearch to find all terms that end in "er".  Unlike a prefix situation, where the list of potential terms can be pruned considerably (skip everything that doesn't start with the prefix), a leading wildcard is forced to check every single entry in the term dictionary.
+
+After that check is done, you are likely to have a very large list of terms that match the leading wildcard, which then slows down the search phase due to excessive terms in the Boolean query.
+
+Moral of the story: avoid leading wildcards (and question marks) because they can be incredibly resource intensive.
