@@ -14,3 +14,8 @@ Once it has a list of matching terms, the prefix query is rewritten as a Boolean
 This process - rewriting the query before searching - makes prefix match fairly efficient, especially when compared to the naive approach of scanning every document for matching prefixes.
 
 This is a query-time operation, which means you don't need to make any special changes to your index, or index data in a specific way.
+
+.Not Analyzed
+****
+Important note: the Preix query is not analyzed.  If you provide a full text query, it will be treated as a single token (spaces and all).  If you need analysis and full-text prefix matching, we'll cover that in the `match_phrase_prefix` section shortly
+****

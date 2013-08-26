@@ -17,7 +17,7 @@ The Wildcard query operates just like the Prefix query internally.  It is first 
 
 ==== Leading Wildcards are slow
 
-However, since you are free to place your wildcards, there is a very real danger of destroying performance with an ill-placed asterisk.  Consider this query:
+Because you are free to place your wildcards anywhere in the query, there is a very real danger of destroying performance with an ill-placed asterisk.  Consider this query:
 
     {
         "wildcard" : { "keyword" : "*er" }
