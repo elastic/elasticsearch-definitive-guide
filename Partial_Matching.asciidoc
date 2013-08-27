@@ -15,7 +15,8 @@ include::PartialMatching/wildcardregex.asciidoc[]
 
 include::PartialMatching/match_phrase_prefix.asciidoc[]
 
-query-string
+include::PartialMatching/query_string.asciidoc[]
+
 
 === Partial matching and relevance scoring
 

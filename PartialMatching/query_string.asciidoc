@@ -1,0 +1,29 @@
+
+Query_string supports full wildcard behavior as part of the Lucene parser.  It works very similar to the Wildcard query:
+
+{
+    "query_string" : {
+        "query" : "go to the party*",
+        "analyze_wildcard" : false,
+        "analyzer" : "snowball"
+    }
+}
+
+As you can see, we are doing a trailing star for prefix matching.  However, the behavior of the query will change depending on the value of `analyze_wildcard`.  By default, wildcards are not analyzed with query_string.
+
+This means that "party" will *not* be stemmed by the snowball analyzer, and the index will be searched for all tokens that match "party*".
+
+In contrast, if `analyze_wildcard` is toggled to true, "party" will be run through snowball and stemmed to "parti".  This stemmed version will be used to search the index, matching any term that accepts the pattern "parti*".
+
+.Only affects wildcard terms!
+****
+It is important to note that `analyze_wildcard` only affects the term that is wildcarded.  The rest of the terms in the query will be analyzed as usual.
+****
+
+==== Multiple Wildcards
+
+Query_string also supports multiple wildcards, not just trailing stars.  You can place as many wildcards as you like throughout the query, in the middle of tokens, etc.
+
+The same warnings about performance apply:  more wildcards typically means more matching documents and more terms to query against.  Be judicious with your usage of wildcards, especially leading wildcards.
+
+If you are exposing query_string to a wider audience, it may be prudent to disable leading wildcards with the `allow_leading_wildcard` option.  Setting this to false will disallow the potential performance woes associated with leading wildcards.

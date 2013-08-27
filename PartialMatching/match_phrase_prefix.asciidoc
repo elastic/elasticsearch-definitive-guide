@@ -41,7 +41,7 @@ The query will now find all documents that have these tokens within the specifie
 
 ==== Watch out for stemming!
 
-Analysis happens before the prefix expansion, which means stemmed words are expanded for prefix matching.  If you use an analyzer that stems (like Standard Analyzer), take a moment to verify that you have it setup correctly.  Consider the phrase "the party".
+Analysis happens before the prefix expansion, which means stemmed words are expanded for prefix matching.  If you use an analyzer that stems (like Snowball Analyzer), take a moment to verify that you have it setup correctly.  Consider the phrase "the party".
 
 After stemming and stop word removal, you'll be left with a single, stemmed token:  "parti".  This token is then expanded for prefix matches, in the form of "parti*".
 
