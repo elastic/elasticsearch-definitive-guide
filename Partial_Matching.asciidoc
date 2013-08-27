@@ -17,10 +17,9 @@ include::PartialMatching/match_phrase_prefix.asciidoc[]
 
 include::PartialMatching/query_string.asciidoc[]
 
-
 === Partial matching and relevance scoring
 
-multi-term rewrite?
+include::PartialMatching/rewrite.asciidoc[]
 
 === At index time
 
