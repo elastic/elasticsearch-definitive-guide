@@ -1,0 +1,52 @@
+
+So if ngrams work for mispellings but aren't really *ideal*, what are ngrams good for?  There is another type of ngram, the Edge Ngram, which is much more practical.  It is ideally suited for "autocomplete" situations, as well as leading wildcards.
+
+Edge ngrams operate on the same "sliding window" principle, but are anchored to the front edge of the token.  This lets you build both suffix- and prefix-matching right into your index.  
+
+==== Autocomplete
+
+The most obvious use of edge ngrams is for as-you-type autocomplete, ala Google Instant.
+
+Like regular ngrams, you can specify both minimum and maximum size of the window.  However, this time it makes sense to set the numbers to different values.  If we are trying to do "autocomplete" behavior, we ideally want a range of values to match against.
+
+Let's set min=1 and max=4, then look at the "pancake" again:
+
+    "p", "pa", "pan", "panc"
+
+Now, when your user types "pa", these tokens will be matched from the index and offer "pancake" as a suggestion (as well as similar words like "pan", "panacea", etc).
+
+.A problem of latency
+****
+The problem with edge-ngrams and autocompletion is one of latency.  Even if the search returns quickly, it has to return faster than a user can type.  Even a 200ms round-trip may be too slow for fast typists, making the autocomplete suggestions useless.
+
+Until recently, edge-ngrams were the only way to get this functionality.  However, the recent Completion Suggester was built exactly for this use-case and can be considerably faster.
+
+If you are in the market for autocomplete behavior, see if the Completion Suggester will work for you.
+****
+
+
+==== Leading Wildcard
+
+There is one task that Edge Ngrams still shine, and in this particular area they can really boost performance.  In the sections about wildcards, we warned heavily against leading wildcards due to performance problems.
+
+If you really need that capability, consider constructing a reverse edge-ngram index.  The principle is simple.  If you reverse a word and treat it as a prefix matching problem, leading wildcards become computationally tractable.
+
+Imagine we need to search for all word that end in "*ing".  Taking the word "jumping", we first reverse it:
+
+    "gnipmuj"
+
+Then we apply the edge ngrams:
+    
+    "g", "gn", "gni", "gnip", "gnipm"
+
+Finally, we reverse the tokens one last time:
+
+    "g", "ng", "ing", "ping", "mping"
+
+Now when you do a search for all words ending in "*ing", you can simply query for the exact suffix "ing" and you'll match "jumping".
+
+This turns the leading wildcard from an extremely expensive operation to one that is remarkably speedy.
+
+Constructing this setup in your mapping is very easy, you just need to sandwich the edge-ngram filter between two reverse filters:
+    
+    ["reverse", "my_edge_ngram", "reverse"]

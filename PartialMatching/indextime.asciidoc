@@ -1,0 +1,8 @@
+
+All the methods we've talked about so far are *query-time* partial matching methods.  They don't require any special mappings or indexing patterns - they simply work with the data that you've already indexed.
+
+The flexibility of query-time operations comes at a cost: performance.  Sometimes it may make sense to move the cost away from the query.  In a real-time web application, an additional 100ms may be too much latency to tolerate.
+
+In these cases, using an index-time approach may yield better performance.  Index-time methods require explicit mappings which build approximate matches right into your index.
+
+You still pay a price, notably increased index size and slightly slower indexing throughput, but it has moved the cost away from the user-facing portion of your application.
