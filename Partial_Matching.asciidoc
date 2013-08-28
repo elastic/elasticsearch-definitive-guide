@@ -11,6 +11,10 @@ include::PartialMatching/prefix.asciidoc[]
 
 include::PartialMatching/wildcardregex.asciidoc[]
 
+=== Prefix and RegEx Filters
+
+include::PartialMatching/prefixregexfilters.asciidoc[]
+
 === Partial matching full text
 
 include::PartialMatching/match_phrase_prefix.asciidoc[]
@@ -36,10 +40,6 @@ include::PartialMatching/edgengrams.asciidoc[]
 === Highlighting matches
 
 === Highlighting partial matches
-
-token_filters vs tokenizers
-
-pattern replace
 
 === Fast vector highlighter
 

@@ -25,9 +25,34 @@ If you are in the market for autocomplete behavior, see if the Completion Sugges
 ****
 
 
+==== Separate analyzer for search
+
+Elasticsearch defaults to the analyzer of a field when executing a search query.  In most cases, this is the correct behavior.  But for edge-ngrams, this can lead to very poorly relevant results.
+
+If your user starts to type "panca", the query itself will be ngrammed into tokens ["p", "pa", "pan", "panc", "panca"].
+
+Another document in your index has the word "pancreatic", which is itself tokenized into tokens ["p", "pa", "pan", "panc", "pancre"].
+
+As you can see, there is considerable overlap between the two sets of tokens, and as such "pancreatic" will match "panca", even though it really shouldn't.  That would be a very confusing "autocomplete" suggestion, since it no longer matches.
+
+For this reason, you should search with an analyzer that doesn't ngram.  You want to search your index for a single token: "panca" and see which documents have that term.
+
+Doing this is easy, you simply specify the `search_analyzer` option in your query:
+
+    {
+        "match" : {
+            "query" : "panca",
+            "search_analyzer" : "my_analyzer_no_ngrams"
+        }
+    }
+
+The search_analyzer should be identical to your normal analyzer, with the exception of omitting ngrams (e.g. it should still lowercase, etc)
+
+You can also configure `search_analyzer` and `index_analyzer` directly in your mapping so that this process happens automatically, without manually adding it to each query.
+
 ==== Leading Wildcard
 
-There is one task that Edge Ngrams still shine, and in this particular area they can really boost performance.  In the sections about wildcards, we warned heavily against leading wildcards due to performance problems.
+There is one task that Edge Ngrams still excels, and in this particular area they can really boost performance.  In the sections about wildcards, we warned heavily against leading wildcards due to performance problems.
 
 If you really need that capability, consider constructing a reverse edge-ngram index.  The principle is simple.  If you reverse a word and treat it as a prefix matching problem, leading wildcards become computationally tractable.
 
