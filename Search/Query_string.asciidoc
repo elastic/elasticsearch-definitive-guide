@@ -85,8 +85,9 @@ readable:
     q=%2Bname%3A(mary+john)+%2Bdate%3A%3E2013-09-10+%2B(facets+geo)
 
 As you can see from the above examples, this _lite_ query string search is
-surprisingly powerful. Its query syntax, which is explained in detail in
-<<query-string-syntax>>,  allows us to express quite complex queries
+surprisingly powerful. Its query syntax, which is explained in detail in the
+{ref}/query-dsl-query-string-query.html#query-string-syntax[Query String Syntax]
+reference docs,  allows us to express quite complex queries
 succinctly, which makes it great for throwaway queries from the
 command line during development.
 

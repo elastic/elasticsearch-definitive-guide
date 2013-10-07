@@ -22,7 +22,9 @@ is translated into a compound query in which:
 * the `author` field must contain the phrase `"joe bloggs"`
 * the `date` field must be a date from 2012 onwards
 
-The full syntax for this mini-language is explained in <<query-string-syntax>>.
+The full syntax for this mini-language is explained in the
+{ref}/query-dsl-query-string-query.html#query-string-syntax[Query String Syntax]
+reference docs.
 
 .Danger, Will Robinson!
 ****
