@@ -14,7 +14,7 @@ The key to full text search is to ensure that _we search for exactly the same
 terms as are stored in our index_.  In other words, both the full
 text data in our documents and the full text query string need to be normalized.
 
-This process is called _Analysis_ and will be discussed fully in <<analysis>>.
+This process is called _Analysis_ and will TODO be discussed fully in <analysis>.
 For now it is enough to know that:
 
  * by default, string fields are _analyzed_ before being indexed, so
