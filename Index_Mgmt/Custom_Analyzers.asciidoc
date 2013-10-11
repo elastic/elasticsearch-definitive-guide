@@ -55,18 +55,21 @@ In the same way as we configured the `es_std` analyzer above, we can
 configure character filters, tokenizers and token filters in their
 respective sections under `analysis`:
 
-    curl -XPUT localhost:9200/my_index -d '
-    {
-        "settings": {
-            "analysis": {
-                "char_filter": { ... custom character filters ... },
-                "tokenizer":   { ...    custom tokenizers     ... },
-                "filter":      { ...   custom token filters   ... },
-                "analyzer":    { ...    custom analyzers      ... }
-            }
-        }
-    }
-    '
+[source,js]
+--------------------------------------------------
+ PUT /my_index
+ {
+     "settings": {
+         "analysis": {
+             "char_filter": { ... custom character filters ... },
+             "tokenizer":   { ...    custom tokenizers     ... },
+             "filter":      { ...   custom token filters   ... },
+             "analyzer":    { ...    custom analyzers      ... }
+         }
+     }
+ }
+--------------------------------------------------
+
 
 As an example, let's set up a custom analyzer which will:
 
@@ -74,94 +77,119 @@ As an example, let's set up a custom analyzer which will:
 
 2. Replace `&` characters with `" and "`, using a custom `mapping`
    character filter:
++
+[source,js]
+--------------------------------------------------
+ "char_filter": {
+     "&_to_and": {
+         "type":       "mapping",
+         "mappings": [ "&=> and "]
+     }
+ }
+--------------------------------------------------
 
-    "char_filter": {
-        "&_to_and": {
-            "type":       "mapping",
-            "mappings": [ "&=> and "]
-        }
-    }
 
 3. Tokenize words, using the `standard` tokenizer.
 
 4. Lowercase terms, using the `lowercase` token filter.
 
 5. Remove a custom list of stopwords, using a custom `stop` token filter:
++
+[source,js]
+--------------------------------------------------
+ "filter": {
+     "my_stopwords": {
+         "type":        "stop",
+         "stopwords": [ "the", "a" ]
+     }
+ }
+--------------------------------------------------
 
-    "filter": {
-        "my_stopwords": {
-            "type":        "stop",
-            "stopwords": [ "the", "a" ]
-        }
-    }
 
 Now we can define our custom analyer, combining the predefined tokenizer
 and filters with the custom filters that we have configured above:
 
-    "analyzer": {
-        "my_analyzer": {
-            "type":           "custom",
-            "char_filter":  [ "html_strip", "&_to_and" ],
-            "tokenizer":      "standard",
-            "filter":       [ "lowercase", "my_stopwords" ]
-        }
-    }
+[source,js]
+--------------------------------------------------
+ "analyzer": {
+     "my_analyzer": {
+         "type":           "custom",
+         "char_filter":  [ "html_strip", "&_to_and" ],
+         "tokenizer":      "standard",
+         "filter":       [ "lowercase", "my_stopwords" ]
+     }
+ }
+--------------------------------------------------
+
 
 To put it all together, the whole `create-index` request looks like this:
 
-    curl -XPUT localhost:9200/my_index -d '
-    {
-        "settings": {
-            "analysis": {
-                "char_filter": {
-                    "&_to_and": {
-                        "type":       "mapping",
-                        "mappings": [ "&=> and "]
-                }},
-                "filter": {
-                    "my_stopwords": {
-                        "type":       "stop",
-                        "stopwords": [ "the", "a" ]
-                }},
-                "analyzer": {
-                    "my_analyzer": {
-                        "type":         "custom",
-                        "char_filter":  [ "html_strip", "&_to_and" ],
-                        "tokenizer":    "standard",
-                        "filter":       [ "lowercase", "my_stopwords" ]
-                }},
-    }}}
-    '
+[source,js]
+--------------------------------------------------
+ PUT /my_index
+ {
+     "settings": {
+         "analysis": {
+             "char_filter": {
+                 "&_to_and": {
+                     "type":       "mapping",
+                     "mappings": [ "&=> and "]
+             }},
+             "filter": {
+                 "my_stopwords": {
+                     "type":       "stop",
+                     "stopwords": [ "the", "a" ]
+             }},
+             "analyzer": {
+                 "my_analyzer": {
+                     "type":         "custom",
+                     "char_filter":  [ "html_strip", "&_to_and" ],
+                     "tokenizer":    "standard",
+                     "filter":       [ "lowercase", "my_stopwords" ]
+             }},
+ }}}
+--------------------------------------------------
+
 
 After creating the index, use the `analyze` API to test the new analyzer:
 
-    curl localhost:9200/my_index/_analyze?analyzer=my_analyzer -d '
-    The quick & brown fox
-    '
+[source,js]
+--------------------------------------------------
+ GET /my_index/_analyze?analyzer=my_analyzer
+ The quick & brown fox
+--------------------------------------------------
+
 
 The abbreviated results below show that our analyzer is working correctly:
 
-    {
-      "tokens" : [
-          { "token" :   "quick",    "position" : 2 },
-          { "token" :   "and",      "position" : 3 },
-          { "token" :   "brown",    "position" : 4 },
-          { "token" :   "fox",      "position" : 5 }
-        ]
-    }
+[source,js]
+--------------------------------------------------
+ {
+   "tokens" : [
+       { "token" :   "quick",    "position" : 2 },
+       { "token" :   "and",      "position" : 3 },
+       { "token" :   "brown",    "position" : 4 },
+       { "token" :   "fox",      "position" : 5 }
+     ]
+ }
+--------------------------------------------------
+
 
 And it can be applied to a `string` field with a mapping such as:
 
-    curl -XPUT localhost:9200/my_index/my_type/_mapping -d '
-    {
-        "my_type": {
-            "properties": {
-                "title": {
-                    "type":      "string",
-                    "analyzer":  "my_analyzer"
-                }
-            }
-        }
-    }
-    '
+[source,js]
+--------------------------------------------------
+ PUT /my_index/my_type/_mapping
+ {
+     "my_type": {
+         "properties": {
+             "title": {
+                 "type":      "string",
+                 "analyzer":  "my_analyzer"
+             }
+         }
+     }
+ }
+--------------------------------------------------
+
 

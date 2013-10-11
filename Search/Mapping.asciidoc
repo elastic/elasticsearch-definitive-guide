@@ -53,30 +53,38 @@ types in one or more indices using the `/_mapping` endpoint.
 In <<data-type-differences>> we already retrieved the mapping for
 type `tweet` in index `gb`:
 
-    curl localhost:9200/gb/tweet/_mapping
+[source,js]
+--------------------------------------------------
+ GET /gb/tweet/_mapping
+--------------------------------------------------
+
 
 This shows us the mapping for the fields (called _properties_) that
 Elasticsearch generated dynamically from the documents that we indexed:
 
-    {
-      "tweet" : {
-        "properties" : {
-          "date" : {
-            "type" :   "date",
-            "format" : "dateOptionalTime"
-          },
-          "name" : {
-            "type" :   "string"
-          },
-          "tweet" : {
-            "type" :   "string"
-          },
-          "user_id" : {
-            "type" :   "long"
-          }
-        }
-      }
-    }
+[source,js]
+--------------------------------------------------
+ {
+   "tweet" : {
+     "properties" : {
+       "date" : {
+         "type" :   "date",
+         "format" : "dateOptionalTime"
+       },
+       "name" : {
+         "type" :   "string"
+       },
+       "tweet" : {
+         "type" :   "string"
+       },
+       "user_id" : {
+         "type" :   "long"
+       }
+     }
+   }
+ }
+--------------------------------------------------
+
 
 ****
 Incorrect mappings, such as having an `age` field mapped as type `string`
@@ -90,11 +98,15 @@ The most important attribute of a field is the `type`. For fields
 other than `string` fields, you will seldom need to map anything other
 than `type`:
 
-    {
-        "number_of_clicks": {
-            "type": "integer"
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "number_of_clicks": {
+         "type": "integer"
+     }
+ }
+--------------------------------------------------
+
 
 Fields of type `"string"` are, by default, considered to contain full text.
 That is, their value will be passed through an analyzer before being indexed
@@ -122,12 +134,16 @@ The default value of `index` for a `string` field is `analyzed`.  If we
 want to map the field as an exact value, then we need to set it to
 `not_analyzed`:
 
-    {
-        "tag": {
-            "type":     "string",
-            "index":    "not_analyzed"
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "tag": {
+         "type":     "string",
+         "index":    "not_analyzed"
+     }
+ }
+--------------------------------------------------
+
 
 ****
 The other simple types -- `long`, `double`, `date` etc -- also accept the
@@ -143,12 +159,16 @@ default, Elasticsearch uses the `standard` analyzer, but you can change this
 by specifying one of the built-in analyzers, such as
 `whitespace`, `simple`, or `english`:
 
-    {
-        "tweet": {
-            "type":     "string",
-            "analyzer": "english"
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "tweet": {
+         "type":     "string",
+         "analyzer": "english"
+     }
+ }
+--------------------------------------------------
+
 
 In <<custom-analyzers>> we will show you how to define and use custom analyzers
 as well.
@@ -169,51 +189,61 @@ field from `analyzed` to `not_analyzed`.
 
 To demonstrate both ways of doing it, let's first delete the `gb` index:
 
-    curl -XDELETE localhost:9200/gb
+[source,js]
+--------------------------------------------------
+ DELETE /gb
+--------------------------------------------------
+
 
 Then create a new index, specifying that the `tweet` field should use
 the `english` analyzer:
 
-    curl -XPUT localhost:9200/gb -d '
-    {
-      "mappings": {
-        "tweet" : {
-          "properties" : {
-            "tweet" : {
-              "type" :    "string",
-              "analyzer": "english"
-            },
-            "date" : {
-              "type" :   "date"
-            },
-            "name" : {
-              "type" :   "string"
-            },
-            "user_id" : {
-              "type" :   "long"
-            }
-          }
-        }
-      }
-    }
-    '
+[source,js]
+--------------------------------------------------
+ PUT /gb 
+ {
+   "mappings": {
+     "tweet" : {
+       "properties" : {
+         "tweet" : {
+           "type" :    "string",
+           "analyzer": "english"
+         },
+         "date" : {
+           "type" :   "date"
+         },
+         "name" : {
+           "type" :   "string"
+         },
+         "user_id" : {
+           "type" :   "long"
+         }
+       }
+     }
+   }
+ }
+--------------------------------------------------
 
+    
 Later on, we can decide to add a new `not_analyzed` text field called `tag`
 to the `tweet` mapping, using the `_mapping` endpoint:
 
-    curl -XPUT localhost:9200/gb/tweet/_mapping -d '
-    {
-      "tweet" : {
-        "properties" : {
-          "tag" : {
-            "type" :    "string",
-            "index":    "not_analyzed"
-          }
-        }
-      }
-    }
-    '
+[source,js]
+--------------------------------------------------
+ PUT /gb/tweet/_mapping 
+ {
+   "tweet" : {
+     "properties" : {
+       "tag" : {
+         "type" :    "string",
+         "index":    "not_analyzed"
+       }
+     }
+   }
+ }
+--------------------------------------------------
 
+    
 Note that we needed to specify the `tweet` type twice: once in the URL and once
 in the JSON body.  Also, we didn't need to list all of the existing fields
 again, as we can't change them anyway.  Our new field has now been merged into
@@ -224,9 +254,11 @@ the existing mapping.
 You can use the `analyze` API to test the mapping for string fields by
 name. Compare the output of these two requests:
 
-    curl localhost:9200/gb/_analyze?field=tweet -d 'Black-cats'
-
-    curl localhost:9200/gb/_analyze?field=tag   -d 'Black-cats'
+[source,js]
+--------------------------------------------------
+ GET /gb/_analyze?field=tweet Black-cats
+ GET /gb/_analyze?field=tag   Black-cats
+--------------------------------------------------
 
 The `tweet` field produces the two terms `"black"` and `"cat"`, and
 the `tag` field produces the single term `"Black-cats"`. In other words,

@@ -4,32 +4,44 @@
 The syntax for deleting a document follows the same pattern that we have seen
 already, but uses the `DELETE` method :
 
-    curl -XDELETE localhost:9200/website/blog/123
+[source,js]
+--------------------------------------------------
+ DELETE /website/blog/123
+--------------------------------------------------
+
 
 If the document is found, Elasticsearch will return an HTTP response code
 of `200 OK` and a response body like the following. Note that the `_version`
 number has been incremented.
 
-    {
-      "ok" :       true,
-      "found" :    true,
-      "_index" :   "website",
-      "_type" :    "blog",
-      "_id" :      "123",
-      "_version" : 3
-    }
+[source,js]
+--------------------------------------------------
+ {
+   "ok" :       true,
+   "found" :    true,
+   "_index" :   "website",
+   "_type" :    "blog",
+   "_id" :      "123",
+   "_version" : 3
+ }
+--------------------------------------------------
+
 
 If the document isn't found, we get a `404 Not Found` response code, and
 a body like:
 
-    {
-      "ok" :       true,
-      "found" :    false,
-      "_index" :   "website",
-      "_type" :    "blog",
-      "_id" :      "123",
-      "_version" : 4
-    }
+[source,js]
+--------------------------------------------------
+ {
+   "ok" :       true,
+   "found" :    false,
+   "_index" :   "website",
+   "_type" :    "blog",
+   "_id" :      "123",
+   "_version" : 4
+ }
+--------------------------------------------------
+
 
 Even though the document doesn't exist -- `"found"` is `false` --  the
 `_version` number has been incremented. This is part of the internal

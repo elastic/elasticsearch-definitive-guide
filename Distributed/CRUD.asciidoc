@@ -41,7 +41,11 @@ document on shard 1 or shard 2?
 
 The answer boils down to a simple formula:
 
-    shard = hash(routing) mod number_of_primary_shards
+[source,js]
+--------------------------------------------------
+ shard = hash(routing) mod number_of_primary_shards
+--------------------------------------------------
+
 
 The `routing` value is an arbitrary string, which defaults to the document's
 `_id` but can also be set to a custom value. This `routing` string

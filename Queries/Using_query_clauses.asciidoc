@@ -11,40 +11,55 @@ can be used wherever _query_context_ applies:
 
 For instance, this  `match` query clause:
 
-    { "match": { "title": "fox" }}
+[source,js]
+--------------------------------------------------
+ { "match": { "title": "fox" }}
+--------------------------------------------------
+
 
 could be used as the argument to the `query` parameter in a `search` request,
 as follows:
 
-    curl -XGET localhost:9200/_search -d '
-    {
-        "query": { "match": { "title": "fox" }}
-    }
-    '
+[source,js]
+--------------------------------------------------
+ GET /_search 
+ {
+     "query": { "match": { "title": "fox" }}
+ }
+--------------------------------------------------
 
+    
 This simple `match` query could be combined with other query clauses using,
 for instance, the compound <<bool-query,`bool` query>>:
 
-    {
-        "bool": {
-            "should": [
-                { "match": { "title": "fox" }},
-                { "match": { "body":  "fox" }}
-            ]
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "bool": {
+         "should": [
+             { "match": { "title": "fox" }},
+             { "match": { "body":  "fox" }}
+         ]
+     }
+ }
+--------------------------------------------------
+
 
 which could, again, be passed to the `query` parameter in a `search` request:
 
-    curl -XGET localhost:9200/_search -d '
-    {
-        "query": {
-            "bool": {
-                "should": [
-                    { "match": { "title": "fox" }},
-                    { "match": { "body":  "fox" }}
-                ]
-            }
-        }
-    }
-    '
+[source,js]
+--------------------------------------------------
+ GET /_search 
+ {
+     "query": {
+         "bool": {
+             "should": [
+                 { "match": { "title": "fox" }},
+                 { "match": { "body":  "fox" }}
+             ]
+         }
+     }
+ }
+--------------------------------------------------
+
+    

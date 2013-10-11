@@ -2,10 +2,14 @@
 
 Imagine we have these two documents:
 
-    {
-        "title":    "Quick elephants",
-        "content":  "Quick! Brown the elephants"
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "title":    "Quick elephants",
+     "content":  "Quick! Brown the elephants"
+ }
+--------------------------------------------------
+
 
     {
         "title":    "Quick brown fox",
@@ -14,13 +18,17 @@ Imagine we have these two documents:
 
 And we run this query:
 
-    {
-      "bool" : {
-         "should" : [
-            { "match" : { "title" :   "quick brown fox" }},
-            { "match" : { "content" : "quick brown fox" }}
-         ]
-    }
+[source,js]
+--------------------------------------------------
+ {
+   "bool" : {
+      "should" : [
+         { "match" : { "title" :   "quick brown fox" }},
+         { "match" : { "content" : "quick brown fox" }}
+      ]
+ }
+--------------------------------------------------
+
 
 The `"Quick elephants"` document scores higher than the `"Quick brown fox"`
 document.  Why? To our eyes, the second document is obviously more relevant
@@ -53,13 +61,17 @@ Don't be taken aback by the name -- the concept is quite simple.
 the `dis_max` query matches if *any* of its clauses match, but instead of
 combining the `_score` from each clause, it uses the highest or ``max'' `_score`.
 
-    {
-      "dis_max" : {
-         "queries" : [
-            { "match" : { "title" :   "quick brown fox" }},
-            { "match" : { "content" : "quick brown fox" }}
-         ]
-    }
+[source,js]
+--------------------------------------------------
+ {
+   "dis_max" : {
+      "queries" : [
+         { "match" : { "title" :   "quick brown fox" }},
+         { "match" : { "content" : "quick brown fox" }}
+      ]
+ }
+--------------------------------------------------
+
 
 In this case, the second document matches the `title` clause very well
 -- better than either the `title` or `content` clause in the first
@@ -69,10 +81,14 @@ document -- so the second document is more relevant than the first.
 
 What happens if we add a third document:
 
-    {
-        "title":    "Quick brown fox",
-        "content":  "Quick brown fox"
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "title":    "Quick brown fox",
+     "content":  "Quick brown fox"
+ }
+--------------------------------------------------
+
 
 This new document should be even more relevant than the second but, because
 the `dis_max` query uses the single highest `_score` only, the fact that
@@ -81,15 +97,19 @@ another clause matches is just ignored.
 We can still take these less relevant clauses into account by passing in
 the `tie_breaker` parameter:
 
-    {
-      "dis_max" : {
-           "queries" : [
-                { "match" : { "title" :   "quick brown fox" }},
-                { "match" : { "content" : "quick brown fox" }}
-            ],
-            "tie_breaker": 0.2
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+   "dis_max" : {
+        "queries" : [
+             { "match" : { "title" :   "quick brown fox" }},
+             { "match" : { "content" : "quick brown fox" }}
+         ],
+         "tie_breaker": 0.2
+     }
+ }
+--------------------------------------------------
+
 
 The relevance calculation becomes:
 
@@ -110,13 +130,17 @@ with a `bool` query.
 However, you can choose to use a `dis_max` query instead by setting
 `use_dis_max` to `true`. The example query above could be rewritten as:
 
-    {
-        "multi_match": {
-            "query":       "Quick brown fox",
-            "fields":      ["title", "content"],
-            "use_dis_max": true,
-            "tie_breaker": 0.2
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "multi_match": {
+         "query":       "Quick brown fox",
+         "fields":      ["title", "content"],
+         "use_dis_max": true,
+         "tie_breaker": 0.2
+     }
+ }
+--------------------------------------------------
+
 ****
 

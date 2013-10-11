@@ -10,13 +10,17 @@ Filter and the And/Or/Not set of filters.
 
 The Bool filter is composed of three sections:
 
-    {
-       "bool" : {
-          "must" : [],
-          "should" : [],
-          "must_not" : [],
-       }
+[source,js]
+--------------------------------------------------
+ {
+    "bool" : {
+       "must" : [],
+       "should" : [],
+       "must_not" : [],
     }
+ }
+--------------------------------------------------
+
 
  - Must: These clauses are required for the document to be returned
  as a match. Effectively, this is equivalent to ANDing all clauses inside the
@@ -81,21 +85,25 @@ If you need both bitset and non-bitset filters, you can combine them using the
 appropriate combinations of compound filters.  Nest the Bool filter inside of
 a And/Or/Not, like this example:
 
-    {
-      "and" : [
-        {
-          "bool" : {
-            "must" : [
-              { "term" : {} },
-              { "range" : {} },
-              { "term" : {} }
-            ]
-          }
-        },
-        { "custom_script" : {} },
-        { "geo_distance" : {} }
-      ]
-    }
+[source,js]
+--------------------------------------------------
+ {
+   "and" : [
+     {
+       "bool" : {
+         "must" : [
+           { "term" : {} },
+           { "range" : {} },
+           { "term" : {} }
+         ]
+       }
+     },
+     { "custom_script" : {} },
+     { "geo_distance" : {} }
+   ]
+ }
+--------------------------------------------------
+
 ****
 
 ==== Filter ordering

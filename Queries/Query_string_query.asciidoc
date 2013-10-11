@@ -10,8 +10,12 @@ succinctly.
 
 For instance, this query string:
 
-    quic* brawn~ +fox status:active +author:"Joe Bloggs"
-    AND date:[2012/01/01 TO *]
+[source,js]
+--------------------------------------------------
+ quic* brawn~ +fox status:active +author:"Joe Bloggs"
+ AND date:[2012/01/01 TO *]
+--------------------------------------------------
+
 
 is translated into a compound query in which:
 
@@ -55,7 +59,11 @@ by cleaning up the query string in your application before running the query.
 In the query syntax, it is possible to target specific fields by specifying
 the field name, followed by a colon. For instance:
 
-    status:active  date:2012/01/01  title:(quick fox) lazy dog
+[source,js]
+--------------------------------------------------
+ status:active  date:2012/01/01  title:(quick fox) lazy dog
+--------------------------------------------------
+
 
 However, the parts of the query for which no field name has been specified
 (`lazy dog` in the above example), are matched against the `default_field`.
@@ -64,12 +72,16 @@ in <<mapping>>.
 
 It is possible to specify a different `default_field` as follows:
 
-    {
-        "query_string" : {
-            "query"         : "lazy dog",
-            "default_field" : "content"
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "query_string" : {
+         "query"         : "lazy dog",
+         "default_field" : "content"
+     }
+ }
+--------------------------------------------------
+
 
 .`field` query
 ****
@@ -78,7 +90,11 @@ allows you to specify the `default_field` in a form more consistent with
 the rest of the Query DSL. The above query is exactly equivalent to these
 two queries:
 
-    { "field" : { "content" : "lazy dog" }}
+[source,js]
+--------------------------------------------------
+ { "field" : { "content" : "lazy dog" }}
+--------------------------------------------------
+
 
     {
       "field" : {
@@ -98,47 +114,63 @@ the more terms that match, the more relevant.
 This behaviour can be changed by changing the `default_operator` from
 `OR` to `AND`:
 
-    {
-        "query_string" : {
-            "query"            : "quick brown fox",
-            "default_operator" : "AND"
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "query_string" : {
+         "query"            : "quick brown fox",
+         "default_operator" : "AND"
+     }
+ }
+--------------------------------------------------
+
 
 ==== `fields`
 
 Like the <<multi-match-query,`multi_match` query>>, it is possible to run
 the `query_string` query against multiple ``default'' fields, as follows:
 
-    {
-        "query_string" : {
-            "query"  : "lazy dog",
-            "fields" : [ "title", "content" ]
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "query_string" : {
+         "query"  : "lazy dog",
+         "fields" : [ "title", "content" ]
+     }
+ }
+--------------------------------------------------
+
 
 It also supports the same wildcard (`*`) field names and per-field
 boosting (`^`) syntax as the `multi_match` query:
 
-    {
-        "query_string" : {
-            "query"  : "lazy dog",
-            "fields" : [ "title^2", "cont*" ]
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "query_string" : {
+         "query"  : "lazy dog",
+         "fields" : [ "title^2", "cont*" ]
+     }
+ }
+--------------------------------------------------
+
 
 By default, queries run on multiple fields are wrapped in a
 <<bool-query,`bool` query>>. Like the `multi_match` query, you can choose
 to use a <<dismax-query,`dis_max` query>> instead:
 
-    {
-        "query_string" : {
-            "query"       : "lazy dog",
-            "fields"      : [ "title^2", "cont*" ],
-            "use_dis_max" : true,
-            "tie_breaker" : 0.2
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "query_string" : {
+         "query"       : "lazy dog",
+         "fields"      : [ "title^2", "cont*" ],
+         "use_dis_max" : true,
+         "tie_breaker" : 0.2
+     }
+ }
+--------------------------------------------------
+
 
 .Multi-field `multi_match` vs `query_string`
 ****
@@ -149,13 +181,17 @@ the `fields` parameter as a _single field_.
 
 This `multi_match` query:
 
-    {
-        "multi_match": {
-            "fields":  ["title", "content"},
-            "query":   "foo bar",
-            "operator: "and"
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "multi_match": {
+         "fields":  ["title", "content"},
+         "query":   "foo bar",
+         "operator: "and"
+     }
+ }
+--------------------------------------------------
+
 
 searches for documents where:
 
@@ -165,13 +201,17 @@ searches for documents where:
 
 while this `query_string` query:
 
-    {
-        "query_string": {
-            "fields":           ["title", "content"},
-            "query":            "foo bar",
-            "default_operator:  "AND"
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "query_string": {
+         "fields":           ["title", "content"},
+         "query":            "foo bar",
+         "default_operator:  "AND"
+     }
+ }
+--------------------------------------------------
+
 
 searches for documents where:
 

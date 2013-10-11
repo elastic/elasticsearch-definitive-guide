@@ -5,40 +5,48 @@ The most basic form of the search API is the _empty search_ which doesn't
 specify any query, but simply returns all documents in all indices in the
 cluster:
 
-    curl localhost:9200/_search
+[source,js]
+--------------------------------------------------
+ GET /_search
+--------------------------------------------------
+
 
 The response (edited for brevity) looks something like this:
 
-    {
-       "hits" : {
-          "total" :       14,
-          "hits" : [
-            {
-              "_index" :  "gb",
-              "_type" :   "tweet",
-              "_id" :     "3",
-              "_source" : {... TRIMMED ...},
-              "_score" :  1.0
-            },
-            {
-              "_index" :  "us",
-              "_type" :   "user",
-              "_id" :     "1",
-              "_source" : {... TRIMMED ...},
-              "_score" :  1.0
-            },
-            ... 8 RESULTS REMOVED ...
-          ],
-          "max_score" :   1
-       },
-       "took" :           4,
-       "_shards" : {
-          "failed" :      0,
-          "successful" :  10,
-          "total" :       10
-       },
-       "timed_out" :      false
-    }
+[source,js]
+--------------------------------------------------
+ {
+    "hits" : {
+       "total" :       14,
+       "hits" : [
+         {
+           "_index" :  "gb",
+           "_type" :   "tweet",
+           "_id" :     "3",
+           "_source" : {... TRIMMED ...},
+           "_score" :  1.0
+         },
+         {
+           "_index" :  "us",
+           "_type" :   "user",
+           "_id" :     "1",
+           "_source" : {... TRIMMED ...},
+           "_score" :  1.0
+         },
+         ... 8 RESULTS REMOVED ...
+       ],
+       "max_score" :   1
+    },
+    "took" :           4,
+    "_shards" : {
+       "failed" :      0,
+       "successful" :  10,
+       "total" :       10
+    },
+    "timed_out" :      false
+ }
+--------------------------------------------------
+
 
 ==== `hits`
 
@@ -86,7 +94,11 @@ default, search requests do not timeout.  If response time is more
 important to you than correct results, then can specify a `timeout` as
 `10` or `"10ms"` (10 milliseconds), or `"1s"` (1 second):
 
-    curl localhost:9200/_search?timeout=10ms
+[source,js]
+--------------------------------------------------
+ GET /_search?timeout=10ms
+--------------------------------------------------
+
 
 Elasticsearch will return any results that it has managed to gather
 from shards which responded before the request timed out.

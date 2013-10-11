@@ -15,14 +15,18 @@ different filters can be performed rapidly using bitwise operations like
 However, it doesn't make sense to cache all filters.  Take this filter
 as an example:
 
-    {
-        "bool" : {
-            "must": [
-                { "term" : { "tag" :    "elasticsearch" }},
-                { "term" : { "status" : "active"        }}
-            ]
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "bool" : {
+         "must": [
+             { "term" : { "tag" :    "elasticsearch" }},
+             { "term" : { "status" : "active"        }}
+         ]
+     }
+ }
+--------------------------------------------------
+
 
 It makes sense to cache the individual `term` filters, but not the
 final result of the `bool` filter, as this is quick to calculate from the
@@ -64,24 +68,32 @@ are not cached either.
 All filters accept a `_cache` which can be set to `true` or `false`,
 allowing you to override the default.  For instance:
 
-    {
-        "term" : {
-            "status" :   "active",
-            "_cache" :   false
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "term" : {
+         "status" :   "active",
+         "_cache" :   false
+     }
+ }
+--------------------------------------------------
+
 
 The only exception to this format is the `query` filter, which needs
 the query to be wrapped in an extra `fquery` layer:
 
-    {
-        "query" : {
-            "fquery" : {
-                "query" :  { ... }
-                "_cache" : true
-            }
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "query" : {
+         "fquery" : {
+             "query" :  { ... }
+             "_cache" : true
+         }
+     }
+ }
+--------------------------------------------------
+
 
 ==== Optimizing filter reuse
 
@@ -104,19 +116,23 @@ Instead, we could use two filters:
 * one which filters out all documents up until `now() - 3600`, which we don't
   cache
 
-    {
-        "bool": {
-            "must": [
-                { "range": {
-                    "created": { "gte": "2013/02/01 00:00:00" }
-                }},
-                { "range": {
-                    "_cache":  false,
-                    "created": { "gte": "2013/02/01 16:52:38" }
-                }},
-            ]
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "bool": {
+         "must": [
+             { "range": {
+                 "created": { "gte": "2013/02/01 00:00:00" }
+             }},
+             { "range": {
+                 "_cache":  false,
+                 "created": { "gte": "2013/02/01 16:52:38" }
+             }},
+         ]
+     }
+ }
+--------------------------------------------------
+
 
 The first filter efficiently excludes all documents except for those created
 today, meaning that the second filter has to do much less work.
@@ -134,12 +150,16 @@ key can consume a significant amount of memory.
 In these exceptional cases, you can provide your own short cache key,
 e.g. `"Friends of John"`.
 
-    {
-        "terms": {
-            "_id":        [ "xxxxxxx", "yyyyyy", ..... ],
-            "_cache_key": "Friends of John"
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "terms": {
+         "_id":        [ "xxxxxxx", "yyyyyy", ..... ],
+         "_cache_key": "Friends of John"
+     }
+ }
+--------------------------------------------------
+
 
 [WARNING]
 ====

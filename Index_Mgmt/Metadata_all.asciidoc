@@ -11,14 +11,17 @@ while you are unsure what final structure your documents will have. You
 can just throw any query string at it and you have a good chance of
 finding the document you're after:
 
-    curl localhost:9200/_search -d '
-    {
-        "match": {
-            "_all": "john smith marketing"
-        }
-    }
-    '
+[source,js]
+--------------------------------------------------
+ GET /_search 
+ {
+     "match": {
+         "_all": "john smith marketing"
+     }
+ }
+--------------------------------------------------
 
+    
 As your application evolves and your search requirements become more
 exacting, you will find yourself using the `_all` field less and less.
 The `_all` field is shotgun approach to search. By querying individual
@@ -35,14 +38,17 @@ in the `_all` field.
 If you decide that you no longer need the `_all` field, you can
 disable it with this mapping:
 
-    curl -XPUT localhost:9200/my_index/my_type/_mapping -d '
-    {
-        "my_type": {
-            "_all": { "enabled": false }
-        }
-    }
-    '
+[source,js]
+--------------------------------------------------
+ PUT /my_index/my_type/_mapping 
+ {
+     "my_type": {
+         "_all": { "enabled": false }
+     }
+ }
+--------------------------------------------------
 
+    
 Inclusion in the `_all` field can be controlled on a field-by-field basis
 using the `include_in_all` setting, which defaults to `true`.  Setting
 `include_in_all` on an object (or on the root object) changes the
@@ -54,35 +60,41 @@ as a catch-all full text field just for specific fields, such as
 field completely, disable `include_in_all` for all fields by default,
 and enable it only on the fields you choose:
 
-    curl -XPUT localhost:9200/my_index/my_type/_mapping -d '
-    {
-        "my_type": {
-            "include_in_all": false,
-            "properties": {
-                "title": {
-                    "type":           "string",
-                    "include_in_all": true
-                },
-                ...
-            }
-        }
-    }
-    '
+[source,js]
+--------------------------------------------------
+ PUT /my_index/my_type/_mapping 
+ {
+     "my_type": {
+         "include_in_all": false,
+         "properties": {
+             "title": {
+                 "type":           "string",
+                 "include_in_all": true
+             },
+             ...
+         }
+     }
+ }
+--------------------------------------------------
 
+    
 Remember that the `_all` field is just an analyzed `string` field.  It
 uses the default analyzer to analyze its values, regardless of which
 analyzer has been set on the fields where the values originate.  And
 like any `string` field, you can configure which analyzer the `_all`
 field should use:
 
-    curl -XPUT localhost:9200/my_index/my_type/_mapping -d '
-    {
-        "my_type": {
-            "_all": { "analyzer": "whitespace" }
-        }
-    }
-    '
+[source,js]
+--------------------------------------------------
+ PUT /my_index/my_type/_mapping 
+ {
+     "my_type": {
+         "_all": { "analyzer": "whitespace" }
+     }
+ }
+--------------------------------------------------
 
+    
 
 
 

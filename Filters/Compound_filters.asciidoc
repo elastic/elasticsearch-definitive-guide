@@ -5,7 +5,11 @@ When you want to combine multiple filter clauses together you need to be
 specific about how they relate to each other, in the same way as you would
 in SQL:
 
-    WHERE status = "active" AND count > 5
+[source,js]
+--------------------------------------------------
+ WHERE status = "active" AND count > 5
+--------------------------------------------------
+
 
 There are two options in Elasticsearch for combining filters with AND, OR
 and NOT logic: the `bool` filter, and the `and`, `or` and `not` filters.
@@ -31,22 +35,30 @@ one or more filter clauses:
 
 For instance, this SQL statement:
 
-    WHERE status = 'active'
-    AND ( created >= '2013/01/01' OR featured = 1 )
-    AND   hidden <> 1
+[source,js]
+--------------------------------------------------
+ WHERE status = 'active'
+ AND ( created >= '2013/01/01' OR featured = 1 )
+ AND   hidden <> 1
+--------------------------------------------------
+
 
 could be written as:
 
-    {
-        "bool" : {
-            "must" :     { "term" : { "status" : "active" }},
-            "should" :   [
-                { "range" : { "created" : { "gte" : "2013/01/01" }}},
-                { "term" :  { "featured" : 1 }}
-            ],
-            "must_not" : { "term" : { "hidden" : 1 }}
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "bool" : {
+         "must" :     { "term" : { "status" : "active" }},
+         "should" :   [
+             { "range" : { "created" : { "gte" : "2013/01/01" }}},
+             { "term" :  { "featured" : 1 }}
+         ],
+         "must_not" : { "term" : { "hidden" : 1 }}
+     }
+ }
+--------------------------------------------------
+
 
 Each of `must`, `should` and `must_not` accepts either a single filter or
 an array of filters, as demonstrated in the `should` clause in the
@@ -60,26 +72,34 @@ allows `bool` filters to be nested.
 
 As an example, this SQL statement:
 
-    WHERE status = "featured"
-    OR    status = "active"   AND created >= '2013/01/01'
+[source,js]
+--------------------------------------------------
+ WHERE status = "featured"
+ OR    status = "active"   AND created >= '2013/01/01'
+--------------------------------------------------
+
 
 could be written as:
 
-    {
-      "bool": {
-        "should": [
-          { "term": { "status": "featured" }},
-          {
-            "bool": {
-              "must": [
-                { "term":  { "status": "active"}},
-                { "range": { "created": { "gte": "2013/01/01" }}}
-              ]
-            }
-          }
-        ]
-      }
-    }
+[source,js]
+--------------------------------------------------
+ {
+   "bool": {
+     "should": [
+       { "term": { "status": "featured" }},
+       {
+         "bool": {
+           "must": [
+             { "term":  { "status": "active"}},
+             { "range": { "created": { "gte": "2013/01/01" }}}
+           ]
+         }
+       }
+     ]
+   }
+ }
+--------------------------------------------------
+
 
 
 [[and-or-filter]]
@@ -91,20 +111,28 @@ type, including other `and` or `or` clauses.
 
 For example, this SQL query:
 
-    WHERE status = "active" AND (count < 5 OR count > 10)
+[source,js]
+--------------------------------------------------
+ WHERE status = "active" AND (count < 5 OR count > 10)
+--------------------------------------------------
+
 
 could be written as:
 
-    {
-        "and" :  [
-            { "term" :  { "status" :      "active" }},
-            { "or" : [
-                { "range" : { "count" : { "lt" : 5  }},
-                { "range" : { "count" : { "gt" : 10 }}
-              ]
-            }
-        ]
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "and" :  [
+         { "term" :  { "status" :      "active" }},
+         { "or" : [
+             { "range" : { "count" : { "lt" : 5  }},
+             { "range" : { "count" : { "gt" : 10 }}
+           ]
+         }
+     ]
+ }
+--------------------------------------------------
+
 
 The order of the filter clauses is important because both the `and` and `or`
 filters __short-circuit__. In other words, they do the least amount of work
@@ -127,9 +155,13 @@ for the `or` filter, and the most specific filters first for the `and` filter.
 The `not` filter negates any other filter. For example, `WHERE count <> 5`
 could be written as:
 
-    {
-        "not" : { "term" : { "count" : 5 }}
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "not" : { "term" : { "count" : 5 }}
+ }
+--------------------------------------------------
+
 
 However, the `not` filter only accepts a single filter.  To negate multiple
 filters, you need to be explicit about how those filters should be combined.
@@ -137,17 +169,25 @@ That is, you should wrap them in a <<bool-filter,`bool` filter>> or
 in an <<and-or-filter,`and` or `or` filter>>. For instance, this SQL
 statement:
 
-    WHERE status <> "inactive"
-      AND status <> "pending"
+[source,js]
+--------------------------------------------------
+ WHERE status <> "inactive"
+   AND status <> "pending"
+--------------------------------------------------
+
 
 could be written in either of these two ways:
 
-    {
-        "and" : [
-          { "not": { "term" : { "status" : "inactive" }}},
-          { "not": { "term" : { "status" : "pending"  }}}
-        ]
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "and" : [
+       { "not": { "term" : { "status" : "inactive" }}},
+       { "not": { "term" : { "status" : "pending"  }}}
+     ]
+ }
+--------------------------------------------------
+
 
     {
         "not" : {
@@ -208,27 +248,31 @@ bitsets::
     wrap just the non-bitset filters in a separate `and` or `or` clause
     which you pass into the main `bool` filter:
 
-    {
-        "bool": {
-            "must": [
-                { "term": { "status": "active" }},
-                { "term": { "tag": "elasticsearch" }},
-                { "or": [
-                    { "geo_distance": {
-                        "distance": "20km",
-                        "location": {
-                            "lat": 40.77,
-                            "lon": 73.98
-                    }}},
-                    { "geo_distance": {
-                        "distance": "20km",
-                        "location": {
-                            "lat": 51.5,
-                            "lon": -0.12
-                    }}}
-                ]}
-            ]
-     }}
+[source,js]
+--------------------------------------------------
+ {
+     "bool": {
+         "must": [
+             { "term": { "status": "active" }},
+             { "term": { "tag": "elasticsearch" }},
+             { "or": [
+                 { "geo_distance": {
+                     "distance": "20km",
+                     "location": {
+                         "lat": 40.77,
+                         "lon": 73.98
+                 }}},
+                 { "geo_distance": {
+                     "distance": "20km",
+                     "location": {
+                         "lat": 51.5,
+                         "lon": -0.12
+                 }}}
+             ]}
+         ]
+  }}
+--------------------------------------------------
+
 
 
 *As a general rule*: use the `bool` filter. If you are trying to

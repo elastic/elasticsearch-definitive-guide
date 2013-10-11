@@ -27,9 +27,13 @@ Exact values are easy to query. The decision is binary -- a value either
 matches the query, or it doesn't. This kind of query is easy to
 express with SQL:
 
-    WHERE name    = "John Smith"
-      AND user_id = 2
-      AND date    > "2013-09-15"
+[source,js]
+--------------------------------------------------
+ WHERE name    = "John Smith"
+   AND user_id = 2
+   AND date    > "2013-09-15"
+--------------------------------------------------
+
 
 Querying full text data is much more subtle. We are not just
 asking ``Does this document match the query'', but ``How _well_ does

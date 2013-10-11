@@ -8,16 +8,28 @@ If you have followed the instructions above, then you are already running
 an Elasticsearch node. To start another node, open a new terminal window,
 change to the directory where you unpacked Elasticsearch, and type:
 
-    ./bin/elasticsearch -f
+[source,js]
+--------------------------------------------------
+ ./bin/elasticsearch -f
+--------------------------------------------------
+
 
 In the output from the new node, you should see something like:
 
-    [INFO ][cluster.service] [Harpy] detected_master [Rand, Daniel]
+[source,js]
+--------------------------------------------------
+ [INFO ][cluster.service] [Harpy] detected_master [Rand, Daniel]
+--------------------------------------------------
+
 
 If, instead, you see a line like the following, then it means that your
 nodes have not been able to detect each other:
 
-    [INFO ][cluster.service] [Harpy] new_master [Harpy]
+[source,js]
+--------------------------------------------------
+ [INFO ][cluster.service] [Harpy] new_master [Harpy]
+--------------------------------------------------
+
 
 Multiple nodes can be run from the same directory, with the same configuration
 and paths. The first node will bind to port `9300` for cluster transport (for
@@ -32,7 +44,11 @@ protected by the firewall.
 First, shut down any running nodes by pressing `Ctrl-C`, open two console
 windows and start a node in each window using the same command:
 
-    ./bin/elasticsearch -f -Des.network.host=127.0.0.1
+[source,js]
+--------------------------------------------------
+ ./bin/elasticsearch -f -Des.network.host=127.0.0.1
+--------------------------------------------------
+
 
 Now your nodes should be able to see each other and form a cluster.
 
@@ -41,7 +57,11 @@ Now your nodes should be able to see each other and form a cluster.
 To follow the steps below exactly, stop the second node with `Ctrl-C`, then
 remove all data from your cluster, by deleting all indices:
 
-    curl -XDELETE localhost:9200/_all
+[source,js]
+--------------------------------------------------
+ DELETE /_all
+--------------------------------------------------
+
 
 You can visualize the changes happening in the cluster by opening the page
 http://bl.ocks.org/d/4709186/ in a browser.

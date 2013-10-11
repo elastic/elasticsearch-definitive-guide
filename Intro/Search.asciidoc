@@ -4,13 +4,21 @@ Let's try a search now -- after all, search is one of the reasons you are intere
 in Elasticsearch! For simple _ad hoc_ searches, we can use the _query string_ search
 method:
 
-    curl -XGET 'localhost:9200/_search?pretty&q=john'
+[source,js]
+--------------------------------------------------
+ GET /_search?pretty&q=john
+--------------------------------------------------
+
 
 The above query returns our `johnsmith` document as a result. By default, Elasticsearch
 is searching all the fields in your document.  If you want to search a specific field,
 you can specify it as a URI parameter:
 
-    curl -XGET 'localhost:9200/_search?pretty&q=first:john'
+[source,js]
+--------------------------------------------------
+ GET /_search?pretty&q=first:john
+--------------------------------------------------
+
 
 Every single field in a document is indexed and searchable by default. It's
 the equivalent a database having an index on every column in
@@ -32,21 +40,24 @@ The query string search is useful for simple queries from the command line, but 
 the _Query DSL_  to express more complex and specific queries in JSON.  The Query DSL is
 Elasticsearch's rich and flexible query language and looks like this:
 
-    curl -XGET localhost:9200/_search?pretty -d '
-    {
-        "query": {
-            "bool": {
-                "must": { "match": { "name.first": "john" }},
-                "should": [
-                    { "match": { "interests": "whales" }},
-                    { "match": { "bio": "eco warrior"  }},
-                    { "range": { "age": { "from": 20   }}}
-                ]
-            }
-        }
-    }
-    '
+[source,js]
+--------------------------------------------------
+ GET /_search?pretty 
+ {
+     "query": {
+         "bool": {
+             "must": { "match": { "name.first": "john" }},
+             "should": [
+                 { "match": { "interests": "whales" }},
+                 { "match": { "bio": "eco warrior"  }},
+                 { "range": { "age": { "from": 20   }}}
+             ]
+         }
+     }
+ }
+--------------------------------------------------
 
+    
 The Query DSL gives you complete control over how your query is executed.
 Individual clauses are like building blocks which can be put together
 in different ways to suit your search needs and performance requirements.
@@ -58,20 +69,27 @@ The search API supports other related functionality, such as highlighting
 search snippets to show matching terms in the context of the document
 content:
 
-    curl -XGET localhost:9200/_search?pretty -d '
-    {
-        "query": { "match": { "bio": "eco warrior" }},
-        "highlight": {
-            "fields": {
-                "bio": {}
-            }
-        }
-    }
-    '
+[source,js]
+--------------------------------------------------
+ GET /_search?pretty 
+ {
+     "query": { "match": { "bio": "eco warrior" }},
+     "highlight": {
+         "fields": {
+             "bio": {}
+         }
+     }
+ }
+--------------------------------------------------
 
+    
 The above query returns snippets like:
 
-    <em>Eco</em>-<em>warrior</em> and defender of the weak
+[source,js]
+--------------------------------------------------
+ <em>Eco</em>-<em>warrior</em> and defender of the weak
+--------------------------------------------------
+
 
 === Near real-time analytics
 
@@ -103,38 +121,45 @@ categories which can then be used to narrow down the results.
 The following query returns all objects of type `user` in all indices,
 and summarizes the most popular values in the `interests` field:
 
-    curl -XGET 'localhost:9200/_all/user/_search?pretty'  -d '
-    {
-       "query" : {
-          "match_all" : {}
-       },
-       "facets" : {
-          "interests" : {
-             "terms" : {
-                "field" : "interests"
-             }
+[source,js]
+--------------------------------------------------
+ GET /_all/user/_search?pretty  
+ {
+    "query" : {
+       "match_all" : {}
+    },
+    "facets" : {
+       "interests" : {
+          "terms" : {
+             "field" : "interests"
           }
        }
     }
-    '
+ }
+--------------------------------------------------
 
+    
 The `facets` section of the JSON response to the above looks like this:
 
-    "facets" : {
-       "interests" : {
-          "_type" : "terms",
-          "total" : 7
-          "terms" : [
-             { "count" : 2, "term" : "whales"   },
-             { "count" : 2, "term" : "golf"     },
-             { "count" : 1, "term" : "wine"     },
-             { "count" : 1, "term" : "dolphins" },
-             { "count" : 1, "term" : "cinema"   }
-          ],
-          "other" : 0,
-          "missing" : 0,
-       }
-    },
+[source,js]
+--------------------------------------------------
+ "facets" : {
+    "interests" : {
+       "_type" : "terms",
+       "total" : 7
+       "terms" : [
+          { "count" : 2, "term" : "whales"   },
+          { "count" : 2, "term" : "golf"     },
+          { "count" : 1, "term" : "wine"     },
+          { "count" : 1, "term" : "dolphins" },
+          { "count" : 1, "term" : "cinema"   }
+       ],
+       "other" : 0,
+       "missing" : 0,
+    }
+ },
+--------------------------------------------------
+
 
 The two most popular interests are `whales` and `golf`. Our user could choose
 to repeat their search, but limiting the results to just users who are

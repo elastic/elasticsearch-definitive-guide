@@ -10,19 +10,35 @@ definition), which we will discuss in <<mapping>>:
 
 * `not_analyzed` (enum) string fields
 
-    { "match" : { "status" : "active" }}
+[source,js]
+--------------------------------------------------
+ { "match" : { "status" : "active" }}
+--------------------------------------------------
+
 
 * numbers
 
-    { "match" : { "count" : 5 }}
+[source,js]
+--------------------------------------------------
+ { "match" : { "count" : 5 }}
+--------------------------------------------------
+
 
 * dates
 
-    { "match" : { "created" : "2013/05/01" }}
+[source,js]
+--------------------------------------------------
+ { "match" : { "created" : "2013/05/01" }}
+--------------------------------------------------
+
 
 * booleans
 
-    { "match" : { "featured" : true }}
+[source,js]
+--------------------------------------------------
+ { "match" : { "featured" : true }}
+--------------------------------------------------
+
 
 
 [[analyzed-vs-not]]
@@ -45,11 +61,19 @@ indexed as the single token `"Foxes Rule!"`.
 By default, Elasticsearch assumes that all string fields contain
 full text. They are defined (or ``mapped'') as:
 
-    { "type": "string", "index": "analyzed" }
+[source,js]
+--------------------------------------------------
+ { "type": "string", "index": "analyzed" }
+--------------------------------------------------
+
 
 String fields which contain exact values have to be manually defined as:
 
-    { "type": "string", "index": "not_analyzed" }
+[source,js]
+--------------------------------------------------
+ { "type": "string", "index": "not_analyzed" }
+--------------------------------------------------
+
 
 We will explain how to setup `not_analyzed` fields in <<mapping>>, but for
 now, it is important to know the distinction between the two.
@@ -69,15 +93,19 @@ the better.
 We could write this by combining three `match` clauses with a
 <<bool-query,`bool` query>>:
 
-    {
-        "bool": {
-            "should": [
-                { "match": { "tag": "html6"  },
-                { "match": { "tag": "css3"   },
-                { "match": { "tag": "jquery" }
-            ]
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "bool": {
+         "should": [
+             { "match": { "tag": "html6"  },
+             { "match": { "tag": "css3"   },
+             { "match": { "tag": "jquery" }
+         ]
+     }
+ }
+--------------------------------------------------
+
 
 Also, because `html6` is such a rare tag, any job tagged with `html6` will
 show up as being particularly relevant.

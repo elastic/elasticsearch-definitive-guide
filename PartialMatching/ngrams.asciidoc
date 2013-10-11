@@ -5,11 +5,19 @@ Creating these fragments is accomplished using the `ngram` token filter. This fi
 
 Given the word "pancake" and a size of three, we generate the following new tokens:
 
-    "pan", "anc", "nca", "cak", "ake"
+[source,js]
+--------------------------------------------------
+ "pan", "anc", "nca", "cak", "ake"
+--------------------------------------------------
+
 
 The minimum and maximum size of the ngram is configurable.  If you set min = 2 and max = 3, you would generate all combinations between two and three:
 
-    "pa", "pan", "an", "anc", ....
+[source,js]
+--------------------------------------------------
+ "pa", "pan", "an", "anc", ....
+--------------------------------------------------
+
 
 While this appears to be useful, in practice it does not help search relevance and simply bloats the index (and potentially slows everything down).  Generally speaking, spending time to find the optimal n-gram size is more productive than generating all ngrams between n and n+10.
 
@@ -19,7 +27,11 @@ Ok, so you have a big pile of ngrams in your index, what is the best way to sear
 
 By default, the match query will analyze your input with the analyzer of the field.  Let's imagine that the search input is "pankake", it will be analyzed into the following tokens:
 
-    "pan", "ank", "nka", "kak", "ake"
+[source,js]
+--------------------------------------------------
+ "pan", "ank", "nka", "kak", "ake"
+--------------------------------------------------
+
 
 And, if you'll look back at the tokenization of "pancake", the two terms have two tokens in common.  The search query will turn up "pancake" even though it was originally mispelled
 

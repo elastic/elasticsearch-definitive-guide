@@ -10,15 +10,27 @@ contain the exact value `bar`? It it similar to the SQL statement:
 
 For instance, does the field `status` contain the string `"active"`:
 
-    { "term" : { "status" : "active" }}
+[source,js]
+--------------------------------------------------
+ { "term" : { "status" : "active" }}
+--------------------------------------------------
+
 
 Does field `count` contain the number `5`:
 
-    { "term" : { "count" : 5 }}
+[source,js]
+--------------------------------------------------
+ { "term" : { "count" : 5 }}
+--------------------------------------------------
+
 
 Does field `publish_date` contain the date `2013/01/01`:
 
-    { "term" : { "publish_date" : "2013/01/01" }}
+[source,js]
+--------------------------------------------------
+ { "term" : { "publish_date" : "2013/01/01" }}
+--------------------------------------------------
+
 
 Term filters work for all simple data types (e.g. strings, numbers, dates).
 They only match *exact* values: if you search for `active` but your field
@@ -32,11 +44,19 @@ values.
 
 For instance, a document whose `tags` field contains an array of tags:
 
-    { "tags" : [ "elasticsearch", "lucene", "nosql" ]}
+[source,js]
+--------------------------------------------------
+ { "tags" : [ "elasticsearch", "lucene", "nosql" ]}
+--------------------------------------------------
+
 
 will match a filter looking for just one of those tags:
 
-    { "term": { "tags": "elasticsearch" }}
+[source,js]
+--------------------------------------------------
+ { "term": { "tags": "elasticsearch" }}
+--------------------------------------------------
+
 
 ====
 
@@ -47,18 +67,26 @@ The `terms` filter is like the `term` filter but allows you to check for
 multiple values at once, much like the `IN` operator in SQL.  By default,
 it checks whether the field contains *ANY* of the listed values:
 
-    { "terms" : { "status" : [ "active", "pending" ] }}
+[source,js]
+--------------------------------------------------
+ { "terms" : { "status" : [ "active", "pending" ] }}
+--------------------------------------------------
+
 
 As mentioned above, a field may contain multiple values. You can
 check whether the field contains *ALL* of the listed values by seting the
 `execution` parameter to `"and"`:
 
-    {
-        "terms" : {
-            "execution" : "and",
-            "tags" :      [ "elasticsearch", "nosql" ]
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "terms" : {
+         "execution" : "and",
+         "tags" :      [ "elasticsearch", "nosql" ]
+     }
+ }
+--------------------------------------------------
+
 
 ===== `execution`
 

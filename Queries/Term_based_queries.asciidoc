@@ -6,18 +6,26 @@ Term based queries are distinct from full text queries like the
 
 Full text queries::
 
-    consider the _mapping_ or field definition of the field being queried,
-    and applies the appropriate _analysis_ to the query string. In other words,
-    they convert the full text query string into a list of _terms_ or tokens
-    in a canonical format,
-    then search the index for those exact terms -- a query string of
-    `"Foo Bar"` might result in queries for the two terms
-    `"foo"` and `"bar"`.
+[source,js]
+--------------------------------------------------
+ consider the _mapping_ or field definition of the field being queried,
+ and applies the appropriate _analysis_ to the query string. In other words,
+ they convert the full text query string into a list of _terms_ or tokens
+ in a canonical format,
+ then search the index for those exact terms -- a query string of
+ `"Foo Bar"` might result in queries for the two terms
+ `"foo"` and `"bar"`.
+--------------------------------------------------
+
 
 Term-based queries::
 
-    have no analysis phase.  A term query for `"Foo"` will search
-    for that *exact term* -- it won't match the indexed term `"foo"`.
+[source,js]
+--------------------------------------------------
+ have no analysis phase.  A term query for `"Foo"` will search
+ for that *exact term* -- it won't match the indexed term `"foo"`.
+--------------------------------------------------
+
 
 As explained in <<exact-queries>>, we would normally use a `match` query
 for exact matching, as it can use the field mapping to decide whether the field

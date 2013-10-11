@@ -6,7 +6,11 @@ comes into its own when used on full text string fields.
 
 To search the full text `title` field, we can write:
 
-    { "match": { "title": "Quick Brown Fox" }}
+[source,js]
+--------------------------------------------------
+ { "match": { "title": "Quick Brown Fox" }}
+--------------------------------------------------
+
 
 First, it analyzes the query string into terms:
 
@@ -22,14 +26,18 @@ Which form is chosen depends on the `operator` paramter, which can be
 set to `"or"` to match *any* terms -- the default -- or `"and"` to
 match *all* terms:
 
-    {
-        "match" : {
-            "title" : {
-                "operator" : "and",
-                "query"    : "Quick Brown Fox"
-            }
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "match" : {
+         "title" : {
+             "operator" : "and",
+             "query"    : "Quick Brown Fox"
+         }
+     }
+ }
+--------------------------------------------------
+
 
 _Note how the form of the `match` query changed to allow it to accept
 the additional `"operator"` parameter._
@@ -48,14 +56,18 @@ We can control how strictly or leniently to match using the
 For instance, we could
 specify that at least `70%` of the terms should be present:
 
-    {
-        "match" : {
-            "title" : {
-                "query"                : "Quick Brown Fox",
-                "minimum_should_match" : "70%"
-            }
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "match" : {
+         "title" : {
+             "query"                : "Quick Brown Fox",
+             "minimum_should_match" : "70%"
+         }
+     }
+ }
+--------------------------------------------------
+
 
 The `minimum_should_match` parameter can accept a variety of formats, which
 are explained in <<minimum-should-match-formats>>.

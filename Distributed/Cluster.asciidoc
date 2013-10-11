@@ -64,14 +64,17 @@ Let's create an index called `blogs` in our empty one-node cluster.
 By default, indices are assigned 5 primary shards, but for the purpose of this
 demonstration, we'll assign just 3 primary shards:
 
-    curl -XPUT 'http://127.0.0.1:9200/blogs/?pretty'  -d '
-    {
-       "settings" : {
-          "number_of_shards" : 3
-       }
+[source,js]
+--------------------------------------------------
+ PUT 'http://127.0.0.1:9200/blogs/?pretty'  
+ {
+    "settings" : {
+       "number_of_shards" : 3
     }
-    '
+ }
+--------------------------------------------------
 
+    
 [[cluster-one-node]]
 .A single-node cluster with an index
 image::images/cluster_node1.svg["A single-node cluster with an index"]
@@ -143,14 +146,17 @@ allowing us to scale up or down as demand requires.
 
 Let's increase the number of replicas from the default of `1` to `2`:
 
-    curl -XPUT 'http://127.0.0.1:9200/blogs/_settings?pretty'  -d '
-    {
-       "index" : {
-          "number_of_replicas" : 2
-       }
+[source,js]
+--------------------------------------------------
+ PUT 'http://127.0.0.1:9200/blogs/_settings?pretty'  
+ {
+    "index" : {
+       "number_of_replicas" : 2
     }
-    '
+ }
+--------------------------------------------------
 
+    
 [[cluster-three-nodes-two-replicas]]
 .Increasing the `number_of_replicas` to 2
 image::images/cluster_node1_node2_node3_replicas_2.svg["A three-node cluster with two replica shards"]

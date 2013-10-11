@@ -19,30 +19,37 @@ can assign this user the unique ID `johnsmith`. Notice how
 the `index`, `type` and `id` are specified in the path of the URI, rather
 than in the document itself:
 
-    curl -XPUT 'localhost:9200/blogs/user/johnsmith?pretty' -d '
-    {
-        "email":     "john@smith.com",
-        "name": {
-            "first": "John",
-            "last":  "Smith"
-        },
-        "bio":       "Eco-warrior and defender of the weak",
-        "age":       25,
-        "join_date": "2013/05/01",
-        "interests": ["dolphins", "whales"]
-    }
-    '
+[source,js]
+--------------------------------------------------
+ PUT /blogs/user/johnsmith?pretty 
+ {
+     "email":     "john@smith.com",
+     "name": {
+         "first": "John",
+         "last":  "Smith"
+     },
+     "bio":       "Eco-warrior and defender of the weak",
+     "age":       25,
+     "join_date": "2013/05/01",
+     "interests": ["dolphins", "whales"]
+ }
+--------------------------------------------------
 
+    
 And we receive the following response, which confirms that our document
 has been indexed correctly:
 
-    {
-      "ok" : true,
-      "_index" : "blogs",
-      "_type" : "user",
-      "_id" : "johnsmith",
-      "_version" : 1
-    }
+[source,js]
+--------------------------------------------------
+ {
+   "ok" : true,
+   "_index" : "blogs",
+   "_type" : "user",
+   "_id" : "johnsmith",
+   "_version" : 1
+ }
+--------------------------------------------------
+
 
 Congratulations! You just indexed your first document! How easy was that?
 
@@ -58,29 +65,37 @@ change would still be there when the cluster is restarted.
 We can retrieve (or `GET`) the document using the same `index`, `type` and `id`
 that we specified when indexing it:
 
-    curl -XGET 'localhost:9200/blogs/user/johnsmith?pretty'
+[source,js]
+--------------------------------------------------
+ GET /blogs/user/johnsmith?pretty
+--------------------------------------------------
+
 
 The response contains the exact same JSON document that we indexed, as the
 `_source` field, plus some extra metadata:
 
-    {
-        "_index" :    "blogs",
-        "_type" :     "user",
-        "_id" :       "johnsmith",
-        "_version" :  1,
-        "exists" :    true,
-        "_source" :   {
-             "email":     "john@smith.com",
-             "name": {
-                 "first": "John",
-                 "last":  "Smith"
-             },
-             "bio":       "Eco-warrior and defender of the weak",
-             "age":       25,
-             "join_date": "2013/05/01",
-             "interests": ["dolphins", "whales"]
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "_index" :    "blogs",
+     "_type" :     "user",
+     "_id" :       "johnsmith",
+     "_version" :  1,
+     "exists" :    true,
+     "_source" :   {
+          "email":     "john@smith.com",
+          "name": {
+              "first": "John",
+              "last":  "Smith"
+          },
+          "bio":       "Eco-warrior and defender of the weak",
+          "age":       25,
+          "join_date": "2013/05/01",
+          "interests": ["dolphins", "whales"]
+     }
+ }
+--------------------------------------------------
+
 
 
 

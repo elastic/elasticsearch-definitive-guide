@@ -25,7 +25,7 @@ into a single package:
 
 Elasticsearch provides many character filters, tokenizers and token filters
 out of the box. These can be combined to create custom analyzers suitable
-for different purposes. TODO We will discuss these in detail in <analysis>.
+for different purposes. We will discuss these in detail in <<custom-analyzers>>.
 
 ==== Built-in analyzers
 
@@ -34,7 +34,11 @@ you can use directly. We list the most important ones below and, to demonstrate
 the difference in behaviour, we show what terms each would produce
 from this string:
 
-    "Set the shape to semi-transparent by calling set_trans(5)"
+[source,js]
+--------------------------------------------------
+ "Set the shape to semi-transparent by calling set_trans(5)"
+--------------------------------------------------
+
 
 Standard analyzer::
 
@@ -46,21 +50,33 @@ and removes most punctuation. By default, it removes English
 _stopwords_ -- common words that don't have much impact on search such
 as `"the"` or `"and"`. It would produce:
 
-    set, shape, semi, transparent, calling, set_trans, 5
+[source,js]
+--------------------------------------------------
+ set, shape, semi, transparent, calling, set_trans, 5
+--------------------------------------------------
+
 
 Simple analyzer::
 
 The simple analyzer splits the text on anything that isn't a letter,
 and lowercases the terms. It would produce:
 
-    set, the, shape, to, semi, transparent, by, calling, set, trans
+[source,js]
+--------------------------------------------------
+ set, the, shape, to, semi, transparent, by, calling, set, trans
+--------------------------------------------------
+
 
 Whitespace analyzer::
 
 The whitespace analyzer splits the text on whitespace. It doesn't
 lowercase. It would produce:
 
-    Set, the, shape, to, semi-transparent, by, calling, set_trans(5)
+[source,js]
+--------------------------------------------------
+ Set, the, shape, to, semi-transparent, by, calling, set_trans(5)
+--------------------------------------------------
+
 
 Language analyzers::
 
@@ -105,24 +121,40 @@ converted the date into the three terms: `"2013"`, `"09"` and `"15"`.
 When we query the `_all` field for `2013`, it matches all 12 tweets,
 because all of them contain the term `2013`:
 
-    curl localhost:9200/_search?q=2013              # 12 results
+[source,js]
+--------------------------------------------------
+ GET /_search?q=2013              # 12 results
+--------------------------------------------------
+
 
 When we query the `_all` field for `2013-09-15`, it first analyzes the
 query string to produce a query which matches any of the terms `2013`, `09`
 or `15`. This also matches all 12 tweets, because all of them contain
 the term `2013`:
 
-    curl localhost:9200/_search?q=2013-09-15        # 12 results !
+[source,js]
+--------------------------------------------------
+ GET /_search?q=2013-09-15        # 12 results !
+--------------------------------------------------
+
 
 When we query the `_date` field for `2013-09-15`, it looks for that
 exact date, and finds one tweet only:
 
-    curl localhost:9200/_search?q=date:2013-09-15   # 1  result
+[source,js]
+--------------------------------------------------
+ GET /_search?q=date:2013-09-15   # 1  result
+--------------------------------------------------
+
 
 When we query the `_date` field for `2013`, it finds no documents
 because none contain that exact date:
 
-    curl localhost:9200/_search?q=date:2013         # 0  results !
+[source,js]
+--------------------------------------------------
+ GET /_search?q=date:2013         # 0  results !
+--------------------------------------------------
+
 
 ==== Testing analyzers
 
@@ -130,27 +162,34 @@ You can use the `analyze` API to see how text is analyzed. Specify which
 analyzer to use in the query string parameters, and the text to analyze
 in the body:
 
-    curl localhost:9200/_analyze?analyzer=standard -d '
-    Text to analyze
-    '
+[source,js]
+--------------------------------------------------
+ GET /_analyze?analyzer=standard
+ Text to analyze
+--------------------------------------------------
+
 
 Each element in the result represents a single term:
 
-    {
-      "tokens" : [ {
-        "token" :        "text",
-        "position" :     1,
-        "start_offset" : 1,
-        "end_offset" :   5,
-        "type" :         "<ALPHANUM>"
-      }, {
-        "token" :        "analyze",
-        "position" :     3,
-        "start_offset" : 9,
-        "end_offset" :   16,
-        "type" :         "<ALPHANUM>"
-      } ]
-    }
+[source,js]
+--------------------------------------------------
+ {
+   "tokens" : [ {
+     "token" :        "text",
+     "position" :     1,
+     "start_offset" : 1,
+     "end_offset" :   5,
+     "type" :         "<ALPHANUM>"
+   }, {
+     "token" :        "analyze",
+     "position" :     3,
+     "start_offset" : 9,
+     "end_offset" :   16,
+     "type" :         "<ALPHANUM>"
+   } ]
+ }
+--------------------------------------------------
+
 
 The `token` is the actual term that will be stored in the index. The
 `position` indicates the order in which the terms appeared in the

@@ -11,7 +11,11 @@ Unlike a relational database, Elasticsearch can search across
 multiple types, and across multiple indices. Simply include another index
 in the URI to search both at the same time:
 
-    curl -XGET 'localhost:9200/blogs,blogs2/_search?pretty'
+[source,js]
+--------------------------------------------------
+ GET /blogs,blogs2/_search?pretty
+--------------------------------------------------
+
 
 Later, you will see how the ability to search across multiple indices as if
 they were one, allows us to scale out as our requirements grow.

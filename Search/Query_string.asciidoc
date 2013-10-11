@@ -10,14 +10,22 @@ The query string search is useful for running _ad hoc_ queries from the
 command line. For instance this query finds all tweets containing the word
 `"elasticsearch"` in the `tweet` field:
 
-    curl 'localhost:9200/_all/tweet/_search?q=tweet:elasticsearch'
+[source,js]
+--------------------------------------------------
+ GET /_all/tweet/_search?q=tweet:elasticsearch
+--------------------------------------------------
+
 
 The next query looks for `"john"` in the `name` field and `"mary"` in the
 `tweet` field. The actual query is just `"+name:john +tweet:mary"` but
 the _percent encoding_ of the query string parameters makes it appear more
 cryptic than it really is:
 
-    curl 'localhost:9200/_search?q=%2Bname%3Ajohn+%2Btweet%3Amary'
+[source,js]
+--------------------------------------------------
+ GET /_search?q=%2Bname%3Ajohn+%2Btweet%3Amary
+--------------------------------------------------
+
 
 The `"+"` prefix indicates conditions which _must_ be satisfied for our query to
 match. Similarly a `"-"` prefix would indicate conditions that _must not_
@@ -28,7 +36,11 @@ the more relevant the document.
 
 This simple search returns all documents which contain the word `"mary"`:
 
-    curl 'localhost:9200/_search?q=mary'
+[source,js]
+--------------------------------------------------
+ GET /_search?q=mary
+--------------------------------------------------
+
 
 In the previous examples, we searched for words in the `tweet` or
 `name` fields. However, the results from this query mention `"mary"` in
@@ -44,16 +56,24 @@ When you index a document, Elasticsearch takes the string values of all of
 its fields and concatenates them into one big string which it indexes as
 the special `_all` field. For example, when we index this document:
 
-    {
-        "tweet":    "However did I manage before Elasticsearch?",
-        "date":     "2013-09-14",
-        "name":     "Mary Jones",
-        "user_id":  1
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "tweet":    "However did I manage before Elasticsearch?",
+     "date":     "2013-09-14",
+     "name":     "Mary Jones",
+     "user_id":  1
+ }
+--------------------------------------------------
+
 
 it's as if we had added an extra field called `_all` with the value:
 
-    "However did I manage before Elasticsearch? 2013-09-14 Mary Jones 1"
+[source,js]
+--------------------------------------------------
+ "However did I manage before Elasticsearch? 2013-09-14 Mary Jones 1"
+--------------------------------------------------
+
 
 The query string search uses the `_all` field unless another
 field name has been specified.
@@ -77,12 +97,20 @@ The next query searches for tweets:
   field
 --
 
-    +name:(mary john) +date:>2013-09-10 +(facets geo)
+[source,js]
+--------------------------------------------------
+ +name:(mary john) +date:>2013-09-10 +(facets geo)
+--------------------------------------------------
+
 
 which, as a properly escaped query string looks like the slightly less
 readable:
 
-    q=%2Bname%3A(mary+john)+%2Bdate%3A%3E2013-09-10+%2B(facets+geo)
+[source,js]
+--------------------------------------------------
+ q=%2Bname%3A(mary+john)+%2Bdate%3A%3E2013-09-10+%2B(facets+geo)
+--------------------------------------------------
+
 
 As you can see from the above examples, this _lite_ query string search is
 surprisingly powerful. Its query syntax, which is explained in detail in the

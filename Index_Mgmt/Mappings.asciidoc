@@ -46,10 +46,14 @@ that the field is a `string` field, and that its value should be analyzed
 by the `whitespace` analyzer before being indexed into the inverted
 index called `name`.
 
-    "name": {
-        "type":     "string",
-        "analyzer": "whitespace"
-    }
+[source,js]
+--------------------------------------------------
+ "name": {
+     "type":     "string",
+     "analyzer": "whitespace"
+ }
+--------------------------------------------------
+
 
 ==== Avoiding type gotchas
 
@@ -63,16 +67,19 @@ the other type uses the `spanish` analyzer.
 
 The problem is illustrated by the following query:
 
-    curl localhost:9200/_search -d '
-    {
-        "query": {
-            "match": {
-                "title": "The quick brown fox"
-            }
-        }
-    }
-    '
+[source,js]
+--------------------------------------------------
+ GET /_search 
+ {
+     "query": {
+         "match": {
+             "title": "The quick brown fox"
+         }
+     }
+ }
+--------------------------------------------------
 
+    
 We are searching in the `title` field in both types.  The query string needs
 to be analyzed, but which analyzer does it use: `spanish` or `english`?
 It will just use the analyzer for the first `title` field that it finds,
@@ -82,17 +89,20 @@ We can avoid this problem either by naming the fields differently -- eg
 `title_en` and `title_es` -- or by explicitly including the type name
 in the field name and querying each field separately:
 
-    curl localhost:9200/_search -d '
-    {
-        "query": {
-            "multi_match": {
-                "query":    "The quick brown fox",
-                "fields": [ "blog_en.title", "blog_es.title" ]
-            }
-        }
-    }
-    '
+[source,js]
+--------------------------------------------------
+ GET /_search 
+ {
+     "query": {
+         "multi_match": {
+             "query":    "The quick brown fox",
+             "fields": [ "blog_en.title", "blog_es.title" ]
+         }
+     }
+ }
+--------------------------------------------------
 
+    
 Our new query uses the `english` analyzer for the field `blog_en.title` and
 the `spanish` analyzer for the field `blog_es.title` and combines the
 results from both fields into an overall relevance score.
@@ -101,8 +111,12 @@ This solution can help when both fields have the same datatype, but
 consider what would happen if you indexed these two documents into
 the same index:
 
-    # type: user
-    { "login": "john_smith" }
+[source,js]
+--------------------------------------------------
+ # type: user
+ { "login": "john_smith" }
+--------------------------------------------------
+
 
     # type: event
     { "login": "2013-06-01" }

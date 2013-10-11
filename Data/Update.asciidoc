@@ -5,23 +5,30 @@ Documents in Elasticsearch are immutable -- we cannot change them. Instead,
 if we need to update a document, we *reindex* or replace it, which we can
 do using the same index API that we have already discussed.
 
-    curl -XPUT localhost:9200/website/blog/123 -d '
-    {
-      "title": "My first blog entry",
-      "text":  "I am starting to get the hang of this..."
-    }
-    '
+[source,js]
+--------------------------------------------------
+ PUT /website/blog/123 
+ {
+   "title": "My first blog entry",
+   "text":  "I am starting to get the hang of this..."
+ }
+--------------------------------------------------
 
+    
 In the response, we can see that Elasticsearch has incremented the `_version`
 number:
 
-    {
-      "ok" :       true,
-      "_index" :   "website",
-      "_type" :    "blog",
-      "_id" :      "123",
-      "_version" : 2
-    }
+[source,js]
+--------------------------------------------------
+ {
+   "ok" :       true,
+   "_index" :   "website",
+   "_type" :    "blog",
+   "_id" :      "123",
+   "_version" : 2
+ }
+--------------------------------------------------
+
 
 
 Internally, Elasticsearch has marked the old document as deleted, and added an

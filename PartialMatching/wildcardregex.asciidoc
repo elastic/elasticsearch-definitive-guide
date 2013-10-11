@@ -5,9 +5,13 @@ You bet!
 
 Elasticsearch has a dedicated Wildcard query, which allows you to specify arbitrary wildcards:
 
-    {
-        "wildcard" : { "keyword" : "h*e" }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "wildcard" : { "keyword" : "h*e" }
+ }
+--------------------------------------------------
+
 
 The wildcard asterisk is acts like a /.*/ regular expression, meaning it will match zero or more character sequences.  It is greedy and will match as many characaters as possible.  So, the above query will match "he", "hoe" and "house".
 
@@ -19,9 +23,13 @@ The Wildcard query operates just like the Prefix query internally.  It is first 
 
 Because you are free to place your wildcards anywhere in the query, there is a very real danger of destroying performance with an ill-placed asterisk.  Consider this query:
 
-    {
-        "wildcard" : { "keyword" : "*er" }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "wildcard" : { "keyword" : "*er" }
+ }
+--------------------------------------------------
+
 
 That is effectively asking Elasticsearch to find all terms that end in "er".  Unlike a prefix situation, where the list of potential terms can be pruned considerably (skip everything that doesn't start with the prefix), a leading wildcard is forced to check every single entry in the term dictionary.
 

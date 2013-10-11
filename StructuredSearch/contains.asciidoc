@@ -7,8 +7,12 @@ What does that mean?
 If you have a term filter for `{ "term" : { "years" : "2013" } }`, it will match _both_
 of the following documents:
 
-    { "years" : ["2013"] }
-    { "years" : ["2013", "2012"] }
+[source,js]
+--------------------------------------------------
+ { "years" : ["2013"] }
+ { "years" : ["2013", "2012"] }
+--------------------------------------------------
+
 
 The Term filter looks at the document and sees that, yep, this doc _contains_ the term "2013".
 It is not asking if the field is _exactly_ as your query, merely that it contains the term you
@@ -18,20 +22,28 @@ If you do want that behavior -- entire field equality -- the best way to accompl
 it involves indexing a secondary field.  In this field, you index the number of values
 that your field contains.  Using our two previous documents:
 
-    { "years" : ["2013"], "years_count" : 1 }
-    { "years" : ["2013", "2012"], "years_count" : 2 }
+[source,js]
+--------------------------------------------------
+ { "years" : ["2013"], "years_count" : 1 }
+ { "years" : ["2013", "2012"], "years_count" : 2 }
+--------------------------------------------------
+
 
 Once you have the count information indexed, you can construct a Bool query that enforces the appropriate
 number of terms:
 
-    {
-        "bool" : {
-            "must" : [
-                { "term" : { "years" : "2013" } },
-                { "term" : { "years_count" : 1 } }
-            ]
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "bool" : {
+         "must" : [
+             { "term" : { "years" : "2013" } },
+             { "term" : { "years_count" : 1 } }
+         ]
+     }
+ }
+--------------------------------------------------
+
 
 This query will now match only the document that is ["2013"] exactly.
 

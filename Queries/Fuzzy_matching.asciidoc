@@ -84,19 +84,27 @@ the other partial matching queries, it doesn't return a relevance
 how similar the query term and the fuzzy term are.
 
 
-    { "fuzzy": { "name": "jon" }}
+[source,js]
+--------------------------------------------------
+ { "fuzzy": { "name": "jon" }}
+--------------------------------------------------
+
 
 The degree of fuzziness can be controlled by setting the `max_edits`
 parameter to `1` (1 edit allowed) or `2` (1 or 2 edits allowed).
 
-    {
-        "fuzzy": {
-            "name": {
-                "value":     "jon",
-                "max_edits": 2
-            }
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "fuzzy": {
+         "name": {
+             "value":     "jon",
+             "max_edits": 2
+         }
+     }
+ }
+--------------------------------------------------
+
 
 
 This simple looking query is rewritten into a much more complicated query
@@ -111,14 +119,18 @@ The <<match-query,`match` query>> (but not the `match_phrase` or
 `match_phrase_prefix` queries) also supports fuzzy matching. Specify
 the maximum number of edits (`1` or `2`) with the `max_edits` parameter:
 
-    {
-        "match": {
-            "title": {
-                "query":     "Full Tekst Saerch",
-                "max_edits": 2
-            }
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "match": {
+         "title": {
+             "query":     "Full Tekst Saerch",
+             "max_edits": 2
+         }
+     }
+ }
+--------------------------------------------------
+
 
 The `match` query will analyze the query string before trying to ``fuzzify''
 it.
@@ -128,12 +140,16 @@ it.
 The <<query-string,`query_string` query>> mini-language supports fuzzy
 matching using the `~` symbol, but only on individual words. For instance:
 
-    {
-        "query_string": {
-            "default_field": "title",
-            "query":         "Full Tekst~2 Saerch~2"
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "query_string": {
+         "default_field": "title",
+         "query":         "Full Tekst~2 Saerch~2"
+     }
+ }
+--------------------------------------------------
+
 
 [NOTE]
 ====

@@ -26,53 +26,72 @@ Let's say we have this query:
 and we want to combine it with the following `term` filter, which will
 only match documents which are in our inbox:
 
-    { "term": { "folder": "inbox" }}
+[source,js]
+--------------------------------------------------
+ { "term": { "folder": "inbox" }}
+--------------------------------------------------
+
 
 The `search` API only accepts a single `query` parameter, so we need
 to wrap the query and the filter in another query, called the `filtered`
 query:
 
-    {
-        "filtered": {
-            "query":  { "match": { "email": "business opportunity" }},
-            "filter": { "term":  { "folder": "inbox" }}
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "filtered": {
+         "query":  { "match": { "email": "business opportunity" }},
+         "filter": { "term":  { "folder": "inbox" }}
+     }
+ }
+--------------------------------------------------
+
 
 We can now pass this query to the `query` parameter of the `search` API:
 
-    curl localhost:9200/_search -d '
-    {
-        "query": {
-            "filtered": {
-                "query":  { "match": { "email": "business opportunity" }},
-                "filter": { "term": { "folder": "inbox" }}
-            }
-        }
-    }
-    '
+[source,js]
+--------------------------------------------------
+ GET /_search 
+ {
+     "query": {
+         "filtered": {
+             "query":  { "match": { "email": "business opportunity" }},
+             "filter": { "term": { "folder": "inbox" }}
+         }
+     }
+ }
+--------------------------------------------------
 
+    
 ==== Just a filter
 
 While in query context, if you need to use a filter without a query, for
 instance to match all emails in the inbox, then you can just omit the
 query:
 
-    {
-        "filtered": {
-            "filter":   { "term": { "folder": "inbox" }}
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "filtered": {
+         "filter":   { "term": { "folder": "inbox" }}
+     }
+ }
+--------------------------------------------------
+
 
 If a query is not specified then it defaults to using the `match_all` query, so
 the above query is equivalent to the following:
 
-    {
-        "filtered": {
-            "query":    { match_all: {}},
-            "filter":   { "term": { "folder": "inbox" }}
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "filtered": {
+         "query":    { match_all: {}},
+         "filter":   { "term": { "folder": "inbox" }}
+     }
+ }
+--------------------------------------------------
+
 
 ==== A query as a filter
 
@@ -81,20 +100,24 @@ This can be achieved with the `query` filter, which just wraps a query.
 The example below shows one way we could exclude emails which look like spam:
 
 
-    {
-        "filtered": {
-            "filter":   {
-                "bool": {
-                    "must":     { "term":  { "folder": "inbox" }},
-                    "must_not": {
-                        "query": {
-                            "match": { "email": "urgent business proposal" }
-                        }
-                    }
-                }
-            }
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "filtered": {
+         "filter":   {
+             "bool": {
+                 "must":     { "term":  { "folder": "inbox" }},
+                 "must_not": {
+                     "query": {
+                         "match": { "email": "urgent business proposal" }
+                     }
+                 }
+             }
+         }
+     }
+ }
+--------------------------------------------------
+
 
 You seldom need to use a query as a filter, but we have included it for
 completeness' sake.  The only time you may need it is when you need to use

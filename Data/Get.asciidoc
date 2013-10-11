@@ -4,23 +4,31 @@
 To get the document out of Elasticsearch, we use the the same `_index`, `_type`
 and `_id`, but the HTTP verb changes to `GET`:
 
-    curl -XGET localhost:9200/website/blog/123?pretty
+[source,js]
+--------------------------------------------------
+ GET /website/blog/123?pretty
+--------------------------------------------------
+
 
 The response includes the by now familiar metadata elements, plus the `_source`
 field, which contains the original JSON document that we sent to Elasticsearch
 when we indexed it.
 
-    {
-      "_index" :   "website",
-      "_type" :    "blog",
-      "_id" :      "123",
-      "_version" : 1,
-      "exists" :   true,
-      "_source" : {
-          "title": "My first blog entry",
-          "text":  "Just trying this out..."
-      }
-    }
+[source,js]
+--------------------------------------------------
+ {
+   "_index" :   "website",
+   "_type" :    "blog",
+   "_id" :      "123",
+   "_version" : 1,
+   "exists" :   true,
+   "_source" : {
+       "title": "My first blog entry",
+       "text":  "Just trying this out..."
+   }
+ }
+--------------------------------------------------
+
 
 .`pretty`
 ****
@@ -39,13 +47,21 @@ Also, the HTTP response code would be `'404 Not Found'` instead of `'200 OK'`.
 We can see this by passing the `-i` argument to `curl`, which causes it to
 display the response headers:
 
-    curl -i -XGET localhost:9200/website/blog/124?pretty
+[source,js]
+--------------------------------------------------
+ curl -I -XGET /website/blog/124?pretty
+--------------------------------------------------
+
 
 The response now looks like this:
 
-    HTTP/1.1 404 Not Found
-    Content-Type: application/json; charset=UTF-8
-    Content-Length: 83
+[source,js]
+--------------------------------------------------
+ HTTP/1.1 404 Not Found
+ Content-Type: application/json; charset=UTF-8
+ Content-Length: 83
+--------------------------------------------------
+
 
     {
       "_index" : "website",
@@ -63,23 +79,31 @@ the `_source` field. But perhaps all you are interested in is the
 Individual fields can be requested using the `fields` parameter. Multiple
 fields can be specified in a comma-separated list:
 
-    curl -XGET localhost:9200/website/blog/123?fields=title,text
+[source,js]
+--------------------------------------------------
+ GET /website/blog/123?fields=title,text
+--------------------------------------------------
+
 
 The response no longer contains the `_source` field, but does contain
 the `title` and `text` fields, which Elasticsearch has extracted from
 the `_source`:
 
-    {
-      "_index" :   "website",
-      "_type" :    "blog",
-      "_id" :      "123",
-      "_version" : 1,
-      "exists" :   true,
-      "fields" : {
-          "title": "My first blog entry",
-          "text":  "Just trying this out..."
-      }
-    }
+[source,js]
+--------------------------------------------------
+ {
+   "_index" :   "website",
+   "_type" :    "blog",
+   "_id" :      "123",
+   "_version" : 1,
+   "exists" :   true,
+   "fields" : {
+       "title": "My first blog entry",
+       "text":  "Just trying this out..."
+   }
+ }
+--------------------------------------------------
+
 
 The metadata elements (`_index` etc) will always be returned. These
 cannot be disabled.

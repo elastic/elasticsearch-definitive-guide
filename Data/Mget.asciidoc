@@ -13,54 +13,61 @@ which specifies the `_index`, `_type` and `_id` metadata of the document
 you wish to retrieve. You can also specify a `fields` parameter if you
 just want to retrieve one or more specific fields:
 
-    curl -XGET localhost:9200/_mget  -d '
-    {
-       "docs" : [
-          {
-             "_index" : "website",
-             "_type" :  "blog",
-             "_id" :    2
-          },
-          {
-             "_index" : "website",
-             "_type" :  "pageviews",
-             "_id" :    1,
-             "fields":  ["views"]
-          }
-       ]
-    }
-    '
+[source,js]
+--------------------------------------------------
+ GET /_mget  
+ {
+    "docs" : [
+       {
+          "_index" : "website",
+          "_type" :  "blog",
+          "_id" :    2
+       },
+       {
+          "_index" : "website",
+          "_type" :  "pageviews",
+          "_id" :    1,
+          "fields":  ["views"]
+       }
+    ]
+ }
+--------------------------------------------------
 
+    
 The response body also contains a `docs` array which contains a response
 per document, in the same order as specified in the request. Each of these
 responses is the same response body that we would expect from an individual
 <<get-doc,`get` request>>:
 
-    {
-       "docs" : [
-          {
-             "_source" : {
-                "text" :  "This is a piece of cake...",
-                "title" : "My first external blog entry"
-             },
-             "_index" :   "website",
-             "_id" :      "2",
-             "_type" :    "blog",
-             "exists" :   true,
-             "_version" : 10
+[source,js]
+--------------------------------------------------
+ {
+    "docs" : [
+       {
+          "_source" : {
+             "text" :  "This is a piece of cake...",
+             "title" : "My first external blog entry"
           },
-          {
-             "_index" :   "website",
-             "_id" :      "1",
-             "_type" :    "pageviews",
-             "exists" :   true,
-             "_version" : 2,
-             "fields" : {
-                "views" : 1
-             }
+          "_index" :   "website",
+          "_id" :      "2",
+          "_type" :    "blog",
+          "exists" :   true,
+          "_version" : 10
+       },
+       {
+          "_index" :   "website",
+          "_id" :      "1",
+          "_type" :    "pageviews",
+          "exists" :   true,
+          "_version" : 2,
+          "fields" : {
+             "views" : 1
           }
-       ]
-    }
+       }
+    ]
+ }
+--------------------------------------------------
+
 
 If the documents you wish to retrieve are all in the same `_index` (and maybe
 even of the same `_type`) then you can specify a default `/_index` or a default
@@ -68,55 +75,65 @@ even of the same `_type`) then you can specify a default `/_index` or a default
 
 You can still override these values in the individual requests:
 
-    curl -XGET localhost:9200/website/blog/_mget  -d '
-    {
-       "docs" : [
-          {
-             "_id" :   2
-          },
-          {
-             "_type" : "pageviews",
-             "_id" :   1
-          }
-       ]
-    }
-    '
+[source,js]
+--------------------------------------------------
+ GET /website/blog/_mget  
+ {
+    "docs" : [
+       {
+          "_id" :   2
+       },
+       {
+          "_type" : "pageviews",
+          "_id" :   1
+       }
+    ]
+ }
+--------------------------------------------------
 
+    
 In fact, if all the documents have the same `_index` and `_type`, then you
 can just pass an array of `ids` instead of the full `docs` array:
 
 
-    curl -XGET localhost:9200/website/blog/_mget  -d '
-    {
-       "ids" : [ "2", "1" ]
-    }
-    '
+[source,js]
+--------------------------------------------------
+ GET /website/blog/_mget  
+ {
+    "ids" : [ "2", "1" ]
+ }
+--------------------------------------------------
 
+    
 Note that the second document that we requested doesn't exist. We
 specified type `blog`, but the document with ID `1` is of type `pageviews`.
 This non-existence is reported in the response body:
 
-    {
-      "docs" : [
-        {
-          "_index" :   "website",
-          "_type" :    "blog",
-          "_id" :      "2",
-          "_version" : 10,
-          "exists" :   true,
-          "_source" : {
-            "title":   "My first external blog entry",
-            "text":    "This is a piece of cake..."
-          }
-        },
-        {
-          "_index" :   "website",
-          "_type" :    "blog",
-          "_id" :      "1",
-          "exists" :   false
-        }
-      ]
-    }
+[source,js]
+--------------------------------------------------
+ {
+   "docs" : [
+     {
+       "_index" :   "website",
+       "_type" :    "blog",
+       "_id" :      "2",
+       "_version" : 10,
+       "exists" :   true,
+       "_source" : {
+         "title":   "My first external blog entry",
+         "text":    "This is a piece of cake..."
+       }
+     },
+     {
+       "_index" :   "website",
+       "_type" :    "blog",
+       "_id" :      "1",
+       "exists" :   false
+     }
+   ]
+ }
+--------------------------------------------------
+
 
 ==== Type considered optional
 
@@ -128,12 +145,15 @@ share IDs.
 What would the following request return if we had a `blog` document with
 ID `1` and a `pageviews` document also with ID `1`?
 
-    curl -XGET localhost:9200/website/_mget  -d '
-    {
-       "ids" : [ "2", "1" ]
-    }
-    '
+[source,js]
+--------------------------------------------------
+ GET /website/_mget  
+ {
+    "ids" : [ "2", "1" ]
+ }
+--------------------------------------------------
 
+    
 Elasticsearch would return the first matching document that it finds. On one
 run you may get back the `blog` document and on another run the `pageviews`
 document.

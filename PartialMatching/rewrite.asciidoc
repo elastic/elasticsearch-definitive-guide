@@ -48,9 +48,13 @@ Like `scoring_boolean`, this rewrite method is heavy and not recommended.
 
 Changing the rewrite method is as simple as specifying the `rewrite` option in the query.  Rewrite can be applied to any query that uses the rewriting process (query_string, prefix, wildcard, etc).
 
-    {
-        "prefix" : { 
-            "my_field" : "qui",
-            "rewrite" : "constant_score_auto"
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "prefix" : { 
+         "my_field" : "qui",
+         "rewrite" : "constant_score_auto"
+     }
+ }
+--------------------------------------------------
+

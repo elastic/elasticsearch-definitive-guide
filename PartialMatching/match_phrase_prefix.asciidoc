@@ -3,15 +3,19 @@ Often you'll find the Prefix query to be stifling - you need to search for a phr
 
 The match query provides an alternate syntax that bundles phrase and prefix matching together.  It is a fully analyzed query, so it "does the right thing" with your full-text search.  Let's take a look at an example and see what Elasticsearch is doing internally:
 
-    {
-        "match_phrase_prefix" : {
-            "message" : {
-                "query" : "example of a te",
-                "max_expansions" : 10,
-                "analyzer" : "standard"
-            }
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "match_phrase_prefix" : {
+         "message" : {
+             "query" : "example of a te",
+             "max_expansions" : 10,
+             "analyzer" : "standard"
+         }
+     }
+ }
+--------------------------------------------------
+
 
 This query is looking for the phrase "example of a te", but allowing the last term to act as independently as a prefix query.  And because the query is analyzed, there are three distinct actions that are ocurring:
 

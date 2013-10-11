@@ -49,12 +49,15 @@ All requests consist of:
 For instance, to count the number of documents in the cluster, we could
 use:
 
-    curl -XGET 'localhost:9200/_count?pretty' -d '
-    {
-        "match_all": {}
-    }
-    '
+[source,js]
+--------------------------------------------------
+ GET /_count?pretty 
+ {
+     "match_all": {}
+ }
+--------------------------------------------------
 
+    
 All responses consist of:
 
 * an HTTP status code, eg: `200 OK`
@@ -64,20 +67,28 @@ All responses consist of:
 The above `curl` request would respond with a JSON body like the
 following:
 
-    {
-        "count" : 0,
-        "_shards" : {
-            "total" : 5,
-            "successful" : 5,
-            "failed" : 0
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "count" : 0,
+     "_shards" : {
+         "total" : 5,
+         "successful" : 5,
+         "failed" : 0
+     }
+ }
+--------------------------------------------------
+
 
 We don't see the HTTP headers in the response because we didn't ask `curl` to
 display them. To see the headers, use the `curl` command with the `-i`
 switch:
 
-    curl -i -XGET 'localhost:9200/'
+[source,js]
+--------------------------------------------------
+ curl -I -XGET 'localhost:9200/'
+--------------------------------------------------
+
 
 We will use this `curl` format in all of our examples because it is easy to
 read and easy to translate into a request using the HTTP library of your

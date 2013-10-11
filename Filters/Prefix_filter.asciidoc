@@ -8,7 +8,11 @@ For instance, the example below will match documents whose `postcode`
 field contains the terms `N1V` or `N1Y`, but will not match `N`, `N2`
 or the lower case `n1`:
 
-    { "prefix" : { "postcode" : "N1" }}
+[source,js]
+--------------------------------------------------
+ { "prefix" : { "postcode" : "N1" }}
+--------------------------------------------------
+
 
 The prefix filter can be used only on fields of type `string`.
 

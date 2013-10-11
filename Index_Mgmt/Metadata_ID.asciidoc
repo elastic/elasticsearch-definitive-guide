@@ -22,42 +22,52 @@ The `_id` field does have one setting that you may want to use: the `path`
 setting tells Elasticsearch that it should extract the value for the
 `_id` from a field within the document itself.
 
-    curl -XPUT localhost:9200/my_index -d '
-    {
-        "mappings": {
-            "my_type": {
-                "_id": {
-                    "path": "doc_id"
-                },
-                "properties": {
-                    "doc_id": {
-                        "type":   "string",
-                        "index":  "not_analyzed"
-                    }
-                }
-            }
-        }
-    }
-    '
+[source,js]
+--------------------------------------------------
+ PUT /my_index 
+ {
+     "mappings": {
+         "my_type": {
+             "_id": {
+                 "path": "doc_id"
+             },
+             "properties": {
+                 "doc_id": {
+                     "type":   "string",
+                     "index":  "not_analyzed"
+                 }
+             }
+         }
+     }
+ }
+--------------------------------------------------
 
+    
 Then, when you index a document:
 
-    curl -XPOST localhost:9200/my_index/my_type -d '
-    {
-        "doc_id": "123"
-    }
-    '
+[source,js]
+--------------------------------------------------
+ POST /my_index/my_type 
+ {
+     "doc_id": "123"
+ }
+--------------------------------------------------
 
+    
 the `_id` value will be extracted from the `doc_id` field in the document
 itself:
 
-    {
-        "ok":       true,
-        "_index":   "my_index",
-        "_type":    "my_type",
-        "_id":      "123",
-        "_version": 1
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "ok":       true,
+     "_index":   "my_index",
+     "_type":    "my_type",
+     "_id":      "123",
+     "_version": 1
+ }
+--------------------------------------------------
+
 
 While this is very convenient, be aware that it has a slight performance
 impact on `bulk` requests (see <<bulk-format>>). The node handling

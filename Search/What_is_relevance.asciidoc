@@ -47,13 +47,16 @@ has the option of producing an _explanation_ with every search result,
 by setting the `explain` parameter to `true`.
 
 
-    curl localhost:9200/_search  -d '
-    {
-       "query"   : { "match" : { "tweet" : "text" }},
-       "explain" : true
-    }
-    '
+[source,js]
+--------------------------------------------------
+ GET /_search  
+ {
+    "query"   : { "match" : { "tweet" : "text" }},
+    "explain" : true
+ }
+--------------------------------------------------
 
+    
 ****
 Adding `explain` produces a lot of output for every hit which can look
 overwhelming, but it is worth taking the time to understand what it all means.
@@ -63,29 +66,41 @@ when you need it.  We'll work through the output for one `hit` bit by bit.
 
 First, we have the metadata that is returned on normal search requests:
 
-    {
-        "_index" :      "us",
-        "_type" :       "tweet",
-        "_id" :         "5",
-        "_score" :      0.13424811,
-        "_source" :     { ... trimmed ... },
+[source,js]
+--------------------------------------------------
+ {
+     "_index" :      "us",
+     "_type" :       "tweet",
+     "_id" :         "5",
+     "_score" :      0.13424811,
+     "_source" :     { ... trimmed ... },
+--------------------------------------------------
+
 
 It adds information about which shard on which node the document came from,
 which is useful to know because term and document frequencies are calculated
 per shard, rather than per index:
 
-        "_shard" :      1,
-        "_node" :       "mzIVYCsqSWCG_M_ZffSs9Q",
+[source,js]
+--------------------------------------------------
+     "_shard" :      1,
+     "_node" :       "mzIVYCsqSWCG_M_ZffSs9Q",
+--------------------------------------------------
+
 
 Then it provides the `_explanation`. Each entry contains a  `description`
 which tells you what type of calculation is being performed, a `value`
 which gives you the result of the calculation, and the `details` of any
 sub-calculations that were required.
 
-        "_explanation" : {
-            "description" :             "weight(tweet:text in 0)
-                                         [PerFieldSimilarity], result of:",
-            "value" :                   0.13424811,
+[source,js]
+--------------------------------------------------
+     "_explanation" : {
+         "description" :             "weight(tweet:text in 0)
+                                      [PerFieldSimilarity], result of:",
+         "value" :                   0.13424811,
+--------------------------------------------------
+
 
 This first calculation tells us that it is trying to calculate the _weight_
 -- term frequency/inverse document frequency or TF/IDF --
@@ -100,37 +115,49 @@ is used to calculate the inverse document frequency or `idf` --
 how common is the term `"text"` in the `tweet` field of all
 documents in the index:
 
-            "details" : [
-                {
-                    "description" :     "idf(docFreq=1, maxDocs=1)",
-                    "value" :           0.30685282
-                },
+[source,js]
+--------------------------------------------------
+         "details" : [
+             {
+                 "description" :     "idf(docFreq=1, maxDocs=1)",
+                 "value" :           0.30685282
+             },
+--------------------------------------------------
+
 
 Next is the `fieldNorm`, which is a measure of how long this document's `tweet`
 field is -- the longer the field, the lower the `value`:
 
-                {
-                    "description" :     "fieldNorm(doc=0)",
-                    "value" :           0.4375
-                },
+[source,js]
+--------------------------------------------------
+             {
+                 "description" :     "fieldNorm(doc=0)",
+                 "value" :           0.4375
+             },
+--------------------------------------------------
+
 
 And finally, the term frequency or `tf` tells us how often the
 term `"text"` appears in the `tweet` field in this document:
 
-                {
-                    "value" :               0.13424811,
-                    "description" :         "fieldWeight in 0, product of:",
-                    "details" : [
-                        {
-                            "description" :     "tf(freq=1.0), with freq of:",
-                            "value" :           1.0
-                            "details" : [ {
-                                "description" : "termFreq=1.0",
-                                "value" :       1.0
-                        }
-                    ]
-                }
-            ]
+[source,js]
+--------------------------------------------------
+             {
+                 "value" :               0.13424811,
+                 "description" :         "fieldWeight in 0, product of:",
+                 "details" : [
+                     {
+                         "description" :     "tf(freq=1.0), with freq of:",
+                         "value" :           1.0
+                         "details" : [ {
+                             "description" : "termFreq=1.0",
+                             "value" :       1.0
+                     }
+                 ]
+             }
+         ]
+--------------------------------------------------
+
 
 The output from the above can be difficult to read in JSON, but is
 easier when it is formatted as YAML, by adding `format=yaml` to the
@@ -145,21 +172,28 @@ importantly, why it *didn't* match.
 
 The path for the request is `/index/type/id/_explain`, as in:
 
-    curl http://localhost:9200/us/tweet/3/_explain  -d '
-    {
-       "query" : {
-          "filtered" : {
-             "filter" : { "term" :  { "user_id" : 1      }},
-             "query" :  { "match" : { "tweet" :   "text" }}
-          }
+[source,js]
+--------------------------------------------------
+ GET /us/tweet/3/_explain
+ {
+    "query" : {
+       "filtered" : {
+          "filter" : { "term" :  { "user_id" : 1      }},
+          "query" :  { "match" : { "tweet" :   "text" }}
        }
     }
-    '
+ }
+--------------------------------------------------
+
 
 Along with the full explanation that we saw above, we also now have a
 `description` element, which tells us:
 
 
-    "failure to match filter: cache(user_id:[1 TO 1])"
+[source,js]
+--------------------------------------------------
+ "failure to match filter: cache(user_id:[1 TO 1])"
+--------------------------------------------------
+
 
 In other words, our `user_id` filter is causing the document not to match.

@@ -8,8 +8,12 @@ has two filters which can help: Exists and Missing.
 The Exists filter will return documents that have values in the specified field.
 For example, given these two documents:
 
-    { "first_name" : "Zachary, "middle_name" : "Joseph }
-    { "first_name" : "Noah }
+[source,js]
+--------------------------------------------------
+ { "first_name" : "Zachary, "middle_name" : "Joseph }
+ { "first_name" : "Noah }
+--------------------------------------------------
+
 
 An exists filter checking for "middle_name" will only return the first document,
 since the second document does not have a "middle_name" field.
@@ -34,11 +38,15 @@ but the value is a `null`.
 The Exists and Missing filters also work on objects, not just core types.  If
 you have the following document:
 
-    {
-       "foo" : {
-          "bar" : "baz"
-       }
+[source,js]
+--------------------------------------------------
+ {
+    "foo" : {
+       "bar" : "baz"
     }
+ }
+--------------------------------------------------
+
 
 You can check for the existence of "foo".  If the inner object "foo" exists,
 Existing filter matches while Missing does not.

@@ -10,7 +10,11 @@ Elasticsearch:
 It is quite possible that we want our `tag` field to contain more
 than one tag. Instead of a single string, we could index an array of tags:
 
-    { "tag": [ "search", "nosql" ]}
+[source,js]
+--------------------------------------------------
+ { "tag": [ "search", "nosql" ]}
+--------------------------------------------------
+
 
 There is no special mapping required for arrays. Any field can contain zero,
 one or more values, in the same way as a full text field is indexed as
@@ -35,10 +39,14 @@ field.
 
 These four fields would be indexed in the same way -- as empty fields:
 
-    "empty_string":             "",
-    "null_value":               null,
-    "empty_array":              [],
-    "array_with_null_value":    [ null ]
+[source,js]
+--------------------------------------------------
+ "empty_string":             "",
+ "null_value":               null,
+ "empty_array":              [],
+ "array_with_null_value":    [ null ]
+--------------------------------------------------
+
 
 ==== Multi-level objects
 
@@ -50,48 +58,56 @@ _Inner objects_ are often used to embed one entity or object inside
 another. For instance, instead of having fields called `user_name`
 and `user_id` inside our `tweet` document, we could write it as:
 
-    {
-        "tweet":            "Elasticsearch is very flexible",
-        "user": {
-            "id":           "@johnsmith",
-            "gender":       "male",
-            "age":          26,
-            "name": {
-                "full":     "John Smith",
-                "first":    "John",
-                "last":     "Smith"
-            }
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "tweet":            "Elasticsearch is very flexible",
+     "user": {
+         "id":           "@johnsmith",
+         "gender":       "male",
+         "age":          26,
+         "name": {
+             "full":     "John Smith",
+             "first":    "John",
+             "last":     "Smith"
+         }
+     }
+ }
+--------------------------------------------------
+
 
 ==== Mapping for inner objects
 
 Elasticsearch will detect new object fields dynamically and map them as
 type `object`, with each inner field listed under `properties`:
 
-    {
-      "tweet": {
-        "properties": {
-          "tweet":            { "type": "string" },
-          "user": {
-            "type":             "object",
-            "properties": {
-              "id":           { "type": "string" },
-              "gender":       { "type": "string" },
-              "age":          { "type": "long"   },
-              "name":   {
-                "type":         "object",
-                "properties": {
-                  "full":     { "type": "string" },
-                  "first":    { "type": "string" },
-                  "last":     { "type": "string" }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+[source,js]
+--------------------------------------------------
+ {
+   "tweet": {
+     "properties": {
+       "tweet":            { "type": "string" },
+       "user": {
+         "type":             "object",
+         "properties": {
+           "id":           { "type": "string" },
+           "gender":       { "type": "string" },
+           "age":          { "type": "long"   },
+           "name":   {
+             "type":         "object",
+             "properties": {
+               "full":     { "type": "string" },
+               "first":    { "type": "string" },
+               "last":     { "type": "string" }
+             }
+           }
+         }
+       }
+     }
+   }
+ }
+--------------------------------------------------
+
 
 The mapping for the `user` and `name` fields have a similar structure
 to the mapping for the `tweet` type itself.  In fact, the `type` mapping
@@ -106,15 +122,19 @@ Lucene doesn't understand inner objects. A Lucene document
 consists of a flat list of fields.  In order for Elasticsearch to index
 inner objects usefully, it converts our document to something like this:
 
-    {
-        "tweet":            [elasticsearch, flexible, very],
-        "user.id":          [@johnsmith],
-        "user.gender":      [male],
-        "user.age":         [26],
-        "user.name.full":   [john, smith],
-        "user.name.first":  [john],
-        "user.name.last":   [smith]
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "tweet":            [elasticsearch, flexible, very],
+     "user.id":          [@johnsmith],
+     "user.gender":      [male],
+     "user.age":         [26],
+     "user.name.full":   [john, smith],
+     "user.name.first":  [john],
+     "user.name.last":   [smith]
+ }
+--------------------------------------------------
+
 
 _Inner fields_ can be referred to by name, eg `"first"`. To distinguish
 between two fields that have the same name we can use the full _path_,
@@ -135,21 +155,29 @@ or not, you will need to check one of the object's inner fields, like
 Finally, consider how an array containing inner objects would be indexed.
 Let's say we have a `followers` array which looks like this:
 
-    {
-        "followers": [
-            { "age": 35, "name": "Mary White"},
-            { "age": 26, "name": "Alex Jones"},
-            { "age": 19, "name": "Lisa Smith"}
-        ]
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "followers": [
+         { "age": 35, "name": "Mary White"},
+         { "age": 26, "name": "Alex Jones"},
+         { "age": 19, "name": "Lisa Smith"}
+     ]
+ }
+--------------------------------------------------
+
 
 This document will be flattened as we described above, but the
 result will look like this:
 
-    {
-        "followers.age":    [19, 26, 35],
-        "followers.name":   [alex, jones, lisa, smith, mary, white]
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "followers.age":    [19, 26, 35],
+     "followers.name":   [alex, jones, lisa, smith, mary, white]
+ }
+--------------------------------------------------
+
 
 The correlation between `{age: 35}` and `{name: Mary White}` has been lost as
 each multi-value field is just a bag of values, not an ordered array.  This

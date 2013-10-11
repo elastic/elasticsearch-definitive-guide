@@ -18,13 +18,21 @@ added as type `string`.
 Sometimes this behaviour can lead to problems.  Imagine that you index
 a document like this:
 
-    { "note": "2013-01-01" }
+[source,js]
+--------------------------------------------------
+ { "note": "2013-01-01" }
+--------------------------------------------------
+
 
 Assuming that this is the first time that the `note` field has been seen,
 it will be added as a `date` field.  But what if the next document looks
 like this:
 
-    { "note": "Logged out" }
+[source,js]
+--------------------------------------------------
+ { "note": "Logged out" }
+--------------------------------------------------
+
 
 This clearly isn't a date, but it is too late.  The field is already
 a date field and so this ``malformed date'' will cause an exception to be
@@ -33,16 +41,19 @@ thrown.
 Date detection can be turned off by setting `date_detection` to `false`
 on the root object:
 
-    curl -XPUT localhost:9200/my_index -d '
-    {
-        "mappings": {
-            "my_type": {
-                "date_detection": false
-            }
-        }
-    }
-    '
+[source,js]
+--------------------------------------------------
+ PUT /my_index 
+ {
+     "mappings": {
+         "my_type": {
+             "date_detection": false
+         }
+     }
+ }
+--------------------------------------------------
 
+    
 With this mapping in place, a string will always be a `string`.  If you need
 a `date` field, you can add it manually.
 
@@ -75,31 +86,34 @@ applied. For instance, we could specify two templates for `string` fields:
 We put the `es` template first, because it is more specific than the
 catch-all `en` template, which matches all string fields:
 
-    curl -XPUT localhost:9200/my_index -d '
-    {
-        "mappings": {
-            "my_type": {
-                "dynamic_templates": [
-                    { "es": {
-                          "match":              "*_es",
-                          "match_mapping_type": "string",
-                          "mapping": {
-                              "type":           "string",
-                              "analyzer":       "spanish"
-                          }
-                    }},
-                    { "en": {
-                          "match":              "*",
-                          "match_mapping_type": "string",
-                          "mapping": {
-                              "type":           "string",
-                              "analyzer":       "english"
-                          }
-                    }}
-                ]
-    }}}
-    '
+[source,js]
+--------------------------------------------------
+ PUT /my_index 
+ {
+     "mappings": {
+         "my_type": {
+             "dynamic_templates": [
+                 { "es": {
+                       "match":              "*_es",
+                       "match_mapping_type": "string",
+                       "mapping": {
+                           "type":           "string",
+                           "analyzer":       "spanish"
+                       }
+                 }},
+                 { "en": {
+                       "match":              "*",
+                       "match_mapping_type": "string",
+                       "mapping": {
+                           "type":           "string",
+                           "analyzer":       "english"
+                       }
+                 }}
+             ]
+ }}}
+--------------------------------------------------
 
+    
 The `match_mapping_type`  allows you to apply the template only
 to fields of the specified type, as detected by the standard dynamic
 mapping rules, eg `string`, `long` etc.
@@ -108,13 +122,17 @@ The `match` parameter matches just the field name and the `match_path`
 parameter matches the full path to a field in an object, so
 the pattern `"address.*.name"` would match a field like this:
 
-    {
-        "address":
-            "city":
-                "name": "New York"
-            }
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "address":
+         "city":
+             "name": "New York"
+         }
+     }
+ }
+--------------------------------------------------
+
 
 The `unmatch` and `unmatch_path` patterns can be used to exclude fields
 that would otherwise match.

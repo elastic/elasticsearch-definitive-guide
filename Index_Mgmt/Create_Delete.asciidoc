@@ -11,21 +11,28 @@ and mappings are set up *before* we index any data.
 To do this, we have to create the index manually, passing in any settings
 or type mappings in the request body, as follows:
 
-    curl -XPUT localhost:9200/my_index -d '
-    {
-        "settings": { ... any settings ... },
-        "mappings": {
-            "type_one": { ... any mappings ... },
-            "type_two": { ... any mappings ... },
-            ...
-        }
-    }
-    '
+[source,js]
+--------------------------------------------------
+ PUT /my_index 
+ {
+     "settings": { ... any settings ... },
+     "mappings": {
+         "type_one": { ... any mappings ... },
+         "type_two": { ... any mappings ... },
+         ...
+     }
+ }
+--------------------------------------------------
 
+    
 In fact, you can prevent the automatic creation of indices by adding the
 following setting to the `config/elasticsearch.yaml` file on each node:
 
-    action.auto_create_index: false
+[source,js]
+--------------------------------------------------
+ action.auto_create_index: false
+--------------------------------------------------
+
 
 ****
 Later, we will discuss how you can TODO use <index-templates,index templates>
@@ -38,25 +45,45 @@ automatically created index every day.
 
 To delete an index, use the following request:
 
-    curl -XDELETE localhost:9200/my_index
+[source,js]
+--------------------------------------------------
+ DELETE /my_index
+--------------------------------------------------
+
 
 You can delete multiple indices with:
 
-    curl -XDELETE loclahost:9200/index_one,index_two
-    curl -XDELETE localhost:9200/index_*
+[source,js]
+--------------------------------------------------
+ DELETE loclahost:9200/index_one,index_two
+ DELETE /index_*
+--------------------------------------------------
+
 
 You can even delete *ALL* indices with:
 
-    curl -XDELETE localhost:9200/_all
+[source,js]
+--------------------------------------------------
+ DELETE /_all
+--------------------------------------------------
+
 
 You may want to disable the ability to delete all indices, by adding
 this setting to your `config/elasticsearch.yaml` file:
 
-    action.disable_delete_all_indices: true
+[source,js]
+--------------------------------------------------
+ action.disable_delete_all_indices: true
+--------------------------------------------------
+
 
 With this setting in effect, you will only be able to delete indices
 by being explicit:
 
-    curl -XDELETE localhost:9200/index_one,index_two
+[source,js]
+--------------------------------------------------
+ DELETE /index_one,index_two
+--------------------------------------------------
+
 
 

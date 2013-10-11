@@ -31,36 +31,46 @@ but have a custom stopwords list. In the following example,
 we create a new analyzer called the `es_std` analyzer, which
 uses the predefined list of Spanish stopwords:
 
-    curl -XPUT localhost:9200/spanish_docs -d '
-    {
-        "settings": {
-            "analysis": {
-                "analyzer": {
-                    "es_std": {
-                        "type":      "standard",
-                        "stopwords": "_spanish_"
-                    }
-                }
-            }
-        }
-    }
-    '
+[source,js]
+--------------------------------------------------
+ PUT /spanish_docs 
+ {
+     "settings": {
+         "analysis": {
+             "analyzer": {
+                 "es_std": {
+                     "type":      "standard",
+                     "stopwords": "_spanish_"
+                 }
+             }
+         }
+     }
+ }
+--------------------------------------------------
 
+    
 The `es_std` analyzer only exists in the `spanish_docs` index where we
 have defined it.  It is not global.  To test it using the `analyze` API, we
 must specify the index name:
 
-    curl -XPOST localhost:9200/spanish_docs/_analyze?analyzer=es_std -d '
-    El veloz zorro marrón
-    '
+[source,js]
+--------------------------------------------------
+ POST /spanish_docs/_analyze?analyzer=es_std 
+ El veloz zorro marrón
+--------------------------------------------------
+
 
 The abbreviated results show that the Spanish stopword `"El"` has been
 removed correctly:
 
-    {
-      "tokens" : [
-        { "token" :    "veloz",   "position" : 2 },
-        { "token" :    "zorro",   "position" : 3 },
-        { "token" :    "marrón",  "position" : 4 }
-      ]
-    }
+[source,js]
+--------------------------------------------------
+ {
+   "tokens" : [
+     { "token" :    "veloz",   "position" : 2 },
+     { "token" :    "zorro",   "position" : 3 },
+     { "token" :    "marrón",  "position" : 4 }
+   ]
+ }
+--------------------------------------------------
+

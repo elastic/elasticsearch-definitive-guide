@@ -8,7 +8,11 @@ has zero values.
 If you store an array of values, one of which is `null`, only the non-null
 values will be indexed.  For instance:
 
-    { count: [ 1, 3, null, 5] }
+[source,js]
+--------------------------------------------------
+ { count: [ 1, 3, null, 5] }
+--------------------------------------------------
+
 
 The `count` field would have the values 1, 3 and 5 indexed.
 
@@ -17,7 +21,11 @@ The `count` field would have the values 1, 3 and 5 indexed.
 
 To check whether a field has a value, use the `exists` filter:
 
-    { "exists" : { "field" : "field_name" }}
+[source,js]
+--------------------------------------------------
+ { "exists" : { "field" : "field_name" }}
+--------------------------------------------------
+
 
 [[missing-filter]]
 ==== `missing` filter
@@ -25,28 +33,40 @@ To check whether a field has a value, use the `exists` filter:
 The inverse of the `exists` filter is the `missing` filter, which checks
 whether the field has no values:
 
-    { "missing" : { "field" : "field_name" }}
+[source,js]
+--------------------------------------------------
+ { "missing" : { "field" : "field_name" }}
+--------------------------------------------------
+
 
 .Objects and existence
 ****
 Elasticsearch can index multi-level docs (known in JSON as _objects_), such as:
 
-    {
-        "person": {
-            "name": {
-                "first": "John",
-                "last":  "Smith"
-            }
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "person": {
+         "name": {
+             "first": "John",
+             "last":  "Smith"
+         }
+     }
+ }
+--------------------------------------------------
+
 
 It does this by flattening the data structure, transforming the above document
 into a list of key-value pairs:
 
-    {
-        "person.name.first": "John",
-        "person.name.last":  "Smith"
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "person.name.first": "John",
+     "person.name.last":  "Smith"
+ }
+--------------------------------------------------
+
 
 Values are only indexed for the `person.name.first` and `person.name.last`
 fields -- fields which contain scalar values.

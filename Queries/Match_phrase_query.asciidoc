@@ -7,24 +7,32 @@ match a _phrase_, that is: all the words, in the *same order and position*.
 The phrase `"quick fox"` would not match a document containing
 `"quick brown fox"`.
 
-    {
-        "match_phrase" : {
-            "title" : "quick fox"
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "match_phrase" : {
+         "title" : "quick fox"
+     }
+ }
+--------------------------------------------------
+
 
 ****
 The `match_phrase` query is a sub-type of the `match` query and can also be
 written as:
 
-    {
-        "match" : {
-            "title" : {
-                "type":  "phrase",
-                "query": "quick fox"
-            }
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "match" : {
+         "title" : {
+             "type":  "phrase",
+             "query": "quick fox"
+         }
+     }
+ }
+--------------------------------------------------
+
 ****
 
 
@@ -34,14 +42,18 @@ The `slop` parameter allows us to relax the strict _same order_ constraint,
 and causes the `match_phrase` query to behave more like a _proximity_ query,
 i.e. the nearer the words are to each other, the more relevant.
 
-    {
-        "match_phrase" : {
-            "title: {
-                "query" : "quick fox",
-                "slop"  : 5
-            }
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "match_phrase" : {
+         "title: {
+             "query" : "quick fox",
+             "slop"  : 5
+         }
+     }
+ }
+--------------------------------------------------
+
 
 _Slop_ behaves like a Levenshtein edit distance without deletions, but based
 on word positions instead of single character changes.  To make the phrase
@@ -75,13 +87,17 @@ for _find-as-you-type_ searches.  It works in the same way as the
 The example below would match `"quick brown fox"` and
 `"quick brown furry animals"`:
 
-    {
-        "match_phrase_prefix" : {
-            "title: {
-                "query" : "quick brown f"
-            }
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "match_phrase_prefix" : {
+         "title: {
+             "query" : "quick brown f"
+         }
+     }
+ }
+--------------------------------------------------
+
 
 The `match_phrase_prefix` query also accepts the `slop`
 parameter, to allow the words to be near to each other, without necessarily
@@ -92,14 +108,18 @@ is used for the prefix query.
 Like the `match_phrase` query, the `match_phrase_prefix` query is a variant
 of the <<match-query,`match` query>> and can be written as:
 
-    {
-        "match" : {
-            "title: {
-                "type"  : "phrase_prefix",
-                "query" : "quick brown f"
-            }
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "match" : {
+         "title: {
+             "type"  : "phrase_prefix",
+             "query" : "quick brown f"
+         }
+     }
+ }
+--------------------------------------------------
+
 ****
 
 
@@ -108,14 +128,18 @@ of the <<match-query,`match` query>> and can be written as:
 The prefix part of the query can generate many sub-queries. For performance
 reasons, you can limit the number of sub-queries with `max_expansions`.
 
-    {
-        "match_phrase_prefix" : {
-            "title: {
-                "query"          : "quick brown f",
-                "max_expansions" : 10
-            }
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "match_phrase_prefix" : {
+         "title: {
+             "query"          : "quick brown f",
+             "max_expansions" : 10
+         }
+     }
+ }
+--------------------------------------------------
+
 
 In the above example, if there are more than 10 terms that begin with `f` in
 our index, it will search for just the first 10 that occur in alphabetical

@@ -53,24 +53,30 @@ First, create the new index, with the appropriate settings and mappings.
 Next, run the search request, telling Elasticsearch to use scanning
 and to keep the scroll request open for one minute:
 
-    curl 'localhost:9200/old_index/_search?search_type=scan&scroll=1m' -d '
-    {
-        "query": { "match_all": {}},
-        "size":  1000
-    }
-    '
+[source,js]
+--------------------------------------------------
+ GET /old_index/_search?search_type=scan&scroll=1m 
+ {
+     "query": { "match_all": {}},
+     "size":  1000
+ }
+--------------------------------------------------
 
+    
 The response to this request doesn't include any hits, but does include a
 `_scroll_id`, which is a long Base 64 encoded string. Now we can pass
 the `_scroll_id` to the `_search/scroll` endpoint to retrieve the first batch of
 results:
 
-    curl localhost:9200/_search/scroll?scroll=1m -d '
-    c2Nhbjs1OzExODpRNV9aY1VyUVM4U0NMd2pjWlJ3YWlBOzExOTpRNV9aY1VyUVM4U0
-    NMd2pjWlJ3YWlBOzExNjpRNV9aY1VyUVM4U0NMd2pjWlJ3YWlBOzExNzpRNV9aY1Vy
-    UVM4U0NMd2pjWlJ3YWlBOzEyMDpRNV9aY1VyUVM4U0NMd2pjWlJ3YWlBOzE7dG90YW
-    xfaGl0czoxOw==
-    '
+[source,js]
+--------------------------------------------------
+ GET /_search/scroll?scroll=1m 
+ c2Nhbjs1OzExODpRNV9aY1VyUVM4U0NMd2pjWlJ3YWlBOzExOTpRNV9aY1VyUVM4U0
+ NMd2pjWlJ3YWlBOzExNjpRNV9aY1VyUVM4U0NMd2pjWlJ3YWlBOzExNzpRNV9aY1Vy
+ UVM4U0NMd2pjWlJ3YWlBOzEyMDpRNV9aY1VyUVM4U0NMd2pjWlJ3YWlBOzE7dG90YW
+ xfaGl0czoxOw==
+--------------------------------------------------
+
 
 Note that we again specify `?scroll=1m`.  The scroll expiry is refreshed
 every time we run a scroll request, so it only needs to be long enough
@@ -116,22 +122,25 @@ don't want their results to overlap.  In our initial scrolled search request,
 we used the `match_all` query, but it is easy to break a big reindex down
 into smaller jobs by filtering on a date field instead:
 
-    curl 'localhost:9200/old_index/_search?search_type=scan&scroll=1m' -d '
-    {
-        "query": {
-            "filtered": {
-                "range": {
-                    "date": {
-                        "gte":  "2013-01-01",
-                        "lt":   "2013-02-01"
-                    }
-                }
-            }
-        },
-        "size":  1000
-    }
-    '
+[source,js]
+--------------------------------------------------
+ GET /old_index/_search?search_type=scan&scroll=1m 
+ {
+     "query": {
+         "filtered": {
+             "range": {
+                 "date": {
+                     "gte":  "2013-01-01",
+                     "lt":   "2013-02-01"
+                 }
+             }
+         }
+     },
+     "size":  1000
+ }
+--------------------------------------------------
 
+    
 Also, if you continue making changes to the old index, you will want to make
 sure that you include the newly added documents in your new index as well.
 This can be done by rerunning the reindex process, but again filtering

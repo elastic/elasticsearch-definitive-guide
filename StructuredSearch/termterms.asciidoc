@@ -15,37 +15,49 @@ they search for the exact string that you specify.
 
 Imagine we have these three documents indexed (and the title field is `not_analyzed`):
 
-    { "title" : "Twelfth Night" }
-    { "title" : "TWELFTH NIGHT" }
-    { "title" : "twelfth night" }
-    { "title" : "twelfth" }
+[source,js]
+--------------------------------------------------
+ { "title" : "Twelfth Night" }
+ { "title" : "TWELFTH NIGHT" }
+ { "title" : "twelfth night" }
+ { "title" : "twelfth" }
+--------------------------------------------------
+
 
 If you used a Match query to search for "Twelfth Night":
 
-    {
-        "query" : {
-            "match" : {
-                "title" : "Twelfth Night"
-            }
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "query" : {
+         "match" : {
+             "title" : "Twelfth Night"
+         }
+     }
+ }
+--------------------------------------------------
+
 
 ...then all four documents would be returned (even the one that is only a partial match).
 Match query is analyzing your text, which means it will be lowercased, tokenized and match all
 four docs.  Instead, if you use a Term filter (placed inside of a filtered query):
 
-    {
-        "query" : {
-            "filtered_query" : {
-                "query" : { "match_all" : {} },
-                "filter" : {
-                    "term" : {
-                        "title" : "Twelfth Night"
-                    }
-                }
-            }
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "query" : {
+         "filtered_query" : {
+             "query" : { "match_all" : {} },
+             "filter" : {
+                 "term" : {
+                     "title" : "Twelfth Night"
+                 }
+             }
+         }
+     }
+ }
+--------------------------------------------------
+
 
 Then only the first document will be returned, because it is the only doc that exactly matches your
 query text.
@@ -55,18 +67,22 @@ query text.
 The Terms filter is just a plural version of the singular Term filter.  Instead of looking for
 a single term, it will look for two or more terms:
 
-    {
-        "query" : {
-            "filtered_query" : {
-                "query" : { "match_all" : {} },
-                "filter" : {
-                    "terms" : {
-                        "title" : ["Twelfth Night", "twelfth night"]
-                    }
-                }
-            }
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "query" : {
+         "filtered_query" : {
+             "query" : { "match_all" : {} },
+             "filter" : {
+                 "terms" : {
+                     "title" : ["Twelfth Night", "twelfth night"]
+                 }
+             }
+         }
+     }
+ }
+--------------------------------------------------
+
 
 This query will return the first and third document.  The Terms filter is an OR operation.
 Only one of the provided terms needs to be present in a document for it to match the filter.
@@ -79,13 +95,17 @@ Should you use them?
 The key difference is that they are queries, and thus affect scoring.  For example, the Terms
 filter from above can be reformulated as a query:
 
-    {
-        "query" : {
-            "terms" : {
-                "title" : ["Twelfth Night", "twelfth night"]
-            }
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "query" : {
+         "terms" : {
+             "title" : ["Twelfth Night", "twelfth night"]
+         }
+     }
+ }
+--------------------------------------------------
+
 
 The Query version will
  a. match any document that has at least one of the terms
@@ -105,22 +125,30 @@ it isn't required.  Term/Terms simply ignores the analysis phase at query-time.
 For example, imagine the default analyzer for this index lowercases all fields.  If you index
 this document, the title field will be lowercased:
 
-    { "title" : "MACBETH" }
+[source,js]
+--------------------------------------------------
+ { "title" : "MACBETH" }
+--------------------------------------------------
+
 
 You can then search for it with a Term Filter, appropriately lowercased:
 
-    {
-        "query" : {
-            "filtered_query" : {
-                "query" : { "match_all" : {} },
-                "filter" : {
-                    "term" : {
-                        "title" : "macbeth"
-                    }
-                }
-            }
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "query" : {
+         "filtered_query" : {
+             "query" : { "match_all" : {} },
+             "filter" : {
+                 "term" : {
+                     "title" : "macbeth"
+                 }
+             }
+         }
+     }
+ }
+--------------------------------------------------
+
 
 And you will get the document back because the title field was lowercased before it was indexed.
 ****

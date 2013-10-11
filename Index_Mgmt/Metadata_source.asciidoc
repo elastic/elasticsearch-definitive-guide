@@ -26,18 +26,21 @@ That said, storing the `_source` field does use disk space.  If none of the
 above reasons are important to you, you can disable the `_source` field
 with the following mapping:
 
-    curl -XPUT localhost:9200/my_index -d '
-    {
-        "mappings": {
-            "my_type": {
-                "_source": {
-                    "enabled":  false
-                }
-            }
-        }
-    }
-    '
+[source,js]
+--------------------------------------------------
+ PUT /my_index 
+ {
+     "mappings": {
+         "my_type": {
+             "_source": {
+                 "enabled":  false
+             }
+         }
+     }
+ }
+--------------------------------------------------
 
+    
 One field setting which we haven't discussed yet is `{"store": true|false}`.
 Besides indexing the values of a field, you can also choose to store the
 original value for later retrieval. Users with a Lucene background
@@ -60,12 +63,15 @@ want to retrieve one or two small fields, such as the `title` and the
 In a search request, you can ask for just certain fields by specifying the
 `fields` parameter in the request body:
 
-    curl localhost:9200/_search -d '
-    {
-        "query":  { "match_all": {}},
-        "fields": [ "title", "created" ]
-    }
-    '
+[source,js]
+--------------------------------------------------
+ GET /_search 
+ {
+     "query":  { "match_all": {}},
+     "fields": [ "title", "created" ]
+ }
+--------------------------------------------------
 
+    
 Values for these fields will either be loaded from disk (if they are
 stored) or extracted from the `_source` field.

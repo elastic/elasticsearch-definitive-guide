@@ -11,16 +11,24 @@ be returned.  Let's look at an example of when you might want to do this.
 
 This document represents an electronic device, and has an associated serial number:
 
-    {
-        "product_name" : "Widget ABC",
-        "serial" : "12JE7612-19238-BJ#J/XY9"
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "product_name" : "Widget ABC",
+     "serial" : "12JE7612-19238-BJ#J/XY9"
+ }
+--------------------------------------------------
+
 
 If you were to index that document with the Standard Analyzer, your serial number would
 be indexed as the following tokens:
 
-    $ curl -XGET 'localhost:9200/_analyze?analyzer=standard&pretty' -d
-    '12JE7612-19238-BJ#J/XY9' | grep token
+[source,js]
+--------------------------------------------------
+ $ GET /_analyze?analyzer=standard&pretty -d
+ '12JE7612-19238-BJ#J/XY9' | grep token
+--------------------------------------------------
+
 
     "token" : "12je7612",
     "token" : "19238",
@@ -39,19 +47,26 @@ unexpected products.
 
 If instead you map that field as not analyzed:
 
-    curl -XPUT localhost:9200/products/product/_mapping -d '
-    {
-        "product" : {
-            "properties" : {
-                "serial" : {"type" : "string", "index" : "not_analyzed"}
-            }
-        }
-    }'
+[source,js]
+--------------------------------------------------
+ PUT /products/product/_mapping 
+ {
+     "product" : {
+         "properties" : {
+             "serial" : {"type" : "string", "index" : "not_analyzed"}
+         }
+     }
+ }
+--------------------------------------------------
 
 Then the serial number will only be indexed as a single token:
 
 
-    "token" : "12JE7612-19238-BJ#J/XY9",
+[source,js]
+--------------------------------------------------
+ "token" : "12JE7612-19238-BJ#J/XY9",
+--------------------------------------------------
+
 
 
 And now only exact matches will actually match. Great!

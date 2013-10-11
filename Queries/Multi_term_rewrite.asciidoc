@@ -4,24 +4,32 @@
 Many query clauses that look simple are rewritten into more complex queries.
 For example, the following simple `prefix` query:
 
-    { "prefix": { "name": "jon" }}
+[source,js]
+--------------------------------------------------
+ { "prefix": { "name": "jon" }}
+--------------------------------------------------
+
 
 could  be rewritten internally into a query that looks like this:
 
-    {
-        "bool": {
-            "should": [
-                { "term": { "name": "jon"   }},
-                { "term": { "name": "jonah" }},
-                { "term": { "name": "jonas" }},
-                { "term": { "name": "jonathon" }},
-                { "term": { "name": "joni" }},
-                { "term": { "name": "jonis" }},
-                { "term": { "name": "jono" }},
-                etc
-            ]
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "bool": {
+         "should": [
+             { "term": { "name": "jon"   }},
+             { "term": { "name": "jonah" }},
+             { "term": { "name": "jonas" }},
+             { "term": { "name": "jonathon" }},
+             { "term": { "name": "joni" }},
+             { "term": { "name": "jonis" }},
+             { "term": { "name": "jono" }},
+             etc
+         ]
+     }
+ }
+--------------------------------------------------
+
 
 It is easy to see how a `prefix` query on `"a"` could generate too many
 queries and perform badly.
@@ -33,14 +41,18 @@ search semantics.
 On most queries that support rewriting, the method can be changed using
 the `rewrite` or `fuzzy_rewrite` parameter:
 
-    {
-        "prefix": {
-            "name": {
-                "value":   "jon",
-                "rewrite": "top_terms_50"
-            }
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "prefix": {
+         "name": {
+             "value":   "jon",
+             "rewrite": "top_terms_50"
+         }
+     }
+ }
+--------------------------------------------------
+
 
 .Boolean `max_clause_count`
 ****
@@ -52,7 +64,11 @@ This limit can be changed at startup by adding the following to the config
 file:
 
 
-    index.query.bool.max_clause_count: 3000
+[source,js]
+--------------------------------------------------
+ index.query.bool.max_clause_count: 3000
+--------------------------------------------------
+
 
 However, it is strongly recommended that you _don't increase this value_
 as it can lead to poor performance. Instead, reconsider the types of

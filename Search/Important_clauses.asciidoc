@@ -10,10 +10,14 @@ to the most important queries and filters.
 The `term` filter is used to filter by exact values, be they numbers, dates
 booleans, or `not_analyzed` string fields:
 
-    { "term": { "age":    26           }}
-    { "term": { "date":   "2013-09-01" }}
-    { "term": { "tag":    "full_text"  }}
-    { "term": { "public": true         }}
+[source,js]
+--------------------------------------------------
+ { "term": { "age":    26           }}
+ { "term": { "date":   "2013-09-01" }}
+ { "term": { "tag":    "full_text"  }}
+ { "term": { "public": true         }}
+--------------------------------------------------
+
 
 ==== `terms` filter
 
@@ -21,21 +25,29 @@ The `terms` filter is the same as the `term` filter, but allows you
 to specify multiple values to match. If the field contains any of
 the specified values, then the document matches:
 
-    { "terms": { "tag": [ "search", "full_text", "nosql" ] }}
+[source,js]
+--------------------------------------------------
+ { "terms": { "tag": [ "search", "full_text", "nosql" ] }}
+--------------------------------------------------
+
 
 ==== `range` filter
 
 The `range` filter allows you to find numbers or dates which fall into
 the specified range:
 
-    {
-        "range": {
-            "age": {
-                "gte":  20,
-                "lt":   30
-            }
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "range": {
+         "age": {
+             "gte":  20,
+             "lt":   30
+         }
+     }
+ }
+--------------------------------------------------
+
 
 The operators that it accepts are:
 
@@ -49,14 +61,18 @@ It can also be used on string fields, where the ranges are lexicographic
 (alphabetical) instead of numeric. For all tags from `"a"` up to but not
 including `"m"`:
 
-    {
-        "range": {
-            "tag": {
-                "gte":  "a",
-                "lt":   "m"
-            }
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "range": {
+         "tag": {
+             "gte":  "a",
+             "lt":   "m"
+         }
+     }
+ }
+--------------------------------------------------
+
 
 ==== `exists` and `missing` filters
 
@@ -64,11 +80,15 @@ The `exists` and `missing` filters are used to find documents where
 the specified field either has one or more values (`exists`) or doesn't have
 any values (`missing`). It is similar in nature to `IS_NULL` in SQL:
 
-    {
-        "exists":   {
-            "field":    "title"
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "exists":   {
+         "field":    "title"
+     }
+ }
+--------------------------------------------------
+
 
 These filters are frequently used to apply a condition only if a field is
 present, and to apply a different condition if it is missing.
@@ -86,23 +106,31 @@ Boolean logic.  It accepts three parameters:
 Each of these parameters can accept a single filter clause or an array
 of filter clauses:
 
-    {
-        "bool": {
-            "must":     { "term": { "folder": "inbox" }},
-            "must_not": { "term": { "tag":    "spam"  }},
-            "should": [
-                        { "term": { "starred": true   }},
-                        { "term": { "unread":  true   }}
-            ]
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "bool": {
+         "must":     { "term": { "folder": "inbox" }},
+         "must_not": { "term": { "tag":    "spam"  }},
+         "should": [
+                     { "term": { "starred": true   }},
+                     { "term": { "unread":  true   }}
+         ]
+     }
+ }
+--------------------------------------------------
+
 
 ==== `match_all` query
 
 The `match_all` query simply matches all documents. It is the default
 query which is used if no query has been specified.
 
-    { "match_all": {}}
+[source,js]
+--------------------------------------------------
+ { "match_all": {}}
+--------------------------------------------------
+
 
 This query is frequently used in combination with a filter, for instance
 to retrieve all emails in the inbox folder.
@@ -118,16 +146,24 @@ If you run a `match` query against a full text field, it will analyze
 the query string using the correct analyzer for that field before executing
 the search:
 
-    { "match": { "tweet": "Cool, bonsai cool" }}
+[source,js]
+--------------------------------------------------
+ { "match": { "tweet": "Cool, bonsai cool" }}
+--------------------------------------------------
+
 
 If you use it on a field containing an exact value, such as a date, a number,
 a boolean or a `not_analyzed` string field, then it will search for that
 exact value:
 
-    { "match": { "age":    26           }}
-    { "match": { "date":   "2013-09-01" }}
-    { "match": { "tag":    "full_text"  }}
-    { "match": { "public": true         }}
+[source,js]
+--------------------------------------------------
+ { "match": { "age":    26           }}
+ { "match": { "date":   "2013-09-01" }}
+ { "match": { "tag":    "full_text"  }}
+ { "match": { "public": true         }}
+--------------------------------------------------
+
 
 Remember, however, that for exact value searches, you probably want to use
 a filter instead of a query, as a filter will be cached.
@@ -142,12 +178,16 @@ query and it is not prone to throwing syntax errors.
 The `multi_match` query allows to run the same `match` query on multiple
 fields:
 
-    {
-        "multi_match": {
-            "query":    "full text search",
-            "fields":   [ "title", "body" ]
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "multi_match": {
+         "query":    "full text search",
+         "fields":   [ "title", "body" ]
+     }
+ }
+--------------------------------------------------
+
 
 ==== `bool` query
 
@@ -171,16 +211,20 @@ as `spam`.  If any documents are `"starred"` or are from 2013 onwards,
 then they will rank higher than they would have otherwise. Documents which
 match *both* conditions will rank even higher:
 
-    {
-        "bool": {
-            "must":     { "match": { "title": "how to make millions" }},
-            "must_not": { "match": { "tag":   "spam" }},
-            "should: [
-                { "match": { "tag": "starred" }},
-                { "match": { "date": { "gte": "2013-01-01" }}
-            ]
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "bool": {
+         "must":     { "match": { "title": "how to make millions" }},
+         "must_not": { "match": { "tag":   "spam" }},
+         "should: [
+             { "match": { "tag": "starred" }},
+             { "match": { "date": { "gte": "2013-01-01" }}
+         ]
+     }
+ }
+--------------------------------------------------
+
 
 If there are no `must` clauses, then at least one `should` clause has to
 match, but if there is at least one `must` clause, then no `should`

@@ -16,34 +16,50 @@ which will help guide your users to the best results quickly.
 Let's start with the simplest form of the `search` API, the empty search,
 which returns all documents in all indices.
 
-    curl localhost:9200/_search -d '{}'
+[source,js]
+--------------------------------------------------
+ GET /_search {}
+--------------------------------------------------
 
 Just as for the query-string search, you can search on one, many or `_all`
 indices, and one, many or all types:
 
-    curl 'localhost:9200/index_2013*/type1,type2/_search' -d '{}'
+[source,js]
+--------------------------------------------------
+ GET /index_2013*/type1,type2/_search {}
+--------------------------------------------------
 
 And you can use the `from` and `size` parameters for pagination:
 
-    curl localhost:9200/_search -d '
-    {
-        "from": 30,
-        "size": 10
-    }
-    '
+[source,js]
+--------------------------------------------------
+ GET /_search 
+ {
+     "from": 30,
+     "size": 10
+ }
+--------------------------------------------------
 
+    
 [NOTE]
 ====
 Some languages, such as Javascript, don't allow request bodies with
 a `GET` request. For this reason, the `search` API can also be used as a
 `POST` request:
 
-    curl -XPOST localhost:9200/_search -d '{}'
+[source,js]
+--------------------------------------------------
+ POST /_search {}
+--------------------------------------------------
 
 Alternatively, you can use a `GET` request and pass the body in the query
 string, as the `source` parameter:
 
-    curl localhost:9200/_search?source=%7B%7D  # equivalent of {}
+[source,js]
+--------------------------------------------------
+ GET /_search?source=%7B%7D  # equivalent of {}
+--------------------------------------------------
+
 
 However, request bodies can be quite long and may exceed the maximum
 query string length which can be as low as 2,000 bytes.

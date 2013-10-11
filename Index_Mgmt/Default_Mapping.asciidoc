@@ -13,16 +13,19 @@ settings, unless explicitly overridden in the type mapping itself.
 For instance, we can disable the `_all` field for all types, using the
 `_default_` mapping, but enable it just for the `blog` type, as follows:
 
-    curl -XPUT localhost:9200/my_index -d '
-    {
-        "_default_": {
-            "_all": { "enabled":  false }
-        },
-        "blog": {
-            "_all": { "enabled":  true  }
-        }
-    }
-    '
+[source,js]
+--------------------------------------------------
+ PUT /my_index 
+ {
+     "_default_": {
+         "_all": { "enabled":  false }
+     },
+     "blog": {
+         "_all": { "enabled":  true  }
+     }
+ }
+--------------------------------------------------
 
+    
 The `_default_` mapping can also be a good place to specify index-wide
 <<dynamic-templates,dynamic templates>>.

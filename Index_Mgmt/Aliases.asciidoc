@@ -27,44 +27,63 @@ name of the real index: `my_index_v1`, `my_index_v2` etc.
 To start off, we create the index `my_index_v1`, and setup the alias
 `my_index` to point to it:
 
-    curl -XPUT localhost:9200/my_index_v1
-    curl -XPUT localhost:9200/my_index_v1/_alias/my_index
+[source,js]
+--------------------------------------------------
+ PUT /my_index_v1
+ PUT /my_index_v1/_alias/my_index
+--------------------------------------------------
+
 
 You can check which index the alias points to with:
 
-    curl 'localhost:9200/*/_alias/my_index'
+[source,js]
+--------------------------------------------------
+ GET /*/_alias/my_index
+--------------------------------------------------
+
 
 Or which aliases point to the index with:
 
-    curl 'localhost:9200/my_index_v1/_alias/*'
+[source,js]
+--------------------------------------------------
+ GET /my_index_v1/_alias/*
+--------------------------------------------------
+
 
 Both of these return:
 
-    {
-        "my_index_v1" : {
-            "aliases" : {
-                "my_index" : { }
-            }
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "my_index_v1" : {
+         "aliases" : {
+             "my_index" : { }
+         }
+     }
+ }
+--------------------------------------------------
+
 
 Later, we decide that we want to change the mappings for a field in our index.
 Of course, we can't change the existing mapping, so we need to reindex
 our data.  To start, we create `my_index_v2` with the new mappings:
 
-    curl -XPUT localhost:9200/my_index_v2 -d '
-    {
-        "mappings": {
-            "my_type": {
-                "tags": {
-                    "type":   "string",
-                    "index":  "not_analyzed"
-                }
-            }
-        }
-    }
-    '
+[source,js]
+--------------------------------------------------
+ PUT /my_index_v2 
+ {
+     "mappings": {
+         "my_type": {
+             "tags": {
+                 "type":   "string",
+                 "index":  "not_analyzed"
+             }
+         }
+     }
+ }
+--------------------------------------------------
 
+    
 Then we reindex our data from `my_index_v1` to `my_index_v2`, following
 the process described in <<reindex>>.  Once we are satisfied that our
 documents have been reindexed correctly, we switch our alias
@@ -75,15 +94,18 @@ from the old index at the same time as we add it to the new index.  The
 change needs to be atomic, which means that we must use the `_aliases`
 endpoint:
 
-    curl -XPOST localhost:9200/_aliases -d '
-    {
-        "actions": [
-            { "remove": { "index": "my_index_v1", "alias": "my_index" }},
-            { "add":    { "index": "my_index_v2", "alias": "my_index" }}
-        ]
-    }
-    '
+[source,js]
+--------------------------------------------------
+ POST /_aliases 
+ {
+     "actions": [
+         { "remove": { "index": "my_index_v1", "alias": "my_index" }},
+         { "add":    { "index": "my_index_v2", "alias": "my_index" }}
+     ]
+ }
+--------------------------------------------------
 
+    
 Your application has switched from using the old index to the new
 index transparently, with zero downtime.
 

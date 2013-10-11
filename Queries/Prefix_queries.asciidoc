@@ -7,7 +7,11 @@ instance: ``find all documents containing terms that begin with `brow`''.
 In order to run this query, Elasticsearch has to find all terms in the index
 that start with `brow` and query all of them, something like:
 
-    brow OR browband OR browbeat OR brown OR....
+[source,js]
+--------------------------------------------------
+ brow OR browband OR browbeat OR brown OR....
+--------------------------------------------------
+
 
 The longer the prefix is, the fewer matching terms there are likely to be,
 and the less work this query needs to do.  Imagine
@@ -36,11 +40,15 @@ The following example finds all documents whose `part_number` field
 begins with the exact value `"XYZ-"`. The relevance `_score` for all matching
 documents is `1`.
 
-    {
-        "prefix" {
-            "part_number": "XYZ-"
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "prefix" {
+         "part_number": "XYZ-"
+     }
+ }
+--------------------------------------------------
+
 
 This simple looking query is rewritten into a much more complicated query
 -- one for each matching term.  The way the query is rewritten can

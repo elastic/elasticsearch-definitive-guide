@@ -15,9 +15,13 @@ the `from` and `size` parameters:
 If you wanted to show 5 results per page, then pages 1 to 3
 could be requested as:
 
-    curl 'localhost:9200/_search?size=5'
-    curl 'localhost:9200/_search?size=5&from=5'
-    curl 'localhost:9200/_search?size=5&from=10'
+[source,js]
+--------------------------------------------------
+ GET /_search?size=5
+ GET /_search?size=5&from=5
+ GET /_search?size=5&from=10
+--------------------------------------------------
+
 
 Beware of paging too deep or requesting too many results at once.
 Results are sorted before being returned. But each shard generates

@@ -10,25 +10,33 @@ The obvious way to accomplish this is by maintaining a document that specifies
 all the users that you follow.  This document is updated every time you add or remove
 a user.
 
-    {
-      "following" : ["1", "3", ...]
-    }
+[source,js]
+--------------------------------------------------
+ {
+   "following" : ["1", "3", ...]
+ }
+--------------------------------------------------
+
 
 
 To search, I perform a GET on the document to obtain the list of users, then
 a second query with those user IDs in a Terms filter:
 
-    {
-      "query" : {
-        "filtered" : {
-          "filter" : {
-            "terms" : {
-              "user" : [ "1", "3", ... ]
-            }
-          }
-        }
-      }
-    }
+[source,js]
+--------------------------------------------------
+ {
+   "query" : {
+     "filtered" : {
+       "filter" : {
+         "terms" : {
+           "user" : [ "1", "3", ... ]
+         }
+       }
+     }
+   }
+ }
+--------------------------------------------------
+
 
 This approach works, but is inefficient (and annoying for the developer).
 With the introduction of the Lookup feature, we can now direct Elasticsearch
@@ -36,23 +44,27 @@ to load those values directly, avoiding the unnecessary roundtrip.
 
 If we tweak our query just a little, we get this:
 
-    {
-      "query" : {
-        "filtered" : {
-          "filter" : {
-            "terms" : {
-              "user" : {
-                "index" : "users",
-                "type" : "user",
-                "id" : "2",
-                "path" : "following"
-              },
-              "_cache_key" : "user_2_friends"
-            }
-          }
-        }
-      }
-    }
+[source,js]
+--------------------------------------------------
+ {
+   "query" : {
+     "filtered" : {
+       "filter" : {
+         "terms" : {
+           "user" : {
+             "index" : "users",
+             "type" : "user",
+             "id" : "2",
+             "path" : "following"
+           },
+           "_cache_key" : "user_2_friends"
+         }
+       }
+     }
+   }
+ }
+--------------------------------------------------
+
 
 In this query, we have a few new properties that facilitate the lookup process.
 `Index`, `type` and `id` allow you to specify where the document lives in

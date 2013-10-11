@@ -7,25 +7,33 @@ The `multi_match` query works in exactly the same way as the
 <<match-query,`match` query>>, but allows you to run the same query
 on several fields at the same time.
 
-    {
-        "multi_match" : {
-            "query"   : "quick brown fox",
-            "fields"  : ["title", "content"]
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "multi_match" : {
+         "query"   : "quick brown fox",
+         "fields"  : ["title", "content"]
+     }
+ }
+--------------------------------------------------
+
 
 Multi-field <<match-phrase-query,phrase>> and
 <<match-phrase-prefix-query,phrase-prefix>> queries can be run by passing
 the same `type` parameter that the <<match-query,`match` query>> accepts:
 
-    {
-        "multi_match" : {
-            "type"    : "phrase_prefix",
-            "query"   : "quick brown f",
-            "fields"  : ["title", "content"],
-            "slop"    : 10
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "multi_match" : {
+         "type"    : "phrase_prefix",
+         "query"   : "quick brown f",
+         "fields"  : ["title", "content"],
+         "slop"    : 10
+     }
+ }
+--------------------------------------------------
+
 
 ==== Boosting fields
 
@@ -39,12 +47,16 @@ value -- the higher the `boost`, the more important the field. In
 the `multi_match` query we can boost a field by appending `^` plus
 a number to the field name:
 
-    {
-        "multi_match" : {
-            "query"   : "quick brown fox",
-            "fields"  : ["title^2", "content"]
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "multi_match" : {
+         "query"   : "quick brown fox",
+         "fields"  : ["title^2", "content"]
+     }
+ }
+--------------------------------------------------
+
 
 The default `boost` value is `1`. Values greater than 1 increase the relative
 importance of that field, and values between `0` and `1` decrease the
@@ -56,12 +68,16 @@ You can use wildcards (`*`) in the field name to match several fields at once.
 For instance, the query below would search the fields `father.name`,
 `wife.name` and `child.name`:
 
-    {
-        "multi_match" : {
-            "query"   : "quick brown fox",
-            "fields"  : [ "*.name" ]
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "multi_match" : {
+         "query"   : "quick brown fox",
+         "fields"  : [ "*.name" ]
+     }
+ }
+--------------------------------------------------
+
 
 
 

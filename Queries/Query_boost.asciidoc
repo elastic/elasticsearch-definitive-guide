@@ -12,12 +12,16 @@ the `content` field, so we need a way of telling Elasticsearch to make the
 We have already seen how to do this when searching multiple fields for
 the same query string, with the <<multi-match-query,`multi_match` query>>:
 
-    {
-        "multi_match": {
-            "query":  "full text search",
-            "fields": ["title^2", "content"]
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "multi_match": {
+         "query":  "full text search",
+         "fields": ["title^2", "content"]
+     }
+ }
+--------------------------------------------------
+
 
 All query clauses accept a `boost` parameter which can be used to alter
 the relative importance of that clause. The default `boost` value is `1`.
@@ -26,19 +30,23 @@ Any value above `1` increases the relevance score, and any value between
 
 The `multi_match` example above could be written out in full as:
 
-    {
-        "bool": {
-            "should": [
-                { "match": { "content": "full text search" }},
-                { "match": {
-                    "title": {
-                        "query": "full text search",
-                        "boost": 2
-                    }
-                }}
-            ]
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "bool": {
+         "should": [
+             { "match": { "content": "full text search" }},
+             { "match": {
+                 "title": {
+                     "query": "full text search",
+                     "boost": 2
+                 }
+             }}
+         ]
+     }
+ }
+--------------------------------------------------
+
 
 *Note:* the structure of the `title` clause had to change to a longer form in
 order to accept the `boost` parameter.

@@ -47,7 +47,11 @@ The `match_all` query simply returns all documents with a relevance
 These queries treat the query string as a ``mini-language'' to express
 complex queries succinctly, e.g.
 
-    title:(+quick brown +fox) +status:active"
+[source,js]
+--------------------------------------------------
+ title:(+quick brown +fox) +status:active"
+--------------------------------------------------
+
 
 They are useful when you need to describe complex queries in a single string,
 but are fragile and potentially dangerous, and the `match` query family should

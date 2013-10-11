@@ -9,11 +9,15 @@ and zero or more characters with `"*"`, for instance `b?o*n` would match
 `brown`, `blown` and `boomtown`.
 
 
-    {
-        "wildcard": {
-            "tag": "b?o*n"
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "wildcard": {
+         "tag": "b?o*n"
+     }
+ }
+--------------------------------------------------
+
 
 [[regexp-query]]
 ==== `regexp` query
@@ -23,11 +27,15 @@ expressions to match terms. A regular expression (_regexp_) like
 `joh?n(ath[oa]n)?` will match `john`, `jon`, `johnathon`, `johnathan`,
 `jonathon` and `jonathan`.
 
-    {
-        "regexp": {
-            "name": "joh?n(ath[oa]n)?"
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "regexp": {
+         "name": "joh?n(ath[oa]n)?"
+     }
+ }
+--------------------------------------------------
+
 
 The full supported syntax is explained in <<regexp-syntax>>.
 
@@ -65,12 +73,20 @@ The longer the prefix, the less work the query needs to do.
 The <<query-string-query,`query_string` query>> mini-language understands
 wildcards:
 
-    "quick b?o*n fox"
+[source,js]
+--------------------------------------------------
+ "quick b?o*n fox"
+--------------------------------------------------
+
 
 and regexps, which are indicated by surrounding the pattern with forward
 slashes (`"/"`):
 
-    "quick /brown|red|green|gr[ea]y/ fox"
+[source,js]
+--------------------------------------------------
+ "quick /brown|red|green|gr[ea]y/ fox"
+--------------------------------------------------
+
 
 The query accepts three parameters which are related to wildcard and
 regexp queries:

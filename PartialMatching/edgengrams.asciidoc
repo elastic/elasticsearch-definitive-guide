@@ -11,7 +11,11 @@ Like regular ngrams, you can specify both minimum and maximum size of the window
 
 Let's set min=1 and max=4, then look at the "pancake" again:
 
-    "p", "pa", "pan", "panc"
+[source,js]
+--------------------------------------------------
+ "p", "pa", "pan", "panc"
+--------------------------------------------------
+
 
 Now, when your user types "pa", these tokens will be matched from the index and offer "pancake" as a suggestion (as well as similar words like "pan", "panacea", etc).
 
@@ -39,12 +43,16 @@ For this reason, you should search with an analyzer that doesn't ngram.  You wan
 
 Doing this is easy, you simply specify the `search_analyzer` option in your query:
 
-    {
-        "match" : {
-            "query" : "panca",
-            "search_analyzer" : "my_analyzer_no_ngrams"
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "match" : {
+         "query" : "panca",
+         "search_analyzer" : "my_analyzer_no_ngrams"
+     }
+ }
+--------------------------------------------------
+
 
 The search_analyzer should be identical to your normal analyzer, with the exception of omitting ngrams (e.g. it should still lowercase, etc)
 
@@ -58,7 +66,11 @@ If you really need that capability, consider constructing a reverse edge-ngram i
 
 Imagine we need to search for all word that end in "*ing".  Taking the word "jumping", we first reverse it:
 
-    "gnipmuj"
+[source,js]
+--------------------------------------------------
+ "gnipmuj"
+--------------------------------------------------
+
 
 Then we apply the edge ngrams:
     
@@ -66,7 +78,11 @@ Then we apply the edge ngrams:
 
 Finally, we reverse the tokens one last time:
 
-    "g", "ng", "ing", "ping", "mping"
+[source,js]
+--------------------------------------------------
+ "g", "ng", "ing", "ping", "mping"
+--------------------------------------------------
+
 
 Now when you do a search for all words ending in "*ing", you can simply query for the exact suffix "ing" and you'll match "jumping".
 

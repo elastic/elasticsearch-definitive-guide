@@ -10,11 +10,15 @@ log events, which can be queued up and indexed in batches of 100 or 1,000.
 
 The `bulk` request body has the following, slightly unusual, format:
 
-    { action: { metadata }}\n
-    { document            }\n
-    { action: { metadata }}\n
-    { document            }\n
-    ...
+[source,js]
+--------------------------------------------------
+ { action: { metadata }}\n
+ { document            }\n
+ { action: { metadata }}\n
+ { document            }\n
+ ...
+--------------------------------------------------
+
 
 Two important points to note about the format:
 
@@ -33,96 +37,122 @@ to be indexed, created or deleted.
 
 For instance, a `delete` request could look like this:
 
-    { "delete": { "_index": "website", "_type": "blog", "_id": "123" }}
+[source,js]
+--------------------------------------------------
+ { "delete": { "_index": "website", "_type": "blog", "_id": "123" }}
+--------------------------------------------------
+
 
 The _document_ line consists of the document `_source` itself -- the fields and values
 that the document contains.  It is only required for `index` or `create`
 requests, not for `delete`.
 
-    { "index":  { "_index": "website", "_type": "blog", "_id": "123" }}
-    { "title":    "My first blog post" }
+[source,js]
+--------------------------------------------------
+ { "index":  { "_index": "website", "_type": "blog", "_id": "123" }}
+ { "title":    "My first blog post" }
+--------------------------------------------------
+
 
 
 If no `_id` is specified, then an ID will be auto-generated:
 
-    { "create": { "_index": "website", "_type": "blog" }}
-    { "title":    "My second blog post" }
+[source,js]
+--------------------------------------------------
+ { "create": { "_index": "website", "_type": "blog" }}
+ { "title":    "My second blog post" }
+--------------------------------------------------
+
 
 
 To put it all together, a complete `bulk` request has this form:
 
-    curl -XPOST localhost:9200/_bulk -d '
-    { "delete": { "_index": "website", "_type": "blog", "_id": "123" }}
-    { "index":  { "_index": "website", "_type": "blog", "_id": "123" }}
-    { "title":    "My first blog post" }
-    { "create": { "_index": "website", "_type": "blog" }}
-    { "title":    "My second blog post" }
-    '
+[source,js]
+--------------------------------------------------
+ POST /_bulk 
+ { "delete": { "_index": "website", "_type": "blog", "_id": "123" }}
+ { "index":  { "_index": "website", "_type": "blog", "_id": "123" }}
+ { "title":    "My first blog post" }
+ { "create": { "_index": "website", "_type": "blog" }}
+ { "title":    "My second blog post" }
+--------------------------------------------------
+
 
 The Elasticsearch response contains the `items` array which lists the result of
 each request, in the same order as we requested them.  It also reports how many
 milliseconds it `took` to perform the whole `bulk` request:
 
-    {
-      "took" : 1,
-      "items" : [
-        { "delete" : {
-            "_index" :   "website",
-            "_type" :    "blog",
-            "_id" :      "123",
-            "_version" : 5,
-            "ok" :       true
-        }},
-        { "index" : {
-            "_index" :   "website",
-            "_type" :    "blog",
-            "_id" :      "123",
-            "_version" : 6,
-            "ok" :       true
-        }},
-        { "create" : {
-            "_index" :   "website",
-            "_type" :    "blog",
-            "_id" :      "YUYRnsC4T2yePAnMy-pqAA",
-            "_version" : 1,
-            "ok" :       true
-        }}
-      ]
-    }
+[source,js]
+--------------------------------------------------
+ {
+   "took" : 1,
+   "items" : [
+     { "delete" : {
+         "_index" :   "website",
+         "_type" :    "blog",
+         "_id" :      "123",
+         "_version" : 5,
+         "ok" :       true
+     }},
+     { "index" : {
+         "_index" :   "website",
+         "_type" :    "blog",
+         "_id" :      "123",
+         "_version" : 6,
+         "ok" :       true
+     }},
+     { "create" : {
+         "_index" :   "website",
+         "_type" :    "blog",
+         "_id" :      "YUYRnsC4T2yePAnMy-pqAA",
+         "_version" : 1,
+         "ok" :       true
+     }}
+   ]
+ }
+--------------------------------------------------
+
 
 If any of the requests fail, then the error will be returned in `items` --
 it won't stop the other requests from being processed:
 
-    curl -XPOST localhost:9200/_bulk -d '
-    { "create": { "_index": "website", "_type": "blog", "_id": "123" }}
-    { "title":    "Cannot create - it already exists" }
-    { "index":  { "_index": "website", "_type": "blog", "_id": "123" }}
-    { "title":    "But we can update it" }
-    '
+[source,js]
+--------------------------------------------------
+ POST /_bulk 
+ { "create": { "_index": "website", "_type": "blog", "_id": "123" }}
+ { "title":    "Cannot create - it already exists" }
+ { "index":  { "_index": "website", "_type": "blog", "_id": "123" }}
+ { "title":    "But we can update it" }
+--------------------------------------------------
+
 
 In the response we can see that it failed to `create` document `123`
 because it already exists. However, the subsequent `index` request, also
 on document `123`, succeeded:
 
-    {
-      "took" : 1,
-      "items" : [
-        { "create" : {
-            "_index" :   "website",
-            "_type" :    "blog",
-            "_id" :      "123",
-            "error" :    "DocumentAlreadyExistsException[[website][4] [blog][123]:
-                          document already exists]"
-        }},
-        { "index" : {
-            "_index" :   "website",
-            "_type" :    "blog",
-            "_id" :      "123",
-            "_version" : 7,
-            "ok" :       true
-        }}
-      ]
-    }
+[source,js]
+--------------------------------------------------
+ {
+   "took" : 1,
+   "items" : [
+     { "create" : {
+         "_index" :   "website",
+         "_type" :    "blog",
+         "_id" :      "123",
+         "error" :    "DocumentAlreadyExistsException[[website][4] [blog][123]:
+                       document already exists]"
+     }},
+     { "index" : {
+         "_index" :   "website",
+         "_type" :    "blog",
+         "_id" :      "123",
+         "_version" : 7,
+         "ok" :       true
+     }}
+   ]
+ }
+--------------------------------------------------
+
 
 That also means that `bulk` requests are not atomic.  They cannot be used
 to implement transactions.  Each request is processed separately, so the
@@ -136,20 +166,26 @@ same `type`. Having to specify the same metadata for each document is a waste.
 Instead, just as for the `mget` API, we can specify a default `/_index` in the
 URL, or even a default `/_index/_type`.
 
-    curl -XPOST localhost:9200/website/_bulk -d '
-    { "index": { "_type": "log" }}
-    { "event": "User logged in" }
-    '
+[source,js]
+--------------------------------------------------
+ POST /website/_bulk 
+ { "index": { "_type": "log" }}
+ { "event": "User logged in" }
+--------------------------------------------------
+
 
 You can still override the `_index` and `_type` in the metadata line, but it
 will use the URL defaults if no override is specified:
 
-    curl -XPOST localhost:9200/website/log/_bulk -d '
-    { "index": {}}
-    { "event": "User logged in" }
-    { "index": { "_type": "blog" }
-    { "title": "Overriding the default type" }}
-    '
+[source,js]
+--------------------------------------------------
+ POST /website/log/_bulk 
+ { "index": {}}
+ { "event": "User logged in" }
+ { "index": { "_type": "blog" }
+ { "title": "Overriding the default type" }}
+--------------------------------------------------
+
 
 Unlike the `mget` API, the `_type` parameter is not optional in `bulk` API.
 It must be specified, either in the URL or in the metadata.
@@ -161,14 +197,17 @@ way as do for single `index` or `delete` requests (see <<version-control>>).
 
 The `_version` number must be specified in the metadata:
 
-    curl -XPOST localhost:9200/website/blog/_bulk -d '
-    { "create": { "_id": "125" }}
-    { "title":    "Create a new blog post, with version 1" }
-    { "index":  { "_id": "125", "_version": 1 }}
-    { "title":    "This update succeeds" }
-    { "index":  { "_id": "125", "_version": 1 }}
-    { "title":    "This update fails with a Conflict error" }
-    '
+[source,js]
+--------------------------------------------------
+ POST /website/blog/_bulk 
+ { "create": { "_id": "125" }}
+ { "title":    "Create a new blog post, with version 1" }
+ { "index":  { "_id": "125", "_version": 1 }}
+ { "title":    "This update succeeds" }
+ { "index":  { "_id": "125", "_version": 1 }}
+ { "title":    "This update fails with a Conflict error" }
+--------------------------------------------------
+
 
 The metadata also understands the `_version_type` parameter, if you wish
 to use `external` version numbers.

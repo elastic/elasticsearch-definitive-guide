@@ -16,11 +16,15 @@ your phrase search will actually be ["sue jump table"].
 
 The Lucene parser used in query_string also supports phrase matching. When search text is wrapped in quotation marks (like you would do in Google), the text is considered a phrase.
 
-    {
-        "query_string" : {
-            "default_field" : "test",
-            "query" : "\"Sue jumped over the table\""
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "query_string" : {
+         "default_field" : "test",
+         "query" : "\"Sue jumped over the table\""
+     }
+ }
+--------------------------------------------------
+
 
 Make sure the quotation marks are properly escaped so that the JSON is valid.  Phrase matching with quotation marks works on all queries that are derived from the Lucene parser (Field Query, q-param syntax, etc).

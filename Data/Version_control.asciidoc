@@ -77,65 +77,87 @@ to change.  If that version is no longer current, our request fails.
 
 Let's create a new blog post:
 
-    curl -XPUT localhost:9200/website/blog/1/_create -d '
-    {
-      "title": "My first blog entry",
-      "text":  "Just trying this out..."
-    }
-    '
+[source,js]
+--------------------------------------------------
+ PUT /website/blog/1/_create 
+ {
+   "title": "My first blog entry",
+   "text":  "Just trying this out..."
+ }
+--------------------------------------------------
 
+    
 The response body tells us that this newly created document has `_version`
 number `1`.  Now imagine that we want to edit the document: we load its data
 into a web form, make our changes, then save the new version.
 
 First we retrieve the document:
 
-    curl -XGET localhost:9200/website/blog/1
+[source,js]
+--------------------------------------------------
+ GET /website/blog/1
+--------------------------------------------------
+
 
 The response body includes the same `_version` number of `1`:
 
-    {
-      "_index" :   "website",
-      "_type" :    "blog",
-      "_id" :      "1",
-      "_version" : 1,
-      "exists" :   true,
-      "_source" : {
-          "title": "My first blog entry",
-          "text":  "Just trying this out..."
-      }
-    }
+[source,js]
+--------------------------------------------------
+ {
+   "_index" :   "website",
+   "_type" :    "blog",
+   "_id" :      "1",
+   "_version" : 1,
+   "exists" :   true,
+   "_source" : {
+       "title": "My first blog entry",
+       "text":  "Just trying this out..."
+   }
+ }
+--------------------------------------------------
+
 
 Now, when we try to save our changes by reindexing the document, we specify
 the `version` to which our changes should be applied:
 
-    curl -XPUT localhost:9200/website/blog/1?version=1 -d '
-    {
-      "title": "My first blog entry",
-      "text":  "Starting to get the hang of this..."
-    }
-    '
+[source,js]
+--------------------------------------------------
+ PUT /website/blog/1?version=1 
+ {
+   "title": "My first blog entry",
+   "text":  "Starting to get the hang of this..."
+ }
+--------------------------------------------------
 
+    
 This request succeeds, and the response body tells us that the `_version`
 has been incremented to `2`:
 
-    {
-      "ok":       true,
-      "_index":   "website",
-      "_type":    "blog",
-      "_id":      "1",
-      "_version": 2
-    }
+[source,js]
+--------------------------------------------------
+ {
+   "ok":       true,
+   "_index":   "website",
+   "_type":    "blog",
+   "_id":      "1",
+   "_version": 2
+ }
+--------------------------------------------------
+
 
 However, if we were to rerun the same index request, still specifying
 `version=1`, Elasticsearch would respond with a `409 Conflict` HTTP response
 code, and a body like the following:
 
-    {
-      "error" : "VersionConflictEngineException[[website][2] [blog][1]:
-                 version conflict, current [2], provided [1]]",
-      "status" : 409
-    }
+[source,js]
+--------------------------------------------------
+ {
+   "error" : "VersionConflictEngineException[[website][2] [blog][1]:
+              version conflict, current [2], provided [1]]",
+   "status" : 409
+ }
+--------------------------------------------------
+
 
 This tells us that the current `_version` number of the document in
 Elasticsearch is `2`, but that we specified that we were updating version `1`.
@@ -173,41 +195,55 @@ index and delete requests, but also when _creating_ new documents.
 For instance, to create a new blog post with an external version number
 of `5`, we can do the following:
 
-    curl -XPUT 'localhost:9200/website/blog/2?version=5&version_type=external' -d '
-    {
-      "title": "My first external blog entry",
-      "text":  "Starting to get the hang of this..."
-    }
-    '
+[source,js]
+--------------------------------------------------
+ PUT /website/blog/2?version=5&version_type=external 
+ {
+   "title": "My first external blog entry",
+   "text":  "Starting to get the hang of this..."
+ }
+--------------------------------------------------
 
+    
 In the response, we can see that the current `_version` number is `5`:
 
-    {
-      "ok":       true,
-      "_index":   "website",
-      "_type":    "blog",
-      "_id":      "2",
-      "_version": 5
-    }
+[source,js]
+--------------------------------------------------
+ {
+   "ok":       true,
+   "_index":   "website",
+   "_type":    "blog",
+   "_id":      "2",
+   "_version": 5
+ }
+--------------------------------------------------
+
 
 Now we update this document, but specifying a new `version` number of `10`:
 
-    curl -XPUT 'localhost:9200/website/blog/2?version=10&version_type=external' -d '
-    {
-      "title": "My first external blog entry",
-      "text":  "This is a piece of cake..."
-    }
-    '
+[source,js]
+--------------------------------------------------
+ PUT /website/blog/2?version=10&version_type=external 
+ {
+   "title": "My first external blog entry",
+   "text":  "This is a piece of cake..."
+ }
+--------------------------------------------------
 
+    
 The request succeeds and sets the current `_version` to `10`:
 
-    {
-      "ok":       true,
-      "_index":   "website",
-      "_type":    "blog",
-      "_id":      "2",
-      "_version": 10
-    }
+[source,js]
+--------------------------------------------------
+ {
+   "ok":       true,
+   "_index":   "website",
+   "_type":    "blog",
+   "_id":      "2",
+   "_version": 10
+ }
+--------------------------------------------------
+
 
 If you were to rerun this request, it would fail with the same conflict
 error we saw above, because the specified external version number is not

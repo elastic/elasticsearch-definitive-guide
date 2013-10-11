@@ -8,14 +8,18 @@ into a final single `_score` for the `bool` query.
 The <<multi-match-query,multi-field query>> that we saw in the previous section
 could be rewritten as:
 
-    {
-        "bool": {
-            "should": [
-                { "match": { "title":   "quick brown fox"}},
-                { "match": { "content": "quick brown fox"}}
-            ]
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "bool": {
+         "should": [
+             { "match": { "title":   "quick brown fox"}},
+             { "match": { "content": "quick brown fox"}}
+         ]
+     }
+ }
+--------------------------------------------------
+
 
 The `bool` query, like the <<bool-filter,`bool` filter>> accepts three
 parameters which can contain query clauses:
@@ -49,17 +53,21 @@ As an example, the following query states that :
  ** the `tags` field contains either `animal` or `popular` or both
 --
 
-    {
-        "bool": {
-            "must":     { "match": { "title": "quick brown fox" }},
-            "must_not": { "match": { "status": "private" }}
-            "should": [
-                { "match": { "content": "quick brown fox" }}
-                { "match": { "tags": "animal"  }},
-                { "match": { "tags": "popular" }}
-            ],
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "bool": {
+         "must":     { "match": { "title": "quick brown fox" }},
+         "must_not": { "match": { "status": "private" }}
+         "should": [
+             { "match": { "content": "quick brown fox" }}
+             { "match": { "tags": "animal"  }},
+             { "match": { "tags": "popular" }}
+         ],
+     }
+ }
+--------------------------------------------------
+
 
 [NOTE]
 ====
@@ -76,17 +84,21 @@ that must match for a document to be included in the result set. For instance,
 you could specify that only documents matching at least 2 of the 3 specified
 tags should be included:
 
-    {
-        "bool": {
-            "must":   { "match": { "title": "full text search" }},
-            "should": [
-                  { "match": { "tags": "perl"   }},
-                  { "match": { "tags": "python" }},
-                  { "match": { "tags": "ruby"   }}
-            ],
-            "minimum_should_match": 2
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "bool": {
+         "must":   { "match": { "title": "full text search" }},
+         "should": [
+               { "match": { "tags": "perl"   }},
+               { "match": { "tags": "python" }},
+               { "match": { "tags": "ruby"   }}
+         ],
+         "minimum_should_match": 2
+     }
+ }
+--------------------------------------------------
+
 
 This is a powerful relevance tuning mechanism.  It means that we aren't
 caught between the two extremes of _everything-**must**-match_ and

@@ -20,58 +20,72 @@ as the `"doc"` parameter -- objects are merged together, existing scalar fields
 are overwritten and new fields are added. For instance, we could add a
 `tags` field and a `views` field to our blog post with:
 
-    curl -XPOST localhost:9200/website/blog/1/_update  -d '
-    {
-       "doc" : {
-          "tags" : [ "testing" ],
-          "views": 0
-       }
+[source,js]
+--------------------------------------------------
+ POST /website/blog/1/_update  
+ {
+    "doc" : {
+       "tags" : [ "testing" ],
+       "views": 0
     }
-    '
+ }
+--------------------------------------------------
 
+    
 If the request succeeds, we see a response similar to that
 of the `index` request:
 
-    {
-       "ok" :       true,
-       "_index" :   "website",
-       "_id" :      "1",
-       "_type" :    "blog",
-       "_version" : 3
-    }
+[source,js]
+--------------------------------------------------
+ {
+    "ok" :       true,
+    "_index" :   "website",
+    "_id" :      "1",
+    "_type" :    "blog",
+    "_version" : 3
+ }
+--------------------------------------------------
+
 
 However, if you would like to see what changes have been made, you can
 request one or more fields with the `fields` query string parameter.  If you want
 to see the whole document, then request the `_source` field:
 
-    curl -XPOST localhost:9200/website/blog/1/_update?fields=_source  -d '
-    {
-       "doc" : {
-          "tags" : [ "testing" ],
-          "views": 0
-       }
+[source,js]
+--------------------------------------------------
+ POST /website/blog/1/_update?fields=_source  
+ {
+    "doc" : {
+       "tags" : [ "testing" ],
+       "views": 0
     }
-    '
+ }
+--------------------------------------------------
 
+    
 Now you can see that our `tags` and `views` fields have been added to the
 document:
 
-    {
-      "ok" :       true,
-      "_index" :   "website",
-      "_type" :    "blog",
-      "_id" :      "1",
-      "_version" : 4,
-      "get" : {
-        "exists"  : true,
-        "_source" : {
-            "title" :  "My first blog entry",
-            "text"  :  "Starting to get the hang of this...",
-            "tags"  :  [ "testing" ],
-            "views" :  0
-        }
-      }
-    }
+[source,js]
+--------------------------------------------------
+ {
+   "ok" :       true,
+   "_index" :   "website",
+   "_type" :    "blog",
+   "_id" :      "1",
+   "_version" : 4,
+   "get" : {
+     "exists"  : true,
+     "_source" : {
+         "title" :  "My first blog entry",
+         "text"  :  "Starting to get the hang of this...",
+         "tags"  :  [ "testing" ],
+         "views" :  0
+     }
+   }
+ }
+--------------------------------------------------
+
 
 ==== Using scripts to make partial updates
 
@@ -85,73 +99,90 @@ Scripts can be used in the `update` API to change the content of the
 For instance, we could use a script to increment the number of `views`
 that our blog post has had:
 
-    curl -XPOST localhost:9200/website/blog/1/_update?fields=views  -d '
-    {
-       "script" : "ctx._source.views+=1"
-    }
-    '
+[source,js]
+--------------------------------------------------
+ POST /website/blog/1/_update?fields=views  
+ {
+    "script" : "ctx._source.views+=1"
+ }
+--------------------------------------------------
 
+    
 We requested the `views` field, so that we can see that it has been
 incremented:
 
-    {
-       "ok" :       true,
-       "_index" :   "website",
-       "_type" :    "blog",
-       "_id" :      "1",
-       "_version" : 5,
-       "get" : {
-          "exists" : true,
-          "fields" : {
-             "views" : 1
-          }
+[source,js]
+--------------------------------------------------
+ {
+    "ok" :       true,
+    "_index" :   "website",
+    "_type" :    "blog",
+    "_id" :      "1",
+    "_version" : 5,
+    "get" : {
+       "exists" : true,
+       "fields" : {
+          "views" : 1
        }
     }
+ }
+--------------------------------------------------
+
 
 We can also use a script to add a new tag to the `tags` array.  In this
 example we specify the new tag as a parameter rather than hard coding
 it in the script itself. This allows Elasticsearch to reuse the script
 in the future, without having to compile a new script for every new tag:
 
-    curl -XPOST localhost:9200/website/blog/1/_update?fields=tags  -d '
-    {
-       "script" : "ctx._source.tags+=new_tag",
-       "params" : {
-          "new_tag" : "search"
-       }
+[source,js]
+--------------------------------------------------
+ POST /website/blog/1/_update?fields=tags  
+ {
+    "script" : "ctx._source.tags+=new_tag",
+    "params" : {
+       "new_tag" : "search"
     }
-    '
+ }
+--------------------------------------------------
 
+    
 The response shows that the `search` tag has been added to the `tags` array:
 
-    {
-       "ok" :       true,
-       "_index" :   "website",
-       "_type" :    "blog",
-       "_id" :      "1",
-       "_version" : 6,
-       "get" : {
-          "exists" : true,
-          "fields" : {
-             "tags" : [
-                "testing",
-                "search"
-             ]
-          }
+[source,js]
+--------------------------------------------------
+ {
+    "ok" :       true,
+    "_index" :   "website",
+    "_type" :    "blog",
+    "_id" :      "1",
+    "_version" : 6,
+    "get" : {
+       "exists" : true,
+       "fields" : {
+          "tags" : [
+             "testing",
+             "search"
+          ]
        }
     }
+ }
+--------------------------------------------------
+
 
 We can even choose to delete a document based on it contents:
 
-    curl -XPOST localhost:9200/website/blog/1/_update -d '
-    {
-       "script" : "ctx._source.tags.contains(tag) ? ctx.op = \"delete\" : ctx.op = \"none\"",
-        "params" : {
-            "tag" : "testing"
-        }
-    }
-    '
+[source,js]
+--------------------------------------------------
+ POST /website/blog/1/_update 
+ {
+    "script" : "ctx._source.tags.contains(tag) ? ctx.op = \"delete\" : ctx.op = \"none\"",
+     "params" : {
+         "tag" : "testing"
+     }
+ }
+--------------------------------------------------
 
+    
 ==== Create or update
 
 Imagine that we need to store a pageview counter in Elasticsearch. Every
@@ -162,48 +193,59 @@ if we try to update a non-existent document, the update will fail.
 In cases like these, we can use the `upsert` parameter to specify the
 document that should be created if it doesn't already exist:
 
-    curl -XPOST localhost:9200/website/pageviews/1/_update?fields=views  -d '
-    {
-       "script" : "ctx._source.views+=1",
-       "upsert": {
-           "views": 0
-       }
+[source,js]
+--------------------------------------------------
+ POST /website/pageviews/1/_update?fields=views  
+ {
+    "script" : "ctx._source.views+=1",
+    "upsert": {
+        "views": 0
     }
-    '
+ }
+--------------------------------------------------
 
+    
 The first time we run this request, a new document is inserted which
 initializes the `views` field to `0`:
 
-    {
-      "ok" :       true,
-      "_index" :   "website",
-      "_type" :    "pageviews",
-      "_id" :      "1",
-      "_version" : 1,
-      "get" : {
-        "exists" : true,
-        "fields" : {
-          "views" : 0
-        }
-      }
-    }
+[source,js]
+--------------------------------------------------
+ {
+   "ok" :       true,
+   "_index" :   "website",
+   "_type" :    "pageviews",
+   "_id" :      "1",
+   "_version" : 1,
+   "get" : {
+     "exists" : true,
+     "fields" : {
+       "views" : 0
+     }
+   }
+ }
+--------------------------------------------------
+
 
 On subsequent runs, the document already exists, so the `script` update
 is applied instead:
 
-    {
-      "ok" :       true,
-      "_index" :   "website",
-      "_type" :    "pageviews",
-      "_id" :      "1",
-      "_version" : 2,
-      "get" : {
-        "exists" : true,
-        "fields" : {
-          "views" : 1
-        }
-      }
-    }
+[source,js]
+--------------------------------------------------
+ {
+   "ok" :       true,
+   "_index" :   "website",
+   "_type" :    "pageviews",
+   "_id" :      "1",
+   "_version" : 2,
+   "get" : {
+     "exists" : true,
+     "fields" : {
+       "views" : 1
+     }
+   }
+ }
+--------------------------------------------------
+
 
 ==== Updates and conflicts
 
@@ -228,15 +270,18 @@ This can be done automatically by setting the `retry_on_conflict` parameter to
 the number of times that `update` should retry before failing -- it defaults
 to `0`.
 
-    curl -XPOST localhost:9200/website/pageviews/1/_update?retry_on_conflict=5  -d '
-    {
-       "script" : "ctx._source.views+=1",
-       "upsert": {
-           "views": 0
-       }
+[source,js]
+--------------------------------------------------
+ POST /website/pageviews/1/_update?retry_on_conflict=5  
+ {
+    "script" : "ctx._source.views+=1",
+    "upsert": {
+        "views": 0
     }
-    '
+ }
+--------------------------------------------------
 
+    
 NOTE: The `update` API does not accept the `version` parameter. You should
 only use `update` for changes that should be applied regardless
 of the current version of the document.

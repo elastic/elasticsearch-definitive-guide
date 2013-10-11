@@ -3,9 +3,13 @@ If you have multipe values for a single field, there are some extra precautions 
 
 For example, consider this document:
 
-    {
-        "names" : [ "xxx yyy", "zzz" ]
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "names" : [ "xxx yyy", "zzz" ]
+ }
+--------------------------------------------------
+
 
 If you search for "xxx zzz", you would not expect this document to be returned.  However, this document will be a match.  Why?
 
@@ -22,18 +26,22 @@ Now when you search for the phrase "xxx zzz" you get a match because both [xxx] 
 
 The solution to this problem is to include `position_offset_gap` in your mapping:
 
-    {
-        "mappings" : {
-            "type" : {
-                "properties" : {
-                    "names" : {
-                        "type" : "string", 
-                        "position_offset_gap" : 100
-                    }
-                }
-            }
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "mappings" : {
+         "type" : {
+             "properties" : {
+                 "names" : {
+                     "type" : "string", 
+                     "position_offset_gap" : 100
+                 }
+             }
+         }
+     }
+ }
+--------------------------------------------------
+
 
 Each time a new value is encountered, the starting position is incremented by the configured amount (in this case 100).  With the above example, token [zzz] would have position 101 and the query would not match a phrase.
 

@@ -3,9 +3,13 @@ The first method we'll talk about is called prefix matching.  The concept is ver
 
 Imagine we have a document that says "quick brown fox" and "quite enough foxes".  You want to find anything that starts with "qui".  The Prefix query makes this task easy:
 
-    {
-        "prefix" : { "my_field" : "qui" }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "prefix" : { "my_field" : "qui" }
+ }
+--------------------------------------------------
+
 
 So what's going on under the surface?  Internally, there are two operations taking place.  First, Elasticsearch formulates your query as a regular expression in the form of `/qui.*/` (e.g. the value "qui" followed by anything).  It then traverses the term dictionary to find all possible terms that match this pattern.
 

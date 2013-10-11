@@ -24,41 +24,50 @@ The `dynamic` setting may be applied to the root object or to any field
 of type `object`.  You could set `dynamic` to `strict` by default,
 but enable it just for a specific inner object:
 
-    curl -XPUT localhost:9200/my_index -d '
-    {
-        "mappings": {
-            "my_type": {
-                "dynamic":      "strict",
-                "properties": {
-                    "title":  { "type": "string"},
-                    "stash":  {
-                        "type":     "object",
-                        "dynamic":  true
-                    }
-                }
-            }
-        }
-    }
-    '
+[source,js]
+--------------------------------------------------
+ PUT /my_index 
+ {
+     "mappings": {
+         "my_type": {
+             "dynamic":      "strict",
+             "properties": {
+                 "title":  { "type": "string"},
+                 "stash":  {
+                     "type":     "object",
+                     "dynamic":  true
+                 }
+             }
+         }
+     }
+ }
+--------------------------------------------------
 
+    
 With this mapping, you can add new searchable fields into the `stash` object:
 
-    curl -XPUT localhost:9200/my_index/my_type/1 -d '
-    {
-        "title":   "This doc adds a new field",
-        "stash": { "new_field": "Success!" }
-    }
-    '
+[source,js]
+--------------------------------------------------
+ PUT /my_index/my_type/1 
+ {
+     "title":   "This doc adds a new field",
+     "stash": { "new_field": "Success!" }
+ }
+--------------------------------------------------
 
+    
 But trying to do the same at the top level will fail:
 
-    curl -XPUT localhost:9200/my_index/my_type/1 -d '
-    {
-        "title":     "This throws a StrictDynamicMappingException",
-        "new_field": "Fail!"
-    }
-    '
+[source,js]
+--------------------------------------------------
+ PUT /my_index/my_type/1 
+ {
+     "title":     "This throws a StrictDynamicMappingException",
+     "new_field": "Fail!"
+ }
+--------------------------------------------------
 
+    
 [NOTE]
 ====
 Setting `dynamic` to `false` doesn't alter the contents of the

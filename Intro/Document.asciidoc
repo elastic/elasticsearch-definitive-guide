@@ -26,17 +26,21 @@ to read.
 
 Consider this JSON document which represents a user object:
 
-    {
-        "email":     "john@smith.com",
-        "name": {
-            "first": "John",
-            "last":  "Smith"
-        },
-        "bio":       "Eco-warrior and defender of the weak",
-        "age":       25,
-        "join_date": "2013/05/01",
-        "interests": ["dolphins", "whales"]
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "email":     "john@smith.com",
+     "name": {
+         "first": "John",
+         "last":  "Smith"
+     },
+     "bio":       "Eco-warrior and defender of the weak",
+     "age":       25,
+     "join_date": "2013/05/01",
+     "interests": ["dolphins", "whales"]
+ }
+--------------------------------------------------
+
 
 Although the original user object was complex, the
 structure of the object has been retained in the JSON version.

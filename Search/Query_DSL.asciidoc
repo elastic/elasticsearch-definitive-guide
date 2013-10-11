@@ -8,67 +8,88 @@ to debug.
 
 To use the query DSL, pass a query in the `query` parameter:
 
-    curl localhost:9200/_search -d '
-    {
-        "query": YOUR_QUERY_HERE
-    }
-    '
+[source,js]
+--------------------------------------------------
+ GET /_search 
+ {
+     "query": YOUR_QUERY_HERE
+ }
+--------------------------------------------------
 
+    
 The ``empty search'' -- `{}` -- is functionally equivalent to using the
 `match_all` query clause. As the name suggests, it matches all documents:
 
-    curl localhost:9200/_search -d '
-    {
-        "query": {
-            "match_all": {}
-        }
-    }
-    '
+[source,js]
+--------------------------------------------------
+ GET /_search 
+ {
+     "query": {
+         "match_all": {}
+     }
+ }
+--------------------------------------------------
 
+    
 ==== Structure of a query clause
 
 A query clause typically has the structure:
 
-    {
-        QUERY_NAME: {
-            ARGUMENT: VALUE,
-            ARGUMENT: VALUE,...
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     QUERY_NAME: {
+         ARGUMENT: VALUE,
+         ARGUMENT: VALUE,...
+     }
+ }
+--------------------------------------------------
+
 
 or, if it references one particular field:
 
-    {
-        QUERY_NAME: {
-            FIELD_NAME: {
-                ARGUMENT: VALUE,
-                ARGUMENT: VALUE,...
-            }
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     QUERY_NAME: {
+         FIELD_NAME: {
+             ARGUMENT: VALUE,
+             ARGUMENT: VALUE,...
+         }
+     }
+ }
+--------------------------------------------------
+
 
 
 For instance, you can use a `match` query clause to find tweets that
 mention `"elasticsearch"` in the `tweet` field:
 
-    {
-        "match": {
-            "tweet": "elasticsearch"
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "match": {
+         "tweet": "elasticsearch"
+     }
+ }
+--------------------------------------------------
+
 
 The full search request would look like this:
 
-    curl localhost:9200/_search -d '
-    {
-        "query": {
-            "match": {
-                "tweet": "elasticsearch"
-            }
-        }
-    }
-    '
+[source,js]
+--------------------------------------------------
+ GET /_search 
+ {
+     "query": {
+         "match": {
+             "tweet": "elasticsearch"
+         }
+     }
+ }
+--------------------------------------------------
 
+    
 ==== Combining multiple clauses
 
 Query clauses are simple building blocks, that can be combined with each
@@ -81,13 +102,17 @@ other to create complex queries. Clauses can be:
   For instance, a `bool` clause allows you to combine other clauses that
   either `must` match,  `must_not` match, or `should` match if possible:
 
-    {
-        "bool": {
-            "must":     { "match": { "tweet": "elasticsearch" }},
-            "must_not": { "match": { "name":  "john" }},
-            "should":   { "match": { "tweet": "full text" }}
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "bool": {
+         "must":     { "match": { "tweet": "elasticsearch" }},
+         "must_not": { "match": { "name":  "john" }},
+         "should":   { "match": { "tweet": "full text" }}
+     }
+ }
+--------------------------------------------------
+
 
 It is important to note that a compound clause can combine *any* other
 query clauses, including other compound clauses. This means that compound
@@ -98,19 +123,23 @@ As an example, the following query looks for emails that contain
 `"business opportunity"` and must either be starred, or both be in the Inbox
 and not marked as spam:
 
-    {
-        "bool": {
-            "must": { "match":      { "email": "business opportunity" }},
-            "should": [
-                 { "match":         { "starred": true }},
-                 { "bool": {
-                       "must":      { "folder": "inbox" }},
-                       "must_not":  { "spam": true }}
-                 }}
-            ],
-            "minimum_should_match": 1
-        }
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "bool": {
+         "must": { "match":      { "email": "business opportunity" }},
+         "should": [
+              { "match":         { "starred": true }},
+              { "bool": {
+                    "must":      { "folder": "inbox" }},
+                    "must_not":  { "spam": true }}
+              }}
+         ],
+         "minimum_should_match": 1
+     }
+ }
+--------------------------------------------------
+
 
 Don't worry about the details of this example yet -- we will explain in
 full later. The important thing to take away is that a compound query

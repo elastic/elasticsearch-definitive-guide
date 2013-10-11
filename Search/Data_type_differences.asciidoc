@@ -5,10 +5,14 @@ Something seems to be broken: we have 12 tweets in our indices,
 and only one of them has the date `2013-09-15`, but have a look at the
 `total` hits for the following queries:
 
-    curl localhost:9200/_search?q=2013              # 12 results
-    curl localhost:9200/_search?q=2013-09-15        # 12 results !
-    curl localhost:9200/_search?q=date:2013-09-15   # 1  result
-    curl localhost:9200/_search?q=date:2013         # 0  results !
+[source,js]
+--------------------------------------------------
+ GET /_search?q=2013              # 12 results
+ GET /_search?q=2013-09-15        # 12 results !
+ GET /_search?q=date:2013-09-15   # 1  result
+ GET /_search?q=date:2013         # 0  results !
+--------------------------------------------------
+
 
 Why does querying the `_all` field for the full date return all
 tweets, and querying the `date` field for just the year return no
@@ -21,29 +25,37 @@ So let's take a look at how Elasticsearch has interpreted our document
 structure, by requesting the _mapping_ (or schema definition)
 for the `tweet` type in the `gb` index:
 
-    curl localhost:9200/gb/tweet/_mapping
+[source,js]
+--------------------------------------------------
+ GET /gb/tweet/_mapping
+--------------------------------------------------
+
 
 which gives us:
 
-    {
-      "tweet" : {
-        "properties" : {
-          "date" : {
-            "type" :   "date",
-            "format" : "dateOptionalTime"
-          },
-          "name" : {
-            "type" :   "string"
-          },
-          "tweet" : {
-            "type" :   "string"
-          },
-          "user_id" : {
-            "type" :   "long"
-          }
-        }
-      }
-    }
+[source,js]
+--------------------------------------------------
+ {
+   "tweet" : {
+     "properties" : {
+       "date" : {
+         "type" :   "date",
+         "format" : "dateOptionalTime"
+       },
+       "name" : {
+         "type" :   "string"
+       },
+       "tweet" : {
+         "type" :   "string"
+       },
+       "user_id" : {
+         "type" :   "long"
+       }
+     }
+   }
+ }
+--------------------------------------------------
+
 
 Elasticsearch has dynamically generated a mapping for us, based on
 what it could guess about our field types.

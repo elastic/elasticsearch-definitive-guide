@@ -16,30 +16,38 @@ it easy for us to start experimenting without having to plan ahead.
 We can see how our fields from the example have been interpreted by retrieving
 the current _mapping_ (aka the schema definition):
 
-    curl -XGET 'localhost:9200/blogs/_mapping?pretty'
+[source,js]
+--------------------------------------------------
+ GET /blogs/_mapping?pretty
+--------------------------------------------------
+
 
 which looks like this:
 
-    {
-      "blogs" : {
-        "user" : {
-          "properties" : {
-            "age" :       { "type" : "long"   },
-            "bio" :       { "type" : "string" },
-            "email" :     { "type" : "string" },
-            "interests" : { "type" : "string" },
-            "join_date" : {
-                "type" : "date",
-                "format" : "yyyy/MM/dd HH:mm:ss||yyyy/MM/dd"
-            },
-            "name" : {
-                "dynamic" : "true",
-                "properties" : {
-                  "first" : { "type" : "string" },
-                  "last" :  { "type" : "string" }
-                }
-            }
-    }}}}
+[source,js]
+--------------------------------------------------
+ {
+   "blogs" : {
+     "user" : {
+       "properties" : {
+         "age" :       { "type" : "long"   },
+         "bio" :       { "type" : "string" },
+         "email" :     { "type" : "string" },
+         "interests" : { "type" : "string" },
+         "join_date" : {
+             "type" : "date",
+             "format" : "yyyy/MM/dd HH:mm:ss||yyyy/MM/dd"
+         },
+         "name" : {
+             "dynamic" : "true",
+             "properties" : {
+               "first" : { "type" : "string" },
+               "last" :  { "type" : "string" }
+             }
+         }
+ }}}}
+--------------------------------------------------
+
 
 We can see that Elasticsearch has done a reasonable job of interpreting our
 data types:

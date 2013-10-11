@@ -7,26 +7,30 @@ _field_ or _property_, and a _value_ can be a string, a number, a boolean,
 another object or an array of values, or some other specialized type, such as
 a string which represents a date, or an object which represents a geolocation:
 
-    {
-        "name":         "John Smith",
-        "age":          42,
-        "confirmed":    true,
-        "join_date":    "2013-06-01",
-        "home": {
-            "lat":      51.5,
-            "lon":      0.1
-        },
-        "accounts": [
-            {
-                "type": "facebook",
-                "id":   "johnsmith"
-            },
-            {
-                "type": "twitter",
-                "id":   "johnsmith"
-            }
-        ]
-    }
+[source,js]
+--------------------------------------------------
+ {
+     "name":         "John Smith",
+     "age":          42,
+     "confirmed":    true,
+     "join_date":    "2013-06-01",
+     "home": {
+         "lat":      51.5,
+         "lon":      0.1
+     },
+     "accounts": [
+         {
+             "type": "facebook",
+             "id":   "johnsmith"
+         },
+         {
+             "type": "twitter",
+             "id":   "johnsmith"
+         }
+     ]
+ }
+--------------------------------------------------
+
 
 Often, we use the terms _object_ and _document_ interchangeably. However,
 there is a distinction.  An object is just a JSON object -- similar to
