@@ -12,7 +12,7 @@ command line. For instance this query finds all tweets containing the word
 
 [source,js]
 --------------------------------------------------
- GET /_all/tweet/_search?q=tweet:elasticsearch
+GET /_all/tweet/_search?q=tweet:elasticsearch
 --------------------------------------------------
 
 
@@ -23,7 +23,7 @@ cryptic than it really is:
 
 [source,js]
 --------------------------------------------------
- GET /_search?q=%2Bname%3Ajohn+%2Btweet%3Amary
+GET /_search?q=%2Bname%3Ajohn+%2Btweet%3Amary
 --------------------------------------------------
 
 
@@ -38,7 +38,7 @@ This simple search returns all documents which contain the word `"mary"`:
 
 [source,js]
 --------------------------------------------------
- GET /_search?q=mary
+GET /_search?q=mary
 --------------------------------------------------
 
 
@@ -58,12 +58,12 @@ the special `_all` field. For example, when we index this document:
 
 [source,js]
 --------------------------------------------------
- {
-     "tweet":    "However did I manage before Elasticsearch?",
-     "date":     "2013-09-14",
-     "name":     "Mary Jones",
-     "user_id":  1
- }
+{
+    "tweet":    "However did I manage before Elasticsearch?",
+    "date":     "2013-09-14",
+    "name":     "Mary Jones",
+    "user_id":  1
+}
 --------------------------------------------------
 
 
@@ -71,7 +71,7 @@ it's as if we had added an extra field called `_all` with the value:
 
 [source,js]
 --------------------------------------------------
- "However did I manage before Elasticsearch? 2013-09-14 Mary Jones 1"
+"However did I manage before Elasticsearch? 2013-09-14 Mary Jones 1"
 --------------------------------------------------
 
 
@@ -99,7 +99,7 @@ The next query searches for tweets:
 
 [source,js]
 --------------------------------------------------
- +name:(mary john) +date:>2013-09-10 +(facets geo)
++name:(mary john) +date:>2013-09-10 +(facets geo)
 --------------------------------------------------
 
 
@@ -108,7 +108,7 @@ readable:
 
 [source,js]
 --------------------------------------------------
- q=%2Bname%3A(mary+john)+%2Bdate%3A%3E2013-09-10+%2B(facets+geo)
+q=%2Bname%3A(mary+john)+%2Bdate%3A%3E2013-09-10+%2B(facets+geo)
 --------------------------------------------------
 
 

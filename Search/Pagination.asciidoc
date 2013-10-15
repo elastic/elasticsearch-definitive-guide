@@ -17,9 +17,9 @@ could be requested as:
 
 [source,js]
 --------------------------------------------------
- GET /_search?size=5
- GET /_search?size=5&from=5
- GET /_search?size=5&from=10
+GET /_search?size=5
+GET /_search?size=5&from=5
+GET /_search?size=5&from=10
 --------------------------------------------------
 
 

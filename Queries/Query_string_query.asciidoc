@@ -12,8 +12,8 @@ For instance, this query string:
 
 [source,js]
 --------------------------------------------------
- quic* brawn~ +fox status:active +author:"Joe Bloggs"
- AND date:[2012/01/01 TO *]
+quic* brawn~ +fox status:active +author:"Joe Bloggs"
+AND date:[2012/01/01 TO *]
 --------------------------------------------------
 
 
@@ -61,7 +61,7 @@ the field name, followed by a colon. For instance:
 
 [source,js]
 --------------------------------------------------
- status:active  date:2012/01/01  title:(quick fox) lazy dog
+status:active  date:2012/01/01  title:(quick fox) lazy dog
 --------------------------------------------------
 
 
@@ -74,12 +74,12 @@ It is possible to specify a different `default_field` as follows:
 
 [source,js]
 --------------------------------------------------
- {
-     "query_string" : {
-         "query"         : "lazy dog",
-         "default_field" : "content"
-     }
- }
+{
+    "query_string" : {
+        "query"         : "lazy dog",
+        "default_field" : "content"
+    }
+}
 --------------------------------------------------
 
 
@@ -92,7 +92,7 @@ two queries:
 
 [source,js]
 --------------------------------------------------
- { "field" : { "content" : "lazy dog" }}
+{ "field" : { "content" : "lazy dog" }}
 --------------------------------------------------
 
 
@@ -116,12 +116,12 @@ This behaviour can be changed by changing the `default_operator` from
 
 [source,js]
 --------------------------------------------------
- {
-     "query_string" : {
-         "query"            : "quick brown fox",
-         "default_operator" : "AND"
-     }
- }
+{
+    "query_string" : {
+        "query"            : "quick brown fox",
+        "default_operator" : "AND"
+    }
+}
 --------------------------------------------------
 
 
@@ -132,12 +132,12 @@ the `query_string` query against multiple ``default'' fields, as follows:
 
 [source,js]
 --------------------------------------------------
- {
-     "query_string" : {
-         "query"  : "lazy dog",
-         "fields" : [ "title", "content" ]
-     }
- }
+{
+    "query_string" : {
+        "query"  : "lazy dog",
+        "fields" : [ "title", "content" ]
+    }
+}
 --------------------------------------------------
 
 
@@ -146,12 +146,12 @@ boosting (`^`) syntax as the `multi_match` query:
 
 [source,js]
 --------------------------------------------------
- {
-     "query_string" : {
-         "query"  : "lazy dog",
-         "fields" : [ "title^2", "cont*" ]
-     }
- }
+{
+    "query_string" : {
+        "query"  : "lazy dog",
+        "fields" : [ "title^2", "cont*" ]
+    }
+}
 --------------------------------------------------
 
 
@@ -161,14 +161,14 @@ to use a <<dismax-query,`dis_max` query>> instead:
 
 [source,js]
 --------------------------------------------------
- {
-     "query_string" : {
-         "query"       : "lazy dog",
-         "fields"      : [ "title^2", "cont*" ],
-         "use_dis_max" : true,
-         "tie_breaker" : 0.2
-     }
- }
+{
+    "query_string" : {
+        "query"       : "lazy dog",
+        "fields"      : [ "title^2", "cont*" ],
+        "use_dis_max" : true,
+        "tie_breaker" : 0.2
+    }
+}
 --------------------------------------------------
 
 
@@ -183,13 +183,13 @@ This `multi_match` query:
 
 [source,js]
 --------------------------------------------------
- {
-     "multi_match": {
-         "fields":  ["title", "content"},
-         "query":   "foo bar",
-         "operator: "and"
-     }
- }
+{
+    "multi_match": {
+        "fields":  ["title", "content"},
+        "query":   "foo bar",
+        "operator: "and"
+    }
+}
 --------------------------------------------------
 
 
@@ -203,13 +203,13 @@ while this `query_string` query:
 
 [source,js]
 --------------------------------------------------
- {
-     "query_string": {
-         "fields":           ["title", "content"},
-         "query":            "foo bar",
-         "default_operator:  "AND"
-     }
- }
+{
+    "query_string": {
+        "fields":           ["title", "content"},
+        "query":            "foo bar",
+        "default_operator:  "AND"
+    }
+}
 --------------------------------------------------
 
 

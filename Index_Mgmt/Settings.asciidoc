@@ -27,13 +27,13 @@ with the following request:
 
 [source,js]
 --------------------------------------------------
- PUT /my_temp_index
- {
-     "settings": {
-         "number_of_shards" :   1,
-         "number_of_replicas" : 0
-     }
- }
+PUT /my_temp_index
+{
+    "settings": {
+        "number_of_shards" :   1,
+        "number_of_replicas" : 0
+    }
+}
 --------------------------------------------------
 
 
@@ -42,10 +42,10 @@ We can change the number of replica shards later on, using the
 
 [source,js]
 --------------------------------------------------
- PUT localhost/9200/my_temp_index/_settings
- {
-     "number_of_replicas": 1
- }
+PUT localhost/9200/my_temp_index/_settings
+{
+    "number_of_replicas": 1
+}
 --------------------------------------------------
 
 

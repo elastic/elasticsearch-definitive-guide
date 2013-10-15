@@ -7,7 +7,7 @@ cluster:
 
 [source,js]
 --------------------------------------------------
- GET /_search
+GET /_search
 --------------------------------------------------
 
 
@@ -15,36 +15,36 @@ The response (edited for brevity) looks something like this:
 
 [source,js]
 --------------------------------------------------
- {
-    "hits" : {
-       "total" :       14,
-       "hits" : [
-         {
-           "_index" :  "gb",
-           "_type" :   "tweet",
-           "_id" :     "3",
-           "_source" : {... TRIMMED ...},
-           "_score" :  1.0
-         },
-         {
-           "_index" :  "us",
-           "_type" :   "user",
-           "_id" :     "1",
-           "_source" : {... TRIMMED ...},
-           "_score" :  1.0
-         },
-         ... 8 RESULTS REMOVED ...
-       ],
-       "max_score" :   1
-    },
-    "took" :           4,
-    "_shards" : {
-       "failed" :      0,
-       "successful" :  10,
-       "total" :       10
-    },
-    "timed_out" :      false
- }
+{
+   "hits" : {
+      "total" :       14,
+      "hits" : [
+        {
+          "_index" :  "gb",
+          "_type" :   "tweet",
+          "_id" :     "3",
+          "_source" : {... TRIMMED ...},
+          "_score" :  1.0
+        },
+        {
+          "_index" :  "us",
+          "_type" :   "user",
+          "_id" :     "1",
+          "_source" : {... TRIMMED ...},
+          "_score" :  1.0
+        },
+        ... 8 RESULTS REMOVED ...
+      ],
+      "max_score" :   1
+   },
+   "took" :           4,
+   "_shards" : {
+      "failed" :      0,
+      "successful" :  10,
+      "total" :       10
+   },
+   "timed_out" :      false
+}
 --------------------------------------------------
 
 
@@ -96,7 +96,7 @@ important to you than correct results, then can specify a `timeout` as
 
 [source,js]
 --------------------------------------------------
- GET /_search?timeout=10ms
+GET /_search?timeout=10ms
 --------------------------------------------------
 
 

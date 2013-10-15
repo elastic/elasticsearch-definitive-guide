@@ -6,7 +6,7 @@ already, but uses the `DELETE` method :
 
 [source,js]
 --------------------------------------------------
- DELETE /website/blog/123
+DELETE /website/blog/123
 --------------------------------------------------
 
 
@@ -16,14 +16,14 @@ number has been incremented.
 
 [source,js]
 --------------------------------------------------
- {
-   "ok" :       true,
-   "found" :    true,
-   "_index" :   "website",
-   "_type" :    "blog",
-   "_id" :      "123",
-   "_version" : 3
- }
+{
+  "ok" :       true,
+  "found" :    true,
+  "_index" :   "website",
+  "_type" :    "blog",
+  "_id" :      "123",
+  "_version" : 3
+}
 --------------------------------------------------
 
 
@@ -32,14 +32,14 @@ a body like:
 
 [source,js]
 --------------------------------------------------
- {
-   "ok" :       true,
-   "found" :    false,
-   "_index" :   "website",
-   "_type" :    "blog",
-   "_id" :      "123",
-   "_version" : 4
- }
+{
+  "ok" :       true,
+  "found" :    false,
+  "_index" :   "website",
+  "_type" :    "blog",
+  "_id" :      "123",
+  "_version" : 4
+}
 --------------------------------------------------
 
 

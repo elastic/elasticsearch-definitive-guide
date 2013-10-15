@@ -10,39 +10,39 @@ To use the query DSL, pass a query in the `query` parameter:
 
 [source,js]
 --------------------------------------------------
- GET /_search 
- {
-     "query": YOUR_QUERY_HERE
- }
+GET /_search
+{
+    "query": YOUR_QUERY_HERE
+}
 --------------------------------------------------
 
-    
+
 The ``empty search'' -- `{}` -- is functionally equivalent to using the
 `match_all` query clause. As the name suggests, it matches all documents:
 
 [source,js]
 --------------------------------------------------
- GET /_search 
- {
-     "query": {
-         "match_all": {}
-     }
- }
+GET /_search
+{
+    "query": {
+        "match_all": {}
+    }
+}
 --------------------------------------------------
 
-    
+
 ==== Structure of a query clause
 
 A query clause typically has the structure:
 
 [source,js]
 --------------------------------------------------
- {
-     QUERY_NAME: {
-         ARGUMENT: VALUE,
-         ARGUMENT: VALUE,...
-     }
- }
+{
+    QUERY_NAME: {
+        ARGUMENT: VALUE,
+        ARGUMENT: VALUE,...
+    }
+}
 --------------------------------------------------
 
 
@@ -50,14 +50,14 @@ or, if it references one particular field:
 
 [source,js]
 --------------------------------------------------
- {
-     QUERY_NAME: {
-         FIELD_NAME: {
-             ARGUMENT: VALUE,
-             ARGUMENT: VALUE,...
-         }
-     }
- }
+{
+    QUERY_NAME: {
+        FIELD_NAME: {
+            ARGUMENT: VALUE,
+            ARGUMENT: VALUE,...
+        }
+    }
+}
 --------------------------------------------------
 
 
@@ -67,11 +67,11 @@ mention `"elasticsearch"` in the `tweet` field:
 
 [source,js]
 --------------------------------------------------
- {
-     "match": {
-         "tweet": "elasticsearch"
-     }
- }
+{
+    "match": {
+        "tweet": "elasticsearch"
+    }
+}
 --------------------------------------------------
 
 
@@ -79,17 +79,17 @@ The full search request would look like this:
 
 [source,js]
 --------------------------------------------------
- GET /_search 
- {
-     "query": {
-         "match": {
-             "tweet": "elasticsearch"
-         }
-     }
- }
+GET /_search
+{
+    "query": {
+        "match": {
+            "tweet": "elasticsearch"
+        }
+    }
+}
 --------------------------------------------------
 
-    
+
 ==== Combining multiple clauses
 
 Query clauses are simple building blocks, that can be combined with each
@@ -104,13 +104,13 @@ other to create complex queries. Clauses can be:
 
 [source,js]
 --------------------------------------------------
- {
-     "bool": {
-         "must":     { "match": { "tweet": "elasticsearch" }},
-         "must_not": { "match": { "name":  "john" }},
-         "should":   { "match": { "tweet": "full text" }}
-     }
- }
+{
+    "bool": {
+        "must":     { "match": { "tweet": "elasticsearch" }},
+        "must_not": { "match": { "name":  "john" }},
+        "should":   { "match": { "tweet": "full text" }}
+    }
+}
 --------------------------------------------------
 
 
@@ -125,19 +125,19 @@ and not marked as spam:
 
 [source,js]
 --------------------------------------------------
- {
-     "bool": {
-         "must": { "match":      { "email": "business opportunity" }},
-         "should": [
-              { "match":         { "starred": true }},
-              { "bool": {
-                    "must":      { "folder": "inbox" }},
-                    "must_not":  { "spam": true }}
-              }}
-         ],
-         "minimum_should_match": 1
-     }
- }
+{
+    "bool": {
+        "must": { "match":      { "email": "business opportunity" }},
+        "should": [
+             { "match":         { "starred": true }},
+             { "bool": {
+                   "must":      { "folder": "inbox" }},
+                   "must_not":  { "spam": true }}
+             }}
+        ],
+        "minimum_should_match": 1
+    }
+}
 --------------------------------------------------
 
 

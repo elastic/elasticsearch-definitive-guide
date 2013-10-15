@@ -11,8 +11,8 @@ using the `POST` version of the index request:
 
 [source,js]
 --------------------------------------------------
- POST /website/blog/ 
- { ... }
+POST /website/blog/
+{ ... }
 --------------------------------------------------
 
 
@@ -27,8 +27,8 @@ The first method uses the `op_type` query string parameter:
 
 [source,js]
 --------------------------------------------------
- PUT /website/blog/123?op_type=create 
- { ... }
+PUT /website/blog/123?op_type=create
+{ ... }
 --------------------------------------------------
 
 
@@ -37,8 +37,8 @@ And the second uses the `/_create` endpoint in the URL:
 
 [source,js]
 --------------------------------------------------
- PUT /website/blog/123/_create 
- { ... }
+PUT /website/blog/123/_create
+{ ... }
 --------------------------------------------------
 
 
@@ -52,10 +52,10 @@ error message like the following:
 
 [source,js]
 --------------------------------------------------
- {
-   "error" : "DocumentAlreadyExistsException[[website][4] [blog][123]:
-              document already exists]",
-   "status" : 409
- }
+{
+  "error" : "DocumentAlreadyExistsException[[website][4] [blog][123]:
+             document already exists]",
+  "status" : 409
+}
 --------------------------------------------------
 

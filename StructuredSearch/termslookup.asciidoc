@@ -12,9 +12,9 @@ a user.
 
 [source,js]
 --------------------------------------------------
- {
-   "following" : ["1", "3", ...]
- }
+{
+  "following" : ["1", "3", ...]
+}
 --------------------------------------------------
 
 
@@ -24,17 +24,17 @@ a second query with those user IDs in a Terms filter:
 
 [source,js]
 --------------------------------------------------
- {
-   "query" : {
-     "filtered" : {
-       "filter" : {
-         "terms" : {
-           "user" : [ "1", "3", ... ]
-         }
-       }
-     }
-   }
- }
+{
+  "query" : {
+    "filtered" : {
+      "filter" : {
+        "terms" : {
+          "user" : [ "1", "3", ... ]
+        }
+      }
+    }
+  }
+}
 --------------------------------------------------
 
 
@@ -46,23 +46,23 @@ If we tweak our query just a little, we get this:
 
 [source,js]
 --------------------------------------------------
- {
-   "query" : {
-     "filtered" : {
-       "filter" : {
-         "terms" : {
-           "user" : {
-             "index" : "users",
-             "type" : "user",
-             "id" : "2",
-             "path" : "following"
-           },
-           "_cache_key" : "user_2_friends"
-         }
-       }
-     }
-   }
- }
+{
+  "query" : {
+    "filtered" : {
+      "filter" : {
+        "terms" : {
+          "user" : {
+            "index" : "users",
+            "type" : "user",
+            "id" : "2",
+            "path" : "following"
+          },
+          "_cache_key" : "user_2_friends"
+        }
+      }
+    }
+  }
+}
 --------------------------------------------------
 
 

@@ -55,14 +55,14 @@ and to keep the scroll request open for one minute:
 
 [source,js]
 --------------------------------------------------
- GET /old_index/_search?search_type=scan&scroll=1m 
- {
-     "query": { "match_all": {}},
-     "size":  1000
- }
+GET /old_index/_search?search_type=scan&scroll=1m
+{
+    "query": { "match_all": {}},
+    "size":  1000
+}
 --------------------------------------------------
 
-    
+
 The response to this request doesn't include any hits, but does include a
 `_scroll_id`, which is a long Base 64 encoded string. Now we can pass
 the `_scroll_id` to the `_search/scroll` endpoint to retrieve the first batch of
@@ -70,11 +70,11 @@ results:
 
 [source,js]
 --------------------------------------------------
- GET /_search/scroll?scroll=1m 
- c2Nhbjs1OzExODpRNV9aY1VyUVM4U0NMd2pjWlJ3YWlBOzExOTpRNV9aY1VyUVM4U0
- NMd2pjWlJ3YWlBOzExNjpRNV9aY1VyUVM4U0NMd2pjWlJ3YWlBOzExNzpRNV9aY1Vy
- UVM4U0NMd2pjWlJ3YWlBOzEyMDpRNV9aY1VyUVM4U0NMd2pjWlJ3YWlBOzE7dG90YW
- xfaGl0czoxOw==
+GET /_search/scroll?scroll=1m
+c2Nhbjs1OzExODpRNV9aY1VyUVM4U0NMd2pjWlJ3YWlBOzExOTpRNV9aY1VyUVM4U0
+NMd2pjWlJ3YWlBOzExNjpRNV9aY1VyUVM4U0NMd2pjWlJ3YWlBOzExNzpRNV9aY1Vy
+UVM4U0NMd2pjWlJ3YWlBOzEyMDpRNV9aY1VyUVM4U0NMd2pjWlJ3YWlBOzE7dG90YW
+xfaGl0czoxOw==
 --------------------------------------------------
 
 
@@ -124,23 +124,23 @@ into smaller jobs by filtering on a date field instead:
 
 [source,js]
 --------------------------------------------------
- GET /old_index/_search?search_type=scan&scroll=1m 
- {
-     "query": {
-         "filtered": {
-             "range": {
-                 "date": {
-                     "gte":  "2013-01-01",
-                     "lt":   "2013-02-01"
-                 }
-             }
-         }
-     },
-     "size":  1000
- }
+GET /old_index/_search?search_type=scan&scroll=1m
+{
+    "query": {
+        "filtered": {
+            "range": {
+                "date": {
+                    "gte":  "2013-01-01",
+                    "lt":   "2013-02-01"
+                }
+            }
+        }
+    },
+    "size":  1000
+}
 --------------------------------------------------
 
-    
+
 Also, if you continue making changes to the old index, you will want to make
 sure that you include the newly added documents in your new index as well.
 This can be done by rerunning the reindex process, but again filtering

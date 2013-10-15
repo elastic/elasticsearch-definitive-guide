@@ -13,10 +13,10 @@ This document represents an electronic device, and has an associated serial numb
 
 [source,js]
 --------------------------------------------------
- {
-     "product_name" : "Widget ABC",
-     "serial" : "12JE7612-19238-BJ#J/XY9"
- }
+{
+    "product_name" : "Widget ABC",
+    "serial" : "12JE7612-19238-BJ#J/XY9"
+}
 --------------------------------------------------
 
 
@@ -25,8 +25,8 @@ be indexed as the following tokens:
 
 [source,js]
 --------------------------------------------------
- $ GET /_analyze?analyzer=standard&pretty -d
- '12JE7612-19238-BJ#J/XY9' | grep token
+$ GET /_analyze?analyzer=standard&pretty -d
+'12JE7612-19238-BJ#J/XY9' | grep token
 --------------------------------------------------
 
 
@@ -49,14 +49,14 @@ If instead you map that field as not analyzed:
 
 [source,js]
 --------------------------------------------------
- PUT /products/product/_mapping 
- {
-     "product" : {
-         "properties" : {
-             "serial" : {"type" : "string", "index" : "not_analyzed"}
-         }
-     }
- }
+PUT /products/product/_mapping
+{
+    "product" : {
+        "properties" : {
+            "serial" : {"type" : "string", "index" : "not_analyzed"}
+        }
+    }
+}
 --------------------------------------------------
 
 Then the serial number will only be indexed as a single token:
@@ -64,7 +64,7 @@ Then the serial number will only be indexed as a single token:
 
 [source,js]
 --------------------------------------------------
- "token" : "12JE7612-19238-BJ#J/XY9",
+"token" : "12JE7612-19238-BJ#J/XY9",
 --------------------------------------------------
 
 

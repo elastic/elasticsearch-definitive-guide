@@ -9,24 +9,24 @@ falls into. This can be done by assigning each filter a name, with the
 
 [source,js]
 --------------------------------------------------
- {
-     "bool" : {
-         "should": [
-             { "range" : {
-                   "_name" : "child",
-                   "age"   : { "to" :  13 }
-             }},
-             { "range" : {
-                   "_name" : "teenager",
-                   "age"   : { "from" : 13, "to" :  18 }
-             }},
-             { "range" : {
-                   "_name" : "adult",
-                   "age"   : { "from" :  18 }
-             }}
-         ]
-     }
- }
+{
+    "bool" : {
+        "should": [
+            { "range" : {
+                  "_name" : "child",
+                  "age"   : { "to" :  13 }
+            }},
+            { "range" : {
+                  "_name" : "teenager",
+                  "age"   : { "from" : 13, "to" :  18 }
+            }},
+            { "range" : {
+                  "_name" : "adult",
+                  "age"   : { "from" :  18 }
+            }}
+        ]
+    }
+}
 --------------------------------------------------
 
 
@@ -35,16 +35,16 @@ key with the names of the matching filters:
 
 [source,js]
 --------------------------------------------------
- {
-     "_index" :           "myindex",
-     "_type" :            "user",
-     "_id" :              "1",
-     "matched_filters" : ["teenager"],
-     "_source" : {
-         "age" :   15,
-         ...
-     }
- }
+{
+    "_index" :           "myindex",
+    "_type" :            "user",
+    "_id" :              "1",
+    "matched_filters" : ["teenager"],
+    "_source" : {
+        "age" :   15,
+        ...
+    }
+}
 --------------------------------------------------
 
 
@@ -53,14 +53,14 @@ the query to be wrapped in an extra `fquery` layer:
 
 [source,js]
 --------------------------------------------------
- {
-     "query" : {
-         "fquery" : {
-             "query" :  { ... }
-             "_name" :  "foo"
-         }
-     }
- }
+{
+    "query" : {
+        "fquery" : {
+            "query" :  { ... }
+            "_name" :  "foo"
+        }
+    }
+}
 --------------------------------------------------
 
 

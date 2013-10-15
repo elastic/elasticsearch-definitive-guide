@@ -79,14 +79,14 @@ Let's create a new blog post:
 
 [source,js]
 --------------------------------------------------
- PUT /website/blog/1/_create 
- {
-   "title": "My first blog entry",
-   "text":  "Just trying this out..."
- }
+PUT /website/blog/1/_create
+{
+  "title": "My first blog entry",
+  "text":  "Just trying this out..."
+}
 --------------------------------------------------
 
-    
+
 The response body tells us that this newly created document has `_version`
 number `1`.  Now imagine that we want to edit the document: we load its data
 into a web form, make our changes, then save the new version.
@@ -95,7 +95,7 @@ First we retrieve the document:
 
 [source,js]
 --------------------------------------------------
- GET /website/blog/1
+GET /website/blog/1
 --------------------------------------------------
 
 
@@ -103,17 +103,17 @@ The response body includes the same `_version` number of `1`:
 
 [source,js]
 --------------------------------------------------
- {
-   "_index" :   "website",
-   "_type" :    "blog",
-   "_id" :      "1",
-   "_version" : 1,
-   "exists" :   true,
-   "_source" : {
-       "title": "My first blog entry",
-       "text":  "Just trying this out..."
-   }
- }
+{
+  "_index" :   "website",
+  "_type" :    "blog",
+  "_id" :      "1",
+  "_version" : 1,
+  "exists" :   true,
+  "_source" : {
+      "title": "My first blog entry",
+      "text":  "Just trying this out..."
+  }
+}
 --------------------------------------------------
 
 
@@ -122,26 +122,26 @@ the `version` to which our changes should be applied:
 
 [source,js]
 --------------------------------------------------
- PUT /website/blog/1?version=1 
- {
-   "title": "My first blog entry",
-   "text":  "Starting to get the hang of this..."
- }
+PUT /website/blog/1?version=1
+{
+  "title": "My first blog entry",
+  "text":  "Starting to get the hang of this..."
+}
 --------------------------------------------------
 
-    
+
 This request succeeds, and the response body tells us that the `_version`
 has been incremented to `2`:
 
 [source,js]
 --------------------------------------------------
- {
-   "ok":       true,
-   "_index":   "website",
-   "_type":    "blog",
-   "_id":      "1",
-   "_version": 2
- }
+{
+  "ok":       true,
+  "_index":   "website",
+  "_type":    "blog",
+  "_id":      "1",
+  "_version": 2
+}
 --------------------------------------------------
 
 
@@ -151,11 +151,11 @@ code, and a body like the following:
 
 [source,js]
 --------------------------------------------------
- {
-   "error" : "VersionConflictEngineException[[website][2] [blog][1]:
-              version conflict, current [2], provided [1]]",
-   "status" : 409
- }
+{
+  "error" : "VersionConflictEngineException[[website][2] [blog][1]:
+             version conflict, current [2], provided [1]]",
+  "status" : 409
+}
 --------------------------------------------------
 
 
@@ -197,25 +197,25 @@ of `5`, we can do the following:
 
 [source,js]
 --------------------------------------------------
- PUT /website/blog/2?version=5&version_type=external 
- {
-   "title": "My first external blog entry",
-   "text":  "Starting to get the hang of this..."
- }
+PUT /website/blog/2?version=5&version_type=external
+{
+  "title": "My first external blog entry",
+  "text":  "Starting to get the hang of this..."
+}
 --------------------------------------------------
 
-    
+
 In the response, we can see that the current `_version` number is `5`:
 
 [source,js]
 --------------------------------------------------
- {
-   "ok":       true,
-   "_index":   "website",
-   "_type":    "blog",
-   "_id":      "2",
-   "_version": 5
- }
+{
+  "ok":       true,
+  "_index":   "website",
+  "_type":    "blog",
+  "_id":      "2",
+  "_version": 5
+}
 --------------------------------------------------
 
 
@@ -223,25 +223,25 @@ Now we update this document, but specifying a new `version` number of `10`:
 
 [source,js]
 --------------------------------------------------
- PUT /website/blog/2?version=10&version_type=external 
- {
-   "title": "My first external blog entry",
-   "text":  "This is a piece of cake..."
- }
+PUT /website/blog/2?version=10&version_type=external
+{
+  "title": "My first external blog entry",
+  "text":  "This is a piece of cake..."
+}
 --------------------------------------------------
 
-    
+
 The request succeeds and sets the current `_version` to `10`:
 
 [source,js]
 --------------------------------------------------
- {
-   "ok":       true,
-   "_index":   "website",
-   "_type":    "blog",
-   "_id":      "2",
-   "_version": 10
- }
+{
+  "ok":       true,
+  "_index":   "website",
+  "_type":    "blog",
+  "_id":      "2",
+  "_version": 10
+}
 --------------------------------------------------
 
 

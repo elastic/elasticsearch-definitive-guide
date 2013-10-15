@@ -13,15 +13,15 @@ finding the document you're after:
 
 [source,js]
 --------------------------------------------------
- GET /_search 
- {
-     "match": {
-         "_all": "john smith marketing"
-     }
- }
+GET /_search
+{
+    "match": {
+        "_all": "john smith marketing"
+    }
+}
 --------------------------------------------------
 
-    
+
 As your application evolves and your search requirements become more
 exacting, you will find yourself using the `_all` field less and less.
 The `_all` field is shotgun approach to search. By querying individual
@@ -40,15 +40,15 @@ disable it with this mapping:
 
 [source,js]
 --------------------------------------------------
- PUT /my_index/my_type/_mapping 
- {
-     "my_type": {
-         "_all": { "enabled": false }
-     }
- }
+PUT /my_index/my_type/_mapping
+{
+    "my_type": {
+        "_all": { "enabled": false }
+    }
+}
 --------------------------------------------------
 
-    
+
 Inclusion in the `_all` field can be controlled on a field-by-field basis
 using the `include_in_all` setting, which defaults to `true`.  Setting
 `include_in_all` on an object (or on the root object) changes the
@@ -62,22 +62,22 @@ and enable it only on the fields you choose:
 
 [source,js]
 --------------------------------------------------
- PUT /my_index/my_type/_mapping 
- {
-     "my_type": {
-         "include_in_all": false,
-         "properties": {
-             "title": {
-                 "type":           "string",
-                 "include_in_all": true
-             },
-             ...
-         }
-     }
- }
+PUT /my_index/my_type/_mapping
+{
+    "my_type": {
+        "include_in_all": false,
+        "properties": {
+            "title": {
+                "type":           "string",
+                "include_in_all": true
+            },
+            ...
+        }
+    }
+}
 --------------------------------------------------
 
-    
+
 Remember that the `_all` field is just an analyzed `string` field.  It
 uses the default analyzer to analyze its values, regardless of which
 analyzer has been set on the fields where the values originate.  And
@@ -86,15 +86,15 @@ field should use:
 
 [source,js]
 --------------------------------------------------
- PUT /my_index/my_type/_mapping 
- {
-     "my_type": {
-         "_all": { "analyzer": "whitespace" }
-     }
- }
+PUT /my_index/my_type/_mapping
+{
+    "my_type": {
+        "_all": { "analyzer": "whitespace" }
+    }
+}
 --------------------------------------------------
 
-    
+
 
 
 

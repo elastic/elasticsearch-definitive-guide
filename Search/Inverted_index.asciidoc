@@ -19,24 +19,24 @@ appears. The result looks like this:
 
 [source,js]
 --------------------------------------------------
-  Term      Doc_1  Doc_2
- -------------------------
-  Quick   |   X   |
-  The     |       |  X
-  brown   |   X   |  X
-  dog     |   X   |
-  dogs    |       |  X
-  fox     |   X   |
-  foxes   |       |  X
-  in      |       |  X
-  jumped  |   X   |
-  lazy    |   X   |  X
-  leap    |       |  X
-  over    |   X   |  X
-  quick   |       |  X
-  summer  |       |  X
-  the     |   X   |
- ------------------------
+ Term      Doc_1  Doc_2
+-------------------------
+ Quick   |   X   |
+ The     |       |  X
+ brown   |   X   |  X
+ dog     |   X   |
+ dogs    |       |  X
+ fox     |   X   |
+ foxes   |       |  X
+ in      |       |  X
+ jumped  |   X   |
+ lazy    |   X   |  X
+ leap    |       |  X
+ over    |   X   |  X
+ quick   |       |  X
+ summer  |       |  X
+ the     |   X   |
+------------------------
 --------------------------------------------------
 
 
@@ -45,12 +45,12 @@ to find the documents in which each term appears:
 
 [source,js]
 --------------------------------------------------
-  Term      Doc_1  Doc_2
- -------------------------
-  brown   |   X   |  X
-  quick   |   X   |
- ------------------------
-  Total   |   2   |  1
+ Term      Doc_1  Doc_2
+-------------------------
+ brown   |   X   |  X
+ quick   |   X   |
+------------------------
+ Total   |   2   |  1
 --------------------------------------------------
 
 
@@ -93,19 +93,19 @@ Now the index looks like this:
 
 [source,js]
 --------------------------------------------------
-  Word      Doc_1  Doc_2
- -------------------------
-  brown   |   X   |  X
-  dog     |   X   |  X
-  fox     |   X   |  X
-  in      |       |  X
-  jump    |   X   |  X
-  lazy    |   X   |  X
-  over    |   X   |  X
-  quick   |   X   |  X
-  summer  |       |  X
-  the     |   X   |  X
- ------------------------
+ Word      Doc_1  Doc_2
+-------------------------
+ brown   |   X   |  X
+ dog     |   X   |  X
+ fox     |   X   |  X
+ in      |       |  X
+ jump    |   X   |  X
+ lazy    |   X   |  X
+ over    |   X   |  X
+ quick   |   X   |  X
+ summer  |       |  X
+ the     |   X   |  X
+------------------------
 --------------------------------------------------
 
 

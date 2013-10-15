@@ -9,12 +9,12 @@ on several fields at the same time.
 
 [source,js]
 --------------------------------------------------
- {
-     "multi_match" : {
-         "query"   : "quick brown fox",
-         "fields"  : ["title", "content"]
-     }
- }
+{
+    "multi_match" : {
+        "query"   : "quick brown fox",
+        "fields"  : ["title", "content"]
+    }
+}
 --------------------------------------------------
 
 
@@ -24,14 +24,14 @@ the same `type` parameter that the <<match-query,`match` query>> accepts:
 
 [source,js]
 --------------------------------------------------
- {
-     "multi_match" : {
-         "type"    : "phrase_prefix",
-         "query"   : "quick brown f",
-         "fields"  : ["title", "content"],
-         "slop"    : 10
-     }
- }
+{
+    "multi_match" : {
+        "type"    : "phrase_prefix",
+        "query"   : "quick brown f",
+        "fields"  : ["title", "content"],
+        "slop"    : 10
+    }
+}
 --------------------------------------------------
 
 
@@ -49,12 +49,12 @@ a number to the field name:
 
 [source,js]
 --------------------------------------------------
- {
-     "multi_match" : {
-         "query"   : "quick brown fox",
-         "fields"  : ["title^2", "content"]
-     }
- }
+{
+    "multi_match" : {
+        "query"   : "quick brown fox",
+        "fields"  : ["title^2", "content"]
+    }
+}
 --------------------------------------------------
 
 
@@ -70,12 +70,12 @@ For instance, the query below would search the fields `father.name`,
 
 [source,js]
 --------------------------------------------------
- {
-     "multi_match" : {
-         "query"   : "quick brown fox",
-         "fields"  : [ "*.name" ]
-     }
- }
+{
+    "multi_match" : {
+        "query"   : "quick brown fox",
+        "fields"  : [ "*.name" ]
+    }
+}
 --------------------------------------------------
 
 

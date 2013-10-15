@@ -29,9 +29,9 @@ express with SQL:
 
 [source,js]
 --------------------------------------------------
- WHERE name    = "John Smith"
-   AND user_id = 2
-   AND date    > "2013-09-15"
+WHERE name    = "John Smith"
+  AND user_id = 2
+  AND date    > "2013-09-15"
 --------------------------------------------------
 
 

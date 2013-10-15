@@ -7,26 +7,26 @@ do using the same index API that we have already discussed.
 
 [source,js]
 --------------------------------------------------
- PUT /website/blog/123 
- {
-   "title": "My first blog entry",
-   "text":  "I am starting to get the hang of this..."
- }
+PUT /website/blog/123
+{
+  "title": "My first blog entry",
+  "text":  "I am starting to get the hang of this..."
+}
 --------------------------------------------------
 
-    
+
 In the response, we can see that Elasticsearch has incremented the `_version`
 number:
 
 [source,js]
 --------------------------------------------------
- {
-   "ok" :       true,
-   "_index" :   "website",
-   "_type" :    "blog",
-   "_id" :      "123",
-   "_version" : 2
- }
+{
+  "ok" :       true,
+  "_index" :   "website",
+  "_type" :    "blog",
+  "_id" :      "123",
+  "_version" : 2
+}
 --------------------------------------------------
 
 

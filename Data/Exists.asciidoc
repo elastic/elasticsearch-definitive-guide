@@ -7,7 +7,7 @@ of the `GET` method. `HEAD` requests don't return a body, just HTTP headers:
 
 [source,js]
 --------------------------------------------------
- curl -I -XHEAD /website/blog/123
+curl -I -XHEAD /website/blog/123
 --------------------------------------------------
 
 
@@ -15,9 +15,9 @@ Elasticsearch will return a `200 OK` status code if the document exists:
 
 [source,js]
 --------------------------------------------------
- HTTP/1.1 200 OK
- Content-Type: text/plain; charset=UTF-8
- Content-Length: 0
+HTTP/1.1 200 OK
+Content-Type: text/plain; charset=UTF-8
+Content-Length: 0
 --------------------------------------------------
 
 
@@ -25,7 +25,7 @@ And a `404 Not Found` if it doesn't exist:
 
 [source,js]
 --------------------------------------------------
- curl -I -XHEAD /website/blog/124
+curl -I -XHEAD /website/blog/124
 --------------------------------------------------
 
 

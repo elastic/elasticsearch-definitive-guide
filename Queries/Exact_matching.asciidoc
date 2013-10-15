@@ -12,7 +12,7 @@ definition), which we will discuss in <<mapping>>:
 
 [source,js]
 --------------------------------------------------
- { "match" : { "status" : "active" }}
+{ "match" : { "status" : "active" }}
 --------------------------------------------------
 
 
@@ -20,7 +20,7 @@ definition), which we will discuss in <<mapping>>:
 
 [source,js]
 --------------------------------------------------
- { "match" : { "count" : 5 }}
+{ "match" : { "count" : 5 }}
 --------------------------------------------------
 
 
@@ -28,7 +28,7 @@ definition), which we will discuss in <<mapping>>:
 
 [source,js]
 --------------------------------------------------
- { "match" : { "created" : "2013/05/01" }}
+{ "match" : { "created" : "2013/05/01" }}
 --------------------------------------------------
 
 
@@ -36,7 +36,7 @@ definition), which we will discuss in <<mapping>>:
 
 [source,js]
 --------------------------------------------------
- { "match" : { "featured" : true }}
+{ "match" : { "featured" : true }}
 --------------------------------------------------
 
 
@@ -63,7 +63,7 @@ full text. They are defined (or ``mapped'') as:
 
 [source,js]
 --------------------------------------------------
- { "type": "string", "index": "analyzed" }
+{ "type": "string", "index": "analyzed" }
 --------------------------------------------------
 
 
@@ -71,7 +71,7 @@ String fields which contain exact values have to be manually defined as:
 
 [source,js]
 --------------------------------------------------
- { "type": "string", "index": "not_analyzed" }
+{ "type": "string", "index": "not_analyzed" }
 --------------------------------------------------
 
 
@@ -95,15 +95,15 @@ We could write this by combining three `match` clauses with a
 
 [source,js]
 --------------------------------------------------
- {
-     "bool": {
-         "should": [
-             { "match": { "tag": "html6"  },
-             { "match": { "tag": "css3"   },
-             { "match": { "tag": "jquery" }
-         ]
-     }
- }
+{
+    "bool": {
+        "should": [
+            { "match": { "tag": "html6"  },
+            { "match": { "tag": "css3"   },
+            { "match": { "tag": "jquery" }
+        ]
+    }
+}
 --------------------------------------------------
 
 

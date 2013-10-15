@@ -10,14 +10,14 @@ could be rewritten as:
 
 [source,js]
 --------------------------------------------------
- {
-     "bool": {
-         "should": [
-             { "match": { "title":   "quick brown fox"}},
-             { "match": { "content": "quick brown fox"}}
-         ]
-     }
- }
+{
+    "bool": {
+        "should": [
+            { "match": { "title":   "quick brown fox"}},
+            { "match": { "content": "quick brown fox"}}
+        ]
+    }
+}
 --------------------------------------------------
 
 
@@ -55,17 +55,17 @@ As an example, the following query states that :
 
 [source,js]
 --------------------------------------------------
- {
-     "bool": {
-         "must":     { "match": { "title": "quick brown fox" }},
-         "must_not": { "match": { "status": "private" }}
-         "should": [
-             { "match": { "content": "quick brown fox" }}
-             { "match": { "tags": "animal"  }},
-             { "match": { "tags": "popular" }}
-         ],
-     }
- }
+{
+    "bool": {
+        "must":     { "match": { "title": "quick brown fox" }},
+        "must_not": { "match": { "status": "private" }}
+        "should": [
+            { "match": { "content": "quick brown fox" }}
+            { "match": { "tags": "animal"  }},
+            { "match": { "tags": "popular" }}
+        ],
+    }
+}
 --------------------------------------------------
 
 
@@ -86,17 +86,17 @@ tags should be included:
 
 [source,js]
 --------------------------------------------------
- {
-     "bool": {
-         "must":   { "match": { "title": "full text search" }},
-         "should": [
-               { "match": { "tags": "perl"   }},
-               { "match": { "tags": "python" }},
-               { "match": { "tags": "ruby"   }}
-         ],
-         "minimum_should_match": 2
-     }
- }
+{
+    "bool": {
+        "must":   { "match": { "title": "full text search" }},
+        "should": [
+              { "match": { "tags": "perl"   }},
+              { "match": { "tags": "python" }},
+              { "match": { "tags": "ruby"   }}
+        ],
+        "minimum_should_match": 2
+    }
+}
 --------------------------------------------------
 
 

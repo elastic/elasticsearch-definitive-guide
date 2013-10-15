@@ -5,15 +5,15 @@ The match query provides an alternate syntax that bundles phrase and prefix matc
 
 [source,js]
 --------------------------------------------------
- {
-     "match_phrase_prefix" : {
-         "message" : {
-             "query" : "example of a te",
-             "max_expansions" : 10,
-             "analyzer" : "standard"
-         }
-     }
- }
+{
+    "match_phrase_prefix" : {
+        "message" : {
+            "query" : "example of a te",
+            "max_expansions" : 10,
+            "analyzer" : "standard"
+        }
+    }
+}
 --------------------------------------------------
 
 

@@ -28,17 +28,17 @@ Consider this JSON document which represents a user object:
 
 [source,js]
 --------------------------------------------------
- {
-     "email":     "john@smith.com",
-     "name": {
-         "first": "John",
-         "last":  "Smith"
-     },
-     "bio":       "Eco-warrior and defender of the weak",
-     "age":       25,
-     "join_date": "2013/05/01",
-     "interests": ["dolphins", "whales"]
- }
+{
+    "email":     "john@smith.com",
+    "name": {
+        "first": "John",
+        "last":  "Smith"
+    },
+    "bio":       "Eco-warrior and defender of the weak",
+    "age":       25,
+    "join_date": "2013/05/01",
+    "interests": ["dolphins", "whales"]
+}
 --------------------------------------------------
 
 

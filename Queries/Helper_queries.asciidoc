@@ -13,22 +13,22 @@ So these two search requests are equivalent:
 
 [source,js]
 --------------------------------------------------
- GET /_search
+GET /_search
 --------------------------------------------------
 
 
 
 [source,js]
 --------------------------------------------------
- GET /_search 
- {
-     "query": {
-         "match_all" : {}
-     }
- }
+GET /_search
+{
+    "query": {
+        "match_all" : {}
+    }
+}
 --------------------------------------------------
 
-    
+
 [[filtered-query]]
 ==== `filtered` query
 
@@ -37,12 +37,12 @@ a filter with a query.
 
 [source,js]
 --------------------------------------------------
- {
-     "filtered" : {
-         "query" :  { ANY QUERY CLAUSE  },
-         "filter" : { ANY FILTER CLAUSE }
-     }
- }
+{
+    "filtered" : {
+        "query" :  { ANY QUERY CLAUSE  },
+        "filter" : { ANY FILTER CLAUSE }
+    }
+}
 --------------------------------------------------
 
 
@@ -53,26 +53,26 @@ sub-clauses:
 
 [source,js]
 --------------------------------------------------
- {
-     "filtered" : {
-         "query" :  {
-             "bool": {
-                 "should": [
-                     { "match" : { "title" :  "quick brown fox" },
-                     { "match" : { "body" :   "quick brown fox" }
-                 ]
-             }
-         },
-         "filter" : {
-             "bool" : {
-                 "must": [
-                     { "term" :  { "status" :   "active" }},
-                     { "term" :  { "featured" : true     }}
-                 ]
-             }
-         }
-     }
- }
+{
+    "filtered" : {
+        "query" :  {
+            "bool": {
+                "should": [
+                    { "match" : { "title" :  "quick brown fox" },
+                    { "match" : { "body" :   "quick brown fox" }
+                ]
+            }
+        },
+        "filter" : {
+            "bool" : {
+                "must": [
+                    { "term" :  { "status" :   "active" }},
+                    { "term" :  { "featured" : true     }}
+                ]
+            }
+        }
+    }
+}
 --------------------------------------------------
 
 

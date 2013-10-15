@@ -7,10 +7,10 @@ and only one of them has the date `2013-09-15`, but have a look at the
 
 [source,js]
 --------------------------------------------------
- GET /_search?q=2013              # 12 results
- GET /_search?q=2013-09-15        # 12 results !
- GET /_search?q=date:2013-09-15   # 1  result
- GET /_search?q=date:2013         # 0  results !
+GET /_search?q=2013              # 12 results
+GET /_search?q=2013-09-15        # 12 results !
+GET /_search?q=date:2013-09-15   # 1  result
+GET /_search?q=date:2013         # 0  results !
 --------------------------------------------------
 
 
@@ -27,7 +27,7 @@ for the `tweet` type in the `gb` index:
 
 [source,js]
 --------------------------------------------------
- GET /gb/tweet/_mapping
+GET /gb/tweet/_mapping
 --------------------------------------------------
 
 
@@ -35,25 +35,25 @@ which gives us:
 
 [source,js]
 --------------------------------------------------
- {
-   "tweet" : {
-     "properties" : {
-       "date" : {
-         "type" :   "date",
-         "format" : "dateOptionalTime"
-       },
-       "name" : {
-         "type" :   "string"
-       },
-       "tweet" : {
-         "type" :   "string"
-       },
-       "user_id" : {
-         "type" :   "long"
-       }
-     }
-   }
- }
+{
+  "tweet" : {
+    "properties" : {
+      "date" : {
+        "type" :   "date",
+        "format" : "dateOptionalTime"
+      },
+      "name" : {
+        "type" :   "string"
+      },
+      "tweet" : {
+        "type" :   "string"
+      },
+      "user_id" : {
+        "type" :   "long"
+      }
+    }
+  }
+}
 --------------------------------------------------
 
 

@@ -18,12 +18,12 @@ The Lucene parser used in query_string also supports phrase matching. When searc
 
 [source,js]
 --------------------------------------------------
- {
-     "query_string" : {
-         "default_field" : "test",
-         "query" : "\"Sue jumped over the table\""
-     }
- }
+{
+    "query_string" : {
+        "default_field" : "test",
+        "query" : "\"Sue jumped over the table\""
+    }
+}
 --------------------------------------------------
 
 

@@ -49,14 +49,14 @@ by setting the `explain` parameter to `true`.
 
 [source,js]
 --------------------------------------------------
- GET /_search  
- {
-    "query"   : { "match" : { "tweet" : "text" }},
-    "explain" : true
- }
+GET /_search
+{
+   "query"   : { "match" : { "tweet" : "text" }},
+   "explain" : true
+}
 --------------------------------------------------
 
-    
+
 ****
 Adding `explain` produces a lot of output for every hit which can look
 overwhelming, but it is worth taking the time to understand what it all means.
@@ -68,12 +68,12 @@ First, we have the metadata that is returned on normal search requests:
 
 [source,js]
 --------------------------------------------------
- {
-     "_index" :      "us",
-     "_type" :       "tweet",
-     "_id" :         "5",
-     "_score" :      0.13424811,
-     "_source" :     { ... trimmed ... },
+{
+    "_index" :      "us",
+    "_type" :       "tweet",
+    "_id" :         "5",
+    "_score" :      0.13424811,
+    "_source" :     { ... trimmed ... },
 --------------------------------------------------
 
 
@@ -83,8 +83,8 @@ per shard, rather than per index:
 
 [source,js]
 --------------------------------------------------
-     "_shard" :      1,
-     "_node" :       "mzIVYCsqSWCG_M_ZffSs9Q",
+    "_shard" :      1,
+    "_node" :       "mzIVYCsqSWCG_M_ZffSs9Q",
 --------------------------------------------------
 
 
@@ -95,10 +95,10 @@ sub-calculations that were required.
 
 [source,js]
 --------------------------------------------------
-     "_explanation" : {
-         "description" :             "weight(tweet:text in 0)
-                                      [PerFieldSimilarity], result of:",
-         "value" :                   0.13424811,
+    "_explanation" : {
+        "description" :             "weight(tweet:text in 0)
+                                     [PerFieldSimilarity], result of:",
+        "value" :                   0.13424811,
 --------------------------------------------------
 
 
@@ -117,11 +117,11 @@ documents in the index:
 
 [source,js]
 --------------------------------------------------
-         "details" : [
-             {
-                 "description" :     "idf(docFreq=1, maxDocs=1)",
-                 "value" :           0.30685282
-             },
+        "details" : [
+            {
+                "description" :     "idf(docFreq=1, maxDocs=1)",
+                "value" :           0.30685282
+            },
 --------------------------------------------------
 
 
@@ -130,10 +130,10 @@ field is -- the longer the field, the lower the `value`:
 
 [source,js]
 --------------------------------------------------
-             {
-                 "description" :     "fieldNorm(doc=0)",
-                 "value" :           0.4375
-             },
+            {
+                "description" :     "fieldNorm(doc=0)",
+                "value" :           0.4375
+            },
 --------------------------------------------------
 
 
@@ -142,20 +142,20 @@ term `"text"` appears in the `tweet` field in this document:
 
 [source,js]
 --------------------------------------------------
-             {
-                 "value" :               0.13424811,
-                 "description" :         "fieldWeight in 0, product of:",
-                 "details" : [
-                     {
-                         "description" :     "tf(freq=1.0), with freq of:",
-                         "value" :           1.0
-                         "details" : [ {
-                             "description" : "termFreq=1.0",
-                             "value" :       1.0
-                     }
-                 ]
-             }
-         ]
+            {
+                "value" :               0.13424811,
+                "description" :         "fieldWeight in 0, product of:",
+                "details" : [
+                    {
+                        "description" :     "tf(freq=1.0), with freq of:",
+                        "value" :           1.0
+                        "details" : [ {
+                            "description" : "termFreq=1.0",
+                            "value" :       1.0
+                    }
+                ]
+            }
+        ]
 --------------------------------------------------
 
 
@@ -174,15 +174,15 @@ The path for the request is `/index/type/id/_explain`, as in:
 
 [source,js]
 --------------------------------------------------
- GET /us/tweet/3/_explain
- {
-    "query" : {
-       "filtered" : {
-          "filter" : { "term" :  { "user_id" : 1      }},
-          "query" :  { "match" : { "tweet" :   "text" }}
-       }
-    }
- }
+GET /us/tweet/3/_explain
+{
+   "query" : {
+      "filtered" : {
+         "filter" : { "term" :  { "user_id" : 1      }},
+         "query" :  { "match" : { "tweet" :   "text" }}
+      }
+   }
+}
 --------------------------------------------------
 
 
@@ -192,7 +192,7 @@ Along with the full explanation that we saw above, we also now have a
 
 [source,js]
 --------------------------------------------------
- "failure to match filter: cache(user_id:[1 TO 1])"
+"failure to match filter: cache(user_id:[1 TO 1])"
 --------------------------------------------------
 
 

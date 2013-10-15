@@ -57,17 +57,17 @@ respective sections under `analysis`:
 
 [source,js]
 --------------------------------------------------
- PUT /my_index
- {
-     "settings": {
-         "analysis": {
-             "char_filter": { ... custom character filters ... },
-             "tokenizer":   { ...    custom tokenizers     ... },
-             "filter":      { ...   custom token filters   ... },
-             "analyzer":    { ...    custom analyzers      ... }
-         }
-     }
- }
+PUT /my_index
+{
+    "settings": {
+        "analysis": {
+            "char_filter": { ... custom character filters ... },
+            "tokenizer":   { ...    custom tokenizers     ... },
+            "filter":      { ...   custom token filters   ... },
+            "analyzer":    { ...    custom analyzers      ... }
+        }
+    }
+}
 --------------------------------------------------
 
 
@@ -80,12 +80,12 @@ As an example, let's set up a custom analyzer which will:
 +
 [source,js]
 --------------------------------------------------
- "char_filter": {
-     "&_to_and": {
-         "type":       "mapping",
-         "mappings": [ "&=> and "]
-     }
- }
+"char_filter": {
+    "&_to_and": {
+        "type":       "mapping",
+        "mappings": [ "&=> and "]
+    }
+}
 --------------------------------------------------
 
 
@@ -97,12 +97,12 @@ As an example, let's set up a custom analyzer which will:
 +
 [source,js]
 --------------------------------------------------
- "filter": {
-     "my_stopwords": {
-         "type":        "stop",
-         "stopwords": [ "the", "a" ]
-     }
- }
+"filter": {
+    "my_stopwords": {
+        "type":        "stop",
+        "stopwords": [ "the", "a" ]
+    }
+}
 --------------------------------------------------
 
 
@@ -111,14 +111,14 @@ and filters with the custom filters that we have configured above:
 
 [source,js]
 --------------------------------------------------
- "analyzer": {
-     "my_analyzer": {
-         "type":           "custom",
-         "char_filter":  [ "html_strip", "&_to_and" ],
-         "tokenizer":      "standard",
-         "filter":       [ "lowercase", "my_stopwords" ]
-     }
- }
+"analyzer": {
+    "my_analyzer": {
+        "type":           "custom",
+        "char_filter":  [ "html_strip", "&_to_and" ],
+        "tokenizer":      "standard",
+        "filter":       [ "lowercase", "my_stopwords" ]
+    }
+}
 --------------------------------------------------
 
 
@@ -126,28 +126,28 @@ To put it all together, the whole `create-index` request looks like this:
 
 [source,js]
 --------------------------------------------------
- PUT /my_index
- {
-     "settings": {
-         "analysis": {
-             "char_filter": {
-                 "&_to_and": {
-                     "type":       "mapping",
-                     "mappings": [ "&=> and "]
-             }},
-             "filter": {
-                 "my_stopwords": {
-                     "type":       "stop",
-                     "stopwords": [ "the", "a" ]
-             }},
-             "analyzer": {
-                 "my_analyzer": {
-                     "type":         "custom",
-                     "char_filter":  [ "html_strip", "&_to_and" ],
-                     "tokenizer":    "standard",
-                     "filter":       [ "lowercase", "my_stopwords" ]
-             }},
- }}}
+PUT /my_index
+{
+    "settings": {
+        "analysis": {
+            "char_filter": {
+                "&_to_and": {
+                    "type":       "mapping",
+                    "mappings": [ "&=> and "]
+            }},
+            "filter": {
+                "my_stopwords": {
+                    "type":       "stop",
+                    "stopwords": [ "the", "a" ]
+            }},
+            "analyzer": {
+                "my_analyzer": {
+                    "type":         "custom",
+                    "char_filter":  [ "html_strip", "&_to_and" ],
+                    "tokenizer":    "standard",
+                    "filter":       [ "lowercase", "my_stopwords" ]
+            }},
+}}}
 --------------------------------------------------
 
 
@@ -155,8 +155,8 @@ After creating the index, use the `analyze` API to test the new analyzer:
 
 [source,js]
 --------------------------------------------------
- GET /my_index/_analyze?analyzer=my_analyzer
- The quick & brown fox
+GET /my_index/_analyze?analyzer=my_analyzer
+The quick & brown fox
 --------------------------------------------------
 
 
@@ -164,14 +164,14 @@ The abbreviated results below show that our analyzer is working correctly:
 
 [source,js]
 --------------------------------------------------
- {
-   "tokens" : [
-       { "token" :   "quick",    "position" : 2 },
-       { "token" :   "and",      "position" : 3 },
-       { "token" :   "brown",    "position" : 4 },
-       { "token" :   "fox",      "position" : 5 }
-     ]
- }
+{
+  "tokens" : [
+      { "token" :   "quick",    "position" : 2 },
+      { "token" :   "and",      "position" : 3 },
+      { "token" :   "brown",    "position" : 4 },
+      { "token" :   "fox",      "position" : 5 }
+    ]
+}
 --------------------------------------------------
 
 
@@ -179,17 +179,17 @@ And it can be applied to a `string` field with a mapping such as:
 
 [source,js]
 --------------------------------------------------
- PUT /my_index/my_type/_mapping
- {
-     "my_type": {
-         "properties": {
-             "title": {
-                 "type":      "string",
-                 "analyzer":  "my_analyzer"
-             }
-         }
-     }
- }
+PUT /my_index/my_type/_mapping
+{
+    "my_type": {
+        "properties": {
+            "title": {
+                "type":      "string",
+                "analyzer":  "my_analyzer"
+            }
+        }
+    }
+}
 --------------------------------------------------
 
 

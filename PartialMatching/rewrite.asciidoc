@@ -9,17 +9,17 @@ This score calculation is non-negligible, and furthermore, not really important 
 
 The default rewrite method is called `constant_score_auto` and uses a constant scoring scheme to aid performance.
 
-==== constant_score_auto 
+==== constant_score_auto
 
 This rewrite method automatically chooses an appropriate rewrite method depending on the type of query you are using.  These defaults are optimized to work with each particular query, and generally, you'll never need to change it.
 
 The `constant_score_auto` option chooses from two variants of a constant score.
 
 **constant_score_boolean**
-This rewrite builds a Should clause where each matching term is given a constant boost equal to the boost of the query.  Scores are then summed together.  
+This rewrite builds a Should clause where each matching term is given a constant boost equal to the boost of the query.  Scores are then summed together.
 
 **constant_score_filter**
-This rewrite is similar in spirit to _boolean, except it constructs a private Filter and uses filter caching to boost performance. 
+This rewrite is similar in spirit to _boolean, except it constructs a private Filter and uses filter caching to boost performance.
 
 Both these two methods have a hard limit of 1024 terms.  If your rewritten query generates more than 1024 terms, Elasticsearch will throw an error.
 
@@ -50,11 +50,11 @@ Changing the rewrite method is as simple as specifying the `rewrite` option in t
 
 [source,js]
 --------------------------------------------------
- {
-     "prefix" : { 
-         "my_field" : "qui",
-         "rewrite" : "constant_score_auto"
-     }
- }
+{
+    "prefix" : {
+        "my_field" : "qui",
+        "rewrite" : "constant_score_auto"
+    }
+}
 --------------------------------------------------
 

@@ -8,7 +8,7 @@ To search the full text `title` field, we can write:
 
 [source,js]
 --------------------------------------------------
- { "match": { "title": "Quick Brown Fox" }}
+{ "match": { "title": "Quick Brown Fox" }}
 --------------------------------------------------
 
 
@@ -28,14 +28,14 @@ match *all* terms:
 
 [source,js]
 --------------------------------------------------
- {
-     "match" : {
-         "title" : {
-             "operator" : "and",
-             "query"    : "Quick Brown Fox"
-         }
-     }
- }
+{
+    "match" : {
+        "title" : {
+            "operator" : "and",
+            "query"    : "Quick Brown Fox"
+        }
+    }
+}
 --------------------------------------------------
 
 
@@ -58,14 +58,14 @@ specify that at least `70%` of the terms should be present:
 
 [source,js]
 --------------------------------------------------
- {
-     "match" : {
-         "title" : {
-             "query"                : "Quick Brown Fox",
-             "minimum_should_match" : "70%"
-         }
-     }
- }
+{
+    "match" : {
+        "title" : {
+            "query"                : "Quick Brown Fox",
+            "minimum_should_match" : "70%"
+        }
+    }
+}
 --------------------------------------------------
 
 

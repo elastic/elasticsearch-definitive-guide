@@ -10,17 +10,17 @@ the value `2`:
 
 [source,js]
 --------------------------------------------------
- GET /_search  
- {
-     "query" : {
-         "filtered" : {
-             "filter" : { "term" : { "user_id" : 2 }}
-         }
-     }
- }
+GET /_search
+{
+    "query" : {
+        "filtered" : {
+            "filter" : { "term" : { "user_id" : 2 }}
+        }
+    }
+}
 --------------------------------------------------
 
-    
+
 The missing-but-implied `match_all` query just sets the `_score` to `1`
 for all documents, and filters don't have any effect on the score. This
 means that all of our results have the meaningless `_score` of `1` -- they
@@ -33,35 +33,35 @@ recent tweets first.  We can do this with the `sort` parameter:
 
 [source,js]
 --------------------------------------------------
- GET /_search  
- {
-     "query" : {
-         "filtered" : {
-             "filter" : { "term" : { "user_id" : 2 }}
-         }
-     },
-     "sort": { "date": { "order": "desc" }}
- }
+GET /_search
+{
+    "query" : {
+        "filtered" : {
+            "filter" : { "term" : { "user_id" : 2 }}
+        }
+    },
+    "sort": { "date": { "order": "desc" }}
+}
 --------------------------------------------------
 
-    
+
 You will notice two differences in the results:
 
 [source,js]
 --------------------------------------------------
- "hits" : {
-     "total" :           6,
-     "max_score" :       null,
-     "hits" : [ {
-         "_index" :      "us",
-         "_type" :       "tweet",
-         "_id" :         "13",
-         "_score" :      null,
-         "_source" :     { ... },
-         "sort" :        [ 1379894400000 ]
-     },
-     ...
- }
+"hits" : {
+    "total" :           6,
+    "max_score" :       null,
+    "hits" : [ {
+        "_index" :      "us",
+        "_type" :       "tweet",
+        "_id" :         "13",
+        "_score" :      null,
+        "_source" :     { ... },
+        "sort" :        [ 1379894400000 ]
+    },
+    ...
+}
 --------------------------------------------------
 
 
@@ -83,22 +83,22 @@ show all matching results sorted first by date, then by relevance:
 
 [source,js]
 --------------------------------------------------
- GET /_search  
- {
-     "query" : {
-         "filtered" : {
-             "query":   { "match": { "tweet": "full text search" }},
-             "filter" : { "term" : { "user_id" : 2 }}
-         }
-     },
-     "sort": [
-         { "date":   { "order": "desc" }},
-         { "_score": { "order": "desc" }}
-     ]
- }
+GET /_search
+{
+    "query" : {
+        "filtered" : {
+            "query":   { "match": { "tweet": "full text search" }},
+            "filter" : { "term" : { "user_id" : 2 }}
+        }
+    },
+    "sort": [
+        { "date":   { "order": "desc" }},
+        { "_score": { "order": "desc" }}
+    ]
+}
 --------------------------------------------------
 
-    
+
 Order is important.  Results are sorted by the first criterion first. Only
 results whose first `sort` value is identical will then be sorted by the
 second criterion, and so on.
@@ -112,10 +112,10 @@ argument from the above query could be written as:
 
 [source,js]
 --------------------------------------------------
-    "sort": [
-         { "date":   { "order": "desc" }},
-         "_score"
-    ]
+   "sort": [
+        { "date":   { "order": "desc" }},
+        "_score"
+   ]
 --------------------------------------------------
 
 
@@ -131,12 +131,12 @@ could sort on the earliest date in the `dates` field using:
 
 [source,js]
 --------------------------------------------------
- "sort": {
-     "dates": {
-         "order": "asc",
-         "mode":  "min"
-     }
- }
+"sort": {
+    "dates": {
+        "order": "asc",
+        "mode":  "min"
+    }
+}
 --------------------------------------------------
 
 
@@ -156,7 +156,7 @@ in the query string:
 
 [source,js]
 --------------------------------------------------
- GET /_search?sort=date:desc&q=*
+GET /_search?sort=date:desc&q=*
 --------------------------------------------------
 
 
@@ -164,7 +164,7 @@ Multiple sort parameters can be specified in order:
 
 [source,js]
 --------------------------------------------------
- GET /_search?sort=date:desc&sort=_score&q=search
+GET /_search?sort=date:desc&sort=_score&q=search
 --------------------------------------------------
 
 

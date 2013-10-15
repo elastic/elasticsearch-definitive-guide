@@ -28,19 +28,19 @@ with the following mapping:
 
 [source,js]
 --------------------------------------------------
- PUT /my_index 
- {
-     "mappings": {
-         "my_type": {
-             "_source": {
-                 "enabled":  false
-             }
-         }
-     }
- }
+PUT /my_index
+{
+    "mappings": {
+        "my_type": {
+            "_source": {
+                "enabled":  false
+            }
+        }
+    }
+}
 --------------------------------------------------
 
-    
+
 One field setting which we haven't discussed yet is `{"store": true|false}`.
 Besides indexing the values of a field, you can also choose to store the
 original value for later retrieval. Users with a Lucene background
@@ -65,13 +65,13 @@ In a search request, you can ask for just certain fields by specifying the
 
 [source,js]
 --------------------------------------------------
- GET /_search 
- {
-     "query":  { "match_all": {}},
-     "fields": [ "title", "created" ]
- }
+GET /_search
+{
+    "query":  { "match_all": {}},
+    "fields": [ "title", "created" ]
+}
 --------------------------------------------------
 
-    
+
 Values for these fields will either be loaded from disk (if they are
 stored) or extracted from the `_source` field.

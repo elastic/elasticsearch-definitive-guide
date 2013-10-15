@@ -48,18 +48,18 @@ When you create your new index, include the above optimizations as follows:
 
 [source,js]
 --------------------------------------------------
- PUT /new_index 
- {
-     "settings": {
-         "number_of_replicas":            0,
-         "refresh_interval":              -1,
-         "translog.flush_threshold_ops":  20000
-     },
-     "mappings": { ... }
- }
+PUT /new_index
+{
+    "settings": {
+        "number_of_replicas":            0,
+        "refresh_interval":              -1,
+        "translog.flush_threshold_ops":  20000
+    },
+    "mappings": { ... }
+}
 --------------------------------------------------
 
-    
+
 ==== After reindexing
 
 Once you have finished reindexing, you can update the index settings
@@ -67,15 +67,15 @@ to be suitable for highly available real time search:
 
 [source,js]
 --------------------------------------------------
- PUT /new_index/_settings 
- {
-     "number_of_replicas":             1,
-     "refresh_interval":               "1s",
-     "translog.flush_threshold_ops":   5000
- }
+PUT /new_index/_settings
+{
+    "number_of_replicas":             1,
+    "refresh_interval":               "1s",
+    "translog.flush_threshold_ops":   5000
+}
 --------------------------------------------------
 
-    
+
 It will take a little time to allocate the replica shards but, as soon
 as that is complete, your index is ready to use.
 

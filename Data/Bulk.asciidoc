@@ -12,11 +12,11 @@ The `bulk` request body has the following, slightly unusual, format:
 
 [source,js]
 --------------------------------------------------
- { action: { metadata }}\n
- { document            }\n
- { action: { metadata }}\n
- { document            }\n
- ...
+{ action: { metadata }}\n
+{ document            }\n
+{ action: { metadata }}\n
+{ document            }\n
+...
 --------------------------------------------------
 
 
@@ -39,7 +39,7 @@ For instance, a `delete` request could look like this:
 
 [source,js]
 --------------------------------------------------
- { "delete": { "_index": "website", "_type": "blog", "_id": "123" }}
+{ "delete": { "_index": "website", "_type": "blog", "_id": "123" }}
 --------------------------------------------------
 
 
@@ -49,8 +49,8 @@ requests, not for `delete`.
 
 [source,js]
 --------------------------------------------------
- { "index":  { "_index": "website", "_type": "blog", "_id": "123" }}
- { "title":    "My first blog post" }
+{ "index":  { "_index": "website", "_type": "blog", "_id": "123" }}
+{ "title":    "My first blog post" }
 --------------------------------------------------
 
 
@@ -59,8 +59,8 @@ If no `_id` is specified, then an ID will be auto-generated:
 
 [source,js]
 --------------------------------------------------
- { "create": { "_index": "website", "_type": "blog" }}
- { "title":    "My second blog post" }
+{ "create": { "_index": "website", "_type": "blog" }}
+{ "title":    "My second blog post" }
 --------------------------------------------------
 
 
@@ -69,12 +69,12 @@ To put it all together, a complete `bulk` request has this form:
 
 [source,js]
 --------------------------------------------------
- POST /_bulk 
- { "delete": { "_index": "website", "_type": "blog", "_id": "123" }}
- { "index":  { "_index": "website", "_type": "blog", "_id": "123" }}
- { "title":    "My first blog post" }
- { "create": { "_index": "website", "_type": "blog" }}
- { "title":    "My second blog post" }
+POST /_bulk
+{ "delete": { "_index": "website", "_type": "blog", "_id": "123" }}
+{ "index":  { "_index": "website", "_type": "blog", "_id": "123" }}
+{ "title":    "My first blog post" }
+{ "create": { "_index": "website", "_type": "blog" }}
+{ "title":    "My second blog post" }
 --------------------------------------------------
 
 
@@ -84,32 +84,32 @@ milliseconds it `took` to perform the whole `bulk` request:
 
 [source,js]
 --------------------------------------------------
- {
-   "took" : 1,
-   "items" : [
-     { "delete" : {
-         "_index" :   "website",
-         "_type" :    "blog",
-         "_id" :      "123",
-         "_version" : 5,
-         "ok" :       true
-     }},
-     { "index" : {
-         "_index" :   "website",
-         "_type" :    "blog",
-         "_id" :      "123",
-         "_version" : 6,
-         "ok" :       true
-     }},
-     { "create" : {
-         "_index" :   "website",
-         "_type" :    "blog",
-         "_id" :      "YUYRnsC4T2yePAnMy-pqAA",
-         "_version" : 1,
-         "ok" :       true
-     }}
-   ]
- }
+{
+  "took" : 1,
+  "items" : [
+    { "delete" : {
+        "_index" :   "website",
+        "_type" :    "blog",
+        "_id" :      "123",
+        "_version" : 5,
+        "ok" :       true
+    }},
+    { "index" : {
+        "_index" :   "website",
+        "_type" :    "blog",
+        "_id" :      "123",
+        "_version" : 6,
+        "ok" :       true
+    }},
+    { "create" : {
+        "_index" :   "website",
+        "_type" :    "blog",
+        "_id" :      "YUYRnsC4T2yePAnMy-pqAA",
+        "_version" : 1,
+        "ok" :       true
+    }}
+  ]
+}
 --------------------------------------------------
 
 
@@ -118,11 +118,11 @@ it won't stop the other requests from being processed:
 
 [source,js]
 --------------------------------------------------
- POST /_bulk 
- { "create": { "_index": "website", "_type": "blog", "_id": "123" }}
- { "title":    "Cannot create - it already exists" }
- { "index":  { "_index": "website", "_type": "blog", "_id": "123" }}
- { "title":    "But we can update it" }
+POST /_bulk
+{ "create": { "_index": "website", "_type": "blog", "_id": "123" }}
+{ "title":    "Cannot create - it already exists" }
+{ "index":  { "_index": "website", "_type": "blog", "_id": "123" }}
+{ "title":    "But we can update it" }
 --------------------------------------------------
 
 
@@ -132,25 +132,25 @@ on document `123`, succeeded:
 
 [source,js]
 --------------------------------------------------
- {
-   "took" : 1,
-   "items" : [
-     { "create" : {
-         "_index" :   "website",
-         "_type" :    "blog",
-         "_id" :      "123",
-         "error" :    "DocumentAlreadyExistsException[[website][4] [blog][123]:
-                       document already exists]"
-     }},
-     { "index" : {
-         "_index" :   "website",
-         "_type" :    "blog",
-         "_id" :      "123",
-         "_version" : 7,
-         "ok" :       true
-     }}
-   ]
- }
+{
+  "took" : 1,
+  "items" : [
+    { "create" : {
+        "_index" :   "website",
+        "_type" :    "blog",
+        "_id" :      "123",
+        "error" :    "DocumentAlreadyExistsException[[website][4] [blog][123]:
+                      document already exists]"
+    }},
+    { "index" : {
+        "_index" :   "website",
+        "_type" :    "blog",
+        "_id" :      "123",
+        "_version" : 7,
+        "ok" :       true
+    }}
+  ]
+}
 --------------------------------------------------
 
 
@@ -168,9 +168,9 @@ URL, or even a default `/_index/_type`.
 
 [source,js]
 --------------------------------------------------
- POST /website/_bulk 
- { "index": { "_type": "log" }}
- { "event": "User logged in" }
+POST /website/_bulk
+{ "index": { "_type": "log" }}
+{ "event": "User logged in" }
 --------------------------------------------------
 
 
@@ -179,11 +179,11 @@ will use the URL defaults if no override is specified:
 
 [source,js]
 --------------------------------------------------
- POST /website/log/_bulk 
- { "index": {}}
- { "event": "User logged in" }
- { "index": { "_type": "blog" }
- { "title": "Overriding the default type" }}
+POST /website/log/_bulk
+{ "index": {}}
+{ "event": "User logged in" }
+{ "index": { "_type": "blog" }
+{ "title": "Overriding the default type" }}
 --------------------------------------------------
 
 
@@ -199,13 +199,13 @@ The `_version` number must be specified in the metadata:
 
 [source,js]
 --------------------------------------------------
- POST /website/blog/_bulk 
- { "create": { "_id": "125" }}
- { "title":    "Create a new blog post, with version 1" }
- { "index":  { "_id": "125", "_version": 1 }}
- { "title":    "This update succeeds" }
- { "index":  { "_id": "125", "_version": 1 }}
- { "title":    "This update fails with a Conflict error" }
+POST /website/blog/_bulk
+{ "create": { "_id": "125" }}
+{ "title":    "Create a new blog post, with version 1" }
+{ "index":  { "_id": "125", "_version": 1 }}
+{ "title":    "This update succeeds" }
+{ "index":  { "_id": "125", "_version": 1 }}
+{ "title":    "This update fails with a Conflict error" }
 --------------------------------------------------
 
 

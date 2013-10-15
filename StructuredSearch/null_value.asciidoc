@@ -13,12 +13,12 @@ encountered:
 
 [source,js]
 --------------------------------------------------
- {
-    "tweet" : {
-       "properties" : {
-          "message" : {"type" : "string", "null_value" : "NA"}
-       }
- }
+{
+   "tweet" : {
+      "properties" : {
+         "message" : {"type" : "string", "null_value" : "NA"}
+      }
+}
 --------------------------------------------------
 
 
@@ -27,7 +27,7 @@ in the `message` field:
 
 [source,js]
 --------------------------------------------------
- { "message" : null }
+{ "message" : null }
 --------------------------------------------------
 
 

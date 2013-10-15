@@ -12,10 +12,10 @@ booleans, or `not_analyzed` string fields:
 
 [source,js]
 --------------------------------------------------
- { "term": { "age":    26           }}
- { "term": { "date":   "2013-09-01" }}
- { "term": { "tag":    "full_text"  }}
- { "term": { "public": true         }}
+{ "term": { "age":    26           }}
+{ "term": { "date":   "2013-09-01" }}
+{ "term": { "tag":    "full_text"  }}
+{ "term": { "public": true         }}
 --------------------------------------------------
 
 
@@ -27,7 +27,7 @@ the specified values, then the document matches:
 
 [source,js]
 --------------------------------------------------
- { "terms": { "tag": [ "search", "full_text", "nosql" ] }}
+{ "terms": { "tag": [ "search", "full_text", "nosql" ] }}
 --------------------------------------------------
 
 
@@ -38,14 +38,14 @@ the specified range:
 
 [source,js]
 --------------------------------------------------
- {
-     "range": {
-         "age": {
-             "gte":  20,
-             "lt":   30
-         }
-     }
- }
+{
+    "range": {
+        "age": {
+            "gte":  20,
+            "lt":   30
+        }
+    }
+}
 --------------------------------------------------
 
 
@@ -63,14 +63,14 @@ including `"m"`:
 
 [source,js]
 --------------------------------------------------
- {
-     "range": {
-         "tag": {
-             "gte":  "a",
-             "lt":   "m"
-         }
-     }
- }
+{
+    "range": {
+        "tag": {
+            "gte":  "a",
+            "lt":   "m"
+        }
+    }
+}
 --------------------------------------------------
 
 
@@ -82,11 +82,11 @@ any values (`missing`). It is similar in nature to `IS_NULL` in SQL:
 
 [source,js]
 --------------------------------------------------
- {
-     "exists":   {
-         "field":    "title"
-     }
- }
+{
+    "exists":   {
+        "field":    "title"
+    }
+}
 --------------------------------------------------
 
 
@@ -108,16 +108,16 @@ of filter clauses:
 
 [source,js]
 --------------------------------------------------
- {
-     "bool": {
-         "must":     { "term": { "folder": "inbox" }},
-         "must_not": { "term": { "tag":    "spam"  }},
-         "should": [
-                     { "term": { "starred": true   }},
-                     { "term": { "unread":  true   }}
-         ]
-     }
- }
+{
+    "bool": {
+        "must":     { "term": { "folder": "inbox" }},
+        "must_not": { "term": { "tag":    "spam"  }},
+        "should": [
+                    { "term": { "starred": true   }},
+                    { "term": { "unread":  true   }}
+        ]
+    }
+}
 --------------------------------------------------
 
 
@@ -128,7 +128,7 @@ query which is used if no query has been specified.
 
 [source,js]
 --------------------------------------------------
- { "match_all": {}}
+{ "match_all": {}}
 --------------------------------------------------
 
 
@@ -148,7 +148,7 @@ the search:
 
 [source,js]
 --------------------------------------------------
- { "match": { "tweet": "Cool, bonsai cool" }}
+{ "match": { "tweet": "Cool, bonsai cool" }}
 --------------------------------------------------
 
 
@@ -158,10 +158,10 @@ exact value:
 
 [source,js]
 --------------------------------------------------
- { "match": { "age":    26           }}
- { "match": { "date":   "2013-09-01" }}
- { "match": { "tag":    "full_text"  }}
- { "match": { "public": true         }}
+{ "match": { "age":    26           }}
+{ "match": { "date":   "2013-09-01" }}
+{ "match": { "tag":    "full_text"  }}
+{ "match": { "public": true         }}
 --------------------------------------------------
 
 
@@ -180,12 +180,12 @@ fields:
 
 [source,js]
 --------------------------------------------------
- {
-     "multi_match": {
-         "query":    "full text search",
-         "fields":   [ "title", "body" ]
-     }
- }
+{
+    "multi_match": {
+        "query":    "full text search",
+        "fields":   [ "title", "body" ]
+    }
+}
 --------------------------------------------------
 
 
@@ -213,16 +213,16 @@ match *both* conditions will rank even higher:
 
 [source,js]
 --------------------------------------------------
- {
-     "bool": {
-         "must":     { "match": { "title": "how to make millions" }},
-         "must_not": { "match": { "tag":   "spam" }},
-         "should: [
-             { "match": { "tag": "starred" }},
-             { "match": { "date": { "gte": "2013-01-01" }}
-         ]
-     }
- }
+{
+    "bool": {
+        "must":     { "match": { "title": "how to make millions" }},
+        "must_not": { "match": { "tag":   "spam" }},
+        "should: [
+            { "match": { "tag": "starred" }},
+            { "match": { "date": { "gte": "2013-01-01" }}
+        ]
+    }
+}
 --------------------------------------------------
 
 

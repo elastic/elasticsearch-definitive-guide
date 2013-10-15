@@ -1,7 +1,7 @@
 
 So if ngrams work for mispellings but aren't really *ideal*, what are ngrams good for?  There is another type of ngram, the Edge Ngram, which is much more practical.  It is ideally suited for "autocomplete" situations, as well as leading wildcards.
 
-Edge ngrams operate on the same "sliding window" principle, but are anchored to the front edge of the token.  This lets you build both suffix- and prefix-matching right into your index.  
+Edge ngrams operate on the same "sliding window" principle, but are anchored to the front edge of the token.  This lets you build both suffix- and prefix-matching right into your index.
 
 ==== Autocomplete
 
@@ -13,7 +13,7 @@ Let's set min=1 and max=4, then look at the "pancake" again:
 
 [source,js]
 --------------------------------------------------
- "p", "pa", "pan", "panc"
+"p", "pa", "pan", "panc"
 --------------------------------------------------
 
 
@@ -45,12 +45,12 @@ Doing this is easy, you simply specify the `search_analyzer` option in your quer
 
 [source,js]
 --------------------------------------------------
- {
-     "match" : {
-         "query" : "panca",
-         "search_analyzer" : "my_analyzer_no_ngrams"
-     }
- }
+{
+    "match" : {
+        "query" : "panca",
+        "search_analyzer" : "my_analyzer_no_ngrams"
+    }
+}
 --------------------------------------------------
 
 
@@ -68,19 +68,19 @@ Imagine we need to search for all word that end in "*ing".  Taking the word "jum
 
 [source,js]
 --------------------------------------------------
- "gnipmuj"
+"gnipmuj"
 --------------------------------------------------
 
 
 Then we apply the edge ngrams:
-    
+
     "g", "gn", "gni", "gnip", "gnipm"
 
 Finally, we reverse the tokens one last time:
 
 [source,js]
 --------------------------------------------------
- "g", "ng", "ing", "ping", "mping"
+"g", "ng", "ing", "ping", "mping"
 --------------------------------------------------
 
 
@@ -89,5 +89,5 @@ Now when you do a search for all words ending in "*ing", you can simply query fo
 This turns the leading wildcard from an extremely expensive operation to one that is remarkably speedy.
 
 Constructing this setup in your mapping is very easy, you just need to sandwich the edge-ngram filter between two reverse filters:
-    
+
     ["reverse", "my_edge_ngram", "reverse"]

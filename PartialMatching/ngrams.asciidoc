@@ -7,7 +7,7 @@ Given the word "pancake" and a size of three, we generate the following new toke
 
 [source,js]
 --------------------------------------------------
- "pan", "anc", "nca", "cak", "ake"
+"pan", "anc", "nca", "cak", "ake"
 --------------------------------------------------
 
 
@@ -15,7 +15,7 @@ The minimum and maximum size of the ngram is configurable.  If you set min = 2 a
 
 [source,js]
 --------------------------------------------------
- "pa", "pan", "an", "anc", ....
+"pa", "pan", "an", "anc", ....
 --------------------------------------------------
 
 
@@ -29,7 +29,7 @@ By default, the match query will analyze your input with the analyzer of the fie
 
 [source,js]
 --------------------------------------------------
- "pan", "ank", "nka", "kak", "ake"
+"pan", "ank", "nka", "kak", "ake"
 --------------------------------------------------
 
 

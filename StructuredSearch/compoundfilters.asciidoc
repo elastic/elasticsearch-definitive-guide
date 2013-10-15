@@ -12,13 +12,13 @@ The Bool filter is composed of three sections:
 
 [source,js]
 --------------------------------------------------
- {
-    "bool" : {
-       "must" : [],
-       "should" : [],
-       "must_not" : [],
-    }
- }
+{
+   "bool" : {
+      "must" : [],
+      "should" : [],
+      "must_not" : [],
+   }
+}
 --------------------------------------------------
 
 
@@ -87,21 +87,21 @@ a And/Or/Not, like this example:
 
 [source,js]
 --------------------------------------------------
- {
-   "and" : [
-     {
-       "bool" : {
-         "must" : [
-           { "term" : {} },
-           { "range" : {} },
-           { "term" : {} }
-         ]
-       }
-     },
-     { "custom_script" : {} },
-     { "geo_distance" : {} }
-   ]
- }
+{
+  "and" : [
+    {
+      "bool" : {
+        "must" : [
+          { "term" : {} },
+          { "range" : {} },
+          { "term" : {} }
+        ]
+      }
+    },
+    { "custom_script" : {} },
+    { "geo_distance" : {} }
+  ]
+}
 --------------------------------------------------
 
 ****

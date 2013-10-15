@@ -21,33 +21,33 @@ than in the document itself:
 
 [source,js]
 --------------------------------------------------
- PUT /blogs/user/johnsmith?pretty 
- {
-     "email":     "john@smith.com",
-     "name": {
-         "first": "John",
-         "last":  "Smith"
-     },
-     "bio":       "Eco-warrior and defender of the weak",
-     "age":       25,
-     "join_date": "2013/05/01",
-     "interests": ["dolphins", "whales"]
- }
+PUT /blogs/user/johnsmith?pretty
+{
+    "email":     "john@smith.com",
+    "name": {
+        "first": "John",
+        "last":  "Smith"
+    },
+    "bio":       "Eco-warrior and defender of the weak",
+    "age":       25,
+    "join_date": "2013/05/01",
+    "interests": ["dolphins", "whales"]
+}
 --------------------------------------------------
 
-    
+
 And we receive the following response, which confirms that our document
 has been indexed correctly:
 
 [source,js]
 --------------------------------------------------
- {
-   "ok" : true,
-   "_index" : "blogs",
-   "_type" : "user",
-   "_id" : "johnsmith",
-   "_version" : 1
- }
+{
+  "ok" : true,
+  "_index" : "blogs",
+  "_type" : "user",
+  "_id" : "johnsmith",
+  "_version" : 1
+}
 --------------------------------------------------
 
 
@@ -67,7 +67,7 @@ that we specified when indexing it:
 
 [source,js]
 --------------------------------------------------
- GET /blogs/user/johnsmith?pretty
+GET /blogs/user/johnsmith?pretty
 --------------------------------------------------
 
 
@@ -76,24 +76,24 @@ The response contains the exact same JSON document that we indexed, as the
 
 [source,js]
 --------------------------------------------------
- {
-     "_index" :    "blogs",
-     "_type" :     "user",
-     "_id" :       "johnsmith",
-     "_version" :  1,
-     "exists" :    true,
-     "_source" :   {
-          "email":     "john@smith.com",
-          "name": {
-              "first": "John",
-              "last":  "Smith"
-          },
-          "bio":       "Eco-warrior and defender of the weak",
-          "age":       25,
-          "join_date": "2013/05/01",
-          "interests": ["dolphins", "whales"]
-     }
- }
+{
+    "_index" :    "blogs",
+    "_type" :     "user",
+    "_id" :       "johnsmith",
+    "_version" :  1,
+    "exists" :    true,
+    "_source" :   {
+         "email":     "john@smith.com",
+         "name": {
+             "first": "John",
+             "last":  "Smith"
+         },
+         "bio":       "Eco-warrior and defender of the weak",
+         "age":       25,
+         "join_date": "2013/05/01",
+         "interests": ["dolphins", "whales"]
+    }
+}
 --------------------------------------------------
 
 

@@ -4,10 +4,10 @@ Imagine we have these two documents:
 
 [source,js]
 --------------------------------------------------
- {
-     "title":    "Quick elephants",
-     "content":  "Quick! Brown the elephants"
- }
+{
+    "title":    "Quick elephants",
+    "content":  "Quick! Brown the elephants"
+}
 --------------------------------------------------
 
 
@@ -20,13 +20,13 @@ And we run this query:
 
 [source,js]
 --------------------------------------------------
- {
-   "bool" : {
-      "should" : [
-         { "match" : { "title" :   "quick brown fox" }},
-         { "match" : { "content" : "quick brown fox" }}
-      ]
- }
+{
+  "bool" : {
+     "should" : [
+        { "match" : { "title" :   "quick brown fox" }},
+        { "match" : { "content" : "quick brown fox" }}
+     ]
+}
 --------------------------------------------------
 
 
@@ -63,13 +63,13 @@ combining the `_score` from each clause, it uses the highest or ``max'' `_score`
 
 [source,js]
 --------------------------------------------------
- {
-   "dis_max" : {
-      "queries" : [
-         { "match" : { "title" :   "quick brown fox" }},
-         { "match" : { "content" : "quick brown fox" }}
-      ]
- }
+{
+  "dis_max" : {
+     "queries" : [
+        { "match" : { "title" :   "quick brown fox" }},
+        { "match" : { "content" : "quick brown fox" }}
+     ]
+}
 --------------------------------------------------
 
 
@@ -83,10 +83,10 @@ What happens if we add a third document:
 
 [source,js]
 --------------------------------------------------
- {
-     "title":    "Quick brown fox",
-     "content":  "Quick brown fox"
- }
+{
+    "title":    "Quick brown fox",
+    "content":  "Quick brown fox"
+}
 --------------------------------------------------
 
 
@@ -99,15 +99,15 @@ the `tie_breaker` parameter:
 
 [source,js]
 --------------------------------------------------
- {
-   "dis_max" : {
-        "queries" : [
-             { "match" : { "title" :   "quick brown fox" }},
-             { "match" : { "content" : "quick brown fox" }}
-         ],
-         "tie_breaker": 0.2
-     }
- }
+{
+  "dis_max" : {
+       "queries" : [
+            { "match" : { "title" :   "quick brown fox" }},
+            { "match" : { "content" : "quick brown fox" }}
+        ],
+        "tie_breaker": 0.2
+    }
+}
 --------------------------------------------------
 
 
@@ -132,14 +132,14 @@ However, you can choose to use a `dis_max` query instead by setting
 
 [source,js]
 --------------------------------------------------
- {
-     "multi_match": {
-         "query":       "Quick brown fox",
-         "fields":      ["title", "content"],
-         "use_dis_max": true,
-         "tie_breaker": 0.2
-     }
- }
+{
+    "multi_match": {
+        "query":       "Quick brown fox",
+        "fields":      ["title", "content"],
+        "use_dis_max": true,
+        "tie_breaker": 0.2
+    }
+}
 --------------------------------------------------
 
 ****

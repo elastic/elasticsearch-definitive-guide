@@ -11,38 +11,38 @@ If we want to specify our own `_id`, then the form of the request is:
 
 [source,js]
 --------------------------------------------------
- PUT /_index/_type/_id 
- {
-   "field": "value",
-   ...
- }
+PUT /_index/_type/_id
+{
+  "field": "value",
+  ...
+}
 --------------------------------------------------
 
-    
+
 For example, if our `_index` is called `"website"`, our `_type` is called
 `"blog"` and we choose the `_id` `"123"`, then the index request looks like this:
 
 [source,js]
 --------------------------------------------------
- PUT /website/blog/123 
- {
-   "title": "My first blog entry",
-   "text":  "Just trying this out..."
- }
+PUT /website/blog/123
+{
+  "title": "My first blog entry",
+  "text":  "Just trying this out..."
+}
 --------------------------------------------------
 
-    
+
 Elasticsearch would respond with:
 
 [source,js]
 --------------------------------------------------
- {
-   "ok" : true,
-   "_index"   : "website",
-   "_type"    : "blog",
-   "_id"      : "123",
-   "_version" : 1
- }
+{
+  "ok" : true,
+  "_index"   : "website",
+  "_type"    : "blog",
+  "_id"      : "123",
+  "_version" : 1
+}
 --------------------------------------------------
 
 
@@ -67,26 +67,26 @@ The URL now contains just the `_index` and the `_type`:
 
 [source,js]
 --------------------------------------------------
- POST /website/blog/ 
- {
-   "title": "My second blog entry",
-   "text":  "Still trying this out..."
- }
+POST /website/blog/
+{
+  "title": "My second blog entry",
+  "text":  "Still trying this out..."
+}
 --------------------------------------------------
 
-    
+
 The response is similar to what we saw before, except that the `_id`
 field has been generated for us:
 
 [source,js]
 --------------------------------------------------
- {
-   "ok" :       true,
-   "_index" :   "website",
-   "_type" :    "blog",
-   "_id" :      "R9xqebnFQW--2loIo7lAXA",
-   "_version" : 1
- }
+{
+  "ok" :       true,
+  "_index" :   "website",
+  "_type" :    "blog",
+  "_id" :      "R9xqebnFQW--2loIo7lAXA",
+  "_version" : 1
+}
 --------------------------------------------------
 
 

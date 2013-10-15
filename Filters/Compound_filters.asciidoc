@@ -7,7 +7,7 @@ in SQL:
 
 [source,js]
 --------------------------------------------------
- WHERE status = "active" AND count > 5
+WHERE status = "active" AND count > 5
 --------------------------------------------------
 
 
@@ -37,9 +37,9 @@ For instance, this SQL statement:
 
 [source,js]
 --------------------------------------------------
- WHERE status = 'active'
- AND ( created >= '2013/01/01' OR featured = 1 )
- AND   hidden <> 1
+WHERE status = 'active'
+AND ( created >= '2013/01/01' OR featured = 1 )
+AND   hidden <> 1
 --------------------------------------------------
 
 
@@ -47,16 +47,16 @@ could be written as:
 
 [source,js]
 --------------------------------------------------
- {
-     "bool" : {
-         "must" :     { "term" : { "status" : "active" }},
-         "should" :   [
-             { "range" : { "created" : { "gte" : "2013/01/01" }}},
-             { "term" :  { "featured" : 1 }}
-         ],
-         "must_not" : { "term" : { "hidden" : 1 }}
-     }
- }
+{
+    "bool" : {
+        "must" :     { "term" : { "status" : "active" }},
+        "should" :   [
+            { "range" : { "created" : { "gte" : "2013/01/01" }}},
+            { "term" :  { "featured" : 1 }}
+        ],
+        "must_not" : { "term" : { "hidden" : 1 }}
+    }
+}
 --------------------------------------------------
 
 
@@ -74,8 +74,8 @@ As an example, this SQL statement:
 
 [source,js]
 --------------------------------------------------
- WHERE status = "featured"
- OR    status = "active"   AND created >= '2013/01/01'
+WHERE status = "featured"
+OR    status = "active"   AND created >= '2013/01/01'
 --------------------------------------------------
 
 
@@ -83,21 +83,21 @@ could be written as:
 
 [source,js]
 --------------------------------------------------
- {
-   "bool": {
-     "should": [
-       { "term": { "status": "featured" }},
-       {
-         "bool": {
-           "must": [
-             { "term":  { "status": "active"}},
-             { "range": { "created": { "gte": "2013/01/01" }}}
-           ]
-         }
-       }
-     ]
-   }
- }
+{
+  "bool": {
+    "should": [
+      { "term": { "status": "featured" }},
+      {
+        "bool": {
+          "must": [
+            { "term":  { "status": "active"}},
+            { "range": { "created": { "gte": "2013/01/01" }}}
+          ]
+        }
+      }
+    ]
+  }
+}
 --------------------------------------------------
 
 
@@ -113,7 +113,7 @@ For example, this SQL query:
 
 [source,js]
 --------------------------------------------------
- WHERE status = "active" AND (count < 5 OR count > 10)
+WHERE status = "active" AND (count < 5 OR count > 10)
 --------------------------------------------------
 
 
@@ -121,16 +121,16 @@ could be written as:
 
 [source,js]
 --------------------------------------------------
- {
-     "and" :  [
-         { "term" :  { "status" :      "active" }},
-         { "or" : [
-             { "range" : { "count" : { "lt" : 5  }},
-             { "range" : { "count" : { "gt" : 10 }}
-           ]
-         }
-     ]
- }
+{
+    "and" :  [
+        { "term" :  { "status" :      "active" }},
+        { "or" : [
+            { "range" : { "count" : { "lt" : 5  }},
+            { "range" : { "count" : { "gt" : 10 }}
+          ]
+        }
+    ]
+}
 --------------------------------------------------
 
 
@@ -157,9 +157,9 @@ could be written as:
 
 [source,js]
 --------------------------------------------------
- {
-     "not" : { "term" : { "count" : 5 }}
- }
+{
+    "not" : { "term" : { "count" : 5 }}
+}
 --------------------------------------------------
 
 
@@ -171,8 +171,8 @@ statement:
 
 [source,js]
 --------------------------------------------------
- WHERE status <> "inactive"
-   AND status <> "pending"
+WHERE status <> "inactive"
+  AND status <> "pending"
 --------------------------------------------------
 
 
@@ -180,12 +180,12 @@ could be written in either of these two ways:
 
 [source,js]
 --------------------------------------------------
- {
-     "and" : [
-       { "not": { "term" : { "status" : "inactive" }}},
-       { "not": { "term" : { "status" : "pending"  }}}
-     ]
- }
+{
+    "and" : [
+      { "not": { "term" : { "status" : "inactive" }}},
+      { "not": { "term" : { "status" : "pending"  }}}
+    ]
+}
 --------------------------------------------------
 
 
@@ -250,27 +250,27 @@ bitsets::
 
 [source,js]
 --------------------------------------------------
- {
-     "bool": {
-         "must": [
-             { "term": { "status": "active" }},
-             { "term": { "tag": "elasticsearch" }},
-             { "or": [
-                 { "geo_distance": {
-                     "distance": "20km",
-                     "location": {
-                         "lat": 40.77,
-                         "lon": 73.98
-                 }}},
-                 { "geo_distance": {
-                     "distance": "20km",
-                     "location": {
-                         "lat": 51.5,
-                         "lon": -0.12
-                 }}}
-             ]}
-         ]
-  }}
+{
+    "bool": {
+        "must": [
+            { "term": { "status": "active" }},
+            { "term": { "tag": "elasticsearch" }},
+            { "or": [
+                { "geo_distance": {
+                    "distance": "20km",
+                    "location": {
+                        "lat": 40.77,
+                        "lon": 73.98
+                }}},
+                { "geo_distance": {
+                    "distance": "20km",
+                    "location": {
+                        "lat": 51.5,
+                        "lon": -0.12
+                }}}
+            ]}
+        ]
+ }}
 --------------------------------------------------
 
 

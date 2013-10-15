@@ -28,28 +28,28 @@ First, you'll want to make sure your stop filter comes before the shingle filter
 
 [source,js]
 --------------------------------------------------
- {
-    "analysis":{
-       "analyzer":{
-          "analyzer_shingle":{
-             "tokenizer":"standard",
-             "filter":[ "standard", "lowercase", "filter_stop", "filter_shingle" ]
-          }
-       },
-       "filter":{
-          "filter_shingle":{
-             "type":"shingle",
-             "max_shingle_size":2,
-             "min_shingle_size":2,
-             "output_unigrams":"true"
-          },
-          "filter_stop":{
-             "type":"stop",
-             "enable_position_increments":"false"
-          }
-       }
-    }
- }
+{
+   "analysis":{
+      "analyzer":{
+         "analyzer_shingle":{
+            "tokenizer":"standard",
+            "filter":[ "standard", "lowercase", "filter_stop", "filter_shingle" ]
+         }
+      },
+      "filter":{
+         "filter_shingle":{
+            "type":"shingle",
+            "max_shingle_size":2,
+            "min_shingle_size":2,
+            "output_unigrams":"true"
+         },
+         "filter_stop":{
+            "type":"stop",
+            "enable_position_increments":"false"
+         }
+      }
+   }
+}
 --------------------------------------------------
 
 
@@ -59,9 +59,9 @@ Why do you need to disable position increments?  When removing stop-words, Lucen
 
 [source,js]
 --------------------------------------------------
- [test text _]
- [text _ see]
- [_ see shingles]
+[test text _]
+[text _ see]
+[_ see shingles]
 --------------------------------------------------
 
 

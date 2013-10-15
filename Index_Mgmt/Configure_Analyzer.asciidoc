@@ -33,30 +33,30 @@ uses the predefined list of Spanish stopwords:
 
 [source,js]
 --------------------------------------------------
- PUT /spanish_docs 
- {
-     "settings": {
-         "analysis": {
-             "analyzer": {
-                 "es_std": {
-                     "type":      "standard",
-                     "stopwords": "_spanish_"
-                 }
-             }
-         }
-     }
- }
+PUT /spanish_docs
+{
+    "settings": {
+        "analysis": {
+            "analyzer": {
+                "es_std": {
+                    "type":      "standard",
+                    "stopwords": "_spanish_"
+                }
+            }
+        }
+    }
+}
 --------------------------------------------------
 
-    
+
 The `es_std` analyzer only exists in the `spanish_docs` index where we
 have defined it.  It is not global.  To test it using the `analyze` API, we
 must specify the index name:
 
 [source,js]
 --------------------------------------------------
- POST /spanish_docs/_analyze?analyzer=es_std 
- El veloz zorro marrón
+POST /spanish_docs/_analyze?analyzer=es_std
+El veloz zorro marrón
 --------------------------------------------------
 
 
@@ -65,12 +65,12 @@ removed correctly:
 
 [source,js]
 --------------------------------------------------
- {
-   "tokens" : [
-     { "token" :    "veloz",   "position" : 2 },
-     { "token" :    "zorro",   "position" : 3 },
-     { "token" :    "marrón",  "position" : 4 }
-   ]
- }
+{
+  "tokens" : [
+    { "token" :    "veloz",   "position" : 2 },
+    { "token" :    "zorro",   "position" : 3 },
+    { "token" :    "marrón",  "position" : 4 }
+  ]
+}
 --------------------------------------------------
 

@@ -12,7 +12,7 @@ For instance, does the field `status` contain the string `"active"`:
 
 [source,js]
 --------------------------------------------------
- { "term" : { "status" : "active" }}
+{ "term" : { "status" : "active" }}
 --------------------------------------------------
 
 
@@ -20,7 +20,7 @@ Does field `count` contain the number `5`:
 
 [source,js]
 --------------------------------------------------
- { "term" : { "count" : 5 }}
+{ "term" : { "count" : 5 }}
 --------------------------------------------------
 
 
@@ -28,7 +28,7 @@ Does field `publish_date` contain the date `2013/01/01`:
 
 [source,js]
 --------------------------------------------------
- { "term" : { "publish_date" : "2013/01/01" }}
+{ "term" : { "publish_date" : "2013/01/01" }}
 --------------------------------------------------
 
 
@@ -46,7 +46,7 @@ For instance, a document whose `tags` field contains an array of tags:
 
 [source,js]
 --------------------------------------------------
- { "tags" : [ "elasticsearch", "lucene", "nosql" ]}
+{ "tags" : [ "elasticsearch", "lucene", "nosql" ]}
 --------------------------------------------------
 
 
@@ -54,7 +54,7 @@ will match a filter looking for just one of those tags:
 
 [source,js]
 --------------------------------------------------
- { "term": { "tags": "elasticsearch" }}
+{ "term": { "tags": "elasticsearch" }}
 --------------------------------------------------
 
 
@@ -69,7 +69,7 @@ it checks whether the field contains *ANY* of the listed values:
 
 [source,js]
 --------------------------------------------------
- { "terms" : { "status" : [ "active", "pending" ] }}
+{ "terms" : { "status" : [ "active", "pending" ] }}
 --------------------------------------------------
 
 
@@ -79,12 +79,12 @@ check whether the field contains *ALL* of the listed values by seting the
 
 [source,js]
 --------------------------------------------------
- {
-     "terms" : {
-         "execution" : "and",
-         "tags" :      [ "elasticsearch", "nosql" ]
-     }
- }
+{
+    "terms" : {
+        "execution" : "and",
+        "tags" :      [ "elasticsearch", "nosql" ]
+    }
+}
 --------------------------------------------------
 
 

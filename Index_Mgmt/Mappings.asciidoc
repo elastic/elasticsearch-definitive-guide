@@ -48,10 +48,10 @@ index called `name`.
 
 [source,js]
 --------------------------------------------------
- "name": {
-     "type":     "string",
-     "analyzer": "whitespace"
- }
+"name": {
+    "type":     "string",
+    "analyzer": "whitespace"
+}
 --------------------------------------------------
 
 
@@ -69,17 +69,17 @@ The problem is illustrated by the following query:
 
 [source,js]
 --------------------------------------------------
- GET /_search 
- {
-     "query": {
-         "match": {
-             "title": "The quick brown fox"
-         }
-     }
- }
+GET /_search
+{
+    "query": {
+        "match": {
+            "title": "The quick brown fox"
+        }
+    }
+}
 --------------------------------------------------
 
-    
+
 We are searching in the `title` field in both types.  The query string needs
 to be analyzed, but which analyzer does it use: `spanish` or `english`?
 It will just use the analyzer for the first `title` field that it finds,
@@ -91,18 +91,18 @@ in the field name and querying each field separately:
 
 [source,js]
 --------------------------------------------------
- GET /_search 
- {
-     "query": {
-         "multi_match": {
-             "query":    "The quick brown fox",
-             "fields": [ "blog_en.title", "blog_es.title" ]
-         }
-     }
- }
+GET /_search
+{
+    "query": {
+        "multi_match": {
+            "query":    "The quick brown fox",
+            "fields": [ "blog_en.title", "blog_es.title" ]
+        }
+    }
+}
 --------------------------------------------------
 
-    
+
 Our new query uses the `english` analyzer for the field `blog_en.title` and
 the `spanish` analyzer for the field `blog_es.title` and combines the
 results from both fields into an overall relevance score.
@@ -113,8 +113,8 @@ the same index:
 
 [source,js]
 --------------------------------------------------
- # type: user
- { "login": "john_smith" }
+# type: user
+{ "login": "john_smith" }
 --------------------------------------------------
 
 

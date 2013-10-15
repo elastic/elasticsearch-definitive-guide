@@ -17,14 +17,14 @@ as an example:
 
 [source,js]
 --------------------------------------------------
- {
-     "bool" : {
-         "must": [
-             { "term" : { "tag" :    "elasticsearch" }},
-             { "term" : { "status" : "active"        }}
-         ]
-     }
- }
+{
+    "bool" : {
+        "must": [
+            { "term" : { "tag" :    "elasticsearch" }},
+            { "term" : { "status" : "active"        }}
+        ]
+    }
+}
 --------------------------------------------------
 
 
@@ -70,12 +70,12 @@ allowing you to override the default.  For instance:
 
 [source,js]
 --------------------------------------------------
- {
-     "term" : {
-         "status" :   "active",
-         "_cache" :   false
-     }
- }
+{
+    "term" : {
+        "status" :   "active",
+        "_cache" :   false
+    }
+}
 --------------------------------------------------
 
 
@@ -84,14 +84,14 @@ the query to be wrapped in an extra `fquery` layer:
 
 [source,js]
 --------------------------------------------------
- {
-     "query" : {
-         "fquery" : {
-             "query" :  { ... }
-             "_cache" : true
-         }
-     }
- }
+{
+    "query" : {
+        "fquery" : {
+            "query" :  { ... }
+            "_cache" : true
+        }
+    }
+}
 --------------------------------------------------
 
 
@@ -118,19 +118,19 @@ Instead, we could use two filters:
 
 [source,js]
 --------------------------------------------------
- {
-     "bool": {
-         "must": [
-             { "range": {
-                 "created": { "gte": "2013/02/01 00:00:00" }
-             }},
-             { "range": {
-                 "_cache":  false,
-                 "created": { "gte": "2013/02/01 16:52:38" }
-             }},
-         ]
-     }
- }
+{
+    "bool": {
+        "must": [
+            { "range": {
+                "created": { "gte": "2013/02/01 00:00:00" }
+            }},
+            { "range": {
+                "_cache":  false,
+                "created": { "gte": "2013/02/01 16:52:38" }
+            }},
+        ]
+    }
+}
 --------------------------------------------------
 
 
@@ -152,12 +152,12 @@ e.g. `"Friends of John"`.
 
 [source,js]
 --------------------------------------------------
- {
-     "terms": {
-         "_id":        [ "xxxxxxx", "yyyyyy", ..... ],
-         "_cache_key": "Friends of John"
-     }
- }
+{
+    "terms": {
+        "_id":        [ "xxxxxxx", "yyyyyy", ..... ],
+        "_cache_key": "Friends of John"
+    }
+}
 --------------------------------------------------
 
 

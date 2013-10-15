@@ -9,11 +9,11 @@ The phrase `"quick fox"` would not match a document containing
 
 [source,js]
 --------------------------------------------------
- {
-     "match_phrase" : {
-         "title" : "quick fox"
-     }
- }
+{
+    "match_phrase" : {
+        "title" : "quick fox"
+    }
+}
 --------------------------------------------------
 
 
@@ -23,14 +23,14 @@ written as:
 
 [source,js]
 --------------------------------------------------
- {
-     "match" : {
-         "title" : {
-             "type":  "phrase",
-             "query": "quick fox"
-         }
-     }
- }
+{
+    "match" : {
+        "title" : {
+            "type":  "phrase",
+            "query": "quick fox"
+        }
+    }
+}
 --------------------------------------------------
 
 ****
@@ -44,14 +44,14 @@ i.e. the nearer the words are to each other, the more relevant.
 
 [source,js]
 --------------------------------------------------
- {
-     "match_phrase" : {
-         "title: {
-             "query" : "quick fox",
-             "slop"  : 5
-         }
-     }
- }
+{
+    "match_phrase" : {
+        "title: {
+            "query" : "quick fox",
+            "slop"  : 5
+        }
+    }
+}
 --------------------------------------------------
 
 
@@ -89,13 +89,13 @@ The example below would match `"quick brown fox"` and
 
 [source,js]
 --------------------------------------------------
- {
-     "match_phrase_prefix" : {
-         "title: {
-             "query" : "quick brown f"
-         }
-     }
- }
+{
+    "match_phrase_prefix" : {
+        "title: {
+            "query" : "quick brown f"
+        }
+    }
+}
 --------------------------------------------------
 
 
@@ -110,14 +110,14 @@ of the <<match-query,`match` query>> and can be written as:
 
 [source,js]
 --------------------------------------------------
- {
-     "match" : {
-         "title: {
-             "type"  : "phrase_prefix",
-             "query" : "quick brown f"
-         }
-     }
- }
+{
+    "match" : {
+        "title: {
+            "type"  : "phrase_prefix",
+            "query" : "quick brown f"
+        }
+    }
+}
 --------------------------------------------------
 
 ****
@@ -130,14 +130,14 @@ reasons, you can limit the number of sub-queries with `max_expansions`.
 
 [source,js]
 --------------------------------------------------
- {
-     "match_phrase_prefix" : {
-         "title: {
-             "query"          : "quick brown f",
-             "max_expansions" : 10
-         }
-     }
- }
+{
+    "match_phrase_prefix" : {
+        "title: {
+            "query"          : "quick brown f",
+            "max_expansions" : 10
+        }
+    }
+}
 --------------------------------------------------
 
 

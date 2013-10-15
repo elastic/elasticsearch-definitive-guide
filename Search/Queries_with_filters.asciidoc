@@ -28,7 +28,7 @@ only match documents which are in our inbox:
 
 [source,js]
 --------------------------------------------------
- { "term": { "folder": "inbox" }}
+{ "term": { "folder": "inbox" }}
 --------------------------------------------------
 
 
@@ -38,12 +38,12 @@ query:
 
 [source,js]
 --------------------------------------------------
- {
-     "filtered": {
-         "query":  { "match": { "email": "business opportunity" }},
-         "filter": { "term":  { "folder": "inbox" }}
-     }
- }
+{
+    "filtered": {
+        "query":  { "match": { "email": "business opportunity" }},
+        "filter": { "term":  { "folder": "inbox" }}
+    }
+}
 --------------------------------------------------
 
 
@@ -51,18 +51,18 @@ We can now pass this query to the `query` parameter of the `search` API:
 
 [source,js]
 --------------------------------------------------
- GET /_search 
- {
-     "query": {
-         "filtered": {
-             "query":  { "match": { "email": "business opportunity" }},
-             "filter": { "term": { "folder": "inbox" }}
-         }
-     }
- }
+GET /_search
+{
+    "query": {
+        "filtered": {
+            "query":  { "match": { "email": "business opportunity" }},
+            "filter": { "term": { "folder": "inbox" }}
+        }
+    }
+}
 --------------------------------------------------
 
-    
+
 ==== Just a filter
 
 While in query context, if you need to use a filter without a query, for
@@ -71,11 +71,11 @@ query:
 
 [source,js]
 --------------------------------------------------
- {
-     "filtered": {
-         "filter":   { "term": { "folder": "inbox" }}
-     }
- }
+{
+    "filtered": {
+        "filter":   { "term": { "folder": "inbox" }}
+    }
+}
 --------------------------------------------------
 
 
@@ -84,12 +84,12 @@ the above query is equivalent to the following:
 
 [source,js]
 --------------------------------------------------
- {
-     "filtered": {
-         "query":    { match_all: {}},
-         "filter":   { "term": { "folder": "inbox" }}
-     }
- }
+{
+    "filtered": {
+        "query":    { match_all: {}},
+        "filter":   { "term": { "folder": "inbox" }}
+    }
+}
 --------------------------------------------------
 
 
@@ -102,20 +102,20 @@ The example below shows one way we could exclude emails which look like spam:
 
 [source,js]
 --------------------------------------------------
- {
-     "filtered": {
-         "filter":   {
-             "bool": {
-                 "must":     { "term":  { "folder": "inbox" }},
-                 "must_not": {
-                     "query": {
-                         "match": { "email": "urgent business proposal" }
-                     }
-                 }
-             }
-         }
-     }
- }
+{
+    "filtered": {
+        "filter":   {
+            "bool": {
+                "must":     { "term":  { "folder": "inbox" }},
+                "must_not": {
+                    "query": {
+                        "match": { "email": "urgent business proposal" }
+                    }
+                }
+            }
+        }
+    }
+}
 --------------------------------------------------
 
 

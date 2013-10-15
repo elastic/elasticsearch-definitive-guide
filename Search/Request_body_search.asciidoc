@@ -18,7 +18,7 @@ which returns all documents in all indices.
 
 [source,js]
 --------------------------------------------------
- GET /_search {}
+GET /_search {}
 --------------------------------------------------
 
 Just as for the query-string search, you can search on one, many or `_all`
@@ -26,21 +26,21 @@ indices, and one, many or all types:
 
 [source,js]
 --------------------------------------------------
- GET /index_2013*/type1,type2/_search {}
+GET /index_2013*/type1,type2/_search {}
 --------------------------------------------------
 
 And you can use the `from` and `size` parameters for pagination:
 
 [source,js]
 --------------------------------------------------
- GET /_search 
- {
-     "from": 30,
-     "size": 10
- }
+GET /_search
+{
+    "from": 30,
+    "size": 10
+}
 --------------------------------------------------
 
-    
+
 [NOTE]
 ====
 Some languages, such as Javascript, don't allow request bodies with
@@ -49,7 +49,7 @@ a `GET` request. For this reason, the `search` API can also be used as a
 
 [source,js]
 --------------------------------------------------
- POST /_search {}
+POST /_search {}
 --------------------------------------------------
 
 Alternatively, you can use a `GET` request and pass the body in the query
@@ -57,7 +57,7 @@ string, as the `source` parameter:
 
 [source,js]
 --------------------------------------------------
- GET /_search?source=%7B%7D  # equivalent of {}
+GET /_search?source=%7B%7D  # equivalent of {}
 --------------------------------------------------
 
 

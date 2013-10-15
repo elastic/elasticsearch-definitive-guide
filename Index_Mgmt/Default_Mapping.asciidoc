@@ -15,17 +15,17 @@ For instance, we can disable the `_all` field for all types, using the
 
 [source,js]
 --------------------------------------------------
- PUT /my_index 
- {
-     "_default_": {
-         "_all": { "enabled":  false }
-     },
-     "blog": {
-         "_all": { "enabled":  true  }
-     }
- }
+PUT /my_index
+{
+    "_default_": {
+        "_all": { "enabled":  false }
+    },
+    "blog": {
+        "_all": { "enabled":  true  }
+    }
+}
 --------------------------------------------------
 
-    
+
 The `_default_` mapping can also be a good place to specify index-wide
 <<dynamic-templates,dynamic templates>>.

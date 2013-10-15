@@ -8,13 +8,13 @@ Full text queries::
 
 [source,js]
 --------------------------------------------------
- consider the _mapping_ or field definition of the field being queried,
- and applies the appropriate _analysis_ to the query string. In other words,
- they convert the full text query string into a list of _terms_ or tokens
- in a canonical format,
- then search the index for those exact terms -- a query string of
- `"Foo Bar"` might result in queries for the two terms
- `"foo"` and `"bar"`.
+consider the _mapping_ or field definition of the field being queried,
+and applies the appropriate _analysis_ to the query string. In other words,
+they convert the full text query string into a list of _terms_ or tokens
+in a canonical format,
+then search the index for those exact terms -- a query string of
+`"Foo Bar"` might result in queries for the two terms
+`"foo"` and `"bar"`.
 --------------------------------------------------
 
 
@@ -22,8 +22,8 @@ Term-based queries::
 
 [source,js]
 --------------------------------------------------
- have no analysis phase.  A term query for `"Foo"` will search
- for that *exact term* -- it won't match the indexed term `"foo"`.
+have no analysis phase.  A term query for `"Foo"` will search
+for that *exact term* -- it won't match the indexed term `"foo"`.
 --------------------------------------------------
 
 

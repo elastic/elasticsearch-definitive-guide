@@ -13,7 +13,7 @@ For instance, this  `match` query clause:
 
 [source,js]
 --------------------------------------------------
- { "match": { "title": "fox" }}
+{ "match": { "title": "fox" }}
 --------------------------------------------------
 
 
@@ -22,26 +22,26 @@ as follows:
 
 [source,js]
 --------------------------------------------------
- GET /_search 
- {
-     "query": { "match": { "title": "fox" }}
- }
+GET /_search
+{
+    "query": { "match": { "title": "fox" }}
+}
 --------------------------------------------------
 
-    
+
 This simple `match` query could be combined with other query clauses using,
 for instance, the compound <<bool-query,`bool` query>>:
 
 [source,js]
 --------------------------------------------------
- {
-     "bool": {
-         "should": [
-             { "match": { "title": "fox" }},
-             { "match": { "body":  "fox" }}
-         ]
-     }
- }
+{
+    "bool": {
+        "should": [
+            { "match": { "title": "fox" }},
+            { "match": { "body":  "fox" }}
+        ]
+    }
+}
 --------------------------------------------------
 
 
@@ -49,17 +49,16 @@ which could, again, be passed to the `query` parameter in a `search` request:
 
 [source,js]
 --------------------------------------------------
- GET /_search 
- {
-     "query": {
-         "bool": {
-             "should": [
-                 { "match": { "title": "fox" }},
-                 { "match": { "body":  "fox" }}
-             ]
-         }
-     }
- }
+GET /_search
+{
+    "query": {
+        "bool": {
+            "should": [
+                { "match": { "title": "fox" }},
+                { "match": { "body":  "fox" }}
+            ]
+        }
+    }
+}
 --------------------------------------------------
 
-    

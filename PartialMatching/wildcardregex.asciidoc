@@ -7,9 +7,9 @@ Elasticsearch has a dedicated Wildcard query, which allows you to specify arbitr
 
 [source,js]
 --------------------------------------------------
- {
-     "wildcard" : { "keyword" : "h*e" }
- }
+{
+    "wildcard" : { "keyword" : "h*e" }
+}
 --------------------------------------------------
 
 
@@ -25,9 +25,9 @@ Because you are free to place your wildcards anywhere in the query, there is a v
 
 [source,js]
 --------------------------------------------------
- {
-     "wildcard" : { "keyword" : "*er" }
- }
+{
+    "wildcard" : { "keyword" : "*er" }
+}
 --------------------------------------------------
 
 

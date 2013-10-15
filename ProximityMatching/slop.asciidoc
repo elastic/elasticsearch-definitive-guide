@@ -5,20 +5,20 @@ You can configure how sloppy the query is using the `slop` option in a `match_ph
 
 [source,js]
 --------------------------------------------------
- {
-     "match_phrase" : {
-         "message" : "Sue ate alligator",
-         "slop" : 10
-     }
- }
+{
+    "match_phrase" : {
+        "message" : "Sue ate alligator",
+        "slop" : 10
+    }
+}
 --------------------------------------------------
 
 
-Slop is actually a measurement of how many edits are needed to match the query.  Each time a token is moved it counts as an edit.  The default slop value is zero, which is why the default `match_phrase` query performs exact exact phrase matches.  
+Slop is actually a measurement of how many edits are needed to match the query.  Each time a token is moved it counts as an edit.  The default slop value is zero, which is why the default `match_phrase` query performs exact exact phrase matches.
 
 A slop of one allows a single token to move: "Sue ate one alligator" is one edit distance from the original query because a single token was inserted.  Slop of two would allow "Sue ate one fat alligator", etc etc.
 
-It is important to note that slop does not guarantee order.  An edit is an edit...it doesn't care about order. 
+It is important to note that slop does not guarantee order.  An edit is an edit...it doesn't care about order.
 
 A slop of two also matches "Sue alligator ate".  Two edits are used to rearrange "alligator" and "ate" , and since slop doesn't care about order at all, this is a valid sloppy match.  With just slop of two, you can get all of these matches and more:
 
@@ -34,12 +34,12 @@ Sloppy matching can also be performed with query_string syntax by using a tilde 
 
 [source,js]
 --------------------------------------------------
- {
-     "query_string" : {
-         "default_field" : "test",
-         "query" : "\"Sue jumped over the table\"~5"
-     }
- }
+{
+    "query_string" : {
+        "default_field" : "test",
+        "query" : "\"Sue jumped over the table\"~5"
+    }
+}
 --------------------------------------------------
 
 

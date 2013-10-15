@@ -6,7 +6,7 @@ For example, the following simple `prefix` query:
 
 [source,js]
 --------------------------------------------------
- { "prefix": { "name": "jon" }}
+{ "prefix": { "name": "jon" }}
 --------------------------------------------------
 
 
@@ -14,20 +14,20 @@ could  be rewritten internally into a query that looks like this:
 
 [source,js]
 --------------------------------------------------
- {
-     "bool": {
-         "should": [
-             { "term": { "name": "jon"   }},
-             { "term": { "name": "jonah" }},
-             { "term": { "name": "jonas" }},
-             { "term": { "name": "jonathon" }},
-             { "term": { "name": "joni" }},
-             { "term": { "name": "jonis" }},
-             { "term": { "name": "jono" }},
-             etc
-         ]
-     }
- }
+{
+    "bool": {
+        "should": [
+            { "term": { "name": "jon"   }},
+            { "term": { "name": "jonah" }},
+            { "term": { "name": "jonas" }},
+            { "term": { "name": "jonathon" }},
+            { "term": { "name": "joni" }},
+            { "term": { "name": "jonis" }},
+            { "term": { "name": "jono" }},
+            etc
+        ]
+    }
+}
 --------------------------------------------------
 
 
@@ -43,14 +43,14 @@ the `rewrite` or `fuzzy_rewrite` parameter:
 
 [source,js]
 --------------------------------------------------
- {
-     "prefix": {
-         "name": {
-             "value":   "jon",
-             "rewrite": "top_terms_50"
-         }
-     }
- }
+{
+    "prefix": {
+        "name": {
+            "value":   "jon",
+            "rewrite": "top_terms_50"
+        }
+    }
+}
 --------------------------------------------------
 
 
@@ -66,7 +66,7 @@ file:
 
 [source,js]
 --------------------------------------------------
- index.query.bool.max_clause_count: 3000
+index.query.bool.max_clause_count: 3000
 --------------------------------------------------
 
 

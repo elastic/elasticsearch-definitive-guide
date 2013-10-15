@@ -10,7 +10,7 @@ change to the directory where you unpacked Elasticsearch, and type:
 
 [source,js]
 --------------------------------------------------
- ./bin/elasticsearch -f
+./bin/elasticsearch -f
 --------------------------------------------------
 
 
@@ -18,7 +18,7 @@ In the output from the new node, you should see something like:
 
 [source,js]
 --------------------------------------------------
- [INFO ][cluster.service] [Harpy] detected_master [Rand, Daniel]
+[INFO ][cluster.service] [Harpy] detected_master [Rand, Daniel]
 --------------------------------------------------
 
 
@@ -27,7 +27,7 @@ nodes have not been able to detect each other:
 
 [source,js]
 --------------------------------------------------
- [INFO ][cluster.service] [Harpy] new_master [Harpy]
+[INFO ][cluster.service] [Harpy] new_master [Harpy]
 --------------------------------------------------
 
 
@@ -46,7 +46,7 @@ windows and start a node in each window using the same command:
 
 [source,js]
 --------------------------------------------------
- ./bin/elasticsearch -f -Des.network.host=127.0.0.1
+./bin/elasticsearch -f -Des.network.host=127.0.0.1
 --------------------------------------------------
 
 
@@ -59,7 +59,7 @@ remove all data from your cluster, by deleting all indices:
 
 [source,js]
 --------------------------------------------------
- DELETE /_all
+DELETE /_all
 --------------------------------------------------
 
 

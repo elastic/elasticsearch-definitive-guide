@@ -10,7 +10,7 @@ values will be indexed.  For instance:
 
 [source,js]
 --------------------------------------------------
- { count: [ 1, 3, null, 5] }
+{ count: [ 1, 3, null, 5] }
 --------------------------------------------------
 
 
@@ -23,7 +23,7 @@ To check whether a field has a value, use the `exists` filter:
 
 [source,js]
 --------------------------------------------------
- { "exists" : { "field" : "field_name" }}
+{ "exists" : { "field" : "field_name" }}
 --------------------------------------------------
 
 
@@ -35,7 +35,7 @@ whether the field has no values:
 
 [source,js]
 --------------------------------------------------
- { "missing" : { "field" : "field_name" }}
+{ "missing" : { "field" : "field_name" }}
 --------------------------------------------------
 
 
@@ -45,14 +45,14 @@ Elasticsearch can index multi-level docs (known in JSON as _objects_), such as:
 
 [source,js]
 --------------------------------------------------
- {
-     "person": {
-         "name": {
-             "first": "John",
-             "last":  "Smith"
-         }
-     }
- }
+{
+    "person": {
+        "name": {
+            "first": "John",
+            "last":  "Smith"
+        }
+    }
+}
 --------------------------------------------------
 
 
@@ -61,10 +61,10 @@ into a list of key-value pairs:
 
 [source,js]
 --------------------------------------------------
- {
-     "person.name.first": "John",
-     "person.name.last":  "Smith"
- }
+{
+    "person.name.first": "John",
+    "person.name.last":  "Smith"
+}
 --------------------------------------------------
 
 

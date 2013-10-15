@@ -6,28 +6,28 @@ The `validate` API can be used to check whether a query is valid or not.
 
 [source,js]
 --------------------------------------------------
- GET /gb/tweet/_validate/query  
- {
-    "tweet" : {
-       "match" : "really powerful"
-    }
- }
+GET /gb/tweet/_validate/query
+{
+   "tweet" : {
+      "match" : "really powerful"
+   }
+}
 --------------------------------------------------
 
-    
+
 The response to the above `validate` request tells us that the query is
 invalid:
 
 [source,js]
 --------------------------------------------------
- {
-   "valid" :         false,
-   "_shards" : {
-     "total" :       1,
-     "successful" :  1,
-     "failed" :      0
-   }
- }
+{
+  "valid" :         false,
+  "_shards" : {
+    "total" :       1,
+    "successful" :  1,
+    "failed" :      0
+  }
+}
 --------------------------------------------------
 
 
@@ -38,30 +38,30 @@ string:
 
 [source,js]
 --------------------------------------------------
- GET /gb/tweet/_validate/query?explain  
- {
-    "tweet" : {
-       "match" : "really powerful"
-    }
- }
+GET /gb/tweet/_validate/query?explain
+{
+   "tweet" : {
+      "match" : "really powerful"
+   }
+}
 --------------------------------------------------
 
-    
+
 Apparently, we've mixed up the type of query (`match`) with the name
 of the field (`tweet`):
 
 [source,js]
 --------------------------------------------------
- {
-   "valid" :     false,
-   "_shards" :   { ... },
-   "explanations" : [ {
-     "index" :   "gb",
-     "valid" :   false,
-     "error" :   "org.elasticsearch.index.query.QueryParsingException:
-                  [gb] No query registered for [tweet]"
-   } ]
- }
+{
+  "valid" :     false,
+  "_shards" :   { ... },
+  "explanations" : [ {
+    "index" :   "gb",
+    "valid" :   false,
+    "error" :   "org.elasticsearch.index.query.QueryParsingException:
+                 [gb] No query registered for [tweet]"
+  } ]
+}
 --------------------------------------------------
 
 
@@ -73,33 +73,33 @@ understanding exactly how your query has been interpreted by Elasticsearch:
 
 [source,js]
 --------------------------------------------------
- GET /_validate/query?explain  
- {
-    "match" : {
-       "tweet" : "really powerful"
-    }
- }
+GET /_validate/query?explain
+{
+   "match" : {
+      "tweet" : "really powerful"
+   }
+}
 --------------------------------------------------
 
-    
+
 An `explanation` is returned for each index that we query, because each
 index can have different settings:
 
 [source,js]
 --------------------------------------------------
- {
-   "valid" :         true,
-   "_shards" :       { ... },
-   "explanations" : [ {
-     "index" :       "us",
-     "valid" :       true,
-     "explanation" : "tweet:really tweet:powerful"
-   }, {
-     "index" :       "gb",
-     "valid" :       true,
-     "explanation" : "tweet:realli tweet:power"
-   } ]
- }
+{
+  "valid" :         true,
+  "_shards" :       { ... },
+  "explanations" : [ {
+    "index" :       "us",
+    "valid" :       true,
+    "explanation" : "tweet:really tweet:powerful"
+  }, {
+    "index" :       "gb",
+    "valid" :       true,
+    "explanation" : "tweet:realli tweet:power"
+  } ]
+}
 --------------------------------------------------
 
 

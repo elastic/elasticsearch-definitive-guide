@@ -9,7 +9,7 @@ that start with `brow` and query all of them, something like:
 
 [source,js]
 --------------------------------------------------
- brow OR browband OR browbeat OR brown OR....
+brow OR browband OR browbeat OR brown OR....
 --------------------------------------------------
 
 
@@ -42,11 +42,11 @@ documents is `1`.
 
 [source,js]
 --------------------------------------------------
- {
-     "prefix" {
-         "part_number": "XYZ-"
-     }
- }
+{
+    "prefix" {
+        "part_number": "XYZ-"
+    }
+}
 --------------------------------------------------
 
 

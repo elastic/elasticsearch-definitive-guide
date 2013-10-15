@@ -13,24 +13,24 @@ or type mappings in the request body, as follows:
 
 [source,js]
 --------------------------------------------------
- PUT /my_index 
- {
-     "settings": { ... any settings ... },
-     "mappings": {
-         "type_one": { ... any mappings ... },
-         "type_two": { ... any mappings ... },
-         ...
-     }
- }
+PUT /my_index
+{
+    "settings": { ... any settings ... },
+    "mappings": {
+        "type_one": { ... any mappings ... },
+        "type_two": { ... any mappings ... },
+        ...
+    }
+}
 --------------------------------------------------
 
-    
+
 In fact, you can prevent the automatic creation of indices by adding the
 following setting to the `config/elasticsearch.yaml` file on each node:
 
 [source,js]
 --------------------------------------------------
- action.auto_create_index: false
+action.auto_create_index: false
 --------------------------------------------------
 
 
@@ -47,7 +47,7 @@ To delete an index, use the following request:
 
 [source,js]
 --------------------------------------------------
- DELETE /my_index
+DELETE /my_index
 --------------------------------------------------
 
 
@@ -55,8 +55,8 @@ You can delete multiple indices with:
 
 [source,js]
 --------------------------------------------------
- DELETE loclahost:9200/index_one,index_two
- DELETE /index_*
+DELETE loclahost:9200/index_one,index_two
+DELETE /index_*
 --------------------------------------------------
 
 
@@ -64,7 +64,7 @@ You can even delete *ALL* indices with:
 
 [source,js]
 --------------------------------------------------
- DELETE /_all
+DELETE /_all
 --------------------------------------------------
 
 
@@ -73,7 +73,7 @@ this setting to your `config/elasticsearch.yaml` file:
 
 [source,js]
 --------------------------------------------------
- action.disable_delete_all_indices: true
+action.disable_delete_all_indices: true
 --------------------------------------------------
 
 
@@ -82,7 +82,7 @@ by being explicit:
 
 [source,js]
 --------------------------------------------------
- DELETE /index_one,index_two
+DELETE /index_one,index_two
 --------------------------------------------------
 
 

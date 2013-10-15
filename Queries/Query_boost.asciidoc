@@ -14,12 +14,12 @@ the same query string, with the <<multi-match-query,`multi_match` query>>:
 
 [source,js]
 --------------------------------------------------
- {
-     "multi_match": {
-         "query":  "full text search",
-         "fields": ["title^2", "content"]
-     }
- }
+{
+    "multi_match": {
+        "query":  "full text search",
+        "fields": ["title^2", "content"]
+    }
+}
 --------------------------------------------------
 
 
@@ -32,19 +32,19 @@ The `multi_match` example above could be written out in full as:
 
 [source,js]
 --------------------------------------------------
- {
-     "bool": {
-         "should": [
-             { "match": { "content": "full text search" }},
-             { "match": {
-                 "title": {
-                     "query": "full text search",
-                     "boost": 2
-                 }
-             }}
-         ]
-     }
- }
+{
+    "bool": {
+        "should": [
+            { "match": { "content": "full text search" }},
+            { "match": {
+                "title": {
+                    "query": "full text search",
+                    "boost": 2
+                }
+            }}
+        ]
+    }
+}
 --------------------------------------------------
 
 

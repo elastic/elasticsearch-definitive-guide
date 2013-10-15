@@ -18,7 +18,7 @@ the current _mapping_ (aka the schema definition):
 
 [source,js]
 --------------------------------------------------
- GET /blogs/_mapping?pretty
+GET /blogs/_mapping?pretty
 --------------------------------------------------
 
 
@@ -26,26 +26,26 @@ which looks like this:
 
 [source,js]
 --------------------------------------------------
- {
-   "blogs" : {
-     "user" : {
-       "properties" : {
-         "age" :       { "type" : "long"   },
-         "bio" :       { "type" : "string" },
-         "email" :     { "type" : "string" },
-         "interests" : { "type" : "string" },
-         "join_date" : {
-             "type" : "date",
-             "format" : "yyyy/MM/dd HH:mm:ss||yyyy/MM/dd"
-         },
-         "name" : {
-             "dynamic" : "true",
-             "properties" : {
-               "first" : { "type" : "string" },
-               "last" :  { "type" : "string" }
-             }
-         }
- }}}}
+{
+  "blogs" : {
+    "user" : {
+      "properties" : {
+        "age" :       { "type" : "long"   },
+        "bio" :       { "type" : "string" },
+        "email" :     { "type" : "string" },
+        "interests" : { "type" : "string" },
+        "join_date" : {
+            "type" : "date",
+            "format" : "yyyy/MM/dd HH:mm:ss||yyyy/MM/dd"
+        },
+        "name" : {
+            "dynamic" : "true",
+            "properties" : {
+              "first" : { "type" : "string" },
+              "last" :  { "type" : "string" }
+            }
+        }
+}}}}
 --------------------------------------------------
 
 

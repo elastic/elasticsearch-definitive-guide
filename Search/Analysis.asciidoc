@@ -36,7 +36,7 @@ from this string:
 
 [source,js]
 --------------------------------------------------
- "Set the shape to semi-transparent by calling set_trans(5)"
+"Set the shape to semi-transparent by calling set_trans(5)"
 --------------------------------------------------
 
 
@@ -52,7 +52,7 @@ as `"the"` or `"and"`. It would produce:
 
 [source,js]
 --------------------------------------------------
- set, shape, semi, transparent, calling, set_trans, 5
+set, shape, semi, transparent, calling, set_trans, 5
 --------------------------------------------------
 
 
@@ -63,7 +63,7 @@ and lowercases the terms. It would produce:
 
 [source,js]
 --------------------------------------------------
- set, the, shape, to, semi, transparent, by, calling, set, trans
+set, the, shape, to, semi, transparent, by, calling, set, trans
 --------------------------------------------------
 
 
@@ -74,7 +74,7 @@ lowercase. It would produce:
 
 [source,js]
 --------------------------------------------------
- Set, the, shape, to, semi-transparent, by, calling, set_trans(5)
+Set, the, shape, to, semi-transparent, by, calling, set_trans(5)
 --------------------------------------------------
 
 
@@ -123,7 +123,7 @@ because all of them contain the term `2013`:
 
 [source,js]
 --------------------------------------------------
- GET /_search?q=2013              # 12 results
+GET /_search?q=2013              # 12 results
 --------------------------------------------------
 
 
@@ -134,7 +134,7 @@ the term `2013`:
 
 [source,js]
 --------------------------------------------------
- GET /_search?q=2013-09-15        # 12 results !
+GET /_search?q=2013-09-15        # 12 results !
 --------------------------------------------------
 
 
@@ -143,7 +143,7 @@ exact date, and finds one tweet only:
 
 [source,js]
 --------------------------------------------------
- GET /_search?q=date:2013-09-15   # 1  result
+GET /_search?q=date:2013-09-15   # 1  result
 --------------------------------------------------
 
 
@@ -152,7 +152,7 @@ because none contain that exact date:
 
 [source,js]
 --------------------------------------------------
- GET /_search?q=date:2013         # 0  results !
+GET /_search?q=date:2013         # 0  results !
 --------------------------------------------------
 
 
@@ -164,8 +164,8 @@ in the body:
 
 [source,js]
 --------------------------------------------------
- GET /_analyze?analyzer=standard
- Text to analyze
+GET /_analyze?analyzer=standard
+Text to analyze
 --------------------------------------------------
 
 
@@ -173,21 +173,21 @@ Each element in the result represents a single term:
 
 [source,js]
 --------------------------------------------------
- {
-   "tokens" : [ {
-     "token" :        "text",
-     "position" :     1,
-     "start_offset" : 1,
-     "end_offset" :   5,
-     "type" :         "<ALPHANUM>"
-   }, {
-     "token" :        "analyze",
-     "position" :     3,
-     "start_offset" : 9,
-     "end_offset" :   16,
-     "type" :         "<ALPHANUM>"
-   } ]
- }
+{
+  "tokens" : [ {
+    "token" :        "text",
+    "position" :     1,
+    "start_offset" : 1,
+    "end_offset" :   5,
+    "type" :         "<ALPHANUM>"
+  }, {
+    "token" :        "analyze",
+    "position" :     3,
+    "start_offset" : 9,
+    "end_offset" :   16,
+    "type" :         "<ALPHANUM>"
+  } ]
+}
 --------------------------------------------------
 
 

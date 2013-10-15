@@ -66,15 +66,15 @@ demonstration, we'll assign just 3 primary shards:
 
 [source,js]
 --------------------------------------------------
- PUT 'http://127.0.0.1:9200/blogs/?pretty'  
- {
-    "settings" : {
-       "number_of_shards" : 3
-    }
- }
+PUT 'http://127.0.0.1:9200/blogs/?pretty'
+{
+   "settings" : {
+      "number_of_shards" : 3
+   }
+}
 --------------------------------------------------
 
-    
+
 [[cluster-one-node]]
 .A single-node cluster with an index
 image::images/cluster_node1.svg["A single-node cluster with an index"]
@@ -148,15 +148,15 @@ Let's increase the number of replicas from the default of `1` to `2`:
 
 [source,js]
 --------------------------------------------------
- PUT 'http://127.0.0.1:9200/blogs/_settings?pretty'  
- {
-    "index" : {
-       "number_of_replicas" : 2
-    }
- }
+PUT 'http://127.0.0.1:9200/blogs/_settings?pretty'
+{
+   "index" : {
+      "number_of_replicas" : 2
+   }
+}
 --------------------------------------------------
 
-    
+
 [[cluster-three-nodes-two-replicas]]
 .Increasing the `number_of_replicas` to 2
 image::images/cluster_node1_node2_node3_replicas_2.svg["A three-node cluster with two replica shards"]

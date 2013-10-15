@@ -11,11 +11,11 @@ and zero or more characters with `"*"`, for instance `b?o*n` would match
 
 [source,js]
 --------------------------------------------------
- {
-     "wildcard": {
-         "tag": "b?o*n"
-     }
- }
+{
+    "wildcard": {
+        "tag": "b?o*n"
+    }
+}
 --------------------------------------------------
 
 
@@ -29,11 +29,11 @@ expressions to match terms. A regular expression (_regexp_) like
 
 [source,js]
 --------------------------------------------------
- {
-     "regexp": {
-         "name": "joh?n(ath[oa]n)?"
-     }
- }
+{
+    "regexp": {
+        "name": "joh?n(ath[oa]n)?"
+    }
+}
 --------------------------------------------------
 
 
@@ -75,7 +75,7 @@ wildcards:
 
 [source,js]
 --------------------------------------------------
- "quick b?o*n fox"
+"quick b?o*n fox"
 --------------------------------------------------
 
 
@@ -84,7 +84,7 @@ slashes (`"/"`):
 
 [source,js]
 --------------------------------------------------
- "quick /brown|red|green|gr[ea]y/ fox"
+"quick /brown|red|green|gr[ea]y/ fox"
 --------------------------------------------------
 
 

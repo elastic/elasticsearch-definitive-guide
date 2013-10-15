@@ -6,7 +6,7 @@ and `_id`, but the HTTP verb changes to `GET`:
 
 [source,js]
 --------------------------------------------------
- GET /website/blog/123?pretty
+GET /website/blog/123?pretty
 --------------------------------------------------
 
 
@@ -16,17 +16,17 @@ when we indexed it.
 
 [source,js]
 --------------------------------------------------
- {
-   "_index" :   "website",
-   "_type" :    "blog",
-   "_id" :      "123",
-   "_version" : 1,
-   "exists" :   true,
-   "_source" : {
-       "title": "My first blog entry",
-       "text":  "Just trying this out..."
-   }
- }
+{
+  "_index" :   "website",
+  "_type" :    "blog",
+  "_id" :      "123",
+  "_version" : 1,
+  "exists" :   true,
+  "_source" : {
+      "title": "My first blog entry",
+      "text":  "Just trying this out..."
+  }
+}
 --------------------------------------------------
 
 
@@ -49,7 +49,7 @@ display the response headers:
 
 [source,js]
 --------------------------------------------------
- curl -I -XGET /website/blog/124?pretty
+curl -I -XGET /website/blog/124?pretty
 --------------------------------------------------
 
 
@@ -57,9 +57,9 @@ The response now looks like this:
 
 [source,js]
 --------------------------------------------------
- HTTP/1.1 404 Not Found
- Content-Type: application/json; charset=UTF-8
- Content-Length: 83
+HTTP/1.1 404 Not Found
+Content-Type: application/json; charset=UTF-8
+Content-Length: 83
 --------------------------------------------------
 
 
@@ -81,7 +81,7 @@ fields can be specified in a comma-separated list:
 
 [source,js]
 --------------------------------------------------
- GET /website/blog/123?fields=title,text
+GET /website/blog/123?fields=title,text
 --------------------------------------------------
 
 
@@ -91,17 +91,17 @@ the `_source`:
 
 [source,js]
 --------------------------------------------------
- {
-   "_index" :   "website",
-   "_type" :    "blog",
-   "_id" :      "123",
-   "_version" : 1,
-   "exists" :   true,
-   "fields" : {
-       "title": "My first blog entry",
-       "text":  "Just trying this out..."
-   }
- }
+{
+  "_index" :   "website",
+  "_type" :    "blog",
+  "_id" :      "123",
+  "_version" : 1,
+  "exists" :   true,
+  "fields" : {
+      "title": "My first blog entry",
+      "text":  "Just trying this out..."
+  }
+}
 --------------------------------------------------
 
 

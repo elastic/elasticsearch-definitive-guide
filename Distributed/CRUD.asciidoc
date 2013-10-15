@@ -43,7 +43,7 @@ The answer boils down to a simple formula:
 
 [source,js]
 --------------------------------------------------
- shard = hash(routing) mod number_of_primary_shards
+shard = hash(routing) mod number_of_primary_shards
 --------------------------------------------------
 
 

@@ -22,28 +22,28 @@ are overwritten and new fields are added. For instance, we could add a
 
 [source,js]
 --------------------------------------------------
- POST /website/blog/1/_update  
- {
-    "doc" : {
-       "tags" : [ "testing" ],
-       "views": 0
-    }
- }
+POST /website/blog/1/_update
+{
+   "doc" : {
+      "tags" : [ "testing" ],
+      "views": 0
+   }
+}
 --------------------------------------------------
 
-    
+
 If the request succeeds, we see a response similar to that
 of the `index` request:
 
 [source,js]
 --------------------------------------------------
- {
-    "ok" :       true,
-    "_index" :   "website",
-    "_id" :      "1",
-    "_type" :    "blog",
-    "_version" : 3
- }
+{
+   "ok" :       true,
+   "_index" :   "website",
+   "_id" :      "1",
+   "_type" :    "blog",
+   "_version" : 3
+}
 --------------------------------------------------
 
 
@@ -53,37 +53,37 @@ to see the whole document, then request the `_source` field:
 
 [source,js]
 --------------------------------------------------
- POST /website/blog/1/_update?fields=_source  
- {
-    "doc" : {
-       "tags" : [ "testing" ],
-       "views": 0
-    }
- }
+POST /website/blog/1/_update?fields=_source
+{
+   "doc" : {
+      "tags" : [ "testing" ],
+      "views": 0
+   }
+}
 --------------------------------------------------
 
-    
+
 Now you can see that our `tags` and `views` fields have been added to the
 document:
 
 [source,js]
 --------------------------------------------------
- {
-   "ok" :       true,
-   "_index" :   "website",
-   "_type" :    "blog",
-   "_id" :      "1",
-   "_version" : 4,
-   "get" : {
-     "exists"  : true,
-     "_source" : {
-         "title" :  "My first blog entry",
-         "text"  :  "Starting to get the hang of this...",
-         "tags"  :  [ "testing" ],
-         "views" :  0
-     }
-   }
- }
+{
+  "ok" :       true,
+  "_index" :   "website",
+  "_type" :    "blog",
+  "_id" :      "1",
+  "_version" : 4,
+  "get" : {
+    "exists"  : true,
+    "_source" : {
+        "title" :  "My first blog entry",
+        "text"  :  "Starting to get the hang of this...",
+        "tags"  :  [ "testing" ],
+        "views" :  0
+    }
+  }
+}
 --------------------------------------------------
 
 
@@ -101,31 +101,31 @@ that our blog post has had:
 
 [source,js]
 --------------------------------------------------
- POST /website/blog/1/_update?fields=views  
- {
-    "script" : "ctx._source.views+=1"
- }
+POST /website/blog/1/_update?fields=views
+{
+   "script" : "ctx._source.views+=1"
+}
 --------------------------------------------------
 
-    
+
 We requested the `views` field, so that we can see that it has been
 incremented:
 
 [source,js]
 --------------------------------------------------
- {
-    "ok" :       true,
-    "_index" :   "website",
-    "_type" :    "blog",
-    "_id" :      "1",
-    "_version" : 5,
-    "get" : {
-       "exists" : true,
-       "fields" : {
-          "views" : 1
-       }
-    }
- }
+{
+   "ok" :       true,
+   "_index" :   "website",
+   "_type" :    "blog",
+   "_id" :      "1",
+   "_version" : 5,
+   "get" : {
+      "exists" : true,
+      "fields" : {
+         "views" : 1
+      }
+   }
+}
 --------------------------------------------------
 
 
@@ -136,36 +136,36 @@ in the future, without having to compile a new script for every new tag:
 
 [source,js]
 --------------------------------------------------
- POST /website/blog/1/_update?fields=tags  
- {
-    "script" : "ctx._source.tags+=new_tag",
-    "params" : {
-       "new_tag" : "search"
-    }
- }
+POST /website/blog/1/_update?fields=tags
+{
+   "script" : "ctx._source.tags+=new_tag",
+   "params" : {
+      "new_tag" : "search"
+   }
+}
 --------------------------------------------------
 
-    
+
 The response shows that the `search` tag has been added to the `tags` array:
 
 [source,js]
 --------------------------------------------------
- {
-    "ok" :       true,
-    "_index" :   "website",
-    "_type" :    "blog",
-    "_id" :      "1",
-    "_version" : 6,
-    "get" : {
-       "exists" : true,
-       "fields" : {
-          "tags" : [
-             "testing",
-             "search"
-          ]
-       }
-    }
- }
+{
+   "ok" :       true,
+   "_index" :   "website",
+   "_type" :    "blog",
+   "_id" :      "1",
+   "_version" : 6,
+   "get" : {
+      "exists" : true,
+      "fields" : {
+         "tags" : [
+            "testing",
+            "search"
+         ]
+      }
+   }
+}
 --------------------------------------------------
 
 
@@ -173,16 +173,16 @@ We can even choose to delete a document based on it contents:
 
 [source,js]
 --------------------------------------------------
- POST /website/blog/1/_update 
- {
-    "script" : "ctx._source.tags.contains(tag) ? ctx.op = \"delete\" : ctx.op = \"none\"",
-     "params" : {
-         "tag" : "testing"
-     }
- }
+POST /website/blog/1/_update
+{
+   "script" : "ctx._source.tags.contains(tag) ? ctx.op = \"delete\" : ctx.op = \"none\"",
+    "params" : {
+        "tag" : "testing"
+    }
+}
 --------------------------------------------------
 
-    
+
 ==== Create or update
 
 Imagine that we need to store a pageview counter in Elasticsearch. Every
@@ -195,34 +195,34 @@ document that should be created if it doesn't already exist:
 
 [source,js]
 --------------------------------------------------
- POST /website/pageviews/1/_update?fields=views  
- {
-    "script" : "ctx._source.views+=1",
-    "upsert": {
-        "views": 0
-    }
- }
+POST /website/pageviews/1/_update?fields=views
+{
+   "script" : "ctx._source.views+=1",
+   "upsert": {
+       "views": 0
+   }
+}
 --------------------------------------------------
 
-    
+
 The first time we run this request, a new document is inserted which
 initializes the `views` field to `0`:
 
 [source,js]
 --------------------------------------------------
- {
-   "ok" :       true,
-   "_index" :   "website",
-   "_type" :    "pageviews",
-   "_id" :      "1",
-   "_version" : 1,
-   "get" : {
-     "exists" : true,
-     "fields" : {
-       "views" : 0
-     }
-   }
- }
+{
+  "ok" :       true,
+  "_index" :   "website",
+  "_type" :    "pageviews",
+  "_id" :      "1",
+  "_version" : 1,
+  "get" : {
+    "exists" : true,
+    "fields" : {
+      "views" : 0
+    }
+  }
+}
 --------------------------------------------------
 
 
@@ -231,19 +231,19 @@ is applied instead:
 
 [source,js]
 --------------------------------------------------
- {
-   "ok" :       true,
-   "_index" :   "website",
-   "_type" :    "pageviews",
-   "_id" :      "1",
-   "_version" : 2,
-   "get" : {
-     "exists" : true,
-     "fields" : {
-       "views" : 1
-     }
-   }
- }
+{
+  "ok" :       true,
+  "_index" :   "website",
+  "_type" :    "pageviews",
+  "_id" :      "1",
+  "_version" : 2,
+  "get" : {
+    "exists" : true,
+    "fields" : {
+      "views" : 1
+    }
+  }
+}
 --------------------------------------------------
 
 
@@ -272,16 +272,16 @@ to `0`.
 
 [source,js]
 --------------------------------------------------
- POST /website/pageviews/1/_update?retry_on_conflict=5  
- {
-    "script" : "ctx._source.views+=1",
-    "upsert": {
-        "views": 0
-    }
- }
+POST /website/pageviews/1/_update?retry_on_conflict=5
+{
+   "script" : "ctx._source.views+=1",
+   "upsert": {
+       "views": 0
+   }
+}
 --------------------------------------------------
 
-    
+
 NOTE: The `update` API does not accept the `version` parameter. You should
 only use `update` for changes that should be applied regardless
 of the current version of the document.

@@ -5,9 +5,9 @@ For example, consider this document:
 
 [source,js]
 --------------------------------------------------
- {
-     "names" : [ "xxx yyy", "zzz" ]
- }
+{
+    "names" : [ "xxx yyy", "zzz" ]
+}
 --------------------------------------------------
 
 
@@ -28,18 +28,18 @@ The solution to this problem is to include `position_offset_gap` in your mapping
 
 [source,js]
 --------------------------------------------------
- {
-     "mappings" : {
-         "type" : {
-             "properties" : {
-                 "names" : {
-                     "type" : "string", 
-                     "position_offset_gap" : 100
-                 }
-             }
-         }
-     }
- }
+{
+    "mappings" : {
+        "type" : {
+            "properties" : {
+                "names" : {
+                    "type" : "string",
+                    "position_offset_gap" : 100
+                }
+            }
+        }
+    }
+}
 --------------------------------------------------
 
 

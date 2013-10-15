@@ -50,17 +50,17 @@ size.  When you create an analyzer, the `ignore_above` setting decides the cut-o
 
 [source,js]
 --------------------------------------------------
- {
-     "tweet" : {
-         "properties" : {
-             "message" : {
-                 "type" : "string",
-                 "analyzer" : "not_analyzed",
-                 "ignore_above" : 200
-             }
-         }
-     }
- }
+{
+    "tweet" : {
+        "properties" : {
+            "message" : {
+                "type" : "string",
+                "analyzer" : "not_analyzed",
+                "ignore_above" : 200
+            }
+        }
+    }
+}
 --------------------------------------------------
 
 

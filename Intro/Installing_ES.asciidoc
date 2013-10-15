@@ -11,9 +11,9 @@ Now you can download the latest version of Elasticsearch:
 
 [source,js]
 --------------------------------------------------
- curl -L -O http://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-0.20.2.tar.gz
- tar -xzf elasticsearch-*.tar.gz
- cd  elasticsearch-*
+curl -L -O http://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-0.20.2.tar.gz
+tar -xzf elasticsearch-*.tar.gz
+cd  elasticsearch-*
 --------------------------------------------------
 
 
@@ -22,7 +22,7 @@ with:
 
 [source,js]
 --------------------------------------------------
- ./bin/elasticsearch -f
+./bin/elasticsearch -f
 --------------------------------------------------
 
 
@@ -30,7 +30,7 @@ Test it out by opening another terminal window and running:
 
 [source,js]
 --------------------------------------------------
- curl 'http://localhost:9200/?pretty'
+curl 'http://localhost:9200/?pretty'
 --------------------------------------------------
 
 
@@ -38,16 +38,16 @@ You should see a response like this:
 
 [source,js]
 --------------------------------------------------
- {
-   "tagline" : "You Know, for Search",
-   "ok" : true,
-   "status" : 200,
-   "name" : "Contrary",
-   "version" : {
-     "number" : "0.20.2",
-     "snapshot_build" : false
-   }
- }
+{
+  "tagline" : "You Know, for Search",
+  "ok" : true,
+  "status" : 200,
+  "name" : "Contrary",
+  "version" : {
+    "number" : "0.20.2",
+    "snapshot_build" : false
+  }
+}
 --------------------------------------------------
 
 

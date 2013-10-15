@@ -29,8 +29,8 @@ To start off, we create the index `my_index_v1`, and setup the alias
 
 [source,js]
 --------------------------------------------------
- PUT /my_index_v1
- PUT /my_index_v1/_alias/my_index
+PUT /my_index_v1
+PUT /my_index_v1/_alias/my_index
 --------------------------------------------------
 
 
@@ -38,7 +38,7 @@ You can check which index the alias points to with:
 
 [source,js]
 --------------------------------------------------
- GET /*/_alias/my_index
+GET /*/_alias/my_index
 --------------------------------------------------
 
 
@@ -46,7 +46,7 @@ Or which aliases point to the index with:
 
 [source,js]
 --------------------------------------------------
- GET /my_index_v1/_alias/*
+GET /my_index_v1/_alias/*
 --------------------------------------------------
 
 
@@ -54,13 +54,13 @@ Both of these return:
 
 [source,js]
 --------------------------------------------------
- {
-     "my_index_v1" : {
-         "aliases" : {
-             "my_index" : { }
-         }
-     }
- }
+{
+    "my_index_v1" : {
+        "aliases" : {
+            "my_index" : { }
+        }
+    }
+}
 --------------------------------------------------
 
 
@@ -70,20 +70,20 @@ our data.  To start, we create `my_index_v2` with the new mappings:
 
 [source,js]
 --------------------------------------------------
- PUT /my_index_v2 
- {
-     "mappings": {
-         "my_type": {
-             "tags": {
-                 "type":   "string",
-                 "index":  "not_analyzed"
-             }
-         }
-     }
- }
+PUT /my_index_v2
+{
+    "mappings": {
+        "my_type": {
+            "tags": {
+                "type":   "string",
+                "index":  "not_analyzed"
+            }
+        }
+    }
+}
 --------------------------------------------------
 
-    
+
 Then we reindex our data from `my_index_v1` to `my_index_v2`, following
 the process described in <<reindex>>.  Once we are satisfied that our
 documents have been reindexed correctly, we switch our alias
@@ -96,16 +96,16 @@ endpoint:
 
 [source,js]
 --------------------------------------------------
- POST /_aliases 
- {
-     "actions": [
-         { "remove": { "index": "my_index_v1", "alias": "my_index" }},
-         { "add":    { "index": "my_index_v2", "alias": "my_index" }}
-     ]
- }
+POST /_aliases
+{
+    "actions": [
+        { "remove": { "index": "my_index_v1", "alias": "my_index" }},
+        { "add":    { "index": "my_index_v2", "alias": "my_index" }}
+    ]
+}
 --------------------------------------------------
 
-    
+
 Your application has switched from using the old index to the new
 index transparently, with zero downtime.
 

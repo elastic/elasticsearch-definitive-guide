@@ -15,25 +15,25 @@ just want to retrieve one or more specific fields:
 
 [source,js]
 --------------------------------------------------
- GET /_mget  
- {
-    "docs" : [
-       {
-          "_index" : "website",
-          "_type" :  "blog",
-          "_id" :    2
-       },
-       {
-          "_index" : "website",
-          "_type" :  "pageviews",
-          "_id" :    1,
-          "fields":  ["views"]
-       }
-    ]
- }
+GET /_mget
+{
+   "docs" : [
+      {
+         "_index" : "website",
+         "_type" :  "blog",
+         "_id" :    2
+      },
+      {
+         "_index" : "website",
+         "_type" :  "pageviews",
+         "_id" :    1,
+         "fields":  ["views"]
+      }
+   ]
+}
 --------------------------------------------------
 
-    
+
 The response body also contains a `docs` array which contains a response
 per document, in the same order as specified in the request. Each of these
 responses is the same response body that we would expect from an individual
@@ -41,31 +41,31 @@ responses is the same response body that we would expect from an individual
 
 [source,js]
 --------------------------------------------------
- {
-    "docs" : [
-       {
-          "_source" : {
-             "text" :  "This is a piece of cake...",
-             "title" : "My first external blog entry"
-          },
-          "_index" :   "website",
-          "_id" :      "2",
-          "_type" :    "blog",
-          "exists" :   true,
-          "_version" : 10
-       },
-       {
-          "_index" :   "website",
-          "_id" :      "1",
-          "_type" :    "pageviews",
-          "exists" :   true,
-          "_version" : 2,
-          "fields" : {
-             "views" : 1
-          }
-       }
-    ]
- }
+{
+   "docs" : [
+      {
+         "_source" : {
+            "text" :  "This is a piece of cake...",
+            "title" : "My first external blog entry"
+         },
+         "_index" :   "website",
+         "_id" :      "2",
+         "_type" :    "blog",
+         "exists" :   true,
+         "_version" : 10
+      },
+      {
+         "_index" :   "website",
+         "_id" :      "1",
+         "_type" :    "pageviews",
+         "exists" :   true,
+         "_version" : 2,
+         "fields" : {
+            "views" : 1
+         }
+      }
+   ]
+}
 --------------------------------------------------
 
 
@@ -77,61 +77,61 @@ You can still override these values in the individual requests:
 
 [source,js]
 --------------------------------------------------
- GET /website/blog/_mget  
- {
-    "docs" : [
-       {
-          "_id" :   2
-       },
-       {
-          "_type" : "pageviews",
-          "_id" :   1
-       }
-    ]
- }
+GET /website/blog/_mget
+{
+   "docs" : [
+      {
+         "_id" :   2
+      },
+      {
+         "_type" : "pageviews",
+         "_id" :   1
+      }
+   ]
+}
 --------------------------------------------------
 
-    
+
 In fact, if all the documents have the same `_index` and `_type`, then you
 can just pass an array of `ids` instead of the full `docs` array:
 
 
 [source,js]
 --------------------------------------------------
- GET /website/blog/_mget  
- {
-    "ids" : [ "2", "1" ]
- }
+GET /website/blog/_mget
+{
+   "ids" : [ "2", "1" ]
+}
 --------------------------------------------------
 
-    
+
 Note that the second document that we requested doesn't exist. We
 specified type `blog`, but the document with ID `1` is of type `pageviews`.
 This non-existence is reported in the response body:
 
 [source,js]
 --------------------------------------------------
- {
-   "docs" : [
-     {
-       "_index" :   "website",
-       "_type" :    "blog",
-       "_id" :      "2",
-       "_version" : 10,
-       "exists" :   true,
-       "_source" : {
-         "title":   "My first external blog entry",
-         "text":    "This is a piece of cake..."
-       }
-     },
-     {
-       "_index" :   "website",
-       "_type" :    "blog",
-       "_id" :      "1",
-       "exists" :   false
-     }
-   ]
- }
+{
+  "docs" : [
+    {
+      "_index" :   "website",
+      "_type" :    "blog",
+      "_id" :      "2",
+      "_version" : 10,
+      "exists" :   true,
+      "_source" : {
+        "title":   "My first external blog entry",
+        "text":    "This is a piece of cake..."
+      }
+    },
+    {
+      "_index" :   "website",
+      "_type" :    "blog",
+      "_id" :      "1",
+      "exists" :   false
+    }
+  ]
+}
 --------------------------------------------------
 
 
@@ -147,13 +147,13 @@ ID `1` and a `pageviews` document also with ID `1`?
 
 [source,js]
 --------------------------------------------------
- GET /website/_mget  
- {
-    "ids" : [ "2", "1" ]
- }
+GET /website/_mget
+{
+   "ids" : [ "2", "1" ]
+}
 --------------------------------------------------
 
-    
+
 Elasticsearch would return the first matching document that it finds. On one
 run you may get back the `blog` document and on another run the `pageviews`
 document.

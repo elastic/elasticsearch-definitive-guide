@@ -51,13 +51,13 @@ use:
 
 [source,js]
 --------------------------------------------------
- GET /_count?pretty 
- {
-     "match_all": {}
- }
+GET /_count?pretty
+{
+    "match_all": {}
+}
 --------------------------------------------------
 
-    
+
 All responses consist of:
 
 * an HTTP status code, eg: `200 OK`
@@ -69,14 +69,14 @@ following:
 
 [source,js]
 --------------------------------------------------
- {
-     "count" : 0,
-     "_shards" : {
-         "total" : 5,
-         "successful" : 5,
-         "failed" : 0
-     }
- }
+{
+    "count" : 0,
+    "_shards" : {
+        "total" : 5,
+        "successful" : 5,
+        "failed" : 0
+    }
+}
 --------------------------------------------------
 
 
@@ -86,7 +86,7 @@ switch:
 
 [source,js]
 --------------------------------------------------
- curl -I -XGET 'localhost:9200/'
+curl -I -XGET 'localhost:9200/'
 --------------------------------------------------
 
 

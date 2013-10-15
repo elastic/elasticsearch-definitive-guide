@@ -6,7 +6,7 @@ method:
 
 [source,js]
 --------------------------------------------------
- GET /_search?pretty&q=john
+GET /_search?pretty&q=john
 --------------------------------------------------
 
 
@@ -16,7 +16,7 @@ you can specify it as a URI parameter:
 
 [source,js]
 --------------------------------------------------
- GET /_search?pretty&q=first:john
+GET /_search?pretty&q=first:john
 --------------------------------------------------
 
 
@@ -42,22 +42,22 @@ Elasticsearch's rich and flexible query language and looks like this:
 
 [source,js]
 --------------------------------------------------
- GET /_search?pretty 
- {
-     "query": {
-         "bool": {
-             "must": { "match": { "name.first": "john" }},
-             "should": [
-                 { "match": { "interests": "whales" }},
-                 { "match": { "bio": "eco warrior"  }},
-                 { "range": { "age": { "from": 20   }}}
-             ]
-         }
-     }
- }
+GET /_search?pretty
+{
+    "query": {
+        "bool": {
+            "must": { "match": { "name.first": "john" }},
+            "should": [
+                { "match": { "interests": "whales" }},
+                { "match": { "bio": "eco warrior"  }},
+                { "range": { "age": { "from": 20   }}}
+            ]
+        }
+    }
+}
 --------------------------------------------------
 
-    
+
 The Query DSL gives you complete control over how your query is executed.
 Individual clauses are like building blocks which can be put together
 in different ways to suit your search needs and performance requirements.
@@ -71,23 +71,23 @@ content:
 
 [source,js]
 --------------------------------------------------
- GET /_search?pretty 
- {
-     "query": { "match": { "bio": "eco warrior" }},
-     "highlight": {
-         "fields": {
-             "bio": {}
-         }
-     }
- }
+GET /_search?pretty
+{
+    "query": { "match": { "bio": "eco warrior" }},
+    "highlight": {
+        "fields": {
+            "bio": {}
+        }
+    }
+}
 --------------------------------------------------
 
-    
+
 The above query returns snippets like:
 
 [source,js]
 --------------------------------------------------
- <em>Eco</em>-<em>warrior</em> and defender of the weak
+<em>Eco</em>-<em>warrior</em> and defender of the weak
 --------------------------------------------------
 
 
@@ -123,41 +123,41 @@ and summarizes the most popular values in the `interests` field:
 
 [source,js]
 --------------------------------------------------
- GET /_all/user/_search?pretty  
- {
-    "query" : {
-       "match_all" : {}
-    },
-    "facets" : {
-       "interests" : {
-          "terms" : {
-             "field" : "interests"
-          }
-       }
-    }
- }
+GET /_all/user/_search?pretty
+{
+   "query" : {
+      "match_all" : {}
+   },
+   "facets" : {
+      "interests" : {
+         "terms" : {
+            "field" : "interests"
+         }
+      }
+   }
+}
 --------------------------------------------------
 
-    
+
 The `facets` section of the JSON response to the above looks like this:
 
 [source,js]
 --------------------------------------------------
- "facets" : {
-    "interests" : {
-       "_type" : "terms",
-       "total" : 7
-       "terms" : [
-          { "count" : 2, "term" : "whales"   },
-          { "count" : 2, "term" : "golf"     },
-          { "count" : 1, "term" : "wine"     },
-          { "count" : 1, "term" : "dolphins" },
-          { "count" : 1, "term" : "cinema"   }
-       ],
-       "other" : 0,
-       "missing" : 0,
-    }
- },
+"facets" : {
+   "interests" : {
+      "_type" : "terms",
+      "total" : 7
+      "terms" : [
+         { "count" : 2, "term" : "whales"   },
+         { "count" : 2, "term" : "golf"     },
+         { "count" : 1, "term" : "wine"     },
+         { "count" : 1, "term" : "dolphins" },
+         { "count" : 1, "term" : "cinema"   }
+      ],
+      "other" : 0,
+      "missing" : 0,
+   }
+},
 --------------------------------------------------
 
 

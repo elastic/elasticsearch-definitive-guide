@@ -17,10 +17,10 @@ Imagine we have these three documents indexed (and the title field is `not_analy
 
 [source,js]
 --------------------------------------------------
- { "title" : "Twelfth Night" }
- { "title" : "TWELFTH NIGHT" }
- { "title" : "twelfth night" }
- { "title" : "twelfth" }
+{ "title" : "Twelfth Night" }
+{ "title" : "TWELFTH NIGHT" }
+{ "title" : "twelfth night" }
+{ "title" : "twelfth" }
 --------------------------------------------------
 
 
@@ -28,13 +28,13 @@ If you used a Match query to search for "Twelfth Night":
 
 [source,js]
 --------------------------------------------------
- {
-     "query" : {
-         "match" : {
-             "title" : "Twelfth Night"
-         }
-     }
- }
+{
+    "query" : {
+        "match" : {
+            "title" : "Twelfth Night"
+        }
+    }
+}
 --------------------------------------------------
 
 
@@ -44,18 +44,18 @@ four docs.  Instead, if you use a Term filter (placed inside of a filtered query
 
 [source,js]
 --------------------------------------------------
- {
-     "query" : {
-         "filtered_query" : {
-             "query" : { "match_all" : {} },
-             "filter" : {
-                 "term" : {
-                     "title" : "Twelfth Night"
-                 }
-             }
-         }
-     }
- }
+{
+    "query" : {
+        "filtered_query" : {
+            "query" : { "match_all" : {} },
+            "filter" : {
+                "term" : {
+                    "title" : "Twelfth Night"
+                }
+            }
+        }
+    }
+}
 --------------------------------------------------
 
 
@@ -69,18 +69,18 @@ a single term, it will look for two or more terms:
 
 [source,js]
 --------------------------------------------------
- {
-     "query" : {
-         "filtered_query" : {
-             "query" : { "match_all" : {} },
-             "filter" : {
-                 "terms" : {
-                     "title" : ["Twelfth Night", "twelfth night"]
-                 }
-             }
-         }
-     }
- }
+{
+    "query" : {
+        "filtered_query" : {
+            "query" : { "match_all" : {} },
+            "filter" : {
+                "terms" : {
+                    "title" : ["Twelfth Night", "twelfth night"]
+                }
+            }
+        }
+    }
+}
 --------------------------------------------------
 
 
@@ -97,13 +97,13 @@ filter from above can be reformulated as a query:
 
 [source,js]
 --------------------------------------------------
- {
-     "query" : {
-         "terms" : {
-             "title" : ["Twelfth Night", "twelfth night"]
-         }
-     }
- }
+{
+    "query" : {
+        "terms" : {
+            "title" : ["Twelfth Night", "twelfth night"]
+        }
+    }
+}
 --------------------------------------------------
 
 
@@ -127,7 +127,7 @@ this document, the title field will be lowercased:
 
 [source,js]
 --------------------------------------------------
- { "title" : "MACBETH" }
+{ "title" : "MACBETH" }
 --------------------------------------------------
 
 
@@ -135,18 +135,18 @@ You can then search for it with a Term Filter, appropriately lowercased:
 
 [source,js]
 --------------------------------------------------
- {
-     "query" : {
-         "filtered_query" : {
-             "query" : { "match_all" : {} },
-             "filter" : {
-                 "term" : {
-                     "title" : "macbeth"
-                 }
-             }
-         }
-     }
- }
+{
+    "query" : {
+        "filtered_query" : {
+            "query" : { "match_all" : {} },
+            "filter" : {
+                "term" : {
+                    "title" : "macbeth"
+                }
+            }
+        }
+    }
+}
 --------------------------------------------------
 
 

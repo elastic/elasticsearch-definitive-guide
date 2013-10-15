@@ -5,15 +5,15 @@ Imagine we have a document that says "quick brown fox" and "quite enough foxes".
 
 [source,js]
 --------------------------------------------------
- {
-     "prefix" : { "my_field" : "qui" }
- }
+{
+    "prefix" : { "my_field" : "qui" }
+}
 --------------------------------------------------
 
 
 So what's going on under the surface?  Internally, there are two operations taking place.  First, Elasticsearch formulates your query as a regular expression in the form of `/qui.*/` (e.g. the value "qui" followed by anything).  It then traverses the term dictionary to find all possible terms that match this pattern.
 
-Once it has a list of matching terms, the prefix query is rewritten as a Boolean of the matching terms from the first step.  With this newly rewritten query, the index is searched as normal.  
+Once it has a list of matching terms, the prefix query is rewritten as a Boolean of the matching terms from the first step.  With this newly rewritten query, the index is searched as normal.
 
 This process - rewriting the query before searching - makes prefix match fairly efficient, especially when compared to the naive approach of scanning every document for matching prefixes.
 

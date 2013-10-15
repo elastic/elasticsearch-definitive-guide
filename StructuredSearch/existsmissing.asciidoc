@@ -10,8 +10,8 @@ For example, given these two documents:
 
 [source,js]
 --------------------------------------------------
- { "first_name" : "Zachary, "middle_name" : "Joseph }
- { "first_name" : "Noah }
+{ "first_name" : "Zachary, "middle_name" : "Joseph }
+{ "first_name" : "Noah }
 --------------------------------------------------
 
 
@@ -40,11 +40,11 @@ you have the following document:
 
 [source,js]
 --------------------------------------------------
- {
-    "foo" : {
-       "bar" : "baz"
-    }
- }
+{
+   "foo" : {
+      "bar" : "baz"
+   }
+}
 --------------------------------------------------
 
 
