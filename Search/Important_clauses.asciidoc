@@ -151,7 +151,6 @@ the search:
 { "match": { "tweet": "Cool, bonsai cool" }}
 --------------------------------------------------
 
-
 If you use it on a field containing an exact value, such as a date, a number,
 a boolean or a `not_analyzed` string field, then it will search for that
 exact value:
@@ -163,7 +162,6 @@ exact value:
 { "match": { "tag":    "full_text"  }}
 { "match": { "public": true         }}
 --------------------------------------------------
-
 
 Remember, however, that for exact value searches, you probably want to use
 a filter instead of a query, as a filter will be cached.

@@ -1,47 +1,21 @@
 [[full-text-search]]
 == Full text search
 
-TODO
+include::Full_Text_Search/Intro.asciidoc[]
 
-=== The `match` query
+include::Full_Text_Search/Match_query.asciidoc[]
 
-TODO
+include::Full_Text_Search/Combining_queries.asciidoc[]
 
-=== Improving precision
+include::Full_Text_Search/Boosting_clauses.asciidoc[]
 
-operator: and
+include::Full_Text_Search/Search_internals.asciidoc[]
 
-minimum_should_match
+include::Full_Text_Search/Controlling_analysis.asciidoc[]
 
-=== Combining queries
+include::Full_Text_Search/Cross_field_matching.asciidoc[]
 
-bool query
+include::Full_Text_Search/Query_string_query.asciidoc[]
 
-=== Boosting clauses
-
-boost
-
-=== How does it work
-
- match -> analyzer -> bool with term queries
-
-=== Controlling analysis
-
-analyzer, default analyzer mapping
-
-=== Matching on multiple fields
-
-multi_match
-
-bool vs dis_max
-
-=== `query_string` query
-
-TODO
-
-=== `query_string` vs `multi_match`
-
-mapping:path, index_name
-
-indexing multiple fields into one index
+include::Full_Text_Search/Query_string_vs_multi_match.asciidoc[]
 

@@ -270,6 +270,3 @@ These raw requests are forwarded directly to the correct shard. There
 is no redundant copying of data, no wasted data structures. The entire
 request process is handled in the smallest amount of memory possible.
 
-This is a good example of just how much thought and effort the Elasticsearch
-authors have put in to optimizing performance.
-

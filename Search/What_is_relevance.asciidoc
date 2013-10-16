@@ -7,13 +7,18 @@ The relevance of each document is represented by a positive floating point
 number called the `_score` -- the higher the `_score`, the more relevant
 the document.
 
-A query clause generates a `_score` for each document.  How that score
-is calculated depends on the type of query clause -- different query
-clauses are used for different purposes.
+A query clause generates a `_score` for each document.  How that score is
+calculated depends on the type of query clause -- different query clauses are
+used for different purposes: a `fuzzy` query would determine the `_score` by
+calculating how similar the spelling of the found word is to the original
+search term, a `terms` query would incorporate the percentage of terms that
+were found, but what we usually mean by _similarity_ is the algorithm that we
+use to calculate how similar the contents of a full text field are to a full
+text query string.
 
-The standard _similarity algorithm_ used in Elasticsearch is known
-as TF/IDF, or Term Frequency/Inverse Document Frequency,
-which takes the following factors into account:
+The standard _similarity algorithm_ used in Elasticsearch is known as TF/IDF,
+or Term Frequency/Inverse Document Frequency, which takes the following
+factors into account:
 
 Term frequency::
   How often does each term appear in the field? The more often, the more
