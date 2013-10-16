@@ -1,0 +1,95 @@
+Now that we have covered the simple case of searching for structured data,
+it is time to explore _full text search_ -- how to search within full
+text fields in order to find the most relevant documents.
+
+The two most important aspects of full text search are:
+
+Relevance::
+
+    The ability to rank results by how relevant they are to
+    the given query, whether relevance is calculated using
+    TF/IDF (see <<relevance-intro>>), proximity to a geo-location,
+    fuzzy similarity or some other algorithm.
+
+Analysis::
+
+    The process of converting a block of text into distinct, normalized tokens
+    (see <<analysis-intro>>) in order to (a) create an inverted index and
+    (b) query the inverted index.
+
+As soon as we talk about either relevance or analysis, we are in the territory
+of queries, rather than filters.
+
+=== Term-based queries vs full-text queries
+
+While all queries perform some sort of relevance calculation, not all queries
+have an analysis phase. Besides specialized queries like the `bool` or
+`function_score` queries which don't operate on text at all, textual queries can
+be broken down into two families:
+
+Term-based queries::
++
+--
+Queries like the `term` or `fuzzy` queries are low-level queries which have no
+analysis phase. They operate on a single term. A `term` query for the term
+`"Foo"` looks for that exact term in the inverted index and calculates the
+relevance (TF/IDF) for each document which contains that term.
+--
+
+Full-text queries::
++
+--
+Queries like the `match` or `query_string` queries are high-level queries which
+understand the mapping of a field.
+
+If you query a `date` or `integer` field, they will treat the query string as
+a date or integer respectively.  If you query an exact value (`not_analyzed`)
+string field, they will treat the whole query string as a single term.  But if
+you query a full-text (`analyzed`) field, they will first pass the query
+string through the appropriate analyzer to produce the list of terms to be
+queried.
+
+Once the query has assembled a list of terms, it executes the appropriate low-
+level query for each of these terms, then combines  their results to produce
+the final relevance score for each document.
+
+We will discuss this process in more detail in the following chapters.
+--
+
+We seldom need to use the term-based queries directly. Usually we need to
+query full text, not individual terms, and this is easier to do with the
+high-level full-text queries which, in turn, use term-based queries
+internally.
+
+Single-term queries like the following:
+
+[source,js]
+--------------------------------------------------
+GET /_search
+{
+    "query": {
+        "term": { "gender": "female" }
+    }
+}
+--------------------------------------------------
+
+usually represent binary `yes`|`no` questions and are almost always better
+expressed as a filter:
+
+[source,js]
+--------------------------------------------------
+GET /_search
+{
+    "query": {
+        "filtered": {
+            "filter": {
+                "term": { "gender": "female" }
+            }
+        }
+    }
+}
+--------------------------------------------------
+
+The cacheability of filters gives us a nice boost in performance.
+
+
