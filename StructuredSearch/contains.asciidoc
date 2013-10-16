@@ -1,11 +1,11 @@
 
 ==== Contains, but does not equal
 
-It is important to understand that Term/Terms are "contains" operations, not "equals".
-What does that mean?
+It is important to understand that `term` and `terms` are "contains" operations, 
+not "equals".  What does that mean?
 
-If you have a term filter for `{ "term" : { "years" : "2013" } }`, it will match _both_
-of the following documents:
+If you have a term filter for `{ "term" : { "years" : "2013" } }`, it will match 
+_both_ of the following documents:
 
 [source,js]
 --------------------------------------------------
@@ -13,14 +13,16 @@ of the following documents:
 { "years" : ["2013", "2012"] }
 --------------------------------------------------
 
+Recall how the `term` filter works: it checks the inverted index for all
+documents which contain a term, then constructs a bitset.  This means that only
+one of the values within a field has to match for a `1` bit to be set.
+This makes `term` (and `terms` too) a "must contain" operation, not a "must equal
+exactly" operation.
 
-The Term filter looks at the document and sees that, yep, this doc _contains_ the term "2013".
-It is not asking if the field is _exactly_ as your query, merely that it contains the term you
-are looking for.
-
-If you do want that behavior -- entire field equality -- the best way to accomplish
-it involves indexing a secondary field.  In this field, you index the number of values
-that your field contains.  Using our two previous documents:
+==== Equals exactly
+If you do want that behavior -- entire field equality -- the best way to 
+accomplish it involves indexing a secondary field.  In this field, you index the
+number of values that your field contains.  Using our two previous documents:
 
 [source,js]
 --------------------------------------------------
@@ -28,34 +30,38 @@ that your field contains.  Using our two previous documents:
 { "years" : ["2013", "2012"], "years_count" : 2 }
 --------------------------------------------------
 
-
-Once you have the count information indexed, you can construct a Bool query that enforces the appropriate
-number of terms:
+Once you have the count information indexed, you can construct a `bool` filter 
+that enforces the appropriate number of terms:
 
 [source,js]
 --------------------------------------------------
+GET /my_index/my_type/_search
 {
-    "bool" : {
-        "must" : [
-            { "term" : { "years" : "2013" } },
-            { "term" : { "years_count" : 1 } }
-        ]
+    "filtered" : {
+        "filter" : {
+             "bool" : {
+                "must" : [
+                    { "term" : { "years" : "2013" } },
+                    { "term" : { "years_count" : 1 } }
+                ]
+            }
+        }
     }
 }
 --------------------------------------------------
 
 
-This query will now match only the document that is ["2013"] exactly.
+This query will now match only the document that is ["2013"] exactly
 
-.Why can't Elasticsearch do this internally?
+.Why can't Elasticsearch do this automatically?
 ****
-Due to the nature of an inverted index, operations like "only this term" are relatively
-expensive.  An inverted index looks up the term and finds a list of all documents that
-contain it.  This makes it fast for finding matching documents.
+Due to the nature of an inverted index, operations like "only this term" are 
+relatively expensive.  An inverted index looks up the term and finds a list of 
+all documents that contain it.
 
-The reverse operation, looking up a document to find which terms it contains, is much more expensive
-and defeats the purpose of an inverted index.
-
-The "equals" situation involving arrays of terms is difficult for this reason, and
-requires the user to index an additional "metadata" field.
+Entire field equality, however, inverts the requirement.  You need to look up a
+document and determine what words are in each field.  This is very expensive to
+do in an inverted index.  An inverted index is not optimized for that type of
+data access.  It is far more efficient to just index the number of
+terms so that you can check manually.
 ****

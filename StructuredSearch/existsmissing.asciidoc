@@ -1,37 +1,151 @@
 
-Since Elasticsearch allows you to dynamically add new fields, it is sometimes
-difficult to know what fields any particular document may have.  Elasticsearch
-has two filters which can help: Exists and Missing.
+Due to the dynamic nature of Elasticsearch, it is common to insert documents
+into an index without knowing _a priori_ what fields are in the document.  This
+is a huge benefit for building robust applications, but it does introduce some
+interesting dilemmas.
+
+For example, how can you handle documents that may have missing fields, or fields
+with null values?  To deal with these situations, Elasticsearch has two filters 
+which can help: `exists` and `missing`.
 
 ==== Exists Filter
 
-The Exists filter will return documents that have values in the specified field.
-For example, given these two documents:
+The `exists` filter will return documents that have values in the specified field.
+For example, imagine we have these three documents:
 
 [source,js]
 --------------------------------------------------
-{ "first_name" : "Zachary, "middle_name" : "Joseph }
-{ "first_name" : "Noah }
+{ "first_name" : "Zachary", "middle_name" : "Joseph", "last_name" : "Tong" }
+{ "first_name" : "Zachary", "middle_name" : null, "last_name" : "Tong" }
+{ "first_name" : "Zachary", "last_name" : "Tong" }
 --------------------------------------------------
 
+Our objective is to find all people named "Zachary Tong" who have a
+middle name.  The middle name field is optional, and therefore we can't be sure
+that all documents will have it.
 
-An exists filter checking for "middle_name" will only return the first document,
-since the second document does not have a "middle_name" field.
+To address this situation, we use the exists filter:
+
+[source,js]
+--------------------------------------------------
+GET /my_index/my_type/_search
+{
+    "query" : {
+        "filtered" : {
+            "bool" : {
+                "must" : [
+                    {"term" : {"first_name" : "Zachary"}},
+                    {"term" : {"last_name" : "Tong"}},
+                    {"exists" : {"field" : "middle_name"}}
+                ]
+            }
+        }
+    }
+}
+--------------------------------------------------
+
+Without the `exists` clause, this query would match all three documents.
+
+With the `exists` filter, documents `1` and `2` are returned.  Why `2`? Even
+though it's value is null, Elasticsearch considers a field with an explicit
+`null` as "existing", so it is returned as well.  
+
+That's a bit annoying, since you may not think that `null` is a legitimate
+value for "existence".  We can solve this problem, but we need to introduce
+the `missing` filter first.
 
 ==== Missing Filter
 
 The Missing filter is essentially the inverse of the Exists filter: it returns
-documents where there is _no_ value for a particular field.  If you used a
-Missing filter on the "middle_name" field with the documents above, only
-the second one ("Noah") will be returned.
+documents where there is _no_ value for a particular field.  Let's swap the 
+`exists` filter for a `missing` filter in our example above:
 
-Missing filter has a few additional options that Exists doesn't have. By default,
-the filter only matches documents that are literally missing a field.  If the
-field is present but `null`, it won't match the filter.
+[source,js]
+--------------------------------------------------
+GET /my_index/my_type/_search
+{
+    "query" : {
+        "filtered" : {
+            "bool" : {
+                "must" : [
+                    {"term" : {"first_name" : "Zachary"}},
+                    {"term" : {"last_name" : "Tong"}},
+                    {"missing" : {"field" : "middle_name"}}
+                ]
+            }
+        }
+    }
+}
+--------------------------------------------------
 
-If you'd like to change this behavior, the `null_value` option can be set to
-`true`. This makes Missing also match documents where the field is present,
-but the value is a `null`.
+Now only document `3` will be returned, since it is the only document that is
+missing the entire `middle_name` field.  It is effectively asking "Which
+documents have a first and last name but _do not_ have a middle name".
+
+Unlike `exists`, there is an extra option that allows you to qualify explicit
+`null` values as "missing".  We can reconfigure our filter with the `null_value`
+option:
+
+[source,js]
+--------------------------------------------------
+GET /my_index/my_type/_search
+{
+    "query" : {
+        "filtered" : {
+            "bool" : {
+                "must" : [
+                    {"term" : {"first_name" : "Zachary"}},
+                    {"term" : {"last_name" : "Tong"}},
+                    {"missing" : {
+                        "field" : "middle_name"
+                        "null_value" : true
+                    }}
+                ]
+            }
+        }
+    }
+}
+--------------------------------------------------
+
+And now documents `2` and `3` are returned, since `2`'s explicit `null` is now
+considered a "missing" field rather than an actual value.
+
+
+==== Exists (and not null)
+
+Now, getting back to the problem we encountered in earlier in the <<_exists_filter>>
+section: how can we find all people named "Zachary Tong" who have a middle name, 
+but _exclude_ middle names that are `null`?
+
+Since the `missing` filter includes a special provision for null values, we 
+simply re-arrange our boolean logic:
+
+[source,js]
+--------------------------------------------------
+GET /my_index/my_type/_search
+{
+    "query" : {
+        "filtered" : {
+            "bool" : {
+                "must" : [
+                    {"term" : {"first_name" : "Zachary"}},
+                    {"term" : {"last_name" : "Tong"}}
+                ],
+                "must_not" : [
+                    {"missing" : {
+                        "field" : "middle_name"
+                        "null_value" : true
+                    }}
+                ]
+            }
+        }
+    }
+}
+--------------------------------------------------
+
+We are basically using a double-negative here.  A document is matched if it _does
+not_ have a missing `middle_name` field, and we set `null_value` so that `null`
+is considered missing too.
 
 ==== Exists/Missing on Objects
 

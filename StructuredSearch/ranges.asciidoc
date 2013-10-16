@@ -1,52 +1,73 @@
 
 Filtering on ranges is a very common structured search. Elasticsearch allows
-filtering on both numeric and string-based ranges.  There are a few options
-depending on your use-case.
+filtering on both numeric and string-based ranges.  The `range` filter is what 
+you'll use most often use to work with ranges.  It automatically detects
+the type you are working with (numeric or string) and applies the correct 
+algorithm.
 
-==== Range Filter
+Why would there be different algorithms?  Essentially, numeric values can be
+ranged much more efficiently than strings.
 
-The standard range component is the Range Filter.  This automatically detects
-the type you are working with (numeric or string) and applies the correct
-Lucene Range filter.
+==== Numeric ranges
 
-.Working with strings?
+TODO: Verify this with Simon
+TODO: image to display this
+
+Say you want to find all documents where `age` is between 20 and 30.  Internally,
+the numeric values are represented by a sorted prefix tree.  Briefly, a prefix
+tree is a tree structure where nodes represent prefixes of the final children.
+
+See Figure TODO for a graphical depiction of a prefix tree.
+
+As Elasticsearch traverses the tree, nodes which do not share the range's prefix 
+can be avoided entirely, meaning large parts of the tree never need to be 
+evaluated.
+
+This leads to very fast operation.  Due to the nature of sorted trees, you can 
+determine find the min/max with many fewer operations than if you merely traversed
+the list one-by-one.
+
+==== String Ranges
+String ranges are done in lexicographical order: "a" comes before "ab", followed 
+by "ac", etc.
+
+In contrast to numeric ranges, there are no tricks that can be performed
+to enhance speed. A prefix tree cannot be maintained for string fields, since 
+it is a very purpose-built data structure.
+
+We can afford to build a prefix tree for numeric values because the number of
+operations are very limited (for example, you never need to do phrase matching,
+or fuzzy, or wildcard, etc).
+
+In contrast, strings need to support the full range of full-text operations, so
+our only option is to evaluate the inverted index item-by-item.
+
+1. *Skip to near the starting range*
++
+Using a special data structure, Elasticsearch can skip to near the starting 
+value of the range, avoiding a large amount of unnecessary comparison.
+
+2. *Collect all terms in the range*
++
+Once we have skipped near the start of the range, there is nothing else we can
+do but iterate over the terms in the inverted index, collecting document IDs
+until we hit the end of the range.
+
+As you can see, unlike numeric ranges (which can find the min/max in only a few
+operations), a lexicographical range will always require as many operations as
+it takes to traverse all the terms in the range.
+
+This isn't to say avoid ranges on strings -- they are still quite fast.
+And like most filters, ranges are cached so subsequent executions are even faster.
+However, it is good to be aware how ranges are executed so you can make intelligent
+design choices for both data architecture and queries.
+
+.Watch out for analyzers!
 ****
 If you are filtering string ranges, make sure the analyzer is configured
 appropriately.  Often, it is a good idea to set a field `not_analyzed`, or at
 least lowercased, so that fields are ordered appropriately.
 
-If a field is analyzed into multiple tokens, you may get strange results matching
-your range filter and not understand why.
-****
-
-==== Numeric_Range Filter
-
-Elasticsearch has a special filter that is designed explicitly for numbers.
-The filter comes with some minor performance advantages at the expense of memory.
-
-Instead of constructing a bitset, the numeric_range filter loads all values into
-memory (in the Field Data) and then performs the necessary calculations.
-
-This means that the Numeric_Range filter can potentially use a lot of memory.
-
-The regular Range filter is already pretty fast, so why bother using numeric_range?
-This filter can be useful if you already have the values loaded into
-Field Data through some other operation (faceting, sorting, etc).  Numeric_Range
-will simply reuse those values.
-
-In practice, you'll usually be using the Range Filter.  But if you are working
-with numbers, it may be a good idea to try out Numeric_Range to see if it improves
-memory usage or performance.
-
-.Are you using the Range Query?
-****
-If you are using the Range Query...chances are good you should switch it to a
-Range filter (or Numeric_Range).
-
-Queries score a document based on its relevance. How does relevance apply to
-ranges?  It doesn't!  A value is either inside the range, or it is not.  You can't
-be _more_ inside a range.
-
-Realistically, there is no good reason to ever use the Range Query...use Range
-or Numeric_Range filter instead.
+If a field is analyzed into multiple tokens, you may get strange results 
+matching your range filter and not understand why.
 ****

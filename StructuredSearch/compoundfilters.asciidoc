@@ -1,14 +1,14 @@
 
-Other than the `Term` filter, the most common operation is combining multiple
-filters together at the same time. For example, you need to find all documents 
-where "age" is greater than 25 _and_ "gender" is "male".
+A very common operation is combining multiple filters together at the same time. 
+For example, you need to find all documents where "age" is greater than 25 _and_ 
+"gender" is "male".
 
-The `Bool` filter is a compound filter that accepts other filters, combining
-them in various boolean combinations.
+What you need is the `bool` filter.  This is a compound filter that accepts 
+other filters, combining them in various boolean combinations.
 
 ==== Bool Filter
 
-The Bool filter is composed of three sections:
+The `bool` filter is composed of three sections:
 
 [source,js]
 --------------------------------------------------
@@ -32,20 +32,19 @@ The Bool filter is composed of three sections:
  - *Must_not*: A document won't be returned if any of these clauses match.  
  Effectively, this is a set of NOT clauses.
 
-Each section of the Bool filter is optional (e.g. you could have a Should clause
+Each section of the `bool` filter is optional (e.g. you may have a Should clause
 and nothing else), and each section can contain one or more filters.
 
-By default, the Bool filter _is not_ cached, unlike the majority of other 
-filters. There is a good reason for this: usually, compound filters combine a 
-number of dynamically generated conditions.
-
-Caching the "total set" of filters just wastes memory and disk I/O, since that
-particular combination of filters is unlikely to surface again.
+By default, the `bool` filter _is not_ cached, unlike the majority of other 
+filters. In practice, most compound filters combine a number of dynamically 
+generated conditions.  Caching the "total set" of filters just wastes memory and
+I/O, since any particular combination of filters is unlikely to surface again.
 
 Sometimes, however, it makes sense to cache the compound filter.  If you find
-yourself always specifying the same combination of filters inside a Bool,
-consider caching the entire compound set by setting `_cache` to true.
-
+yourself always specifying the same combination of filters inside a `bool`,
+consider caching the entire compound set by setting `_cache` to true.  This will
+cause the entire `bool` to be cached as a single bitset which in some arrangements
+may be more efficient.
 
 
 ==== Filter ordering

@@ -8,7 +8,7 @@ Sometimes this is inconvenient and you want to specify a default value. Most cor
 types (String, Number, Boolean, Date) support an option to define a null value
 called, unsurprisingly, `null_value`.
 
-In this mapping, we define a string ("NA") as the default when a `null` is
+In this mapping, we define a string (e.g. "NA") as the default when a `null` is
 encountered:
 
 [source,js]
@@ -27,7 +27,7 @@ in the `message` field:
 
 [source,js]
 --------------------------------------------------
-{ "message" : null }
+{ "message" : null }    //Stored as { "message" : "NA" }
 --------------------------------------------------
 
 

@@ -1,46 +1,37 @@
-When working with exact values, the most common filter that you will be using is
-the `Term` filter.  The `Term` filter performs no analysis - it simply searches 
-for the exact query text that you provide.  
+When working with exact values, you will be working with filters.  And the most 
+common filter that you will be using is the `term` filter.  This filter performs
+no analysis steps - it simply searches for the exact query text that you provide.  
 
 ==== Term Filter
 
-Imagine we have these three documents indexed (and the title field is 
-`not_analyzed`):
+Let's walk through a simple example of how the `term` filter works, both 
+from an end-user perspective and internally.  Imagine we have indexed a few 
+documents (and the title field is `not_analyzed`):
 
 [source,js]
 --------------------------------------------------
+POST /my_index/my_type/_bulk
+{ "index": { "_id": 1 }}
 { "title" : "Twelfth Night" }
+{ "index": { "_id": 2 }}
 { "title" : "TWELFTH NIGHT" }
+{ "index": { "_id": 3 }}
 { "title" : "twelfth night" }
+{ "index": { "_id": 4 }}
 { "title" : "twelfth" }
 --------------------------------------------------
 
 
-If you used a Match query to search for "Twelfth Night":
+And now we want to find an exact value: "Twelfth Night".  We only want the
+document that has that term _exactly_.  To do this, we use a `term` filter 
+inside of a `filtered` query:
 
 [source,js]
 --------------------------------------------------
+GET /my_index/my_type/_search
 {
     "query" : {
-        "match" : {
-            "title" : "Twelfth Night"
-        }
-    }
-}
---------------------------------------------------
-
-
-...then all four documents would be returned (even the one that is only a 
-partial match). Match query is analyzing your text, which means it will be 
-lowercased, tokenized and match all four docs.  Instead, if you use a Term 
-filter (placed inside of a filtered query):
-
-[source,js]
---------------------------------------------------
-{
-    "query" : {
-        "filtered_query" : {
-            "query" : { "match_all" : {} },
+        "filtered" : {
             "filter" : {
                 "term" : {
                     "title" : "Twelfth Night"
@@ -51,35 +42,47 @@ filter (placed inside of a filtered query):
 }
 --------------------------------------------------
 
-Then only the first document will be returned, because it is the only doc that 
-exactly matches your query text.
+Let's look at how this works internally:
 
-The filter isn't limited to strings, it can also search for numbers, phrases
-and special characters.  The `Term` filter doesn't care, it is just looking 
-directly into the index trying to find your exact query text.
+1. *Find Matching Docs*
++
+The `term` filter looks up the term `"Twelfth Night"` in the inverted index and
+retrieves the list of documents that contain that term.  In this case, it is
+only document `1`
 
-==== Internal Operation
-The `Term` filter is a fundamental building block in Elasticsearch, and used 
-both internally and externally for many purposes.  It helps to have an understanding
-of how `Term` filters work technically.
+2. *Build a Bitset*
++
+The filter then builds a bitset (array of 1's and 0's) which describes which
+documents contain the term.  In our example, the bitset would be: `[1,0,0,0]`
 
-When a `Term` filter is executed for the first time, Elasticsearch visits each
-segment in each appropriate shard.  It asks the segment _"Does this term exist?"_.
+3. *Mask the Index*
++
+With the bitset in hand, the documents in the index are "masked". Only
+documents containing the term will be evaluated by the query. Since our example
+has no query, all matching documents are returned.
 
-This question is answered by a Bloom Filter, which is a special type of 
-probabilistic data structure that can very quickly answer "set membership" 
-questions (bloom filters are much faster than doing a binary search, for example).
-If the term is not present in the segment, the entire block can be skipped which
-saves considerable time, processing and I/O.
+4. *Cache the Bitset*
++
+Lastly, the bitset is stored in memory, since we can use this in the future and
+skip step 1. and 2.  This adds a lot of performance and makes filters very
+fast.
 
-If the term _is_ present in the segment, Elasticsearch loads up the segment, 
-finds the row that corresponds with the term and extracts the IDs of all 
-documents matching that term.
+The results are exactly as you would expect: only the first document is returned
+as a hit. 
 
-Finally, it constructs a bitset (an array of bits set to either 1 or 0) which 
-corresponds to whether a document matches the filter or not.  This bitset is 
-cached in memory, and the next segment is processed.
-
-This seems complicated, but in reality it is very fast, and operating on bitsets
-is much faster than scanning documents every time.  Furthermore, bitsets are saved
-for future optimizations, as we'll see later <<todo>>
+[source,json]
+--------------------------------------------------
+"hits" : [ 
+    {
+        "_index" : "my_index",
+        "_type" : "my_type",
+        "_id" : "1",
+        "_score" : 1.0, <1>
+        "_source" : { 
+          "title" : "Twelfth Night" 
+        }
+    } 
+]
+--------------------------------------------------
+<1> Notice how the score of the document is one.  Filters don't perform any 
+scoring, so all documents that match a filter automatically get a score of one.

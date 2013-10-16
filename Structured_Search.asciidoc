@@ -5,8 +5,6 @@ include::StructuredSearch/structuredsearch.asciidoc[]
 
 include::StructuredSearch/not_analyzed.asciidoc[]
 
-include::StructuredSearch/filters.asciidoc[]
-
 === Finding exact values
 
 include::StructuredSearch/term.asciidoc[]
@@ -18,16 +16,8 @@ include::StructuredSearch/compoundfilters.asciidoc[]
 === Finding multiple exact values
 
 include::StructuredSearch/terms.asciidoc[]
+
 include::StructuredSearch/contains.asciidoc[]
-
-
-
-
-
-
-
-
-
 
 === Dealing with Null values
 
