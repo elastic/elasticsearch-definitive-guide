@@ -2,25 +2,29 @@
 === What is Structured Search?
 
 Structured search is all about interrogating data that has some type of inherent
-structure.  Dates, times and numbers are all structured -- they have a precise format and you can
-perform logical operations on them.
+structure.  Dates, times and numbers are all structured -- they have a precise 
+format and you can perform logical operations on them.
 
  - _Is this date older than 30 days ago?_
  - _Show me all prices between 20 and 50_
  - _Return all documents with age > 25_
 
-Text can be structured too.  A human is ``male'' or ``female''.  A blog post is tagged with keywords
+Text can be structured too.  A human is ``male'' or ``female''.  A blog post is 
+tagged with keywords
 ``distributed'' and ``search''.
 
 With structured search, the answer to your question is often a yes or no:
-something either belongs to your query or it does not.  In many cases, structured search does
-not concern itself with relevance so much as including or excluding.
+something either belongs to your query or it does not.  In many cases, 
+structured search does not concern itself with relevance so much as including or
+excluding.
 
 .Traditional Databases
 ****
 You may notice some parallels to traditional, relational databases here.
 
-RDBMs are typically very good at structured search.  `SELECT * FROM table WHERE date > 07/10/2013`.
+RDBMs are typically very good at structured search.  `SELECT * FROM table WHERE 
+date > 07/10/2013`.
+
 RDBMs are good at these questions because they don't require relevance calculations.
 
 But don't worry, Elasticsearch is very good at structured search too!

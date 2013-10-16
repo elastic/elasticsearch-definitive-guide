@@ -1,72 +1,14 @@
 
-=== Understanding not_analyzed
+=== Use not_analyzed for structured search
 
 In many structured search situations, it makes sense to map a field
-as `not_analyzed`.  The `not_analyzed` property does what it says on the tin...
-it prevents a field from being analyzed by the default analyzer.
+as `not_analyzed`. With structured search, you only care about exact values.
 
-The string will go into the index exactly as it appears: capitalization, punctuation
-and all.  Phrased another way, `not_analyzed` ensures that only exact matches will
-be returned.  Let's look at an example of when you might want to do this.
+The default behavior of Elasticsearch is to analyze your data so that you can
+perform full-text seach as discussed in <<analysis-intro>>.  For structured
+search, you want to disable this behavior by setting `index: not_analyzed` (see
+<<_customizing_field_mappings>> for more details).
 
-This document represents an electronic device, and has an associated serial number:
-
-[source,js]
---------------------------------------------------
-{
-    "product_name" : "Widget ABC",
-    "serial" : "12JE7612-19238-BJ#J/XY9"
-}
---------------------------------------------------
-
-
-If you were to index that document with the Standard Analyzer, your serial number would
-be indexed as the following tokens:
-
-[source,js]
---------------------------------------------------
-$ GET /_analyze?analyzer=standard&pretty -d
-'12JE7612-19238-BJ#J/XY9' | grep token
---------------------------------------------------
-
-
-    "token" : "12je7612",
-    "token" : "19238",
-    "token" : "bj",
-    "token" : "j",
-    "token" : "xy9",
-
-
-As you can see, the Standard Analyzer interpreted each hyphen, hash mark and slash as a place to
-split the string into a new token.  It also lowercased all the characters.
-
-If you searched for "12JE7612-ABCD-EFG", you would not expect it to match because they are
-blatantly different serial numbers.  However, since Elasticsearch tokenized and indexed
-the serial number, the first part of your query ("12JE7612") very well may match, returning
-unexpected products.
-
-If instead you map that field as not analyzed:
-
-[source,js]
---------------------------------------------------
-PUT /products/product/_mapping
-{
-    "product" : {
-        "properties" : {
-            "serial" : {"type" : "string", "index" : "not_analyzed"}
-        }
-    }
-}
---------------------------------------------------
-
-Then the serial number will only be indexed as a single token:
-
-
-[source,js]
---------------------------------------------------
-"token" : "12JE7612-19238-BJ#J/XY9",
---------------------------------------------------
-
-
-
-And now only exact matches will actually match. Great!
+Once your fields are treated as `not_analyzed`, you can begin to use structured
+search queries without running into strange analysis problems due to stemming, 
+lowercasing, etc.

@@ -1,10 +1,10 @@
 
-Without a doubt, you will encounter a situation where you need to use several
-filters at the same time.  You need to find all documents where "age" is greater
-than 25 AND "gender" is "male".
+Other than the `Term` filter, the most common operation is combining multiple
+filters together at the same time. For example, you need to find all documents 
+where "age" is greater than 25 _and_ "gender" is "male".
 
-Elasticsearch offers two different types of boolean logic filters: Boolean
-Filter and the And/Or/Not set of filters.
+The `Bool` filter is a compound filter that accepts other filters, combining
+them in various boolean combinations.
 
 ==== Bool Filter
 
@@ -22,22 +22,22 @@ The Bool filter is composed of three sections:
 --------------------------------------------------
 
 
- - Must: These clauses are required for the document to be returned
+ - *Must*: These clauses are required for the document to be returned
  as a match. Effectively, this is equivalent to ANDing all clauses inside the
  `must`.
 
- - Should: These clauses are optional, but one needs to match.  Effectively,
+ - *Should*: These clauses are optional, but one needs to match.  Effectively,
  this is a set of OR clauses.
 
- - Must_not: A document won't be returned if any of these clauses match.  Effectively,
- this is a set of NOT clauses.
+ - *Must_not*: A document won't be returned if any of these clauses match.  
+ Effectively, this is a set of NOT clauses.
 
-Each section of the Bool filter is optional, and each section can containe one
-or more filters.
+Each section of the Bool filter is optional (e.g. you could have a Should clause
+and nothing else), and each section can contain one or more filters.
 
-By default, the Bool filter _is not_ cached, unlike the majority of other filters.
-There is a good reason for this: usually, compound filters combine a number
-of dynamically generated conditions.
+By default, the Bool filter _is not_ cached, unlike the majority of other 
+filters. There is a good reason for this: usually, compound filters combine a 
+number of dynamically generated conditions.
 
 Caching the "total set" of filters just wastes memory and disk I/O, since that
 particular combination of filters is unlikely to surface again.
@@ -46,74 +46,9 @@ Sometimes, however, it makes sense to cache the compound filter.  If you find
 yourself always specifying the same combination of filters inside a Bool,
 consider caching the entire compound set by setting `_cache` to true.
 
-==== And/Or/Not Filters
 
-There is another set of filters - And/Or/Not - which provide boolean logic.
-They work exactly as they are named:
-
- - And: All clauses are required to match
- - Or: Clauses are optional, but at least one must match.
- - Not: Inverse of And, all clauses must not match
-
-Like the Bool filter, these filters are not cached by default, but can be
-enabled by setting `_cache` to true.
-
-==== Choosing the right Compound Filter
-
-So wait, which set of boolean filters should you use?  Are they equivalent?
-The answer is "No", and there is a very important distinction that can affect
-performance.
-
-The And/Or/Not set of filters work on a doc-by-doc basis. They first load all
-relevant values into Field Data, then iterate over the list checking for matches.
-
-The Bool filter, in contrast, uses the bitsets that we talked about earlier.
-This means that any filter which produces bitsets (the majority of filters)
-will have the best performance from being placed inside a Bool filter.
-
-And/Or/Not should be used with the following filters:
-
-- Geo* filters
-- Numeric_Range
-- Scripts
-
-Any other filter belongs inside of a Bool!
-
-.Mixing filter types
-****
-If you need both bitset and non-bitset filters, you can combine them using the
-appropriate combinations of compound filters.  Nest the Bool filter inside of
-a And/Or/Not, like this example:
-
-[source,js]
---------------------------------------------------
-{
-  "and" : [
-    {
-      "bool" : {
-        "must" : [
-          { "term" : {} },
-          { "range" : {} },
-          { "term" : {} }
-        ]
-      }
-    },
-    { "custom_script" : {} },
-    { "geo_distance" : {} }
-  ]
-}
---------------------------------------------------
-
-****
 
 ==== Filter ordering
 
-The order inside of a compound filter is important for performance reasons.
-Filters are executed in the order they appear, which means that "heavier" filters
-should be placed at the bottom.
-
-The "lighter" filters at the top will progressively exclude documents from the
-search pool, which means the more computationally expensive filters at the bottom
-will have fewer documents to evaluate.
-
-In practice, these "heavy" filters are usually scripts and geo-related filters.
+TODO  Do we talk about this?  We removed the and/or/not so filter order isnt
+as important anymore...

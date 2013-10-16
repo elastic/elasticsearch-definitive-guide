@@ -1,0 +1,85 @@
+When working with exact values, the most common filter that you will be using is
+the `Term` filter.  The `Term` filter performs no analysis - it simply searches 
+for the exact query text that you provide.  
+
+==== Term Filter
+
+Imagine we have these three documents indexed (and the title field is 
+`not_analyzed`):
+
+[source,js]
+--------------------------------------------------
+{ "title" : "Twelfth Night" }
+{ "title" : "TWELFTH NIGHT" }
+{ "title" : "twelfth night" }
+{ "title" : "twelfth" }
+--------------------------------------------------
+
+
+If you used a Match query to search for "Twelfth Night":
+
+[source,js]
+--------------------------------------------------
+{
+    "query" : {
+        "match" : {
+            "title" : "Twelfth Night"
+        }
+    }
+}
+--------------------------------------------------
+
+
+...then all four documents would be returned (even the one that is only a 
+partial match). Match query is analyzing your text, which means it will be 
+lowercased, tokenized and match all four docs.  Instead, if you use a Term 
+filter (placed inside of a filtered query):
+
+[source,js]
+--------------------------------------------------
+{
+    "query" : {
+        "filtered_query" : {
+            "query" : { "match_all" : {} },
+            "filter" : {
+                "term" : {
+                    "title" : "Twelfth Night"
+                }
+            }
+        }
+    }
+}
+--------------------------------------------------
+
+Then only the first document will be returned, because it is the only doc that 
+exactly matches your query text.
+
+The filter isn't limited to strings, it can also search for numbers, phrases
+and special characters.  The `Term` filter doesn't care, it is just looking 
+directly into the index trying to find your exact query text.
+
+==== Internal Operation
+The `Term` filter is a fundamental building block in Elasticsearch, and used 
+both internally and externally for many purposes.  It helps to have an understanding
+of how `Term` filters work technically.
+
+When a `Term` filter is executed for the first time, Elasticsearch visits each
+segment in each appropriate shard.  It asks the segment _"Does this term exist?"_.
+
+This question is answered by a Bloom Filter, which is a special type of 
+probabilistic data structure that can very quickly answer "set membership" 
+questions (bloom filters are much faster than doing a binary search, for example).
+If the term is not present in the segment, the entire block can be skipped which
+saves considerable time, processing and I/O.
+
+If the term _is_ present in the segment, Elasticsearch loads up the segment, 
+finds the row that corresponds with the term and extracts the IDs of all 
+documents matching that term.
+
+Finally, it constructs a bitset (an array of bits set to either 1 or 0) which 
+corresponds to whether a document matches the filter or not.  This bitset is 
+cached in memory, and the next segment is processed.
+
+This seems complicated, but in reality it is very fast, and operating on bitsets
+is much faster than scanning documents every time.  Furthermore, bitsets are saved
+for future optimizations, as we'll see later <<todo>>

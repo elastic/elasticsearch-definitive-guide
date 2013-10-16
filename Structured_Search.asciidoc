@@ -9,9 +9,25 @@ include::StructuredSearch/filters.asciidoc[]
 
 === Finding exact values
 
-include::StructuredSearch/termterms.asciidoc[]
+include::StructuredSearch/term.asciidoc[]
 
+=== Combining filters
+
+include::StructuredSearch/compoundfilters.asciidoc[]
+
+=== Finding multiple exact values
+
+include::StructuredSearch/terms.asciidoc[]
 include::StructuredSearch/contains.asciidoc[]
+
+
+
+
+
+
+
+
+
 
 === Dealing with Null values
 
@@ -29,9 +45,7 @@ include::StructuredSearch/bitsets.asciidoc[]
 
 include::StructuredSearch/persegmentbitsets.asciidoc[]
 
-=== Combining filters
 
-include::StructuredSearch/compoundfilters.asciidoc[]
 
 === Normalizing exact values
 

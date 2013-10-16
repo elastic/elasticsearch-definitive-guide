@@ -1,0 +1,109 @@
+
+Now that we have seen the `Term` filter and how to combine multiple filters 
+with `Bool`, the `Terms` filter will be easy to understand.  At a high level,
+the `Terms` filter is simply the plural version of the singular `Term` filter.
+
+It accepts an array of terms and returns documents which contain one or more
+terms.  If we use the same dataset from earlier in the chapter:
+
+[source,js]
+--------------------------------------------------
+{ "title" : "Twelfth Night" }
+{ "title" : "TWELFTH NIGHT" }
+{ "title" : "twelfth night" }
+{ "title" : "twelfth" }
+--------------------------------------------------
+
+And then query it with the following `Terms` filter:
+
+[source,js]
+--------------------------------------------------
+{
+    "query" : {
+        "filtered_query" : {
+            "query" : { "match_all" : {} },
+            "filter" : {
+                "terms" : {
+                    "title" : ["Twelfth Night", "twelfth night"]
+                }
+            }
+        }
+    }
+}
+--------------------------------------------------
+
+The query will return first and third document.  It's as if we had built a `Bool`
+with two `Term` filters inside the Should clause.  Is that what the `Terms` filter
+does internally?
+
+To answer that question, we need to look at the `execution_mode` attribute.
+
+==== Execution Mode: Plain
+The `execution_mode` attribute controls how the `Terms` filter builds its bitsets
+internally.
+
+The default execution mode is `plain`, which creates a composite bitset.  
+Using our example above, the filter will generate two bitsets (where a 1 represents
+a document that has the term):
+
+- [1,0,0,0]
+- [0,0,1,0]
+
+Those two bitsets will then be ANDed together to generate the final, composite 
+bitset:
+
+- [1,0,1,0] 
+
+That bitset represents all the documents that have _any_ of the
+specified terms, which means the `Terms` filter is by default an OR operation.
+This final bitset is all that is cached, which is often very efficient since
+it represents the union of potentially many smaller filters.
+
+==== Execution Mode: Bool
+The other useful execution mode is `bool`, which tells Elasticsearch to construct
+a `Bool` filter internally instead of a composite bitset.
+
+With `execution_mode: bool`, or original query is transformed into this query:
+
+[source,js]
+--------------------------------------------------
+{
+    "query" : {
+        "filtered_query" : {
+            "query" : { "match_all" : {} },
+            "filter" : {
+                "bool" : {
+                    "should" : [
+                        {"term" : {"title" : "Twelfth Night"}},
+                        {"term" : {"title" : "twelfth night"}},
+                    ]
+                }
+            }
+        }
+    }
+}
+--------------------------------------------------
+
+The final result is the same: documents one and three are returned.  So why 
+would you choose `bool` over `plain`?  The difference is how the bitsets are 
+cached.
+
+In `plain`, the final bitset is a union of all term's bitsets.  With `bool`,
+individual `Term` filters are cached separately (just like a normal `Bool` filter).
+
+Generally speaking, the default `plain` mode is a better choice.  But `bool` can 
+be useful in situations where you have a small cardinality of filters that 
+may be combined in large number of permutations.  
+
+For example, if you have 20 different titles used in sets of nine, you may have 
+to cache up to 167,960 different combinations when using `plain`.  If you don't 
+have the memory to hold all 167,960 bitsets in memory, you'll start evicting 
+filters.  At the extreme end, if none of the filters are reused you may end up 
+caching and evicting thousands of worthless filters.
+
+By contrast, if you select `bool`, there are only 20 individual titles that need
+to be cached.  All the permutations are simply combined in the `Bool` filter
+and you won't churn your cache constantly with evictions.
+
+
+
