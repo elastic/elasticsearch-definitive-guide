@@ -1,0 +1,119 @@
+=== The `match` query
+
+The `match` query is the ``go-to'' query -- the first query that you reach for
+whenever you need to query any field. It is a high-level _full-text query_
+meaning that it knows how to deal with both full-text fields and exact-value
+fields.
+
+That said, the main use case for the `match` query is for full text search. As
+we have already explained in <<term-vs-full-text>>, you should almost always
+prefer a filter over a query for exact value fields. So let's take a look at
+how full text search works, by looking at a simple example.
+
+==== Index some data
+
+First, we'll create a new index:
+
+[source,js]
+--------------------------------------------------
+# delete the index in case it already exists
+DELETE /my_index
+
+# create a new index with 1 primary shard <1>
+POST /my_index
+{ "settings": { "number_of_shards": 1 }}
+--------------------------------------------------
+
+<1> Later on, in <<relevance-is-broken>>, we will explain why
+    we created this index with only one primary shard.
+
+And index some documents using the <<bulk,`bulk` API>>:
+
+[source,js]
+--------------------------------------------------
+POST /my_index/my_type/_bulk
+{ "index": { "_id": 1 }}
+{ "title": "The quick brown fox" }
+{ "index": { "_id": 2 }}
+{ "title": "The quick brown fox jumps over the lazy dog" }
+{ "index": { "_id": 3 }}
+{ "title": "The quick brown fox jumps over the quick dog" }
+{ "index": { "_id": 4 }}
+{ "title": "Brown fox brown dog" }
+--------------------------------------------------
+
+==== A single word query
+
+Our first example explains what happens when we use the `match` query to
+search a full-text field for a single word:
+
+[source,js]
+--------------------------------------------------
+GET /my_index/my_type/_search
+{
+    "query": {
+        "match": {
+            "title": "QUICK!"
+        }
+    }
+}
+--------------------------------------------------
+
+Elasticsearch executes the above `match` query as follows:
+
+1. *Check the field type*
++
+The `title` field is a full-text (`analyzed`) `string` field, which means that
+the query string should be analyzed too.
+
+2. *Analyze the query string*
++
+The query string `"QUICK!"` is passed through the standard analyzer which
+results in the single term `"quick"`. Because we have a just a single term,
+the `match` query can be executed as a single low-level `term` query.
+
+3. *Find matching docs*
++
+The `term` query looks up `"quick"` in the inverted index and retrieves the
+list of documents that contain that term, in this case documents `1`, `2`, and
+`3`.
+
+4. *Score each doc*
++
+The `term` query caculates the relevance `_score` for each matching document,
+by combining the term frequency (how often `"quick"` appears in the `title`
+field of each document), with the inverse document frequency (how often
+`"quick"` appears in the `title` field in all documents in the index), and the
+length of each field (shorter fields are considered more relevant).
+
+This process gives us the following results (abbreviated):
+
+[source,js]
+--------------------------------------------------
+"hits": [
+ {
+    "_id": "3",
+    "_score": 0.53033006, <1>
+    "_source": {
+       "title": "The quick brown fox jumps over the quick dog"
+    }
+ },
+ {
+    "_id": "1",
+    "_score": 0.5, <2>
+    "_source": {
+       "title": "The quick brown fox"
+    }
+ },
+ {
+    "_id": "2",
+    "_score": 0.375,
+    "_source": {
+       "title": "The quick brown fox jumps over the lazy dog"
+    }
+ }
+]
+--------------------------------------------------
+<1> Doc `3` is most relevant because it contains the term `"quick"` twice.
+<2> Doc `1` is more relevant than doc `2` because its `title` field is shorter.
+

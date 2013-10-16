@@ -20,6 +20,7 @@ Analysis::
 As soon as we talk about either relevance or analysis, we are in the territory
 of queries, rather than filters.
 
+[[term-vs-full-text]]
 === Term-based queries vs full-text queries
 
 While all queries perform some sort of relevance calculation, not all queries
@@ -56,7 +57,7 @@ the final relevance score for each document.
 We will discuss this process in more detail in the following chapters.
 --
 
-We seldom need to use the term-based queries directly. Usually we need to
+You seldom need to use the term-based queries directly. Usually you want to
 query full text, not individual terms, and this is easier to do with the
 high-level full-text queries which, in turn, use term-based queries
 internally.
