@@ -1,5 +1,5 @@
 
-Now that we have seen the `term` filter and how to combine multiple filters 
+Now that we have seen the `term` filter and how to combine multiple filters
 with `bool`, the `terms` filter will be easy to understand.  At a high level,
 the `terms` filter is simply the plural version of the singular `term` filter.
 
@@ -46,7 +46,7 @@ To answer that question, we need to look at the `execution_mode` attribute.
 The `execution_mode` attribute controls how the `terms` filter builds its bitsets
 internally.
 
-The default execution mode is `plain`, which creates a composite bitset.  
+The default execution mode is `plain`, which creates a composite bitset.
 Using our example above, the filter will generate two bitsets (where a 1 represents
 a document that has the term):
 
@@ -54,17 +54,17 @@ a document that has the term):
 +
 Only the first document has the term, so the bitset is: `[1,0,0,0]`
 
-1. *Construct a bitset for "twelfth night"*
+2. *Construct a bitset for "twelfth night"*
 +
 Only the third document has the term, so the bitset is: `[0,0,1,0]`
 
-1. *Merge the bitsets*
+3. *Merge the bitsets*
 +
-Resulting bitset is the union of the first two, using a bitwise OR: `[1,0,1,0]` 
+Resulting bitset is the union of the first two, using a bitwise OR: `[1,0,1,0]`
 
 The final bitset represents all the documents that have _any_ of the
 specified terms, which means the `terms` filter is an OR operation (if that
-doesn't make sense, sit tight: we'll talk about it more in 
+doesn't make sense, sit tight: we'll talk about it more in
 <<_contains_but_does_not_equal>>).
 
 This final, composite bitset is cached instead of the individual bitsets.
@@ -76,7 +76,7 @@ into a single filter tends to save space and speed.
 The other useful execution mode is `bool`, which tells Elasticsearch to construct
 a `bool` filter internally instead of a composite bitset.
 
-With `execution_mode: bool`, our original query is internally transformed into 
+With `execution_mode: bool`, our original query is internally transformed into
 this query:
 
 [source,js]
@@ -98,23 +98,23 @@ this query:
 }
 --------------------------------------------------
 
-The final result is the same: documents one and three are returned.  So why 
-would you choose `bool` over `plain`?  The difference is how the bitsets are 
+The final result is the same: documents one and three are returned.  So why
+would you choose `bool` over `plain`?  The difference is how the bitsets are
 cached.
 
 In `plain`, the final bitset is a union of all term's bitsets.  We only cached
-the final, composite bitset.  With `bool`, individual `term` filters are cached 
+the final, composite bitset.  With `bool`, individual `term` filters are cached
 individually (just like a normal `bool` filter) while the final bitset is not
 cached.
 
-Generally speaking, the default `plain` mode is a better choice.  But `bool` can 
-be useful in situations where you have a small cardinality of filters that 
-may be combined in large number of permutations.  
+Generally speaking, the default `plain` mode is a better choice.  But `bool` can
+be useful in situations where you have a small cardinality of filters that
+may be combined in large number of permutations.
 
-For example, if you have 20 different colors used in sets of nine, you may have 
-to cache up to 167,960 different combinations when using `plain`.  If you don't 
-have the memory to hold all 167,960 bitsets in memory, you'll start evicting 
-filters.  At the extreme end, if none of the filters are reused you may end up 
+For example, if you have 20 different colors used in sets of nine, you may have
+to cache up to 167,960 different combinations when using `plain`.  If you don't
+have the memory to hold all 167,960 bitsets in memory, you'll start evicting
+filters.  At the extreme end, if none of the filters are reused you may end up
 caching and evicting thousands of worthless filters.
 
 By contrast, if you select `bool`, there are only 20 individual colors that need
