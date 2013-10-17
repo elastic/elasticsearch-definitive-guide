@@ -118,6 +118,7 @@ This process gives us the following (abbreviated) results:
 <2> Doc `1` is more relevant than doc `2` because its `title` field is shorter.
 
 
+[[match-multi-word]]
 ==== A multi-word query
 
 If we could only search for one word at a time, full text search would be
@@ -223,6 +224,7 @@ GET /my_index/my_type/_search
 The above query would exclude document 1 which only contains one of the two
 terms.
 
+[[match-precision]]
 ==== Controlling precision
 
 The choice between *all* and *any* is a bit too black-or-white. What if the
