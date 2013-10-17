@@ -177,7 +177,7 @@ The above query returns all four documents in the results list:
 <1> Doc 4 is the most relevant because it contains `"brown"` twice and `"dog"`
     once.
 
-<2> Docs 2 and 3 both contain `"brown"` and `"dog"` once each and the `title` 
+<2> Docs 2 and 3 both contain `"brown"` and `"dog"` once each and the `title`
     field is the same length in both docs, so they have the same score.
 
 <3> Doc 1 matches even though it only contains `"brown"`, not `"dog"`.
@@ -185,7 +185,7 @@ The above query returns all four documents in the results list:
 Because the `match` query has to look for two terms -- `["brown","dog"]` --
 internally it has to execute two `term` queries and combine their individual
 results into the overall result. To do this, it wraps the two `term` queries
-in a `bool` query, which we will examine in detail in <<bool-query>>. 
+in a `bool` query, which we will examine in detail in <<bool-query>>.
 
 The important thing to take away from the above is that any document whose
 `title` field contains *at least one of the specified terms* will match the
@@ -194,7 +194,7 @@ query.  The more terms that match, the more relevant the document.
 ==== Improving precision
 
 Matching any document which contains *any* of the query terms may result in  a
-lot of seemingly irrelevant results.  It's a shotgun approach to search.
+long tail of seemingly irrelevant results.  It's a shotgun approach to search.
 Perhaps we only want to show documents which contain *all* of the query terms.
 In other words, instead of `"brown OR dog"` we only want to return documents
 that match `"brown AND dog"`.
@@ -227,7 +227,7 @@ terms.
 
 The choice between *all* and *any* is a bit too black-or-white. What if the
 user specified five query terms and a document contains only four of them?
-Setting `"operator"` to `"and"` would exclude this document. 
+Setting `"operator"` to `"and"` would exclude this document.
 
 Sometimes that is exactly what you want, but for most full-text search use
 cases, you want to include documents which may be relevant but exclude those
@@ -246,7 +246,7 @@ GET /my_index/my_type/_search
 {
   "query": {
     "match": {
-      "title": {      
+      "title": {
         "query":                "quick brown dog",
         "minimum_should_match": "75%"
       }
@@ -255,10 +255,10 @@ GET /my_index/my_type/_search
 }
 --------------------------------------------------
 
-As a percentage, `minimum_should_match` does the right thing. In the example
-above with three terms, `75%` would be rounded down to `66.6%` or two out of
-the three terms. No matter what you set it to, at least one term must match
-for a document to be considered a match.
+When specified as a percentage, `minimum_should_match` does the right thing:
+in the example above with three terms, `75%` would be rounded down to `66.6%`
+or two out of the three terms. No matter what you set it to, at least one term
+must match for a document to be considered a match.
 
 The `minimum_should_match` parameter is very flexible and different rules can
 be applied depending on the number of terms the user enters.  For the full
@@ -266,4 +266,4 @@ documentation see the
 http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-minimum-should-match.html[`minimum_should_match` reference documentation].
 
 To fully understand how the `match` query handles multi-word queries, we need
-to examine how to combine queries with the `bool` query.
+to examine how to combine multiple queries with the `bool` query.
