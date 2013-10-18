@@ -25,6 +25,7 @@ GET /my_index/my_type/_search
                   { "match": { "title": "dog"   }}
       ]
     }
+  }
 }
 --------------------------------------------------
 
@@ -32,9 +33,9 @@ The results from the above query include any document whose `title` field
 contains the term `"quick"`, except for those that also contain `"lazy"`. So
 far this is pretty similar to how the `bool` filter works.
 
-The difference comes in with the two `should` clauses, which say: a document
+The difference comes in with the two `should` clauses, which say: _a document
 is not required to contain either `"brown"` or `"dog"`, but if it does, then
-it should be considered more relevant:
+it should be considered more relevant_:
 
 [source,js]
 --------------------------------------------------
@@ -96,6 +97,7 @@ GET /my_index/my_type/_search
       ],
       "minimum_should_match": 2
     }
+  }
 }
 --------------------------------------------------
 
@@ -113,15 +115,13 @@ at least one clause must match:
 
 [source,js]
 --------------------------------------------------
-GET /my_index/my_type/_search
 {
-  "query": {
-    "bool": {
-      "should": [
-        { "term": { "title": "brown" }},
-        { "term": { "title": "fox"   }}
-      ]
-    }
+  "bool": {
+    "should": [
+      { "term": { "title": "brown" }},
+      { "term": { "title": "fox"   }}
+    ]
+  }
 }
 --------------------------------------------------
 
@@ -130,15 +130,13 @@ so *all* clauses must match:
 
 [source,js]
 --------------------------------------------------
-GET /my_index/my_type/_search
 {
-  "query": {
-    "bool": {
-      "must": [
-        { "term": { "title": "brown" }},
-        { "term": { "title": "fox"   }}
-      ]
-    }
+  "bool": {
+    "must": [
+      { "term": { "title": "brown" }},
+      { "term": { "title": "fox"   }}
+    ]
+  }
 }
 --------------------------------------------------
 
@@ -147,18 +145,21 @@ directly through to the `bool` query:
 
 [source,js]
 --------------------------------------------------
-GET /my_index/my_type/_search
 {
-  "query": {
-    "bool": {
-      "should": [
-        { "term": { "title": "brown" }},
-        { "term": { "title": "fox"   }},
-        { "term": { "title": "quick" }}
-      ],
-      "minimum_should_match": "75%"
-    }
+  "bool": {
+    "should": [
+      { "term": { "title": "brown" }},
+      { "term": { "title": "fox"   }},
+      { "term": { "title": "quick" }}
+    ],
+    "minimum_should_match": "75%"
+  }
 }
 --------------------------------------------------
 
+Of course, we would normally write these types of queries using the `match`
+query, but understanding how the `match` query works internally lets you take
+control of the process when you need to. There are some things that can't be
+done with a single `match` query, such as give more weight to some query terms
+than to others. We will look at an example of this in the next section.
 

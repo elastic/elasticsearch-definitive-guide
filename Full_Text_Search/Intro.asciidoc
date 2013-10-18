@@ -50,9 +50,9 @@ you query a full-text (`analyzed`) field, they will first pass the query
 string through the appropriate analyzer to produce the list of terms to be
 queried.
 
-Once the query has assembled a list of terms, it executes the appropriate low-
-level query for each of these terms, then combines  their results to produce
-the final relevance score for each document.
+Once the query has assembled a list of terms, it executes the appropriate
+low-level query for each of these terms, then combines  their results to
+produce the final relevance score for each document.
 
 We will discuss this process in more detail in the following chapters.
 --
