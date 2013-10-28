@@ -1,0 +1,220 @@
+=== Multi-field matching
+
+Often, you will want to search for matching results in more than one field.
+While the title of a blog post may provide an accurate summary of its content,
+users may be searching for details that are only mentioned deep in the text of
+the post itself.  Of course, we can't tell in advance if a user's search terms
+refer to a blog post title or to content details, but we can combine queries
+that match on the `title` and `body` fields respectively.
+
+One way of doing so would be to use the `bool` query:
+
+[source,js]
+--------------------------------------------------
+GET /_search
+{
+    "query": {
+        "bool": {
+            "should": [
+                { "match": { "title": "Multi-field matching"  }},
+                { "match": { "body":  "Multi-field matching"  }}
+            ]
+        }
+    }
+}
+--------------------------------------------------
+
+While the `bool` query is a useful generic way of combining multiple queries,
+it is not appropriate in every circumstance as it takes a _more-matches is
+better_ approach. Often this is exactly what you want.  However, it can
+produce incongruent results. Imagine for example that we have the following
+two documents:
+
+Document 1::
+
+[source,js]
+--------------------------------------------------
+{
+    "title": "Brown rabbits",
+    "body":  "Brown rabbits are commonly seen."
+}
+--------------------------------------------------
+
+Document 2::
+
+[source,js]
+--------------------------------------------------
+{
+    "title": "What does it eat?",
+    "body":  "My quick brown fox eats rabbits on a regular basis."
+}
+--------------------------------------------------
+
+Now we run the following `bool` query:
+
+[source,js]
+--------------------------------------------------
+{
+    "query": {
+        "bool": {
+            "should": [
+                { "match": { "title": "Brown fox" }},
+                { "match": { "body":  "Brown fox" }}
+            ]
+        }
+    }
+}
+--------------------------------------------------
+
+Document 2 appears to be the better match, as it contains both of the words
+that we are looking for.  However, this query actually returns Document 1 as
+the better match:
+
+[source,js]
+--------------------------------------------------
+{
+  "hits": [
+     {
+        "_id":      "1",
+        "_score":   0.17545144,
+        "_source": {
+           "title": "Brown rabbits",
+           "body":  "Brown rabbits are commonly seen."
+        }
+     },
+     {
+        "_id":      "2",
+        "_score":   0.11107239,
+        "_source": {
+           "title": "What does it eat?",
+           "body":  "My quick brown fox eats rabbits."
+        }
+     }
+  ]
+}
+--------------------------------------------------
+
+To understand why, think about how the `bool` query calculates its score.
+First, it runs both queries in the `should` clause, then it adds their scores
+together and divides the total by the number of clauses, ie two.
+
+Document 1 contains the word `"brown"` in both fields, so both `match` clauses
+are successful and have a score.  Document 2 contains both words in the `body`
+field but neither word in the `title` field. The high score from the `body`
+query is added to the zero score from the `title` query, and divided by two,
+resulting in a lower overall score than for Document 1.
+
+What if, instead, we used the *highest* score for each field as the overall
+score for the query?  This would give preference to fields that contain both
+of the words we are looking for, rather than the same word repeated in
+different fields.
+
+Instead of using the `bool` query, we can combine our two field clauses with a
+`dis_max` or _DisjunctionMaxQuery_.  Disjunction means "or" (while
+conjunction means "and") so the DisjunctionMaxQuery means: _return documents
+that match any of these queries, and calculate the score using the best
+matching query_:
+
+[source,js]
+--------------------------------------------------
+{
+    "query": {
+        "dis_max": {
+            "queries": [
+                { "match": { "title": "Brown fox" }},
+                { "match": { "body":  "Brown fox" }}
+            ]
+        }
+    }
+}
+--------------------------------------------------
+
+This produces the results that we expect:
+
+[source,js]
+--------------------------------------------------
+{
+  "hits": [
+     {
+        "_id":      "2",
+        "_score":   0.2581116,
+        "_source": {
+           "title": "What does it eat?",
+           "body":  "My quick brown fox eats rabbits."
+        }
+     },
+     {
+        "_id":      "1",
+        "_score":   0.15891947,
+        "_source": {
+           "title": "Brown rabbits",
+           "body":  "Brown rabbits are commonly seen."
+        }
+     }
+  ]
+}
+--------------------------------------------------
+
+**************************************************
+
+While the `bool` query takes a _more-is-better_ approach, the `dis_max` query
+looks for the best matching clause. There is no hard and fast rule about when
+you should prefer which, but  generally:
+
+`dis_max`::
+
+Use the `dis_max` query when searching for the same query string in different
+fields, when having more words in a single field is more important than having
+some words (possibly the same word) in multiple fields.
+
+`bool`::
+
+Use the `bool` query when each matching clause should increase the relevance
+score, such as when each clause has a different query string.  Or, if you have
+the same field analyzed in different ways, each field that matches could be
+used to  increase the overall score. We will examine this technique in detail
+in <<relevance>>.
+
+**************************************************
+
+==== `multi_match` query
+
+Just as the `match` query is a high-level query for running multi-word full
+text queries, the `multi_match` query is a high-level query for running
+`match` queries on multiple fields.
+
+The above query could be rewritten more concisely as:
+
+[source,js]
+--------------------------------------------------
+{
+    "query": {
+        "multi_match": {
+            "query":  "Brown fox",
+            "fields": [ "title", "body" ]
+        }
+    }
+}
+--------------------------------------------------
+
+By default, the `multi_match` query wraps a `match` query on each field,
+combining their scores with a `dis_max` query, although this can be changed to
+using a `bool` query by setting `use_dis_max` to `false`.
+
+The `multi_match` query also allows you to specify multiple fields using a
+wildcard syntax. You could match on the `title`, `first_name`, `middle_name`
+and `last_name` fields, with the following:
+
+[source,js]
+--------------------------------------------------
+GET /_search
+{
+    "query": {
+        "multi_match": {
+            "query":  "Mary Smith",
+            "fields": [ "title", "*_name" ]
+        }
+    }
+}
+--------------------------------------------------
+

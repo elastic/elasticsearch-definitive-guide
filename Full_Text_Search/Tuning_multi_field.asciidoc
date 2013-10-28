@@ -1,0 +1,131 @@
+=== Tuning multi-field queries
+
+With a multi-field query like:
+
+[source,js]
+--------------------------------------------------
+{
+    "query": {
+        "multi_match": {
+            "query":  "Brown fox",
+            "fields": [ "title", "body" ]
+        }
+    }
+}
+--------------------------------------------------
+
+we probably expect documents that match on both the `title` field and the
+`body` field to rank higher than documents that match on just one field, but
+this isn't the case. The `dis_max` query simply uses the `_score` from the
+single best matching clause.
+
+==== `tie_breaker`
+
+It is possible, however, to bump up documents that match on more fields by
+specifying the `tie_breaker` parameter.
+
+[source,js]
+--------------------------------------------------
+{
+    "query": {
+        "multi_match": {
+            "query":       "Brown fox",
+            "fields":      [ "title", "body" ],
+            "tie_breaker": 0.2
+        }
+    }
+}
+--------------------------------------------------
+
+The `tie_breaker` parameter tell the `dis_max` query to calculate its score as
+follows:
+
+* take the `_score` of the best matching clause
+* multiply the score of each of the other matching clauses by `tie_breaker`
+* add them all together, and normalize
+
+The `tie_breaker` is a floating point value between `0` and `1, where `0`
+uses just the best matching clause and `1` counts all matching clauses
+equally.  The exact value can be tuned based on your data and queries, but a
+reasonable value should be close to zero, eg `0.1 - 0.4`, in order not to
+overwhelm the ``best-matching'' nature of `dis_max`.
+
+==== Field length
+
+We probably would also expect documents that match on the `title` field to
+rank higher than documents that match on the `body` field, and this is indeed
+the case.
+
+This order falls out naturally from the similarity algorithm used by
+Elasticsearch: shorter fields are given more weight than longer fields as each
+matched term forms a bigger percentage of all terms in that field.  In other
+words, matching two out of the six terms in the `title` field is likely to be
+much more relevant than matching two out of the 600 terms in the `body`
+field.
+
+It's more complicated than this, of course, because the effect of field length
+needs to be combined with other factors affecting relevance:
+
+* a field will match if it contains one or both of the terms `brown` and `fox`
+  -- the more matching terms it contains, the more relevant
+
+* a field may contain multiple copies of the same term -- the more times
+  a term appears in the field, the more relevant
+
+* each term in each field may have a different weight depending how often
+  it appears in that field across all the documents in the index -- the
+  more often, the less relevant
+
+==== Boosting fields
+
+Given that there are so many factors at play, you may find that you need to
+tune your query results to be a good fit for your data and your requirements.
+Perhaps the effect of the short `title` field is overwhelming results from the
+`body` field, or vice versa.  The simplest weapon in our tuning arsenal is the
+`boost` parameter. We can increase the weight of the `title` field by giving
+it a `boost` value higher than `1`:
+
+[source,js]
+--------------------------------------------------
+GET /_search
+{
+    "query": {
+        "dis_max": {
+            "queries": [
+                {
+                    "match": {
+                        "title": {
+                            "query": Brown fox",
+                            "boost": 2
+                        }
+                    }
+                },
+                { "match": { "body":  "Brown fox" }}
+            ]
+        }
+    }
+}
+--------------------------------------------------
+
+The ``best'' value for the `boost` parameter is most easily determined by
+trial and error: set a `boost` value, run test queries, repeat. A reasonable
+range for `boost` lies between `1` and `5`, maybe `10`.
+
+The `multi_match` query also supports per-field boosting, using the caret
+(`^`) syntax: just add `^boost` after the field name, where `boost` is a
+floating point number. The following query is the `multi_match` equivalent of
+the `dis_max` query above:
+
+[source,js]
+--------------------------------------------------
+GET /_search
+{
+    "query": {
+        "multi_match": {
+            "query":  "Brown fox",
+            "fields": [ "title^2", "body" ]
+        }
+    }
+}
+--------------------------------------------------
+

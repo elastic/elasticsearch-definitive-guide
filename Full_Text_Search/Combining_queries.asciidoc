@@ -9,8 +9,8 @@ Filters make a binary decision: should this document be included in the
 results list or not? Queries, however, are more subtle. They not only decide
 whether to include a document or not, but also how relevant that document is.
 
-Like the `bool` filter, the `bool` query accepts multiple query clauses under
-the `must`, `must_not` and `should` parameters.  For instance:
+Like the filter equivalent, the `bool` query accepts multiple query clauses
+under the `must`, `must_not` and `should` parameters.  For instance:
 
 [source,js]
 --------------------------------------------------
@@ -79,9 +79,9 @@ By default, none of the `should` clauses are required to match, with one
 exception: if there are no `must` clauses, then at least one `should` clause
 must match.
 
-In the same way as we could control the <<match-precision,precision of the
-`match` query>>, we can control how many `should` clauses need to match using
-the `minimum_should_match` parameter, either as an absolute number or as a
+Just as we can control the <<match-precision,precision of the `match` query>>,
+we can control how many `should` clauses need to match using the
+`minimum_should_match` parameter, either as an absolute number or as a
 percentage:
 
 [source,js]

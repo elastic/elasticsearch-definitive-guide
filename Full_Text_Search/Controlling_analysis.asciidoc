@@ -1,0 +1,189 @@
+=== Controlling analysis
+
+Queries can only find terms that actually exist in the inverted index, so it
+is important to ensure that the same analysis process is applied both to the
+document at index time, and to the query string at query time so that the
+terms in the query match the terms in the inverted index.
+
+While we say ``document'', really analyzers are determined per-field. Each
+field can have a different analyzer, either by configuring a specific analyzer
+for that field or by falling back on the type, index or node defaults.  At
+index time, a field's value is analyzed using the configured or default
+analyzer for that field.
+
+For instance, let's add a new field to `my_index`:
+
+[source,js]
+--------------------------------------------------
+PUT /my_index/my_type/_mapping
+{
+    "my_type": {
+        "properties": {
+            "english": {
+                "type":     "string",
+                "analyzer": "english"
+            }
+        }
+    }
+}
+--------------------------------------------------
+
+Now we can compare how values in the `english` field and the `title` field are
+analyzed at index time using the `analyze` API:
+
+[source,js]
+--------------------------------------------------
+GET /my_index/_analyze?field=my_type.title   <1>
+Foxes
+
+GET /my_index/_analyze?field=my_type.english <2>
+Foxes
+--------------------------------------------------
+
+<1> Field `title`, which uses the default `standard` analyzer returns the
+    term `foxes`
+
+<2> Field `english`, which uses the `english` analyzer returns the term
+    `fox`.
+
+If we were to run a low-level `term` query for the exact term `fox`, the
+`english` field would match but the `title` field would not.
+
+High-level queries like the `match` query understand field mappings and can
+apply the correct analyzer for each field being queried. We can see this
+in action with the `validate query` API:
+
+
+[source,js]
+--------------------------------------------------
+GET /my_index/my_type/_validate/query?explain
+{
+    "multi_match": {
+        "query":  "Foxes",
+        "fields": [ "title", "english" ]
+    }
+}
+--------------------------------------------------
+
+which returns this `explanation`:
+
+    (title:foxes | english:fox)
+
+By using the appropriate analyzer for each field, the `multi_match` query
+ensures that it looks for each term in the correct format for that field.
+
+==== Default analyzers
+
+While we can specify an analyzer at field level, how do we determine which
+analyzer is used for a field if none is specified at field level?
+
+Analyzers can be specified at several levels.  Elasticsearch works through
+each level until it finds an analyzer which it can use.  At index time, the
+process is as follows:
+
+* the `analyzer` defined in the field mapping, else
+* *the analyzer defined in the `_analyzer` field of the document, else*
+* the default `analyzer` for the `type`, which defaults to
+* the analyzer named `default` in the index settings, which defaults to
+* the analyzer named `default` at node level, which defaults to
+* the `standard` analyzer
+
+At search time, the sequence is slightly different:
+
+* *the `analyzer` defined in the query itself, else*
+* the `analyzer` defined in the field mapping, else
+* the default `analyzer` for the `type`, which defaults to
+* the analyzer named `default` in the index settings, which defaults to
+* the analyzer named `default` at node level, which defaults to
+* the `standard` analyzer
+
+**************************************************
+
+The two lines in bold above highlight differences in the index time sequence
+and the search time sequence.  The `_analyzer` field allows you to specify a
+default analyzer for each document (eg `english`, `french`, `spanish`) while
+the `analyzer` parameter in the query specifies which analyzer to use on the
+query string. This is one way of handling multiple languages in a single
+index. We will look at this technique in more detail in <<languages>>.
+
+**************************************************
+
+Occasionally, it makese sense to use a different analyzer at index and search
+time. For instance, at index time we may want to index synonyms, eg for every
+occurrence of `quick` we also index `fast`, `rapid` and `speedy`. But at
+search time, we don't need to search for all of these synonyms.  Instead we
+can just lookup the single word that the user has entered, be it `quick`,
+`fast`, `rapid` or `speedy`.
+
+To enable this distinction, Elasticsearch also supports the `index_analyzer`
+and `search_analyzer` parameters, and analyzers named `default_index` and
+`default_search`.
+
+The full sequence at index time really looks like this:
+
+* the `index_analyzer` defined in the field mapping, else
+* the `analyzer` defined in the field mapping, else
+* the analyzer defined in the `_analyzer` field of the document, else
+* the default `index_analyzer` for the `type`, which defaults to
+* the default `analyzer` for the `type`, which defaults to
+* the analyzer named `default_index` in the index settings, which defaults to
+* the analyzer named `default` in the index settings, which defaults to
+* the analyzer named `default_index` at node level, which defaults to
+* the analyzer named `default` at node level, which defaults to
+* the `standard` analyzer
+
+And at search time:
+
+* the `analyzer` defined in the query itself, else
+* the `search_analyzer` defined in the field mapping, else
+* the `analyzer` defined in the field mapping, else
+* the default `search_analyzer` for the `type`, which defaults to
+* the default `analyzer` for the `type`, which defaults to
+* the analyzer named `default_search` in the index settings, which defaults to
+* the analyzer named `default` in the index settings, which defaults to
+* the analyzer named `default_search` at node level, which defaults to
+* the analyzer named `default` at node level, which defaults to
+* the `standard` analyzer
+
+==== Configuring analyzers in practice
+
+The sheer number of places where you can specify an analyzer is quite
+overwhelming.  In practice, though, it is pretty simple.
+
+The first thing to remember is that, even though you may start out using
+Elasticsearch for a single purpose or a single application such as logging,
+chances are that you will find more use cases and end up running several
+distinct applications on the same cluster.  Each index needs to be independent
+and independently configurable. You don't want to set defaults for one use
+case, only to have to override them for another use case later on.
+
+This rules out configuring analyzers at the node level.  Additionally,
+configuring analyzers at node level requires changing the config file on every
+node and restarting every node which becomes a maintenance nightmare. It's a
+much better idea to keep Elasticsearch running and to manage settings only via
+the API.
+
+Most of the time, you will know what fields your documents will contain ahead
+of time.  The simplest approach is to set the analyzer for each full-text
+field when you create your index or add type mappings.  While this approach is
+slightly more verbose, it makes it easy to see which analyzer is being applied
+to each field.
+
+Typically, most of your string fields will be exact-value `not_analyzed`
+fields such as tags or enums, plus two or three full-text fields which will
+use some default analyzer like `standard` or `english` or some other language.
+Then you may have one or two fields which need custom analysis: perhaps the
+`title` field needs to be indexed in a way that supports _find-as-you-type_.
+
+You can set the `default` analyzer in the index to the analyzer you want to
+use for almost all full-text fields, and just configure the specialised
+analyzer on the one or two fields that need it.  If, in your model, you need
+a different default analyzer per type, then use the type level `analyzer`
+setting instead.
+
+A common work-flow for time based data like logging is to create a new index
+per day on the fly by just indexing into it.  While this work flow prevents
+you from creating your index up front, you can still use
+{ref}indices-templates.html[index templates]
+to specify the settings and mappings that a new index should have.
+
