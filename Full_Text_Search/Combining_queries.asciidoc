@@ -1,0 +1,165 @@
+[[bool-query]]
+=== Combining queries
+
+We have already discussed how to use the <<bool-filter,`bool` filter>> to
+combine multiple filter clauses with `and`, `or` and `not` logic.  In query
+land, the `bool` query does a similar job but with one important difference.
+
+Filters make a binary decision: should this document be included in the
+results list or not? Queries, however, are more subtle. They not only decide
+whether to include a document or not, but also how relevant that document is.
+
+Like the filter equivalent, the `bool` query accepts multiple query clauses
+under the `must`, `must_not` and `should` parameters.  For instance:
+
+[source,js]
+--------------------------------------------------
+GET /my_index/my_type/_search
+{
+  "query": {
+    "bool": {
+      "must":     { "match": { "title": "quick" }},
+      "must_not": { "match": { "title": "lazy"  }},
+      "should": [
+                  { "match": { "title": "brown" }},
+                  { "match": { "title": "dog"   }}
+      ]
+    }
+  }
+}
+--------------------------------------------------
+
+The results from the above query include any document whose `title` field
+contains the term `"quick"`, except for those that also contain `"lazy"`. So
+far this is pretty similar to how the `bool` filter works.
+
+The difference comes in with the two `should` clauses, which say: _a document
+is not required to contain either `"brown"` or `"dog"`, but if it does, then
+it should be considered more relevant_:
+
+[source,js]
+--------------------------------------------------
+{
+  "hits": [
+     {
+        "_id": "3",
+        "_score": 0.70134366, <1>
+        "_source": {
+           "title": "The quick brown fox jumps over the quick dog"
+        }
+     },
+     {
+        "_id": "1",
+        "_score": 0.3312608,
+        "_source": {
+           "title": "The quick brown fox"
+        }
+     }
+  ]
+}
+--------------------------------------------------
+
+<1> Doc 3 scores higher because it contains `"dog"`.
+
+==== Score calculation
+
+The `bool` query calculates the relevance `_score` for each document by adding
+together the `_score` from all of the matching `must` and `should` clauses,
+then dividing by the total number of `must` and `should` clauses.
+
+The `must_not` clauses do not affect the score -- their only purpose is to
+exclude documents that might otherwise have been included.
+
+==== Controlling precision
+
+All of the `must` clauses must match and all of the `must_not` clause must not
+match, but how many `should` clauses should match?
+
+By default, none of the `should` clauses are required to match, with one
+exception: if there are no `must` clauses, then at least one `should` clause
+must match.
+
+Just as we can control the <<match-precision,precision of the `match` query>>,
+we can control how many `should` clauses need to match using the
+`minimum_should_match` parameter, either as an absolute number or as a
+percentage:
+
+[source,js]
+--------------------------------------------------
+GET /my_index/my_type/_search
+{
+  "query": {
+    "bool": {
+      "should": [
+        { "match": { "title": "brown" }},
+        { "match": { "title": "fox"   }},
+        { "match": { "title": "dog"   }}
+      ],
+      "minimum_should_match": 2
+    }
+  }
+}
+--------------------------------------------------
+
+The results would only include documents whose `title` field contains `"brown"
+AND "fox"`, `"brown" AND "dog"`, or `"fox" AND "dog"`. If a document contains
+all three, then it would be considered more relevant than those which contain
+just two of the three.
+
+==== How `match` uses `bool`
+
+By now, you have probably realised that <<match-multi-word,multi-word `match`
+queries>> simply wrap the generated `term` queries in a `bool` query. With the
+default `"or"` operator, each `term` query is added as a `should` clause, so
+at least one clause must match:
+
+[source,js]
+--------------------------------------------------
+{
+  "bool": {
+    "should": [
+      { "term": { "title": "brown" }},
+      { "term": { "title": "fox"   }}
+    ]
+  }
+}
+--------------------------------------------------
+
+With the `"and"` operator, all the `term` queries are added as `must` clause,
+so *all* clauses must match:
+
+[source,js]
+--------------------------------------------------
+{
+  "bool": {
+    "must": [
+      { "term": { "title": "brown" }},
+      { "term": { "title": "fox"   }}
+    ]
+  }
+}
+--------------------------------------------------
+
+And if the `minimum_should_match` parameter is specified, it is passed
+directly through to the `bool` query:
+
+[source,js]
+--------------------------------------------------
+{
+  "bool": {
+    "should": [
+      { "term": { "title": "brown" }},
+      { "term": { "title": "fox"   }},
+      { "term": { "title": "quick" }}
+    ],
+    "minimum_should_match": "75%"
+  }
+}
+--------------------------------------------------
+
+Of course, we would normally write these types of queries using the `match`
+query, but understanding how the `match` query works internally lets you take
+control of the process when you need to. There are some things that can't be
+done with a single `match` query, such as give more weight to some query terms
+than to others. We will look at an example of this in the next section.
+

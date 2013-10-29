@@ -21,7 +21,7 @@ As soon as we talk about either relevance or analysis, we are in the territory
 of queries, rather than filters.
 
 [[term-vs-full-text]]
-=== Term-based queries vs full-text queries
+=== Term-based vs. Full-text
 
 While all queries perform some sort of relevance calculation, not all queries
 have an analysis phase. Besides specialized queries like the `bool` or
@@ -50,9 +50,9 @@ you query a full-text (`analyzed`) field, they will first pass the query
 string through the appropriate analyzer to produce the list of terms to be
 queried.
 
-Once the query has assembled a list of terms, it executes the appropriate low-
-level query for each of these terms, then combines  their results to produce
-the final relevance score for each document.
+Once the query has assembled a list of terms, it executes the appropriate
+low-level query for each of these terms, then combines  their results to
+produce the final relevance score for each document.
 
 We will discuss this process in more detail in the following chapters.
 --
@@ -62,20 +62,10 @@ query full text, not individual terms, and this is easier to do with the
 high-level full-text queries which, in turn, use term-based queries
 internally.
 
-Single-term queries like the following:
-
-[source,js]
---------------------------------------------------
-GET /_search
-{
-    "query": {
-        "term": { "gender": "female" }
-    }
-}
---------------------------------------------------
-
-usually represent binary `yes`|`no` questions and are almost always better
-expressed as a filter:
+**************************************************
+Single-term queries usually represent binary `yes`|`no` questions and are
+almost always better expressed as a filter, so that they can benefit from
+filter caching:
 
 [source,js]
 --------------------------------------------------
@@ -91,6 +81,5 @@ GET /_search
 }
 --------------------------------------------------
 
-The cacheability of filters gives us a nice boost in performance.
-
+**************************************************
 

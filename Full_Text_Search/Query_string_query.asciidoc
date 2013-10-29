@@ -1,0 +1,238 @@
+=== The `query_string` query
+
+Back in <<search-lite>> we introduced query string search, which accepts a
+query in the `q=` query string parameter, and which understands a concise
+search syntax, known as the _Lucene query parser syntax_:
+
+[source,js]
+--------------------------------------------------
+# GET /_search?q=title:(brown fox) body:(brown fox)
+GET /_search?q=title%3A(brown+fox)+body%3A(brown+fox)
+--------------------------------------------------
+
+This same query parser syntax is exposed in the Query DSL as the
+`query_string` query:
+
+[source,js]
+--------------------------------------------------
+GET /_search
+{
+    "query": {
+        "query_string": "title:(brown fox) body:(brown fox)"
+    }
+}
+--------------------------------------------------
+
+In this example, we have explicitly told the `query_string` query to search
+within the `title` and `body` fields specifically, but it falls back to
+searching within the <<all-field,`_all` field>> for words where no field has
+been specified:
+
+[source,js]
+--------------------------------------------------
+GET /_search
+{
+    "query": {
+        "query_string": "title:(brown fox) body:(brown fox) foo bar" <1>
+    }
+}
+--------------------------------------------------
+<1> Looks for `foo` or `bar` in the `_all` field.
+
+This ``default field'' can be changed by specifying a different
+`default_field` in the query:
+
+[source,js]
+--------------------------------------------------
+GET /_search
+{
+    "query": {
+        "query_string": {
+            "default_field": "other", <1>
+            "query":         "title:(brown fox) body:(brown fox) foo bar"
+    }
+}
+--------------------------------------------------
+<1> Looks for `foo` or `bar` in the `other` field.
+
+Alternatively, the default field can be specified using the `field` query. The
+following example is exactly the same as the `query_string` example above:
+
+[source,js]
+--------------------------------------------------
+GET /_search
+{
+    "query": {
+        "field": {
+            "other": "title:(brown fox) body:(brown fox) foo bar"
+        }
+    }
+}
+--------------------------------------------------
+
+The `query_string` and `field` queries understand a complicated, succinct
+query syntax, which is explained in detail in the
+{ref}/query-dsl-query-string-query.html#query-string-syntax[Query String Syntax]
+reference docs, and we will introduce elements of the syntax in the following
+chapters.
+
+[[query-string-problems]]
+We also said that this query type, while useful for _ad hoc_ queries from the
+command line, should not be exposed to your users:
+
+* It is fragile, meaning that any syntax error will result in an error being
+  returned instead of results.
+
+* It exposes all your fields to the user, potentially exposing data you would
+  prefer to keep secret.
+
+* It allows them to run very heavy queries which could bring your cluster to
+  its knees.
+
+That said, the `query_string` query does have one very useful property when it
+is used for multi-field matching.
+
+==== Multi-field matching with `query_string`
+
+While the `multi_match` field searches each field for matches, the
+`query_string` query treats multiple fields as a single ``pooled field''. This
+effect is less obvious when we are looking for *any* matching term, but it
+becomes more obvious when we require *all* terms.
+
+The difference is most easily understood by example.  Imagine we have a
+document like the following:
+
+[source,js]
+--------------------------------------------------
+{
+    "first": "John",
+    "last":  "Smith"
+}
+--------------------------------------------------
+
+A `multi_match` query like the following will match this document:
+
+[source,js]
+--------------------------------------------------
+GET /_search
+{
+    "query": {
+        "multi_match": {
+            "query":       "john smith",
+            "fields":      [ "first", "last"],
+            "use_dis_max": false <1>
+        }
+    }
+}
+--------------------------------------------------
+
+<1> Use a `bool` query because we want to add together the score from each
+    field.
+
+It matches because it queries the `first` field for `john OR smith` and
+the `last` field for `john OR smith`, and each field contains one
+matching term. So far, so good.
+
+However, we decide that we are getting way too many matches and we would like
+to show only documents that match all terms:
+
+[source,js]
+--------------------------------------------------
+GET /_search
+{
+    "query": {
+        "multi_match": {
+            "query":       "john smith",
+            "fields":      [ "first", "last"],
+            "use_dis_max": false,
+            "operator":    "and" <1>
+        }
+    }
+}
+--------------------------------------------------
+
+<1> Setting `operator` to `"and"` means that both `john` and `smith` are
+    required.
+
+Now, we get zero matches! But if we try the same thing with the `query_string`
+query:
+
+[source,js]
+--------------------------------------------------
+GET /_search
+{
+    "query": {
+        "query_string": {
+            "query":            "john smith",
+            "fields":           [ "first", "last"],
+            "default_operator": "and"
+        }
+    }
+}
+--------------------------------------------------
+
+we find that it *does* match!
+
+The reason for this difference is that the `multi_match` query requires both
+terms *in a single field*, while the `query_string` query looks for documents
+where each term exists in *at least one field*.
+
+This difference can be demonstrated by running both of the queries through the
+`validate_query` API:
+
+[source,js]
+--------------------------------------------------
+GET /_validate/query?explain
+{
+    "multi_match": {
+        "query":       "john smith",
+        "fields":      [ "first", "last"],
+        "use_dis_max": false,
+        "operator":    "and"
+    }
+}
+
+GET /_validate/query?explain
+{
+    "query_string": {
+        "query":            "john smith",
+        "fields":           [ "first", "last"],
+        "default_operator": "and"
+    }
+}
+--------------------------------------------------
+
+The explanations for the two queries are as follows (remember that `+` means
+_required_):
+
+`multi_match`::
+
+--------------------------------------------------
+(+first:john +first:smith) (+last:john +last:smith)
+--------------------------------------------------
+
+`query_string`::
+
+--------------------------------------------------
++(first:john | last:john) +(first:smith | last:smith)
+--------------------------------------------------
+
+This ``pooled field'' functionality is clearly useful and easy to use, but it
+exposes us to the <<query-string-problems,problems>> associated with the
+`query_string` query. So how we can avoid these issues?
+
+==== Sanitising the query string
+
+One approach is to sanitise the query string: remove all of the _reserved
+characters_ before we run the query, using a regular expression to replace
+all of the following with whitespace:
+
+--------------------------------------------------
+- + : \ / { } [ ] ( ) * ? ~ ^ ! & | " AND OR NOT
+--------------------------------------------------
+
+This will render your query string harmless and is an acceptable approach.
+
+Another approach, which we discuss in the <<pooled-fields,next section>>, is
+to index both the `first` and `last` fields into a single inverted index and
+to query it as a single field, then we manage to avoid the problem completely.
