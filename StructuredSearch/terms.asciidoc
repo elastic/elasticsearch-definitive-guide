@@ -36,9 +36,35 @@ And then query it with the following `terms` filter:
 }
 --------------------------------------------------
 
-The query will return first and third document.  It's as if we had built a `bool`
-with two `term` filters inside the Should clause.  Is that what the `terms` filter
-does internally?
+The query will return first and third document:
+
+[source,json]
+--------------------------------------------------
+"hits" : [ 
+    {
+        "_index" : "my_index",
+        "_type" : "my_type",
+        "_id" : "1",
+        "_score" : 1.0,
+        "_source" : { 
+          "title" : "Twelfth Night" 
+        }
+    },
+    {
+        "_index" : "my_index",
+        "_type" : "my_type",
+        "_id" : "3",
+        "_score" : 1.0,
+        "_source" : { 
+          "title" : "twelfth night" 
+        }
+    } 
+]
+--------------------------------------------------
+
+Superficially, the behavior is identical to building a `bool` with two `term` 
+filters inside of a `should` clause.  Is that what the `terms` filter is actually
+doing internally?
 
 To answer that question, we need to look at the `execution_mode` attribute.
 
@@ -64,17 +90,22 @@ Resulting bitset is the union of the first two, using a bitwise OR: `[1,0,1,0]`
 
 The final bitset represents all the documents that have _any_ of the
 specified terms, which means the `terms` filter is an OR operation (if that
-doesn't make sense, sit tight: we'll talk about it more in 
-<<_contains_but_does_not_equal>>).
+doesn't quite make sense, sit tight: we'll talk about it more in 
+"<<_contains_but_does_not_equal>>").
 
 This final, composite bitset is cached instead of the individual bitsets.
 This is often more efficient use of space, since the final filter may be composed
 of many small bitsets which are largely zero-values.  Packing them together
 into a single filter tends to save space and speed.
 
+So to answer the question _"does Elasticsearch build a `bool` filter internally"_,
+the answer is no, by default it does not.  It uses the `plain` execution mode
+which optimizes the bitset creation process.
+
 ==== Execution Mode: Bool
-The other useful execution mode is `bool`, which tells Elasticsearch to construct
-a `bool` filter internally instead of a composite bitset.
+There is, however, another mode that is called `bool`.  As you might guess, this
+tells Elasticsearch to construct a `bool` filter internally instead of a 
+composite bitset.
 
 With `execution_mode: bool`, our original query is internally transformed into 
 this query:
@@ -83,8 +114,7 @@ this query:
 --------------------------------------------------
 {
     "query" : {
-        "filtered_query" : {
-            "query" : { "match_all" : {} },
+        "filtered" : {
             "filter" : {
                 "bool" : {
                     "should" : [
@@ -104,7 +134,7 @@ cached.
 
 In `plain`, the final bitset is a union of all term's bitsets.  We only cached
 the final, composite bitset.  With `bool`, individual `term` filters are cached 
-individually (just like a normal `bool` filter) while the final bitset is not
+independently (just like a normal `bool` filter).  The final bitset is not
 cached.
 
 Generally speaking, the default `plain` mode is a better choice.  But `bool` can 
@@ -126,3 +156,5 @@ should choose.  The default `plain` works very well, but sometimes you may need
 to manually intervene.  Carefully consider the types of filters you are using,
 their cardinality and how often they will get reused before making your choice.
 
+If in doubt, stick to the default `plain` mode...defaults in Elasticsearch are
+chosen because they work for 95% of people!

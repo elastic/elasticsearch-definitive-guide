@@ -24,12 +24,11 @@ can be avoided entirely, meaning large parts of the tree never need to be
 evaluated.
 
 This leads to very fast operation.  Due to the nature of sorted trees, you can 
-determine find the min/max with many fewer operations than if you merely traversed
-the list one-by-one.
+find the min/max with few operations.
 
 ==== String Ranges
-String ranges are done in lexicographical order: "a" comes before "ab", followed 
-by "ac", etc.
+String ranges are done in lexicographical order: "a" comes before "ab", which 
+are sorted before "ac", etc.
 
 In contrast to numeric ranges, there are no tricks that can be performed
 to enhance speed. A prefix tree cannot be maintained for string fields, since 
@@ -37,7 +36,8 @@ it is a very purpose-built data structure.
 
 We can afford to build a prefix tree for numeric values because the number of
 operations are very limited (for example, you never need to do phrase matching,
-or fuzzy, or wildcard, etc).
+or fuzzy, or wildcard, etc).  Numeric fields just need to provide search for
+exact matches and ranges, nothing more.
 
 In contrast, strings need to support the full range of full-text operations, so
 our only option is to evaluate the inverted index item-by-item.
@@ -55,7 +55,9 @@ until we hit the end of the range.
 
 As you can see, unlike numeric ranges (which can find the min/max in only a few
 operations), a lexicographical range will always require as many operations as
-it takes to traverse all the terms in the range.
+it takes to traverse all the terms in the range.  If there are 1000
+terms that fall in the range...Elasticsearch has to make a minimum of 1000
+comparisons.
 
 This isn't to say avoid ranges on strings -- they are still quite fast.
 And like most filters, ranges are cached so subsequent executions are even faster.

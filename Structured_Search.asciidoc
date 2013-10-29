@@ -35,16 +35,6 @@ include::StructuredSearch/bitsets.asciidoc[]
 
 include::StructuredSearch/persegmentbitsets.asciidoc[]
 
-
-
-=== Normalizing exact values
-
-include::StructuredSearch/normalizingexact.asciidoc[]
-
-include::StructuredSearch/stopwords.asciidoc[]
-
-include::StructuredSearch/omit_norms.asciidoc[]
-
 === Social-graph filter
 
 include::StructuredSearch/termslookup.asciidoc[]
@@ -53,7 +43,8 @@ include::StructuredSearch/termslookup.asciidoc[]
 
 include::StructuredSearch/cachekey.asciidoc[]
 
-=== Exact value queries
+=== Normalizing exact values
 
-TODO
+include::StructuredSearch/normalizingexact.asciidoc[]
+
 

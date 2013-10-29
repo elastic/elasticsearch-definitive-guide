@@ -8,26 +8,25 @@ Sometimes this is inconvenient and you want to specify a default value. Most cor
 types (String, Number, Boolean, Date) support an option to define a null value
 called, unsurprisingly, `null_value`.
 
-In this mapping, we define a string (e.g. "NA") as the default when a `null` is
-encountered:
+In this mapping, we define a string as the default when a `null` is encountered:
 
 [source,js]
 --------------------------------------------------
 {
    "tweet" : {
       "properties" : {
-         "message" : {"type" : "string", "null_value" : "NA"}
+         "message" : {"type" : "string", "null_value" : "This is a default."}
       }
 }
 --------------------------------------------------
 
 
-And now, when we index this document, the string "NA" will be indexed and stored
-in the `message` field:
+And now, when we index this document, the string "This is a default" will be 
+indexed and stored in the `message` field:
 
 [source,js]
 --------------------------------------------------
-{ "message" : null }    //Stored as { "message" : "NA" }
+{ "message" : null }    //Stored as { "message" : "This is a default." }
 --------------------------------------------------
 
 

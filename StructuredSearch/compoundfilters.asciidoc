@@ -1,7 +1,10 @@
 
-A very common operation is combining multiple filters together at the same time. 
-For example, you need to find all documents where "age" is greater than 25 _and_ 
-"gender" is "male".
+The `term` filter example was great because it is simple and easy to understand.
+In practice you'll often find yourself needing to filter on multiple values or
+fields.  
+
+For example, how do you find all documents where "age > 25" _and_ "gender == 
+male" ? 
 
 What you need is the `bool` filter.  This is a compound filter that accepts 
 other filters, combining them in various boolean combinations.
@@ -32,9 +35,62 @@ The `bool` filter is composed of three sections:
  - *Must_not*: A document won't be returned if any of these clauses match.  
  Effectively, this is a set of NOT clauses.
 
-Each section of the `bool` filter is optional (e.g. you may have a Should clause
+Each section of the `bool` filter is optional (e.g. you can have a Should clause
 and nothing else), and each section can contain one or more filters.
 
+And that's it! When you need multiple filters, simply place them into the
+different sections of the `bool` filter.  Using the example at the top of this 
+section, let's filter all documents where _"age > 25"_ and _"gender == 
+male"_:
+
+[source,js]
+--------------------------------------------------
+GET /my_index/my_type/_search
+{
+   "query" : {
+      "filtered" : {
+         "filter" : {
+            "bool" : {
+              "must" : [
+                 "range" : {"age" : {"gt" : 25}}, <1>
+                 "term" : {"gender" : "male"} <2>
+              ]
+           }
+         }
+      }
+   }
+   
+}
+--------------------------------------------------
+<1> <2> Both of these clauses must be satisfied for a document to be returned
+as a match
+
+If we put the filters inside a `should` instead of a `must`, we can ask for 
+documents that satisfy one or more of the filters:
+
+[source,js]
+--------------------------------------------------
+GET /my_index/my_type/_search
+{
+   "query" : {
+      "filtered" : {
+         "filter" : {
+            "bool" : {
+              "should" : [
+                 "range" : {"age" : {"gt" : 25}}, <1>
+                 "term" : {"gender" : "male"} <2>
+              ]
+           }
+         }
+      }
+   }
+   
+}
+--------------------------------------------------
+<1> <2> Only one of these filters must match for a document to be returned. A doc
+can have _"age > 25"_ OR _"gender: male"_ OR _"age > 25 AND gender: male"_.
+
+==== Caching
 By default, the `bool` filter _is not_ cached, unlike the majority of other 
 filters. In practice, most compound filters combine a number of dynamically 
 generated conditions.  Caching the "total set" of filters just wastes memory and

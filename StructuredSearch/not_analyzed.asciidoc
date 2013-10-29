@@ -2,10 +2,11 @@
 ==== Use not_analyzed for structured search
 
 The default behavior of Elasticsearch is to analyze your data so that you can
-perform full-text seach as discussed in <<analysis-intro>>.  For structured
-search, you want to disable this behavior by setting `index: not_analyzed` (see
-<<_customizing_field_mappings>> for more details).
+perform full-text search as discussed in <<analysis-intro>>.  For structured
+search, you will often want to disable this behavior by setting 
+`index: not_analyzed` (see <<_customizing_field_mappings>> for more details).
 
-The reason for this is fairly obvious: structured search is about exact values.
-The last thing we want is to transform our exact values through some type
-of analysis process.  We want the field to be entirely untouched.
+The reason for this is fairly obvious: structured search is all about exact
+values. The last thing we want is to transform our exact values through some 
+type of analysis process.  We want the field to be entirely untouched, and thus
+we usually make the fields `not_analyzed`.

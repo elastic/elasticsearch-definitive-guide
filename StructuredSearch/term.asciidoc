@@ -1,6 +1,6 @@
-When working with exact values, you will be working with filters.  And the most 
-common filter that you will be using is the `term` filter.  This filter performs
-no analysis steps - it simply searches for the exact query text that you provide.  
+When working with exact values, you will be mainly working with filters - 
+the `term` filter in particular.  This filter performs no analysis steps - it 
+simply searches for the exact query text that you provide.  
 
 ==== Term Filter
 
@@ -22,7 +22,7 @@ POST /my_index/my_type/_bulk
 --------------------------------------------------
 
 
-And now we want to find an exact value: "Twelfth Night".  We only want the
+Now we want to find the exact value "Twelfth Night".  We only want the
 document that has that term _exactly_.  To do this, we use a `term` filter 
 inside of a `filtered` query:
 
@@ -42,13 +42,14 @@ GET /my_index/my_type/_search
 }
 --------------------------------------------------
 
-Let's look at how this works internally:
+Internally, Elasticsearch is performing several operations when executing a 
+filter:
 
 1. *Find Matching Docs*
 +
 The `term` filter looks up the term `"Twelfth Night"` in the inverted index and
-retrieves the list of documents that contain that term.  In this case, it is
-only document `1`
+retrieves the list of documents that contain that term.  In this case, document 
+`1` has the term we are looking for
 
 2. *Build a Bitset*
 +
@@ -68,7 +69,8 @@ skip step 1. and 2.  This adds a lot of performance and makes filters very
 fast.
 
 The results are exactly as you would expect: only the first document is returned
-as a hit. 
+as a hit. None of the other documents are returned, since none of them have the
+term *exactly* as we specified in the filter.
 
 [source,json]
 --------------------------------------------------
@@ -85,4 +87,5 @@ as a hit.
 ]
 --------------------------------------------------
 <1> Notice how the score of the document is one.  Filters don't perform any 
-scoring, so all documents that match a filter automatically get a score of one.
+scoring, so all documents that match a filter automatically get a score of one
+unless modified by a query.

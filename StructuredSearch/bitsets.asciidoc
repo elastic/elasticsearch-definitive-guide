@@ -6,9 +6,11 @@ We are going to take a quick detour and talk about how filters work internally.
 A good understanding of the internals will let you optimize your queries for
 maximum performance.
 
-We've already discussed bitsets some, but we are going to talk about them more.
-As you already know, bitsets are simply arrays of bits (1's and 0'z).  They are 
-very compact which makes them excellent for in-memory operations.
+We've already discussed bitsets some in "<<_term_filter>>", but we are going to 
+talk about them in a bit more detail. As you already know, bitsets are simply 
+arrays of bits (1's and 0's).  They are  very compact which makes them excellent 
+for in-memory operations.  Elasticsearch can efficiently store many different
+filters in memory.
 
 The first time a filter is executed, it iterates over each document and 
 evaluates the filter: _"Does this document match?"_
@@ -17,12 +19,31 @@ If the answer is Yes, a `1` is placed in the bitset for that document; otherwise
 a `0` is recorded.  This is repeated for all the documents in your index.
 
 When the filter is finished, you will have an array of bits representing the
-matching status of each document.
+matching status of each document.  This bitset is then used to mask the index,
+such that only documents with a `1` bit (e.g. matching the filter) are evaluated
+with the query.
 
-The real performance advantage comes the next time the filter is used.  Instead
-of iterating over each document (which usually requires disk I/O and CPU to
-evaluate the filter), Elasticsearch merely looks at the array of bits
+This alone has big performance benefits.  Relevancy and scoring requires
+computation.  While a single score calculation is very fast, your query
+may match _billions_ of documents, and scoring a billion documents can take 
+some time.  If you are aiming for sub-second response times, this can pose a
+real problem.
+
+Filters allow you to skip the scoring step for documents that wouldn't have 
+been a hit anyway, since they don't match the filter criterion.
+
+The real performance advantage comes the next time the filter is 
+used.  Instead of iterating over each document (which usually requires disk I/O 
+and CPU to evaluate the filter), Elasticsearch merely looks at the array of bits
 and finds all positions with a `1`.
+
+This provides huge performance benefits, since retrieving the bitset from memory
+and masking the index is orders of magnitude faster than evaluating the filter
+against each document.
+
+Filters provide two layers of performance.  First, it avoids scoring calculations
+on unnecessary documents.  Second, they are cached so that future filtering
+can skip the filter evaluation step.
 
 .Independent filter caching
 ****
@@ -33,17 +54,17 @@ the same filter bitset will be reused.
 This ties in nicely with the composability of the query DSL.  It is easy to
 move filters around, or reuse the same filter in multiple places within the
 same query.  This isn't just convenient to the developer -- it has direct
-performance benefits.
+performance benefits because the bitsets are reused internally.
 ****
 
 Evaluating filters by looking at the bits is already a powerful technique, but
-the real benefit lies in multi-filter operations.  Since the bitset is just an
-array of bits, we can perform bitwise operations.  
+another benefit lies in multi-filter operations.  Since the bitset is just 
+an array of bits, we can perform bitwise operations.  
 
 For example, finding the union of two terms is just a bitwise OR on the two 
 filter bitsets. Similarly, the intersection of two terms is just a bitwise AND.
 
-These bitwise operations are so basic, so fundamental to computing, that your 
+These bitwise operations are so basic -- so fundamental to computing -- that your 
 CPU has dedicated hardware to perform bitwise calculations.  It is hard to 
 overstate how fast these operations are. They are literally several orders of 
 magnitude faster than that retrieving the documents from disk

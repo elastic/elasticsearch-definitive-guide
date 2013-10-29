@@ -15,9 +15,9 @@ For example, imagine we have these three documents:
 
 [source,js]
 --------------------------------------------------
-{ "first_name" : "Zachary", "middle_name" : "Joseph", "last_name" : "Tong" }
-{ "first_name" : "Zachary", "middle_name" : null, "last_name" : "Tong" }
-{ "first_name" : "Zachary", "last_name" : "Tong" }
+{ "_id" : 1, "first_name" : "Zachary", "middle_name" : "Joseph", "last_name" : "Tong" }
+{ "_id" : 2, "first_name" : "Zachary", "middle_name" : null, "last_name" : "Tong" }
+{ "_id" : 3, "first_name" : "Zachary", "last_name" : "Tong" }
 --------------------------------------------------
 
 Our objective is to find all people named "Zachary Tong" who have a
@@ -46,9 +46,39 @@ GET /my_index/my_type/_search
 
 Without the `exists` clause, this query would match all three documents.
 
-With the `exists` filter, documents `1` and `2` are returned.  Why `2`? Even
-though it's value is null, Elasticsearch considers a field with an explicit
-`null` as "existing", so it is returned as well.  
+With the `exists` filter, documents `1` and `2` are returned:
+
+[source,json]
+--------------------------------------------------
+"hits" : [ 
+    {
+        "_index" : "my_index",
+        "_type" : "my_type",
+        "_id" : "1",
+        "_score" : 1.0,
+        "_source" : { 
+          "first_name" : "Zachary",
+          "middle_name" : "Joseph", 
+          "last_name" : "Tong" 
+        }
+    },
+    {
+        "_index" : "my_index",
+        "_type" : "my_type",
+        "_id" : "2",
+        "_score" : 1.0,
+        "_source" : { 
+          "first_name" : "Zachary",
+          "middle_name" : null,
+          "last_name" : "Tong" 
+        }
+    } 
+]
+--------------------------------------------------
+
+Why is document `2` returned? Even though it's value is null, Elasticsearch 
+considers a field with an explicit `null` as "existing", so it is returned as 
+well.  
 
 That's a bit annoying, since you may not think that `null` is a legitimate
 value for "existence".  We can solve this problem, but we need to introduce
@@ -78,7 +108,25 @@ GET /my_index/my_type/_search
 }
 --------------------------------------------------
 
-Now only document `3` will be returned, since it is the only document that is
+Now only document `3` will be returned:
+
+[source,json]
+--------------------------------------------------
+"hits" : [ 
+    {
+        "_index" : "my_index",
+        "_type" : "my_type",
+        "_id" : "3",
+        "_score" : 1.0,
+        "_source" : { 
+          "first_name" : "Zachary",
+          "last_name" : "Tong" 
+        }
+    }
+]
+--------------------------------------------------
+
+Document `3` is the only doc returned since it is the only one that is
 missing the entire `middle_name` field.  It is effectively asking "Which
 documents have a first and last name but _do not_ have a middle name".
 
@@ -108,7 +156,34 @@ GET /my_index/my_type/_search
 --------------------------------------------------
 
 And now documents `2` and `3` are returned, since `2`'s explicit `null` is now
-considered a "missing" field rather than an actual value.
+considered a "missing" field rather than an actual value:
+
+[source,json]
+--------------------------------------------------
+"hits" : [ 
+    {
+        "_index" : "my_index",
+        "_type" : "my_type",
+        "_id" : "2",
+        "_score" : 1.0,
+        "_source" : { 
+          "first_name" : "Zachary",
+          "middle_name" : null,
+          "last_name" : "Tong" 
+        }
+    },
+    {
+        "_index" : "my_index",
+        "_type" : "my_type",
+        "_id" : "3",
+        "_score" : 1.0,
+        "_source" : { 
+          "first_name" : "Zachary",
+          "last_name" : "Tong" 
+        }
+    }
+]
+--------------------------------------------------
 
 
 ==== Exists (and not null)
@@ -145,7 +220,25 @@ GET /my_index/my_type/_search
 
 We are basically using a double-negative here.  A document is matched if it _does
 not_ have a missing `middle_name` field, and we set `null_value` so that `null`
-is considered missing too.
+is considered missing too.  The result is now as we want - only document `1`
+is returned:
+
+[source,json]
+--------------------------------------------------
+"hits" : [ 
+    {
+        "_index" : "my_index",
+        "_type" : "my_type",
+        "_id" : "1",
+        "_score" : 1.0,
+        "_source" : { 
+          "first_name" : "Zachary",
+          "middle_name" : "Joseph", 
+          "last_name" : "Tong" 
+        }
+    }
+]
+--------------------------------------------------
 
 ==== Exists/Missing on Objects
 
