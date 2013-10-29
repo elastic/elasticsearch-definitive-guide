@@ -1,4 +1,8 @@
 
+Prefix matching is extremely useful for autocomplete and general cases where
+you need to find words starting with a certain
+
+
 In the last section we say that Elasticsearch rewrote a prefix query into a regular expression utilizing a wildcard star.  Does that mean you can use wildcards in other places?  And regular expressions?
 
 You bet!
