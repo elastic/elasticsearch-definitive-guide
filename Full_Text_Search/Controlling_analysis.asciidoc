@@ -19,7 +19,7 @@ PUT /my_index/my_type/_mapping
 {
     "my_type": {
         "properties": {
-            "english": {
+            "english_title": {
                 "type":     "string",
                 "analyzer": "english"
             }
@@ -29,25 +29,25 @@ PUT /my_index/my_type/_mapping
 --------------------------------------------------
 
 Now we can compare how values in the `english` field and the `title` field are
-analyzed at index time using the `analyze` API:
+analyzed at index time using the `analyze` API to analyze the word `"Foxes"`:
 
 [source,js]
 --------------------------------------------------
 GET /my_index/_analyze?field=my_type.title   <1>
 Foxes
 
-GET /my_index/_analyze?field=my_type.english <2>
+GET /my_index/_analyze?field=my_type.english_title <2>
 Foxes
 --------------------------------------------------
 
 <1> Field `title`, which uses the default `standard` analyzer returns the
     term `foxes`
 
-<2> Field `english`, which uses the `english` analyzer returns the term
+<2> Field `english_title`, which uses the `english` analyzer returns the term
     `fox`.
 
 If we were to run a low-level `term` query for the exact term `fox`, the
-`english` field would match but the `title` field would not.
+`english_title` field would match but the `title` field would not.
 
 High-level queries like the `match` query understand field mappings and can
 apply the correct analyzer for each field being queried. We can see this
@@ -60,14 +60,14 @@ GET /my_index/my_type/_validate/query?explain
 {
     "multi_match": {
         "query":  "Foxes",
-        "fields": [ "title", "english" ]
+        "fields": [ "title", "english_title" ]
     }
 }
 --------------------------------------------------
 
 which returns this `explanation`:
 
-    (title:foxes | english:fox)
+    (title:foxes | english_title:fox)
 
 By using the appropriate analyzer for each field, the `multi_match` query
 ensures that it looks for each term in the correct format for that field.
