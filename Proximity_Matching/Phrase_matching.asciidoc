@@ -69,7 +69,7 @@ This returns:
 
 Positions can be stored in the inverted index, and position-aware queries like
 the `match_phrase` query can use them to match only documents which contains
-all of the words in exactly the order specfified, with no words inbetween.
+all of the words in exactly the order specified, with no words inbetween.
 
 ==== What is a phrase
 
