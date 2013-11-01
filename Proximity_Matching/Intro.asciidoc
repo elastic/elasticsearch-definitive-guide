@@ -1,0 +1,27 @@
+Standard full text search with TF/IDF treats documents, or at least each field
+within a document, as a big _bag of words_.  The `match` query can tell us if
+that bag contains our search terms or not, but that is only part of the story.
+It can't tell us anything about the relationship between words.
+
+Consider the difference between these sentences:
+
+* ``Sue ate the alligator''
+* ``The alligator ate Sue''
+* ``Sue never goes anywhere without her alligator skin purse''
+
+A `match` query for `"sue alligator"` would match all three documents, but it
+doesn't tell us if the two words form part of the same idea, or even the same
+paragraph.
+
+Understanding how words relate to each other is a very complicated problem and
+we are not going to be able to solve it by just using another type of query,
+but we can at least find words that appear to be related because they appear
+near each other or even next to each other.
+
+Each document may be much longer than the examples we present above -- `Sue`
+and `alligator` may be separated by paragraphs of other text. Perhaps we still
+want to return these documents where the words are widely separated, but we
+want to give documents where the words are close together a higher relevance
+score.
+
+This is the province of _phrase matching_ or _proximity matching_.

@@ -1,0 +1,81 @@
+=== Multi-value fields
+
+A curious thing can happen when you try to use phrase matching on multi-value
+fields.  Imagine that you index this document:
+
+[source,js]
+--------------------------------------------------
+PUT /my_index/groups/1
+{
+    "names": [ "John Abraham", "Lincoln Smith"]
+}
+--------------------------------------------------
+
+Then run a phrase query for `"Abraham Lincoln"`:
+
+[source,js]
+--------------------------------------------------
+GET /my_index/groups/_search
+{
+    "query": {
+        "match_phrase": {
+            "names": "Abraham Lincoln"
+        }
+    }
+}
+--------------------------------------------------
+
+Surprisingly our document matches, even though `"Abraham"` and `"Lincoln"`
+belong to two different people in the `names` array. The reason for this comes
+down to the way arrays are indexed in Elasticsearch.
+
+When `"John Abraham"` is analyzed, it produces:
+
+* Position 1: `john`
+* Position 2: `abraham`
+
+Then when `"Lincoln Smith"` is analyzed, it produces:
+
+* Position 3: `lincoln`
+* Position 4: `smith`
+
+In other words, it produces exactly the same list of tokens as it would have
+done for the single string `"John Abraham Lincoln Smith"`. Our example query
+looks for `abraham` directly followed by `lincoln`, and these two terms do
+indeed exist and they are right next to each other, so the query matches.
+
+Fortunately, there is a simple workaround for cases like these, called the
+`position_offset_gap`, which we need to configure in the field mapping:
+
+[source,js]
+--------------------------------------------------
+DELETE /my_index/groups/ <1>
+
+PUT /my_index/groups/_mapping <2>
+{
+    "groups": {
+        "properties": {
+            "names": {
+                "type":                "string",
+                "position_offset_gap": 100
+            }
+        }
+    }
+}
+--------------------------------------------------
+<1> First delete the `group` mapping and and documents of that type.
+<2> Then create a new `group` mapping with the correct values.
+
+The `position_offset_gap` settings tells Elasticsearch that it should increase
+the current term `position` by the specified value for every new array
+element.  So now, when we index the array of names, the terms are emitted with
+the following positions:
+
+* Position 1: `john`
+* Position 2: `abraham`
+* Position 103: `lincoln`
+* Position 104: `smith`
+
+Our phrase query would no longer match a document like this because `abraham`
+and `lincoln` are now 100 words apart. You would have to add a `slop` value of
+100 in order for this document to match.

@@ -1,26 +1,20 @@
 [[proximity-matching]]
 == Proximity matching
 
-include::ProximityMatching/proximityintro.asciidoc[]
+include::Proximity_Matching/Intro.asciidoc[]
 
-=== Phrase queries
+include::Proximity_Matching/Phrase_matching.asciidoc[]
 
-include::ProximityMatching/matchphrase.asciidoc[]
+include::Proximity_Matching/Slop.asciidoc[]
 
-=== Being more flexible
+include::Proximity_Matching/Multi_value_fields.asciidoc[]
 
-include::ProximityMatching/slop.asciidoc[]
+include::Proximity_Matching/Scoring.asciidoc[]
 
-=== Multi-value string fields
+include::Proximity_Matching/Relevance.asciidoc[]
 
-include::ProximityMatching/position_offset_gap.asciidoc[]
+include::Proximity_Matching/Performance.asciidoc[]
 
-index_options: position
-
-
-
-=== Proximity at index time
-
-include::ProximityMatching/shingles.asciidoc[]
+include::Proximity_Matching/Shingles.asciidoc[]
 
 

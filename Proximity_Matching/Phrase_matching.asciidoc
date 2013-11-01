@@ -1,0 +1,115 @@
+[[phrase-matching]]
+=== Phrase matching
+
+In the same way that the `match` query is the ``go-to'' query for standard
+full text search, the `match_phrase` query is the one you should reach for
+when you want to find words that are near to each other:
+
+[source,js]
+--------------------------------------------------
+GET /my_index/my_type/_search
+{
+    "query": {
+        "match_phrase": {
+            "title": "quick brown fox"
+        }
+    }
+}
+--------------------------------------------------
+
+Like the `match` query, the `match_phrase` query first analyzes the query
+string to produce a list of terms. It then searches for all the terms, but
+only keeps documents  which contains *all* of the search terms in the same
+*positions*, relative to each other.  A query for the phrase `"quick fox"`
+would not match any of our documents because no document contains the word
+`"quick"` immediately followed by `"fox"`.
+
+==== Term positions
+
+When a string is analyzed, the analyzer returns not only a list of terms, but
+also the _position_ or order of each term in the original string:
+
+[source,js]
+--------------------------------------------------
+GET /_analyze?analyzer=standard
+Quick brown fox
+--------------------------------------------------
+
+This returns:
+
+[source,js]
+--------------------------------------------------
+{
+   "tokens": [
+      {
+         "token": "quick",
+         "start_offset": 0,
+         "end_offset": 5,
+         "type": "<ALPHANUM>",
+         "position": 1 <1>
+      },
+      {
+         "token": "brown",
+         "start_offset": 6,
+         "end_offset": 11,
+         "type": "<ALPHANUM>",
+         "position": 2 <1>
+      },
+      {
+         "token": "fox",
+         "start_offset": 12,
+         "end_offset": 15,
+         "type": "<ALPHANUM>",
+         "position": 3 <1>
+      }
+   ]
+}
+--------------------------------------------------
+<1> The `position` of each term in the original string.
+
+Positions can be stored in the inverted index, and position-aware queries like
+the `match_phrase` query can use them to match only documents which contains
+all of the words in exactly the order specfified, with no words inbetween.
+
+==== What is a phrase
+
+For a document to be considered a match for the phrase ``quick brown fox'':
+
+* `quick`, `brown` and `fox` must all appear in the document
+
+* the position of `brown` must be `1` greater than the position of `quick`
+
+* the position of `fox` must be `2` greater than the position of `quick`
+
+If any of these conditions is not met, the document is not considered a match.
+
+==== Other queries
+
+Phrase matching is also supported by the `query_string` and `field` queries,
+where a phrase should be demarcated with double quotes:
+
+[source,js]
+--------------------------------------------------
+GET /my_index/my_type/_search
+{
+    "query": {
+        "query_string": {
+            "query": "title:\"quick brown fox\""
+        }
+    }
+}
+--------------------------------------------------
+
+**************************************************
+
+Internally, the `match_phrase` and `query_string` queries use the low-level
+`span` query family to do position-aware matching. Span queries are term-level
+queries, so they have no analysis phase -- they search for the exact term
+specified.
+
+Thankfully, most people never need to use the `span` queries directly as the
+`match_phrase` query is usually good enough. However, certain specialized
+fields, like patent searches, use these low-level queries to perform very
+specific carefully constructed positional searches.
+
+**************************************************

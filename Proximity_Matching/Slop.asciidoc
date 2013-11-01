@@ -1,0 +1,73 @@
+[[slop]]
+=== Mixing it up
+
+Requiring exact phrase matches may be too strict a constraint. Perhaps we *do*
+want documents which contain ``quick brown fox'' to be considered a match for
+the query ``quick fox'', even though the positions aren't exactly equivalent.
+
+We can introduce a degree of flexibility into phrase matching by using the
+`slop` parameter:
+
+[source,js]
+--------------------------------------------------
+GET /my_index/my_type/_search
+{
+    "query": {
+        "match_phrase": {
+            "title": "quick fox",
+            "slop":  1
+        }
+    }
+}
+--------------------------------------------------
+
+The `slop` parameter tells the `match_phrase` query how far apart terms are
+allowed to be while still considering the document a match. By ``how far
+apart'' we mean: _how many times do you need to move a term in order to make
+the query and document match_?
+
+We'll start with a simple example. To make the query `"quick fox"` match
+a document containing `"quick brown fox"` we need a `slop` of just `1`:
+
+
+                Pos 1         Pos 2         Pos 3
+    -----------------------------------------------
+    Doc:        quick         brown         fox
+    -----------------------------------------------
+    Query:      quick         fox
+    Slop 1:     quick                 ↳     fox
+
+While all words need to be present in phrase matching, even when using `slop`,
+the words don't neccessarily need to be in the same sequence in order to
+match. With a high enough `slop` value, words can be arranged in any order.
+
+To make the query `"fox quick"` match our document, we need a `slop` of `3`:
+
+                Pos 1         Pos 2         Pos 3
+    -----------------------------------------------
+    Doc:        quick         brown         fox
+    -----------------------------------------------
+    Query:      fox           quick
+    Slop 1:     fox|quick  ↵  <1>
+    Slop 2:     quick      ↳  fox
+    Slop 3:     quick                 ↳     fox
+
+<1> Note that `fox` and `quick` occupy the same position in this step.
+    Switching word order from ``fox quick'' to ``quick fox'' thus requires two
+    steps, or a `slop` of `2`.
+
+The `query_string` and `field` queries also support phrase `slop`, by adding a
+tilde (`~`) and the slop value after the phrase, as in this example:
+
+[source,js]
+--------------------------------------------------
+GET /my_index/my_type/_search
+{
+    "query": {
+        "query_string": {
+            "query": "title:\"fox quick\"~3"
+        }
+    }
+}
+--------------------------------------------------
+
