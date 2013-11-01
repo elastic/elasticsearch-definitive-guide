@@ -31,10 +31,20 @@ be broken down into two families:
 Term-based queries::
 +
 --
+
 Queries like the `term` or `fuzzy` queries are low-level queries which have no
 analysis phase. They operate on a single term. A `term` query for the term
-`"Foo"` looks for that exact term in the inverted index and calculates the
+`"Foo"` looks for that *exact term* in the inverted index and calculates the
 relevance (TF/IDF) for each document which contains that term.
+
+It is important to remember that the `term` query looks in the inverted index
+for the exact term only -- it won't match any variants like `"foo"` or
+`"FOO"`.  Also, it doesn't matter how the term came to be in the index, just
+that it is.  If you were to index `["Foo","Bar"]` into an exact value
+`not_analyzed` field, or `"Foo Bar"` into an analyzed field with the
+`whitespace` analyzer, both would result in having the two terms `"Foo"` and
+`"Bar"` in the inverted index.
+
 --
 
 Full-text queries::

@@ -27,7 +27,7 @@ GET /_search
 While the `bool` query is a useful generic way of combining multiple queries,
 it is not appropriate in every circumstance as it takes a _more-matches is
 better_ approach. Often this is exactly what you want.  However, it can
-produce incongruent results. Imagine for example that we have the following
+produce surprising results. Imagine for example that we have the following
 two documents:
 
 Document 1::

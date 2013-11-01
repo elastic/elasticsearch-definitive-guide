@@ -21,7 +21,7 @@ First, we'll create a new index:
 DELETE /my_index
 
 # create a new index with 1 primary shard <1>
-POST /my_index
+PUT /my_index
 { "settings": { "number_of_shards": 1 }}
 --------------------------------------------------
 
