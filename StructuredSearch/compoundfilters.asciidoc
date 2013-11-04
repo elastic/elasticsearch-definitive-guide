@@ -1,13 +1,9 @@
 
-The `term` filter example was great because it is simple and easy to understand.
-In practice you'll often find yourself needing to filter on multiple values or
-fields.  
+The previous two examples showed only a single filter in use. In practice you
+will probably need to filter on multiple values or fields.  
 
-For example, how do you find all documents where "age > 25" _and_ "gender == 
-male" ? 
-
-What you need is the `bool` filter.  This is a compound filter that accepts 
-other filters, combining them in various boolean combinations.
+In these situations, we need the `bool` filter.  This is a compound filter that 
+accepts other filters, combining them in various boolean combinations.
 
 ==== Bool Filter
 
@@ -29,8 +25,8 @@ The `bool` filter is composed of three sections:
  as a match. Effectively, this is equivalent to ANDing all clauses inside the
  `must`.
 
- - *Should*: These clauses are optional, but one needs to match.  Effectively,
- this is a set of OR clauses.
+ - *Should*: These clauses are optional, but at least one needs to match.  
+ Effectively, this is a set of OR clauses.
 
  - *Must_not*: A document won't be returned if any of these clauses match.  
  Effectively, this is a set of NOT clauses.
@@ -39,21 +35,32 @@ Each section of the `bool` filter is optional (e.g. you can have a Should clause
 and nothing else), and each section can contain one or more filters.
 
 And that's it! When you need multiple filters, simply place them into the
-different sections of the `bool` filter.  Using the example at the top of this 
-section, let's filter all documents where _"age > 25"_ and _"gender == 
-male"_:
+different sections of the `bool` filter.  Continuing with the products example
+from the previous section, let's find all documents where the price is equal to
+20 _or_ the UPC is "XHDK-A-1293-#fJ3".  In SQL, it would look like this:
+
+[source,sql]
+--------------------------------------------------
+SELECT product 
+FROM table 
+WHERE price = 20 
+  OR productID = "XHDK-A-1293-#fJ3"
+--------------------------------------------------
+With Elasticsearch, we will take the two `term` filters that we used previously
+and place them inside the `should` clause of a `bool` filter.  Since the `should`
+acts as a logical OR, we'll get the same behavior as the above SQL:
 
 [source,js]
 --------------------------------------------------
-GET /my_index/my_type/_search
+GET /my_store/products/_search
 {
    "query" : {
-      "filtered" : {
+      "filtered" : { <1>
          "filter" : {
             "bool" : {
-              "must" : [
-                 "range" : {"age" : {"gt" : 25}}, <1>
-                 "term" : {"gender" : "male"} <2>
+              "should" : [
+                 "term" : {"price" : 20}, <2>
+                 "term" : {"productID" : "XHDK-A-1293-#fJ3"} <2>
               ]
            }
          }
@@ -62,23 +69,77 @@ GET /my_index/my_type/_search
    
 }
 --------------------------------------------------
-<1> <2> Both of these clauses must be satisfied for a document to be returned
-as a match
+<1> Note that we still need to use a `filtered_query` to wrap everything
+<2> These two `term` filters are _children_ of the `bool` filter, and since they
+are placed inside the `should` clause, at least one of them needs to match
 
-If we put the filters inside a `should` instead of a `must`, we can ask for 
-documents that satisfy one or more of the filters:
+Our search results return two hits, each document satisfying a different clause
+in the `bool` filter:
+
+[source,json]
+--------------------------------------------------
+"hits" : [ 
+    {
+        "_index" : "my_store",
+        "_type" : "products",
+        "_id" : "1",
+        "_score" : 1.0,
+        "_source" : { 
+          "price" : 10,
+          "productID" : "XHDK-A-1293-#fJ3" <1>
+        }
+    },
+    {
+        "_index" : "my_store",
+        "_type" : "products",
+        "_id" : "2",
+        "_score" : 1.0,
+        "_source" : { 
+          "price" : 20, <2>
+          "productID" : "KDKE-B-9947-#kL5"
+        }
+    }
+]
+--------------------------------------------------
+<1> This matches the `term` filter for `productID = "XHDK-A-1293-#fJ3"`
+<2> This matches the `term` filter for `price = 20`
+
+==== Nesting boolean filters
+
+Even though `bool` is a compound filter and accepts "children" filters, it is
+important to understand that `bool` is just a filter itself.  This means you 
+can nest `bool` filters inside of other `bool` filters giving you the 
+ability to make arbitrarily complex boolean logic.
+
+Given this SQL statement:
+
+[source,sql]
+--------------------------------------------------
+SELECT document
+FROM products
+WHERE productID = "KDKE-B-9947-#kL5" 
+  OR ( productID = "JODL-X-1937-#pV7"
+    AND price = 30 )
+--------------------------------------------------
+
+We can translate it into a pair of nested `bool` filters:
 
 [source,js]
 --------------------------------------------------
-GET /my_index/my_type/_search
+GET /my_store/products/_search
 {
    "query" : {
       "filtered" : {
          "filter" : {
             "bool" : {
               "should" : [
-                 "range" : {"age" : {"gt" : 25}}, <1>
-                 "term" : {"gender" : "male"} <2>
+                "term" : {"productID" : "KDKE-B-9947-#kL5"}, <1>
+                "bool" : { <1>
+                  "must" : [
+                    "term" : {"productID" : "JODL-X-1937-#pV7"}, <2>
+                    "term" : {"price" : 30}, <2>
+                  ]  
+                }
               ]
            }
          }
@@ -87,23 +148,43 @@ GET /my_index/my_type/_search
    
 }
 --------------------------------------------------
-<1> <2> Only one of these filters must match for a document to be returned. A doc
-can have _"age > 25"_ OR _"gender: male"_ OR _"age > 25 AND gender: male"_.
+<1> Because the `term` and the `bool` are sibling clauses inside of the first 
+boolean `should`, at least one of these filters must match for a document to be
+a hit
+<2> These two `term` clauses are siblings in a `must` clause, so they both have
+to match for a document to be returned as a hit
 
-==== Caching
-By default, the `bool` filter _is not_ cached, unlike the majority of other 
-filters. In practice, most compound filters combine a number of dynamically 
-generated conditions.  Caching the "total set" of filters just wastes memory and
-I/O, since any particular combination of filters is unlikely to surface again.
+The results show us two documents, one matching each of the `should` clauses:
 
-Sometimes, however, it makes sense to cache the compound filter.  If you find
-yourself always specifying the same combination of filters inside a `bool`,
-consider caching the entire compound set by setting `_cache` to true.  This will
-cause the entire `bool` to be cached as a single bitset which in some arrangements
-may be more efficient.
+[source,json]
+--------------------------------------------------
+"hits" : [ 
+    {
+        "_index" : "my_store",
+        "_type" : "products",
+        "_id" : "2",
+        "_score" : 1.0,
+        "_source" : { 
+          "price" : 20,
+          "productID" : "KDKE-B-9947-#kL5" <1>
+        }
+    },
+    {
+        "_index" : "my_store",
+        "_type" : "products",
+        "_id" : "3",
+        "_score" : 1.0,
+        "_source" : { 
+          "price" : 30, <2>
+          "productID" : "JODL-X-1937-#pV7" <2>
+        }
+    }
+]
+--------------------------------------------------
+<1> This productID matches the `term` in the first `bool`
+<2> These two fields match the `term` filters in the nested `bool`
 
-
-==== Filter ordering
-
-TODO  Do we talk about this?  We removed the and/or/not so filter order isnt
-as important anymore...
+This was just a simple example, but it demonstrates how boolean filters clauses
+can be selected for the appropriate logic (e.g. and/or/not) and nested inside
+of each other.  With this framework, you can make as complex of boolean logic
+as you need.

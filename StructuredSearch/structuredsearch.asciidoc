@@ -3,32 +3,22 @@
 
 Structured search is all about interrogating data that has some type of inherent
 structure.  Dates, times and numbers are all structured -- they have a precise 
-format and you can perform logical operations on them.
+format and you can perform logical operations on them.  Common operations include
+comparing ranges of numbers or dates, or determining which value is larger.
 
- - _Is this date older than 30 days ago?_
- - _Show me all prices between 20 and 50_
- - _Return all documents with age > 25_
+Text can be structured too.  A box of crayons has a discrete set of colors: `red`, `green`, `blue`.  A blog post may be tagged with keywords 
+`distributed` and `search`.  Products in an e-commerce store have UPCs and other
+IDs which require strict and structured formatting.
 
-Text can be structured too.  A human is ``male'' or ``female''.  A blog post is 
-tagged with keywords ``distributed'' and ``search''.
+With structured search, the answer to your question is **always** a yes or no;
+something either belongs in the set or it does not.  Structured search does
+not worry about document relevance, scoring or sorting -- it simply includes
+or excludes documents.
 
-With structured search, the answer to your question is often a yes or no:
-something either belongs to your query or it does not.  In many cases, 
-structured search does not concern itself with relevance so much as including or
-excluding.
+This should make sense logically.  A number can't be "more" in a range than
+any other number which falls in the range.  It is either in the range...or it
+isn't.  Similarly, for structured text, a value is either equal or it isn't.  
+There is no concept of "more similar".
 
-.Traditional Databases
-****
-You may notice some parallels to traditional, relational databases here.
-
-RDBMs are typically very good at structured search.  `SELECT * FROM table WHERE 
-date > 07/10/2013`.
-
-RDBMs are good at these questions because they don't require relevance calculations.
-
-But don't worry, Elasticsearch is very good at structured search too, and you'll
-find that the flexible nature of the query DSL makes it easy to represent
-advanced queries which would be very difficult in SQL.
-****
-
-
+It may seem like we are belaboring the point, but this a fundamental concept to structured search.  The rest of the chapter builds on this concept of 
+inclusion/exclusion.

@@ -4,85 +4,128 @@ into an index without knowing _a priori_ what fields are in the document.  This
 is a huge benefit for building robust applications, but it does introduce some
 interesting dilemmas.
 
-For example, how can you handle documents that may have missing fields, or fields
-with null values?  To deal with these situations, Elasticsearch has two filters 
-which can help: `exists` and `missing`.
+Consider our last example, where documents have a field named `tags`.  This is
+a multi-valued field.  A document may have one tag, many tags, or potentially
+no tags at all. 
+
+How is this data represented in the inverted index?  If you think back to when
+we introduced the inverted index, it stores a list of terms for a particular 
+field. For each term in that list, it also stores the list of documents which 
+contain the term.
+
+If a field is empty (e.g. there are no `tags` for a document), there are no 
+terms to index, which means there will be no information added to the inverted 
+index.  Ultimately, this means that a `null`, `[]` (an empty array), and `[null]`
+are all equivalent...they simply don't exist in the inverted index!
+
+Obviously the world is not simple, and data is often missing fields, contains 
+explicit nulls or empty arrays. To deal with these situations, Elasticsearch has 
+a few tools to work with null or missing values.
 
 ==== Exists Filter
 
-The `exists` filter will return documents that have values in the specified field.
-For example, imagine we have these three documents:
+The first tool in your arsenal is the `exists` filter.  This filter will return 
+documents that have values in the specified field. Let's use the tagging example.
+First, we need to create an index and make sure the `tags` field is `not_analyzed`
+to avoid analysis problems.  Then we can insert some data:
 
 [source,js]
 --------------------------------------------------
-{ "_id" : 1, "first_name" : "Zachary", "middle_name" : "Joseph", "last_name" : "Tong" }
-{ "_id" : 2, "first_name" : "Zachary", "middle_name" : null, "last_name" : "Tong" }
-{ "_id" : 3, "first_name" : "Zachary", "last_name" : "Tong" }
+PUT /my_index <1>
+{
+    "mappings" : {
+        "posts" : {
+            "properties" : {
+                "tags" : {
+                    "type" : "string",
+                    "index" : "not_analyzed"
+                }
+            }
+        }
+    }
+}
+
+POST /my_index/posts/_bulk
+{ "index": { "_id": "1" }}
+{"tags" : ["search"] }
+{ "index": { "_id": "2" }}
+{ "tags" : ["search", "open source"] }
+{ "index": { "_id": "3" }}
+{ "other_field" : "some data" }
+{ "index": { "_id": "4" }}
+{ "tags" : null }
+{ "index": { "_id": "5" }}
+{ "tags" : ["search", null] }
+
 --------------------------------------------------
+<1> Like we saw earlier in <<_term_filter_with_text>>, we need to explicitly
+make these fields `not_analyzed` so that a default analyzer is not applied
 
-Our objective is to find all people named "Zachary Tong" who have a
-middle name.  The middle name field is optional, and therefore we can't be sure
-that all documents will have it.
+This data contains a variety of documents.  The first two documents have normal,
+multi-valued data.  Document `3` has no tags at all, while doc `4` explicitly 
+sets `null` for the `tags` field.  Finally, document `5` has one "real" tag
+and one explicit null.
 
-To address this situation, we use the exists filter:
+Our objective is to find all documents where a tag is set.  We don't care what
+the tag is, so long as it exists within the document.  To answer this question, 
+we use the exists filter:
 
 [source,js]
 --------------------------------------------------
-GET /my_index/my_type/_search
+GET /my_index/posts/_search
 {
     "query" : {
         "filtered" : {
-            "bool" : {
-                "must" : [
-                    {"term" : {"first_name" : "Zachary"}},
-                    {"term" : {"last_name" : "Tong"}},
-                    {"exists" : {"field" : "middle_name"}}
-                ]
+            "filter" : {
+                "exists" : {"field" : "middle_name"}
             }
         }
     }
 }
 --------------------------------------------------
 
-Without the `exists` clause, this query would match all three documents.
-
-With the `exists` filter, documents `1` and `2` are returned:
+Our query returns three documents:
 
 [source,json]
 --------------------------------------------------
-"hits" : [ 
+"hits" : [
     {
-        "_index" : "my_index",
-        "_type" : "my_type",
-        "_id" : "1",
-        "_score" : 1.0,
-        "_source" : { 
-          "first_name" : "Zachary",
-          "middle_name" : "Joseph", 
-          "last_name" : "Tong" 
-        }
+      "_index" : "my_index",
+      "_type" : "posts",
+      "_id" : "1",
+      "_score" : 1.0, "_source" : {"tags" : ["search"] }
     },
     {
-        "_index" : "my_index",
-        "_type" : "my_type",
-        "_id" : "2",
-        "_score" : 1.0,
-        "_source" : { 
-          "first_name" : "Zachary",
-          "middle_name" : null,
-          "last_name" : "Tong" 
-        }
-    } 
+      "_index" : "my_index",
+      "_type" : "posts",
+      "_id" : "5",
+      "_score" : 1.0, "_source" : { "tags" : ["search", null] } <1>
+    },
+    {
+      "_index" : "my_index",
+      "_type" : "posts",
+      "_id" : "2",
+      "_score" : 1.0, "_source" : { "tags" : ["search", "open source"] }
+    }
 ]
 --------------------------------------------------
+<1> Notice how doc `5` is returned, even though we indexed a `null` value. The
+field exists because a "normal" tag was indexed, so the `null` had no impact
+on the filter.
 
-Why is document `2` returned? Even though it's value is null, Elasticsearch 
-considers a field with an explicit `null` as "existing", so it is returned as 
-well.  
+The results are easy to understand.  The only two documents that were excluded
+were document `2` and `4`.  Document `2` didn't specify the `tags` field at
+all, so it isn't surprising that it doesn't match the `exists` filter.
 
-That's a bit annoying, since you may not think that `null` is a legitimate
-value for "existence".  We can solve this problem, but we need to introduce
-the `missing` filter first.
+Document `4` did specify the `tags` field, but it passed an explicit `null`.
+To Elasticsearch, an explicit `null` is the same a field not existing at all.
+Internally, nothing was indexed for that field...it is functionally equivalent
+to document `2`.
+
+The internal operation is also easy to understand.  All we need to do is scan
+down the inverted index and set a `1` bit for every document ID that we
+encounter, regardless of what the term is.  If a document's field has a term 
+-- any term -- it by definition means the field exists.
 
 ==== Missing Filter
 
@@ -92,153 +135,39 @@ documents where there is _no_ value for a particular field.  Let's swap the
 
 [source,js]
 --------------------------------------------------
-GET /my_index/my_type/_search
+GET /my_index/posts/_search
 {
     "query" : {
         "filtered" : {
-            "bool" : {
-                "must" : [
-                    {"term" : {"first_name" : "Zachary"}},
-                    {"term" : {"last_name" : "Tong"}},
-                    {"missing" : {"field" : "middle_name"}}
-                ]
-            }
+            "missing" : {"field" : "tags"}
         }
     }
 }
 --------------------------------------------------
 
-Now only document `3` will be returned:
+And, as you would expect, we get the inverse search results back (doc `2` and
+`4`):
 
 [source,json]
 --------------------------------------------------
 "hits" : [ 
     {
-        "_index" : "my_index",
-        "_type" : "my_type",
-        "_id" : "3",
-        "_score" : 1.0,
-        "_source" : { 
-          "first_name" : "Zachary",
-          "last_name" : "Tong" 
-        }
-    }
-]
---------------------------------------------------
-
-Document `3` is the only doc returned since it is the only one that is
-missing the entire `middle_name` field.  It is effectively asking "Which
-documents have a first and last name but _do not_ have a middle name".
-
-Unlike `exists`, there is an extra option that allows you to qualify explicit
-`null` values as "missing".  We can reconfigure our filter with the `null_value`
-option:
-
-[source,js]
---------------------------------------------------
-GET /my_index/my_type/_search
-{
-    "query" : {
-        "filtered" : {
-            "bool" : {
-                "must" : [
-                    {"term" : {"first_name" : "Zachary"}},
-                    {"term" : {"last_name" : "Tong"}},
-                    {"missing" : {
-                        "field" : "middle_name"
-                        "null_value" : true
-                    }}
-                ]
-            }
-        }
-    }
-}
---------------------------------------------------
-
-And now documents `2` and `3` are returned, since `2`'s explicit `null` is now
-considered a "missing" field rather than an actual value:
-
-[source,json]
---------------------------------------------------
-"hits" : [ 
-    {
-        "_index" : "my_index",
-        "_type" : "my_type",
-        "_id" : "2",
-        "_score" : 1.0,
-        "_source" : { 
-          "first_name" : "Zachary",
-          "middle_name" : null,
-          "last_name" : "Tong" 
-        }
+      "_index" : "my_index",
+      "_type" : "posts",
+      "_id" : "4",
+      "_score" : 1.0, "_source" : { "tags" : null }
     },
     {
-        "_index" : "my_index",
-        "_type" : "my_type",
-        "_id" : "3",
-        "_score" : 1.0,
-        "_source" : { 
-          "first_name" : "Zachary",
-          "last_name" : "Tong" 
-        }
-    }
+      "_index" : "my_index",
+      "_type" : "posts",
+      "_id" : "3",
+      "_score" : 1.0, "_source" : { "other_field" : "some data" }
+    } 
 ]
 --------------------------------------------------
 
 
-==== Exists (and not null)
 
-Now, getting back to the problem we encountered in earlier in the <<_exists_filter>>
-section: how can we find all people named "Zachary Tong" who have a middle name, 
-but _exclude_ middle names that are `null`?
-
-Since the `missing` filter includes a special provision for null values, we 
-simply re-arrange our boolean logic:
-
-[source,js]
---------------------------------------------------
-GET /my_index/my_type/_search
-{
-    "query" : {
-        "filtered" : {
-            "bool" : {
-                "must" : [
-                    {"term" : {"first_name" : "Zachary"}},
-                    {"term" : {"last_name" : "Tong"}}
-                ],
-                "must_not" : [
-                    {"missing" : {
-                        "field" : "middle_name"
-                        "null_value" : true
-                    }}
-                ]
-            }
-        }
-    }
-}
---------------------------------------------------
-
-We are basically using a double-negative here.  A document is matched if it _does
-not_ have a missing `middle_name` field, and we set `null_value` so that `null`
-is considered missing too.  The result is now as we want - only document `1`
-is returned:
-
-[source,json]
---------------------------------------------------
-"hits" : [ 
-    {
-        "_index" : "my_index",
-        "_type" : "my_type",
-        "_id" : "1",
-        "_score" : 1.0,
-        "_source" : { 
-          "first_name" : "Zachary",
-          "middle_name" : "Joseph", 
-          "last_name" : "Tong" 
-        }
-    }
-]
---------------------------------------------------
 
 ==== Exists/Missing on Objects
 

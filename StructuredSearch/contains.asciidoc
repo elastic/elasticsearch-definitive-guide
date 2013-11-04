@@ -4,13 +4,13 @@
 It is important to understand that `term` and `terms` are "contains" operations, 
 not "equals".  What does that mean?
 
-If you have a term filter for `{ "term" : { "years" : "2013" } }`, it will match 
+If you have a term filter for `{ "term" : { "tags" : "search" } }`, it will match 
 _both_ of the following documents:
 
 [source,js]
 --------------------------------------------------
-{ "years" : ["2013"] }
-{ "years" : ["2013", "2012"] }
+{ "tags" : ["search"] }
+{ "tags" : ["search", "open source"] }
 --------------------------------------------------
 
 Recall how the `term` filter works: it checks the inverted index for all
@@ -26,8 +26,8 @@ number of values that your field contains.  Using our two previous documents:
 
 [source,js]
 --------------------------------------------------
-{ "years" : ["2013"], "years_count" : 1 }
-{ "years" : ["2013", "2012"], "years_count" : 2 }
+{ "tags" : ["search"], "tag_count" : 1 }
+{ "tags" : ["search", "open source"], "tag_count" : 2 }
 --------------------------------------------------
 
 Once you have the count information indexed, you can construct a `bool` filter 
@@ -41,8 +41,8 @@ GET /my_index/my_type/_search
         "filter" : {
              "bool" : {
                 "must" : [
-                    { "term" : { "years" : "2013" } },
-                    { "term" : { "years_count" : 1 } }
+                    { "term" : { "tags" : "search" } },
+                    { "term" : { "tag_count" : 1 } }
                 ]
             }
         }
@@ -51,7 +51,8 @@ GET /my_index/my_type/_search
 --------------------------------------------------
 
 
-This query will now match only the document that is ["2013"] exactly
+This query will now match only the document that has a single tag which is 
+`search`, rather than any document which contains `search`.
 
 .Why can't Elasticsearch do this automatically?
 ****

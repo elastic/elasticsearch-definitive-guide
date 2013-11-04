@@ -1,41 +1,223 @@
 
 ==== Default values for null fields
 
-By default, Elasticsearch ignores null values.  If a document is indexed with
-a `null` as the value of a field, the field is simply not added to the document.
+As we saw above, Elasticsearch basically ignores any `null` value.  If it is
+in an array, it is as if nothing was specified.  If it is the value of a field,
+it is as if the field wasn't indexed at all.
 
-Sometimes this is inconvenient and you want to specify a default value. Most core
-types (String, Number, Boolean, Date) support an option to define a null value
-called, unsurprisingly, `null_value`.
+But sometimes you want to make a notation that an explicit `null` was encountered.
+For example, how would you find all documents where the user entered an explicit
+`null`?
 
-In this mapping, we define a string as the default when a `null` is encountered:
+With the scheme we saw above, this is impossible.  The data is lost.  Luckily,
+there is an option that we can set that overwrites explicit `null`s with a 
+stand-in value.
+
+Most core types (String, Number, Boolean, Date) support an option to define a 
+null value with your own placeholder.  This option is called `null_value` and 
+is set in the mappings of a type.
+
+In this mapping, we define a string as the default when a `null` is encountered.
+Let's delete our tagging example and recreate it with `null_value` specified:
 
 [source,js]
 --------------------------------------------------
+DELETE /my_index <1>
+
+PUT /my_index
 {
-   "tweet" : {
-      "properties" : {
-         "message" : {"type" : "string", "null_value" : "This is a default."}
-      }
+    "mappings" : {
+        "posts" : {
+            "properties" : {
+                "tags" : {
+                    "type" : "string",
+                    "index" : "not_analyzed",
+                    "null_value" : "NULL" <2>
+                }
+            }
+        }
+    }
+}
+
+POST /my_index/posts/_bulk
+{ "index": { "_id": "1" }}
+{"tags" : ["search"] }
+{ "index": { "_id": "2" }}
+{ "tags" : ["search", "open source"] }
+{ "index": { "_id": "3" }}
+{ "other_field" : "some data" }
+{ "index": { "_id": "4" }}
+{ "tags" : null }
+{ "index": { "_id": "5" }}
+{ "tags" : ["search", null] }
+
+--------------------------------------------------
+<1> Delete the old index, since we cannot update the mapping
+<2> The new index now specifies `null_value` for tags
+
+Now, whenever an explicit `null` is encountered, Elasticsearch will replace it
+with the term `"NULL"`.  This means the term `"NULL"` is now part of the
+inverted index, so Elasticsearch can use the term for more advanced behavior.  
+It also means that your null-placeholder must be unique and *not used in your 
+normal data*, otherwise you'll get some very strange results!
+
+If we re-run our `missing` filter from before:
+
+[source,js]
+--------------------------------------------------
+GET /my_index/posts/_search
+{
+    "query" : {
+        "filtered" : {
+            "filter" : {
+                "missing" : {"field" : "tags"}
+            } 
+        }
+    }
 }
 --------------------------------------------------
 
-
-And now, when we index this document, the string "This is a default" will be 
-indexed and stored in the `message` field:
+We get slightly different results: document `4` no longer appears in the hits:
 
 [source,js]
 --------------------------------------------------
-{ "message" : null }    //Stored as { "message" : "This is a default." }
+"hits" : [ 
+    {
+      "_index" : "my_index",
+      "_type" : "posts",
+      "_id" : "3",
+      "_score" : 1.0, "_source" : { "other_field" : "some data" }
+    } 
+]
+--------------------------------------------------
+
+This makes sense when you think about what is happening internally.  
+Elasticsearch is indexing an actual value for the field (`"NULL"`), which means
+the field is not technically missing anymore.  But this looks like it breaks
+the behavior or the `missing` filter.
+
+To get around this particular quirk, we need to set a flag on the filter itself,
+which instructs the filter to ignore the null-placeholder value:
+
+[source,js]
+--------------------------------------------------
+GET /my_index/posts/_search
+{
+    "query" : {
+        "filtered" : {
+            "filter" : {
+                "missing" : {
+                    "field" : "tags",
+                    "null_value" : true <1>
+                }
+            } 
+        }
+    }
+}
+
+"hits" : [ 
+    {
+      "_index" : "my_index",
+      "_type" : "posts",
+      "_id" : "4",
+      "_score" : 1.0, "_source" : { "tags" : null } <2>
+    },
+    {
+      "_index" : "my_index",
+      "_type" : "posts",
+      "_id" : "5",
+      "_score" : 1.0, "_source" : { "tags" : ["search", null] } <2>
+    },
+    {
+      "_index" : "my_index",
+      "_type" : "posts",
+      "_id" : "3",
+      "_score" : 1.0, "_source" : { "other_field" : "some data" }
+    }
+]
+--------------------------------------------------
+<1> By setting `null_value` to true, we tell the filter to treat null-placeholder 
+values as if they were missing.
+<2> Both of these documents were found because they indexed the null-placeholder
+
+When `null_value` is set to true, the `missing` filter considers the 
+null-placeholder equivalent to the field not existing.  This causes the behavior
+where *any* explicit `null` will cause the  document to be matched.  Notice how
+document `5` is returned even though there is a "normal" value in the
+field as well. 
+
+Finally, there is one last flag we can set which modifies the behavior again.
+By setting the `existence` option to false, we can ask the `missing` filter for
+all documents where an explicit `null` was provided, but to *ignore* documents
+where the field was simply not specified.  This will cause document `3` to 
+be excluded from the hits:
+
+[source,js]
+--------------------------------------------------
+GET /my_index/posts/_search
+{
+    "query" : {
+        "filtered" : {
+            "filter" : {
+                "missing" : {
+                    "field" : "tags",
+                    "null_value" : true, <1>
+                    "existence" : false <2>
+                }
+            } 
+        }
+    }
+}
+
+"hits" : [ 
+    {
+      "_index" : "my_index",
+      "_type" : "posts",
+      "_id" : "4",
+      "_score" : 1.0, "_source" : { "tags" : null }
+    },
+    {
+      "_index" : "my_index",
+      "_type" : "posts",
+      "_id" : "5",
+      "_score" : 1.0, "_source" : { "tags" : ["search", null] }
+    }
+]
+--------------------------------------------------
+<1> We leave `null_value` set to true
+<2> But now set `existence` to false, which excludes documents where the field
+was missing entirely (e.g. not an explicit `null`)
+
+Naturally, if you make `null_value` false and `existence` true, 
+you'll get the inverse results:
+
+[source,js]
+--------------------------------------------------
+GET /my_index/posts/_search
+{
+    "query" : {
+        "filtered" : {
+            "filter" : {
+                "missing" : {
+                    "field" : "tags",
+                    "null_value" : false,
+                    "existence":true
+                }
+            } 
+        }
+    }
+}'
+
+"hits" : [ 
+    {
+      "_index" : "my_index",
+      "_type" : "posts",
+      "_id" : "3",
+      "_score" : 1.0, "_source" : { "other_field" : "some data" }
+    }
+]
 --------------------------------------------------
 
 
-.Only works for explicit nulls!
-****
-An important note: this is a default that is applied _only_ when an explicit
-null is provided as the value of a field.  It is not a default if the field
-is omitted entirely.
 
-If "message" is not present in the document at all, the default value _is not_
-applied and no "message" field will be indexed.
-****
+
