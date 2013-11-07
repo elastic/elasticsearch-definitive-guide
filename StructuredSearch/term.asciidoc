@@ -1,14 +1,14 @@
-When working with exact values, you will be working with filters. Filters are important because they are very, very fast.  Filters do not
+When working with exact values, you will be working with filters. Filters are 
+important because they are very, very fast.  Filters do not
 calculate relevance (avoiding the entire scoring phase) and are easily cached.
 We'll talk about the performance benefits of filters later in 
-<<_bitsets_the_secret_sauce>>, but for now, just keep in mind that you should
+<<_all_about_caching>>, but for now, just keep in mind that you should
 use filters as often as you can.
 
 ==== Term Filter with Numbers
 
-We are going to explore the `term` filter first because you will find yourself
-using it often.  This filter is capable of handling numbers numbers and dates
-just as well as text.
+We are going to explore the `term` filter first because you will use it often.  
+This filter is capable of handling numbers numbers, dates and text.
 
 Let's look at an example using numbers first by indexing some products.  These
 documents have a `price` and a `productID`:
@@ -36,14 +36,31 @@ SELECT document
 FROM products
 WHERE price = 20
 --------------------------------------------------
-In Elasticsearch DSL, the syntax is a little different.  We will use a `term` 
-filter instead:
+
+In Elasticsearch DSL, we use a `term` filter to accomplish the same thing.  The
+`term` filter will look for the exact value that we specify.  By itself, a
+`term` filter is very simple:
+
+[source,js]
+--------------------------------------------------
+"term" : {
+    "price" : 20 
+}
+--------------------------------------------------
+
+We specify a field and the value that we wish the field to be.  The `term`
+filter isn't very useful on its own though.  Rather, we need to wrap the filter
+with a `filtered` query.
+
+Elasticsearch ultimately expects a query in the request body, not a filter.
+To satisfy this requirement, we use a `filtered` query (as introduced in 
+<<_literal_filtered_literal_query>>), which will hold our filter:
 
 [source,js]
 --------------------------------------------------
 GET /my_store/products/_search
 {
-    "query" : { <1>
+    "query" : {
         "filtered" : { <1>
             "query" : {}, <2>
             "filter" : {
@@ -55,18 +72,15 @@ GET /my_store/products/_search
     }
 }
 --------------------------------------------------
-
-<1> The top level `query` clause wants a query, but since we want to use 
-filters, we must wrap our filter in a `filtered_query` (introduced 
-in <<_literal_filtered_literal_query>>). A `filtered_query` is a query that 
-accepts a `query` and a `filter`. It executes the `filter` clause first and only
-evaluates the `query` on documents that matched the filter
+<1> The `filtered` query accepts both a `query` and a `filter`
 <2> If the `query` clause is empty (or omitted) then the search results are 
 simply the set of documents that matched the filter.
-<3> The `term` filter is being used to find all documents where `price = 20`
+<3> The `term` filter that we saw previously.  Notice how it is placed inside
+the `filter` clause.
 
-The search results from this query are exactly what you would expect: only 
-document `2` is returned as a hit:
+Once executed, the search results from this query are exactly what you would 
+expect: only document `2` is returned as a hit (because only `2` had a price
+of 20):
 
 [source,json]
 --------------------------------------------------
@@ -141,7 +155,7 @@ already exist.
 <3> Here we explicitly say that we don't want `productID` to be analyzed
 
 Now that we have told Elasticsearch to `not_analyze` the ID field, we can 
-go ahead and index some documents.
+go ahead and re-index our documents.
 
 [source,js]
 --------------------------------------------------
@@ -162,7 +176,7 @@ this:
 
 [source,sql]
 --------------------------------------------------
-SELECT document
+SELECT product
 FROM products
 WHERE productID = "XHDK-A-1293-#fJ3"
 --------------------------------------------------
@@ -187,6 +201,11 @@ GET /my_store/products/_search
 
 Since the `productID` field is not analyzed, and the `term` filter performs no
 analysis, the query finds the exact match and returns document `1` as a hit. 
+Success!
+
+Notice how the syntax of the `term` filter did not change, even though we
+are looking for strings instead of numbers.  The filter understands that the
+underlying field is a text field and will act appropriately.
 
 
 ==== Internal Filter Operation
@@ -203,8 +222,8 @@ only document `1` has the term we are looking for
 2. *Build a Bitset*
 +
 The filter then builds a bitset (array of 1's and 0's) which describes which
-documents contain the term.  In our example, the bitset would be: 
-`[1,0,0,0]`
+documents contain the term.  Matching documents receive a  `1` bit.  In our 
+example, the bitset would be: `[1,0,0,0]`
 
 3. *Cache the Bitset*
 +
@@ -213,9 +232,13 @@ skip step 1. and 2.  This adds a lot of performance and makes filters very
 fast.
 
 When executing a query that has filters, it will either evaluate and cache the
-bitset (as described above), or simply retrieve the bitset from memory.  Once
+bitset (as described above), or retrieve the bitset from memory.  Once
 all the bitsets are gathered, a simple bitwise AND will yield the final set of
 documents that match the filter.
+
+These matching documents are then given to the `query` portion of a `filtered`
+query.  If the `query` clause is empty or omitted, then the matching documents
+are just returned with a score of 1.
 
 
 

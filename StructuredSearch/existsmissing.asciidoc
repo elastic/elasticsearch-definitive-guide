@@ -77,7 +77,7 @@ GET /my_index/posts/_search
     "query" : {
         "filtered" : {
             "filter" : {
-                "exists" : {"field" : "middle_name"}
+                "exists" : {"field" : "tags"}
             }
         }
     }
@@ -113,19 +113,27 @@ Our query returns three documents:
 field exists because a "normal" tag was indexed, so the `null` had no impact
 on the filter.
 
-The results are easy to understand.  The only two documents that were excluded
-were document `2` and `4`.  Document `2` didn't specify the `tags` field at
-all, so it isn't surprising that it doesn't match the `exists` filter.
+The results are easy to understand.  Any document that has actual terms in the
+`tags` field was returned as a hit.  The only two documents that were excluded
+were document `3` and `4`:
 
-Document `4` did specify the `tags` field, but it passed an explicit `null`.
+[source,js]
+--------------------------------------------------
+// Document #3
+{ "other_field" : "some data" }
+--------------------------------------------------
+<1> Document `3` didn't specify the `tags` field at all, so it isn't surprising that 
+it doesn't match the `exists` filter.
+
+[source,js]
+--------------------------------------------------
+// Document #4
+{ "tags" : null }
+--------------------------------------------------
+<1> Document `4` did specify the `tags` field, but it passed an explicit `null`.
 To Elasticsearch, an explicit `null` is the same a field not existing at all.
 Internally, nothing was indexed for that field...it is functionally equivalent
-to document `2`.
-
-The internal operation is also easy to understand.  All we need to do is scan
-down the inverted index and set a `1` bit for every document ID that we
-encounter, regardless of what the term is.  If a document's field has a term 
--- any term -- it by definition means the field exists.
+to document `3`.
 
 ==== Missing Filter
 
@@ -145,7 +153,7 @@ GET /my_index/posts/_search
 }
 --------------------------------------------------
 
-And, as you would expect, we get the inverse search results back (doc `2` and
+And, as you would expect, we get the inverse search results back (doc `3` and
 `4`):
 
 [source,json]
@@ -154,15 +162,15 @@ And, as you would expect, we get the inverse search results back (doc `2` and
     {
       "_index" : "my_index",
       "_type" : "posts",
-      "_id" : "4",
-      "_score" : 1.0, "_source" : { "tags" : null }
+      "_id" : "3",
+      "_score" : 1.0, "_source" : { "other_field" : "some data" }
     },
     {
       "_index" : "my_index",
       "_type" : "posts",
-      "_id" : "3",
-      "_score" : 1.0, "_source" : { "other_field" : "some data" }
-    } 
+      "_id" : "4",
+      "_score" : 1.0, "_source" : { "tags" : null }
+    }
 ]
 --------------------------------------------------
 
@@ -186,3 +194,8 @@ you have the following document:
 
 You can check for the existence of "foo".  If the inner object "foo" exists,
 Existing filter matches while Missing does not.
+
+Internally, the filter is looking at all fields that match `foo.*` and evaluating
+if they have values or not.  TODO: Clint halp! 
+
+

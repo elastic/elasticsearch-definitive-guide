@@ -1,18 +1,20 @@
-In the Lookup example, we saw an option called `_cache_key`.  This isn't unique
-to the `terms` Lookup filter...its an option that can be set for any filter.
-It allows you to give filters human-sensible names, which Elasticsearch will
-then use internally.
 
-Custom cache keys has a single edge-case purpose: potentially huge reductions
-in memory.  That seems strange, since it is just a cache key, so let's look
-at how Elasticsearch works internally.
 
-By default, Elasticsearch uses the filter itself as a key in a map.  When
-parsing a query, it can simply take the entire filter contents, use that as a
-key and retrieve the associated bitset from memory.
+The lookup example works great from the developer's point of view...but it is 
+going to make your filter cache very unhappy.  If you were to run this type
+of query in production and watch the filter cache stats, you'd see a large
+amount of evictions -- the dreaded cache churn we discussed in 
+<<_controlling_caching>>.
+
+So what's going on?  To understand the problem, we need to understand how
+Elasticsearch names the filters in memory.  Cached filters are stored in a map,
+and each entry has a key name which is used to retrieve the filter.
+
+By default, Elasticsearch uses the filter itself as the key.  When
+parsing a query, it can simply take the entire filter contents and uses that as 
+the key.
 
 As a simple example, a filter map may look like this:
-
 
 [rame="topbot",options="header"]
 |======================
@@ -23,37 +25,47 @@ As a simple example, a filter map may look like this:
 |`engineering` | "engineering" |00000011001010
 |======================
 
-As you can see, we have a list of `terms` filters.  The key to the map is simply
+As you can see, we have a list of `terms` filters.  The key is simply
 the list of terms concatenated together.  Elasticsearch does this for one 
 reason: speed.  It is very fast to extract the filter contents and retrieve from
 the map. 
 
 This does, however, lead to certain edge-cases where memory usage can balloon
-out of control.  What happens if you have 10,000 terms in your filter?
+out of control.  Our previous twitter example -- aka `terms` filters with 
+10,000 terms -- is one such example
 
 Elasticsearch will simply concatenate all 10,000 terms together...which means
-the key itself may potentially use more memory than the cached bitset!  Obviously,
-this is not ideal.
+the key itself may potentially use more memory than the cached bitset!  
+Obviously, this is not ideal.  The way to fix this is to manually over-ride
+the cache key using an option called `_cache_key`.  Instead of concatenating
+all the terms together, Elasticsearch will use the key name that you provide.
 
-As we saw with `terms` lookup, it was highly recommended that the user specify
-a `_cache_key` value for this exact reason.  In practice, it is usually only the
-`Terms` filter which is susceptible to this memory problem, since it is the
-only filter that can potentially contain a large number of terms concatenated
-together.
+If we tweak our lookup example from before, we can manually assign a key name:
 
-If you are using the `terms` filter (including the lookup derivation), analyze
-your filters carefully and assess if you need to set a custom `_cache_key`.
+[source,js]
+--------------------------------------------------
+GET /my_index/users/_search
+{
+  "query" : {
+    "filtered" : {
+      "filter" : {
+        "terms" : {
+          "user" : {
+            "index" : "my_index",
+            "type" : "user_following",
+            "id" : "1",
+            "path" : "following" 
+          },
+          "_cache_key" : "user_following_1" <1>
+        }
+      }
+    }
+  }
+}
+--------------------------------------------------
+<1> We manually add a cache key, arbitrarily set to some unique value
 
-If you happen to have a very large term set, set the `_cache_key` to
-something that makes sense for your business logic, or simply hash the terms
-with something like SHA1.
-
-.Is this reported in the memory stats?
-****
-Unfortunately, cache key values are not included in the memory usage stats that
-Elasticsearch provides.  While you can see how much memory the Filter cache is
-using, this does not include memory used by the cache keys themselves.
-
-The only good way to diagnose this situation is to carefully examine the filters
-that you are executing and determine if a custom `_cache_key` is required.
-****
+For this example, we are setting the cache key to the type + field name + user
+ID.  The actual key value doesn't really matter, so long as it is unique to the
+filter and short.  Depending on your business requirements, it may make sense
+to simply hash the list of IDs (with SHA1, etc) and use that as a key.

@@ -1,9 +1,9 @@
 
 === What is Structured Search?
 
-Structured search is all about interrogating data that has some type of inherent
+Structured search is about interrogating data that has inherent
 structure.  Dates, times and numbers are all structured -- they have a precise 
-format and you can perform logical operations on them.  Common operations include
+format that you can perform logical operations on.  Common operations include
 comparing ranges of numbers or dates, or determining which value is larger.
 
 Text can be structured too.  A box of crayons has a discrete set of colors: `red`, `green`, `blue`.  A blog post may be tagged with keywords 
@@ -20,5 +20,3 @@ any other number which falls in the range.  It is either in the range...or it
 isn't.  Similarly, for structured text, a value is either equal or it isn't.  
 There is no concept of "more similar".
 
-It may seem like we are belaboring the point, but this a fundamental concept to structured search.  The rest of the chapter builds on this concept of 
-inclusion/exclusion.

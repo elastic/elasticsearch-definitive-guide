@@ -1,75 +1,207 @@
 
-Filtering on ranges is a very common structured search. Elasticsearch allows
-filtering on both numeric and string-based ranges.  The `range` filter is what 
-you'll use most often use to work with ranges.  It automatically detects
-the type you are working with (numeric or string) and applies the correct 
-algorithm.
+Filtering on ranges is a very common structured search. When dealing with numbers
+in this chapter, we have so far only searched for exact numbers.  In practice, 
+filtering on ranges tends to be more useful.  For example, find all products
+with a price greater than $20 and less than $40.
 
-Why would there be different algorithms?  Essentially, numeric values can be
-ranged much more efficiently than strings.
+In SQL terms, a range can be expressed as:
 
-==== Numeric ranges
+[source,sql]
+--------------------------------------------------
+SELECT document
+FROM products
+WHERE price BETWEEN 20 AND 40
+--------------------------------------------------
 
-TODO: Verify this with Simon
-TODO: image to display this
 
-Say you want to find all documents where `age` is between 20 and 30.  Internally,
-the numeric values are represented by a sorted prefix tree.  Briefly, a prefix
-tree is a tree structure where nodes represent prefixes of the final children.
+Elasticsearch has a `range` filter, which, unsurprisingly, allows you to filter
+ranges:
 
-See Figure TODO for a graphical depiction of a prefix tree.
+[source,js]
+--------------------------------------------------
+"range" : {
+    "price" : {
+        "gt" : 20 ,
+        "lt" : 40
+    } 
+}
+--------------------------------------------------
 
-As Elasticsearch traverses the tree, nodes which do not share the range's prefix 
-can be avoided entirely, meaning large parts of the tree never need to be 
-evaluated.
+The `range` filter supports both inclusive and exclusive ranges, through
+combinations of the following options:
 
-This leads to very fast operation.  Due to the nature of sorted trees, you can 
-find the min/max with few operations.
+ - `gt`: greater than (>), non-inclusive
+ - `gte`: greater than or equal (>=), inclusive
+ - `lt`: less than (<), non-inclusive
+ - `lte`: less than or equal (<=), inclusive
 
-==== String Ranges
-String ranges are done in lexicographical order: "a" comes before "ab", which 
-are sorted before "ac", etc.
+Like every other filter we have seen in this chapter, the `range` filter is 
+best used inside of a `filtered` query:
 
-In contrast to numeric ranges, there are no tricks that can be performed
-to enhance speed. A prefix tree cannot be maintained for string fields, since 
-it is a very purpose-built data structure.
+[source,js]
+--------------------------------------------------
+GET /my_store/products/_search
+{
+    "query" : {
+        "filtered" : {
+            "filter" : {
+                "range" : { <1>
+                    "price" : {
+                        "gt" : 20,
+                        "lt" : 40
+                    } 
+                }
+            }
+        }
+    }
+}
+--------------------------------------------------
+<1> The filter that we saw above, placed inside a `filtered` query
 
-We can afford to build a prefix tree for numeric values because the number of
-operations are very limited (for example, you never need to do phrase matching,
-or fuzzy, or wildcard, etc).  Numeric fields just need to provide search for
-exact matches and ranges, nothing more.
+If you need an unbounded range (e.g. just `>20`), simply omit the one
+of the boundaries:
 
-In contrast, strings need to support the full range of full-text operations, so
-our only option is to evaluate the inverted index item-by-item.
+[source,js]
+--------------------------------------------------
+GET /my_store/products/_search
+{
+    "query" : {
+        "filtered" : {
+            "filter" : {
+                "range" : {
+                    "price" : {
+                        "gt" : 20 <1>
+                    } 
+                }
+            }
+        }
+    }
+}
+--------------------------------------------------
+<1> By omitting the `lt` clause, we have specified an unbounded `>20` range
 
-1. *Skip to near the starting range*
-+
-Using a special data structure, Elasticsearch can skip to near the starting 
-value of the range, avoiding a large amount of unnecessary comparison.
+==== Ranges on dates
+The range filter also works on date fields.  Intuitively, we can specify the 
+dates in our range:
 
-2. *Collect all terms in the range*
-+
-Once we have skipped near the start of the range, there is nothing else we can
-do but iterate over the terms in the inverted index, collecting document IDs
-until we hit the end of the range.
+[source,js]
+--------------------------------------------------
+GET /my_store/products/_search
+{
+    "query" : {
+        "filtered" : {
+            "query" : {},
+            "filter" : {
+                "range" : {
+                    "timestamp" : {
+                        "gt" : "2013-01-01 00:00:00",
+                        "lt" : "2013-01-07 00:00:00"
+                    } 
+                }
+            }
+        }
+    }
+}
+--------------------------------------------------
 
-As you can see, unlike numeric ranges (which can find the min/max in only a few
-operations), a lexicographical range will always require as many operations as
-it takes to traverse all the terms in the range.  If there are 1000
-terms that fall in the range...Elasticsearch has to make a minimum of 1000
-comparisons.
+The date field also supports date math operations, which can be used in the
+`range` filter.  For example, if we want to find all documents that have
+a timestamp sometime in the last hour:
 
-This isn't to say avoid ranges on strings -- they are still quite fast.
-And like most filters, ranges are cached so subsequent executions are even faster.
-However, it is good to be aware how ranges are executed so you can make intelligent
-design choices for both data architecture and queries.
+[source,js]
+--------------------------------------------------
+GET /my_store/products/_search
+{
+    "query" : {
+        "filtered" : {
+            "query" : {},
+            "filter" : {
+                "range" : {
+                    "timestamp" : {
+                        "gt" : "now-1h"
+                    } 
+                }
+            }
+        }
+    }
+}
+--------------------------------------------------
 
-.Watch out for analyzers!
+This filter will now constantly find all documents with a timestamp greater than
+the current time minus 1 hour, making the filter a "sliding window" across
+your documents.
+
+Date math can also be applied to actual dates, rather than a placeholder like
+`now`.  For example, we ask for timestamps greater than a specified time:
+
+[source,js]
+--------------------------------------------------
+GET /my_store/products/_search
+{
+    "query" : {
+        "filtered" : {
+            "query" : {},
+            "filter" : {
+                "range" : {
+                    "timestamp" : {
+                        "gt" : "2013-01-01 00:00:00",
+                        "lt" : "2013-01-01 00:00:00||+1M"
+                    } 
+                }
+            }
+        }
+    }
+}
+--------------------------------------------------
+
+Simply separate the date from the date math with a double pipe (`||`).  In this
+example, we asked for all documents in the month of January (`+1M` specifies
+one month).
+
+Date math is "calendar aware", so it knows how many days are in each month, 
+days in a year, etc.
+
+==== Ranges on strings
+The range filter can also operate on string fields.  String ranges are 
+calculated lexicographically (aka alphabetically).  For example, these values
+are sorted in lexicographic order:
+
+ - `a`
+ - `ab`
+ - `abb`
+ - `abc`
+ - `b`
+
+If we want a range from `ab` to `abc`, we can use the same `range` filter
+syntax:
+
+[source,js]
+--------------------------------------------------
+GET /my_store/products/_search
+{
+    "query" : {
+        "filtered" : {
+            "query" : {},
+            "filter" : {
+                "range" : {
+                    "title" : {
+                        "gt" : "ab",
+                        "lt" : "abc"
+                    } 
+                }
+            }
+        }
+    }
+}
+--------------------------------------------------
+
+.Be careful of cardinality
 ****
-If you are filtering string ranges, make sure the analyzer is configured
-appropriately.  Often, it is a good idea to set a field `not_analyzed`, or at
-least lowercased, so that fields are ordered appropriately.
+Ranges on string values are inherently slower than numeric ranges, which seems
+pretty obvious.  Finding ranges on numbers/dates is a trivial operation, while
+comparing strings requires many more operations.
 
-If a field is analyzed into multiple tokens, you may get strange results 
-matching your range filter and not understand why.
+In general, just remember that the higher your field's cardinality (e.g. the
+number of unique values in the field), the slower a string range will be.
 ****
+

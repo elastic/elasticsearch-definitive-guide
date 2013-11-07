@@ -1,11 +1,26 @@
 
-Now that we have seen the `term` filter and how to combine multiple filters
-with `bool`, the `terms` filter will be easy to understand.  At a high level,
-the `terms` filter is simply the plural version of the singular `term` filter.
+The `term` filter is useful for finding a single value, but you'll probably
+want to search for multiple values.  What if you want to find documents that
+have a price of $20 or $30?
 
-It accepts an array of terms and returns documents which contain one or more
-terms.  If we continue using the product dataset introduced at the beginning of 
-this chapter, we can construct a `terms` filter to find two different prices
+Rather than using multiple `term` filters, you can instead use a single `terms`
+filter (note the 's' at the end).  The `terms` filter is simply the plural 
+version of the singular `term` filter.
+
+It looks looks nearly identical to a vanilla `term` too.  Instead of 
+specifying a single price, we are now specifying an array of values:
+
+[source,js]
+--------------------------------------------------
+{
+    "terms" : {
+        "price" : [20, 30]
+    }
+}
+--------------------------------------------------
+
+And like the `term` filter, we will place it inside of a `filtered` query to 
+actually use it:
 
 [source,js]
 --------------------------------------------------
@@ -13,7 +28,7 @@ this chapter, we can construct a `terms` filter to find two different prices
     "query" : {
         "filtered" : {
             "filter" : {
-                "terms" : {
+                "terms" : { <1>
                     "price" : [20, 30]
                 }
             }
@@ -21,6 +36,7 @@ this chapter, we can construct a `terms` filter to find two different prices
     }
 }
 --------------------------------------------------
+<1> The `terms` filter as seen above, but placed inside the `filtered` query
 
 The query will return second and third documents:
 

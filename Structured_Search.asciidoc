@@ -27,11 +27,9 @@ include::StructuredSearch/null_value.asciidoc[]
 
 include::StructuredSearch/ranges.asciidoc[]
 
-=== Bitsets: the secret sauce
+=== All about Caching
 
 include::StructuredSearch/bitsets.asciidoc[]
-
-include::StructuredSearch/persegmentbitsets.asciidoc[]
 
 === Social-graph filter
 
@@ -41,8 +39,9 @@ include::StructuredSearch/termslookup.asciidoc[]
 
 include::StructuredSearch/cachekey.asciidoc[]
 
-=== Normalizing exact values
+=== Revisiting the Social-graph
 
-include::StructuredSearch/normalizingexact.asciidoc[]
+include::StructuredSearch/revisittermslookup.asciidoc[]
+
 
 
