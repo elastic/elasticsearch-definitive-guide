@@ -55,23 +55,8 @@ GET /_search
 --------------------------------------------------
 <1> Looks for `foo` or `bar` in the `other` field.
 
-Alternatively, the default field can be specified using the `field` query. The
-following example is exactly the same as the `query_string` example above:
-
-[source,js]
---------------------------------------------------
-GET /_search
-{
-    "query": {
-        "field": {
-            "other": "title:(brown fox) body:(brown fox) foo bar"
-        }
-    }
-}
---------------------------------------------------
-
-The `query_string` and `field` queries understand a complicated, succinct
-query syntax, which is explained in detail in the
+The `query_string` query understands a complicated, succinct query syntax,
+which is explained in detail in the
 {ref}/query-dsl-query-string-query.html#query-string-syntax[Query String Syntax]
 reference docs, and we will introduce elements of the syntax in the following
 chapters.

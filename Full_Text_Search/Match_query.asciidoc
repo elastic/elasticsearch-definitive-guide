@@ -13,7 +13,8 @@ how full text search works, by looking at a simple example.
 
 ==== Index some data
 
-First, we'll create a new index:
+First, we'll create a new index and index some documents using the
+<<bulk,`bulk` API>>:
 
 [source,js]
 --------------------------------------------------
@@ -23,15 +24,8 @@ DELETE /my_index
 # create a new index with 1 primary shard <1>
 PUT /my_index
 { "settings": { "number_of_shards": 1 }}
---------------------------------------------------
 
-<1> Later on, in <<relevance-is-broken>>, we will explain why
-    we created this index with only one primary shard.
-
-And index some documents using the <<bulk,`bulk` API>>:
-
-[source,js]
---------------------------------------------------
+# index some documents
 POST /my_index/my_type/_bulk
 { "index": { "_id": 1 }}
 { "title": "The quick brown fox" }
@@ -42,6 +36,9 @@ POST /my_index/my_type/_bulk
 { "index": { "_id": 4 }}
 { "title": "Brown fox brown dog" }
 --------------------------------------------------
+
+<1> Later on, in <<relevance-is-broken>>, we will explain why
+    we created this index with only one primary shard.
 
 ==== A single word query
 
@@ -86,6 +83,7 @@ by combining the term frequency (how often `"quick"` appears in the `title`
 field of each document), with the inverse document frequency (how often
 `"quick"` appears in the `title` field in all documents in the index), and the
 length of each field (shorter fields are considered more relevant).
+See <<relevance-intro>>.
 
 This process gives us the following (abbreviated) results:
 

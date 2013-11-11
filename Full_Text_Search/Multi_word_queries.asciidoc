@@ -66,7 +66,7 @@ The above query returns all four documents in the results list:
 Because the `match` query has to look for two terms -- `["brown","dog"]` --
 internally it has to execute two `term` queries and combine their individual
 results into the overall result. To do this, it wraps the two `term` queries
-in a `bool` query, which we will examine in detail in <<bool-query>>.
+in a `bool` query, which we will examine in detail in <<bool-query>> below.
 
 The important thing to take away from the above is that any document whose
 `title` field contains *at least one of the specified terms* will match the
@@ -142,10 +142,15 @@ in the example above with three terms, `75%` would be rounded down to `66.6%`
 or two out of the three terms. No matter what you set it to, at least one term
 must match for a document to be considered a match.
 
+
+**************************************************
+
 The `minimum_should_match` parameter is very flexible and different rules can
 be applied depending on the number of terms the user enters.  For the full
 documentation see the
 http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-minimum-should-match.html[`minimum_should_match` reference documentation].
+
+**************************************************
 
 To fully understand how the `match` query handles multi-word queries, we need
 to examine how to combine multiple queries with the `bool` query.

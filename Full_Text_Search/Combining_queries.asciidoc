@@ -111,10 +111,14 @@ just two of the three.
 By now, you have probably realised that <<match-multi-word,multi-word `match`
 queries>> simply wrap the generated `term` queries in a `bool` query. With the
 default `"or"` operator, each `term` query is added as a `should` clause, so
-at least one clause must match:
+at least one clause must match. These two queries are equivalent:
 
 [source,js]
 --------------------------------------------------
+{
+    "match": { "title": "brown fox"}
+}
+
 {
   "bool": {
     "should": [
@@ -125,11 +129,20 @@ at least one clause must match:
 }
 --------------------------------------------------
 
-With the `"and"` operator, all the `term` queries are added as `must` clause,
-so *all* clauses must match:
+With the `"and"` operator, all the `term` queries are added as `must` clauses,
+so *all* clauses must match. These two queries are equivalent:
 
 [source,js]
 --------------------------------------------------
+{
+    "match": {
+        "title": {
+            "query":    "brown fox",
+            "operator": "and"
+        }
+    }
+}
+
 {
   "bool": {
     "must": [
@@ -141,10 +154,20 @@ so *all* clauses must match:
 --------------------------------------------------
 
 And if the `minimum_should_match` parameter is specified, it is passed
-directly through to the `bool` query:
+directly through to the `bool` query, making these two queries equivalent:
 
 [source,js]
 --------------------------------------------------
+{
+    "match": {
+        "title": {
+            "query":                "brown fox",
+            "minimum_should_match": "75%"
+        }
+    }
+}
+
+
 {
   "bool": {
     "should": [

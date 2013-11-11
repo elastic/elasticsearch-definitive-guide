@@ -16,19 +16,20 @@ GET /_search
     "query": {
         "bool": {
             "should": [
-                { "match": { "title": "Multi-field matching"  }},
-                { "match": { "body":  "Multi-field matching"  }}
+                { "match": { "title": "Multi-field matching"  }}, <1>
+                { "match": { "body":  "Multi-field matching"  }}  <1>
             ]
         }
     }
 }
 --------------------------------------------------
+<1> The only difference between these clauses is the field name.
 
 While the `bool` query is a useful generic way of combining multiple queries,
-it is not appropriate in every circumstance as it takes a _more-matches is
-better_ approach. Often this is exactly what you want.  However, it can
-produce surprising results. Imagine for example that we have the following
-two documents:
+it is not appropriate in every circumstance as it takes a
+_more-matches-is-better_ approach. Often this is exactly what you want.
+However, it can produce surprising results. Imagine for example that we have
+the following two documents:
 
 Document 1::
 
@@ -67,8 +68,8 @@ Now we run the following `bool` query:
 --------------------------------------------------
 
 Document 2 appears to be the better match, as it contains both of the words
-that we are looking for.  However, this query actually returns Document 1 as
-the better match:
+that we are looking for.  However, this query actually gives Document 1 the
+higher score:
 
 [source,js]
 --------------------------------------------------
@@ -105,7 +106,7 @@ query is added to the zero score from the `title` query, and divided by two,
 resulting in a lower overall score than for Document 1.
 
 What if, instead, we used the *highest* score for each field as the overall
-score for the query?  This would give preference to fields that contain both
+score for the query?  This would give preference to fields that contain *both*
 of the words we are looking for, rather than the same word repeated in
 different fields.
 
@@ -183,7 +184,7 @@ Just as the `match` query is a high-level query for running multi-word full
 text queries, the `multi_match` query is a high-level query for running
 `match` queries on multiple fields.
 
-The above query could be rewritten more concisely as:
+The above `dis_max` query could be rewritten more concisely as:
 
 [source,js]
 --------------------------------------------------
@@ -197,9 +198,9 @@ The above query could be rewritten more concisely as:
 }
 --------------------------------------------------
 
-By default, the `multi_match` query wraps a `match` query on each field,
-combining their scores with a `dis_max` query, although this can be changed to
-using a `bool` query by setting `use_dis_max` to `false`.
+By default, the `multi_match` query runs a `match` query on each field,
+combining their scores with a `dis_max` query. You can choose to use a `bool`
+query instead of the `dis_max` query by setting `use_dis_max` to `false`.
 
 The `multi_match` query also allows you to specify multiple fields using a
 wildcard syntax. You could match on the `title`, `first_name`, `middle_name`

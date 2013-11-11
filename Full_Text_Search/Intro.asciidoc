@@ -35,30 +35,29 @@ Term-based queries::
 Queries like the `term` or `fuzzy` queries are low-level queries which have no
 analysis phase. They operate on a single term. A `term` query for the term
 `"Foo"` looks for that *exact term* in the inverted index and calculates the
-relevance (TF/IDF) for each document which contains that term.
+TF/IDF relevance `_score` for each document that contains the term.
 
 It is important to remember that the `term` query looks in the inverted index
 for the exact term only -- it won't match any variants like `"foo"` or
-`"FOO"`.  Also, it doesn't matter how the term came to be in the index, just
-that it is.  If you were to index `["Foo","Bar"]` into an exact value
-`not_analyzed` field, or `"Foo Bar"` into an analyzed field with the
-`whitespace` analyzer, both would result in having the two terms `"Foo"` and
-`"Bar"` in the inverted index.
+`"FOO"`.  It doesn't matter how the term came to be in the index, just that it
+is.  If you were to index `["Foo","Bar"]` into an exact value `not_analyzed`
+field, or `"Foo Bar"` into an analyzed field with the `whitespace` analyzer,
+both would result in having the two terms `"Foo"` and `"Bar"` in the inverted
+index.
 
 --
 
 Full-text queries::
 +
 --
-Queries like the `match` or `query_string` queries are high-level queries which
-understand the mapping of a field.
 
-If you query a `date` or `integer` field, they will treat the query string as
-a date or integer respectively.  If you query an exact value (`not_analyzed`)
-string field, they will treat the whole query string as a single term.  But if
-you query a full-text (`analyzed`) field, they will first pass the query
-string through the appropriate analyzer to produce the list of terms to be
-queried.
+Queries like the `match` or `query_string` queries are high-level queries
+which understand the mapping of a field: If you query a `date` or `integer`
+field, they will treat the query string as a date or integer respectively.  If
+you query an exact value (`not_analyzed`) string field, they will treat the
+whole query string as a single term.  But if you query a full-text
+(`analyzed`) field, they will first pass the query string through the
+appropriate analyzer to produce the list of terms to be queried.
 
 Once the query has assembled a list of terms, it executes the appropriate
 low-level query for each of these terms, then combines  their results to

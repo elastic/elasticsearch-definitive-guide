@@ -1,8 +1,10 @@
 === Boosting query clauses
 
 Imagine that we want to search for documents about "full text search"  but we
-want to give more weight to documents which also mention "Elasticsearch" or
-"Lucene".
+want to give more _weight_ to documents which also mention "Elasticsearch" or
+"Lucene". By ``more weight'' we mean that documents which mention
+"Elasticsearch" or "Lucene" will get a higher relevance `_score`, which means
+that they will appear higher in the list of results.
 
 A simple `bool` query allows us to write this fairly complex query as follows:
 
@@ -21,17 +23,17 @@ GET /_search
                 }
             },
             "should": [
-                { "match": { "content": "Elasticsearch"         }},
-                { "match": { "content": "Lucene"                }}
+                { "match": { "content": "Elasticsearch" }},
+                { "match": { "content": "Lucene"        }}
             ]
         }
     }
 }
 --------------------------------------------------
 
-The more `match` clauses that match, the more relevant the document.  But what
-if we want to give more weight to the docs which also contain "Lucene" and
-even more weight to the docs containing "Elasticsearch"?
+The more `should` clauses that match, the more relevant the document.  But
+what if we want to give more weight to the docs which also contain "Lucene"
+and even more weight to the docs containing "Elasticsearch"?
 
 Any query clause allows us to specify a `boost` value, which defaults to `1`.
 A `boost` value greater than `1` increases the relative weight of that
