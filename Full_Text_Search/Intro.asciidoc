@@ -68,10 +68,14 @@ We will discuss this process in more detail in the following chapters.
 
 You seldom need to use the term-based queries directly. Usually you want to
 query full text, not individual terms, and this is easier to do with the
-high-level full-text queries which, in turn, use term-based queries
-internally.
+high-level full-text queries (which end up using term-based queries
+internally).
 
 **************************************************
+
+If you do find yourself wanting to use a query on an exact value
+`not_analyzed` field, think of whether you really want a query or a filter.
+
 Single-term queries usually represent binary `yes`|`no` questions and are
 almost always better expressed as a filter, so that they can benefit from
 filter caching:

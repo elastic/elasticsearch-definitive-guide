@@ -11,6 +11,7 @@ we have already explained in <<term-vs-full-text>>, you should almost always
 prefer a filter over a query for exact value fields. So let's take a look at
 how full text search works, by looking at a simple example.
 
+[[match-test-data]]
 ==== Index some data
 
 First, we'll create a new index and index some documents using the
