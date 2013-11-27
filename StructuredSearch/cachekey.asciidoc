@@ -16,21 +16,32 @@ the key.
 
 As a simple example, a filter map may look like this:
 
-[rame="topbot",options="header"]
-|======================
-|Terms |Key | Bitset
-|`marketing` | "marketing" |01101011001010
-|`sales`, `pr` | "sales_pr" |11010011111011
-|`management`, `sales`, `pr` | "management_sales_pr" |11110111111011
-|`engineering` | "engineering" |00000011001010
-|======================
+
+    |----------------------------------------------------------------|
+    |        Terms          |        Key            |     Bitset     |
+    |----------------------------------------------------------------|
+    | marketing             | "marketing"           | 01101011001010 |
+    | sales, pr             | "sales_pr"            | 11010011111011 |
+    | management, sales, pr | "management_sales_pr" | 11110111111011 |
+    | engineering           | "engineering"         | 00000011001010 |
+    |----------------------------------------------------------------|
 
 As you can see, we have a list of `terms` filters.  The key is simply
-the list of terms concatenated together.  Elasticsearch does this for one 
-reason: speed.  It is very fast to extract the filter contents and retrieve from
-the map. 
+the list of terms concatenated together.  Filters need to be uniquely identified,
+so the filter itself works as a perfect unique key.
 
-This does, however, lead to certain edge-cases where memory usage can balloon
+.Does term order matter?
+****
+You may wonder if the order of terms matters.  For example, is 
+`{"terms" : ["a", "b"]}` cached separately from `{"terms" : ["b", "a"]}`?
+
+The answer is no, they are not cached separately.  In reality, Elasticsearch
+sorts the terms and caches the filter *object* itself, not a string concatenation.
+But this complicates the subject, so you can safely think of the map keys as
+strings where term order does not matter.
+****
+
+This approach can, however, lead to certain edge-cases where memory usage balloons
 out of control.  Our previous twitter example -- aka `terms` filters with 
 10,000 terms -- is one such example
 
@@ -69,3 +80,35 @@ For this example, we are setting the cache key to the type + field name + user
 ID.  The actual key value doesn't really matter, so long as it is unique to the
 filter and short.  Depending on your business requirements, it may make sense
 to simply hash the list of IDs (with SHA1, etc) and use that as a key.
+
+._cache_key's cannot be automatically evicted
+****
+If you use custom _cache_key's, you need to manually evict them from cache
+when appropriate.  In our twitter example, if you were to add a new "following"
+ID to the document, the saved cache is no longer valid and needs to be manually
+removed.
+
+You can do this with the Clear Cache API, which will clear the cache for our
+"following" field:
+
+[source,js]
+--------------------------------------------------
+POST /my_index/_cache/clear?filter=true&fields=following
+--------------------------------------------------
+
+Alternatively, you can set a timeout for the filter cache which will expire 
+filters after a certain age.  This is set using the Update Cluster Settings API:
+
+[source,js]
+--------------------------------------------------
+POST /_cluster/settings
+{
+  "persistent" : {
+    "indices.cache.filter.expire" : "10m"
+  }
+}
+--------------------------------------------------
+
+This is a less useful method, however, since it affects your entire cluster
+and filters which are not using a _custom_cache key.  
+****

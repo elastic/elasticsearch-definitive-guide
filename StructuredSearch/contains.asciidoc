@@ -16,10 +16,30 @@ _both_ of the following documents:
 <1> This document is returned, even though it has terms other than `"search"`
 
 Recall how the `term` filter works: it checks the inverted index for all
-documents which contain a term, then constructs a bitset.  This means that only
-one of the values within a field has to match for a `1` bit to be set.
-This makes `term` (and `terms` too) a "must contain" operation, not a "must equal
-exactly" operation.
+documents which contain a term, then constructs a bitset.  In our simple
+example, we have the following inverted index:
+
+[width="50%",frame="topbot"]
+|==========================
+| Token | DocIDs
+|`search`| `1`,`2`
+|`open_source` | `2`
+|==========================
+
+When a `term` filter is executed for the token `search`, it goes straight to the
+corresponding entry in the inverted index and extracts the associated doc IDs.
+As you can see, both doc `1` and `2` contain the token in the inverted index, 
+therefore they are both returned as a result.
+
+The nature of an inverted index also means that entire field equality is rather
+difficult to calculate.  How would you determine if a particular document
+*only* contains your request term?  You would have to find the term in
+the inverted index, extract the document IDs, then scan *every row in the 
+inverted index* looking for those IDs to see if a doc has any other terms.
+
+As you might imagine, that would be tremendously inefficient and expensive.
+For that reason, `term` and `terms` are "must contain" operations, not
+"must equal exactly".
 
 ==== Equals exactly
 If you do want that behavior -- entire field equality -- the best way to
@@ -30,7 +50,7 @@ we now include a field that maintains the number of tags:
 [source,js]
 --------------------------------------------------
 { "tags" : ["search"], "tag_count" : 1 }
-{ "tags" : ["search", "open source"], "tag_count" : 2 }
+{ "tags" : ["search", "open_source"], "tag_count" : 2 }
 --------------------------------------------------
 
 Once you have the count information indexed, you can construct a `bool` filter
@@ -55,21 +75,5 @@ GET /my_index/my_type/_search
 <1> Find all documents that have the term `"search"`
 <2> But make sure the document only has one tag
 
-This query will now match only the document that has a single tag which is
-`search`, rather than any document which contains `search`.  This is a very
-useful pattern that you may find yourself using often.
-
-.Why can't Elasticsearch do this automatically?
-****
-Due to the nature of an inverted index, operations like "only this term" are
-relatively expensive.
-
-An inverted index looks up the term and finds a list of all documents that
-contain the term.
-
-Entire field equality, however, inverts the requirement.  You need to look up a
-document and determine what words are in each field.  This is very expensive to
-do in an inverted index.  An inverted index is not optimized for that type of
-data access.  It is far more efficient to just index the number of
-terms so that you can check manually.
-****
+This query will now match only the document that has a single tag which is 
+`search`, rather than any document which contains `search`.  

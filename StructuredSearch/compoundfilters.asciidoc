@@ -1,6 +1,16 @@
 
 The previous two examples showed a single filter in use. In practice you
-will probably need to filter on multiple values or fields.
+will probably need to filter on multiple values or fields.  For example, how
+would you express this SQL in Elasticsearch?
+
+[source,sql]
+--------------------------------------------------
+SELECT product 
+FROM products 
+WHERE 
+  (price = 20 OR productID = "XHDK-A-1293-#fJ3") AND
+  (price != 30)
+--------------------------------------------------
 
 In these situations, you will need the `bool` filter.  This is a compound filter
 that accepts other filters, combining them in various boolean combinations.
@@ -26,27 +36,19 @@ The `bool` filter is composed of three sections:
  as a match. Effectively, this is equivalent to ANDing all clauses inside the
  `must`.
 
- - *Should*: These clauses are optional, but at least one needs to match.
+ - *Must_not*: A document won't be returned if *any* of these clauses match.  
+ Effectively, this is a set of NOT clauses.
+
+ - *Should*: These clauses are optional, but *at least one* needs to match.  
  Effectively, this is a set of OR clauses.
 
- - *Must_not*: A document won't be returned if any of these clauses match.
- Effectively, this is a set of NOT clauses.
+
 
 Each section of the `bool` filter is optional (e.g. you can have a Should clause
 and nothing else), and each section can contain one or more filters.
 
 And that's it! When you need multiple filters, simply place them into the
-different sections of the `bool` filter.  Continuing with the products example
-from the previous section, let's find all documents where the price is equal to
-`20` _or_ the UPC is `XHDK-A-1293-#fJ3`.  In SQL, it would look like this:
-
-[source,sql]
---------------------------------------------------
-SELECT product
-FROM products
-WHERE price = 20
-  OR productID = "XHDK-A-1293-#fJ3"
---------------------------------------------------
+different sections of the `bool` filter.  
 
 With Elasticsearch, we will take the two `term` filters that we used previously
 and place them inside the `should` clause of a `bool` filter.  Since the `should`
@@ -63,7 +65,10 @@ GET /my_store/products/_search
               "should" : [
                  "term" : {"price" : 20}, <2>
                  "term" : {"productID" : "XHDK-A-1293-#fJ3"} <2>
-              ]
+              ],
+              "must_not" : {
+                 "term" : {"price" : 30} <3>
+              }
            }
          }
       }
@@ -74,6 +79,8 @@ GET /my_store/products/_search
 <1> Note that we still need to use a `filtered_query` to wrap everything
 <2> These two `term` filters are _children_ of the `bool` filter, and since they
 are placed inside the `should` clause, at least one of them needs to match
+<3> If a product has a price of `30` it is automatically excluded because it
+matches a `must_not` clause
 
 Our search results return two hits, each document satisfying a different clause
 in the `bool` filter:

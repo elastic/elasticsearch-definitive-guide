@@ -48,13 +48,12 @@ In Elasticsearch DSL, we use a `term` filter to accomplish the same thing.  The
 }
 --------------------------------------------------
 
-We specify a field and the value that we wish the field to be.  The `term`
-filter isn't very useful on its own though.  Rather, we need to wrap the filter
-with a `filtered` query.
+The `term` filter simply specifies a field and the value that we wish to find.  
 
-Elasticsearch ultimately expects a query in the request body, not a filter.
-To satisfy this requirement, we use a `filtered` query (as introduced in 
-<<_literal_filtered_literal_query>>), which will hold our filter:
+The `term` filter isn't very useful on its own though.  As discussed in the 
+Search chapter (<<_empty_search>>), the `search` API expects a query and not a 
+`filter`. To use our `term` filter, we need to wrap it with a 
+<<_literal_filtered_literal_query>>:
 
 [source,js]
 --------------------------------------------------
@@ -62,7 +61,9 @@ GET /my_store/products/_search
 {
     "query" : {
         "filtered" : { <1>
-            "query" : {}, <2>
+            "query" : { 
+                "match_all" : {} <2>
+            }, 
             "filter" : {
                 "term" : { <3>
                     "price" : 20 
@@ -73,8 +74,8 @@ GET /my_store/products/_search
 }
 --------------------------------------------------
 <1> The `filtered` query accepts both a `query` and a `filter`
-<2> If the `query` clause is empty (or omitted) then the search results are 
-simply the set of documents that matched the filter.
+<2> A `match_all` is used to return all matching documents.  This is the default
+behavior, so in future examples we will simply omit the `query` section
 <3> The `term` filter that we saw previously.  Notice how it is placed inside
 the `filter` clause.
 
@@ -97,29 +98,102 @@ of 20):
     } 
 ]
 --------------------------------------------------
-<1> Filters do not perform scoring or relevance, so all documents that match
-a filter receive a score of one.
+<1> Filters do not perform scoring or relevance. The score comes from the query, 
+which is a match_all query, which treats all docs as equal, so all documents 
+receive a _neutral_ score of one.
 
 ==== Term Filter with Text
 As mentioned at the top of this section, the `term` filter can match strings
 just as easily as numbers.  Instead of price, let's try to find products that
 have a certain UPC identification code.
 
-Structured search with strings require a little planning first, however.  A
-number is easy because it is simply a number...there is no analysis process.
+First, we'll index some product data:
 
-But strings are analyzed by default (see <<analysis-intro>>), and this will
-ruin our attempts at exact matching.  Imagine we have the UPC `XHDK-A-1293-#fJ3`,
-the default analyzer will index this as three distinct tokens:
+[source,js]
+--------------------------------------------------
+POST /my_store/products/_bulk
+{ "index": { "_id": 1                            }}
+{ "price" : 10, "productID" : "XHDK-A-1293-#fJ3" }
+{ "index": { "_id": 2                            }}
+{ "price" : 20, "productID" : "KDKE-B-9947-#kL5" }
+{ "index": { "_id": 3                            }}
+{ "price" : 30, "productID" : "JODL-X-1937-#pV7" }
+{ "index": { "_id": 4                            }}
+{ "price" : 30, "productID" : "QQPX-R-3956-#aD8" }
+--------------------------------------------------
 
-- `xhdk`
-- `1293`
-- `fj3`
+Each document has a `productID` which identifies it, and a price.  If we wanted
+to find a specific `productID` in SQL, we might use a query like this:
 
-There are a couple of important points here.  Obviously, we have three distinct
+[source,sql]
+--------------------------------------------------
+SELECT product
+FROM products
+WHERE productID = "XHDK-A-1293-#fJ3"
+--------------------------------------------------
+
+Translated into Elasticsearch DSL, we can try a similar query with
+the `term` filter like so:
+
+[source,js]
+--------------------------------------------------
+GET /my_store/products/_search
+{
+    "query" : {
+        "filtered" : { 
+            "filter" : {
+                "term" : { 
+                    "productID" : "XHDK-A-1293-#fJ3"
+                }
+            }
+        }
+    }
+}
+--------------------------------------------------
+
+Except there is a little hiccup...we won't get any results back!  Why is that?
+The problem isn't actually with the the `term` query, it is with the indexed
+data.  If we use the Analyze API (<<_testing_analyzers>), we can
+see that our UPC is being tokenized into smaller tokens:
+
+[source,js]
+--------------------------------------------------
+GET /_analyze?field=productID
+XHDK-A-1293-#fJ3
+--------------------------------------------------
+[source,js]
+--------------------------------------------------
+{
+  "tokens" : [ {
+    "token" : "xhdk",
+    "start_offset" : 0,
+    "end_offset" : 4,
+    "type" : "<ALPHANUM>",
+    "position" : 1
+  }, {
+    "token" : "1293",
+    "start_offset" : 7,
+    "end_offset" : 11,
+    "type" : "<NUM>",
+    "position" : 3
+  }, {
+    "token" : "fj3",
+    "start_offset" : 13,
+    "end_offset" : 16,
+    "type" : "<ALPHANUM>",
+    "position" : 4
+  } ]
+}
+--------------------------------------------------
+
+There are a couple of important points here.  We have three distinct
 tokens instead of a single token representing the UPC.  But also notice how
-all characters are lowercased, that we lost hyphens and the hash (#) sign, and
+all characters are lowercased, we lost hyphens and the hash (#) sign, and
 the `A` was removed entirely because the analyzer thought it was a stop-word.
+
+So when our `term` filter is looking for `XHDK-A-1293-#fJ3`, it doesn't find
+anything because that token does not exist inside our index.  Instead, there
+are the three tokens listed above.
 
 Obviously, this is not what we want to happen when dealing with identification
 codes, or any kind of precise enumeration.
@@ -170,18 +244,9 @@ POST /my_store/products/_bulk
 { "price" : 30, "productID" : "QQPX-R-3956-#aD8" }
 --------------------------------------------------
 
-Now, getting back to our original question, let's find all products that have
-the ID code `XHDK-A-1293-#fJ3`.  A representative SQL query would look like 
-this:
-
-[source,sql]
---------------------------------------------------
-SELECT product
-FROM products
-WHERE productID = "XHDK-A-1293-#fJ3"
---------------------------------------------------
-And we once again use the `term` filter to find the exact match we are looking 
-for:
+Only now will our `term` filter work as expected.  Let's try it again on the
+newly indexed data (notice, the query and filter have not changed at all, just
+how the data is mapped):
 
 [source,js]
 --------------------------------------------------
@@ -202,11 +267,6 @@ GET /my_store/products/_search
 Since the `productID` field is not analyzed, and the `term` filter performs no
 analysis, the query finds the exact match and returns document `1` as a hit. 
 Success!
-
-Notice how the syntax of the `term` filter did not change, even though we
-are looking for strings instead of numbers.  The filter understands that the
-underlying field is a text field and will act appropriately.
-
 
 ==== Internal Filter Operation
 
@@ -231,15 +291,17 @@ Lastly, the bitset is stored in memory, since we can use this in the future and
 skip step 1. and 2.  This adds a lot of performance and makes filters very
 fast.
 
-When executing a query that has filters, it will either evaluate and cache the
-bitset (as described above), or retrieve the bitset from memory.  Once
-all the bitsets are gathered, a simple bitwise AND will yield the final set of
-documents that match the filter.
+When executing a query that has filters, first check to see if the filter is
+cached in memory.  If it is, the cached filter will be retrieved.  Otherwise the
+filter will be evaluated (as described above) and the generatead bitset will
+be cached for future use.
 
+Once all the relevant bitsets have been retrieved, they are
+combined with bitwise operations and yield a final set of documents that match.
 These matching documents are then given to the `query` portion of a `filtered`
-query.  If the `query` clause is empty or omitted, then the matching documents
-are just returned with a score of 1.
-
-
+query.  It is important to understand that the query will only operate on
+documents that matched the specified filters...this is one of the ways that
+filters can improve performance.  Fewer documents evaluated by the query usually
+means faster response times.
 
 

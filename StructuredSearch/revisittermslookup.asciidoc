@@ -8,19 +8,14 @@ person followed.  Since it is possible for a user to follow a large number of
 users, we used the lookup capability of the `terms` filter.
 This allowed us to avoid sending a list of 10,000 terms in the query itself.
 
-But this setup could be improved.  Using the knowledge gained in 
-<<_all_about_caching>>, you know that caching these terms could be tricky.
-Do we cache all 10,000 terms together with the default `plain` execution mode?
-This seems like a bad idea, since it is highly unlikely that the filter will 
-ever be used again (how often do users follow the exact same 10,000 people?)
+But even though we have optimized the delivery of terms to the filter (e.g.
+extracting from a document instead of sending over the wire), the underlying 
+process is fundamentally the same.  We are performing 10,000 individual term
+lookups.  And this only gets worse as you continue to follow more people.
 
-We could cache them independently using `bool`, but this seems wasteful too.
-If you have thousands of users, and they each follow 10,000 users, you are going
-to very quickly fill up your cache with filters that are _probably_ not going
-to be used by other queries.
-
-Both seem like poor solutions.  The problem isn't the filter so much as the
-data organization.  In our old example, we had a document-per-user which listed
+So while the `lookup` capability has helped considerably, it is a band-aid and not
+a true fix.  The problem isn't the filter...the problem is how the data has 
+been organized.  In our old example, we had a document-per-user which listed
 who that user followed:
 
 [source,js]

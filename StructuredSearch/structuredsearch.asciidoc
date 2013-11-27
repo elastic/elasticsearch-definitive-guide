@@ -7,8 +7,9 @@ format that you can perform logical operations on.  Common operations include
 comparing ranges of numbers or dates, or determining which value is larger.
 
 Text can be structured too.  A box of crayons has a discrete set of colors: `red`, `green`, `blue`.  A blog post may be tagged with keywords 
-`distributed` and `search`.  Products in an e-commerce store have UPCs and other
-IDs which require strict and structured formatting.
+`distributed` and `search`.  Products in an e-commerce store have Universal
+Product Codes (UPCs) or some other identifier which requires strict and 
+structured formatting.
 
 With structured search, the answer to your question is **always** a yes or no;
 something either belongs in the set or it does not.  Structured search does

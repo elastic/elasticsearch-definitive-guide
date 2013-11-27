@@ -1,5 +1,5 @@
 
-Filtering on ranges is a very common structured search. When dealing with numbers
+When dealing with numbers
 in this chapter, we have so far only searched for exact numbers.  In practice, 
 filtering on ranges tends to be more useful.  For example, find all products
 with a price greater than $20 and less than $40.
@@ -30,14 +30,13 @@ ranges:
 The `range` filter supports both inclusive and exclusive ranges, through
 combinations of the following options:
 
- - `gt`: greater than (>), non-inclusive
- - `gte`: greater than or equal (>=), inclusive
- - `lt`: less than (<), non-inclusive
- - `lte`: less than or equal (<=), inclusive
+ - `gt`: greater than (`>`), non-inclusive
+ - `gte`: greater than or equal (`>=`), inclusive
+ - `lt`: less than (`<`), non-inclusive
+ - `lte`: less than or equal (`<=`), inclusive
 
-Like every other filter we have seen in this chapter, the `range` filter is 
-best used inside of a `filtered` query:
 
+.Example range filter
 [source,js]
 --------------------------------------------------
 GET /my_store/products/_search
@@ -70,7 +69,7 @@ GET /my_store/products/_search
             "filter" : {
                 "range" : {
                     "price" : {
-                        "gt" : 20 <1>
+                        "gt" : 20
                     } 
                 }
             }
@@ -78,11 +77,9 @@ GET /my_store/products/_search
     }
 }
 --------------------------------------------------
-<1> By omitting the `lt` clause, we have specified an unbounded `>20` range
 
 ==== Ranges on dates
-The range filter also works on date fields.  Intuitively, we can specify the 
-dates in our range:
+The range filter also works on date fields:
 
 [source,js]
 --------------------------------------------------
@@ -159,13 +156,15 @@ example, we asked for all documents in the month of January (`+1M` specifies
 one month).
 
 Date math is "calendar aware", so it knows how many days are in each month, 
-days in a year, etc.
+days in a year, etc.  More details about working with dates can be found
+in <<Dates>>
 
 ==== Ranges on strings
 The range filter can also operate on string fields.  String ranges are 
 calculated lexicographically (aka alphabetically).  For example, these values
 are sorted in lexicographic order:
 
+ - `5`
  - `a`
  - `ab`
  - `abb`
@@ -197,9 +196,12 @@ GET /my_store/products/_search
 
 .Be careful of cardinality
 ****
-Ranges on string values are inherently slower than numeric ranges, which seems
-pretty obvious.  Finding ranges on numbers/dates is a trivial operation, while
-comparing strings requires many more operations.
+Numeric and date fields are indexed in such a way that ranges are very efficient
+to calculate.  This is not the case for string fields, however.  To perform
+a range on a string field, Elasticsearch is effectively performing a `term`
+filter for every term that falls in the range.  This is much slower than
+a date or numeric range, and the slowness is exacerbated by having more
+unique terms in your index (or larger ranges).
 
 In general, just remember that the higher your field's cardinality (e.g. the
 number of unique values in the field), the slower a string range will be.
