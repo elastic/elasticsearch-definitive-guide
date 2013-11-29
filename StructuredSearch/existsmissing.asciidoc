@@ -122,7 +122,8 @@ were document `3` and `4`:
 // Document #3
 { "other_field" : "some data" }
 --------------------------------------------------
-<1> Document `3` didn't specify the `tags` field at all, so it isn't surprising that 
+
+Document `3` didn't specify the `tags` field at all, so it isn't surprising that
 it doesn't match the `exists` filter.
 
 [source,js]
@@ -130,7 +131,8 @@ it doesn't match the `exists` filter.
 // Document #4
 { "tags" : null }
 --------------------------------------------------
-<1> Document `4` did specify the `tags` field, but it passed an explicit `null`.
+
+Document `4` did specify the `tags` field, but it passed an explicit `null`.
 To Elasticsearch, an explicit `null` is the same a field not existing at all.
 Internally, nothing was indexed for that field...it is functionally equivalent
 to document `3`.

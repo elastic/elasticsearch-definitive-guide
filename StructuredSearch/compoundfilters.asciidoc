@@ -5,6 +5,7 @@ will probably need to filter on multiple values or fields.
 In these situations, you will need the `bool` filter.  This is a compound filter 
 that accepts other filters, combining them in various boolean combinations.
 
+[[bool-filter]]
 ==== Bool Filter
 
 The `bool` filter is composed of three sections:

@@ -134,13 +134,12 @@ to something like this:
 But we don't really want to have to duplicate fields and waste space with
 redundant data. Instead, we want to _index a single field in different ways
 for different purposes_.  Elasticsearch makes it easy to do this using _multi-
-fields_.
+fields_, which we have already met in <<signal-fields>>.
 
 Any simple field -- a field that contains a concrete value like a string or a
 number -- can be defined as a `multi_field`, but multi-fields are mostly used
 to analyze `string` fields with different analyzers, or even to index a
 `not_analyzed` version of the string for sorting or aggregation purposes.
-<<TODO>>?
 
 The old mapping for the `title` field looked like this:
 

@@ -92,7 +92,7 @@ GET /my_index/users/_search
             "index" : "my_index", <1>
             "type" : "user_following", <1>
             "id" : "1", <1>
-            "path" : "following" <4>
+            "path" : "following" <2>
           }
         }
       }

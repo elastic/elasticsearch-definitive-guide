@@ -48,8 +48,8 @@ The query will return second and third documents:
         "_type" : "products",
         "_id" : "2",
         "_score" : 1.0,
-        "_source" : { 
-          "price" : 20, <2>
+        "_source" : {
+          "price" : 20,
           "productID" : "KDKE-B-9947-#kL5"
         }
     },
@@ -58,8 +58,8 @@ The query will return second and third documents:
         "_type" : "products",
         "_id" : "3",
         "_score" : 1.0,
-        "_source" : { 
-          "price" : 30, <2>
+        "_source" : {
+          "price" : 30,
           "productID" : "JODL-X-1937-#pV7"
         }
     }

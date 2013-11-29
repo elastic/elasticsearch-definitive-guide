@@ -51,9 +51,9 @@ If, however, we were to index both first name and last name into a single
 last name -- it will have have the same low IDF in either position, which
 would improve the accuracy of our results.
 
-In <<all-field>> we introduced the special `_all` field, which concatenates
-the values from all other fields into one big string which it then indexes as
-an `analyzed` string field.
+In <<all-field-intro>> and <<all-field>> we introduced the special `_all`
+field, which concatenates the values from all other fields into one big string
+which it then indexes as an `analyzed` string field.
 
 This sounds like what we want: by indexing both `first_name` and `last_name`
 into one field, instead of dealing with the complexities of multi-field

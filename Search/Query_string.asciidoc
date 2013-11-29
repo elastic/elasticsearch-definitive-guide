@@ -32,7 +32,7 @@ match. Similarly a `"-"` prefix would indicate conditions that _must not_
 match.  All conditions without a `+` or `-` are optional -- the more that match,
 the more relevant the document.
 
-[[all-field]]
+[[all-field-intro]]
 ==== The `_all` field
 
 This simple search returns all documents which contain the word `"mary"`:
