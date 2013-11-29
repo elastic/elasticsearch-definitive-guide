@@ -1,0 +1,118 @@
+=== Tuning competitive queries
+
+What would happen if the user had searched for ``quick pets''?  Both documents
+contain the word ``quick''  but only document 2 contains the word ``pets''.
+Neither document contains *both words* in the *same field*.
+
+A simple `dis_max` query like the following would choose the single best
+matching field, and ignore the other:
+
+[source,js]
+--------------------------------------------------
+{
+    "query": {
+        "dis_max": {
+            "queries": [
+                { "match": { "title": "Quick pets" }},
+                { "match": { "body":  "Quick pets" }}
+            ]
+        }
+    }
+}
+--------------------------------------------------
+
+This would result in the following:
+
+[source,js]
+--------------------------------------------------
+{
+  "hits": [
+     {
+        "_id": "1",
+        "_score": 0.12713557, <1>
+        "_source": {
+           "title": "Quick brown rabbits",
+           "body": "Brown rabbits are commonly seen."
+        }
+     },
+     {
+        "_id": "2",
+        "_score": 0.12713557, <1>
+        "_source": {
+           "title": "Keeping pets healthy",
+           "body": "My quick brown fox eats rabbits on a regular basis."
+        }
+     }
+   ]
+}
+--------------------------------------------------
+<1> Note that the scores are exactly the same.
+
+We would probably expect documents that match on both the `title` field and
+the `body` field to rank higher than documents that match on just one field,
+but this isn't the case. Remember: the `dis_max` query simply uses the
+`_score` from the single best matching clause.
+
+==== `tie_breaker`
+
+It is possible, however, still to take the `_score` from the other matching clauses
+into account, by specifying the `tie_breaker` parameter.
+
+[source,js]
+--------------------------------------------------
+{
+    "query": {
+        "dis_max": {
+            "queries": [
+                { "match": { "title": "Quick pets" }},
+                { "match": { "body":  "Quick pets" }}
+            ],
+            "tie_breaker": 0.3
+        }
+    }
+}
+--------------------------------------------------
+
+which gives us the following results:
+
+[source,js]
+--------------------------------------------------
+{
+  "hits": [
+     {
+        "_id": "2",
+        "_score": 0.14757764, <1>
+        "_source": {
+           "title": "Keeping pets healthy",
+           "body": "My quick brown fox eats rabbits on a regular basis."
+        }
+     },
+     {
+        "_id": "1",
+        "_score": 0.124275915, <1>
+        "_source": {
+           "title": "Quick brown rabbits",
+           "body": "Brown rabbits are commonly seen."
+        }
+     }
+   ]
+}
+--------------------------------------------------
+<1> Document 2 now has a small lead over document 1.
+
+The `tie_breaker` parameter makes the `dis_max` query behave more like a
+halfway house between `dis_max` and `bool`. The score is calculated as
+follows:
+
+* take the `_score` of the best matching clause
+* multiply the score of each of the other matching clauses by `tie_breaker`
+* add them all together, and normalize
+
+So all matching clauses count, but the best matching clause counts most.
+
+The `tie_breaker` can be a floating point value between `0` and `1`, where `0`
+uses just the best matching clause and `1` counts all matching clauses
+equally.  The exact value can be tuned based on your data and queries, but a
+reasonable value should be close to zero, eg `0.1 - 0.4`, in order not to
+overwhelm the ``best-matching'' nature of `dis_max`.
+

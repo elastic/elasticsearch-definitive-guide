@@ -7,19 +7,13 @@ include::Full_Text_Search/Match_query.asciidoc[]
 
 include::Full_Text_Search/Multi_word_queries.asciidoc[]
 
-include::Full_Text_Search/Relevance_is_broken.asciidoc[]
-
 include::Full_Text_Search/Combining_queries.asciidoc[]
+
+include::Full_Text_Search/How_match_uses_bool.asciidoc[]
 
 include::Full_Text_Search/Boosting_clauses.asciidoc[]
 
-include::Full_Text_Search/Multi_field_matching.asciidoc[]
-
-include::Full_Text_Search/Tuning_multi_field.asciidoc[]
-
 include::Full_Text_Search/Controlling_analysis.asciidoc[]
 
+include::Full_Text_Search/Relevance_is_broken.asciidoc[]
 
-include::Full_Text_Search/Query_string_query.asciidoc[]
-
-include::Full_Text_Search/Pooled_fields.asciidoc[]

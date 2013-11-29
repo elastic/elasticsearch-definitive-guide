@@ -153,6 +153,4 @@ http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-
 **************************************************
 
 To fully understand how the `match` query handles multi-word queries, we need
-to examine how to combine multiple queries with the `bool` query. But first, a
-quick detour to explain why we <<match-test-data,created our test index>> with
-just one primary shard.
+to examine how to combine multiple queries with the `bool` query.

@@ -1,0 +1,118 @@
+[[word-centric-query]]
+=== Word-centric queries
+
+To make our ``red widget london'' query word-centric, we could break up  the
+query string on whitespace to yield the three individual words `red`,
+`widget` and `london`, and use a separate `multi_match` query on all fields
+for each word:
+
+[source,js]
+--------------------------------------------------
+GET /my_index/_search
+{
+    "query": {
+        "bool": {
+            "should": [
+               { "multi_match": {
+                   "query":  "red",
+                   "fields": [ "name", "color", "city" ]
+               }},
+               { "multi_match": {
+                   "query":  "widget",
+                   "fields": [ "name", "color", "city" ]
+               }},
+               { "multi_match": {
+                   "query":  "london",
+                   "fields": [ "name", "color", "city" ]
+               }}
+            ]
+        }
+    }
+}
+--------------------------------------------------
+
+Now that the outer query is a simple `bool` query, it is easy to control the
+``long tail''.  We can either make all words required by adding the
+`multi_match` queries as `must` clauses instead of `should` clauses -- the
+equivalent of setting `operator` to `and` -- or we can exercise finer control
+with the `minimum_should_match` parameter:
+
+[source,js]
+--------------------------------------------------
+GET /my_index/_search
+{
+    "query": {
+        "bool": {
+            "should": [
+               { "multi_match": {
+                   "query":  "red",
+                   "fields": [ "name", "color", "city" ]
+               }},
+               { "multi_match": {
+                   "query":  "widget",
+                   "fields": [ "name", "color", "city" ]
+               }},
+               { "multi_match": {
+                   "query":  "london",
+                   "fields": [ "name", "color", "city" ]
+               }}
+            ],
+            "minimum_should_match": "70%" <1>
+        }
+    }
+}
+--------------------------------------------------
+
+<1> At least 70% of the words (in this case, 2 of the 3) must be present.
+
+Rewriting this query to make it word-centric also solves the
+<<multi-match-exact-values,problem with `not_analyzed` fields>>. The
+query for ``widgets WC1'' against the `name` and `postcode` fields
+would give us:
+
+[source,js]
+--------------------------------------------------
+GET /my_index/_search
+{
+    "query": {
+        "bool": {
+            "should": [
+               { "multi_match": {
+                   "query":  "widgets",
+                   "fields": [ "name", "postcode" ]
+               }},
+               { "multi_match": {
+                   "query":  "WC1", <1>
+                   "fields": [ "name", "postcode" ]
+               }}
+            ]
+        }
+    }
+}
+--------------------------------------------------
+<1> The exact term `WC1` exists in the postcode field and so
+    would find a match.
+
+
+[NOTE]
+==================================================
+
+Splitting the query string whitespace only solves the problem for
+`not_analyzed` fields as long as the terms in the field do not contain any
+whitespace.
+
+If your postcodes included spaces, like `WC1 2GH`, then a query for ``WC1
+2GH'' would become a query for the two terms `WC1` and `2GH`, neither of which
+exist in the field.
+
+In this case, your two options would be:
+
+* use a regular expression to recognise and extract postcodes from the query
+  string before querying, and query the `postcode` field independently
+
+* make the `postcode` field an `analyzed` field, or make it a `multi_field`
+  with both an `analyzed` and `not_analyzed` sub-field.
+
+==================================================
+
+

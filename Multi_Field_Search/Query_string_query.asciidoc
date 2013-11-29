@@ -1,0 +1,119 @@
+[[query-string-query]]
+=== `query_string` query
+
+Back in <<search-lite>> we introduced query string search, which accepts a
+query in the `q=` query string parameter, and which understands a concise
+search syntax, known as the _Lucene query parser syntax_:
+
+[source,js]
+--------------------------------------------------
+GET /_search?q=name:widget color:red city:London
+--------------------------------------------------
+
+This same query parser syntax is exposed in the Query DSL as the
+`query_string` query:
+
+[source,js]
+--------------------------------------------------
+GET /_search
+{
+    "query": {
+        "query_string": "name:widget color:red London"
+    }
+}
+--------------------------------------------------
+
+In this example, we have explicitly told the `query_string` query to search
+for `widget` in the `name` field, `red` in the `color` field, and it falls
+back to searching for `London` within the <<all-field,`_all` field>>, because
+no field was specified. You can change which field is used for this general
+field by specifying a different `default_field`.
+
+One of the most interesting properties of the `query_string` query is that it
+is word-centric, not field-centric. Instead of specifying a single
+`default_field`, you can specify a list of fields:
+
+[source,js]
+--------------------------------------------------
+GET /_search
+{
+    "query": {
+        "query_string": {
+            "query":  "red widget London",
+            "fields": [ "name", "color", "city" ]
+    }
+}
+--------------------------------------------------
+
+The above results in a query that is identical to the one described in
+<<word-centric-query>>. It splits the query string on whitespace and searches
+for each word in at least one field:
+
+      (color:red    name:red    city:red)
+    | (color:widget name:widget city:widget)
+    | (color:london name:london city:london)
+
+You can even set `default_operator` to `and` to make all words required,  or
+specify a `minimum_should_match` parameter to make a percentage of the words
+required:
+
+[source,js]
+--------------------------------------------------
+GET /_search
+{
+    "query": {
+        "query_string": {
+            "query":                "red widget London",
+            "fields":               [ "name", "color", "city" ],
+            "minimum_should_match": "70%"
+    }
+}
+--------------------------------------------------
+
+Unfortunately, the `query_string` comes with extra baggage which prevents it
+from being the _de facto_ word-centric query.
+
+[[query-string-problems]]
+==== Problems with the `query_string` query
+
+The `query_string` query understands a complicated, succinct query syntax --
+explained in detail in the
+{ref}/query-dsl-query-string-query.html#query-string-syntax[Query String Syntax]
+reference docs -- which makes it very powerful. Unfortunately, there is no
+way of limiting its power.
+
+It allows users to search in any field in your index, exposing data you might
+prefer to keep secret.  And it allows them to run potentially very heavy
+queries which could even bring your cluster to its knees.
+
+It is fragile, meaning that any syntax error will result in an error being
+returned instead of results, and because it has so many syntactical elements,
+it is difficult for the ordinary user to know when they are using syntax
+instead of simple search terms.
+
+For example, a query string of ``http://foo.com'' would actually mean:
+_search in the `http` field for an empty regular expression, and search in
+the `_all` field for `foo.com`._  And a query string of ``http://foo.com/''
+would throw an error because the last `/` looks like the start of a regular
+expression.
+
+The `query_string` query should not be exposed directly to your users, unless
+they are power users who understand the syntax and whom you can trust with
+your cluster.
+
+It can still be used to great effect though, as long as you sanitize the query
+string first.
+
+==== Sanitising the query string
+
+Sanitising the query string means removing all _reserved characters_ before
+running the query, which you could do by using a regular expression to replace
+all of the following with whitespace:
+
+--------------------------------------------------
+- + : \ / { } [ ] ( ) * ? ~ ^ ! & | " AND OR NOT
+--------------------------------------------------
+
+This will render your query string harmless and is an acceptable approach, but
+you may find it just as easy to use the more verbose approach discussed in
+<<word-centric-query>>.

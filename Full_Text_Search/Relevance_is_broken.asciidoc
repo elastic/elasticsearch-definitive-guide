@@ -1,6 +1,10 @@
 [[relevance-is-broken]]
 === Relevance is broken!
 
+Before we move on to discussing more complex queries in
+<<multi-field-search>>, let's make a quick detour to explain why we
+<<match-test-data,created our test index>> with just one primary shard.
+
 Every now and again a new user opens an issue claiming that sorting by
 relevance is broken and offering a short reproduction: they index a few
 documents, run a simple query and find apparently less relevant results

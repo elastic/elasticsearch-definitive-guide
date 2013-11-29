@@ -59,19 +59,21 @@ in action with the `validate query` API:
 --------------------------------------------------
 GET /my_index/my_type/_validate/query?explain
 {
-    "multi_match": {
-        "query":  "Foxes",
-        "fields": [ "title", "english_title" ]
+    "bool": {
+        "should": [
+            { "match": { "title":         "Foxes"},
+            { "match": { "english_title": "Foxes"}
+        ]
     }
 }
 --------------------------------------------------
 
 which returns this `explanation`:
 
-    (title:foxes | english_title:fox)
+    (title:foxes english_title:fox)
 
-By using the appropriate analyzer for each field, the `multi_match` query
-ensures that it looks for each term in the correct format for that field.
+The `match` query uses the appropriate analyzer for each field to ensure
+that it looks for the each term in the correct format for that field.
 
 ==== Default analyzers
 

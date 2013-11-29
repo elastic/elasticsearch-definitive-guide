@@ -1,0 +1,90 @@
+=== Cooperative fields
+
+Now we come to a pattern common in product search. Each document in our
+imaginary product index has a field for the product name, brand, color,
+description, serial number and the store where the product is located.
+Something like this:
+
+[source,js]
+--------------------------------------------------
+{
+    "name":         "Awesome Widget",
+    "brand":        "Acme Corp",
+    "color":        "Red",
+    "desc":         "This is the most awesome widget ever",
+    "ref":          "XYZ-123",
+    "store": {
+        "city":     "London",
+        "postcode": "WC1"
+    }
+}
+--------------------------------------------------
+
+
+This sounds a lot like the example we described in <<multi-query-strings>>,
+but there is a big difference between these two scenarios.  In
+<<multi-query-strings>>, we used a separate query string for each field. In
+this scenario, we want to search across multiple fields with a *single* query
+string.
+
+Our user might type this into the search box: ``red widget london''. Each of
+those words appears in a different field so using a `dis_max` query to find
+the single best matching field is the wrong approach.
+
+==== A naive approach
+
+Really we want to query each field in turn and add up the scores of every
+field that matches, which sounds like it is a job for the `bool` query:
+
+[source,js]
+--------------------------------------------------
+{
+    "query": {
+        "bool": {
+            "should": [
+                { "match": { "name":  "red widget london" }},
+                { "match": { "color": "red widget london" }},
+                { "match": { "city":  "red widget london" }}
+            ]
+        }
+    }
+}
+--------------------------------------------------
+
+Repeating the query string for every field soon becomes tedious. We can use
+the `multi_match` query instead, and set the `use_dis_max` parameter to
+`false` to tell it to use a `bool` query instead of a `dis_max` query:
+
+[source,js]
+--------------------------------------------------
+{
+    "query": {
+        "multi_match": {
+            "query":       "red widget london",
+            "fields":      [ "name", "color", "city" ],
+            "use_dis_max": false
+        }
+    }
+}
+--------------------------------------------------
+
+==== Limitations of `multi_match`
+
+Using `multi_match` to query collaborative fields is simple, but has some
+limitations:
+
+* It can't query exact value `not_analyzed` fields
+
+* It can't use the `operator` or `minimum_should_match` parameters
+  to reduce the long tail of less relevant results
+
+* It is designed to find the most fields matching any words, rather than to
+  find the most matching words across all fields.
+
+All three problems are a result of the fact that the `multi_match` query is
+_field-centric_ rather than _word-centric_ -- it looks for the best matching
+field or most matching fields, when really what we're interested is the most
+matching words. In the rest of this chapter, we will look at why each of these
+limitations exist and how we can combat them.
+
+

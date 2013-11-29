@@ -1,0 +1,268 @@
+[[signal-fields]]
+=== Signal fields
+
+Full text search is a battle between _recall_ -- returning all of the
+documents that are relevant -- and _precision_ -- not returning irrelevant
+documents.  The most important goal is to present the user with the most
+relevant documents on the first page of results.
+
+In order to improve recall, we cast the net wide -- we not only include
+documents that match the user's search terms exactly, we also include
+documents that we believe to be pertinent to the query.  If a user searches
+for ``quick brown fox'', a document which contains ``fast foxes'' may well be a
+reasonable result to return.
+
+If the only pertinent document that we have is the one containing ``fast
+foxes'', then it will appear at the top of the results list.  But of course, if
+we have 100 documents which contain the words ``quick brown fox'', then the
+``fast foxes'' document may be considered less relevant and we would want to
+push it further down the list.  After including many potential matches, we
+need to ensure that the best ones rise to the top.
+
+A common technique for fine-tuning full text relevance is to index the same
+text in multiple ways, each of which provides a different relevance _signal_.
+The main field would contain terms in their broadest-matching form to match as
+many documents as possible.  For instance, we could use a stemmer to index
+``jumps'', ``jumping'' and ``jumped'' as the root form ``jump''.  Then it
+doesn't matter if the user searches for ``jumped'', we could still match
+documents which containing ``jumping''.
+
+However, if we have two documents, one of which contains ``jumped'' and the
+other ``jumping'', the user would probably expect the first document to rank
+higher, as it contains exactly what they typed in.
+
+We can achieve this by indexing the same text in an *unstemmed* form into a
+separate field.  A document is included in the results list if it matches the
+broad-matching main field, but if it also matches the unstemmed field then it
+gets extra points and is pushed up the results list.
+
+There are many signals that we could consider and which we will discuss later
+in this book, such as synonyms, word proximity or partial-matching, but we
+will use the simple example of stemmed and unstemmed fields to illustrate this
+technique.
+
+==== Multi-fields
+
+Imagine that we start with a single `title` field which uses the `english`
+analyzer for stemming:
+
+[source,js]
+--------------------------------------------------
+{
+    "title": {
+        "type":     "string",
+        "analyzer": "english"
+    }
+}
+--------------------------------------------------
+
+We also want to index the value in the `title` field using the `standard`
+analyzer. The naive approach to indexing the same value in two ways would be
+to include two separate fields in a document, as follows:
+
+[source,js]
+--------------------------------------------------
+{
+    "title_std":     "Jumping jack rabbits",
+    "title_stemmed": "Jumping jack rabbits"
+}
+--------------------------------------------------
+
+This is a waste of space though.  What we really want to do is to pass in a
+single field but to index it in two different ways. The `multi_field` field
+type exists for exactly this purpose. The first step in converting a field
+to a `multi_field` is to change the mapping to look like this:
+
+[source,js]
+--------------------------------------------------
+{
+    "title": { <1>
+        "type":             "multi_field",
+        "fields": {
+            "title": { <1>
+                "type":     "string",
+                "analyzer": "english"
+            }
+        }
+    }
+}
+--------------------------------------------------
+<1> The ``main'' sub-field has the same name as the multi-field: `title`.
+
+Now we can add a new sub-field called `std`, which will use the `standard`
+analyzer:
+
+[source,js]
+--------------------------------------------------
+{
+    "title": {
+        "type":             "multi_field",
+        "fields": {
+            "title": { <1>
+                "type":     "string",
+                "analyzer": "english"
+            },
+            "std":   { <2>
+                "type":     "string",
+                "analyzer": "standard"
+            }
+        }
+    }
+}
+--------------------------------------------------
+<1> This ``main'' field can be queried as `title` or as `title.title`.
+<2> The `std` sub-field should be queried as `title.std`.
+
+Now that we have explained the structure of the `multi_field` query, we can
+work through a full example, starting with creating the index:
+
+[source,js]
+--------------------------------------------------
+DELETE /my_index
+
+PUT /my_index
+{
+    "settings": { "number_of_shards": 1 }, <1>
+    "mappings": {
+        "my_type": {
+            "properties": {
+                "title": {
+                    "type":             "multi_field",
+                    "fields": {
+                        "title": {
+                            "type":     "string",
+                            "analyzer": "english"
+                        },
+                        "std":   {
+                            "type":     "string",
+                            "analyzer": "standard"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+--------------------------------------------------
+<1> See <<relevance-is-broken>>.
+
+Next we index some documents:
+
+[source,js]
+--------------------------------------------------
+PUT /my_index/my_type/1
+{ "title": "My rabbit jumps" }
+
+PUT /my_index/my_type/2
+{ "title": "Jumping jack rabbits" }
+--------------------------------------------------
+
+A simple `match` query on the `title` field for ``jumping rabbits'':
+
+[source,js]
+--------------------------------------------------
+GET /my_index/_search
+{
+   "query": {
+        "match": {
+            "title": "jumping rabbits"
+        }
+    }
+}
+--------------------------------------------------
+
+becomes a query for the two terms `jump` and `rabbit`, thanks to the `english`
+analyzer, so it returns both docs with the same score:
+
+[source,js]
+--------------------------------------------------
+{
+  "hits": [
+     {
+        "_id": "1",
+        "_score": 0.42039964,
+        "_source": {
+           "title": "My rabbit jumps"
+        }
+     },
+     {
+        "_id": "2",
+        "_score": 0.42039964,
+        "_source": {
+           "title": "Jumping jack rabbits"
+        }
+     }
+  ]
+}
+--------------------------------------------------
+
+If we were to query just the `title.std` field, then only document 2 would
+match.  However, if we were to query both fields and to *combine* their scores
+using the `bool` query, then both documents would match (thanks to the `title`
+field) and document 2 would score higher (thanks to the `title.std` field):
+
+[source,js]
+--------------------------------------------------
+GET /my_index/_search
+{
+   "query": {
+        "multi_match": {
+            "query":       "jumping rabbits",
+            "fields":      [ "title", "title.std" ],
+            "use_dis_max": false <1>
+        }
+    }
+}
+--------------------------------------------------
+<1>  We want to combine the scores from each field rather than choosing the
+     single best field.  Setting `use_dis_max` to `false` causes the
+     `multi_match` query to wrap the two field-clauses in a `bool` query
+     instead of a `dis_max` query.
+
+[source,js]
+--------------------------------------------------
+{
+  "hits": [
+     {
+        "_id": "2",
+        "_score": 0.8226396, <1>
+        "_source": {
+           "title": "Jumping jack rabbits"
+        }
+     },
+     {
+        "_id": "1",
+        "_score": 0.10741998, <1>
+        "_source": {
+           "title": "My rabbit jumps"
+        }
+     }
+  ]
+}
+--------------------------------------------------
+<1> Document 2 now scores much higher than document 1.
+
+We are using the broad-matching `title` field to include as many documents as
+possible -- to increase recall -- but we use the `title.std` field as a
+_signal_ to improve the relevance scoring. The contribution of each field to
+the final score can be controlled by specifying custom `boost` values. For
+instance, we could boost the `title` field to make it the most important
+field, thus reducing the effect of any other signal fields:
+
+[source,js]
+--------------------------------------------------
+GET /my_index/_search
+{
+   "query": {
+        "multi_match": {
+            "query":       "jumping rabbits",
+            "fields":      [ "title^10", "title.std" ], <1>
+            "use_dis_max": false
+        }
+    }
+}
+--------------------------------------------------
+
+<1> The `boost` value of `10` on the `title` field makes that field relatively
+    more important than the `title.std` field.
+
