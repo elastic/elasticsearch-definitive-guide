@@ -6,25 +6,25 @@ interesting dilemmas.
 
 Consider our last example, where documents have a field named `tags`.  This is
 a multi-valued field.  A document may have one tag, many tags, or potentially
-no tags at all. 
+no tags at all.
 
 How is this data represented in the inverted index?  If you think back to when
-we introduced the inverted index, it stores a list of terms for a particular 
-field. For each term in that list, it also stores the list of documents which 
+we introduced the inverted index, it stores a list of terms for a particular
+field. For each term in that list, it also stores the list of documents which
 contain the term.
 
-If a field is empty (e.g. there are no `tags` for a document), there are no 
-terms to index, which means there will be no information added to the inverted 
+If a field is empty (e.g. there are no `tags` for a document), there are no
+terms to index, which means there will be no information added to the inverted
 index.  Ultimately, this means that a `null`, `[]` (an empty array), and `[null]`
 are all equivalent...they simply don't exist in the inverted index!
 
-Obviously the world is not simple, and data is often missing fields, contains 
-explicit nulls or empty arrays. To deal with these situations, Elasticsearch has 
+Obviously the world is not simple, and data is often missing fields, contains
+explicit nulls or empty arrays. To deal with these situations, Elasticsearch has
 a few tools to work with null or missing values.
 
 ==== Exists Filter
 
-The first tool in your arsenal is the `exists` filter.  This filter will return 
+The first tool in your arsenal is the `exists` filter.  This filter will return
 documents that have values in the specified field. Let's use the tagging example.
 First, we need to create an index and make sure the `tags` field is `not_analyzed`
 to avoid analysis problems.  Then we can insert some data:
@@ -62,12 +62,12 @@ POST /my_index/posts/_bulk
 make these fields `not_analyzed` so that a default analyzer is not applied
 
 This data contains a variety of documents.  The first two documents have normal,
-multi-valued data.  Document `3` has no tags at all, while doc `4` explicitly 
+multi-valued data.  Document `3` has no tags at all, while doc `4` explicitly
 sets `null` for the `tags` field.  Finally, document `5` has one "real" tag
 and one explicit null.
 
 Our objective is to find all documents where a tag is set.  We don't care what
-the tag is, so long as it exists within the document.  To answer this question, 
+the tag is, so long as it exists within the document.  To answer this question,
 we use the exists filter:
 
 [source,js]
@@ -140,7 +140,7 @@ to document `3`.
 ==== Missing Filter
 
 The Missing filter is essentially the inverse of the Exists filter: it returns
-documents where there is _no_ value for a particular field.  Let's swap the 
+documents where there is _no_ value for a particular field.  Let's swap the
 `exists` filter for a `missing` filter in our example above:
 
 [source,js]
@@ -160,7 +160,7 @@ And, as you would expect, we get the inverse search results back (doc `3` and
 
 [source,json]
 --------------------------------------------------
-"hits" : [ 
+"hits" : [
     {
       "_index" : "my_index",
       "_type" : "posts",
@@ -198,6 +198,6 @@ You can check for the existence of "foo".  If the inner object "foo" exists,
 Existing filter matches while Missing does not.
 
 Internally, the filter is looking at all fields that match `foo.*` and evaluating
-if they have values or not.  TODO: Clint halp! 
+if they have values or not.  TODO: Clint halp!
 
 

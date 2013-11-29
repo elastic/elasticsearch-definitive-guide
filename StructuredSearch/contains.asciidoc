@@ -1,10 +1,10 @@
 
 ==== Contains, but does not equal
 
-It is important to understand that `term` and `terms` are "contains" operations, 
+It is important to understand that `term` and `terms` are "contains" operations,
 not "equals".  What does that mean?
 
-If you have a term filter for `{ "term" : { "tags" : "search" } }`, it will match 
+If you have a term filter for `{ "term" : { "tags" : "search" } }`, it will match
 _both_ of the following documents:
 
 [source,js]
@@ -12,6 +12,7 @@ _both_ of the following documents:
 { "tags" : ["search"] }
 { "tags" : ["search", "open source"] } <1>
 --------------------------------------------------
+
 <1> This document is returned, even though it has terms other than `"search"`
 
 Recall how the `term` filter works: it checks the inverted index for all
@@ -21,7 +22,7 @@ This makes `term` (and `terms` too) a "must contain" operation, not a "must equa
 exactly" operation.
 
 ==== Equals exactly
-If you do want that behavior -- entire field equality -- the best way to 
+If you do want that behavior -- entire field equality -- the best way to
 accomplish it involves indexing a secondary field.  In this field, you index the
 number of values that your field contains.  Using our two previous documents,
 we now include a field that maintains the number of tags:
@@ -32,7 +33,7 @@ we now include a field that maintains the number of tags:
 { "tags" : ["search", "open source"], "tag_count" : 2 }
 --------------------------------------------------
 
-Once you have the count information indexed, you can construct a `bool` filter 
+Once you have the count information indexed, you can construct a `bool` filter
 that enforces the appropriate number of terms:
 
 [source,js]
@@ -52,18 +53,18 @@ GET /my_index/my_type/_search
 }
 --------------------------------------------------
 <1> Find all documents that have the term `"search"`
-<2> But make sure the document only has one tag 
+<2> But make sure the document only has one tag
 
-This query will now match only the document that has a single tag which is 
+This query will now match only the document that has a single tag which is
 `search`, rather than any document which contains `search`.  This is a very
-useful pattern that you may find yourself using often. 
+useful pattern that you may find yourself using often.
 
 .Why can't Elasticsearch do this automatically?
 ****
-Due to the nature of an inverted index, operations like "only this term" are 
-relatively expensive.  
+Due to the nature of an inverted index, operations like "only this term" are
+relatively expensive.
 
-An inverted index looks up the term and finds a list of all documents that 
+An inverted index looks up the term and finds a list of all documents that
 contain the term.
 
 Entire field equality, however, inverts the requirement.  You need to look up a

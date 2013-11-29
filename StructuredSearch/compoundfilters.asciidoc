@@ -1,8 +1,8 @@
 
 The previous two examples showed a single filter in use. In practice you
-will probably need to filter on multiple values or fields.  
+will probably need to filter on multiple values or fields.
 
-In these situations, you will need the `bool` filter.  This is a compound filter 
+In these situations, you will need the `bool` filter.  This is a compound filter
 that accepts other filters, combining them in various boolean combinations.
 
 [[bool-filter]]
@@ -26,10 +26,10 @@ The `bool` filter is composed of three sections:
  as a match. Effectively, this is equivalent to ANDing all clauses inside the
  `must`.
 
- - *Should*: These clauses are optional, but at least one needs to match.  
+ - *Should*: These clauses are optional, but at least one needs to match.
  Effectively, this is a set of OR clauses.
 
- - *Must_not*: A document won't be returned if any of these clauses match.  
+ - *Must_not*: A document won't be returned if any of these clauses match.
  Effectively, this is a set of NOT clauses.
 
 Each section of the `bool` filter is optional (e.g. you can have a Should clause
@@ -42,9 +42,9 @@ from the previous section, let's find all documents where the price is equal to
 
 [source,sql]
 --------------------------------------------------
-SELECT product 
-FROM products 
-WHERE price = 20 
+SELECT product
+FROM products
+WHERE price = 20
   OR productID = "XHDK-A-1293-#fJ3"
 --------------------------------------------------
 
@@ -68,7 +68,7 @@ GET /my_store/products/_search
          }
       }
    }
-   
+
 }
 --------------------------------------------------
 <1> Note that we still need to use a `filtered_query` to wrap everything
@@ -80,13 +80,13 @@ in the `bool` filter:
 
 [source,json]
 --------------------------------------------------
-"hits" : [ 
+"hits" : [
     {
         "_index" : "my_store",
         "_type" : "products",
         "_id" : "1",
         "_score" : 1.0,
-        "_source" : { 
+        "_source" : {
           "price" : 10,
           "productID" : "XHDK-A-1293-#fJ3" <1>
         }
@@ -96,7 +96,7 @@ in the `bool` filter:
         "_type" : "products",
         "_id" : "2",
         "_score" : 1.0,
-        "_source" : { 
+        "_source" : {
           "price" : 20, <2>
           "productID" : "KDKE-B-9947-#kL5"
         }
@@ -109,8 +109,8 @@ in the `bool` filter:
 ==== Nesting boolean filters
 
 Even though `bool` is a compound filter and accepts "children" filters, it is
-important to understand that `bool` is just a filter itself.  This means you 
-can nest `bool` filters inside of other `bool` filters, giving you the 
+important to understand that `bool` is just a filter itself.  This means you
+can nest `bool` filters inside of other `bool` filters, giving you the
 ability to make arbitrarily complex boolean logic.
 
 Given this SQL statement:
@@ -119,7 +119,7 @@ Given this SQL statement:
 --------------------------------------------------
 SELECT document
 FROM products
-WHERE productID = "KDKE-B-9947-#kL5" 
+WHERE productID = "KDKE-B-9947-#kL5"
   OR ( productID = "JODL-X-1937-#pV7"
     AND price = 30 )
 --------------------------------------------------
@@ -140,17 +140,17 @@ GET /my_store/products/_search
                   "must" : [
                     "term" : {"productID" : "JODL-X-1937-#pV7"}, <2>
                     "term" : {"price" : 30}, <2>
-                  ]  
+                  ]
                 }
               ]
            }
          }
       }
    }
-   
+
 }
 --------------------------------------------------
-<1> Because the `term` and the `bool` are sibling clauses inside of the first 
+<1> Because the `term` and the `bool` are sibling clauses inside of the first
 boolean `should`, at least one of these filters must match for a document to be
 a hit
 <2> These two `term` clauses are siblings in a `must` clause, so they both have
@@ -160,13 +160,13 @@ The results show us two documents, one matching each of the `should` clauses:
 
 [source,json]
 --------------------------------------------------
-"hits" : [ 
+"hits" : [
     {
         "_index" : "my_store",
         "_type" : "products",
         "_id" : "2",
         "_score" : 1.0,
-        "_source" : { 
+        "_source" : {
           "price" : 20,
           "productID" : "KDKE-B-9947-#kL5" <1>
         }
@@ -176,7 +176,7 @@ The results show us two documents, one matching each of the `should` clauses:
         "_type" : "products",
         "_id" : "3",
         "_score" : 1.0,
-        "_source" : { 
+        "_source" : {
           "price" : 30, <2>
           "productID" : "JODL-X-1937-#pV7" <2>
         }

@@ -4,10 +4,10 @@ want to search for multiple values.  What if you want to find documents that
 have a price of $20 or $30?
 
 Rather than using multiple `term` filters, you can instead use a single `terms`
-filter (note the 's' at the end).  The `terms` filter is simply the plural 
+filter (note the 's' at the end).  The `terms` filter is simply the plural
 version of the singular `term` filter.
 
-It looks looks nearly identical to a vanilla `term` too.  Instead of 
+It looks looks nearly identical to a vanilla `term` too.  Instead of
 specifying a single price, we are now specifying an array of values:
 
 [source,js]
@@ -19,7 +19,7 @@ specifying a single price, we are now specifying an array of values:
 }
 --------------------------------------------------
 
-And like the `term` filter, we will place it inside of a `filtered` query to 
+And like the `term` filter, we will place it inside of a `filtered` query to
 actually use it:
 
 [source,js]
@@ -42,7 +42,7 @@ The query will return second and third documents:
 
 [source,json]
 --------------------------------------------------
-"hits" : [ 
+"hits" : [
     {
         "_index" : "my_store",
         "_type" : "products",

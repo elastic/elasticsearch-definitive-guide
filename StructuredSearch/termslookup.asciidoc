@@ -1,12 +1,12 @@
 
 The `terms` filter allows us to find documents which contain one or more terms
 that we are looking for.  While this list of terms is usually small, it isn't
-uncommon for the list to grow very large.  What do you do when your list of 
+uncommon for the list to grow very large.  What do you do when your list of
 terms is 10,000 long?  Do you send all 10,000 terms over the wire, incurring
 network cost?  How do you get that list of 10,000 terms to begin with?
 
 These are questions that people run into very soon in development, especially
-with social applications that involve thousands of accounts.  Let's use the 
+with social applications that involve thousands of accounts.  Let's use the
 classic twitter example: You follow 10,000 people on twitter
 and want to see what they've been tweeting in the last 24 hours.
 
@@ -33,7 +33,7 @@ PUT /my_index/user_following/1/_update
 }
 --------------------------------------------------
 
-To search, you must perform a GET on the document to obtain the list of users, 
+To search, you must perform a GET on the document to obtain the list of users,
 then a second query with those user IDs in a Terms filter:
 
 [source,js]
@@ -55,7 +55,7 @@ GET /my_index/users/_search
 --------------------------------------------------
 
 
-This approach works, but is inefficient (and annoying for the developer). Each 
+This approach works, but is inefficient (and annoying for the developer). Each
 query requires two full round-trips to the server before you have useful data
 to work with.
 
@@ -69,13 +69,13 @@ SELECT user
 FROM   users
 WHERE  id IN (SELECT following
               FROM   user_following
-              WHERE  id = 1) 
+              WHERE  id = 1)
 --------------------------------------------------
 
 
 The `terms` filter has a feature which is similar to a subquery.  Called a
 `lookup`, it allows the filter to load values directly from a document rather
-than from the query body.  This simplifies the code for a developer, and avoids 
+than from the query body.  This simplifies the code for a developer, and avoids
 an unnecessary round-trip.
 
 If we tweak our query just a little, we get this:
@@ -123,11 +123,11 @@ and extract terms from a different index.
 This can give you considerable flexibility when organizing data, but it can also
 give extra performance.
 
-Elasticsearch prefers to get the lookup document locally if possible, 
+Elasticsearch prefers to get the lookup document locally if possible,
 since this avoids an inter-cluster round-trip to get the document.  An easy
-performance trick is auto-replicating your "lookup" index to all nodes.  
+performance trick is auto-replicating your "lookup" index to all nodes.
 
-This guarantees a local copy of all lookup documents on each node, which makes 
+This guarantees a local copy of all lookup documents on each node, which makes
 all `terms` lookups very fast.
 ****
 
