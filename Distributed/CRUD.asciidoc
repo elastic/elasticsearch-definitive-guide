@@ -134,7 +134,9 @@ The allowed values for `consistency` are `quorum` (the majority),
 +
 If a quorum is not available, the primary *does not* write the document and
 instead returns an exception to the client.  If the quorum is available, the 
-primary will write the document, then push it out to be replicated.
+primary will write the document, then push it out to be replicated.  It will
+wait for all available shards to respond (either success or failure) before
+returning to the client
 +
 Note that the `number_of_replicas` is the number of replicas specified in
 the index settings, not the number of replicas that are currently live.
