@@ -281,8 +281,22 @@ POST /website/pageviews/1/_update?retry_on_conflict=5
 }
 --------------------------------------------------
 
+This works great for idempotent operations like incrementing a counter.
+There are times, however, when updates are *not* idempotent and may be racing
+each other for a chance to change the document.  Instead of all the updates
+clobbering each other (effectively making it a "last-write-wins" scenario), you
+can specify a `version` just like you can with `index` or `delete` in 
+<<_optimistic_concurrency_control>>.
 
-NOTE: The `update` API does not accept the `version` parameter. You should
-only use `update` for changes that should be applied regardless
-of the current version of the document.
+This makes the update only succeed if the versions match, otherwise the update
+will fail.  You do not specify `retry_on_conflict`, since explicitly want an
+error if there is a version conflict:
+
+[source,js]
+--------------------------------------------------
+POST /website/pageviews/1/_update?version=3
+{
+   "script" : "ctx._source.tags+='search']
+}
+--------------------------------------------------
 

@@ -31,3 +31,15 @@ queries per second.
 
 Later in the book, we'll discuss how to choose an appropriate number of shards. For now, just
 keep in mind that shards are how Elasticsearch manages a distributed environment.
+
+As you read through this book, you'll encounter supplemental chapters about the
+distributed nature of Elasticsearch.  These chapters will teach you about
+how the cluster scales and deals with failover (<<_life_inside_a_cluster>>), 
+handles document storage (<<distributed-docs>>) and executes searches 
+(<<_distributed_search_execution>>).
+
+These chapters aren't necessary for working with Elasticsearch, but will provide
+helpful information that will make your knowledge of Elasticsearch more complete.
+Feel free to skim them and revisit at a later point when you need a more 
+complete understanding.
+

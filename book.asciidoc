@@ -4,9 +4,15 @@
 
 include::Intro.asciidoc[]
 
+include::Distributed/Cluster.asciidoc[]
+
 include::Data_In_Data_Out.asciidoc[]
 
+include::Distributed/CRUD.asciidoc[]
+
 include::Search.asciidoc[]
+
+include::Distributed/Search.asciidoc[]
 
 include::Index_Mgmt.asciidoc[]
 
@@ -45,8 +51,6 @@ include::Index_Per_User.asciidoc[]
 include::Geolocation.asciidoc[]
 
 include::Percolation.asciidoc[]
-
-include::Distributed_Model.asciidoc[]
 
 include::Scaling.asciidoc[]
 

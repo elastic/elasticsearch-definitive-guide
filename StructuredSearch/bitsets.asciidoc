@@ -76,7 +76,7 @@ filter changes from query to query, so it doesn't make much sense to cache the
 entire `bool`.  Rather, we'll just leverage the cached filters that make up
 the `bool`, which is nearly always more efficient.
 
-Geo filters, which we will talk about in <<geo>>, are also not cached by default
+Geo filters, which we will talk about in <<geoloc>>, are also not cached by default
 either.  Geo filters are typically used to filter results on the geolocation of a 
 specific user.  Since every user has their own unique
 geolocation, it seldom makes sense to cache Geo filters.

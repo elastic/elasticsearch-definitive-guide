@@ -1,8 +1,16 @@
-=== Distributed nature
+== Life inside a Cluster
 
 Elasticsearch is built to be always available, and to scale with your needs.
 Scale can come from buying bigger servers (_vertical scale_ or _scaling up_)
 or buying more servers (_horizontal scale_ or _scaling out_).
+
+.Supplemental Chapter
+****
+As mentioned earlier, this is the first of several "supplemental" chapters about
+how Elasticsearch operates in a distributed environment.  It is useful and 
+interesting data, but feel free to skip it.  You can use Elasticsearch for 
+a long time without worrying about shards, replication and fallover.
+****
 
 While Elasticsearch can benefit from more powerful hardware, vertical
 scale has its limits. Real scalability comes from horizontal scale
@@ -13,13 +21,11 @@ With most databases, scaling horizontally
 usually requires a major overhaul of your application to take advantage
 of these extra boxes.
 
-In contrast, Elasticsearch  is _distributed_ by nature. It knows how
+In contrast, Elasticsearch is _distributed_ by nature. It knows how
 manage multiple nodes to provide scale and high availability.  This
 also means that your application doesn't need to care about it.
 
-include::Multiple_nodes.asciidoc[]
-
-==== An empty cluster
+=== An empty cluster
 
 If we start a single node, with no data, our cluster looks like <<img-cluster>>.
 
@@ -36,7 +42,7 @@ As users, we can talk any node in the cluster. Each node knows how to route
 our request to the nodes that hold the data we are interested in. It is all
 managed transparently by Elasticsearch.
 
-==== Add an index
+=== Add an index
 
 To add data to Elasticsearch, we need an _index_, where
 an index is like a ``database'' in a relational database - a place
@@ -62,14 +68,15 @@ shards can be changed at any time.
 Let's create an index called `blogs` in our empty one-node cluster.
 
 By default, indices are assigned 5 primary shards, but for the purpose of this
-demonstration, we'll assign just 3 primary shards:
+demonstration, we'll assign just 3 primary shards and 1 set of replicas:
 
 [source,js]
 --------------------------------------------------
-PUT 'http://127.0.0.1:9200/blogs/?pretty'
+PUT /blogs
 {
    "settings" : {
-      "number_of_shards" : 3
+      "number_of_shards" : 3,
+      "number_of_replicas" : 1
    }
 }
 --------------------------------------------------
@@ -85,12 +92,48 @@ there is no point in having both a primary shard and its replica allocated
 to the same node.  If the server were to fail, you would lose both copies
 of your data.
 
-==== Add failover
+=== Add failover
 
 Running a single node means that you have a single point of failure -- there
-is no redundancy. A new node will join the cluster automatically as long
-as it has the same cluster name set in its config file, and it can
-talk to the other nodes.
+is no redundancy. 
+
+A cluster in this state is considered `yellow`.  A yellow cluster state means
+that all primary shards are allocated -- none of your data is missing --
+but one or more replicas are missing.  A yellow state effectively means that
+your cluster is susceptable to data loss if a node were to fail.
+
+You can get the current state of your cluster through the Cluster Health API:
+
+[source,js]
+--------------------------------------------------
+GET /_cluster/health
+--------------------------------------------------
+
+Which will return a response similar to this:
+
+[source,js]
+--------------------------------------------------
+{
+  "cluster_name" : "testcluster",
+  "status" : "yellow", <1>
+  "timed_out" : false,
+  "number_of_nodes" : 1,
+  "number_of_data_nodes" : 1,
+  "active_primary_shards" : 3,
+  "active_shards" : 3,
+  "relocating_shards" : 0,
+  "initializing_shards" : 0,
+  "unassigned_shards" : 3 <2>
+}
+--------------------------------------------------
+<1> Clustere state is yellow, meaning one or more replicas are not allocated
+<2> 3 replica shards are unassigned because it doesn't make sense to allocate
+them to the same node as the primary shards.
+
+It goes without saying that data-loss is unpleasant.  To make a cluster 
+more resilient to data loss, simply add another node. A new node will join the 
+cluster automatically as long as it has the same 
+cluster name set in its config file, and it can talk to the other nodes.
 
 If we start a second node, our cluster would look like <<cluster-two-nodes>>.
 
@@ -106,7 +149,29 @@ Any newly indexed document will first be stored on the primary shard,
 then copied in parallel to any replica shards. This ensures that our
 document is immediately available from any node in the cluster.
 
-==== Scale horizontally
+At this point, our cluster is now `green`, which means all primary and replica
+shards are allocated to a machine.  The Cluster Health API will return a
+response like this now:
+
+[source,js]
+--------------------------------------------------
+{
+  "cluster_name" : "testcluster",
+  "status" : "green", <1>
+  "timed_out" : false,
+  "number_of_nodes" : 2,
+  "number_of_data_nodes" : 2,
+  "active_primary_shards" : 3,
+  "active_shards" : 6,
+  "relocating_shards" : 0,
+  "initializing_shards" : 0,
+  "unassigned_shards" : 0
+}
+--------------------------------------------------
+<1> Cluster state is now green because all shards (primary + replica) are
+allocated
+
+=== Scale horizontally
 
 Now our cluster is _always available_, but what about scaling as the demand
 for our application grows? If we start a third node, our cluster reorganizes
@@ -148,7 +213,7 @@ Let's increase the number of replicas from the default of `1` to `2`:
 
 [source,js]
 --------------------------------------------------
-PUT 'http://127.0.0.1:9200/blogs/_settings?pretty'
+PUT /blogs/_settings
 {
    "index" : {
       "number_of_replicas" : 2
@@ -170,11 +235,11 @@ Of course, just having more replica shards on the same number of nodes doesn't
 increase our performance, but it does mean that we have more redundancy.
 We can now afford to lose two nodes without losing any data.
 
-==== Coping with failure
+=== Coping with failure
 
 We've said that Elasticsearch can cope when nodes fail, so let's go
-ahead and try it out. If we kill the first node -- just press `Ctrl-C` to
-end the process -- our cluster looks like <<cluster-post-kill>>.
+ahead and try it out. If we kill the first node our cluster looks like 
+<<cluster-post-kill>>.
 
 [[cluster-post-kill]]
 .Cluster after killing one node
@@ -182,7 +247,12 @@ image::images/cluster_node2_node3.svg["The cluster after killing one node"]
 
 Replica shards on `Node 2` and `Node 3` have been promoted instantly to
 primary shards in order to replace the two primaries that were lost with
-`Node 1`. We still have all 3 primary shards, but we are now running with
+`Node 1`. The first thing Elasticsearch will do is promote replicas to primary.
+Primary shards are the "authority" source of data in Elasticsearch, so a 
+primary must always be present.
+
+
+We still have all 3 primary shards, but we are now running with
 one replica of each primary instead of with two.
 Were we to kill `Node 2`, then our application could still keep running without
 data loss because `Node 3` contains a copy of every shard.

@@ -31,7 +31,7 @@ Two important points to note about the format:
 
 The _action/metadata_ line specifies *what action* to do to *which document*.
 
-The _action_ must be one of `index`, `create` or `delete`.
+The _action_ must be one of `index`, `create`, `update` or `delete`.
 The _metadata_ should specify the `_index`, `_type` and `_id` of the document
 to be indexed, created or deleted.
 
@@ -43,9 +43,16 @@ For instance, a `delete` request could look like this:
 --------------------------------------------------
 
 
-The _document_ line consists of the document `_source` itself -- the fields and values
-that the document contains.  It is only required for `index` or `create`
-requests, not for `delete`.
+The _document_ line consists of the document `_source` itself -- the fields and 
+values that the document contains.  It is required for `index` and `create` 
+operations, which makes sense: you must supply the document to index.
+
+It is also required for `update` operations, but it acts a little differently.
+The document specified may be a full or partial doc, which is then merged
+into the existing document just like a regular update.  It may also contain
+a script or upsert clause -- check the online documentation for full syntax.
+
+No _document_ line is required for a delete.
 
 [source,js]
 --------------------------------------------------
@@ -75,6 +82,8 @@ POST /_bulk
 { "title":    "My first blog post" }
 { "create": { "_index": "website", "_type": "blog" }}
 { "title":    "My second blog post" }
+{ "update": { "_index": "website", "_type": "blog", "_id": "123", "_retry_on_conflict" : 3} }
+{ "doc" : {"title" : "My updated blog post"} }
 --------------------------------------------------
 
 

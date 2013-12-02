@@ -10,7 +10,7 @@ have a value, and a field that has been explicitly set to `null`
 
 With the default behavior that we saw above, this is impossible.  The data is 
 lost.  Luckily, there is an option that we can set that overwrites explicit 
-`null`+s with a "placeholder" value.
+`null` with a "placeholder" value.
 
 Most core types (String, Number, Boolean, Date) support an option to define a 
 null value with your own placeholder.  This option is called `null_value` and 
@@ -123,168 +123,15 @@ This behavior is modifiable using two different options: `null_value` and
 `existence`.  Both values can be set true or false, and the different 
 combinations of these two options will give you different search results.
 
-Here is a matrix with links to the different variations, before we walk
-through all the examples:
+`null_value` controls how explicit `nulls` are handled.  By setting this to true,
+the filter will treat explicit `null` values (e.g. those with a null-placeholder)
+as "missing" and therefore return them as a match.
 
-[width="50%",frame="topbot"]
-|==========================
-| | 2+^s| `null_values`
-| | | True  |False
-.2+.^s|`existence` |True  | <<_all_missing_values>> | <<_only_absent_fields>>
-|False  |<<_only_explicit_null>> | 
-|==========================
+`existence` controls how entirely missing values are handled.  If set to true,
+the filter will match documents where a field was omitted entirely.
 
-
-==== All null and missing values
-
-If you want all "missing" fields, set both `null_value` and `existence` to true.
-This will match all documents that specified either an explicit `null` (and thus
-replaced with our null-placeholder `"NULL"`), or where the field was omitted 
-entirely.
-
-[source,js]
---------------------------------------------------
-GET /my_index/posts/_search
-{
-    "query" : {
-        "filtered" : {
-            "filter" : {
-                "missing" : {
-                    "field" : "tags",
-                    "null_value" : true, <1>
-                    "existence" : true <1>
-                }
-            } 
-        }
-    }
-}
-
-"hits" : [ 
-    {
-      "_index" : "my_index",
-      "_type" : "posts",
-      "_id" : "4",
-      "_score" : 1.0, "_source" : { "tags" : null } <2>
-    },
-    {
-      "_index" : "my_index",
-      "_type" : "posts",
-      "_id" : "5",
-      "_score" : 1.0, "_source" : { "tags" : ["search", null] } <2>
-    },
-    {
-      "_index" : "my_index",
-      "_type" : "posts",
-      "_id" : "3",
-      "_score" : 1.0, "_source" : { "other_field" : "some data" } <3>
-    }
-]
---------------------------------------------------
-<1> Set both options to true to match all "missing" fields
-<2> These documents are returned because `null_value: true`
-<3> This document is returned because `existence: true`
-
-When the filter is executed with these options, null-placeholders are considered
-equivalent to a field that is completely omitted.  This causes the behavior
-where *any* explicit `null` will be matched.  Notice how
-document `5` is returned even though there is a "normal" value in the
-field as well. 
-
-
-==== Only explicit null
-
-If you only want to find documents where an explicit `null` was specified (and
-ignore documents where the field was omitted entirely), toggle `existence` to 
-false:
-
-[source,js]
---------------------------------------------------
-GET /my_index/posts/_search
-{
-    "query" : {
-        "filtered" : {
-            "filter" : {
-                "missing" : {
-                    "field" : "tags",
-                    "null_value" : true,
-                    "existence" : false <1>
-                }
-            } 
-        }
-    }
-}
-
-"hits" : [ 
-    {
-      "_index" : "my_index",
-      "_type" : "posts",
-      "_id" : "4",
-      "_score" : 1.0, "_source" : { "tags" : null }
-    },
-    {
-      "_index" : "my_index",
-      "_type" : "posts",
-      "_id" : "5",
-      "_score" : 1.0, "_source" : { "tags" : ["search", null] }
-    }
-]
---------------------------------------------------
-<1> By setting `existence` to false, we exclude documents where the field was
-omitted entirely
-
-As you can see, the search results now only show documents where an explicit
-`null` was provided (including document `5` where a "normal" value is also
-present in the multi-valued array).
-
-==== Only absent fields
-
-Lastly, if you inverse the options from the last example, you can find all 
-documents where the field was omitted (but ignore the documents where explicit
-`null` was provided):
-
-[source,js]
---------------------------------------------------
-GET /my_index/posts/_search
-{
-    "query" : {
-        "filtered" : {
-            "filter" : {
-                "missing" : {
-                    "field" : "tags",
-                    "null_value" : false, <1>
-                    "existence":true <1>
-                }
-            } 
-        }
-    }
-}'
-
-"hits" : [ 
-    {
-      "_index" : "my_index",
-      "_type" : "posts",
-      "_id" : "3",
-      "_score" : 1.0, "_source" : { "other_field" : "some data" }
-    }
-]
---------------------------------------------------
-<1> Set `existence: true` and `null_value: false` to find only "omitted" fields
-
-And the results only show documents where the field was simply not indexed,
-completely ignoring all the explicit `null` documents.
-
-==== Missing filter wrap-up
-
-This section was fairly verbose with examples, but the `missing` filter is best 
-seen in action to understand how the combination of options affect which 
-documents are returned. By mixing/matching options, you can tailor the filter to
-return just the documents that you need.
-
-Remember - this advanced behavior only works when you have configured the
-field to index a `null_value` as we saw at the beginning of this chapter
-(<<_default_values_for_null_fields>>).  If you don't specify a default,
-placeholder value...none of this advanced logic will work.
-
+You can mix and match `null_value` and `existence` to get different behaviors.
+To see an example of each configuration, check the reference documentation.
 
 
 
