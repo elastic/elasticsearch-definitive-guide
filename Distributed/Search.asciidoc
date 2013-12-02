@@ -36,7 +36,20 @@ to the user depending on sorting and pagination.
 We'll use a simple cluster setup.  We have a three-node cluster with one index,
 and that index has three primary shards (but no replicas).
 
-TODO: Add image
+[[img-distrib-search]]
+.Query Phase of distributed search
+image::images/distributed_search_query.png["Query Phase of distributed search"]
+
+1. The client sends a get request to `Node 3`.
+
+2. `Node 3` becomes the coordinating node and re-broadcasts the search to all
+shards in the index.
+
+3. Each shard executes the query and builds a priority queue to hold the matching
+documents
+
+4. The doc ID and score are sent back to the coordinating node and merged into
+a large priority queue
 
 When a search request is sent to a node, that node becomes the coordinating node.
 It is the job of this node to merge, sort and return search results to the client.
@@ -85,6 +98,17 @@ After identifying which documents match, we need to actually obtain those
 docs from the various shards and return them to the client.  Remember, the
 output of the query phase is merely a list of documents and their score.  We
 haven't extracted their source yet.  This is the job of the fetch phase.
+
+[[img-distrib-fetch]]
+.Fetch Phase of distributed search
+image::images/distributed_search_fetch.png["Fetch Phase of distributed search"]
+
+1. The coordinating identifies which documents need to be retrieved and issues
+a GET to shard that holds the required documents
+
+2. Participating shards load the document and send back the source
+
+3. Documents are enriched with the score and metadata, then returned to the client
 
 The coordinating node first decides what documents *actually* need to be fetched.
 Recall that our query only wanted documents 90-100, but our priority queue is 300
