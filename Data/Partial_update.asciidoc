@@ -296,7 +296,7 @@ error if there is a version conflict:
 --------------------------------------------------
 POST /website/pageviews/1/_update?version=3
 {
-   "script" : "ctx._source.tags+='search']
+   "script" : "ctx._source.tags+='search'"
 }
 --------------------------------------------------
 
