@@ -28,10 +28,12 @@ And a `404 Not Found` if it doesn't exist:
 curl -I -XHEAD /website/blog/124
 --------------------------------------------------
 
-
-    HTTP/1.1 404 Not Found
-    Content-Type: text/plain; charset=UTF-8
-    Content-Length: 0
+[source,js]
+--------------------------------------------------
+HTTP/1.1 404 Not Found
+Content-Type: text/plain; charset=UTF-8
+Content-Length: 0
+--------------------------------------------------
 
 Of course, just because a document didn't exist when you checked it,
 doesn't mean that it won't exist later on.  Another process might
