@@ -1,41 +1,35 @@
 
 
-You have data, and you want to interrogate it to answer some question.
-Perhaps you are trying to gain insight into your business by analyzing
-metrics.  Or maybe you are just letting customers look through your product
-catalogue.
+If you are picking up this book, it is because you have data.  And if you have
+data, you want to *do something* with it...data is fairly worthless if
+it just sits on a hard drive.  
 
-How do you access your data?  A traditional databases can filter by date, postcode or
-exact values. This is a solved problem. Any database can do it, and do it quickly.
+Although a ridiculously obvious statement, most databases are astonishingly inept
+at extracting actionable knowledge from your data.
 
-But how about full text search?  Full text search must find results
-in unstructured data using a natural language query, and then rank them by
-_relevance_. This is a task that modern databases simply cannot handle.
+Sure, they can filter by timestamp or exact values, but can they perform
+full-text search, handle synonyms and score documents by relevance?  Can they 
+generate analytics and aggregations from the same data?  Most importantly, can 
+they do this in real-time without big batch processing jobs?
 
-Enter Elasticsearch.
+This is what sets Elasticsearch apart from other databases; Elasticsearch 
+encourages you to explore and utilize your data, rather than letting it rot in a 
+warehouse because it is too difficult to query. 
 
 === What is Elasticsearch?
 
-[quote]
-Elasticsearch is a search engine built on top of Apache Lucene.
+Elasticsearch is a search engine built on top of Apache Lucene, a full-text 
+search library.  Lucene is arguably the most advanced, performant and fully-featured
+search engine in existence today -- both open source and proprietary.
 
-So what is Lucene?
+Unfortunately, Lucene is just a library, so if you wish to leverage it's power
+you need to work in Java and integrate it directly with your application.  
+Worse, you will likely require a degree in Information Retrieval to understand
+how it works.  Lucene is *very* complex.
 
-[quote,'http://lucene.apache.org/core/[lucene.apache.org/core]']
-____
-Apache Lucene(TM) is a high-performance, full-featured text search engine
-library written entirely in Java.
-____
-
-Lucene is really, really powerful -- but it is just a library. If you want to
-use Lucene, you must have a degree in information retrieval, work entirely in Java
-and tightly couple your code to the Lucene libraries
-
-Those are some pretty onerous constraints.
-
-Elasticsearch aims to make full text search easy.  It is is based on Lucene,
-which means that it uses Lucene internally for its indexing and search. Elasticsearch
-enjoys all the power of Lucene for full text search.
+Elasticsearch aims to make full text search easy by hiding the complexities of
+Lucene behind a simple, coherent API.  Elasticsearch uses Lucene internally 
+for all of its indexing and search.
 
 However, it is much more than just Lucene and much more than ``just'' full
 text search.
@@ -49,7 +43,7 @@ Elasticsearch is also:
   and unstructured data.
 
 And it packages up all of this functionality into a standalone service
-that your application can talk to via a simple API.  Use
+that your application can talk to via a simple RESTful API.  Use
 your favorite programming language, Elasticsearch doesn't care.
 
 It is easy to get started with Elasticsearch. It ships with

@@ -57,7 +57,6 @@ GET /_count?pretty
 }
 --------------------------------------------------
 
-
 All responses consist of:
 
 * an HTTP status code, eg: `200 OK`
@@ -93,3 +92,31 @@ curl -I -XGET 'localhost:9200/'
 We will use this `curl` format in all of our examples because it is easy to
 read and easy to translate into a request using the HTTP library of your
 choice.
+
+.Curl Shorthand
+****
+For the rest of the book, you'll notice curl examples in the shorthand format 
+used above.  The curl command is shortened from:
+
+[source,js]
+--------------------------------------------------
+curl -XGET 'localhost:9200/_count?pretty' -d '
+{
+    "match_all": {}
+}'
+--------------------------------------------------
+
+to simply:
+
+[source,js]
+--------------------------------------------------
+GET /_count?pretty
+{
+    "match_all": {}
+}
+--------------------------------------------------
+
+This is done to space and repetitive typing.  We will show you the HTTP method
+(GET, PUT, POST, etc) and the URL path which follows `localhost:9200`.  The
+rest of the lines following the curl command are the body of the request.
+****
