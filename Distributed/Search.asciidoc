@@ -54,15 +54,15 @@ a large priority queue
 When a search request is sent to a node, that node becomes the coordinating node.
 It is the job of this node to merge, sort and return search results to the client.
 The first thing the coordinating node does is rebroadcast the query to each 
-shard in the index:
+shard in the index.
 
 Each shard now evaluates the query against the documents that reside within that
 shard.  If a document matches, it is placed in a *priority queue*, which is just
 a data structure that maintains the "top N documents" according to the scoring
 metric.
 
-The size of the queue is equivalent to your pagination parameters (`from` + 
-`size`).  So if you query with `from: 90` and `size: 10`, each shard will build 
+The size of the queue is equivalent to your pagination parameters (`from + 
+size`).  So if you query with `from: 90` and `size: 10`, each shard will build 
 a priority queue that is 100 documents long.
 
 Once each shard has finished executing the query and has built a queue of
