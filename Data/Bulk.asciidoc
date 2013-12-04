@@ -2,8 +2,8 @@
 === Cheaper in bulk
 
 In the same way that `mget` allows us to retrieve multiple documents at once,
-the `bulk` API allows us to make multiple `create`, `index` or `delete` requests
-in a single step.
+the `bulk` API allows us to make multiple `create`, `index`, `update` or `delete` 
+requests in a single step.
 
 This is particularly useful if you need to index a data stream such as
 log events, which can be queued up and indexed in batches of 100 or 1,000.
@@ -33,7 +33,7 @@ The _action/metadata_ line specifies *what action* to do to *which document*.
 
 The _action_ must be one of `index`, `create`, `update` or `delete`.
 The _metadata_ should specify the `_index`, `_type` and `_id` of the document
-to be indexed, created or deleted.
+to be indexed, created, updated or deleted.
 
 For instance, a `delete` request could look like this:
 
