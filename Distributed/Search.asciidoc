@@ -103,8 +103,8 @@ haven't extracted their source yet.  This is the job of the fetch phase.
 .Fetch Phase of distributed search
 image::images/distributed_search_fetch.png["Fetch Phase of distributed search"]
 
-1. The coordinating identifies which documents need to be retrieved and issues
-a GET to shard that holds the required documents
+1. The coordinating node identifies which documents need to be retrieved and 
+issues a GET to shard that holds the required documents
 
 2. Participating shards load the document and send back the source
 
@@ -112,7 +112,7 @@ a GET to shard that holds the required documents
 
 The coordinating node first decides what documents *actually* need to be fetched.
 Recall that our query only wanted documents 90-100, but our priority queue is 300
-long!  The coordinating node will scan down the list to document `90` and extract
+long.  The coordinating node will scan down the list to document `90` and extract
 the IDs of `90` through `100`.
 
 It will then issue 10 fetch requests to obtain these documents.  These are
@@ -139,10 +139,10 @@ disk and send those over the wire to the coordinating node.  But since our
 user only wanted 10 results, we would throw away 290 documents that we 
 painstakingly loaded from disk!
 
-Networking is faster than disk access, so the penalty of an extra round-trip
-is much less than loading a large number of documents only to throw them away.
+The overhead of an extra round-trip is often much less than loading a large 
+number of documents from disk...only to throw them away moments later.
 
-Query And Fetch is used sometimes as an internal optimization.  If Elasticsearch
+Query And Fetch is sometimes used as an internal optimization.  If Elasticsearch
 recognizes that only a single shard is being queried, it will 
 execute everything in one pass since two phases are not needed.
 
@@ -172,7 +172,7 @@ In addition to removing it from your interface, make sure it is limited in your
 application too.  Bots have no problem adjusting URLs and paging through your
 entire data set.  
 
-Alas, Googlebot has been known to take down a cluster ro two because of 
+Alas, Googlebot has been known to take down a cluster or two because of 
 enthusiastic pagination
 ****
 
