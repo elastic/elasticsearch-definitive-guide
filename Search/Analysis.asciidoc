@@ -23,6 +23,10 @@ into a single package:
    stopwords like `"a"`, `"and"`, `"the"` etc)
    or add terms (eg synonyms like `"jump"` and `"leap"`)
 
+[[img-search-analysis-chain]]
+.Analysis Chain
+image::images/search_analysis_chain.png["Analysis Chain"]
+
 Elasticsearch provides many character filters, tokenizers and token filters
 out of the box. These can be combined to create custom analyzers suitable
 for different purposes. We will discuss these in detail in <<custom-analyzers>>.

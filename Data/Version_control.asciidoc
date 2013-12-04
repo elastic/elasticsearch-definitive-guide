@@ -22,6 +22,11 @@ One day, management decides to have a sale. Suddenly, we are
 selling several widgets every second. Imagine two web processes, running in
 parallel, both processing the sale of one widget each:
 
+[[img-data-lww]]
+.Consequence of no concurrency control
+image::images/data_last_write_wins.png["Consequence of no concurrency control"]
+
+
 1. `web_1`: get `stock_count` -> `100`
 2. `web_2`: get `stock_count` -> `100`
 3. `web_1`: set `stock_count` to `(100 - 1)` -> `99`
