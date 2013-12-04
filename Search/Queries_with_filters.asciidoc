@@ -21,7 +21,10 @@ to achieve your goal in the most efficient way.
 
 Let's say we have this query:
 
-   { "match": { "email": "business opportunity" }}
+[source,js]
+--------------------------------------------------
+{ "match": { "email": "business opportunity" }}
+--------------------------------------------------
 
 and we want to combine it with the following `term` filter, which will
 only match documents which are in our inbox:
@@ -86,7 +89,7 @@ the above query is equivalent to the following:
 --------------------------------------------------
 {
     "filtered": {
-        "query":    { match_all: {}},
+        "query":    { "match_all": {}},
         "filter":   { "term": { "folder": "inbox" }}
     }
 }
@@ -108,7 +111,7 @@ The example below shows one way we could exclude emails which look like spam:
             "bool": {
                 "must":     { "term":  { "folder": "inbox" }},
                 "must_not": {
-                    "query": {
+                    "query": { <1>
                         "match": { "email": "urgent business proposal" }
                     }
                 }
@@ -117,6 +120,8 @@ The example below shows one way we could exclude emails which look like spam:
     }
 }
 --------------------------------------------------
+<1> Note the `query` filter, which is allowing us to use the `match` query
+inside of a `bool` filter
 
 
 You seldom need to use a query as a filter, but we have included it for
