@@ -111,15 +111,17 @@ This solution can help when both fields have the same datatype, but
 consider what would happen if you indexed these two documents into
 the same index:
 
+.Type: user
 [source,js]
 --------------------------------------------------
-# type: user
 { "login": "john_smith" }
 --------------------------------------------------
 
-
-    # type: event
-    { "login": "2013-06-01" }
+.Type: event
+[source,js]
+--------------------------------------------------
+{ "login": "2013-06-01" }
+--------------------------------------------------
 
 Lucene doesn't care that one field contains a string and the other field
 contains a date -- it will happily index the byte values from both fields.
