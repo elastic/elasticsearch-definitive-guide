@@ -42,7 +42,7 @@ We can change the number of replica shards later on, using the
 
 [source,js]
 --------------------------------------------------
-PUT localhost/9200/my_temp_index/_settings
+PUT /my_temp_index/_settings
 {
     "number_of_replicas": 1
 }

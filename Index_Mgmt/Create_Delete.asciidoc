@@ -55,7 +55,7 @@ You can delete multiple indices with:
 
 [source,js]
 --------------------------------------------------
-DELETE loclahost:9200/index_one,index_two
+DELETE /index_one,index_two
 DELETE /index_*
 --------------------------------------------------
 
