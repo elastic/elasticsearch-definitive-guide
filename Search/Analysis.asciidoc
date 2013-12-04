@@ -85,11 +85,13 @@ are able to take the peculiarities of the specified language into
 account. For instance, the `english` analyzer comes with a set of
 English stopwords, and is able to _stem_ English words because it
 understands the rules of English grammar.
-+
+
 The `english` analyzer would produce the following:
-+
-    set, shape, semi, transpar, call, set_tran, 5
-+
+
+[source,js]
+--------------------------------------------------
+set, shape, semi, transpar, call, set_tran, 5
+--------------------------------------------------
 Note how `"transparent"` and `"calling"` have been stemmed to their root
 form.
 
