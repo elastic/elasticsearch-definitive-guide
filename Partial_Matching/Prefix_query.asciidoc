@@ -1,0 +1,76 @@
+[[prefix-query]]
+=== `prefix` query
+
+To find all postcodes beginning with `W1` we could use a simple `prefix`
+query:
+
+[source,js]
+--------------------------------------------------
+GET /myindex/address/_search
+{
+    "query": {
+        "prefix": {
+            "postcode": "W1"
+        }
+    }
+}
+--------------------------------------------------
+
+The `prefix` query is a low-level query that works at the term level.  It
+doesn't analyze the query string before searching -- it assumes that you have
+passed it the exact prefix that you want to find.
+
+**************************************************
+
+By default, the `prefix` query does no relevance scoring.  It just finds
+matching documents and gives them all a score of `1`.  Really it behaves more
+like a filter than a query.  The only practical difference between the
+`prefix` query and the `prefix` filter is that the filter can be cached.
+
+**************************************************
+
+
+Previously we said that ``you can only find terms that exist in the inverted
+index'' but we haven't done anything special to index these postcodes -- each
+postcode is simply indexed as the exact value specified in each document.  So
+how does the `prefix` query work?
+
+Remember that the inverted index consists of a sorted list of unique terms (in
+this case, postcodes).  For each term, it lists the IDs of the documents
+containing that term in the _postings list_.  The inverted index for our
+example documents would look something like this:
+
+    Term:          Doc IDs:
+    -------------------------
+    "SW5 0BE"    |  5
+    "W1F 7HW"    |  3
+    "W2F 8HW"    |  2
+    "W1V 3DG"    |  1
+    "WC1N 1LZ"   |  4
+    -------------------------
+
+In order to support prefix matching on the fly, the query:
+
+1. skips through the terms list to find the first term beginning with `W1`
+2. collects the associated document IDs
+3. moves to the next term
+4. if it also begins with `W1`, it repeats from step 2
+5. otherwise we're done
+
+While this works fine for our small example, imagine that our inverted index
+contained a million different postcodes beginning with `W1`. The prefix query
+would need to visit all one million terms in order to calculate the result!
+
+And the shorter the prefix, the more terms need to be visited. If we were to
+look for the prefix `W` instead of `W1`, perhaps we would match 10 million
+terms instead of just one million.
+
+The `prefix` query or filter are useful for _ad hoc_ prefix matching, but
+should be used with care.  They can be used freely on fields with a small
+number of terms, but they scale poorly and can put your cluster under a lot of
+strain.  Try to limit their impact on your cluster by using a long prefix --
+this reduces the number of terms that need to be visited.
+
+Later in this chapter we will look at an alternative index-time solution which
+makes prefix matching much more efficient.  But first, we'll take a look at
+two related queries: the `wildcard` and `regexp` queries.

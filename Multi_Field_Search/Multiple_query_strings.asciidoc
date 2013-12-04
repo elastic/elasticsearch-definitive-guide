@@ -84,7 +84,6 @@ GET /_search
     "query": {
         "bool": {
             "should": [
-                { "match": {
                 { "match": { <1>
                     "title":  {
                         "query": "War and Peace",

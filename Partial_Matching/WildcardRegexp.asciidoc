@@ -1,0 +1,57 @@
+=== `wildcard` and `regexp` queries
+
+The `wildcard` query is a low-level term-based query similar in nature to the
+`prefix` query, but allows you to specify a pattern instead of just a prefix.
+It uses the standard shell wildcards where `?` matches any character, and `*`
+matches zero or more characters.
+
+This query would match the documents containing `W1F 7HW` and `W2F 8HW`:
+
+[source,js]
+--------------------------------------------------
+GET /myindex/address/_search
+{
+    "query": {
+        "wildcard": {
+            "postcode": "W?F*HW" <1>
+        }
+    }
+}
+--------------------------------------------------
+<1> The `?` will match the `1` and the `2`, while the `*` matches the space
+    and the `7` and `8`.
+
+Imagine now that you wanted to match all postcodes in the `W` area.  A prefix
+match would include the postcode starting with `WC`, and you would have a
+similar problem with a wildcard match.  We only want to match postcodes that
+begin with a `W`, followed by a number.  The `regexp` query allows you to
+write these more complicated patterns:
+
+[source,js]
+--------------------------------------------------
+GET /myindex/address/_search
+{
+    "query": {
+        "regexp": {
+            "postcode": "W[0-9].+" <1>
+        }
+    }
+}
+--------------------------------------------------
+<1> The regular expression says that the term must begin with a `W`, followed
+    by any number from 0 to 9, followed by 1 or more other characters.
+
+The `wildcard` and `regexp` queries work in exactly the same way as the
+`prefix` query.  They also have to scan the list of terms in the inverted
+index to find all matching terms, and gather document IDs term-by-term.  The
+only difference between them and the `prefix` query is that they support more
+complex patterns.
+
+This means that the same caveats apply.  Running these queries on a field with
+many unique terms can be very resource intensive indeed.  Avoid using a
+pattern that starts with a wildcard, eg `"*foo"` or, as a regexp, `".*foo"`.
+
+While prefix matching can be made more efficient by preparing your data at
+index time, wildcard and regular expression matching can only really be done
+at query time. These queries have their place, but should be used sparingly.
+

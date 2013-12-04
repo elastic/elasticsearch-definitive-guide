@@ -70,8 +70,8 @@ This per-field analysis works well until one of the fields is an exact value
 [[multi-match-exact-values]]
 ==== `multi-match` and `not_analyzed` fields.
 
-What would happen if we tried to include a postal code in the query string,
-such as in this example:
+What would happen if we tried to include a postal code like ``WC1'' in the
+query string, such as in this example:
 
 [source,js]
 --------------------------------------------------

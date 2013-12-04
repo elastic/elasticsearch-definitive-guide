@@ -1,11 +1,11 @@
 
 You'll often find yourself trying to perform exact, structured search on data
-that is not "noisy" or "dirty".  For example, your data may have a mix of 
+that is not "noisy" or "dirty".  For example, your data may have a mix of
 capitalization and whitespace.  This usually needs to be removed even for
 structured search environments.  It is unlikely that you will expect users to
 search for "airplane " (note the trailing space).
 
-There are a number of analyzers that you can apply to your data to help 
+There are a number of analyzers that you can apply to your data to help
 normalize it, making exact matches work in a predictable manner.  Many of these
 analysis chains start with the `keyword` token filter.
 
@@ -15,6 +15,7 @@ identical to setting the field to `not_analyzed`.  Case is not changed, errant
 whitespace is not stripped, special characters are not removed.  It simply
 outputs your text as a single token.
 
+[[keyword-tokenizer]]
 ==== Cleaning up data
 
 By itself, `keyword` is not very useful.  But you can combine it with a number of
@@ -25,12 +26,12 @@ with `keyword` are:
 - `trim` - Removes any whitespace before and after the text in the token
 
 This combination - `keyword, lowercase, trim` - is a good default token filter
-chain for exact match scenarios that still need special characters and 
+chain for exact match scenarios that still need special characters and
 *significant* spacing (such as the spaces between words in a phrase).
 
 This combination is also very a very common way to prepare data for faceting and
 sorting.  If you are faceting, you probably want "New York" and "new york" to be
-aggregated  together.  Setting the field to `not_analyzed` will make the 
+aggregated  together.  Setting the field to `not_analyzed` will make the
 aggregations case-sensitive, which may not be the behavior you want.
 
 ==== Truncating tokens
@@ -41,7 +42,7 @@ to the product category, while the rest is just unique characters specific to th
 particular product.
 
 By combining `keyword` analyzer with the `truncate` filter, you can selectively
-index just the portion you are interested in.  This allows you to maintain 
+index just the portion you are interested in.  This allows you to maintain
 searchability without bloating your index with unnecessary terms.  Ultimately,
 this saves disk space and processing power (due to a smaller inverted index).
 
@@ -66,7 +67,7 @@ These anomalous fields can unescessarily bloat your index on disk.  They also
 increase the size of the inverted index and slow down searches.
 
 Depending on your use-case, you can choose to ignore fields that are over a
-certain size.  When you create an analyzer, the `ignore_above` setting decides 
+certain size.  When you create an analyzer, the `ignore_above` setting decides
 the cut-off.
 
 [source,js]
@@ -91,7 +92,7 @@ setting, it is ignored and not indexed at all.  It is equivalent to setting
 
 This option is most frequently used in combination with `not_analyzed` fields.
 Since `not_analyzed` fields require an exact match to find them, it is unlikely
-that inordinately large fields will ever be found (since it is unlikely the 
+that inordinately large fields will ever be found (since it is unlikely the
 user will ever enter 10,000 characters exactly).
 
 It often makes sense to pair `ignore_above` with `not_analyzed` so you can
@@ -108,14 +109,14 @@ Elasticsearch will keep only the tokens that are unique.  All duplicate tokens
 will be removed.
 
 The `unique` token filter makes sense when the field is some type of enumeration.
-With enumerations (such as color, or keywords), you only care about the presence 
+With enumerations (such as color, or keywords), you only care about the presence
 of a term, not how many times it occurred.  The `unique` token filter will reduce
 wasted space.
 
-Using the same blog example, what if your user adds 10,000 tags to a blog 
+Using the same blog example, what if your user adds 10,000 tags to a blog
 article?  You may wish to limit the number tags that are indexed.  While you
 could do this client-side, Elasticsearch can automatically perform this limiting
-for you with the `limit` token filter.  
+for you with the `limit` token filter.
 
 If the number of tokens exceeds the configured limit, the additional tokens
 will be removed from the token stream.  This is usually more flexible than

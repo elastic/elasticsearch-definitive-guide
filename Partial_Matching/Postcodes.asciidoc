@@ -1,0 +1,58 @@
+=== Postcodes and structured data
+
+We will use UK postcodes to illustrate how to use partial matching with
+structured data. UK postcodes have a well defined structure. For instance the
+postcode `W1V 3DG` can be broken down into:
+
+* `W1V` -- The outer part, identifies the postal area and district, consists of:
+
+**  `W` --     Area, one or two letters
+**  `1V` --    District, one or two numbers, possibly followed by a letter
+
+* `3DG` -- The inner part, identifies a street or building, consists of:
+
+** `3` --     Sector, one number
+** `DG` --    Unit, two letters
+
+
+Let's assume that we are indexing postcodes as exact value `not_analyzed`
+fields, so we could create our index as follows:
+
+[source,js]
+--------------------------------------------------
+PUT /myindex
+{
+    "mappings": {
+        "address": {
+            "properties": {
+                "postcode": {
+                    "type":  "string",
+                    "index": "not_analyzed"
+                }
+            }
+        }
+    }
+}
+--------------------------------------------------
+
+And index some postcodes:
+
+[source,js]
+--------------------------------------------------
+PUT /myindex/address/1
+{ "postcode": "W1V 3DG" }
+
+PUT /myindex/address/2
+{ "postcode": "W2F 8HW" }
+
+PUT /myindex/address/3
+{ "postcode": "W1F 7HW" }
+
+PUT /myindex/address/4
+{ "postcode": "WC1N 1LZ" }
+
+PUT /myindex/address/5
+{ "postcode": "SW5 0BE" }
+--------------------------------------------------
+
+Now our data is ready to be queried.
