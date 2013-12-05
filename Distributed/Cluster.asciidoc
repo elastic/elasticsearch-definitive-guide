@@ -7,8 +7,8 @@ or buying more servers (_horizontal scale_ or _scaling out_).
 .Supplemental Chapter
 ****
 As mentioned earlier, this is the first of several "supplemental" chapters about
-how Elasticsearch operates in a distributed environment.  It is useful and 
-interesting data, but feel free to skip it.  You can use Elasticsearch for 
+how Elasticsearch operates in a distributed environment.  It is useful and
+interesting data, but feel free to skip it.  You can use Elasticsearch for
 a long time without worrying about shards, replication and fallover.
 ****
 
@@ -21,7 +21,7 @@ With most databases, scaling horizontally
 usually requires a major overhaul of your application to take advantage
 of these extra boxes.
 
-In contrast, Elasticsearch is _distributed_ by nature. It knows how
+In contrast, Elasticsearch is _distributed_ by nature. It knows how to
 manage multiple nodes to provide scale and high availability.  This
 also means that your application doesn't need to care about it.
 
@@ -95,7 +95,7 @@ of your data.
 === Add failover
 
 Running a single node means that you have a single point of failure -- there
-is no redundancy. 
+is no redundancy.
 
 A cluster in this state is considered `yellow`.  A yellow cluster state means
 that all primary shards are allocated -- none of your data is missing --
@@ -130,9 +130,9 @@ Which will return a response similar to this:
 <2> 3 replica shards are unassigned because it doesn't make sense to allocate
 them to the same node as the primary shards.
 
-It goes without saying that data-loss is unpleasant.  To make a cluster 
-more resilient to data loss, simply add another node. A new node will join the 
-cluster automatically as long as it has the same 
+It goes without saying that data-loss is unpleasant.  To make a cluster
+more resilient to data loss, simply add another node. A new node will join the
+cluster automatically as long as it has the same
 cluster name set in its config file, and it can talk to the other nodes.
 
 If we start a second node, our cluster would look like <<cluster-two-nodes>>.
@@ -238,7 +238,7 @@ We can now afford to lose two nodes without losing any data.
 === Coping with failure
 
 We've said that Elasticsearch can cope when nodes fail, so let's go
-ahead and try it out. If we kill the first node our cluster looks like 
+ahead and try it out. If we kill the first node our cluster looks like
 <<cluster-post-kill>>.
 
 [[cluster-post-kill]]
@@ -248,7 +248,7 @@ image::images/cluster_node2_node3.svg["The cluster after killing one node"]
 Replica shards on `Node 2` and `Node 3` have been promoted instantly to
 primary shards in order to replace the two primaries that were lost with
 `Node 1`. The first thing Elasticsearch will do is promote replicas to primary.
-Primary shards are the "authority" source of data in Elasticsearch, so a 
+Primary shards are the "authority" source of data in Elasticsearch, so a
 primary must always be present.
 
 

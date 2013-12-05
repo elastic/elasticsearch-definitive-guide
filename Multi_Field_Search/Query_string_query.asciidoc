@@ -92,11 +92,16 @@ returned instead of results, and because it has so many syntactical elements,
 it is difficult for the ordinary user to know when they are using syntax
 instead of simple search terms.
 
-For example, a query string of ``http://foo.com'' would actually mean:
-_search in the `http` field for an empty regular expression, and search in
-the `_all` field for `foo.com`._  And a query string of ``http://foo.com/''
-would throw an error because the last `/` looks like the start of a regular
-expression.
+************************************************
+
+For example, a query string of ``http://foo.com'' would actually mean: _search
+the `http` field for an empty regular expression (`//`), and  the `_all` field
+for `foo.com`._
+
+A query string of ``http://foo.com/'' would throw an error because the last
+`/` looks like the start of a regular expression.
+
+************************************************
 
 The `query_string` query should not be exposed directly to your users, unless
 they are power users who understand the syntax and whom you can trust with

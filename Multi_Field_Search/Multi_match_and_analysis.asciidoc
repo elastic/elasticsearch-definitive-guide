@@ -64,25 +64,24 @@ the terms `awesome` and `widgets` for the `name` field, which uses the
 `standard` analyzer, and into their stemmed forms for the `desc` field, which
 uses the `english` analyzer.
 
-This per-field analysis works well until one of the fields is an exact value
-`not_analyzed` field.
-
 [[multi-match-exact-values]]
 ==== `multi-match` and `not_analyzed` fields.
 
-What would happen if we tried to include a postal code like ``WC1'' in the
-query string, such as in this example:
+Per-field analysis works well until one of the fields is an exact value
+`not_analyzed` field. What would happen if we tried to include a postal code
+like ``WC1'' in the query string, such as in this example:
 
 [source,js]
 --------------------------------------------------
 GET /my_index/_validate/query?explain
 {
     "multi_match": {
-        "query": "widgets WC1",
+        "query": "widgets WC1", <1>
         "fields": [ "name", "postcode"]
     }
 }
 --------------------------------------------------
+<1> Our user is searching for ``widgets'' available in postcode area ``WC1''.
 
 The `store.postcode` field is a `not_analyzed` string, so the whole query
 string is treated as a single term:

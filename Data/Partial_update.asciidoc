@@ -11,7 +11,7 @@ replaced.  The `update` API has to obey the same rules.  Externally,
 it appears as if we are partially updating a document in place.
 Internally, the `update` API simply manages the same _retrieve-change-reindex_
 process that we have already described, thus avoiding the network overhead of
-multiple rexquests. By reducing the time between the _retrieve_ and
+multiple requests. By reducing the time between the _retrieve_ and
 _reindex_ steps, we reduce the likelihood of there being conflicting
 changes from other processes.
 
@@ -285,7 +285,7 @@ This works great for idempotent operations like incrementing a counter.
 There are times, however, when updates are *not* idempotent and may be racing
 each other for a chance to change the document.  Instead of all the updates
 clobbering each other (effectively making it a "last-write-wins" scenario), you
-can specify a `version` just like you can with `index` or `delete` in 
+can specify a `version` just like you can with `index` or `delete` in
 <<_optimistic_concurrency_control>>.
 
 This makes the update only succeed if the versions match, otherwise the update

@@ -68,10 +68,11 @@ to include two separate fields in a document, as follows:
 }
 --------------------------------------------------
 
-This is a waste of space though.  What we really want to do is to pass in a
-single field but to index it in two different ways. The `multi_field` field
-type exists for exactly this purpose. The first step in converting a field
-to a `multi_field` is to change the mapping to look like this:
+Storing the string twice in the `_source` field is a waste of space though.
+What we really want to do is to pass in a single field but to index it in two
+different ways. The `multi_field` field type exists for exactly this purpose.
+The first step in converting a field to a `multi_field` is to change the
+mapping to look like this:
 
 [source,js]
 --------------------------------------------------
@@ -110,7 +111,7 @@ analyzer:
     }
 }
 --------------------------------------------------
-<1> This ``main'' field can be queried as `title` or as `title.title`.
+<1> This ``main'' field can be queried as `title`.
 <2> The `std` sub-field should be queried as `title.std`.
 
 Now that we have explained the structure of the `multi_field` query, we can
