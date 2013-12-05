@@ -47,22 +47,22 @@ will be considered very important, perhaps important enough to overwhelm the
 score on the Peter Smith document.
 
 If, however, we were to index both first name and last name into a single
-`full_name field, then it wouldn't matter whether Smith is a first name or
+`full_name` field, then it wouldn't matter whether Smith is a first name or
 last name -- it will have have the same low IDF in either position, which
 would improve the accuracy of our results.
 
 In <<all-field-intro>> and <<all-field>> we introduced the special `_all`
 field, which concatenates the values from all other fields into one big string
-which it then indexes as an `analyzed` string field.
+and indexes it as an `analyzed` string field.
 
 This sounds like what we want: by indexing both `first_name` and `last_name`
 into one field, instead of dealing with the complexities of multi-field
 search, we can query just a single field, and we benefit from the correct
 pooled IDFs.
 
-By default the `_all` field doesn't contain just the first and last names --
-it contains all of the other field values as well.  We could change that by
-mapping the other fields as follows:
+By default, though, the `_all` field doesn't contain just the first and last
+names -- it contains all of the other field values as well.  We could change
+that by mapping the other fields as follows:
 
 [source,js]
 --------------------------------------------------

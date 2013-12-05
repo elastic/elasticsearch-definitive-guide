@@ -41,6 +41,7 @@ GET /_search
         "query_string": {
             "query":  "red widget London",
             "fields": [ "name", "color", "city" ]
+        }
     }
 }
 --------------------------------------------------

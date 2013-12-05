@@ -126,7 +126,7 @@ PUT /my_index
 <1> Note the new `path` parameter.
 <2> These two sub-fields will be indexed into the common `full_name` field.
 
-This mapping only works because of the `path` parameter, which controls
+The above mapping only works because of the `path` parameter, which controls
 how the name of each inverted index is formed.  It can take two values:
 
 [horizontal]
