@@ -1,8 +1,8 @@
 === Index time optimizations
 
-All of the solutions we've talked about so far are implemented at *query-
-time*. They don't require any special mappings or indexing patterns -- they
-simply work with the data that you've already indexed.
+All of the solutions we've talked about so far are implemented at
+*query-time*. They don't require any special mappings or indexing patterns --
+they simply work with the data that you've already indexed.
 
 The flexibility of query time operations comes at a cost: search performance.
 Sometimes it may make sense to move the cost away from the query.  In a real-
