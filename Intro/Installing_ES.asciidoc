@@ -7,11 +7,12 @@ The only requirement for installing Elasticsearch is a recent version of Java.
 Preferably, you should install the latest version of the official Java
 from http://www.java.com[www.java.com].
 
-Now you can download the latest version of Elasticsearch:
+Now you can download the latest version of Elasticsearch from
+http://www.elasticsearch.org/download/.
 
 [source,js]
 --------------------------------------------------
-curl -L -O http://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-0.20.2.tar.gz
+curl -L -O http://download.elasticsearch.org/PATH/TO/LATEST.tar.gz
 tar -xzf elasticsearch-*.tar.gz
 cd  elasticsearch-*
 --------------------------------------------------

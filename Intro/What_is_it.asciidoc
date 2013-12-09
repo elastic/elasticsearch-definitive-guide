@@ -1,34 +1,16 @@
-
-
-If you are picking up this book, it is because you have data.  And if you have
-data, you want to *do something* with it...data is fairly worthless if
-it just sits on a hard drive.  
-
-Although a ridiculously obvious statement, most databases are astonishingly inept
-at extracting actionable knowledge from your data.
-
-Sure, they can filter by timestamp or exact values, but can they perform
-full-text search, handle synonyms and score documents by relevance?  Can they 
-generate analytics and aggregations from the same data?  Most importantly, can 
-they do this in real-time without big batch processing jobs?
-
-This is what sets Elasticsearch apart from other databases; Elasticsearch 
-encourages you to explore and utilize your data, rather than letting it rot in a 
-warehouse because it is too difficult to query. 
-
 === What is Elasticsearch?
 
-Elasticsearch is a search engine built on top of Apache Lucene, a full-text 
+Elasticsearch is a search engine built on top of Apache Lucene, a full-text
 search library.  Lucene is arguably the most advanced, performant and fully-featured
 search engine in existence today -- both open source and proprietary.
 
-Unfortunately, Lucene is just a library, so if you wish to leverage it's power
-you need to work in Java and integrate it directly with your application.  
-Worse, you will likely require a degree in Information Retrieval to understand
-how it works.  Lucene is *very* complex.
+But Lucene is just a library. To leverage it's power you need to work in Java
+and integrate it directly with your application. Worse, you will likely
+require a degree in Information Retrieval to understand how it works.  Lucene
+is *very* complex.
 
 Elasticsearch aims to make full text search easy by hiding the complexities of
-Lucene behind a simple, coherent API.  Elasticsearch uses Lucene internally 
+Lucene behind a simple, coherent API.  Elasticsearch uses Lucene internally
 for all of its indexing and search.
 
 However, it is much more than just Lucene and much more than ``just'' full
@@ -39,7 +21,7 @@ Elasticsearch is also:
 * a distributed document store where every field is indexed and
    searchable
 * a distributed search engine with real-time analytics
-* capable of scaling to hundreds of servers and terabytes of structured
+* capable of scaling to hundreds of servers and petaabytes of structured
   and unstructured data.
 
 And it packages up all of this functionality into a standalone service
