@@ -3,14 +3,16 @@
 use strict;
 use warnings;
 
-use ElasticSearch;
-my $e = ElasticSearch->new;
-$e->delete_index( index => ['_all'], ignore_missing => 1 );
+use Elasticsearch;
+
+my $e = Elasticsearch->new;
+$e->indices->delete( index => ['_all'], ignore => 404);
+
 my @users = ( {
         id    => 2,
         type  => 'user',
         index => 'gb',
-        data  => {
+        body  => {
             name     => 'Mary Jones',
             username => '@mary',
             email    => 'mary@jones.com'
@@ -20,7 +22,7 @@ my @users = ( {
         id    => 1,
         type  => 'user',
         index => 'us',
-        data  => {
+        body  => {
             name     => 'John Smith',
             username => '@john',
             email    => 'john@smith.com',
@@ -52,15 +54,15 @@ while ( my $tweet = shift @tweets ) {
         index => $user->{index},
         type  => 'tweet',
         id    => $i,
-        data  => {
+        body  => {
             tweet => $tweet,
             date  => "2013-09-" . ( $i + 10 ),
-            name => $user->{data}{name},
+            name => $user->{body}{name},
             user_id =>  1 + ( $i % 2 ),
         }
         };
     $i++;
 }
 
-$e->bulk_index( docs => \@docs );
+$e->index( %$_ ) for @docs;
 

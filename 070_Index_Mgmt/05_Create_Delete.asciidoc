@@ -35,7 +35,7 @@ action.auto_create_index: false
 
 
 ****
-Later, we will discuss how you can use <<_index_templates_2>>
+Later, we will discuss how you can use <<index-templates>>
 to pre-configure automatically created indices. This is particularly
 useful when indexing log data, allowing you to roll over to a new
 automatically created index every day.

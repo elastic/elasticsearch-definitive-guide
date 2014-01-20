@@ -2,65 +2,63 @@
 
 :ref:  http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/
 
-include::Intro.asciidoc[]
+include::010_Intro.asciidoc[]
 
-include::Distributed/Cluster.asciidoc[]
+include::020_Distributed/Cluster.asciidoc[]
 
-include::Data_In_Data_Out.asciidoc[]
+include::030_Data_In_Data_Out.asciidoc[]
 
-include::Distributed/CRUD.asciidoc[]
+include::020_Distributed/CRUD.asciidoc[]
 
-include::Search.asciidoc[]
+include::050_Search.asciidoc[]
 
-include::Distributed/Search.asciidoc[]
+include::020_Distributed/Search.asciidoc[]
 
-include::Index_Mgmt.asciidoc[]
+include::070_Index_Mgmt.asciidoc[]
 
-include::Structured_Search.asciidoc[]
+include::080_Structured_Search.asciidoc[]
 
-include::Dates.asciidoc[]
+include::090_Dates.asciidoc[]
 
-include::Full_Text_Search.asciidoc[]
+include::100_Full_Text_Search.asciidoc[]
 
-include::Multi_Field_Search.asciidoc[]
+include::110_Multi_Field_Search.asciidoc[]
 
-include::Proximity_Matching.asciidoc[]
+include::120_Proximity_Matching.asciidoc[]
 
-include::Partial_Matching.asciidoc[]
+include::130_Partial_Matching.asciidoc[]
 
-include::Synonyms_Stopwords.asciidoc[]
+include::140_Synonyms_Stopwords.asciidoc[]
 
-include::Multilingual.asciidoc[]
+include::150_Multilingual.asciidoc[]
 
-include::Fuzzy_Matching.asciidoc[]
+include::160_Fuzzy_Matching.asciidoc[]
 
-include::Relevance.asciidoc[]
+include::170_Relevance.asciidoc[]
 
-include::Non_Prose.asciidoc[]
+include::180_Non_Prose.asciidoc[]
 
-include::Scripting.asciidoc[]
+include::190_Scripting.asciidoc[]
 
-include::Aggregations.asciidoc[]
+include::200_Aggregations.asciidoc[]
 
-include::Relationships.asciidoc[]
+include::210_Relationships.asciidoc[]
 
-include::Time_Based.asciidoc[]
+include::220_Time_Based.asciidoc[]
 
-include::Index_Per_User.asciidoc[]
+include::230_Index_Per_User.asciidoc[]
 
-include::Geolocation.asciidoc[]
+include::240_Geolocation.asciidoc[]
 
-include::Percolation.asciidoc[]
+include::250_Percolation.asciidoc[]
 
-include::Scaling.asciidoc[]
+include::260_Scaling.asciidoc[]
 
-include::Index_Admin.asciidoc[]
+include::280_Cluster_Admin.asciidoc[]
 
-include::Cluster_Admin.asciidoc[]
+include::290_Deplyoment.asciidoc[]
 
-include::Deplyoment.asciidoc[]
+include::300_Lucene.asciidoc[]
 
-include::Lucene.asciidoc[]
-
-include::Glossary.asciidoc[]
-
+[[TODO]]
+Dummy link for subjects not yet written about

@@ -40,8 +40,8 @@ In <<pagination>> we said that deep paging in a distributed system is very
 expensive and should be avoided.  But in order to reindex all of our data,
 we need to retrieve every document in the old index!
 
-The costly part of deep pagination is the global sorting of results (see 
-<<_distributed_search_execution>> for more technical details).  But if
+The costly part of deep pagination is the global sorting of results (see
+<<distributed-search>> for more technical details).  But if
 we disable sorting then we can return all documents quite cheaply. To do
 this, we use a special search mode called `scan`.
 

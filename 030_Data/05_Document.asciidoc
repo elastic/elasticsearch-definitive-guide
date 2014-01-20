@@ -65,7 +65,7 @@ application is concerned, our documents live in an _index_ -- Elasticsearch
 takes care of the details.
 
 ****
-We will discuss how to create and manage indices ourselves in <<index-admin>>,
+We will discuss how to create and manage indices ourselves in <<index-management>>,
 but for now we will let Elasticsearch create the index for us.  All we have
 to do is to choose a name, which must be lower case, cannot begin with
 an underscore and cannot contain commas, e.g. `website`.

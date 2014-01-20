@@ -1,7 +1,8 @@
+[[distributed-search]]
 == Distributed Search Execution
 
 Before moving on, we are going to take a detour and talk about how search is
-executed in a distributed environment.  Unlike basic CRUD operations (as we 
+executed in a distributed environment.  Unlike basic CRUD operations (as we
 learned in <<distributed-docs>>), search is a little more complicated.
 
 .Content warning
@@ -16,7 +17,7 @@ but don't be overwhelmed by the detail.
 ****
 
 Search requires a more complicated execution model because we don't know what
-documents will match your query. For simple CRUD operations, we know exactly 
+documents will match your query. For simple CRUD operations, we know exactly
 what document we are operating on, and more importantly, where to find it.
 Using the documents index, type and ID we can immediately determine what shard
 the document lives in.
@@ -53,7 +54,7 @@ a large priority queue
 
 When a search request is sent to a node, that node becomes the coordinating node.
 It is the job of this node to merge, sort and return search results to the client.
-The first thing the coordinating node does is rebroadcast the query to each 
+The first thing the coordinating node does is rebroadcast the query to each
 shard in the index.
 
 Each shard now evaluates the query against the documents that reside within that
@@ -61,8 +62,8 @@ shard.  If a document matches, it is placed in a *priority queue*, which is just
 a data structure that maintains the "top N documents" according to the scoring
 metric.
 
-The size of the queue is equivalent to your pagination parameters (`from + 
-size`).  So if you query with `from: 90` and `size: 10`, each shard will build 
+The size of the queue is equivalent to your pagination parameters (`from +
+size`).  So if you query with `from: 90` and `size: 10`, each shard will build
 a priority queue that is 100 documents long.
 
 Once each shard has finished executing the query and has built a queue of
@@ -71,7 +72,7 @@ very lightweight: it is simply the document ID and the `_score` of each doc.
 
 On the coordinating node, we take these candidate lists and merge them together
 to form one large priority queue.  Since we have three shards being
-queried, and each shard constructed a queue that was 100 documents long, the 
+queried, and each shard constructed a queue that was 100 documents long, the
 final merged queue will be 300 documents long.
 
 That ends the query phase and we are left with a list of documents that match
@@ -88,7 +89,7 @@ This means that Elasticsearch will choose one shard from each replication group
 (either the primary or one of it's replicas) and query that.  The rest of the
 query and fetch process is identical.
 
-This is why replicas can help with search performance: they spread the query 
+This is why replicas can help with search performance: they spread the query
 load amongst your cluster.
 ****
 
@@ -103,7 +104,7 @@ haven't extracted their source yet.  This is the job of the fetch phase.
 .Fetch Phase of distributed search
 image::images/distributed_search_fetch.png["Fetch Phase of distributed search"]
 
-1. The coordinating node identifies which documents need to be retrieved and 
+1. The coordinating node identifies which documents need to be retrieved and
 issues a GET to shard that holds the required documents
 
 2. Participating shards load the document and send back the source
@@ -125,7 +126,7 @@ will be sent back to the client.
 
 === Why two round-trips?
 You may have noticed that the Query Then Fetch method requires two inter-cluster
-round-trips.  Would it be more efficient to just send back the document after 
+round-trips.  Would it be more efficient to just send back the document after
 the query phase?  That would remove the need for an extra network round-trip.
 
 A single round-trip method exists, called "Query And Fetch", but it
@@ -136,14 +137,14 @@ the coordinating node (resulting in a final queue size of 300).
 
 If we remove the Fetch phase, we would be forced to load all 300 documents off
 disk and send those over the wire to the coordinating node.  But since our
-user only wanted 10 results, we would throw away 290 documents that we 
+user only wanted 10 results, we would throw away 290 documents that we
 painstakingly loaded from disk!
 
-The overhead of an extra round-trip is often much less than loading a large 
+The overhead of an extra round-trip is often much less than loading a large
 number of documents from disk...only to throw them away moments later.
 
 Query And Fetch is sometimes used as an internal optimization.  If Elasticsearch
-recognizes that only a single shard is being queried, it will 
+recognizes that only a single shard is being queried, it will
 execute everything in one pass since two phases are not needed.
 
 === Avoid deep pagination
@@ -161,7 +162,7 @@ both a CPU and memory perspective.
 In practice, you don't really want or need deep pagination anyway.  Most users
 become frustrated after the second page of results...rarely does anyone scroll
 to page ten-thousand.  Even Google limits search results after a certain number
-of pages.  
+of pages.
 
 It is highly recommended to disable "infinite" paging, removing it completely
 from your interface.
@@ -170,24 +171,24 @@ from your interface.
 ****
 In addition to removing it from your interface, make sure it is limited in your
 application too.  Bots have no problem adjusting URLs and paging through your
-entire data set.  
+entire data set.
 
-Alas, Googlebot has been known to take down a cluster or two because of 
+Alas, Googlebot has been known to take down a cluster or two because of
 enthusiastic pagination
 ****
 
 === Handling failure
 
-As discussed in <<_life_inside_a_cluster>>, failure can strike your cluster.  In 
+As discussed in <<distributed-cluster>>, failure can strike your cluster.  In
 our example we have three nodes and three primary shards...but no replicas.  If
 a machine were to catch on fire *right now*, you would lose some data.
 
 Does this mean your cluster stops executing search requests until the data is
 restored? Absolutely not!  It does, however, mean that your search results will
-be incomplete.  
+be incomplete.
 
-The Query Then Fetch process will continue like normal, but the coordinating 
-node will make a note that one primary shard is not available for search.  
+The Query Then Fetch process will continue like normal, but the coordinating
+node will make a note that one primary shard is not available for search.
 Documents will be fetched, sorted and returned to the client.  In the search
 metadata you will notice that one of the shards is marked as "failed":
 
