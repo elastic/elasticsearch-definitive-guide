@@ -112,8 +112,8 @@ of the data at the time the map-reduce job began, which may be hours, days
 or weeks before.
 
 Aggregations in Elasticsearch, however, summarise the data based on current
-search results.  This makes analytics derived from aggregations near
-real-time, instead of hours or days stale. As soon as a new document is visible
+search results.  This makes analytics derived from aggregations *near
+real-time*, instead of hours or days stale. As soon as a new document is visible
 to search, its data is also available to aggregations.
 
 A simple example of an aggregation in action is _faceted navigation_: a user
@@ -159,9 +159,9 @@ The `facets` section of the JSON response to the above looks like this:
 --------------------------------------------------
 
 
-The two most popular interests are `whales` and `golf`. Our user could choose
-to repeat their search, but limiting the results to just users who are
-interested in whales.
+The two most popular interests are `whales` and `golf`. Our user could narrow
+down their search, by limiting the results to just users who are interested in
+whales.
 
 The output from facets can often be presented visually, as a pie chart or
 a histogram, or geographic results can be overlaid on a map.

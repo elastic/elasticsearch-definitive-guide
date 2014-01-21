@@ -8,7 +8,8 @@ one schema yet. Did we hide that step from the intro?
 The answer is no: we didn't hide that step. Elasticsearch is _schema free_ --
 it doesn't require you to define a schema upfront but will automatically
 detect the datatype of each new field in your document and build a schema for
-you.
+you. Elasticsearch tries hard to get out of your way so that it is easy to
+experiment.
 
 Later, we will want more control over this process but, by not requiring
 a schema -- by being _schema free_ -- Elasticsearch makes
@@ -28,9 +29,9 @@ which looks like this:
 [source,js]
 --------------------------------------------------
 {
-  "blogs" : {
-    "user" : {
-      "properties" : {
+  "blogs" : { <1>
+    "user" : { <2>
+      "properties" : { <3>
         "age" :       { "type" : "long"   },
         "bio" :       { "type" : "string" },
         "email" :     { "type" : "string" },
@@ -47,7 +48,9 @@ which looks like this:
         }
 }}}}
 --------------------------------------------------
-
+<1> The `index` name.
+<2> The `type` name.
+<3> The fields in our type.
 
 We can see that Elasticsearch has done a reasonable job of interpreting our
 data types:

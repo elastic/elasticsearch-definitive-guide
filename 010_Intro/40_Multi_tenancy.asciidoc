@@ -28,7 +28,8 @@ Searching across indices may seem like a gimmick at first glance, but it
 actually allows for some very high-performance optimizations. Consider data
 that is stored in a new index each day. Searching the last seven days is as
 simple as including the last seven indices in the URI, avoiding the need to
-look through the rest of the indices altogether.
+look through the rest of the indices altogether. And expiring old data
+is as easy as deleting an index.
 
 ****
 

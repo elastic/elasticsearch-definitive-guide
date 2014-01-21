@@ -12,11 +12,10 @@ http://www.elasticsearch.org/download/.
 
 [source,js]
 --------------------------------------------------
-curl -L -O http://download.elasticsearch.org/PATH/TO/LATEST.tar.gz
-tar -xzf elasticsearch-*.tar.gz
-cd  elasticsearch-*
+curl -L -O http://download.elasticsearch.org/PATH/TO/LATEST/$VERSION.zip
+unzip elasticsearch-$VERSION.zip
+cd  elasticsearch-$VERSION
 --------------------------------------------------
-
 
 Elasticsearch is now ready to run. You can start it up in the foreground
 with:
@@ -25,7 +24,7 @@ with:
 --------------------------------------------------
 ./bin/elasticsearch <1>
 --------------------------------------------------
-<1> Add `-d` if you want to run it as a daemon.
+<1> Add `-d` if you want to run it in the background as a daemon.
 
 Test it out by opening another terminal window and running:
 

@@ -33,41 +33,34 @@ otherwise they may not be able to understand each other.
 
 All other languages can communicate with Elasticsearch over *port 9200* using
 a RESTful API, accessible with your favorite web client. In fact, as you have
-seen above, you can even talk to Elasticsearch from the command line, using the
+seen above, you can even talk to Elasticsearch from the command line using the
 `curl` command.
 
-All requests consist of:
-
-* an appropriate HTTP method: `GET`, `POST`, `PUT`, `HEAD` or `DELETE`
-* the protocol and hostname of any node in the cluster,
-  eg: `http://localhost:9200` or even just `localhost:9200`
-* the path of the resource you want to use, eg: `/_count`
-* any optional query string parameters, eg `?pretty` will _pretty-print_
-  the JSON response to make it easier to read
-* a JSON encoded request body (if the request needs one)
-
-For instance, to count the number of documents in the cluster, we could
-use:
+A request to Elasticsearch consists of the same parts as any HTTP request. For
+instance, to count the number of documents in the cluster, we could use:
 
 [source,js]
 --------------------------------------------------
+      <1>     <2>                     <3>    <4>
 curl -XGET 'http://localhost:9200/_count?pretty' -d '
-{
+{  <5>
     "query": {
         "match_all": {}
     }
 }
 '
 --------------------------------------------------
+<1> The appropriate HTTP method or ``verb'': `GET`, `POST`, `PUT`, `HEAD` or
+    `DELETE`
+<2> The protocol, hostname and port of any node in the cluster.
+<3> The path of the request.
+<4> Any optional query string parameters, eg `?pretty` will _pretty-print_
+    the JSON response to make it easier to read
+<5> A JSON encoded request body (if the request needs one)
 
-All responses consist of:
-
-* an HTTP status code, eg: `200 OK`
-* a response body encoded in JSON (except for `HEAD` requests, which don't
-  return a body)
-
-The above `curl` request would respond with a JSON body like the
-following:
+Elasticsearch returns an HTTP status code like `200 OK` and (except for `HEAD`
+requests) a JSON encoded response body. The above `curl` request would respond
+with a JSON body like the following:
 
 [source,js]
 --------------------------------------------------
@@ -81,7 +74,6 @@ following:
 }
 --------------------------------------------------
 
-
 We don't see the HTTP headers in the response because we didn't ask `curl` to
 display them. To see the headers, use the `curl` command with the `-i`
 switch:
@@ -91,14 +83,7 @@ switch:
 curl -i -XGET 'localhost:9200/'
 --------------------------------------------------
 
-We will use this `curl` format in all of our examples because it is easy to
-read and easy to translate into a request using the HTTP library of your
-choice.
-
-.`curl` shorthand
-****
-
-For the rest of the book, we will show `curl` examples using a shorthand
+For the rest of the book, we will show these `curl` examples using a shorthand
 format that leaves out all of the bits that are the same in every request,
 like the hostname and port, and the `curl` command itself. Instead of showing
 a full request like:
@@ -107,7 +92,9 @@ a full request like:
 --------------------------------------------------
 curl -XGET 'localhost:9200/_count?pretty' -d '
 {
-    "match_all": {}
+    "query": {
+        match_all": {}
+    }
 }'
 --------------------------------------------------
 
@@ -117,10 +104,10 @@ we will show it in this shorthand format:
 --------------------------------------------------
 GET /_count
 {
-    "match_all": {}
+    "query": {
+        match_all": {}
+    }
 }
 --------------------------------------------------
 
 TODO: Link to the Sense plugin?
-
-****

@@ -11,11 +11,12 @@ spreadsheet: you have to flatten the object to fit the table schema -- usually
 one field per column -- and then have to reconstruct it every time you
 retrieve it.
 
-Elasticsearch is _document oriented_, meaning that it stores and indexes
-entire objects or _documents_.  In Elasticsearch, you index, search, sort and
-filter documents... not rows of columnar data.  This is a fundamentally
-different  way of thinking about data and is one of the reasons Elasticsearch
-can  perform complex full text search.
+Elasticsearch is _document oriented_, meaning that it stores entire objects or
+_documents_.  Not only does it store them, it also *indexes* the contents of
+each document. In Elasticsearch, you index, search, sort and filter
+documents... not rows of columnar data.  This is a fundamentally different
+way of thinking about data and is one of the reasons Elasticsearch can
+perform complex full text search.
 
 ==== JSON
 
