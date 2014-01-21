@@ -1,11 +1,12 @@
 === Multi-tenancy
 
-Elasticsearch supports _multi-tenancy_. In other words, just like a
-relational database can have multiple independent ``databases'',
-Elasticsearch can have multiple independent indices. We can run
-multiple applications off a single Elasticsearch cluster.
+Elasticsearch supports _multi-tenancy_. In other words, just like a relational
+database can have multiple independent ``databases'', Elasticsearch can have
+multiple independent indices. We can run multiple applications, potentially
+with very different search requirements, with a single Elasticsearch cluster.
 
-Similarly, each index can have multiple types, each with its own mapping or schema.
+Similarly, each index can have multiple types, each with its own mapping or
+schema.
 
 Unlike a relational database, Elasticsearch can search across
 multiple types, and across multiple indices. Simply include another index
@@ -13,7 +14,7 @@ in the URI to search both at the same time:
 
 [source,js]
 --------------------------------------------------
-GET /blogs,blogs2/_search?pretty
+GET /blogs,blogs2/_search
 --------------------------------------------------
 
 
@@ -22,11 +23,12 @@ they were one, allows us to scale out as our requirements grow.
 
 .Gimmick?
 ****
-Searching across indices may seem like a gimmick at first glance, but it actually
-allows for some very high-performance optimizations. Consider data that is stored
-in a new index each day.
 
-Searching the last seven days is as simple as including the last seven indices in the URI,
-avoiding the need to look through the rest of the indices altogether.
+Searching across indices may seem like a gimmick at first glance, but it
+actually allows for some very high-performance optimizations. Consider data
+that is stored in a new index each day. Searching the last seven days is as
+simple as including the last seven indices in the URI, avoiding the need to
+look through the rest of the indices altogether.
+
 ****
 

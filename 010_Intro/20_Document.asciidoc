@@ -2,27 +2,27 @@
 
 Objects in an application are seldom just a simple list of keys and values.
 More often than not they are complex data structures which may contain other
-objects, or arrays of values.
+dates, geo-locations, objects, or arrays of values.
 
-When using a relational database to store these objects, you flatten
-the object to fit the table schema (usually one field per column). When
-retrieving the object from the database, you have to reconstruct it
-from the flat representation.
+Sooner or later you're going to want to store these objects in a database.
+Trying to do this with the rows and columns of a relational database is the
+equivalent of trying to squeeze your rich expressive objects into a very big
+spreadsheet: you have to flatten the object to fit the table schema -- usually
+one field per column -- and then have to reconstruct it every time you
+retrieve it.
 
-Elasticsearch is _document oriented_, meaning that it stores and
-indexes entire _documents_.  In Elasticsearch, you index, search,
-sort and filter documents...not rows of data.  This is a fundamentally different
- way of thinking about data and is one of the reasons Elasticsearch can
- perform complex full text search.
+Elasticsearch is _document oriented_, meaning that it stores and indexes
+entire objects or _documents_.  In Elasticsearch, you index, search, sort and
+filter documents... not rows of columnar data.  This is a fundamentally
+different  way of thinking about data and is one of the reasons Elasticsearch
+can  perform complex full text search.
 
+==== JSON
 
-[NOTE]
-====
-Elasticsearch uses JSON as the serialization format for documents.
-
-JSON serialization is supported by most programming languages, and has become
-the standard format used by the NoSQL movement. It is simple, concise and easy
-to read.
+Elasticsearch uses _JSON_ (or Javascript Object Notation ) as the
+serialization format for documents. JSON serialization is supported by most
+programming languages, and has become the standard format used by the NoSQL
+movement. It is simple, concise and easy to read.
 
 Consider this JSON document which represents a user object:
 
@@ -41,10 +41,7 @@ Consider this JSON document which represents a user object:
 }
 --------------------------------------------------
 
-
-Although the original user object was complex, the
-structure of the object has been retained in the JSON version.
-Converting an object to JSON for indexing in Elasticsearch
-is much simpler than the equivalent process for a flat table structure.
-====
-
+Although the original `user` object was complex, the structure and meaning of
+the object has been retained in the JSON version. Converting an object to JSON
+for indexing in Elasticsearch is much simpler than the equivalent process for
+a flat table structure.

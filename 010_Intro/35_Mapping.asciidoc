@@ -2,12 +2,13 @@
 
 When you create a new table in a relational database, the first thing you
 do is define the data type of each column. But we've been playing
-with Elasticsearch -- indexing, searching, faceting -- and haven't defined
+with Elasticsearch -- indexing, searching, aggregating -- and we haven't defined
 one schema yet. Did we hide that step from the intro?
 
-The answer is no: we didn't hide that step. Elasticsearch is _schema free_
--- it will automatically detect the datatype of each field in your document
-and build a schema for you.
+The answer is no: we didn't hide that step. Elasticsearch is _schema free_ --
+it doesn't require you to define a schema upfront but will automatically
+detect the datatype of each new field in your document and build a schema for
+you.
 
 Later, we will want more control over this process but, by not requiring
 a schema -- by being _schema free_ -- Elasticsearch makes
@@ -18,7 +19,7 @@ the current _mapping_ (aka the schema definition):
 
 [source,js]
 --------------------------------------------------
-GET /blogs/_mapping?pretty
+GET /blogs/_mapping
 --------------------------------------------------
 
 
@@ -39,7 +40,6 @@ which looks like this:
             "format" : "yyyy/MM/dd HH:mm:ss||yyyy/MM/dd"
         },
         "name" : {
-            "dynamic" : "true",
             "properties" : {
               "first" : { "type" : "string" },
               "last" :  { "type" : "string" }
@@ -56,14 +56,14 @@ data types:
 * string fields, including the array field `interests`, are
   assigned type `string`
 * the string field `join_date` has correctly been recognised as type `date`
-* the embedded object `name` has two string fields: `first` and `last`
+* the inner object `name` has two string fields: `first` and `last`
 
 With the mapping as it is, we are already well positioned to add a search
 service to our blogging website.
 
 But search engines are sophisticated.  With the domain specific knowledge
-that you have about your own data, you can tailor the mapping to your needs
-adding, for example:
+that you have about your own data you can tailor the mapping to your needs
+by adding, for example:
 
  * autocomplete searches to the `title` field
  * language specific analysis to the `title` and `content` fields

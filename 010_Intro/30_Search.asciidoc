@@ -2,36 +2,38 @@
 
 Let's try a search now -- after all, search is one of the reasons you are interested
 in Elasticsearch! For simple _ad hoc_ searches, we can use the _query string_ search
-method:
+method, so called because we pass the
 
 [source,js]
 --------------------------------------------------
-GET /_search?pretty&q=john
+GET /_search?q=john
 --------------------------------------------------
 
-
-The above query returns our `johnsmith` document as a result. By default, Elasticsearch
-is searching all the fields in your document.  If you want to search a specific field,
-you can specify it as a URI parameter:
+The above query returns our `johnsmith` document as a result. By default,
+Elasticsearch searches within all the fields in your document.  If you want to
+query a specific field, you can specify it in the query string:
 
 [source,js]
 --------------------------------------------------
-GET /_search?pretty&q=first:john
+GET /_search?q=first:john
 --------------------------------------------------
 
 
 Every single field in a document is indexed and searchable by default. It's
-the equivalent a database having an index on every column in
-every table, and be able to use multiple indices in a single request!
+the equivalent of a database having an index on every column in
+every table, and being able to use multiple indices in a single request!
 
-The search response contains not only the list of which documents match, but
-also returns the document itself. There is no need to have a separate phase to
-fetch the matching documents from another datasource.
+The search response not only contains the list of which documents match but
+also contains the documents themselves. There is no need to have a separate
+phase to fetch the matching documents from another datasource.
 
 .Near real-time search
 ****
-While documents can be retrieved immediately after being indexed (real-time GET) they only become ``visible'' to search within 1 second of
-being indexed or updated. This is known as  _near real-time search_.
+
+While documents can be retrieved immediately after being indexed -- real-time
+GET -- they only become ``visible'' to search within 1 second of being indexed
+or updated. This is known as  _near real-time search_.
+
 ****
 
 === Full body search
@@ -42,7 +44,7 @@ Elasticsearch's rich and flexible query language and looks like this:
 
 [source,js]
 --------------------------------------------------
-GET /_search?pretty
+GET /_search
 {
     "query": {
         "bool": {
@@ -71,7 +73,7 @@ content:
 
 [source,js]
 --------------------------------------------------
-GET /_search?pretty
+GET /_search
 {
     "query": { "match": { "bio": "eco warrior" }},
     "highlight": {
@@ -85,7 +87,7 @@ GET /_search?pretty
 
 The above query returns snippets like:
 
-[source,js]
+[source,html]
 --------------------------------------------------
 <em>Eco</em>-<em>warrior</em> and defender of the weak
 --------------------------------------------------
@@ -93,11 +95,11 @@ The above query returns snippets like:
 
 === Near real-time analytics
 
-While search returns the ``best-matching'' documents, we can use _facets_
-to generate analytics by summarizing all the documents that match the query.
-It's a bit like using `GROUP BY` in SQL.
+While search returns the ``best-matching'' documents, we can use
+_aggregations_ to generate analytics by summarizing all of the documents that
+match the query. It's a bit like using `GROUP BY` in SQL.
 
-Facets can answer questions like:
+Aggregations (or `aggs`) can answer questions like:
 
 * What are the most popular tags or categories?
 * How many comments have been left per hour, day or month?
@@ -109,12 +111,12 @@ batch jobs running in parallel. The results from map-reduce reflect the state
 of the data at the time the map-reduce job began, which may be hours, days
 or weeks before.
 
-Facets in Elasticsearch, however, summarise the data based on current search
-results.  This makes analytics derived from Facets near real-time, instead of hours
-or days stale. As soon as a new document is visible to search, its data is also available
-to facets.
+Aggregations in Elasticsearch, however, summarise the data based on current
+search results.  This makes analytics derived from aggregations near
+real-time, instead of hours or days stale. As soon as a new document is visible
+to search, its data is also available to aggregations.
 
-A simple example of facets in action is _faceted navigation_: a user
+A simple example of an aggregation in action is _faceted navigation_: a user
 does a search which returns a list of results, plus a list of popular
 categories which can then be used to narrow down the results.
 
@@ -123,12 +125,12 @@ and summarizes the most popular values in the `interests` field:
 
 [source,js]
 --------------------------------------------------
-GET /_all/user/_search?pretty
+GET /_all/user/_search
 {
    "query" : {
       "match_all" : {}
    },
-   "facets" : {
+   "aggs" : {
       "interests" : {
          "terms" : {
             "field" : "interests"
@@ -143,21 +145,17 @@ The `facets` section of the JSON response to the above looks like this:
 
 [source,js]
 --------------------------------------------------
-"facets" : {
-   "interests" : {
-      "_type" : "terms",
-      "total" : 7
-      "terms" : [
-         { "count" : 2, "term" : "whales"   },
-         { "count" : 2, "term" : "golf"     },
-         { "count" : 1, "term" : "wine"     },
-         { "count" : 1, "term" : "dolphins" },
-         { "count" : 1, "term" : "cinema"   }
-      ],
-      "other" : 0,
-      "missing" : 0,
-   }
-},
+"aggregations": {
+  "interests": {
+     "buckets": [
+        { "key": "whales",   "doc_count": 3 },
+        { "key": "golf",     "doc_count": 3 },
+        { "key": "wine",     "doc_count": 2 },
+        { "key": "dolphins", "doc_count": 1 },
+        { "key": "cinema",   "doc_count": 1 }
+     ]
+  }
+}
 --------------------------------------------------
 
 

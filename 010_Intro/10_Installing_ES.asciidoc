@@ -23,9 +23,9 @@ with:
 
 [source,js]
 --------------------------------------------------
-./bin/elasticsearch -f
+./bin/elasticsearch <1>
 --------------------------------------------------
-
+<1> Add `-d` if you want to run it as a daemon.
 
 Test it out by opening another terminal window and running:
 
@@ -40,24 +40,25 @@ You should see a response like this:
 [source,js]
 --------------------------------------------------
 {
-  "tagline" : "You Know, for Search",
-  "ok" : true,
-  "status" : 200,
-  "name" : "Contrary",
-  "version" : {
-    "number" : "0.20.2",
-    "snapshot_build" : false
-  }
+   "status": 200,
+   "name": "Shrunken Bones",
+   "version": {
+      "number": "1.0.0",
+      "lucene_version": "4.6"
+   },
+   "tagline": "You Know, for Search"
 }
 --------------------------------------------------
-
 
 This means that your Elasticsearch _cluster_ is up and running, and we can
 start experimenting with it.
 
 .Clusters and nodes
 ****
-A _node_ is a running instance of Elasticsearch. A _cluster_ is a group
-of nodes that are working together to share data and to provide failover and
-scale, although a single node can form a cluster by itself.
+
+A _node_ is a running instance of Elasticsearch. A _cluster_ is a group of
+nodes with the same `cluster.name` that are working together to share data,
+and to provide failover and scale, although a single node can form a cluster
+all by itself.
+
 ****

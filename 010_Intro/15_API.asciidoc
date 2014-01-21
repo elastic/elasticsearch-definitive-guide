@@ -19,11 +19,11 @@ Transport client::
     forwards requests to a node in the cluster.
 
 Both Java clients talk to the cluster over *port 9300*, using the native
-Elasticsearch protocol.  The nodes in the cluster also communicate
+Elasticsearch _transport_ protocol.  The nodes in the cluster also communicate
 with each other over port 9300. If this port is not open, then your nodes will
 not be able to form a cluster.
 
-[NOTE]
+[TIP]
 ====
 The Java client must be from the same version of Elasticsearch as the nodes,
 otherwise they may not be able to understand each other.
@@ -32,7 +32,7 @@ otherwise they may not be able to understand each other.
 ==== RESTful API with JSON over HTTP
 
 All other languages can communicate with Elasticsearch over *port 9200* using
-a RESTful API, accessible with your favorite HTTP library. In fact, as you have
+a RESTful API, accessible with your favorite web client. In fact, as you have
 seen above, you can even talk to Elasticsearch from the command line, using the
 `curl` command.
 
@@ -51,10 +51,13 @@ use:
 
 [source,js]
 --------------------------------------------------
-GET /_count?pretty
+curl -XGET 'http://localhost:9200/_count?pretty' -d '
 {
-    "match_all": {}
+    "query": {
+        "match_all": {}
+    }
 }
+'
 --------------------------------------------------
 
 All responses consist of:
@@ -85,18 +88,20 @@ switch:
 
 [source,js]
 --------------------------------------------------
-curl -I -XGET 'localhost:9200/'
+curl -i -XGET 'localhost:9200/'
 --------------------------------------------------
-
 
 We will use this `curl` format in all of our examples because it is easy to
 read and easy to translate into a request using the HTTP library of your
 choice.
 
-.Curl Shorthand
+.`curl` shorthand
 ****
-For the rest of the book, you'll notice curl examples in the shorthand format 
-used above.  The curl command is shortened from:
+
+For the rest of the book, we will show `curl` examples using a shorthand
+format that leaves out all of the bits that are the same in every request,
+like the hostname and port, and the `curl` command itself. Instead of showing
+a full request like:
 
 [source,js]
 --------------------------------------------------
@@ -106,17 +111,16 @@ curl -XGET 'localhost:9200/_count?pretty' -d '
 }'
 --------------------------------------------------
 
-to simply:
+we will show it in this shorthand format:
 
 [source,js]
 --------------------------------------------------
-GET /_count?pretty
+GET /_count
 {
     "match_all": {}
 }
 --------------------------------------------------
 
-This is done to space and repetitive typing.  We will show you the HTTP method
-(GET, PUT, POST, etc) and the URL path which follows `localhost:9200`.  The
-rest of the lines following the curl command are the body of the request.
+TODO: Link to the Sense plugin?
+
 ****
