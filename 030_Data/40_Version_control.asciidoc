@@ -1,26 +1,26 @@
 [[version-control]]
 === Dealing with conflicts
 
-When we update a document using the `index` API, we read the original document,
-make our changes, then update the *whole document* in one go. The most
-recent indexing request wins -- whichever document was indexed last determines
-what is stored in Elasticsearch. If somebody else had
-changed the document in the meantime, their changes would be lost.
+When updating a document using the `index` API, we read the original document,
+make our changes, then reindex the *whole document* in one go. The most recent
+indexing request wins -- whichever document was indexed last is the one stored
+in Elasticsearch. If somebody else had changed the document in the meantime,
+their changes would be lost.
 
-Many times, this is not a problem.  Perhaps our main data store is a relational
-database, and we just copy the data into Elasticsearch to make it searchable.
-Perhaps there is little chance of two people changing the same
-document at the same time. Or perhaps it doesn't really matter to our
-business if we lose changes occasionally.
+Many times, this is not a problem.  Perhaps our main data store is a
+relational database, and we just copy the data into Elasticsearch to make it
+searchable. Perhaps there is little chance of two people changing the same
+document at the same time. Or perhaps it doesn't really matter to our business
+if we lose changes occasionally.
 
-But sometimes losing a change is *very important*.  Imagine that
-we're using Elasticsearch to store the number of widgets that we have
-in stock in our online store. Every time that we sell a widget,
-we decrement the stock count in Elasticsearch.
+But sometimes losing a change is *very important*.  Imagine that we're using
+Elasticsearch to store the number of widgets that we have in stock in our
+online store. Every time that we sell a widget, we decrement the stock count
+in Elasticsearch.
 
-One day, management decides to have a sale. Suddenly, we are
-selling several widgets every second. Imagine two web processes, running in
-parallel, both processing the sale of one widget each:
+One day, management decides to have a sale. Suddenly, we are selling several
+widgets every second. Imagine two web processes, running in parallel, both
+processing the sale of one widget each:
 
 [[img-data-lww]]
 .Consequence of no concurrency control
@@ -32,53 +32,54 @@ image::images/data_last_write_wins.png["Consequence of no concurrency control"]
 3. `web_1`: set `stock_count` to `(100 - 1)` -> `99`
 4. `web_2`: set `stock_count` to `(100 - 1)` -> `99`  `# WRONG`
 
-The change that `web_1` made to the `stock_count` has been lost
-because `web_2` is unaware that its copy of the `stock_count` is out of date.
-The result is that we think we have more widgets than we actually do,
-and we're going to disappoint customers by selling them stock that
-doesn't exist.
+The change that `web_1` made to the `stock_count` has been lost because
+`web_2` is unaware that its copy of the `stock_count` is out of date. The
+result is that we think we have more widgets than we actually do, and we're
+going to disappoint customers by selling them stock that doesn't exist.
 
-The more frequently that changes are made, or the longer the gap
-between reading data and updating it, the more likely it is that we
-will lose changes.
+The more frequently that changes are made, or the longer the gap between
+reading data and updating it, the more likely it is that we will lose changes.
 
 There are two approaches to ensuring that changes are not lost when
-making concurrent updates.
+making concurrent updates:
 
-_Pessimistic concurrency control_, widely used by relational databases,
-assumes that conflicting changes are likely to happen and so blocks
-access to a resource in order to prevent conflicts. A typical
-example of this is locking a row before reading its data, ensuring that
-only the thread which placed the lock is able to make changes to the data in
-that row.
+_Pessimistic concurrency control_::
 
-_Optimistic concurrency control_, used by Elasticsearch,
-assumes that conflicts are unlikely to happen and doesn't block operations
-from being attempted. However, if the underlying
-data has been modified between reading and writing, the update will fail.
-It is then up to the application to decide how it should resolve the conflict.
-For instance, it could reattempt the update, using the fresh
-data, or it could report the situation to the user.
+widely used by relational databases, assumes that conflicting changes are
+likely to happen and so blocks access to a resource in order to prevent
+conflicts. A typical example of this is locking a row before reading its data,
+ensuring that only the thread which placed the lock is able to make changes to
+the data in that row.
 
+_Optimistic concurrency control_::
+
+used by Elasticsearch, assumes that conflicts are unlikely to happen and
+doesn't block operations from being attempted. However, if the underlying data
+has been modified between reading and writing, the update will fail. It is
+then up to the application to decide how it should resolve the conflict. For
+instance, it could reattempt the update, using the fresh data, or it could
+report the situation to the user.
+
+[[optimistic-concurrency-control]]
 === Optimistic concurrency control
 
-Elasticsearch is distributed.  When documents are
-created, updated or deleted, the new version of the document has to be
-replicated to other nodes in the cluster.  Elasticsearch is also highly
-concurrent, meaning that these replication requests are sent in parallel,
-and may arrive at their destination out of sequence. It needs a way of
-ensuring that an older version of a document never overwrites a newer version.
+Elasticsearch is distributed.  When documents are created, updated or deleted,
+the new version of the document has to be replicated to other nodes in the
+cluster.  Elasticsearch is also asynchronous and  concurrent, meaning that
+these replication requests are sent in parallel, and may arrive at their
+destination out of sequence. It needs a way of ensuring that an older version
+of a document never overwrites a newer version.
 
-When we discussed `index`, `get` and `delete` requests above, we pointed
-out that every document has a `_version` number which is incremented whenever
-a document is changed. Elasticsearch uses this `_version` number to ensure
-that changes are applied in the correct order. If an older version of
-a document arrives after a new version, it can simply be ignored.
+When we discussed `index`, `get` and `delete` requests above, we pointed out
+that every document has a `_version` number which is incremented whenever a
+document is changed. Elasticsearch uses this `_version` number to ensure that
+changes are applied in the correct order. If an older version of a document
+arrives after a new version, it can simply be ignored.
 
 We can take advantage of the `_version` number to ensure that conflicting
-changes made by our application do not result in data loss.
-We do this by specifying the version number of the document that we wish
-to change.  If that version is no longer current, our request fails.
+changes made by our application do not result in data loss. We do this by
+specifying the `version number of the document that we wish to change.  If that
+version is no longer current, our request fails.
 
 Let's create a new blog post:
 
@@ -113,27 +114,27 @@ The response body includes the same `_version` number of `1`:
   "_type" :    "blog",
   "_id" :      "1",
   "_version" : 1,
-  "exists" :   true,
-  "_source" : {
+  "found" :    true,
+  "_source" :  {
       "title": "My first blog entry",
       "text":  "Just trying this out..."
   }
 }
 --------------------------------------------------
 
-
 Now, when we try to save our changes by reindexing the document, we specify
 the `version` to which our changes should be applied:
 
 [source,js]
 --------------------------------------------------
-PUT /website/blog/1?version=1
+PUT /website/blog/1?version=1 <1>
 {
   "title": "My first blog entry",
   "text":  "Starting to get the hang of this..."
 }
 --------------------------------------------------
-
+<1> We want this update to succeed only if the current `_version` of this
+    document in our index is version `1`.
 
 This request succeeds, and the response body tells us that the `_version`
 has been incremented to `2`:
@@ -141,14 +142,13 @@ has been incremented to `2`:
 [source,js]
 --------------------------------------------------
 {
-  "ok":       true,
   "_index":   "website",
   "_type":    "blog",
   "_id":      "1",
   "_version": 2
+  "created":  false
 }
 --------------------------------------------------
-
 
 However, if we were to rerun the same index request, still specifying
 `version=1`, Elasticsearch would respond with a `409 Conflict` HTTP response
@@ -167,16 +167,15 @@ code, and a body like the following:
 This tells us that the current `_version` number of the document in
 Elasticsearch is `2`, but that we specified that we were updating version `1`.
 
-What we do now depends upon our application requirements.  We could tell
-the user that somebody else has already made changes to the document,
-and that they should review the changes before trying to save them again.
+What we do now depends upon our application requirements.  We could tell the
+user that somebody else has already made changes to the document, and that
+they should review the changes before trying to save them again.
 Alternatively, as in the case of the widget `stock_count` above, we could
 retrieve the latest document and try to reapply the change.
 
-Almost all APIs which update or delete a document accept a `version`
-parameter, which allows you to apply optimistic concurrency control
-to just the parts of your code where it makes sense. The only exception
-to this is the `update` API, which we will discuss in the next section.
+All APIs which update or delete a document accept a `version` parameter, which
+allows you to apply optimistic concurrency control to just the parts of your
+code where it makes sense.
 
 ==== Using versions from an external system
 
@@ -187,12 +186,12 @@ you can reuse these same version numbers in Elasticsearch by adding
 be integers greater than zero and less than about `9.2e+18` -- a positive
 `long` value in Java.
 
-The way external version numbers are handled is a bit different to what
-we have discussed above.  Instead of checking that the current `_version`
-is _the same_ as the one specified in the request, Elasticsearch checks
-that the current `_version` is _less than_ the specified version.
-If the request succeeds, the external version number
-is stored as the document's new `_version`.
+The way external version numbers are handled is a bit different to the
+internal version numbers  we discussed above.  Instead of checking that the
+current `_version` is _the same_ as the one specified in the request,
+Elasticsearch checks that the current `_version` is _less than_ the specified
+version. If the request succeeds, the external version number is stored as the
+document's new `_version`.
 
 External version numbers can be specified not only on
 index and delete requests, but also when _creating_ new documents.
@@ -215,16 +214,15 @@ In the response, we can see that the current `_version` number is `5`:
 [source,js]
 --------------------------------------------------
 {
-  "ok":       true,
   "_index":   "website",
   "_type":    "blog",
   "_id":      "2",
-  "_version": 5
+  "_version": 5,
+  "created":  true
 }
 --------------------------------------------------
 
-
-Now we update this document, but specifying a new `version` number of `10`:
+Now we update this document, specifying a new `version` number of `10`:
 
 [source,js]
 --------------------------------------------------
@@ -235,20 +233,18 @@ PUT /website/blog/2?version=10&version_type=external
 }
 --------------------------------------------------
 
-
 The request succeeds and sets the current `_version` to `10`:
 
 [source,js]
 --------------------------------------------------
 {
-  "ok":       true,
   "_index":   "website",
   "_type":    "blog",
   "_id":      "2",
-  "_version": 10
+  "_version": 10,
+  "created":  false
 }
 --------------------------------------------------
-
 
 If you were to rerun this request, it would fail with the same conflict
 error we saw above, because the specified external version number is not

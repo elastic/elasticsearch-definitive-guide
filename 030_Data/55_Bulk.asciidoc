@@ -2,28 +2,26 @@
 === Cheaper in bulk
 
 In the same way that `mget` allows us to retrieve multiple documents at once,
-the `bulk` API allows us to make multiple `create`, `index`, `update` or `delete` 
-requests in a single step.
-
-This is particularly useful if you need to index a data stream such as
-log events, which can be queued up and indexed in batches of 100 or 1,000.
+the `bulk` API allows us to make multiple `create`, `index`, `update` or
+`delete`  requests in a single step. This is particularly useful if you need
+to index a data stream such as log events, which can be queued up and indexed
+in batches of 100 or 1,000.
 
 The `bulk` request body has the following, slightly unusual, format:
 
 [source,js]
 --------------------------------------------------
 { action: { metadata }}\n
-{ document            }\n
+{ request body        }\n
 { action: { metadata }}\n
-{ document            }\n
+{ request body        }\n
 ...
 --------------------------------------------------
-
 
 Two important points to note about the format:
 
 * Every line must end with a newline character `"\n"`, *including the last
-  line*. These are used as markers to allow efficient line separation.
+  line*. These are used as markers to allow for efficient line separation.
 
 * The lines cannot contain embedded newline characters, as they would
   interfere with parsing -- that means that the JSON must *not* be
@@ -31,9 +29,9 @@ Two important points to note about the format:
 
 The _action/metadata_ line specifies *what action* to do to *which document*.
 
-The _action_ must be one of `index`, `create`, `update` or `delete`.
-The _metadata_ should specify the `_index`, `_type` and `_id` of the document
-to be indexed, created, updated or deleted.
+The _action_ must be one of `index`, `create`, `update` or `delete`. The
+_metadata_ should specify the `_index`, `_type` and `_id` of the document to
+be indexed, created, updated or deleted.
 
 For instance, a `delete` request could look like this:
 
@@ -42,35 +40,27 @@ For instance, a `delete` request could look like this:
 { "delete": { "_index": "website", "_type": "blog", "_id": "123" }}
 --------------------------------------------------
 
+The _request body_ line consists of the document `_source` itself -- the fields
+and values that the document contains.  It is required for `index` and
+`create` operations, which makes sense: you must supply the document to index.
 
-The _document_ line consists of the document `_source` itself -- the fields and 
-values that the document contains.  It is required for `index` and `create` 
-operations, which makes sense: you must supply the document to index.
-
-It is also required for `update` operations, but it acts a little differently.
-The document specified may be a full or partial doc, which is then merged
-into the existing document just like a regular update.  It may also contain
-a script or upsert clause -- check the online documentation for full syntax.
-
-No _document_ line is required for a delete.
+It is also required for `update` operations and should consist of the same
+request body that you would pass to the `update` API: `doc`, `upsert`,
+`script` etc. No _request body_ line is required for a delete.
 
 [source,js]
 --------------------------------------------------
-{ "index":  { "_index": "website", "_type": "blog", "_id": "123" }}
+{ "create":  { "_index": "website", "_type": "blog", "_id": "123" }}
 { "title":    "My first blog post" }
 --------------------------------------------------
-
-
 
 If no `_id` is specified, then an ID will be auto-generated:
 
 [source,js]
 --------------------------------------------------
-{ "create": { "_index": "website", "_type": "blog" }}
+{ "index": { "_index": "website", "_type": "blog" }}
 { "title":    "My second blog post" }
 --------------------------------------------------
-
-
 
 To put it all together, a complete `bulk` request has this form:
 
@@ -78,52 +68,63 @@ To put it all together, a complete `bulk` request has this form:
 --------------------------------------------------
 POST /_bulk
 { "delete": { "_index": "website", "_type": "blog", "_id": "123" }}
-{ "index":  { "_index": "website", "_type": "blog", "_id": "123" }}
+{ "create": { "_index": "website", "_type": "blog", "_id": "123" }}
 { "title":    "My first blog post" }
-{ "create": { "_index": "website", "_type": "blog" }}
+{ "index":  { "_index": "website", "_type": "blog" }}
 { "title":    "My second blog post" }
 { "update": { "_index": "website", "_type": "blog", "_id": "123", "_retry_on_conflict" : 3} }
-{ "doc" : {"title" : "My updated blog post"} }
+{ "doc" : {"title" : "My updated blog post"} } <1>
 --------------------------------------------------
-
+<1> Remember the final newline character.
 
 The Elasticsearch response contains the `items` array which lists the result of
-each request, in the same order as we requested them.  It also reports how many
-milliseconds it `took` to perform the whole `bulk` request:
+each request, in the same order as we requested them:
 
 [source,js]
 --------------------------------------------------
 {
-  "took" : 1,
-  "items" : [
-    { "delete" : {
-        "_index" :   "website",
-        "_type" :    "blog",
-        "_id" :      "123",
-        "_version" : 5,
-        "ok" :       true
-    }},
-    { "index" : {
-        "_index" :   "website",
-        "_type" :    "blog",
-        "_id" :      "123",
-        "_version" : 6,
-        "ok" :       true
-    }},
-    { "create" : {
-        "_index" :   "website",
-        "_type" :    "blog",
-        "_id" :      "YUYRnsC4T2yePAnMy-pqAA",
-        "_version" : 1,
-        "ok" :       true
-    }}
-  ]
-}
+   "took": 4,
+   "errors": false, <1>
+   "items": [
+      {  "delete": {
+            "_index":   "website",
+            "_type":    "blog",
+            "_id":      "123",
+            "_version": 2,
+            "status":   200,
+            "found":    true
+      }},
+      {  "create": {
+            "_index":   "website",
+            "_type":    "blog",
+            "_id":      "123",
+            "_version": 3,
+            "status":   201
+      }},
+      {  "create": {
+            "_index":   "website",
+            "_type":    "blog",
+            "_id":      "EiwfApScQiiy7TIKFxRCTw",
+            "_version": 1,
+            "status":   201
+      }},
+      {  "update": {
+            "_index":   "website",
+            "_type":    "blog",
+            "_id":      "123",
+            "_version": 4,
+            "status":   200
+      }}
+   ]
+}}
 --------------------------------------------------
+<1> All sub-requests completed successfully.
 
+Each sub-request is executed independently, so the failure of one sub-request
+won't affect the success of the others. If any of the requests fail, then the
+top-level  `error` flag is set to `true` and the error details will be
+reported under the relevant request:
 
-If any of the requests fail, then the error will be returned in `items` --
-it won't stop the other requests from being processed:
 
 [source,js]
 --------------------------------------------------
@@ -135,45 +136,50 @@ POST /_bulk
 --------------------------------------------------
 
 
-In the response we can see that it failed to `create` document `123`
-because it already exists. However, the subsequent `index` request, also
-on document `123`, succeeded:
+In the response we can see that it failed to `create` document `123` because
+it already exists, but the subsequent `index` request, also on document `123`,
+succeeded:
 
 [source,js]
 --------------------------------------------------
 {
-  "took" : 1,
-  "items" : [
-    { "create" : {
-        "_index" :   "website",
-        "_type" :    "blog",
-        "_id" :      "123",
-        "error" :    "DocumentAlreadyExistsException[[website][4] [blog][123]:
-                      document already exists]"
-    }},
-    { "index" : {
-        "_index" :   "website",
-        "_type" :    "blog",
-        "_id" :      "123",
-        "_version" : 7,
-        "ok" :       true
-    }}
-  ]
+   "took": 3,
+   "errors": true, <1>
+   "items": [
+      {  "create": {
+            "_index":   "website",
+            "_type":    "blog",
+            "_id":      "123",
+            "status":   409, <2>
+            "error":    "DocumentAlreadyExistsException <3>
+                        [[website][4] [blog][123]:
+                        document already exists]"
+      }},
+      {  "index": {
+            "_index":   "website",
+            "_type":    "blog",
+            "_id":      "123",
+            "_version": 5,
+            "status":   200 <4>
+      }}
+   ]
 }
 --------------------------------------------------
+<1> One or more requests has failed.
+<2> The HTTP status code for this request reports `409 CONFLICT`.
+<3> The error message explaining why the request failed.
+<4> The second request succeeded with an HTTP status code of `200 OK`.
 
-
-That also means that `bulk` requests are not atomic.  They cannot be used
-to implement transactions.  Each request is processed separately, so the
-failure of one request will not interfere with the others.
+That also means that `bulk` requests are not atomic -- they cannot be used to
+implement transactions.  Each request is processed separately, so the success
+or failure of one request will not interfere with the others.
 
 ==== Don't repeat yourself
 
 Perhaps you are batch indexing logging data into the same `index`, and with the
 same `type`. Having to specify the same metadata for each document is a waste.
-
-Instead, just as for the `mget` API, we can specify a default `/_index` in the
-URL, or even a default `/_index/_type`.
+Instead, just as for the `mget` API, the `bulk` request accepts a default `/_index` or
+`/_index/_type` in the URL:
 
 [source,js]
 --------------------------------------------------
@@ -182,9 +188,8 @@ POST /website/_bulk
 { "event": "User logged in" }
 --------------------------------------------------
 
-
 You can still override the `_index` and `_type` in the metadata line, but it
-will use the URL defaults if no override is specified:
+will use the values in the URL as defaults:
 
 [source,js]
 --------------------------------------------------
@@ -195,87 +200,18 @@ POST /website/log/_bulk
 { "title": "Overriding the default type" }}
 --------------------------------------------------
 
-
-Unlike the `mget` API, the `_type` parameter is not optional in `bulk` API.
-It must be specified, either in the URL or in the metadata.
-
-==== Conflict control
-
-We can use `_version` numbers to avoid overwriting data in the same
-way as do for single `index` or `delete` requests (see <<version-control>>).
-
-The `_version` number must be specified in the metadata:
-
-[source,js]
---------------------------------------------------
-POST /website/blog/_bulk
-{ "create": { "_id": "125" }}
-{ "title":    "Create a new blog post, with version 1" }
-{ "index":  { "_id": "125", "_version": 1 }}
-{ "title":    "This update succeeds" }
-{ "index":  { "_id": "125", "_version": 1 }}
-{ "title":    "This update fails with a Conflict error" }
---------------------------------------------------
-
-
-The metadata also understands the `_version_type` parameter, if you wish
-to use `external` version numbers.
-
 ==== How big is too big?
 
-There is an optimal size of `bulk` request. Above that size, performance
-no longer improves and may even drop off. Also, the entire bulk request
-needs to be loaded into memory by the node which receives our request,
-so the bigger the request, the less memory available for other requests.
+The entire bulk request needs to be loaded into memory by the node which
+receives our request, so the bigger the request, the less memory available for
+other requests. There is an optimal size of `bulk` request. Above that size,
+performance no longer improves and may even drop off.
 
 The optimal size, however, is not a fixed number. It depends entirely on your
 hardware, your document size and complexity, and your indexing and search
 load.  Fortunately, it is easy to find the _sweetspot_:
 
-Try indexing typical documents in batches of increasing size. When
-performance starts to drop, your batch size is too big.
-
-A good place to start is with batches of between 1,000 and 5,000 documents or,
-if your documents are very large, with even smaller batches.
-
-[[bulk-format]]
-==== Why the funny format?
-
-You may have asked yourself: ``Why does the `bulk` API require the funny format
-with the newline characters, instead of just sending the requests wrapped in
-a JSON array, like the `mget` API?''
-
-To answer this, we need to explain a little background:
-
-Documents are stored and indexed in shards. An index is just a logical namespace
-which points to one or more shards.  On top of that, a cluster may contain
-multiple indices. Elasticsearch uses the `_index`, `_type` and `_id` of the
-document to determine which shard it should belong to.
-
-If you are running a cluster with more than one node, then it is likely that
-these shards will be allocated to different nodes. Each _action_ inside a `bulk`
-request needs to be forwarded to the correct shard on the correct node.
-
-If the individual requests were wrapped up in a JSON array, that would mean
-that we would need to:
-
- * parse the JSON into an array (including the document data, which
-   can be very large)
- * look at each request to determine which shard it should go to
- * create an array of requests for each shard
- * serialize these arrays into the internal transport format
- * send the requests to each shard
-
-It would work, but would need a lot of RAM to hold copies of essentially
-the same data, and would create many more data structures that the JVM
-would have to spend time garbage collecting.
-
-Instead, Elasticsearch reaches up into the networking buffer, where
-the raw request has been received and reads the data directly. It uses the
-newline characters to identify and parse just the small _action/metadata_ lines
-in order to decide which shard should handle each request.
-
-These raw requests are forwarded directly to the correct shard. There
-is no redundant copying of data, no wasted data structures. The entire
-request process is handled in the smallest amount of memory possible.
-
+Try indexing typical documents in batches of increasing size. When performance
+starts to drop off, your batch size is too big. A good place to start is with
+batches of between 1,000 and 5,000 documents or, if your documents are very
+large, with even smaller batches.

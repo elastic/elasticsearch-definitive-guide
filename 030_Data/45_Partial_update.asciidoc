@@ -2,23 +2,25 @@
 === Partial updates to documents
 
 In <<update-doc>>, we said that the way to update a document is to retrieve
-it, change it, then reindex the whole document. This is true. However,
-using the `update` API, we can make partial updates to a document
-in a single client request, such as incrementing a counter.
+it, change it, then reindex the whole document. This is true. However, using
+the `update` API, we can make partial updates like incrementing a counter in a
+single request.
 
 We also said that documents are immutable -- they cannot be changed, only
-replaced.  The `update` API has to obey the same rules.  Externally,
-it appears as if we are partially updating a document in place.
-Internally, the `update` API simply manages the same _retrieve-change-reindex_
-process that we have already described, thus avoiding the network overhead of
-multiple requests. By reducing the time between the _retrieve_ and
-_reindex_ steps, we reduce the likelihood of there being conflicting
-changes from other processes.
+replaced.  The `update` API *must* obey the same rules.  Externally, it
+appears as though we are partially updating a document in place. Internally,
+however, the `update` API simply manages the same _retrieve-change-reindex_
+process that we have already described. The difference is that this process
+happens within a shard, thus avoiding the network overhead of multiple
+requests. By reducing the time between the _retrieve_ and _reindex_ steps, we
+also reduce the likelihood of there being conflicting changes from other
+processes.
 
-The simplest form of the `update` request accepts a partial document
-as the `"doc"` parameter -- objects are merged together, existing scalar fields
-are overwritten and new fields are added. For instance, we could add a
-`tags` field and a `views` field to our blog post with:
+The simplest form of the `update` request accepts a partial document as the
+`"doc"` parameter which just gets merged with the existing document -- objects
+are merged together, existing scalar fields are overwritten and new fields are
+added. For instance, we could add a `tags` field and a `views` field to our
+blog post with:
 
 [source,js]
 --------------------------------------------------
@@ -31,14 +33,12 @@ POST /website/blog/1/_update
 }
 --------------------------------------------------
 
-
 If the request succeeds, we see a response similar to that
 of the `index` request:
 
 [source,js]
 --------------------------------------------------
 {
-   "ok" :       true,
    "_index" :   "website",
    "_id" :      "1",
    "_type" :    "blog",
@@ -46,97 +46,60 @@ of the `index` request:
 }
 --------------------------------------------------
 
-
-However, if you would like to see what changes have been made, you can
-request one or more fields with the `fields` query string parameter.  If you want
-to see the whole document, then request the `_source` field:
+Retrieving the document shows the updated `_source` field:
 
 [source,js]
 --------------------------------------------------
-POST /website/blog/1/_update?fields=_source
 {
-   "doc" : {
-      "tags" : [ "testing" ],
-      "views": 0
+   "_index":    "website",
+   "_type":     "blog",
+   "_id":       "1",
+   "_version":  3,
+   "found":     true,
+   "_source": {
+      "title":  "My first blog entry",
+      "text":   "Starting to get the hang of this...",
+      "tags": [ "testing" ], <1>
+      "views":  0 <1>
    }
 }
 --------------------------------------------------
-
-
-Now you can see that our `tags` and `views` fields have been added to the
-document:
-
-[source,js]
---------------------------------------------------
-{
-  "ok" :       true,
-  "_index" :   "website",
-  "_type" :    "blog",
-  "_id" :      "1",
-  "_version" : 4,
-  "get" : {
-    "exists"  : true,
-    "_source" : {
-        "title" :  "My first blog entry",
-        "text"  :  "Starting to get the hang of this...",
-        "tags"  :  [ "testing" ],
-        "views" :  0
-    }
-  }
-}
---------------------------------------------------
-
+<1> Our new fields have been added to the `_source`.
 
 ==== Using scripts to make partial updates
 
-We will discuss scripting in more detail in <<scripting>>, but for now it
-is enough to know that scripts can be used in several places in Elasticsearch
-to achieve custom actions that are not directly supported by the API.
+****
 
-Scripts can be used in the `update` API to change the content of the
-`_source` field, which is known inside the script as: `ctx._source`
+We will discuss scripting in more detail in <<scripting>>, but for now it is
+enough to know that scripts can be used in several places in Elasticsearch to
+achieve custom actions that are not directly supported by the API. The
+default scripting language is called MVEL, but Elasticsearch also supports
+Javascript, Groovy and Python.
 
-For instance, we could use a script to increment the number of `views`
-that our blog post has had:
+****
+
+Scripts can be used in the `update` API to change the contents of the `_source`
+field, which is referred to inside an update script as `ctx._source`. For
+instance, we could use a script to increment the number of `views` that our
+blog post has had:
 
 [source,js]
 --------------------------------------------------
-POST /website/blog/1/_update?fields=views
+POST /website/blog/1/_update
 {
    "script" : "ctx._source.views+=1"
 }
 --------------------------------------------------
 
-
-We requested the `views` field, so that we can see that it has been
-incremented:
-
-[source,js]
---------------------------------------------------
-{
-   "ok" :       true,
-   "_index" :   "website",
-   "_type" :    "blog",
-   "_id" :      "1",
-   "_version" : 5,
-   "get" : {
-      "exists" : true,
-      "fields" : {
-         "views" : 1
-      }
-   }
-}
---------------------------------------------------
-
-
 We can also use a script to add a new tag to the `tags` array.  In this
-example we specify the new tag as a parameter rather than hard coding
-it in the script itself. This allows Elasticsearch to reuse the script
-in the future, without having to compile a new script for every new tag:
+example we specify the new tag as a parameter rather than hard coding it in
+the script itself. This allows Elasticsearch to reuse the script in the
+future, without having to compile a new script every time we want to add
+another tag:
 
 [source,js]
 --------------------------------------------------
-POST /website/blog/1/_update?fields=tags
+POST /website/blog/1/_update
 {
    "script" : "ctx._source.tags+=new_tag",
    "params" : {
@@ -145,50 +108,47 @@ POST /website/blog/1/_update?fields=tags
 }
 --------------------------------------------------
 
-
-The response shows that the `search` tag has been added to the `tags` array:
+Fetching the document shows the effect of the last two requests:
 
 [source,js]
 --------------------------------------------------
 {
-   "ok" :       true,
-   "_index" :   "website",
-   "_type" :    "blog",
-   "_id" :      "1",
-   "_version" : 6,
-   "get" : {
-      "exists" : true,
-      "fields" : {
-         "tags" : [
-            "testing",
-            "search"
-         ]
-      }
+   "_index":    "website",
+   "_type":     "blog",
+   "_id":       "1",
+   "_version":  5,
+   "found":     true,
+   "_source": {
+      "title":  "My first blog entry",
+      "text":   "Starting to get the hang of this...",
+      "tags":  ["testing", "search"], <1>
+      "views":  1 <2>
    }
 }
 --------------------------------------------------
+<1> The `search` tag has been appended to the `tags` array.
+<2> The `views` field has been incremented.
 
-
-We can even choose to delete a document based on it contents:
+We can even choose to delete a document based on it contents,
+by setting `ctx.op` to `delete`:
 
 [source,js]
 --------------------------------------------------
 POST /website/blog/1/_update
 {
-   "script" : "ctx._source.tags.contains(tag) ? ctx.op = \"delete\" : ctx.op = \"none\"",
+   "script" : "ctx.op = ctx._source.views == count ? 'delete' : 'none'",
     "params" : {
-        "tag" : "testing"
+        "count": 1
     }
 }
 --------------------------------------------------
 
-
 ==== Create or update
 
-Imagine that we need to store a pageview counter in Elasticsearch. Every
-time a user views a page, we increment the counter for that page.  But if
-it is a new page, we can't be sure that a counter already exists, and
-if we try to update a non-existent document, the update will fail.
+Imagine that we need to store a pageview counter in Elasticsearch. Every time
+that a user views a page, we increment the counter for that page.  But if it
+is a new page, we can't be sure that a counter already exists, and if we try
+to update a non-existent document, the update will fail.
 
 In cases like these, we can use the `upsert` parameter to specify the
 document that should be created if it doesn't already exist:
@@ -204,55 +164,17 @@ POST /website/pageviews/1/_update?fields=views
 }
 --------------------------------------------------
 
-
-The first time we run this request, a new document is inserted which
-initializes the `views` field to `0`:
-
-[source,js]
---------------------------------------------------
-{
-  "ok" :       true,
-  "_index" :   "website",
-  "_type" :    "pageviews",
-  "_id" :      "1",
-  "_version" : 1,
-  "get" : {
-    "exists" : true,
-    "fields" : {
-      "views" : 0
-    }
-  }
-}
---------------------------------------------------
-
-
-On subsequent runs, the document already exists, so the `script` update
-is applied instead:
-
-[source,js]
---------------------------------------------------
-{
-  "ok" :       true,
-  "_index" :   "website",
-  "_type" :    "pageviews",
-  "_id" :      "1",
-  "_version" : 2,
-  "get" : {
-    "exists" : true,
-    "fields" : {
-      "views" : 1
-    }
-  }
-}
---------------------------------------------------
-
+The first time we run this request, the `upsert` value is indexed as a new
+document, which  initializes the `views` field to `0`. On subsequent runs the
+document already exists so the `script` update is applied instead,
+incrementing the `views` counter.
 
 ==== Updates and conflicts
 
-In the introduction to this section, we said that the smaller window
-between the _retrieve_ and _reindex_ steps, the smaller the opportunity for
-conflicting changes. But it doesn't eliminate it completely.
-It is still possible that a request from another process could change the
+In the introduction to this section, we said that the smaller window between
+the _retrieve_ and _reindex_ steps, the smaller the opportunity for
+conflicting changes. But it doesn't eliminate the possibility completely. It
+is still possible that a request from another process could change the
 document before `update` has managed to reindex it.
 
 To avoid losing data, the `update` API retrieves the current `_version`
@@ -272,7 +194,7 @@ to `0`.
 
 [source,js]
 --------------------------------------------------
-POST /website/pageviews/1/_update?retry_on_conflict=5
+POST /website/pageviews/1/_update?retry_on_conflict=5 <1>
 {
    "script" : "ctx._source.views+=1",
    "upsert": {
@@ -280,23 +202,13 @@ POST /website/pageviews/1/_update?retry_on_conflict=5
    }
 }
 --------------------------------------------------
+<1> Retry this update 5 times before failing.
 
-This works great for idempotent operations like incrementing a counter.
-There are times, however, when updates are *not* idempotent and may be racing
-each other for a chance to change the document.  Instead of all the updates
-clobbering each other (effectively making it a "last-write-wins" scenario), you
-can specify a `version` just like you can with `index` or `delete` in
-<<_optimistic_concurrency_control>>.
-
-This makes the update only succeed if the versions match, otherwise the update
-will fail.  You do not specify `retry_on_conflict`, since explicitly want an
-error if there is a version conflict:
-
-[source,js]
---------------------------------------------------
-POST /website/pageviews/1/_update?version=3
-{
-   "script" : "ctx._source.tags+='search'"
-}
---------------------------------------------------
+This works well for idempotent operations like incrementing a counter, but
+there are other changes which are *not* idempotent and where the order of
+changes *is* important. Like the <<index-doc,`index` API>>, the `update` API
+adopts a ``last-write-wins'' approach by default, but it also accepts a
+`version` parameter which to allow you to use
+<<optimistic-concurrency-control>> to specify which version of the document
+you intend to update.
 

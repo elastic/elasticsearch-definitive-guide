@@ -17,7 +17,6 @@ number has been incremented.
 [source,js]
 --------------------------------------------------
 {
-  "ok" :       true,
   "found" :    true,
   "_index" :   "website",
   "_type" :    "blog",
@@ -26,14 +25,12 @@ number has been incremented.
 }
 --------------------------------------------------
 
-
 If the document isn't found, we get a `404 Not Found` response code, and
 a body like:
 
 [source,js]
 --------------------------------------------------
 {
-  "ok" :       true,
   "found" :    false,
   "_index" :   "website",
   "_type" :    "blog",
@@ -42,14 +39,17 @@ a body like:
 }
 --------------------------------------------------
 
-
 Even though the document doesn't exist -- `"found"` is `false` --  the
-`_version` number has been incremented. This is part of the internal
+`_version` number has still been incremented. This is part of the internal
 book-keeping which ensures that changes are applied in the correct order
 across multiple nodes.
 
-As already mentioned in <<update-doc>>, deleting a document doesn't immediately
-remove the document from disk -- it just marks it as deleted. Elasticsearch
-will clean up deleted documents in the background as you continue
-to index more data.
+****
+
+As already mentioned in <<update-doc>>, deleting a document doesn't
+immediately remove the document from disk -- it just marks it as deleted.
+Elasticsearch will clean up deleted documents in the background as you
+continue to index more data.
+
+****
 

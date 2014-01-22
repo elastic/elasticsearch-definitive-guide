@@ -11,57 +11,56 @@ If we want to specify our own `_id`, then the form of the request is:
 
 [source,js]
 --------------------------------------------------
-PUT /_index/_type/_id
+PUT /{index}/{type}/{id}
 {
   "field": "value",
   ...
 }
 --------------------------------------------------
 
-
-For example, if our `_index` is called `"website"`, our `_type` is called
-`"blog"` and we choose the `_id` `"123"`, then the index request looks like this:
+For example, if our index is called `"website"`, our type is called `"blog"`
+and we choose the ID `"123"`, then the index request looks like this:
 
 [source,js]
 --------------------------------------------------
 PUT /website/blog/123
 {
   "title": "My first blog entry",
-  "text":  "Just trying this out..."
+  "text":  "Just trying this out...",
+  "date":  "2014/01/01"
 }
 --------------------------------------------------
 
-
-Elasticsearch would respond with:
+Elasticsearch responds with:
 
 [source,js]
 --------------------------------------------------
 {
-  "ok" : true,
-  "_index"   : "website",
-  "_type"    : "blog",
-  "_id"      : "123",
-  "_version" : 1
+   "_index":    "website",
+   "_type":     "blog",
+   "_id":       "123",
+   "_version":  1,
+   "created":   true
 }
 --------------------------------------------------
 
 
-The response indicates that the indexing request has been successful with
-`{"ok": true}`, it includes the `_index`, `_type` and `_id` metadata, and
-a new element: `_version`.
+The response indicates that the indexing request has been successfully created
+and includes the `_index`, `_type` and `_id` metadata, and a new element:
+`_version`.
 
-Every document in Elasticsearch has a version number. Every time a change
-is made to a document (including deleting it), the `_version` number
-is incremented.  In <<version-control>> we will discuss
-how to use the `_version` number to ensure that one part of your application
-doesn't overwrite changes made by another part.
+Every document in Elasticsearch has a version number. Every time a change is
+made to a document (including deleting it), the `_version` number is
+incremented.  In <<version-control>> we will discuss how to use the `_version`
+number to ensure that one part of your application doesn't overwrite changes
+made by another part.
 
 ==== Auto-generating IDs
 
-If we don't have an `_id` already and want Elasticsearch to
-auto-generate one for us, then the structure of the request changes:
-instead of using the `PUT` verb -- ``store this document at this URL'' --
-we use the `POST` verb -- ``store this document *under* this URL''.
+If we don't have an `_id` already and want Elasticsearch to autogenerate one
+for us, then the structure of the request changes: instead of using the `PUT`
+verb -- ``store this document at this URL'' -- we use the `POST` verb --
+``store this document *under* this URL''.
 
 The URL now contains just the `_index` and the `_type`:
 
@@ -70,7 +69,8 @@ The URL now contains just the `_index` and the `_type`:
 POST /website/blog/
 {
   "title": "My second blog entry",
-  "text":  "Still trying this out..."
+  "text":  "Still trying this out...",
+  "date":  "2014/01/01"
 }
 --------------------------------------------------
 
@@ -81,17 +81,16 @@ field has been generated for us:
 [source,js]
 --------------------------------------------------
 {
-  "ok" :       true,
-  "_index" :   "website",
-  "_type" :    "blog",
-  "_id" :      "R9xqebnFQW--2loIo7lAXA",
-  "_version" : 1
+   "_index":    "website",
+   "_type":     "blog",
+   "_id":       "wM0OSFhDQXGZAWDf0-drSA",
+   "_version":  1,
+   "created":   true
 }
 --------------------------------------------------
 
-
 Auto-generated IDs are 22 character long, URL-safe, Base64-encoded string
-_universally unique identifiers_, or http://en.wikipedia.org/wiki/Uuid[UUIDs] .
+_universally unique identifiers_, or http://en.wikipedia.org/wiki/Uuid[UUIDs].
 
 
 

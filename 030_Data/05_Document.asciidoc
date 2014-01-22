@@ -1,11 +1,11 @@
 [[document]]
 === What is a document?
 
-Most entities or objects in most applications can be serialized into a
-JSON object, with keys and values. A _key_ is the name of a
-_field_ or _property_, and a _value_ can be a string, a number, a boolean,
-another object or an array of values, or some other specialized type, such as
-a string which represents a date, or an object which represents a geolocation:
+Most entities or objects in most applications can be serialized into a JSON
+object, with keys and values. A _key_ is the name of a _field_ or _property_,
+and a _value_ can be a string, a number, a boolean, another object, an array
+of values, or some other specialized type such as a string representing a date
+or an object representing a geolocation:
 
 [source,js]
 --------------------------------------------------
@@ -33,8 +33,8 @@ a string which represents a date, or an object which represents a geolocation:
 
 
 Often, we use the terms _object_ and _document_ interchangeably. However,
-there is a distinction.  An object is just a JSON object -- similar to
-what is known as a hash, hashmap or associative array. Objects may contain
+there is a distinction.  An object is just a JSON object -- similar to what is
+known as a hash, hashmap, dictionary or associative array. Objects may contain
 other objects.
 
 In Elasticsearch, the term _document_ has a specific meaning. It refers
@@ -55,59 +55,58 @@ elements are:
 ==== `_index`
 
 An _index_ is a like a ``database'' in a relational database -- it is the place
-we store and index our data.
-
-Actually, in Elasticsearch, our data is stored and indexed in shards,
-while an index is just a logical namespace which
-groups together one or more shards. However, this is an internal detail --
-our application shouldn't care about shards at all.  As far as our
-application is concerned, our documents live in an _index_ -- Elasticsearch
-takes care of the details.
+we store and index related data.
 
 ****
+
+Actually, in Elasticsearch, our data is stored and indexed in _shards_, while an
+index is just a logical namespace which groups together one or more shards.
+However, this is an internal detail -- our application shouldn't care about
+shards at all.  As far as our application is concerned, our documents live in
+an _index_. Elasticsearch takes care of the details.
+
+****
+
 We will discuss how to create and manage indices ourselves in <<index-management>>,
-but for now we will let Elasticsearch create the index for us.  All we have
-to do is to choose a name, which must be lower case, cannot begin with
-an underscore and cannot contain commas, e.g. `website`.
-****
+but for now we will let Elasticsearch create the index for us.  All we have to
+do is to choose a name, which must be lower case, cannot begin with an
+underscore and cannot contain commas, e.g. `website`.
 
 ==== `_type`
 
-In an application, we use objects to represent ``things'' such as a user,
-a blog post, a comment, or an email. Each object belongs to a
-_class_ which defines the properties or data associated with an object.
-Objects in the `user` class may have a name, a gender, an age and an
-email address.
+In applications, we use objects to represent ``things'' such as a user, a blog
+post, a comment, or an email. Each object belongs to a _class_ which defines
+the properties or data associated with an object. Objects in the `user` class
+may have a name, a gender, an age and an email address.
 
-In a relational database, we usually store objects of the same class in the same
-table, because they share the same data structure. In Elasticsearch,
-for the same reason, we use the same _type_ for documents which represent
-the same class of ``thing'', because they share the same data structure.
+In a relational database, we usually store objects of the same class in the
+same table because they share the same data structure. For the same reason, in
+Elasticsearch we use the same _type_ for documents which represent the same
+class of ``thing'', because they share the same data structure.
 
 Every _type_ has its own <<mapping,mapping>> or schema definition, which
 defines the data structure for documents of that type, much like the columns
-in a database table. Documents of all types can be stored
-in the same index, but the _mapping_ for the type tells Elasticsearch
-how the data in the document should be indexed.
+in a database table. Documents of all types can be stored in the same index,
+but the _mapping_ for the type tells Elasticsearch how the data in each
+document should be indexed.
 
-We will discuss how to specify and manage mappings in <<mapping>>, but
-for now we will rely on Elasticsearch to detect our document's data structure
+We will discuss how to specify and manage mappings in <<mapping>>, but for now
+we will rely on Elasticsearch to detect our document's data structure
 automatically.
 
-A `_type` name can be lower or upper case, but shouldn't begin with
-an underscore, or contain commas, eg `user`.
+A `_type` name can be lower or upper case, but shouldn't begin with an
+underscore, or contain commas, eg `user`.
 
 ==== `_id`
 
 The _id_ is a string that, when combined with the `_index` and `type`,
-identifies a unique document in Elasticsearch. When creating a new
-document, you can either provide your own `_id` or let Elasticsearch
-generate one for you.
+uniquely identifies a document in Elasticsearch. When creating a new document,
+you can either provide your own `_id` or let Elasticsearch generate one for
+you.
 
 ==== Other metadata
 
-There are several other metadata elements, which we will discuss
-in full in <<mapping>>. With the elements listed above, we are already able
-to store a document in Elasticsearch and to retrieve it by ID -- in other
-words, to use Elasticsearch as a document store.
-
+There are several other metadata elements, which we will discuss in
+<<mapping>>. With the elements listed above, we are already able to store a
+document in Elasticsearch and to retrieve it by ID -- in other words, to use
+Elasticsearch as a document store.
