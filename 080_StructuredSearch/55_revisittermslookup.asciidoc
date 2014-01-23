@@ -38,7 +38,7 @@ right in the `user` document.  Our user documents become the source of "followin
 PUT /my_index/users/2
 { 
     "name" : "Zach", 
-    "joined" : "2013-10-28",
+    "joined" : "2014-10-28",
     "followed_by" : [1, 5, 10]
 }
 --------------------------------------------------

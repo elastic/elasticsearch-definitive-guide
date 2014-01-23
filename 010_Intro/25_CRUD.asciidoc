@@ -33,7 +33,7 @@ PUT /blogs/user/johnsmith
     },
     "bio":       "Eco-warrior and defender of the weak",
     "age":       25,
-    "join_date": "2013/05/01",
+    "join_date": "2014/05/01",
     "interests": ["dolphins", "whales"]
 }
 --------------------------------------------------
@@ -95,7 +95,7 @@ The response contains the exact same JSON document that we indexed, as the
          },
          "bio":       "Eco-warrior and defender of the weak",
          "age":       25,
-         "join_date": "2013/05/01",
+         "join_date": "2014/05/01",
          "interests": ["dolphins", "whales"]
     }
 }

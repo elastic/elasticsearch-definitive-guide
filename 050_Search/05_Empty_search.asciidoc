@@ -20,20 +20,18 @@ The response (edited for brevity) looks something like this:
       "total" :       14,
       "hits" : [
         {
-          "_index" :  "gb",
-          "_type" :   "tweet",
-          "_id" :     "3",
-          "_source" : {... TRIMMED ...},
-          "_score" :  1.0
-        },
-        {
-          "_index" :  "us",
-          "_type" :   "user",
-          "_id" :     "1",
-          "_source" : {... TRIMMED ...},
-          "_score" :  1.0
-        },
-        ... 8 RESULTS REMOVED ...
+          "_index":   "us",
+          "_type":    "tweet",
+          "_id":      "7",
+          "_score":   1,
+          "_source": {
+             "date":    "2014-09-17",
+             "name":    "John Smith",
+             "tweet":   "The Query DSL is really powerful and flexible",
+             "user_id": 2
+          }
+       },
+        ... 9 RESULTS REMOVED ...
       ],
       "max_score" :   1
    },
@@ -51,21 +49,20 @@ The response (edited for brevity) looks something like this:
 ==== `hits`
 
 The most important section of the response is `hits`, which contains the
-`total` number of documents that match our query, and a `hits` array
+`total` number of documents that matched our query, and a `hits` array
 containing the first 10 of those matching documents -- the results.
 
-Each result in the `hits` array contains the `_index`, `_type` and `_id`
-of the document, plus the `_source` field.  This means
-that the whole document is immediately available to us directly from
-the search results. There is no need to use the document ID to fetch the
-document body in a separate step.
+Each result in the `hits` array contains the `_index`, `_type` and `_id` of
+the document, plus the `_source` field.  This means that the whole document is
+immediately available to us directly from the search results. This is unlike
+other search engines which return just the document ID, requiring you to fetch
+the document itself in a separate step.
 
-Each element also has a `_score`.  This is the _relevance score_, which
-is a measure of how well each result matches the query.  By
-default, results are returned with the most relevant documents first;
-that is, in descending order of `_score`.
-In this case, we didn't specify any query so all documents are equally
-relevant, hence the standard `_score` of `1` for all results.
+Each element also has a `_score`.  This is the _relevance score_, which is a
+measure of how well the document matches the query.  By default, results are
+returned with the most relevant documents first; that is, in descending order
+of `_score`. In this case, we didn't specify any query so all documents are
+equally relevant, hence the neutral `_score` of `1` for all results.
 
 The `max_score` value is the highest `_score` of any document that matches our
 query.
@@ -77,22 +74,20 @@ to execute.
 
 ==== `shards`
 
-The `_shards` element tells us the `total` number of shards that were involved in
-the query and how many were `succesful` or how many `failed`.
-
-We wouldn't normally expect shards to fail, but it can happen.
-For instance, if we were to suffer a major disaster in which we lost
-the two servers responsible for hosting both the primary and replica of a
-single shard, then there are no copies of that shard available to respond to
-search requests. In this case, Elasticsearch will report the shard as `failed`,
-but continue to return results from the remaining shards.
+The `_shards` element tells us the `total` number of shards that were involved
+in the query and, of them, how many were `succesful` and how many `failed`.
+We wouldn't normally expect shards to fail, but it can happen. If we were to
+suffer a major disaster in which we lost both the primary and the replica copy
+of the same shard, there would be no copies of that shard available to respond
+to search requests. In this case, Elasticsearch would report the shard as
+`failed`, but continue to return results from the remaining shards.
 
 ==== `timeout`
 
 The `timed_out` value tells us whether the query timed out or not.  By
-default, search requests do not timeout.  If response time is more
-important to you than correct results, then can specify a `timeout` as
-`10` or `"10ms"` (10 milliseconds), or `"1s"` (1 second):
+default, search requests do not timeout.  If low response times are more
+important to you than complete results, then can specify a `timeout` as `10`
+or `"10ms"` (10 milliseconds), or `"1s"` (1 second):
 
 [source,js]
 --------------------------------------------------

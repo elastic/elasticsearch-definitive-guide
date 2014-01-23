@@ -5,19 +5,10 @@ use warnings;
 
 use Elasticsearch;
 
-my $e = Elasticsearch->new;
+my $e = Elasticsearch->new(trace_to=>'Stderr');
 $e->indices->delete( index => ['_all'], ignore => 404);
 
-my @users = ( {
-        id    => 2,
-        type  => 'user',
-        index => 'gb',
-        body  => {
-            name     => 'Mary Jones',
-            username => '@mary',
-            email    => 'mary@jones.com'
-        }
-    },
+my @users = (
     {
         id    => 1,
         type  => 'user',
@@ -26,6 +17,16 @@ my @users = ( {
             name     => 'John Smith',
             username => '@john',
             email    => 'john@smith.com',
+        }
+    },
+    {
+        id    => 2,
+        type  => 'user',
+        index => 'gb',
+        body  => {
+            name     => 'Mary Jones',
+            username => '@mary',
+            email    => 'mary@jones.com'
         }
     },
 );
@@ -37,7 +38,7 @@ my @tweets = (
     "The Elasticsearch API is really easy to use",
     "The Query DSL is really powerful and flexible",
     "They have added did-you-mean suggest functionality to #elasticsearch",
-    "Geo-location facets are really cool",
+    "Geo-location aggregations are really cool",
     "ElasticSearch surely is one of the hottest new NoSQL products",
     "Elasticsearch is built for the cloud, easy to scale",
     "ElasticSearch and I have left the honeymoon stage, and I still love her.",
@@ -56,7 +57,7 @@ while ( my $tweet = shift @tweets ) {
         id    => $i,
         body  => {
             tweet => $tweet,
-            date  => "2013-09-" . ( $i + 10 ),
+            date  => "2014-09-" . ( $i + 10 ),
             name => $user->{body}{name},
             user_id =>  1 + ( $i % 2 ),
         }

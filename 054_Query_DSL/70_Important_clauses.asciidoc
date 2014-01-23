@@ -14,7 +14,7 @@ booleans, or `not_analyzed` string fields:
 [source,js]
 --------------------------------------------------
 { "term": { "age":    26           }}
-{ "term": { "date":   "2013-09-01" }}
+{ "term": { "date":   "2014-09-01" }}
 { "term": { "tag":    "full_text"  }}
 { "term": { "public": true         }}
 --------------------------------------------------
@@ -159,7 +159,7 @@ exact value:
 [source,js]
 --------------------------------------------------
 { "match": { "age":    26           }}
-{ "match": { "date":   "2013-09-01" }}
+{ "match": { "date":   "2014-09-01" }}
 { "match": { "tag":    "full_text"  }}
 { "match": { "public": true         }}
 --------------------------------------------------
@@ -206,7 +206,7 @@ instead. The `bool` query combines the `_score` from each `must` or
 
 The following query finds documents whose `title` field matches
 the query string `"how to make millions"` and which are not marked
-as `spam`.  If any documents are `"starred"` or are from 2013 onwards,
+as `spam`.  If any documents are `"starred"` or are from 2014 onwards,
 then they will rank higher than they would have otherwise. Documents which
 match *both* conditions will rank even higher:
 
@@ -218,7 +218,7 @@ match *both* conditions will rank even higher:
         "must_not": { "match": { "tag":   "spam" }},
         "should: [
             { "match": { "tag": "starred" }},
-            { "match": { "date": { "gte": "2013-01-01" }}
+            { "match": { "date": { "gte": "2014-01-01" }}
         ]
     }
 }

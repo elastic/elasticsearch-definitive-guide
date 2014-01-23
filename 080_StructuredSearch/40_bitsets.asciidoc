@@ -39,7 +39,7 @@ GET /my_store/products/_search
                 "bool" : {
                   "must" : [
                     "term" : {"tag" : "search"}, <1>
-                    "term" : {"year" : 2013}
+                    "term" : {"year" : 2014}
                   ]  
                 }
               ]
@@ -54,7 +54,7 @@ GET /my_store/products/_search
 
 The query is a set of two nested `bool` filters.  One filter is looking for
 `tag:search AND type:"open source"`, while the other is looking for `tag:search
-AND year:2013`.  They both utilize the same filter for the `tag` field, 
+AND year:2014`.  They both utilize the same filter for the `tag` field, 
 which means the bitset for `tag:search` is only generated once and then used
 in both places.
 

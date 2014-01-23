@@ -2,15 +2,15 @@
 === Data type differences
 
 Something seems to be broken: we have 12 tweets in our indices,
-and only one of them has the date `2013-09-15`, but have a look at the
+and only one of them has the date `2014-09-15`, but have a look at the
 `total` hits for the following queries:
 
 [source,js]
 --------------------------------------------------
-GET /_search?q=2013              # 12 results
-GET /_search?q=2013-09-15        # 12 results !
-GET /_search?q=date:2013-09-15   # 1  result
-GET /_search?q=date:2013         # 0  results !
+GET /_search?q=2014              # 12 results
+GET /_search?q=2014-09-15        # 12 results !
+GET /_search?q=date:2014-09-15   # 1  result
+GET /_search?q=date:2014         # 0  results !
 --------------------------------------------------
 
 

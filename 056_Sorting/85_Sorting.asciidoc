@@ -68,7 +68,7 @@ You will notice two differences in the results:
 The first is that we have a new element in each result called `sort`, which
 contains the value(s) that was used for sorting.  In this case, we sorted
 on `date` which internally is indexed as _milliseconds-since-the-epoch_.
-The long number `1379894400000` is equivalent to `2013-09-23 00:00:00 UTC`.
+The long number `1379894400000` is equivalent to `2014-09-23 00:00:00 UTC`.
 
 The second is that the `_score` and `max_score` are `null`.  Calculating the
 `_score` is quite expensive and usually its only purpose is for

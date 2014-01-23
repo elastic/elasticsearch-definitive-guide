@@ -7,8 +7,8 @@ _request body_ version that expects a JSON request body and uses a
 rich search language called the query DSL.
 
 The query string search is useful for running _ad hoc_ queries from the
-command line. For instance this query finds all tweets containing the word
-`"elasticsearch"` in the `tweet` field:
+command line. For instance this query finds all documents of type `tweet` that
+contain the word `"elasticsearch"` in the `tweet` field:
 
 [source,js]
 --------------------------------------------------
@@ -17,9 +17,12 @@ GET /_all/tweet/_search?q=tweet:elasticsearch
 
 
 The next query looks for `"john"` in the `name` field and `"mary"` in the
-`tweet` field. The actual query is just `"+name:john +tweet:mary"` but
-the _percent encoding_ of the query string parameters makes it appear more
-cryptic than it really is:
+`tweet` field. The actual query is just:
+
+    +name:john +tweet:mary
+
+but the _percent encoding_ needed for query string parameters makes it appear
+more cryptic than it really is:
 
 [source,js]
 --------------------------------------------------
@@ -61,7 +64,7 @@ the special `_all` field. For example, when we index this document:
 --------------------------------------------------
 {
     "tweet":    "However did I manage before Elasticsearch?",
-    "date":     "2013-09-14",
+    "date":     "2014-09-14",
     "name":     "Mary Jones",
     "user_id":  1
 }
@@ -72,7 +75,7 @@ it's as if we had added an extra field called `_all` with the value:
 
 [source,js]
 --------------------------------------------------
-"However did I manage before Elasticsearch? 2013-09-14 Mary Jones 1"
+"However did I manage before Elasticsearch? 2014-09-14 Mary Jones 1"
 --------------------------------------------------
 
 
@@ -91,52 +94,49 @@ disable it.
 
 The next query searches for tweets:
 
---
 * where the `name` field contains `"mary"` or `"john"`
-* and where the `date` is greater than `2013-09-10`
-* and which contain either of the words `"facets"` or `"geo"` in the `_all`
-  field
---
+* and where the `date` is greater than `2014-09-10`
+* and which contain either of the words `"aggregations"` or `"geo"` in the
+  `_all` field
 
 [source,js]
 --------------------------------------------------
-+name:(mary john) +date:>2013-09-10 +(facets geo)
++name:(mary john) +date:>2014-09-10 +(aggregations geo)
 --------------------------------------------------
 
-
-which, as a properly escaped query string looks like the slightly less
+which, as a properly encoded query string looks like the slightly less
 readable:
 
 [source,js]
 --------------------------------------------------
-q=%2Bname%3A(mary+john)+%2Bdate%3A%3E2013-09-10+%2B(facets+geo)
+?q=%2Bname%3A(mary+john)+%2Bdate%3A%3E2014-09-10+%2B(aggregations+geo)
 --------------------------------------------------
-
 
 As you can see from the above examples, this _lite_ query string search is
 surprisingly powerful. Its query syntax, which is explained in detail in the
 {ref}/query-dsl-query-string-query.html#query-string-syntax[Query String Syntax]
-reference docs,  allows us to express quite complex queries
-succinctly, which makes it great for throwaway queries from the
-command line during development.
+reference docs, allows us to express quite complex queries succinctly. This
+makes it great for throwaway queries from the command line or during
+development.
 
 However, you can also see that its terseness can make it cryptic and
 difficult to debug. And it's fragile -- a slight syntax error in the query
 string, such as a misplaced `-`, `:`, `/` or `"` and it will return an error
 instead of results.
 
-Lastly, the query string search allows any user to run potentially
-slow heavy queries on any field in your index, possibly exposing private
-information or even bringing your cluster to its knees!
+Lastly, the query string search allows any user to run potentially slow heavy
+queries on any field in your index, possibly exposing private information or
+even bringing your cluster to its knees!
 
-For these reasons, we don't recommend exposing the query string
-search directly to your users, unless they are power users who can
-be trusted with your data and with your cluster. (Not your boss.  Definitely
-not your boss.)
+[TIP]
+==================================================
+For these reasons, we don't recommend exposing query string search directly to
+your users, unless they are power users who can be trusted with your data and
+with your cluster.
+==================================================
 
-Instead, in production we usually rely on the full-featured
-_request body_ search API, which does all of the above, plus a lot more.
-
-Before we get there though, we first need to take a look at how our data is
-indexed in Elasticsearch.
+Instead, in production we usually rely on the full-featured _request body_
+search API, which does all of the above, plus a lot more. Before we get there
+though, we first need to take a look at how our data is indexed in
+Elasticsearch.
 

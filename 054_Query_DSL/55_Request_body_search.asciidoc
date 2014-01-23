@@ -26,7 +26,7 @@ indices, and one, many or all types:
 
 [source,js]
 --------------------------------------------------
-GET /index_2013*/type1,type2/_search {}
+GET /index_2014*/type1,type2/_search {}
 --------------------------------------------------
 
 And you can use the `from` and `size` parameters for pagination:

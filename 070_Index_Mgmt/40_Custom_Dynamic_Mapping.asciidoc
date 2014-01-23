@@ -11,7 +11,7 @@ suit your data.
 ==== `date_detection`
 
 When Elasticsearch encounters a new string field, it checks to see if the
-string contains a recognisable date, like `"2013-01-01"`. If it looks
+string contains a recognisable date, like `"2014-01-01"`. If it looks
 like a date, then the field is added as type `date`. Otherwise it is
 added as type `string`.
 
@@ -20,7 +20,7 @@ a document like this:
 
 [source,js]
 --------------------------------------------------
-{ "note": "2013-01-01" }
+{ "note": "2014-01-01" }
 --------------------------------------------------
 
 

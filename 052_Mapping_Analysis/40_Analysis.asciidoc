@@ -120,45 +120,45 @@ field is defined, and so they can do the right thing:
 Now you can understand why the queries that we demonstrated in
 <<data-type-differences>> return what they do:
 
-The `date` field contains an exact value: the single term `"2013-09-15"`.
+The `date` field contains an exact value: the single term `"2014-09-15"`.
 The `_all` field is a full text field, so the analysis process has
-converted the date into the three terms: `"2013"`, `"09"` and `"15"`.
+converted the date into the three terms: `"2014"`, `"09"` and `"15"`.
 
-When we query the `_all` field for `2013`, it matches all 12 tweets,
-because all of them contain the term `2013`:
+When we query the `_all` field for `2014`, it matches all 12 tweets,
+because all of them contain the term `2014`:
 
 [source,js]
 --------------------------------------------------
-GET /_search?q=2013              # 12 results
+GET /_search?q=2014              # 12 results
 --------------------------------------------------
 
 
-When we query the `_all` field for `2013-09-15`, it first analyzes the
-query string to produce a query which matches any of the terms `2013`, `09`
+When we query the `_all` field for `2014-09-15`, it first analyzes the
+query string to produce a query which matches any of the terms `2014`, `09`
 or `15`. This also matches all 12 tweets, because all of them contain
-the term `2013`:
+the term `2014`:
 
 [source,js]
 --------------------------------------------------
-GET /_search?q=2013-09-15        # 12 results !
+GET /_search?q=2014-09-15        # 12 results !
 --------------------------------------------------
 
 
-When we query the `_date` field for `2013-09-15`, it looks for that
+When we query the `_date` field for `2014-09-15`, it looks for that
 exact date, and finds one tweet only:
 
 [source,js]
 --------------------------------------------------
-GET /_search?q=date:2013-09-15   # 1  result
+GET /_search?q=date:2014-09-15   # 1  result
 --------------------------------------------------
 
 
-When we query the `_date` field for `2013`, it finds no documents
+When we query the `_date` field for `2014`, it finds no documents
 because none contain that exact date:
 
 [source,js]
 --------------------------------------------------
-GET /_search?q=date:2013         # 0  results !
+GET /_search?q=date:2014         # 0  results !
 --------------------------------------------------
 
 

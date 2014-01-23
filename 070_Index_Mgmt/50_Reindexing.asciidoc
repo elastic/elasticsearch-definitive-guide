@@ -131,8 +131,8 @@ GET /old_index/_search?search_type=scan&scroll=1m
         "filtered": {
             "range": {
                 "date": {
-                    "gte":  "2013-01-01",
-                    "lt":   "2013-02-01"
+                    "gte":  "2014-01-01",
+                    "lt":   "2014-02-01"
                 }
             }
         }

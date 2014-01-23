@@ -4,18 +4,29 @@
 
 include::010_Intro.asciidoc[]
 
+[[getting-started]]
+= Getting started
+
 include::020_Distributed_Cluster.asciidoc[]
 
 include::030_Data_In_Data_Out.asciidoc[]
 
-include::020_Distributed/CRUD.asciidoc[]
+include::040_Distributed_CRUD.asciidoc[]
 
 include::050_Search.asciidoc[]
+
+include::052_Mapping_Analysis.asciidoc[]
+
+include::054_Query_DSL.asciidoc[]
+
+include::056_Sorting.asciidoc[]
 
 include::020_Distributed/Search.asciidoc[]
 
 include::070_Index_Mgmt.asciidoc[]
 
+[[search-in-depth]]
+= Search in depth
 include::080_Structured_Search.asciidoc[]
 
 include::090_Dates.asciidoc[]
@@ -37,6 +48,9 @@ include::160_Fuzzy_Matching.asciidoc[]
 include::170_Relevance.asciidoc[]
 
 include::180_Non_Prose.asciidoc[]
+
+[[other-stuff]]
+= Other stuff
 
 include::190_Scripting.asciidoc[]
 
