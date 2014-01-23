@@ -1,0 +1,52 @@
+[[distrib-read]]
+=== Retrieving a document
+
+A document can be retrieved from a primary shard or from any of its replicas.
+The request process is depicted in <<img-distrib-read>>.
+
+[[img-distrib-read]]
+.Retrieving a single document
+image::images/distrib_single_read.svg["Retrieving a single document"]
+
+1. The client sends a get request to `Node 1`.
+
+2. The node uses the document's `_id` to determine that the document
+   belongs to shard `0`. Copies of shard `0` exist on all three nodes.
+   On this occasion, it forwards the request to `Node 2`, which returns
+   the document.
+
+For read requests, the requesting node will choose a different shard copy on
+every request -- it round-robins through the nodes.
+
+It is possible that a document has been indexed on the primary shard but
+has not yet been copied to the replica shards. In this case a replica
+might report that the document doesn't exist, while the primary would have
+returned the document successfully.
+
+The `preference` parameter can be used to control which node handles the
+retrieval request:
+
+Default::
+
+If `preference` is not specified, then read requests will be sent to
+each shard in turn, in a round-robin fashion.
+
+`_local`::
+
+If a copy of the shard exists on the requesting node, then this will be
+used to handle the read request, otherwise the request will be forwarded
+to another node.
+
+`_primary`::
+
+The read request will be handled only by the primary shard.  This can
+be useful when you are using <<version-control,`_version` numbers>> to
+avoid data loss from conflicting changes. Retrieving the latest version
+from the primary shard reduces (but does not eliminate) the chances
+of conflict.
+
+Arbitrary string::
+
+The `preference` parameter can be set to any arbitrary string, such as the
+session ID of a user, which would ensure that the user always gets results
+from the same node.
