@@ -5,7 +5,7 @@ In the same way that `mget` allows us to retrieve multiple documents at once,
 the `bulk` API allows us to make multiple `create`, `index`, `update` or
 `delete`  requests in a single step. This is particularly useful if you need
 to index a data stream such as log events, which can be queued up and indexed
-in batches of 100 or 1,000.
+in batches of hundreds or thousands.
 
 The `bulk` request body has the following, slightly unusual, format:
 
@@ -23,7 +23,7 @@ Two important points to note about the format:
 * Every line must end with a newline character `"\n"`, *including the last
   line*. These are used as markers to allow for efficient line separation.
 
-* The lines cannot contain embedded newline characters, as they would
+* The lines cannot contain unescaped newline characters, as they would
   interfere with parsing -- that means that the JSON must *not* be
   pretty-printed.
 
@@ -177,7 +177,7 @@ or failure of one request will not interfere with the others.
 ==== Don't repeat yourself
 
 Perhaps you are batch indexing logging data into the same `index`, and with the
-same `type`. Having to specify the same metadata for each document is a waste.
+same `type`. Having to specify the same metadata for every document is a waste.
 Instead, just as for the `mget` API, the `bulk` request accepts a default `/_index` or
 `/_index/_type` in the URL:
 
@@ -209,7 +209,7 @@ performance no longer improves and may even drop off.
 
 The optimal size, however, is not a fixed number. It depends entirely on your
 hardware, your document size and complexity, and your indexing and search
-load.  Fortunately, it is easy to find the _sweetspot_:
+load.  Fortunately, it is easy to find this _sweetspot_:
 
 Try indexing typical documents in batches of increasing size. When performance
 starts to drop off, your batch size is too big. A good place to start is with

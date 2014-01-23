@@ -1,9 +1,9 @@
 [[index-doc]]
 === Indexing a document
 
-As discussed above, before we can store a document in Elasticsearch, we need
-to choose an `_index` name, a `_type` name and decide whether we will provide
-our own `_id` or let Elasticsearch generate one for us.
+The first step, before we can store a document in Elasticsearch, is  to choose
+an `_index` name, a `_type` name and decide whether we will provide our own
+`_id` or let Elasticsearch generate one for us.
 
 ==== Using our own ID
 

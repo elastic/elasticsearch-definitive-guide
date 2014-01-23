@@ -18,8 +18,8 @@ POST /website/blog/
 However, if we already have an `_id` that we want to use, then we have to tell
 Elasticsearch that it should only accept our index request if a document with
 the same `_index`, `_type` and `_id` doesn't exist already. There are two ways
-of doing this, which amount to the same thing. Use whichever method is more
-convenient for you.
+of doing this, both of which amount to the same thing. Use whichever method is
+more convenient for you.
 
 The first method uses the `op_type` query string parameter:
 

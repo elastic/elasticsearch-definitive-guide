@@ -37,10 +37,12 @@ image::images/distrib_bulk.svg["Multiple document changes with bulk"]
 2. `Node 1` builds a bulk request per shard, and forwards these requests in
     parallel to the nodes hosting each involved primary shard.
 
-3. Once a request has been executed successfully on a primary shard, it is
-   forwarded in parallel to its replica shards on the other nodes. Once all
-   replica shards report success, the node reports success to the requesting
-   node, which collates the responses and returns them to the client.
+3. The primary shard executes each action serially, one after another. As each
+   action succeeds, the primary forwards the new document (or deletion) to its
+   replica shards in parallel, then moves on to the next action. Once all
+   replica shards report success for all actions, the node reports success to
+   the requesting node, which collates the responses and returns them to the
+   client.
 
 The `bulk` API also accepts the `replication` and `consistency` parameters
 at the top-level for the whole `bulk` request, and the `routing` parameter

@@ -67,8 +67,8 @@ Elasticsearch is distributed.  When documents are created, updated or deleted,
 the new version of the document has to be replicated to other nodes in the
 cluster.  Elasticsearch is also asynchronous and  concurrent, meaning that
 these replication requests are sent in parallel, and may arrive at their
-destination out of sequence. It needs a way of ensuring that an older version
-of a document never overwrites a newer version.
+destination *out of sequence*. It needs a way of ensuring that an older
+version of a document never overwrites a newer version.
 
 When we discussed `index`, `get` and `delete` requests above, we pointed out
 that every document has a `_version` number which is incremented whenever a
@@ -246,8 +246,8 @@ The request succeeds and sets the current `_version` to `10`:
 }
 --------------------------------------------------
 
-If you were to rerun this request, it would fail with the same conflict
-error we saw above, because the specified external version number is not
-higher than the current version in Elasticsearch.
+If you were to rerun this request, it would fail with the same conflict error
+we saw before, because the specified external version number is not higher
+than the current version in Elasticsearch.
 
 
