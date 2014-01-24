@@ -7,7 +7,7 @@ in nature, but have slightly different purposes.
 A _filter_ asks a `yes|no` question of every document and is used
 for fields that contain exact values:
 
-* is the `created` date in the range `2011` .. `2012`?
+* is the `created` date in the range `2013` .. `2014`?
 
 * does the `status` field contain the term `"published"`?
 
@@ -51,8 +51,8 @@ may perform as well or better than a cached filter which spans millions
 of documents.  In general, however, a cached filter will outperform a
 query, and will do so consistently.
 
-The goal of filters is to reduce the number of documents that have to
-be examined by the query.
+The goal of filters is to *reduce the number of documents that have to
+be examined by the query*.
 
 ==== When to use which
 

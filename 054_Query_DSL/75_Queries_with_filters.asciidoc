@@ -74,9 +74,12 @@ query:
 
 [source,js]
 --------------------------------------------------
+GET /_search
 {
-    "filtered": {
-        "filter":   { "term": { "folder": "inbox" }}
+    "query": {
+        "filtered": {
+            "filter":   { "term": { "folder": "inbox" }}
+        }
     }
 }
 --------------------------------------------------
@@ -87,10 +90,13 @@ the above query is equivalent to the following:
 
 [source,js]
 --------------------------------------------------
+GET /_search
 {
-    "filtered": {
-        "query":    { "match_all": {}},
-        "filter":   { "term": { "folder": "inbox" }}
+    "query": {
+        "filtered": {
+            "query":    { "match_all": {}},
+            "filter":   { "term": { "folder": "inbox" }}
+        }
     }
 }
 --------------------------------------------------
@@ -99,20 +105,23 @@ the above query is equivalent to the following:
 ==== A query as a filter
 
 Occasionally, you will want to use a query while you are in filter context.
-This can be achieved with the `query` filter, which just wraps a query.
-The example below shows one way we could exclude emails which look like spam:
+This can be achieved with the `query` filter, which just wraps a query. The
+example below shows one way we could exclude emails which look like spam:
 
 
 [source,js]
 --------------------------------------------------
+GET /_search
 {
-    "filtered": {
-        "filter":   {
-            "bool": {
-                "must":     { "term":  { "folder": "inbox" }},
-                "must_not": {
-                    "query": { <1>
-                        "match": { "email": "urgent business proposal" }
+    "query": {
+        "filtered": {
+            "filter":   {
+                "bool": {
+                    "must":     { "term":  { "folder": "inbox" }},
+                    "must_not": {
+                        "query": { <1>
+                            "match": { "email": "urgent business proposal" }
+                        }
                     }
                 }
             }
@@ -120,8 +129,8 @@ The example below shows one way we could exclude emails which look like spam:
     }
 }
 --------------------------------------------------
-<1> Note the `query` filter, which is allowing us to use the `match` query
-inside of a `bool` filter
+<1> Note the `query` filter, which is allowing us to use the `match` *query*
+    inside a `bool` *filter*.
 
 
 You seldom need to use a query as a filter, but we have included it for

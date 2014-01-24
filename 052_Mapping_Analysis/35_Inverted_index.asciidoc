@@ -14,50 +14,42 @@ containing:
 To create an inverted index, we first split the `content` field of each
 document into separate words (which we call _terms_ or _tokens_), create a
 sorted list of all the unique terms, then list in which document each term
-appears. The result looks like this:
+appears. The result looks something like this:
+
+     Term      Doc_1  Doc_2
+     -------------------------
+     Quick   |   X   |
+     The     |       |  X
+     brown   |   X   |  X
+     dog     |   X   |
+     dogs    |       |  X
+     fox     |   X   |
+     foxes   |       |  X
+     in      |       |  X
+     jumped  |   X   |
+     lazy    |   X   |  X
+     leap    |       |  X
+     over    |   X   |  X
+     quick   |       |  X
+     summer  |       |  X
+     the     |   X   |
+     ------------------------
+
+Now, if we want to search for `"quick brown"` we just need to find the
+documents in which each term appears:
 
 
-[source,js]
---------------------------------------------------
- Term      Doc_1  Doc_2
- -------------------------
- Quick   |   X   |
- The     |       |  X
- brown   |   X   |  X
- dog     |   X   |
- dogs    |       |  X
- fox     |   X   |
- foxes   |       |  X
- in      |       |  X
- jumped  |   X   |
- lazy    |   X   |  X
- leap    |       |  X
- over    |   X   |  X
- quick   |       |  X
- summer  |       |  X
- the     |   X   |
- ------------------------
---------------------------------------------------
-
-
-Now, if we want to search for `"quick brown"` we just need
-to find the documents in which each term appears:
-
-[source,js]
---------------------------------------------------
- Term      Doc_1  Doc_2
- -------------------------
- brown   |   X   |  X
- quick   |   X   |
- ------------------------
- Total   |   2   |  1
---------------------------------------------------
-
+     Term      Doc_1  Doc_2
+     -------------------------
+     brown   |   X   |  X
+     quick   |   X   |
+     ------------------------
+     Total   |   2   |  1
 
 Both documents match, but the first document has more matches than the second.
 If we apply a naive _similarity algorithm_ which just counts the number of
-matching terms, then we can say that the first document is a better match,
-or is _more relevant_ to our query, than the second document.
+matching terms, then we can say that the first document is a better match --
+is _more relevant_ to our query -- than the second document.
 
 Bu there are a few problems with our current inverted index:
 
@@ -65,48 +57,47 @@ Bu there are a few problems with our current inverted index:
    thinks of them as the same word.
 
 2. `"fox"` and `"foxes"` are pretty similar, as are `"dog"` and `"dogs"`
-   -- they share the same root.
+   -- they share the same root word.
 
 3. `"jumped"` and `"leap"`, while not from the same root word, are similar
-   in meaning
+   in meaning -- they are synonyms.
 
-With the above index, a search for `"+Quick +foxes"` wouldn't match any documents.
+With the above index, a search for `"+Quick +foxes"` wouldn't match any
+documents. (Remember, a preceding `+` means that the word must be present).
 Both the term `"Quick"` and the term `"foxes"` have to be in the same document
-in order to satisfy the query, but the first doc contains `"Quick fox"` and the
-second doc contains `"quick foxes"`. Our user would probably expect
-both documents to match the query.
+in order to satisfy the query, but the first doc contains `"Quick fox"` and
+the second doc contains `"quick foxes"`.
 
-We can do better. If we normalize the terms into a standard format,
-then we can find documents that contain terms that are not exactly the
-same as the user requested, but similar enough to still be relevant.
-For instance:
+Our user could reasonably expect both documents to match the query. We can do
+better.
 
-1. `"Quick"` can be lowercased to become `"quick"`
+If we normalize the terms into a standard format, then we can find documents
+that contain terms that are not exactly the same as the user requested, but
+are similar enough to still be relevant. For instance:
 
-2. `"foxes"` can be _stemmed_ (that is reduced to its root form) to
+1. `"Quick"` can be lowercased to become `"quick"`.
+
+2. `"foxes"` can be _stemmed_ -- reduced to its root form -- to
    become `"fox"`. Similarly `"dogs"` could be stemmed to `"dog"`.
 
 3. `"jumped"` and `"leap"` are synonyms and can be indexed as just the
-   single term `"jump"`
+   single term `"jump"`.
 
 Now the index looks like this:
 
-[source,js]
---------------------------------------------------
- Word      Doc_1  Doc_2
- -------------------------
- brown   |   X   |  X
- dog     |   X   |  X
- fox     |   X   |  X
- in      |       |  X
- jump    |   X   |  X
- lazy    |   X   |  X
- over    |   X   |  X
- quick   |   X   |  X
- summer  |       |  X
- the     |   X   |  X
- ------------------------
---------------------------------------------------
+     Term      Doc_1  Doc_2
+     -------------------------
+     brown   |   X   |  X
+     dog     |   X   |  X
+     fox     |   X   |  X
+     in      |       |  X
+     jump    |   X   |  X
+     lazy    |   X   |  X
+     over    |   X   |  X
+     quick   |   X   |  X
+     summer  |       |  X
+     the     |   X   |  X
+     ------------------------
 
 
 But we're not there yet. Our search for `"+Quick +foxes"` would *still* fail,
@@ -115,7 +106,7 @@ apply the same normalization rules that we used on the `content` field to
 our query string, it would become a query for `"+quick +fox"`, which
 would succeed!
 
-This is very important. You can only find terms that actually exist in your
+IMPORTANT: This is very important. You can only find terms that actually exist in your
 index, so: *both the indexed text and and query string must be normalized
 into the same form*.
 

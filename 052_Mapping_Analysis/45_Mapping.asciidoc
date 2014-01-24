@@ -48,16 +48,15 @@ the string into a long, and throw an error if it can't.
 
 ==== Viewing the mapping
 
-We can view the mapping that Elasticsearch has for one or more
-types in one or more indices using the `/_mapping` endpoint.
-In <<data-type-differences>> we already retrieved the mapping for
-type `tweet` in index `gb`:
+We can view the mapping that Elasticsearch has for one or more types in one or
+more indices using the `/_mapping` endpoint. At the <<mapping-analysis,start
+of this chapter>> we already retrieved the mapping for type `tweet` in index
+`gb`:
 
 [source,js]
 --------------------------------------------------
-GET /gb/tweet/_mapping
+GET /gb/_mapping/tweet
 --------------------------------------------------
-
 
 This shows us the mapping for the fields (called _properties_) that
 Elasticsearch generated dynamically from the documents that we indexed:
@@ -65,32 +64,38 @@ Elasticsearch generated dynamically from the documents that we indexed:
 [source,js]
 --------------------------------------------------
 {
-  "tweet" : {
-    "properties" : {
-      "date" : {
-        "type" :   "date",
-        "format" : "dateOptionalTime"
-      },
-      "name" : {
-        "type" :   "string"
-      },
-      "tweet" : {
-        "type" :   "string"
-      },
-      "user_id" : {
-        "type" :   "long"
+   "gb": {
+      "mappings": {
+         "tweet": {
+            "properties": {
+               "date": {
+                  "type": "date",
+                  "format": "dateOptionalTime"
+               },
+               "name": {
+                  "type": "string"
+               },
+               "tweet": {
+                  "type": "string"
+               },
+               "user_id": {
+                  "type": "long"
+               }
+            }
+         }
       }
-    }
-  }
+   }
 }
 --------------------------------------------------
 
-
-****
+[TIP]
+==================================================
 Incorrect mappings, such as having an `age` field mapped as type `string`
 instead of `integer`, can produce confusing results to your queries.
+
 Instead of assuming that your mapping is correct, check it!
-****
+==================================================
+
 
 ==== Customizing field mappings
 
@@ -121,13 +126,14 @@ The two most important mapping attributes for `string` fields are
 The `index` attribute controls how the string will be indexed. It
 can contain one of three values:
 
+[horizontal]
 `analyzed`::        First analyze the string, then index it.  In other words,
                     index this field as full text.
 
 `not_analyzed`::    Index this field, so it is searchable, but index the
-                    value exactly as specified -- do not analyze it.
+                    value exactly as specified. Do not analyze it.
 
-`no`::              Don't index this field at all -- this field
+`no`::              Don't index this field at all. This field
                     will not be searchable.
 
 The default value of `index` for a `string` field is `analyzed`.  If we
@@ -146,9 +152,11 @@ want to map the field as an exact value, then we need to set it to
 
 
 ****
+
 The other simple types -- `long`, `double`, `date` etc -- also accept the
 `index` parameter, but the only relevant values are `no` and `not_analyzed`,
-as their values are never passed through an analyzer.
+as their values are never analyzed.
+
 ****
 
 ===== `analyzer`
@@ -179,28 +187,30 @@ You can specify the mapping for a type when you first create an index.
 Alternatively, you can add the mapping for a new type (or update the mapping
 for an existing type) later, using the `/_mapping` endpoint.
 
-While you can *add* to an existing mapping, you can't *change* it.  If a
-field already exists in the mapping, then it probably means that data from that
-field has already been indexed.  If you change the field mapping, then the
-indexed data will be wrong, and probably not searchable.
+****
+While you can *add* to an existing mapping, you can't *change* it.  If a field
+already exists in the mapping, then it probably means that data from that
+field has already been indexed.  If you were to change the field mapping, then
+the already indexed data would be wrong and would not be properly searchable.
+****
 
 We can update a mapping to add a new field, but we can't change an existing
 field from `analyzed` to `not_analyzed`.
 
-To demonstrate both ways of doing it, let's first delete the `gb` index:
+To demonstrate both ways of specifying mappings, let's first delete the `gb`
+index:
 
-[source,js]
+[source,sh]
 --------------------------------------------------
 DELETE /gb
 --------------------------------------------------
-
 
 Then create a new index, specifying that the `tweet` field should use
 the `english` analyzer:
 
 [source,js]
 --------------------------------------------------
-PUT /gb
+PUT /gb <1>
 {
   "mappings": {
     "tweet" : {
@@ -223,31 +233,26 @@ PUT /gb
   }
 }
 --------------------------------------------------
+<1> This creates the index with the `mappings` specified in the body.
 
-
-Later on, we can decide to add a new `not_analyzed` text field called `tag`
-to the `tweet` mapping, using the `_mapping` endpoint:
+Later on, we decide to add a new `not_analyzed` text field called `tag` to the
+`tweet` mapping, using the `_mapping` endpoint:
 
 [source,js]
 --------------------------------------------------
-PUT /gb/tweet/_mapping
+PUT /gb/_mapping/tweet
 {
-  "tweet" : {
-    "properties" : {
-      "tag" : {
-        "type" :    "string",
-        "index":    "not_analyzed"
-      }
+  "properties" : {
+    "tag" : {
+      "type" :    "string",
+      "index":    "not_analyzed"
     }
   }
 }
 --------------------------------------------------
 
-
-Note that we needed to specify the `tweet` type twice: once in the URL and once
-in the JSON body.  Also, we didn't need to list all of the existing fields
-again, as we can't change them anyway.  Our new field has now been merged into
-the existing mapping.
+Note that we didn't need to list all of the existing fields again, as we can't
+change them anyway.  Our new field has been merged into the existing mapping.
 
 ==== Testing the mapping
 
@@ -256,10 +261,14 @@ name. Compare the output of these two requests:
 
 [source,js]
 --------------------------------------------------
-GET /gb/_analyze?field=tweet Black-cats
-GET /gb/_analyze?field=tag   Black-cats
---------------------------------------------------
+GET /gb/_analyze?field=tweet
+Black-cats <1>
 
-The `tweet` field produces the two terms `"black"` and `"cat"`, and
-the `tag` field produces the single term `"Black-cats"`. In other words,
-our mapping is working correctly.
+GET /gb/_analyze?field=tag
+Black-cats <1>
+--------------------------------------------------
+<1> The text we want to analyze is passed in the body.
+
+The `tweet` field produces the two terms `"black"` and `"cat"`, while the
+`tag` field produces the single term `"Black-cats"`. In other words, our
+mapping is working correctly.

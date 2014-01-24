@@ -1,15 +1,14 @@
 === Most important queries and filters
 
-While Elasticsearch comes with many different queries and filters, there
-are just a few which you will use frequently. We will discuss them in
-much greater detail in both <<structured-search>> and <<full-text-search>>, 
-but below we give you a quick introduction to the most important queries and 
-filters.
+While Elasticsearch comes with many different queries and filters, there are
+just a few which you will use frequently. We will discuss them in much greater
+detail in <<search-in-depth>> but below we give you a quick introduction to
+the most important queries and filters.
 
 ==== `term` filter
 
 The `term` filter is used to filter by exact values, be they numbers, dates
-booleans, or `not_analyzed` string fields:
+booleans, or `not_analyzed` exact value string fields:
 
 [source,js]
 --------------------------------------------------
@@ -57,22 +56,6 @@ The operators that it accepts are:
 `gte`::     greater than or equal to
 `lt` ::     less than
 `lte`::     less than or equal to
-
-It can also be used on string fields, where the ranges are lexicographic
-(alphabetical) instead of numeric. For all tags from `"a"` up to but not
-including `"m"`:
-
-[source,js]
---------------------------------------------------
-{
-    "range": {
-        "tag": {
-            "gte":  "a",
-            "lt":   "m"
-        }
-    }
-}
---------------------------------------------------
 
 
 ==== `exists` and `missing` filters
@@ -133,10 +116,9 @@ query which is used if no query has been specified.
 --------------------------------------------------
 
 
-This query is frequently used in combination with a filter, for instance
-to retrieve all emails in the inbox folder.
-All documents are considered to be equally relevant, so they all receive a
-`_score` of `1`.
+This query is frequently used in combination with a filter, for instance to
+retrieve all emails in the inbox folder. All documents are considered to be
+equally relevant, so they all receive a neutral `_score` of `1`.
 
 ==== `match` query
 
@@ -164,13 +146,14 @@ exact value:
 { "match": { "public": true         }}
 --------------------------------------------------
 
-Remember, however, that for exact value searches, you probably want to use
-a filter instead of a query, as a filter will be cached.
+TIP: For exact value searches, you probably want to use a filter instead of a
+query, as a filter will be cached.
 
-The `match` query does not understand the query syntax that we used in
-query string search, eg `"+user_id:2 +tweet:search"`. It is safe to
-expose to your users via a search field: you control what fields they can
-query and it is not prone to throwing syntax errors.
+Unlike the query string search that we showed in <<search-lite>>, the `match`
+query does not use a query syntax like `"+user_id:2 +tweet:search"`. It just
+looks for the words that are specified. This means that it is safe to expose
+to your users via a search field -- you control what fields they can query and
+it is not prone to throwing syntax errors.
 
 ==== `multi_match` query
 
@@ -196,6 +179,7 @@ filters give binary `yes|no` answers, queries calculate a relevance score
 instead. The `bool` query combines the `_score` from each `must` or
 `should` clause which matches.
 
+[horizontal]
 `must`::        Clauses which *must* match for the document to be included.
 
 `must_not`::    Clauses which *must not* match for the document to be included.
@@ -228,9 +212,3 @@ match *both* conditions will rank even higher:
 If there are no `must` clauses, then at least one `should` clause has to
 match, but if there is at least one `must` clause, then no `should`
 clauses are required to match.
-
-==== `filtered` query
-
-The `filtered` query is used to combine a query clause with a filter clause.
-We discuss it in the next section.
-

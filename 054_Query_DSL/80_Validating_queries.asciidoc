@@ -8,8 +8,10 @@ The `validate` API can be used to check whether a query is valid or not.
 --------------------------------------------------
 GET /gb/tweet/_validate/query
 {
-   "tweet" : {
-      "match" : "really powerful"
+   "query": {
+      "tweet" : {
+         "match" : "really powerful"
+      }
    }
 }
 --------------------------------------------------
@@ -38,14 +40,17 @@ string:
 
 [source,js]
 --------------------------------------------------
-GET /gb/tweet/_validate/query?explain
+GET /gb/tweet/_validate/query?explain <1>
 {
-   "tweet" : {
-      "match" : "really powerful"
+   "query": {
+      "tweet" : {
+         "match" : "really powerful"
+      }
    }
 }
 --------------------------------------------------
-
+<1> The `explain` flag provides more information about why a query is
+    invalid.
 
 Apparently, we've mixed up the type of query (`match`) with the name
 of the field (`tweet`):
@@ -75,15 +80,17 @@ understanding exactly how your query has been interpreted by Elasticsearch:
 --------------------------------------------------
 GET /_validate/query?explain
 {
-   "match" : {
-      "tweet" : "really powerful"
+   "query": {
+      "match" : {
+         "tweet" : "really powerful"
+      }
    }
 }
 --------------------------------------------------
 
 
 An `explanation` is returned for each index that we query, because each
-index can have different settings:
+index can have different mapping and analyzers:
 
 [source,js]
 --------------------------------------------------

@@ -17,8 +17,8 @@ than one tag. Instead of a single string, we could index an array of tags:
 
 
 There is no special mapping required for arrays. Any field can contain zero,
-one or more values, in the same way as a full text field is indexed as
-multiple terms.
+one or more values, in the same way as a full text field is analyzed to
+produce multiple terms.
 
 By implication, this means that *all of the values of an array must be
 of the same datatype*.  You can't mix dates with strings. If you create
@@ -26,9 +26,13 @@ a new field by indexing an array, Elasticsearch will use the
 datatype of the first value in the array to determine the `type` of the
 new field.
 
-The elements inside an array are not ordered. You cannot refer to
-``the first element'' or ``the last element''.  Rather think
-of an array as a _bag of values_.
+****
+
+The elements inside an array are not ordered. You cannot refer to ``the first
+element'' or ``the last element''.  Rather think of an array as a _bag of
+values_.
+
+****
 
 ==== Empty fields
 
@@ -37,7 +41,8 @@ values. In fact, there is no way of storing a `null` value in Lucene, so
 a field with a `null` value is also considered to be an empty
 field.
 
-These four fields would be indexed in the same way -- as empty fields:
+These four fields would all be considered to be empty, and would not be
+indexed:
 
 [source,js]
 --------------------------------------------------
@@ -84,21 +89,23 @@ type `object`, with each inner field listed under `properties`:
 [source,js]
 --------------------------------------------------
 {
-  "tweet": {
-    "properties": {
-      "tweet":            { "type": "string" },
-      "user": {
-        "type":             "object",
-        "properties": {
-          "id":           { "type": "string" },
-          "gender":       { "type": "string" },
-          "age":          { "type": "long"   },
-          "name":   {
-            "type":         "object",
-            "properties": {
-              "full":     { "type": "string" },
-              "first":    { "type": "string" },
-              "last":     { "type": "string" }
+  "gb": {
+    "tweet": { <1>
+      "properties": {
+        "tweet":            { "type": "string" },
+        "user": { <2>
+          "type":             "object",
+          "properties": {
+            "id":           { "type": "string" },
+            "gender":       { "type": "string" },
+            "age":          { "type": "long"   },
+            "name":   { <2>
+              "type":         "object",
+              "properties": {
+                "full":     { "type": "string" },
+                "first":    { "type": "string" },
+                "last":     { "type": "string" }
+              }
             }
           }
         }
@@ -107,7 +114,8 @@ type `object`, with each inner field listed under `properties`:
   }
 }
 --------------------------------------------------
-
+<1> Root object.
+<2> Inner objects.
 
 The mapping for the `user` and `name` fields have a similar structure
 to the mapping for the `tweet` type itself.  In fact, the `type` mapping
@@ -118,9 +126,9 @@ the `_all` field etc.
 
 ==== How inner objects are indexed
 
-Lucene doesn't understand inner objects. A Lucene document
-consists of a flat list of fields.  In order for Elasticsearch to index
-inner objects usefully, it converts our document to something like this:
+Lucene doesn't understand inner objects. A Lucene document consists of a flat
+list of key-value pairs.  In order for Elasticsearch to index inner objects
+usefully, it converts our document into something like this:
 
 [source,js]
 --------------------------------------------------
@@ -141,14 +149,9 @@ between two fields that have the same name we can use the full _path_,
 eg `"user.name.first"` or even the `type` name plus
 the path: `"tweet.user.name.first"`.
 
-Note that in our index, there is no field called `user` and no field called
-`user.name`.  Lucene only indexes scalar or simple values, not complex
-datastructures.
-
-If you need to check whether a document contains a `user` inner object
-or not, you will need to check one of the object's inner fields, like
-`user.id`.
-
+NOTE: In the simple flattened document above, there is no field called `user`
+and no field called `user.name`.  Lucene only indexes scalar or simple values,
+not complex datastructures.
 
 ==== Arrays of inner objects
 
@@ -180,10 +183,14 @@ result will look like this:
 
 
 The correlation between `{age: 35}` and `{name: Mary White}` has been lost as
-each multi-value field is just a bag of values, not an ordered array.  This
-is sufficient for us to ask  _“Is there a follower called Alex Jones?”_,
-but we can't get an accurate answer to
-“Is there a follower called Alex Jones _who is 26 years old?”_.
+each multi-value field is just a bag of values, not an ordered array.  This is
+sufficient for us to ask:
+
+* _Is there a follower who is 26 years old?_
+
+but we can't get an accurate answer to:
+
+* _Is there a follower who is 26 years old **and who is called Alex Jones?**_
 
 Correlated inner objects, which are able to answer queries like these,
 are called _nested_ objects, and we will discuss them later on in

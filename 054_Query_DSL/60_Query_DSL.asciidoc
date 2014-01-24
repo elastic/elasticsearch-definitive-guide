@@ -1,10 +1,9 @@
 === Query DSL
 
 The Query DSL is a flexible, expressive search language that Elasticsearch
-uses to expose most of the power of Lucene through a simple JSON interface.
-It is what you should be using to write your queries in production.
-It makes your queries more flexible, more precise, easier to read and easier
-to debug.
+uses to expose most of the power of Lucene through a simple JSON interface. It
+is what you should be using to write your queries in production. It makes your
+queries more flexible, more precise, easier to read and easier to debug.
 
 To use the query DSL, pass a query in the `query` parameter:
 
@@ -16,9 +15,8 @@ GET /_search
 }
 --------------------------------------------------
 
-
 The ``empty search'' -- `{}` -- is functionally equivalent to using the
-`match_all` query clause. As the name suggests, it matches all documents:
+`match_all` query clause which, as the name suggests, matches all documents:
 
 [source,js]
 --------------------------------------------------

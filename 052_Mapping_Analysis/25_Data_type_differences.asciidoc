@@ -1,9 +1,6 @@
-[[data-type-differences]]
-=== Data type differences
-
-Something seems to be broken: we have 12 tweets in our indices,
-and only one of them has the date `2014-09-15`, but have a look at the
-`total` hits for the following queries:
+Something seems to be broken: we have 12 tweets in our indices, and only one
+of them contains the date `2014-09-15`, but have a look at the `total` hits
+for the following queries:
 
 [source,js]
 --------------------------------------------------
@@ -14,8 +11,8 @@ GET /_search?q=date:2014         # 0  results !
 --------------------------------------------------
 
 
-Why does querying the `_all` field for the full date return all
-tweets, and querying the `date` field for just the year return no
+Why does querying the <<all-field-intro,`_all` field>> for the full date
+return all tweets, and querying the `date` field for just the year return no
 results? Why do our results differ when searching within the `_all` field or
 the `date` field?
 
@@ -27,7 +24,7 @@ for the `tweet` type in the `gb` index:
 
 [source,js]
 --------------------------------------------------
-GET /gb/tweet/_mapping
+GET /gb/_mapping/tweet
 --------------------------------------------------
 
 
@@ -36,38 +33,41 @@ which gives us:
 [source,js]
 --------------------------------------------------
 {
-  "tweet" : {
-    "properties" : {
-      "date" : {
-        "type" :   "date",
-        "format" : "dateOptionalTime"
-      },
-      "name" : {
-        "type" :   "string"
-      },
-      "tweet" : {
-        "type" :   "string"
-      },
-      "user_id" : {
-        "type" :   "long"
+   "gb": {
+      "mappings": {
+         "tweet": {
+            "properties": {
+               "date": {
+                  "type": "date",
+                  "format": "dateOptionalTime"
+               },
+               "name": {
+                  "type": "string"
+               },
+               "tweet": {
+                  "type": "string"
+               },
+               "user_id": {
+                  "type": "long"
+               }
+            }
+         }
       }
-    }
-  }
+   }
 }
 --------------------------------------------------
 
 
-Elasticsearch has dynamically generated a mapping for us, based on
-what it could guess about our field types.
-
-The response shows us that the `date` field has been recognised as a field
-of type `date`. The `_all` field isn't mentioned because
-it is a default field but we know that the `_all` field is of type `string`.
+Elasticsearch has dynamically generated a mapping for us, based on what it
+could guess about our field types. The response shows us that the `date` field
+has been recognised as a field of type `date`. The `_all` field isn't
+mentioned because it is a default field, but we know that the `_all` field is
+of type `string`.
 
 So fields of type `date` and fields of type `string` are indexed differently,
 and can thus be searched differently.  That's not entirely surprising.
 You might expect that each of the core data types -- strings, numbers, booleans
-and dates -- might be indexed slightly differently. And this is true;
+and dates -- might be indexed slightly differently. And this is true:
 there are slight differences.
 
 But by far the biggest difference is actually between fields that represent
