@@ -1,19 +1,19 @@
 [[relevance-intro]]
 === What is relevance?
 
-We've mentioned that, by default, results are returned in descending
-order of relevance. But what is relevance? How is it calculated?
+We've mentioned that, by default, results are returned in descending order of
+relevance. But what is relevance? How is it calculated?
 
-The relevance of each document is represented by a positive floating point
-number called the `_score` -- the higher the `_score`, the more relevant
+The relevance score of each document is represented by a positive floating
+point number called the `_score` -- the higher the `_score`, the more relevant
 the document.
 
 A query clause generates a `_score` for each document.  How that score is
 calculated depends on the type of query clause -- different query clauses are
-used for different purposes: a `fuzzy` query would determine the `_score` by
+used for different purposes: a `fuzzy` query might determine the `_score` by
 calculating how similar the spelling of the found word is to the original
 search term, a `terms` query would incorporate the percentage of terms that
-were found, but what we usually mean by _similarity_ is the algorithm that we
+were found, but what we usually mean by _relevance_ is the algorithm that we
 use to calculate how similar the contents of a full text field are to a full
 text query string.
 
@@ -22,24 +22,30 @@ or Term Frequency/Inverse Document Frequency, which takes the following
 factors into account:
 
 Term frequency::
-  How often does each term appear in the field? The more often, the more
-  relevant.
+
+  How often does the term appear in the field? The more often, the more
+  relevant. A field containing five mentions of the same term is more likely
+  to be relevant than a field containing just one mention.
 
 Inverse document frequency::
-  How often does each term appear in the index?  The more often, the *less*
-  relevant.
 
-Length norm::
-  How long is the field? The longer it is, the less likely it is
-  that words in the field will be relevant.
+  How often does each term appear in the index? The more often, the *less*
+  relevant. Terms that appear in many documents have a lower _weight_ than
+  more uncommon terms.
+
+Field norm::
+
+  How long is the field? The longer it is, the less likely it is that words in
+  the field will be relevant. A term appearing in a short `title` field
+  carries more weight than the same term appearing in a long `content` field.
 
 Individual queries may combine the TF/IDF score with other factors
 such as the term proximity in phrase queries, or term similarity in
 fuzzy queries.
 
-Relevance is not just about full text search. It can equally be
-applied to `yes|no` clauses, where the more clauses that match, the higher
-the `_score`.
+Relevance is not just about full text search though. It can equally be applied
+to `yes|no` clauses, where the more clauses that match, the higher the
+`_score`.
 
 When multiple query clauses are combined using a compound query like the
 `bool` query, the `_score` from each of these query clauses is combined to
@@ -55,13 +61,13 @@ by setting the `explain` parameter to `true`.
 
 [source,js]
 --------------------------------------------------
-GET /_search
+GET /_search?explain <1>
 {
-   "query"   : { "match" : { "tweet" : "text" }},
-   "explain" : true
+   "query"   : { "match" : { "tweet" : "honeymoon" }}
 }
 --------------------------------------------------
-
+<1> The `explain` parameter adds an explanation of how the `_score` was
+    calculated to every result.
 
 ****
 Adding `explain` produces a lot of output for every hit which can look
@@ -77,11 +83,10 @@ First, we have the metadata that is returned on normal search requests:
 {
     "_index" :      "us",
     "_type" :       "tweet",
-    "_id" :         "5",
-    "_score" :      0.13424811,
+    "_id" :         "12",
+    "_score" :      0.076713204,
     "_source" :     { ... trimmed ... },
 --------------------------------------------------
-
 
 It adds information about which shard on which node the document came from,
 which is useful to know because term and document frequencies are calculated
@@ -93,104 +98,104 @@ per shard, rather than per index:
     "_node" :       "mzIVYCsqSWCG_M_ZffSs9Q",
 --------------------------------------------------
 
-
 Then it provides the `_explanation`. Each entry contains a  `description`
 which tells you what type of calculation is being performed, a `value`
 which gives you the result of the calculation, and the `details` of any
-sub-calculations that were required.
+sub-calculations that were required:
 
 [source,js]
 --------------------------------------------------
-    "_explanation" : {
-        "description" :             "weight(tweet:text in 0)
-                                     [PerFieldSimilarity], result of:",
-        "value" :                   0.13424811,
---------------------------------------------------
-
-
-This first calculation tells us that it is trying to calculate the _weight_
--- term frequency/inverse document frequency or TF/IDF --
-of the term `"text"` in the field `tweet`, for document `0`.  (This is an
-internal document ID and, for our purposes, can be ignored.)
-
-As this is the uppermost calculation, its `value` will be used as the
-final `_score` for the document.
-
-The calculation consists of a few sub-calculations, the first of which
-is used to calculate the inverse document frequency or `idf` --
-how common is the term `"text"` in the `tweet` field of all
-documents in the index:
-
-[source,js]
---------------------------------------------------
-        "details" : [
-            {
-                "description" :     "idf(docFreq=1, maxDocs=1)",
-                "value" :           0.30685282
+"_explanation": { <1>
+   "description": "weight(tweet:honeymoon in 0)
+                  [PerFieldSimilarity], result of:",
+   "value":       0.076713204,
+   "details": [
+      {
+         "description": "fieldWeight in 0, product of:",
+         "value":       0.076713204,
+         "details": [
+            {  <2>
+               "description": "tf(freq=1.0), with freq of:",
+               "value":       1,
+               "details": [
+                  {
+                     "description": "termFreq=1.0",
+                     "value":       1
+                  }
+               ]
             },
---------------------------------------------------
-
-
-Next is the `fieldNorm`, which is a measure of how long this document's `tweet`
-field is -- the longer the field, the lower the `value`:
-
-[source,js]
---------------------------------------------------
-            {
-                "description" :     "fieldNorm(doc=0)",
-                "value" :           0.4375
+            { <3>
+               "description": "idf(docFreq=1, maxDocs=1)",
+               "value":       0.30685282
             },
---------------------------------------------------
-
-
-And finally, the term frequency or `tf` tells us how often the
-term `"text"` appears in the `tweet` field in this document:
-
-[source,js]
---------------------------------------------------
-            {
-                "value" :               0.13424811,
-                "description" :         "fieldWeight in 0, product of:",
-                "details" : [
-                    {
-                        "description" :     "tf(freq=1.0), with freq of:",
-                        "value" :           1.0
-                        "details" : [ {
-                            "description" : "termFreq=1.0",
-                            "value" :       1.0
-                    }
-                ]
+            { <4>
+               "description": "fieldNorm(doc=0)",
+               "value":        0.25,
             }
-        ]
+         ]
+      }
+   ]
+}
 --------------------------------------------------
+<1> Summary of the score calculation for `honeymoon`
+<2> Term frequency
+<3> Inverse document frequency
+<4> Field norm
 
+The first part is the summary of the calculation. It tells us that it has
+calculated the _weight_ -- term frequency/inverse document frequency or TF/IDF
+-- of the term `"honeymoon"` in the field `tweet`, for document `0`.  (This is
+an internal document ID and, for our purposes, can be ignored.)
 
-The output from the above can be difficult to read in JSON, but is
-easier when it is formatted as YAML, by adding `format=yaml` to the
-query string.
+It then provides details of how the weight was calculated:
+
+Term frequency::
+
+    How many times did the term `honeymoon` appear in the `tweet` field in
+    this document?
+
+Inverse document frequency::
+
+    How many times did the term `honeymoon` appear in the `tweet` field
+    of all documents in the index?
+
+Field norm::
+
+    How long is the `tweet` field in this document -- the longer the field,
+    the smaller this number.
+
+Explanations for more complicated queries can appear to be very complex, but
+really they just contain more of the same calculations that appear in the
+example above. This information can be invaluable for debugging why search
+results appear in the order that they do.
+
+[TIP]
+==================================================================
+The output from explain can be difficult to read in JSON, but it is easier
+when it is formatted as YAML. Just add `format=yaml` to the query string.
+==================================================================
 
 
 ==== Understanding why a document matched
 
-While the `explain` option adds an explanation for every result, you can
-use the `explain` API to understand why a particular document matched or, more
+While the `explain` option adds an explanation for every result, you can use
+the `explain` API to understand why one particular document matched or, more
 importantly, why it *didn't* match.
 
 The path for the request is `/index/type/id/_explain`, as in:
 
 [source,js]
 --------------------------------------------------
-GET /us/tweet/3/_explain
+GET /us/tweet/12/_explain
 {
    "query" : {
       "filtered" : {
-         "filter" : { "term" :  { "user_id" : 1      }},
+         "filter" : { "term" :  { "user_id" : 2      }},
          "query" :  { "match" : { "tweet" :   "text" }}
       }
    }
 }
 --------------------------------------------------
-
 
 Along with the full explanation that we saw above, we also now have a
 `description` element, which tells us:
@@ -198,8 +203,8 @@ Along with the full explanation that we saw above, we also now have a
 
 [source,js]
 --------------------------------------------------
-"failure to match filter: cache(user_id:[1 TO 1])"
+"failure to match filter: cache(user_id:[2 TO 2])"
 --------------------------------------------------
 
-
-In other words, our `user_id` filter is causing the document not to match.
+In other words, our `user_id` filter clause is preventing the document from
+matching.

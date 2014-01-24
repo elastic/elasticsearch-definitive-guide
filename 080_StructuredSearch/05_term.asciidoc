@@ -1,13 +1,13 @@
-When working with exact values, you will be working with filters. Filters are 
+When working with exact values, you will be working with filters. Filters are
 important because they are very, very fast.  Filters do not
 calculate relevance (avoiding the entire scoring phase) and are easily cached.
-We'll talk about the performance benefits of filters later in 
+We'll talk about the performance benefits of filters later in
 <<_all_about_caching>>, but for now, just keep in mind that you should
 use filters as often as you can.
 
 ==== Term Filter with Numbers
 
-We are going to explore the `term` filter first because you will use it often.  
+We are going to explore the `term` filter first because you will use it often.
 This filter is capable of handling numbers numbers, dates and text.
 
 Let's look at an example using numbers first by indexing some products.  These
@@ -44,16 +44,16 @@ In Elasticsearch DSL, we use a `term` filter to accomplish the same thing.  The
 [source,js]
 --------------------------------------------------
 "term" : {
-    "price" : 20 
+    "price" : 20
 }
 --------------------------------------------------
 
-The `term` filter simply specifies a field and the value that we wish to find.  
+The `term` filter simply specifies a field and the value that we wish to find.
 
-The `term` filter isn't very useful on its own though.  As discussed in the 
-Search chapter (<<_empty_search>>), the `search` API expects a query and not a 
-`filter`. To use our `term` filter, we need to wrap it with a 
-<<_literal_filtered_literal_query>>:
+The `term` filter isn't very useful on its own though.  As discussed in the
+Search chapter (<<_empty_search>>), the `search` API expects a query and not a
+`filter`. To use our `term` filter, we need to wrap it with a
+<<filtered-query,`filtered` query>>:
 
 [source,js]
 --------------------------------------------------
@@ -61,12 +61,12 @@ GET /my_store/products/_search
 {
     "query" : {
         "filtered" : { <1>
-            "query" : { 
+            "query" : {
                 "match_all" : {} <2>
-            }, 
+            },
             "filter" : {
                 "term" : { <3>
-                    "price" : 20 
+                    "price" : 20
                 }
             }
         }
@@ -79,27 +79,27 @@ behavior, so in future examples we will simply omit the `query` section
 <3> The `term` filter that we saw previously.  Notice how it is placed inside
 the `filter` clause.
 
-Once executed, the search results from this query are exactly what you would 
+Once executed, the search results from this query are exactly what you would
 expect: only document `2` is returned as a hit (because only `2` had a price
 of 20):
 
 [source,json]
 --------------------------------------------------
-"hits" : [ 
+"hits" : [
     {
         "_index" : "my_store",
         "_type" : "products",
         "_id" : "2",
         "_score" : 1.0, <1>
-        "_source" : { 
+        "_source" : {
           "price" : 20,
           "productID" : "KDKE-B-9947-#kL5"
         }
-    } 
+    }
 ]
 --------------------------------------------------
-<1> Filters do not perform scoring or relevance. The score comes from the query, 
-which is a match_all query, which treats all docs as equal, so all documents 
+<1> Filters do not perform scoring or relevance. The score comes from the query,
+which is a match_all query, which treats all docs as equal, so all documents
 receive a _neutral_ score of one.
 
 ==== Term Filter with Text
@@ -140,9 +140,9 @@ the `term` filter like so:
 GET /my_store/products/_search
 {
     "query" : {
-        "filtered" : { 
+        "filtered" : {
             "filter" : {
-                "term" : { 
+                "term" : {
                     "productID" : "XHDK-A-1293-#fJ3"
                 }
             }
@@ -198,10 +198,10 @@ are the three tokens listed above.
 Obviously, this is not what we want to happen when dealing with identification
 codes, or any kind of precise enumeration.
 
-To prevent this from happening, we need to tell Elasticsearch to `not_analyze` 
-the field when indexing.  We saw this originally in 
+To prevent this from happening, we need to tell Elasticsearch to `not_analyze`
+the field when indexing.  We saw this originally in
 <<_customizing_field_mappings>>.  To do this, we need to first delete our old
-index (because it has the incorrect mapping) and create a new one with the 
+index (because it has the incorrect mapping) and create a new one with the
 correct mappings:
 
 [source,js]
@@ -220,7 +220,7 @@ PUT /my_store <2>
             }
         }
     }
-    
+
 }
 --------------------------------------------------
 <1> Deleting the index first is required, since we cannot change mappings that
@@ -228,7 +228,7 @@ already exist.
 <2> With the index deleted, we can recreate it with out custom mapping
 <3> Here we explicitly say that we don't want `productID` to be analyzed
 
-Now that we have told Elasticsearch to `not_analyze` the ID field, we can 
+Now that we have told Elasticsearch to `not_analyze` the ID field, we can
 go ahead and re-index our documents.
 
 [source,js]
@@ -255,7 +255,7 @@ GET /my_store/products/_search
     "query" : {
         "filtered" : {
             "filter" : {
-                "term" : { 
+                "term" : {
                     "productID" : "XHDK-A-1293-#fJ3"
                 }
             }
@@ -265,24 +265,24 @@ GET /my_store/products/_search
 --------------------------------------------------
 
 Since the `productID` field is not analyzed, and the `term` filter performs no
-analysis, the query finds the exact match and returns document `1` as a hit. 
+analysis, the query finds the exact match and returns document `1` as a hit.
 Success!
 
 ==== Internal Filter Operation
 
-Internally, Elasticsearch is performing several operations when executing a 
+Internally, Elasticsearch is performing several operations when executing a
 filter:
 
 1. *Find Matching Docs*
 +
-The `term` filter looks up the term `"XHDK-A-1293-#fJ3"` in the inverted index 
-and retrieves the list of documents that contain that term.  In this case, 
+The `term` filter looks up the term `"XHDK-A-1293-#fJ3"` in the inverted index
+and retrieves the list of documents that contain that term.  In this case,
 only document `1` has the term we are looking for
 
 2. *Build a Bitset*
 +
 The filter then builds a bitset (array of 1's and 0's) which describes which
-documents contain the term.  Matching documents receive a  `1` bit.  In our 
+documents contain the term.  Matching documents receive a  `1` bit.  In our
 example, the bitset would be: `[1,0,0,0]`
 
 3. *Cache the Bitset*
