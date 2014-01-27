@@ -93,7 +93,7 @@ a full request like:
 curl -XGET 'localhost:9200/_count?pretty' -d '
 {
     "query": {
-        match_all": {}
+        "match_all": {}
     }
 }'
 --------------------------------------------------
@@ -105,7 +105,7 @@ we will show it in this shorthand format:
 GET /_count
 {
     "query": {
-        match_all": {}
+        "match_all": {}
     }
 }
 --------------------------------------------------
