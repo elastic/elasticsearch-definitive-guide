@@ -1,0 +1,77 @@
+=== Query Phase
+
+During the initial _query phase_,  the query is broadcast to a shard copy (a
+primary or replica shard) of every shard in the index. Each shard executes
+the search locally and builds a _priority queue_ of matching documents.
+
+.Priority queue
+****
+
+A priority queue is just a sorted list which holds the _Top-N_ matching
+documents. The size of the priority queue depends on the pagination
+parameters: `from` and `size`.  For example, the following search request
+would require a priority queue big enough to hold 100 documents:
+
+[source,js]
+--------------------------------------------------
+GET /_search
+{
+    "from": 90,
+    "size": 10
+}
+--------------------------------------------------
+****
+
+The query phase process is depicted in <<img-distrib-search>>.
+
+[[img-distrib-search]]
+.Query Phase of distributed search
+image::images/distributed_search_query.png["Query Phase of distributed search"]
+
+1. The client sends a `search` request to `Node 1` which creates an empty
+   priority queue of size `from + size`.
+
+2. `Node 1` forwards the search request to a primary or replica copy of every
+   shard in the index.
+
+3. Each shard executes the query locally and adds the results into a local
+   sorted priority queue of size `from + size`.
+
+4. Each shard returns the doc IDs and sort values of all of the docs in its
+   priority queue to the coordinating node, `Node 1`, which merges these
+   values into its own priority queue to produce a globally sorted list of
+   results.
+
+When a search request is sent to a node, that node becomes the coordinating
+node. It is the job of this node to broadcast the search request to all
+involved shards, and to gather their responses into a globally sorted result
+set which it can return to the client.
+
+The first step is to broadcast the request to a shard copy of every node in
+the index. Just like <<distrib-read,document `GET` requests>>, search requests
+can be handled by a primary shard or by any of its replicas. This is how more
+replicas (when combined with more hardware) can increase search throughput.
+A coordinating node will round robin through all shard copies on subsequent
+requests in order to spread the load.
+
+Each shard executes the query locally and builds a sorted priority queue of
+length `from + size`, in other words enough results to satisfy the global
+search request all by itself. It returns a lightweight list of results to the
+coordinating node, which contains just the doc IDs and any values required for
+sorting, such as the `_score`.
+
+The coordinating node merges these shard-level results into its own sorted
+priority queue which represents the globally sorted result set. Here the query
+phase ends.
+
+.Multi-index search
+****
+
+An index can consist of one or more primary shards, so a search request
+against a single index needs to be able to combine the results from multiple
+shards. A search against *multiple* or *all* indices works in exactly the same
+way --  there are just more shards involved.
+
+****
+
+
