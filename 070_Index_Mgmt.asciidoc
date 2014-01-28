@@ -2,9 +2,9 @@
 == Index Management
 
 We have seen how Elasticsearch makes it easy to start developing a new
-application without requiring any advance planning.  However, it doesn't take
-long before we need to fine-tune the indexing and search process
-to better suit particular use cases.
+application without requiring any advance planning or setup.  However, it
+doesn't take long before you start wanting to fine-tune the indexing and
+search process to better suit your particular use case.
 
 Almost all of these customizations relate to the _index_, and the _types_
 which it contains.  In this chapter we will discuss the APIs
@@ -32,13 +32,5 @@ include::070_Index_Mgmt/50_Reindexing.asciidoc[]
 
 include::070_Index_Mgmt/55_Aliases.asciidoc[]
 
-include::070_Index_Mgmt/60_Reindex_Optimizations.asciidoc[]
-
 include::070_Index_Mgmt/65_Conclusion.asciidoc[]
-
-
-
-
-
-
 

@@ -10,50 +10,65 @@ In <<analysis-intro>> we said that _analyzer_ is a wrapper which combines
 three functions into a single package, which are executed in sequence:
 
 Character filters::
-
-Character filters are used to ``tidy up'' a text field before it is
-tokenized.  For instance, if our text is in HTML format, it will contains
-HTML tags like `<p>` or `<div>` that we don't want to be indexed.
-We can use the `html_strip` character filter to remove all HTML tags and to
-convert HTML entities like `&Aacute;` into the corresponding Unicode
-character: `Á`.
 +
+--
+Character filters are used to ``tidy up'' a string before it is tokenized.
+For instance, if our text is in HTML format, it will contains HTML tags like
+`<p>` or `<div>` that we don't want to be indexed. We can use the
+{ref}/analysis-htmlstrip-charfilter.html[`html_strip` character filter]
+to remove all HTML tags and to convert HTML entities like `&Aacute;` into the
+corresponding Unicode character: `Á`.
+
 An analyzer may have zero or more character filters.
+--
 
 Tokenizers::
-
-An analyzer must have a single tokenizer.  The tokenizer breaks the
-text string into individual terms or tokens. The `standard` tokenizer,
++
+--
+An analyzer *must* have a single tokenizer.  The tokenizer breaks the
+string up into individual terms or tokens. The
+{ref}/analysis-standard-tokenizer.html[`standard` tokenizer],
 which is used in the `standard` analyzer, breaks up a string into
 invidual terms on word boundaries, and removes most punctuation, but
 other tokenizers exist which have different behaviour.
-+
-For instance, the `keyword` tokenizer outputs exactly the same string
-as it received, without any tokenization. The `whitespace` tokenizer
-splits text on whitespace only. The `pattern` tokenizer can
+
+For instance, the
+{ref}/analysis-keyword-tokenizer.html[`keyword` tokenizer]
+outputs exactly the same string as it received, without any tokenization. The
+{ref}/analysis-whitespace-tokenizer.html[`whitespace` tokenizer]
+splits text on whitespace only. The
+{ref}/analysis-pattern-tokenizer.html[`pattern` tokenizer] can
 be used to split text on a matching regular expression.
+--
 
 Token filters::
-
++
+--
 After tokenization, the resulting _token stream_ is passed through any
 specified token filters, in the order in which they are specified.
-+
-Token filters may change, add or remove tokens.  We have already mentioned
-the `lowercase` and `stop` token filters, but there are many more available
-in Elasticsearch. Stemming token filters ``stem'' words to their root form.
-The `ascii_folding` filter removes diacritcs, converting a term like `"très"`
-into `"tres"`. The `ngram` and `edge_ngram` token filters can produce
-tokens suitable for partial matching or autocomplete.
 
-In the following chapters, we will discuss examples of where and how to use
-these tokenizers and filters.  But first, we need to explain how to
-create a custom analyzer.
+Token filters may change, add or remove tokens.  We have already mentioned the
+{ref}/analysis-lowercase-tokenfilter.html[`lowercase`] and
+{ref}/analysis-stop-tokenfilter.html[`stop` token filters],
+but there are many more available in Elasticsearch.
+{ref}/analysis-stemmer-tokenfilter.html[Stemming token filters]
+``stem'' words to their root form. The
+{ref}/analysis-asciifolding-tokenfilter.html[`ascii_folding` filter]
+removes diacritcs, converting a term like `"très"` into `"tres"`. The
+{ref}/analysis-ngram-tokenfilter.html[`ngram`] and
+{ref}/analysis-edgengram-tokenfilter.html[`edge_ngram` token filters] can produce
+tokens suitable for partial matching or autocomplete.
+--
+
+In <<search-in-depth>>, we will discuss examples of where and how to use these
+tokenizers and filters.  But first, we need to explain how to create a custom
+analyzer.
 
 ==== Creating a custom analyzer
 
-In the same way as we configured the `es_std` analyzer above, we can
-configure character filters, tokenizers and token filters in their
-respective sections under `analysis`:
+In the same way as we configured the `es_std` analyzer above, we can configure
+character filters, tokenizers and token filters in their respective sections
+under `analysis`:
 
 [source,js]
 --------------------------------------------------
@@ -105,9 +120,8 @@ As an example, let's set up a custom analyzer which will:
 }
 --------------------------------------------------
 
-
-Now we can define our custom analyer, combining the predefined tokenizer
-and filters with the custom filters that we have configured above:
+Our analyzer definition combines the predefined tokenizer and filters with the
+custom filters that we have configured above:
 
 [source,js]
 --------------------------------------------------
@@ -146,7 +160,7 @@ PUT /my_index
                     "char_filter":  [ "html_strip", "&_to_and" ],
                     "tokenizer":    "standard",
                     "filter":       [ "lowercase", "my_stopwords" ]
-            }},
+            }}
 }}}
 --------------------------------------------------
 
@@ -174,19 +188,17 @@ The abbreviated results below show that our analyzer is working correctly:
 }
 --------------------------------------------------
 
-
-And it can be applied to a `string` field with a mapping such as:
+The analyzer is not much use unless we tell Elasticsearch where to use it. We
+can apply it to a `string` field with a mapping such as:
 
 [source,js]
 --------------------------------------------------
-PUT /my_index/my_type/_mapping
+PUT /my_index/_mapping/my_type
 {
-    "my_type": {
-        "properties": {
-            "title": {
-                "type":      "string",
-                "analyzer":  "my_analyzer"
-            }
+    "properties": {
+        "title": {
+            "type":      "string",
+            "analyzer":  "my_analyzer"
         }
     }
 }

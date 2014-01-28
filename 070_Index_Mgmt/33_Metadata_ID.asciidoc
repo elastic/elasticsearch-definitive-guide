@@ -29,7 +29,7 @@ PUT /my_index
     "mappings": {
         "my_type": {
             "_id": {
-                "path": "doc_id"
+                "path": "doc_id" <1>
             },
             "properties": {
                 "doc_id": {
@@ -41,7 +41,7 @@ PUT /my_index
     }
 }
 --------------------------------------------------
-
+<1> Extract the doc `_id` from the `doc_id` field.
 
 Then, when you index a document:
 
@@ -55,25 +55,26 @@ POST /my_index/my_type
 
 
 the `_id` value will be extracted from the `doc_id` field in the document
-itself:
+body:
 
 [source,js]
 --------------------------------------------------
 {
-    "ok":       true,
     "_index":   "my_index",
     "_type":    "my_type",
-    "_id":      "123",
-    "_version": 1
+    "_id":      "123", <1>
+    "_version": 1,
+    "created":  true
 }
 --------------------------------------------------
+<1> The `_id` has been extracted correctly.
 
 
-While this is very convenient, be aware that it has a slight performance
-impact on `bulk` requests (see <<bulk-format>>). The node handling
-the request can no longer make use of the optimized bulk format to
-parse only the metadata line in order to decide which shard should receive the
-request. Instead, it has to parse the document body itself.
+TIP: While this is very convenient, be aware that it has a slight performance
+impact on `bulk` requests (see <<bulk-format>>). The node handling the request
+can no longer make use of the optimized bulk format to parse just the metadata
+line in order to decide which shard should receive the request. Instead, it
+has to parse the document body as well.
 
 
 

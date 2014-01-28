@@ -100,7 +100,7 @@ a higher `_score`.
 
 If you are implementing your own scoring model not based on TF/IDF and you
 need more control over the boosting process, you can use the
-http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-function-score-query.html#_boost_factor[`boost_factor`]
+{ref}/query-dsl-function-score-query.html#_boost_factor[`boost_factor`]
 parameter in the `function_score` query to perform simple multiplication
 without the normalization step.
 

@@ -2,13 +2,13 @@
 ==== Metadata: `_all` field
 
 In <<search-lite>> we introduced the `_all` field: a special field that
-indexes the values from all other fields as strings. The `query_string`
-query clause (and searches performed as `?q=john`) defaults to searching in the
-`_all` field if no other field is specified.
+indexes the values from all other fields as one big string. The `query_string`
+query clause (and searches performed as `?q=john`) defaults to searching in
+the `_all` field if no other field is specified.
 
 The `_all` field is useful during the exploratory phase of a new application,
-while you are unsure what final structure your documents will have. You
-can just throw any query string at it and you have a good chance of
+while you are still unsure about the final structure that your documents will
+have. You can just throw any query string at it and you have a good chance of
 finding the document you're after:
 
 [source,js]
@@ -22,25 +22,29 @@ GET /_search
 --------------------------------------------------
 
 
-As your application evolves and your search requirements become more
-exacting, you will find yourself using the `_all` field less and less.
-The `_all` field is shotgun approach to search. By querying individual
-fields, you have more flexbility, power and fine-grained control over
-which results are considered to be most relevant.
+As your application evolves and your search requirements become more exacting,
+you will find yourself using the `_all` field less and less. The `_all` field
+is shotgun approach to search. By querying individual fields, you have more
+flexbility, power and fine-grained control over which results are considered
+to be most relevant.
 
-One of the important factors taken into account by the relevance algorithm
-is the length of the field: the shorter the field, the more important.
-For instance, a term that appears in a (short) `title` field
-is likely to be more important than the same term which appears somewhere
-in a (long) `content` field. This distinction between fields disappears
-in the `_all` field.
+****
 
-If you decide that you no longer need the `_all` field, you can
-disable it with this mapping:
+One of the important factors taken into account by the
+<<relevance-intro,relevance algorithm>>
+is the length of the field: the shorter the field, the more important. A term
+that appears in a short `title` field is likely to be more important than the
+same term which appears somewhere in a long `content` field. This distinction
+between field lengths disappears in the `_all` field.
+
+****
+
+If you decide that you no longer need the `_all` field, you can disable it
+with this mapping:
 
 [source,js]
 --------------------------------------------------
-PUT /my_index/my_type/_mapping
+PUT /my_index/_mapping/my_type
 {
     "my_type": {
         "_all": { "enabled": false }

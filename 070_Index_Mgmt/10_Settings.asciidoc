@@ -2,11 +2,11 @@
 
 There are many many knobs that you can twiddle to
 customize index behaviour, which you can read about in the
-http:/www.elasticsearch.org/guide/reference/index-modules/[Index Modules
-reference documentation].
+{ref}/index-modules.html[Index Modules reference documentation],
+but...
 
-*But remember*: Elasticsearch comes with good defaults. Don't twiddle
-these knobs until you really need to.
+TIP: Elasticsearch comes with good defaults. Don't twiddle these knobs until
+you understand what they do and why you should change them.
 
 Two of the most important settings are:
 
@@ -22,8 +22,8 @@ Two of the most important settings are:
     should have, which defaults to `1`.  This setting can be changed
     at any time on a live index.
 
-For instance, we could create a new small index with no replica shards
-with the following request:
+For instance, we could create a small index -- just one primary shard --
+and no replica shards with the following request:
 
 [source,js]
 --------------------------------------------------
@@ -37,7 +37,7 @@ PUT /my_temp_index
 --------------------------------------------------
 
 
-We can change the number of replica shards later on, using the
+Later, we can change the number of replica shards dynamically using the
 `update-index-settings` API as follows:
 
 [source,js]

@@ -8,8 +8,7 @@ contain:
   document may contain.
 
 * various metadata fields, all of which start with an underscore, such
-  as `_type`, `_id` and `_source`. The default handling of these metadata
-  fields can be customized via the root object.
+  as `_type`, `_id` and `_source`.
 
 * settings which control how the dynamic detection of new fields
   is handled, such as `analyzer`, `dynamic_date_formats` and
@@ -32,11 +31,10 @@ fields or properties in <<core-fields>> and <<complex-core-fields>>:
                 at all (`no`).
 
 `analyzer`::    Which `analyzer` to use for a full text field, both at index
-                time and at query time.
+                time and at search time.
 
-We will discuss other field types such as `multi_field`, `ip`, `geo_point`,
-`geo_shape`, and `binary` in the appropriate sections later
-in the book.
+We will discuss other field types such as `ip`, `geo_point` and `geo_shape` in
+the appropriate sections later in the book.
 
 include::31_Metadata_source.asciidoc[]
 

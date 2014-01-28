@@ -17,14 +17,14 @@ This is almost always desired functionality because it means that:
   documents from another (usually slower) datastore
 
 * individual fields can be extracted from the `_source` field and returned
-  in `get` or `search` requests when you don't need see the whole document
+  in `get` or `search` requests when you don't need to see the whole document
 
-* it is easier to debug queries because you can see exactly what each
-  document contains, rather than having to guess from a list of IDs
+* it is easier to debug queries because you can see exactly what each document
+  contains, rather than having to guess their contents from a list of IDs
 
 That said, storing the `_source` field does use disk space.  If none of the
-above reasons are important to you, you can disable the `_source` field
-with the following mapping:
+above reasons is important to you, you can disable the `_source` field with
+the following mapping:
 
 [source,js]
 --------------------------------------------------
@@ -40,38 +40,33 @@ PUT /my_index
 }
 --------------------------------------------------
 
-
-One field setting which we haven't discussed yet is `{"store": true|false}`.
-Besides indexing the values of a field, you can also choose to store the
-original value for later retrieval. Users with a Lucene background
-use `store` to choose which fields they would like to be able to return
-in their search results. In fact the `_source` field is a stored field.
-
-In Elasticsearch, setting individual document fields to be stored is usually
-a false optimization. It is almost always better to just extract the fields
-that you need from the  `_source` field. Every stored field that you
-retrieve requires a separate disk seek (4ms) which is the equivalent of
-reading *2 megabytes* of `_source` field from disk! While returning a single
-stored field may be slightly faster than extracting it from `_source`,
-retrieving more than one field is likely to be slower.
-
-The only time when it may be useful to set document fields to
-`{"store": true }` is when you have a very large `_source` field and you only
-want to retrieve one or two small fields, such as the `title` and the
-`created` date.
-
-In a search request, you can ask for just certain fields by specifying the
-`fields` parameter in the request body:
+In a search request, you can ask for certain fields only by specifying the
+`_source` parameter in the request body:
 
 [source,js]
 --------------------------------------------------
 GET /_search
 {
-    "query":  { "match_all": {}},
-    "fields": [ "title", "created" ]
+    "query":   { "match_all": {}},
+    "_source": [ "title", "created" ]
 }
 --------------------------------------------------
 
+Values for these fields will be extracted from the `_source` field and
+returned instead of the full `_source`.
 
-Values for these fields will either be loaded from disk (if they are
-stored) or extracted from the `_source` field.
+.Stored fields
+****
+
+Besides indexing the values of a field, you can also choose to `store` the
+original field value for later retrieval. Users with a Lucene background use
+stored fields to choose which fields they would like to be able to return in
+their search results. In fact the `_source` field is a stored field.
+
+In Elasticsearch, setting individual document fields to be stored is usually a
+false optimization. The whole document is already stored as the `_source`
+field. It is almost always better to just extract the fields that you need
+using the `_source` parameter.
+
+****
+

@@ -1,15 +1,15 @@
 === Creating an index
 
-Up until now, we have created a new index by simply indexing a document
-into it.  The index is created with the default settings, and new
-fields are added to the type mapping using dynamic detection.
+Up until now, we have created a new index by simply indexing a document into
+it.  The index is created with the default settings, and new fields are added
+to the type mapping using dynamic mapping.
 
 Now we need more control over the process: we want to ensure that the index
-has been created with the correct number of primary shards, that analyzers
-and mappings are set up *before* we index any data.
+has been created with the appropriate number of primary shards, and that
+analyzers and mappings are set up *before* we index any data.
 
-To do this, we have to create the index manually, passing in any settings
-or type mappings in the request body, as follows:
+To do this, we have to create the index manually, passing in any settings or
+type mappings in the request body, as follows:
 
 [source,js]
 --------------------------------------------------
@@ -25,8 +25,9 @@ PUT /my_index
 --------------------------------------------------
 
 
-In fact, you can prevent the automatic creation of indices by adding the
-following setting to the `config/elasticsearch.yaml` file on each node:
+In fact, if you want to you can prevent the automatic creation of indices by
+adding the following setting to the `config/elasticsearch.yml` file on each
+node:
 
 [source,js]
 --------------------------------------------------
@@ -35,10 +36,13 @@ action.auto_create_index: false
 
 
 ****
-Later, we will discuss how you can use <<index-templates>>
-to pre-configure automatically created indices. This is particularly
-useful when indexing log data, allowing you to roll over to a new
-automatically created index every day.
+
+Later, we will discuss how you can use <<index-templates>> to pre-configure
+automatically created indices. This is particularly useful when indexing log
+data: you log into an index whose name includes the date and, as midnight
+rolls over, a new properly configured index automatically springs into
+existence.
+
 ****
 
 === Deleting an index
@@ -65,24 +69,6 @@ You can even delete *ALL* indices with:
 [source,js]
 --------------------------------------------------
 DELETE /_all
---------------------------------------------------
-
-
-You may want to disable the ability to delete all indices, by adding
-this setting to your `config/elasticsearch.yaml` file:
-
-[source,js]
---------------------------------------------------
-action.disable_delete_all_indices: true
---------------------------------------------------
-
-
-With this setting in effect, you will only be able to delete indices
-by being explicit:
-
-[source,js]
---------------------------------------------------
-DELETE /index_one,index_two
 --------------------------------------------------
 
 

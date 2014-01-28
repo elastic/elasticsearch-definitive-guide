@@ -1,139 +1,39 @@
 [[reindex]]
 === Reindexing your data
 
-While you can add new types to an index, or add new fields to a type,
-you can't add new analyzers or make changes to existing fields.  If you were
-to do so, the data that has already been indexed would be incorrect and
-your searches would no longer work as expected.
+While you can add new types to an index, or add new fields to a type, you
+can't add new analyzers or make changes to existing fields.  If you were to do
+so, the data that has already been indexed would be incorrect and your
+searches would no longer work as expected.
 
-The simplest way to apply these changes to your existing data is
-just to reindex it:  create a new index with the new settings and
-copy all of your documents from the old index to the new index.
+The simplest way to apply these changes to your existing data is just to
+reindex:  create a new index with the new settings and copy all of your
+documents from the old index to the new index.
 
-One of the advantages of the `_source` field is that you already have
-the whole document available to you in Elasticsearch itself. You don't
-have to rebuild your index from the database, which is usually much
-slower.
+One of the advantages of the `_source` field is that you already have the
+whole document available to you in Elasticsearch itself. You don't have to
+rebuild your index from the database, which is usually much slower.
 
-In order to reindex all of our documents in the old index efficiently,
-we use _scroll & scan_, in combination with the `bulk` API.
+To reindex all of the documents from the old index efficiently,  use
+<<scan-scroll,_scan & scroll_>> to retrieve batches of documents from the old index,
+and the <<bulk,`bulk` API>> to push them into the new index.
 
-[[scroll]]
-==== `scroll`
+.Reindexing in batches
+****
 
-A _scrolled search_ allows us to do an initial search and to keep pulling
-batches of results from Elasticsearch until there are no more results left.
-It's a bit like a _cursor_ in a traditional database.
-
-A scrolled search takes a snapshot in time -- it doesn't see any changes
-that are made to the index after the initial search request. It does this by
-keeping the old datafiles around, so that it can preserve its ``view'' on
-what the index looked like at the time it started.
-
-We start a scroll request by passing the `scroll` parameter to the search
-request, telling Elasticsearch how long it should keep the scroll open.
-
-[[scan]]
-==== `scan`
-
-In <<pagination>> we said that deep paging in a distributed system is very
-expensive and should be avoided.  But in order to reindex all of our data,
-we need to retrieve every document in the old index!
-
-The costly part of deep pagination is the global sorting of results (see
-<<distributed-search>> for more technical details).  But if
-we disable sorting then we can return all documents quite cheaply. To do
-this, we use a special search mode called `scan`.
-
-Scan instructs Elasticsearch to do no sorting, but to just return the next
-batch of results from every shard which still has results to return.
-
-==== Reindexing process
-
-First, create the new index, with the appropriate settings and mappings.
-Next, run the search request, telling Elasticsearch to use scanning
-and to keep the scroll request open for one minute:
-
-[source,js]
---------------------------------------------------
-GET /old_index/_search?search_type=scan&scroll=1m
-{
-    "query": { "match_all": {}},
-    "size":  1000
-}
---------------------------------------------------
-
-
-The response to this request doesn't include any hits, but does include a
-`_scroll_id`, which is a long Base 64 encoded string. Now we can pass
-the `_scroll_id` to the `_search/scroll` endpoint to retrieve the first batch of
-results:
-
-[source,js]
---------------------------------------------------
-GET /_search/scroll?scroll=1m
-c2Nhbjs1OzExODpRNV9aY1VyUVM4U0NMd2pjWlJ3YWlBOzExOTpRNV9aY1VyUVM4U0
-NMd2pjWlJ3YWlBOzExNjpRNV9aY1VyUVM4U0NMd2pjWlJ3YWlBOzExNzpRNV9aY1Vy
-UVM4U0NMd2pjWlJ3YWlBOzEyMDpRNV9aY1VyUVM4U0NMd2pjWlJ3YWlBOzE7dG90YW
-xfaGl0czoxOw==
---------------------------------------------------
-
-
-Note that we again specify `?scroll=1m`.  The scroll expiry is refreshed
-every time we run a scroll request, so it only needs to be long enough
-for us to reindex the current batch of results, not all of the documents
-in the index.
-
-The response to this scroll request returns a batch of results, which
-we can index into the new index with the the `bulk` API -- we just need
-to update the `_index` parameter of each document to have the new
-index name.
-
-The scroll request also returns  a *new `_scroll_id`*.  This is important:
-every time we make the next scroll request, we must pass the `_scroll_id`
-from the *previous* scroll request.
-
-When no more hits are returned, we have processed all matching documents.
-
-==== Choosing the right `size`
-
-We want to retrieve and reindex multiple documents at once, because
-it is more efficient to do so in bulk than document-by-document.  That said,
-there is a limit.  All of these documents have to be represented in
-memory in Elasticsearch, which means that less memory is available
-for other functions like responding to search requests.
-
-Also, the `size` parameter that we specified in the scrolled search request
-is somewhat misleading.  Instead of receiving a maximum of `size` results
-at a time, we receive `size * number_of_shards` results.  If our index
-has 5 primary shards, this means that the above query would return up to
-5,000 results from every scroll request.
-
-Fortunately, finding a good value for `size` is easy:  Start with a small
-`size` like 500 or 1,000 and measure the reindexing speed.  Increase the
-`size` until the reindexing speed stops increasing and starts to drop off.
-You have now found the ``sweet spot''. Depending on the
-average document size, you will probably find that something in the
-range of 1,000 to 5,000 works well.
-
-==== Reindexing in batches
-
-You can run multiple reindexing jobs at the same time, but you obviously
-don't want their results to overlap.  In our initial scrolled search request,
-we used the `match_all` query, but it is easy to break a big reindex down
-into smaller jobs by filtering on a date field instead:
+You can run multiple reindexing jobs at the same time, but you obviously don't
+want their results to overlap.  Instead, break a big reindex down into smaller
+jobs by filtering on a date or timestamp field:
 
 [source,js]
 --------------------------------------------------
 GET /old_index/_search?search_type=scan&scroll=1m
 {
     "query": {
-        "filtered": {
-            "range": {
-                "date": {
-                    "gte":  "2014-01-01",
-                    "lt":   "2014-02-01"
-                }
+        "range": {
+            "date": {
+                "gte":  "2014-01-01",
+                "lt":   "2014-02-01"
             }
         }
     },
@@ -142,10 +42,12 @@ GET /old_index/_search?search_type=scan&scroll=1m
 --------------------------------------------------
 
 
-Also, if you continue making changes to the old index, you will want to make
+If you continue making changes to the old index, you will want to make
 sure that you include the newly added documents in your new index as well.
 This can be done by rerunning the reindex process, but again filtering
 on a date field to only match documents that have been added since the
 last reindex process started.
+
+****
 
 

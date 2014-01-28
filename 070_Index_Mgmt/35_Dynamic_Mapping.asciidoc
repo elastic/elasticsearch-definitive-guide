@@ -1,9 +1,9 @@
 [[dynamic-mapping]]
 === Dynamic mapping
 
-As we discussed in <<mapping-intro>>, when Elasticsearch encounters a new
-field in a document, it uses _dynamic mapping_ to determine the datatype for
-the field and automatically adds the new field to the type mapping.
+When Elasticsearch encounters a previously unknown field in a document, it
+uses <<mapping-intro,_dynamic mapping_>> to determine the datatype for the
+field and automatically adds the new field to the type mapping.
 
 Sometimes this is the desired behaviour and sometimes it isn't. Perhaps
 you don't know what fields will be added to your documents later on,
@@ -30,18 +30,21 @@ PUT /my_index
 {
     "mappings": {
         "my_type": {
-            "dynamic":      "strict",
+            "dynamic":      "strict", <1>
             "properties": {
                 "title":  { "type": "string"},
                 "stash":  {
                     "type":     "object",
-                    "dynamic":  true
+                    "dynamic":  true <2>
                 }
             }
         }
     }
 }
 --------------------------------------------------
+<1> The `my_type` object will throw an exception if an unknown field
+    is encountered.
+<2> The `stash` object will create new fields dynamically.
 
 
 With this mapping, you can add new searchable fields into the `stash` object:
@@ -68,10 +71,7 @@ PUT /my_index/my_type/1
 --------------------------------------------------
 
 
-[NOTE]
-====
-Setting `dynamic` to `false` doesn't alter the contents of the
-`_source` field at all -- the `_source` will still contain the whole
-JSON document that you indexed.  However, any unknown fields will not be added
-to the mapping and will not be searchable.
-====
+NOTE: Setting `dynamic` to `false` doesn't alter the contents of the `_source`
+field at all -- the `_source` will still contain the whole JSON document that
+you indexed.  However, any unknown fields will not be added to the mapping and
+will not be searchable.

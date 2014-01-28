@@ -55,13 +55,12 @@ PUT /my_index
 
 
 With this mapping in place, a string will always be a `string`.  If you need
-a `date` field, you can add it manually.
+a `date` field, you have to add it manually.
 
 [NOTE]
 ====
 Elasticsearch's idea of what strings look like dates can be altered
-with the `dynamic_date_formats` setting, which we will discuss in
-<<dates>>.
+with the {ref}/mapping-root-object-type.html#_dynamic_date_formats[`dynamic_date_formats` setting].
 ====
 
 [[dynamic-templates]]
@@ -94,7 +93,7 @@ PUT /my_index
         "my_type": {
             "dynamic_templates": [
                 { "es": {
-                      "match":              "*_es",
+                      "match":              "*_es", <1>
                       "match_mapping_type": "string",
                       "mapping": {
                           "type":           "string",
@@ -102,7 +101,7 @@ PUT /my_index
                       }
                 }},
                 { "en": {
-                      "match":              "*",
+                      "match":              "*", <2>
                       "match_mapping_type": "string",
                       "mapping": {
                           "type":           "string",
@@ -112,7 +111,8 @@ PUT /my_index
             ]
 }}}
 --------------------------------------------------
-
+<1> Match string fields whose name ends in `_es`.
+<2> Match all other string fields.
 
 The `match_mapping_type`  allows you to apply the template only
 to fields of the specified type, as detected by the standard dynamic
@@ -138,5 +138,4 @@ The `unmatch` and `unmatch_path` patterns can be used to exclude fields
 that would otherwise match.
 
 More configuration options can be found in the
-http://www.elasticsearch.org/guide/reference/mapping/root-object-type/[
-reference documentation for the root object].
+{ref}/mapping-root-object-type.html[reference documentation for the root object].

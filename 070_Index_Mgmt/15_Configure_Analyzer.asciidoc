@@ -15,22 +15,19 @@ It consists of:
 
 * the `standard` tokenizer, which splits the input text on word boundaries
 * the `standard` token filter, which is intended to tidy up the the tokens
-  emitted by the tokenizer, but currently is a no-op
+  emitted by the tokenizer (but currently is a no-op)
 * the `lowercase` token filter which converts all tokens into lowercase
-* the `stop` token filter which removes English stopwords -- common words
+* the `stop` token filter which removes stopwords -- common words
   that have little impact on search relevance, such as `a`, `the`, `and`,
   `is` etc.
 
-Of course, the `standard` analyzer can be used on text from languages
-other than English, so the default choice of English stopwords may not be
-appropriate.
+By default the stopwords filter is disabled.  You can enable it by creating a
+custom analyzer based on the `standard` analyzer and setting the `stopwords`
+parameter. Either provide a list of stopwords or tell it to use a predefined
+stopwords list from a particular language.
 
-In order to use the correct stopwords list for your documents, you
-can customize the `standard` analyzer to create your own analyzer.
-This new analyzer will be based on the `standard` analyzer,
-but have a custom stopwords list. In the following example,
-we create a new analyzer called the `es_std` analyzer, which
-uses the predefined list of Spanish stopwords:
+In the following example, we create a new analyzer called the `es_std`
+analyzer, which uses the predefined list of Spanish stopwords:
 
 [source,js]
 --------------------------------------------------
@@ -49,17 +46,15 @@ PUT /spanish_docs
 }
 --------------------------------------------------
 
-
-The `es_std` analyzer only exists in the `spanish_docs` index where we
-have defined it.  It is not global.  To test it using the `analyze` API, we
-must specify the index name:
+The `es_std` analyzer is not global -- it only exists in the `spanish_docs`
+index where we have defined it. To test it with the `analyze` API, we must
+specify the index name:
 
 [source,js]
 --------------------------------------------------
 POST /spanish_docs/_analyze?analyzer=es_std
 El veloz zorro marrón
 --------------------------------------------------
-
 
 The abbreviated results show that the Spanish stopword `"El"` has been
 removed correctly:
