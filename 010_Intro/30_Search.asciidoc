@@ -2,7 +2,7 @@
 
 Let's try a search now -- after all, search is one of the reasons you are interested
 in Elasticsearch! For simple _ad hoc_ searches, we can use the _query string_ search
-method, so called because we pass the
+method, so called because we pass the query using a query string URI parameter:
 
 [source,js]
 --------------------------------------------------
