@@ -69,8 +69,8 @@ an _index_. Elasticsearch takes care of the details.
 
 We will discuss how to create and manage indices ourselves in <<index-management>>,
 but for now we will let Elasticsearch create the index for us.  All we have to
-do is to choose a name, which must be lower case, cannot begin with an
-underscore and cannot contain commas, e.g. `website`.
+do is to choose an index name.  This name must be lower case, cannot begin with an
+underscore and cannot contain commas. Let's use `website` as our index name.
 
 ==== `_type`
 
@@ -95,7 +95,7 @@ we will rely on Elasticsearch to detect our document's data structure
 automatically.
 
 A `_type` name can be lower or upper case, but shouldn't begin with an
-underscore, or contain commas, eg `user`.
+underscore, or contain commas.  We shall use `user` for our type name.
 
 ==== `_id`
 
