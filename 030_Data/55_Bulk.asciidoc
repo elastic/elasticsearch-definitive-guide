@@ -217,3 +217,7 @@ Try indexing typical documents in batches of increasing size. When performance
 starts to drop off, your batch size is too big. A good place to start is with
 batches of between 1,000 and 5,000 documents or, if your documents are very
 large, with even smaller batches.
+
+It is often useful to keep an eye on the physical size of your bulk requests.
+One thousand 1kb documents is very different than one thousand 1mb documents. 
+A good bulk size to start playing with is around 5-15mb in size.
