@@ -67,7 +67,7 @@ To put it all together, a complete `bulk` request has this form:
 [source,js]
 --------------------------------------------------
 POST /_bulk
-{ "delete": { "_index": "website", "_type": "blog", "_id": "123" }}
+{ "delete": { "_index": "website", "_type": "blog", "_id": "123" }} <1>
 { "create": { "_index": "website", "_type": "blog", "_id": "123" }}
 { "title":    "My first blog post" }
 { "index":  { "_index": "website", "_type": "blog" }}
@@ -75,7 +75,9 @@ POST /_bulk
 { "update": { "_index": "website", "_type": "blog", "_id": "123", "_retry_on_conflict" : 3} }
 { "doc" : {"title" : "My updated blog post"} } <1>
 --------------------------------------------------
-<1> Remember the final newline character.
+<1> Notice how the `delete` _action_ does not have a _request body_, it is 
+followed immediately by another _action_
+<2> Remember the final newline character.
 
 The Elasticsearch response contains the `items` array which lists the result of
 each request, in the same order as we requested them:
