@@ -1,30 +1,81 @@
 [preface]
 == Preface
-
 ////
 A (very) brief introduction.
 ////
+
+The world is swimming in data.  For years we have been simply overwhelmed
+by the quantity of data at our fingertips.  Technology has focused on 
+how to store and structure warehouses full of data.  This is superb...until you
+actually need to use that data.
+
+Elasticsearch is a new technology that focuses on how to *find* data, because 
+data is not useful just sitting on a hard drive.
 
 === Who Should Read This Book
 ////
 This is where you describe your reader. Think of this in terms of what they do in their jobs, how this will make their tasks easier, and what knowledge you'd like them to have before getting the most out of this book.
 ////
 
+You should read this book if you have data, need to find it *fast*, and need to
+scale past the capabilities of a single machine.
+
+Maybe you've been given a greenfield project and have the flexibility to design 
+the entire system ground up.  This new project is expected to grow by terrabytes
+in the coming years and you're promising aggressive, sub-second response times.
+This project requires all the features that modern users expect: full-text search,
+autocompletion, suggestions, geolocation support.  And these features need to scale
+with your data and maintain fast response times.
+
+Equally likely, you may be refactoring and replacing older systems.  You need to 
+integrate with legacy architecture and existing user interfaces.  You need to
+replicate the functionality of the old system while delivering better performance
+(which is probably the reason for refactoring in the first place).  And crucially, 
+this new architecture needs to scale over time so that you don't refactor *again* 
+in a few years.
+
+Or finally, maybe you are in dev-ops.  While all the other departments are trying
+to wrangle data into a usable product, you're trying to keep all of their servers
+from bursting into flames.  You have dozens of clusters with hundreds of machines,
+all spewing forth logs and warnings, many of which go unnoticed until that
+3am wakeup call.  You are looking for a way to take these logs and derive meaning
+from them before it becomes a catastrophe.
+
+Elasticsearch is the answer to all of these scenarios.  At its heart, Elasticsearch
+is a search engine.  But if you think about it, aren't most problems just about
+searching for the right piece of data that your application needs?
+
 === Why I Wrote This Book
 ////
 Here you should describe how this book might have helped you at one point, and how this book adds to the body of knowledge or fills a gap. Another way to think of this is 'what we hope you'll get out of this.' You could also call this section "Goals of This Book"
 ////
+
+We wrote this book because Elasticsearch needs a narrative documentation.  The 
+existing reference documentation is excellent...if you know what you are doing.
+It assumes that you are intimately familiar with information retrieval concepts,
+distributed systems, the query DSL and a host of other topics.
+
+This book makes no such assumptions.  It has been written so that a complete
+beginner -- to both search and distributed systems -- can pick it up and start building
+a prototype within a few chapters.  This book is a soup-to-nuts narrative.  We
+introduce theoretical concepts and build with concrete examples, moving from
+beginner topics to advanced functionality.
+
+The existing reference documentation explains *how* to use features.  We want this 
+book to explain *why* and *when* to use various features.
 
 === A Word on [something] Today
 ////
 Optional section. Depending on your book's topic, you can re-word the above to be, "A Word on JavaScript Today," or "A Word on Big Data Today," etc. Then place your book in context of the state of play of the topic.  This is key to anchoring your reader and getting them oriented to your perspective as they navigate the book.  
 ////
 
+Ehm??  Need this section?
+
 === Navigating This Book
 ////
 Here is where you'll offer a summary of each of your book's chapters.  I've inserted a sample below from a Java book:
 
-This book is organized roughly as follows:
+This book is organized roughly into three sections:
 * Chapters 1 and 2 provide a basic introduction to Java concepts and a tutorial to give you a jump start on Java programming
 * Chapter 3 discusses fundamental tools for developing with Java (the compiler, the interpreter, and the JAR file package).
 * Chapter 4 through 7 describe the Java language itself, beginning with the basic syntax and then covering classes and objects, exceptions, arrays, enumerations, annotations, and much more.
@@ -37,10 +88,84 @@ If you're like us, you don't read books from front to back. If you're really lik
 * And so on..
 ////
 
+This book is written around Elasticsearch 1.0.  While most of the syntax
+and concepts are backwards-compatible with older versions, you should Elasticsearch
+1.0 in conjunction with this book for the best experience. 
+
+This book is organized into three main sections:
+
+==== Part 1: "Getting Started"
+This section introduces you to the fundamental concepts in Elasticsearch.  After
+reading this section of the book, you should have enough knowledge to build a
+prototype, navigate the reference documentation and start to think about more 
+advanced functionality.
+
+* Chapter 1 ("you know, for search…") is a crash-course introduction to
+Elasticsearch, introducing the wide array of functionality and a taste of the syntax
+* Chapter 2 ("life inside a cluster") introduces you to the distributed nature 
+of Elasticsearch
+* Chapter 3 ("data in, data out") describes how to get your data into and out of
+Elasticsearch, while Chapter 4 ("distributed document store") explains how all of
+this works in a distributed environment
+* Chapter 5 ("searching – the basic tools") explains important search terminology
+and introduces some simple search syntax
+* Chapter 6 ("mapping and analysis") and Chapter 7 ("full body search") introduce
+the more robust Query DSl and how to use it to perform complex searches
+* Chapter 8 ("sorting and relevance") dives deeper into search theory and gives 
+you the tools to understand why documents are returned as a search result
+* Finally, Chapter 9 ("index management") closes with some useful administrative
+tools to manage your indices
+
+==== Part 2: "Search in Depth"
+This section takes the knowledge gained in Part 1 and begins to utilize it for
+advanced functionality.  These chapters deal with many of the use-cases you see
+in the real world: searching for structured data, dealing with multiple fields,
+handling synonyms, etc. 
+
+These chapters focus less on the syntax of a query, and more on the problem that
+you are trying to solve.  While reading these chapters, you should begin to see
+parallels to various facets of your data.  Not all sections will apply to your 
+problem, but the concepts discussed will give you an idea how to think about
+finding data.
+
+* Chapter 10 ("structured search") introduces structured search and how it differs
+from full-text searching
+* Chapter 11 and 12 discuss dates and times, and how they can be searched
+* Chapter 13 ("full text search") immerses you in the intricacies of full-text
+search.  This section will take your search results from "good" to "great", by 
+giving you a deeper understanding of what is happening *inside* of Elasticsearch
+* Chapter 14 ("multi-field search") is entirely about searching multiple fields
+at the same time, since this introduces many additional complexities in scoring
+and relevancy
+* Chapter 15 discusses making searches more exact with phrase matching, while
+Chapter 16 shows how to make your searches less precise with partial matches
+* Chapter 17 and 18 deal with the intricacies of written language and how to 
+handle internationalization
+* Chapter 19 introduces fuzzy searching and tolerating typos
+* Chapter 20 exposes the nitty-gritty details of scoring, boosting and relevance
+* Chapter 21 talks about some of the ways to deal with text that isn't exactly prose:
+file paths, encodings, binary data
+
+==== Part 3: "<something>"
+Finally, Part 3 deals with topics that aren't strictly search, but utilize the
+same underlying infrastructure.  In these sections, you'll learn about
+real-time analytics, geolocation search and reversed-search with percolation.
+
+You'll also learn some common patterns of structuring data, which are useful
+when planning your system.  Finally, we wrap up the book with some tips for
+moving to production and how to monitor your cluster's health.
+
+
 === Online Resources
 ////
 Here is where you should list online references you feel readers should add to their bookmarks or should familiarize themselves with prior to beginning your book.
 ////
+
+Because this book tries to focus on problem solving in Elasticsearch and less 
+about syntax, we sometimes reference the existing documentation for a complete
+list of parameters.  The reference documentation can be found here:
+
+<link>
 
 === Conventions Used in This Book
 ////
