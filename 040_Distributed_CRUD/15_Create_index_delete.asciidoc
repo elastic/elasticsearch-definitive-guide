@@ -44,9 +44,7 @@ succeeded or not.
 
 It is advisable to use the default `sync` replication as it is possible to
 overload Elasticsearch by sending too many requests without waiting for their
-completion.  It also requires a special preference (discussed next in 
-<<distrib-read>>) since replicas are no longer guaranteed to be consistent with
-the primary shard.
+completion.
 --
 
 `consistency`::
