@@ -52,7 +52,8 @@ session ID of a user, which would ensure that the user always gets results
 from the same node.
 
 .Be careful with arbitrary strings!
-****
+[IMPORTANT]
+================================================
 Carefully evaluate if you really need to use this functionality. The provided 
 string is hashed into a value modulo the number of nodes in your cluster: 
 therefore, the preference can shift if you add or remove nodes to the cluster.  
@@ -60,4 +61,4 @@ therefore, the preference can shift if you add or remove nodes to the cluster.
 Furthermore, if your arbitrary strings are not well distributed (e.g. 90% of 
 requests use the same string), it is very easy to make a single node "hot", 
 where that node services all requests.
-****
+================================================

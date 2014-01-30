@@ -99,7 +99,8 @@ Elasticsearch will return any results that it has managed to gather
 from shards which responded before the request timed out.  
 
 .Timeout is not a circuit breaker
-****
+[IMPORTANT]
+================================================
 It should be noted that this timeout does not halt the execution of the query,
 it merely tells the coordinating node to return the results _so far_ and close
 the connection.  In the background, other shards may still be processing the
@@ -107,5 +108,5 @@ query even though results have been sent.
 
 Use the timeout because it is important to your SLA, not because you want it to
 increase performance by "short-circuiting" query execution.
-****
+================================================
 
