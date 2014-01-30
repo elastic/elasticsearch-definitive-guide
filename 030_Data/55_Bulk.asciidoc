@@ -73,10 +73,10 @@ POST /_bulk
 { "index":  { "_index": "website", "_type": "blog" }}
 { "title":    "My second blog post" }
 { "update": { "_index": "website", "_type": "blog", "_id": "123", "_retry_on_conflict" : 3} }
-{ "doc" : {"title" : "My updated blog post"} } <1>
+{ "doc" : {"title" : "My updated blog post"} } <2>
 --------------------------------------------------
-<1> Notice how the `delete` _action_ does not have a _request body_, it is 
-followed immediately by another _action_
+<1> Notice how the `delete` _action_ does not have a _request body_, it is
+    followed immediately by another _action_.
 <2> Remember the final newline character.
 
 The Elasticsearch response contains the `items` array which lists the result of
@@ -219,5 +219,5 @@ batches of between 1,000 and 5,000 documents or, if your documents are very
 large, with even smaller batches.
 
 It is often useful to keep an eye on the physical size of your bulk requests.
-One thousand 1kb documents is very different than one thousand 1mb documents. 
-A good bulk size to start playing with is around 5-15mb in size.
+One thousand 1kB documents is very different than one thousand 1MB documents.
+A good bulk size to start playing with is around 5-15MB in size.
