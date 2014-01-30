@@ -38,9 +38,9 @@ Field data is used in several places in Elasticsearch:
 * scripts which refer to fields
 
 Clearly, this can consume a lot of memory, especially for high cardinality
-string fields -- string fields that have many unique values. Fortunately,
-insufficient memory is a problem which can be solved by horizontal scaling,
-by adding more nodes to your cluster.
+string fields -- string fields that have many unique values -- like the body
+of an email. Fortunately, insufficient memory is a problem which can be solved
+by horizontal scaling, by adding more nodes to your cluster.
 
 For now, all you need to know is what field data is, and to be aware that it
 can be memory hungry.  Later we will show you how to see how much memory field

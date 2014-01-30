@@ -90,6 +90,21 @@ sorting -- we're not sorting by relevance, so it doesn't make sense to keep
 track of the `_score`.  If you want the `_score` to be calculated regardless,
 then you can set the `track_score` parameter to `true`.
 
+.Default ordering
+****
+
+As a shortcut, you can specify just the name of the field to sort on:
+
+[source,js]
+--------------------------------------------------
+    "sort": "number_of_children"
+--------------------------------------------------
+
+Fields will be sorted in ascending order by default, and
+the `_source` value in descending order.
+
+****
+
 ==== Multi-level sorting
 
 Perhaps we want to combine the `_score` from a query with the `date`, and
@@ -120,19 +135,15 @@ Multi-level sorting doesn't have to involve the `_score` -- you could sort
 using several different fields, on geo-distance or on a custom value
 calculated in a script.
 
-.Default ordering
+.Sorting and query string search
 ****
-
-As a shortcut, you can specify just the name of the field to sort on:
+Query string search also supports custom sorting, using the `sort` parameter
+in the query string:
 
 [source,js]
 --------------------------------------------------
-    "sort": "number_of_children"
+GET /_search?sort=date:desc&sort=_score&q=search
 --------------------------------------------------
-
-Fields will be sorted in ascending order by default, and
-the `_source` value in descending order.
-
 ****
 
 ==== Sorting on multi-value fields
@@ -155,26 +166,6 @@ could sort on the earliest date in each `dates` field using:
 }
 --------------------------------------------------
 
-However, analyzed string fields are not so easy. If you analyze a string like
-`"fine old art"`, it results in three terms. We probably want to sort
-alphabetically on the first term, then the second term, etc, but Elasticsearch
-doesn't have this information at its disposal.
 
-You can use the `min` and `max` sort modes (it uses `min` by default) but that
-will result in sorting on either `art` or `old`, neither of which was the
-intent. Later on in <<mapping>>, we will show you how to index a single field
-both as an `analyzed` full text field (for searching) and as a `not_analyzed`
-string field for sorting.
-
-.Sorting and query string search
-****
-Query string search also supports custom sorting, using the `sort` parameter
-in the query string:
-
-[source,js]
---------------------------------------------------
-GET /_search?sort=date:desc&sort=_score&q=search
---------------------------------------------------
-****
 
 
