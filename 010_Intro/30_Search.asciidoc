@@ -142,7 +142,7 @@ GET /_all/user/_search
 --------------------------------------------------
 
 
-The `facets` section of the JSON response to the above looks like this:
+The `aggregations` section of the JSON response to the above looks like this:
 
 [source,js]
 --------------------------------------------------
@@ -164,5 +164,5 @@ The two most popular interests are `whales` and `golf`. Our user could narrow
 down their search, by limiting the results to just users who are interested in
 whales.
 
-The output from facets can often be presented visually, as a pie chart or
+The output from aggregations can often be presented visually, as a pie chart or
 a histogram, or geographic results can be overlaid on a map.

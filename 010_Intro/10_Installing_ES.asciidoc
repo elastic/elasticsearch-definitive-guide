@@ -7,7 +7,7 @@ The only requirement for installing Elasticsearch is a recent version of Java.
 Preferably, you should install the latest version of the official Java
 from http://www.java.com[www.java.com].
 
-Now you can download the latest version of Elasticsearch from
+You can download the latest version of Elasticsearch from
 http://www.elasticsearch.org/download/.
 
 [source,js]
@@ -43,7 +43,7 @@ You should see a response like this:
    "name": "Shrunken Bones",
    "version": {
       "number": "1.0.0",
-      "lucene_version": "4.6"
+      "lucene_version": "4.6.1"
    },
    "tagline": "You Know, for Search"
 }
@@ -56,7 +56,7 @@ start experimenting with it.
 ****
 
 A _node_ is a running instance of Elasticsearch. A _cluster_ is a group of
-nodes with the same `cluster.name` that are working together to share data,
+nodes with the same `cluster.name` that are working together to share data
 and to provide failover and scale, although a single node can form a cluster
 all by itself.
 
