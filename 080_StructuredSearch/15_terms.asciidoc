@@ -1,10 +1,11 @@
+=== Finding multiple exact values
 
-The `term` filter is useful for finding a single value, but you'll probably
-want to search for multiple values.  What if you want to find documents that
-have a price of $20 or $30?
+The `term` filter is useful for finding a single value, but often you'll  want
+to search for multiple values.  What if you want to find documents that have a
+price of $20 or $30?
 
 Rather than using multiple `term` filters, you can instead use a single `terms`
-filter (note the 's' at the end).  The `terms` filter is simply the plural
+filter (note the ``s'' at the end).  The `terms` filter is simply the plural
 version of the singular `term` filter.
 
 It looks looks nearly identical to a vanilla `term` too.  Instead of
@@ -44,22 +45,18 @@ The query will return the second and third documents:
 --------------------------------------------------
 "hits" : [
     {
-        "_index" : "my_store",
-        "_type" : "products",
-        "_id" : "2",
+        "_id" :    "2",
         "_score" : 1.0,
         "_source" : {
-          "price" : 20,
+          "price" :     20,
           "productID" : "KDKE-B-9947-#kL5"
         }
     },
     {
-        "_index" : "my_store",
-        "_type" : "products",
-        "_id" : "3",
+        "_id" :    "3",
         "_score" : 1.0,
         "_source" : {
-          "price" : 30,
+          "price" :     30,
           "productID" : "JODL-X-1937-#pV7"
         }
     }

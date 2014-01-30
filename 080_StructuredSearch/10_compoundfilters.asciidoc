@@ -1,3 +1,4 @@
+=== Combining filters
 
 The previous two examples showed a single filter in use. In practice you
 will probably need to filter on multiple values or fields.  For example, how
@@ -5,15 +6,15 @@ would you express this SQL in Elasticsearch?
 
 [source,sql]
 --------------------------------------------------
-SELECT product 
-FROM products 
-WHERE 
-  (price = 20 OR productID = "XHDK-A-1293-#fJ3") AND
-  (price != 30)
+SELECT product
+FROM   products
+WHERE  (price = 20 OR productID = "XHDK-A-1293-#fJ3")
+  AND  (price != 30)
 --------------------------------------------------
 
-In these situations, you will need the `bool` filter.  This is a compound filter
-that accepts other filters, combining them in various boolean combinations.
+In these situations, you will need the `bool` filter.  This is a _compound
+filter_ that accepts other filters as arguments, combining them in various
+boolean combinations.
 
 [[bool-filter]]
 ==== Bool Filter
@@ -24,35 +25,30 @@ The `bool` filter is composed of three sections:
 --------------------------------------------------
 {
    "bool" : {
-      "must" : [],
-      "should" : [],
+      "must" :     [],
+      "should" :   [],
       "must_not" : [],
    }
 }
 --------------------------------------------------
 
-
- - *Must*: These clauses are required for the document to be returned
- as a match. Effectively, this is equivalent to ANDing all clauses inside the
- `must`.
-
- - *Must_not*: A document won't be returned if *any* of these clauses match.  
- Effectively, this is a set of NOT clauses.
-
- - *Should*: These clauses are optional, but *at least one* needs to match.  
- Effectively, this is a set of OR clauses.
-
-
-
-Each section of the `bool` filter is optional (e.g. you can have a Should clause
-and nothing else), and each section can contain one or more filters.
+[horizontal]
+`must`::     All of these clauses *must* match. The equivalent of `AND`.
+`must_not`:: All of these clauses *must_not* match. The equivalent of `NOT`.
+`should`::   At least one of these clauses must match. The equivalent of `OR`.
 
 And that's it! When you need multiple filters, simply place them into the
-different sections of the `bool` filter.  
+different sections of the `bool` filter.
 
-With Elasticsearch, we will take the two `term` filters that we used previously
-and place them inside the `should` clause of a `bool` filter.  Since the `should`
-acts as a logical OR, we'll get the same behavior as the above SQL:
+****
+Each section of the `bool` filter is optional (e.g. you can have a `must`
+clause and nothing else), and each section can contain a single filter or an
+array of filters.
+****
+
+To replicate the SQL example above, we will take the two `term` filters that
+we used previously and place them inside the `should` clause of a `bool`
+filter, and add another clause to deal with the `NOT` condition:
 
 [source,js]
 --------------------------------------------------
@@ -73,14 +69,13 @@ GET /my_store/products/_search
          }
       }
    }
-
 }
 --------------------------------------------------
-<1> Note that we still need to use a `filtered_query` to wrap everything
+<1> Note that we still need to use a `filtered` query to wrap everything.
 <2> These two `term` filters are _children_ of the `bool` filter, and since they
-are placed inside the `should` clause, at least one of them needs to match
+    are placed inside the `should` clause, at least one of them needs to match.
 <3> If a product has a price of `30` it is automatically excluded because it
-matches a `must_not` clause
+    matches a `must_not` clause.
 
 Our search results return two hits, each document satisfying a different clause
 in the `bool` filter:
@@ -89,29 +84,25 @@ in the `bool` filter:
 --------------------------------------------------
 "hits" : [
     {
-        "_index" : "my_store",
-        "_type" : "products",
-        "_id" : "1",
-        "_score" : 1.0,
+        "_id" :     "1",
+        "_score" :  1.0,
         "_source" : {
-          "price" : 10,
+          "price" :     10,
           "productID" : "XHDK-A-1293-#fJ3" <1>
         }
     },
     {
-        "_index" : "my_store",
-        "_type" : "products",
-        "_id" : "2",
-        "_score" : 1.0,
+        "_id" :     "2",
+        "_score" :  1.0,
         "_source" : {
-          "price" : 20, <2>
+          "price" :     20, <2>
           "productID" : "KDKE-B-9947-#kL5"
         }
     }
 ]
 --------------------------------------------------
-<1> This matches the `term` filter for `productID = "XHDK-A-1293-#fJ3"`
-<2> This matches the `term` filter for `price = 20`
+<1> Matches the `term` filter for `productID = "XHDK-A-1293-#fJ3"`
+<2> Matches the `term` filter for `price = 20`
 
 ==== Nesting boolean filters
 
@@ -125,10 +116,10 @@ Given this SQL statement:
 [source,sql]
 --------------------------------------------------
 SELECT document
-FROM products
-WHERE productID = "KDKE-B-9947-#kL5"
-  OR ( productID = "JODL-X-1937-#pV7"
-    AND price = 30 )
+FROM   products
+WHERE  productID      = "KDKE-B-9947-#kL5"
+  OR (     productID = "JODL-X-1937-#pV7"
+       AND price     = 30 )
 --------------------------------------------------
 
 We can translate it into a pair of nested `bool` filters:
@@ -154,14 +145,14 @@ GET /my_store/products/_search
          }
       }
    }
-
 }
 --------------------------------------------------
 <1> Because the `term` and the `bool` are sibling clauses inside of the first
-boolean `should`, at least one of these filters must match for a document to be
-a hit
-<2> These two `term` clauses are siblings in a `must` clause, so they both have
-to match for a document to be returned as a hit
+    boolean `should`, at least one of these filters must match for a document
+    to be a hit.
+
+<2> These two `term` clauses are siblings in a `must` clause, so they both
+    have to match for a document to be returned as a hit.
 
 The results show us two documents, one matching each of the `should` clauses:
 
@@ -169,22 +160,18 @@ The results show us two documents, one matching each of the `should` clauses:
 --------------------------------------------------
 "hits" : [
     {
-        "_index" : "my_store",
-        "_type" : "products",
-        "_id" : "2",
-        "_score" : 1.0,
+        "_id" :     "2",
+        "_score" :  1.0,
         "_source" : {
-          "price" : 20,
+          "price" :     20,
           "productID" : "KDKE-B-9947-#kL5" <1>
         }
     },
     {
-        "_index" : "my_store",
-        "_type" : "products",
-        "_id" : "3",
-        "_score" : 1.0,
+        "_id" :     "3",
+        "_score" :  1.0,
         "_source" : {
-          "price" : 30, <2>
+          "price" :      30, <2>
           "productID" : "JODL-X-1937-#pV7" <2>
         }
     }
@@ -193,7 +180,5 @@ The results show us two documents, one matching each of the `should` clauses:
 <1> This productID matches the `term` in the first `bool`
 <2> These two fields match the `term` filters in the nested `bool`
 
-This was just a simple example, but it demonstrates how boolean filters clauses
-can be selected for the appropriate logic (e.g. and/or/not) and nested inside
-of each other.  With this framework, you can make as complex of boolean logic
-as you need.
+This was just a simple example, but it demonstrates how boolean filters can be
+used as building blocks to construct complex logical conditions.

@@ -1,0 +1,249 @@
+=== Dealing with null values
+
+Think back to our earlier example where documents have a field named `tags`.
+This is a multi-valued field.  A document may have one tag, many tags, or
+potentially no tags at all. If a field has no values, how is it stored in an
+inverted index?
+
+That's a trick question, because the answer is: it isn't stored at all. Let's
+look at that inverted index from the last section:
+
+[width="50%",frame="topbot"]
+|==========================
+| Token         | DocIDs
+|`open_source`  | `2`
+|`search`       | `1`,`2`
+|==========================
+
+How would you store a field that doesn't exist in that data structure?  You
+can't!  An inverted index is simply a list of tokens and the documents that
+contain them.  If a field doesn't exist... it doesn't hold any tokens, which
+means it won't be represented in an inverted index data structure.
+
+Ultimately, this means that a `null`, `[]` (an empty array), and `[null]`
+are all equivalent...they simply don't exist in the inverted index!
+
+Obviously the world is not simple, and data is often missing fields, contains
+explicit nulls or empty arrays. To deal with these situations, Elasticsearch has
+a few tools to work with null or missing values.
+
+==== Exists Filter
+
+The first tool in your arsenal is the `exists` filter.  This filter will return
+documents that have any value in the specified field. Let's use the tagging example
+and index some example documents:
+
+[source,js]
+--------------------------------------------------
+POST /my_index/posts/_bulk
+{ "index": { "_id": "1"              }}
+{ "tags" : ["search"]                }  <1>
+{ "index": { "_id": "2"              }}
+{ "tags" : ["search", "open_source"] }  <2>
+{ "index": { "_id": "3"              }}
+{ "other_field" : "some data"        }  <3>
+{ "index": { "_id": "4"              }}
+{ "tags" : null                      }  <4>
+{ "index": { "_id": "5"              }}
+{ "tags" : ["search", null]          }  <5>
+
+--------------------------------------------------
+<1> The `tags` field has one value.
+<2> The `tags` field has two values.
+<3> The `tags` field is missing altogether.
+<4> The `tags` field is set to `null`.
+<5> The `tags` field has one value and a `null`.
+
+The resulting inverted index for our `tags` field will look like this:
+
+[width="50%",frame="topbot"]
+|==========================
+| Token        | DocIDs
+|`open_source` | `2`
+|`search`      | `1`,`2`,`5`
+|==========================
+
+Our objective is to find all documents where a tag is set.  We don't care what
+the tag is, so long as it exists within the document.  In SQL parlance,
+we would use an `IS NOT NULL` query:
+
+[source,SQL]
+--------------------------------------------------
+SELECT tags
+FROM   posts
+WHERE  tags IS NOT NULL
+--------------------------------------------------
+
+In Elasticsearch, we use the `exists` filter:
+
+[source,js]
+--------------------------------------------------
+GET /my_index/posts/_search
+{
+    "query" : {
+        "filtered" : {
+            "filter" : {
+                "exists" : { "field" : "tags" }
+            }
+        }
+    }
+}
+--------------------------------------------------
+
+Our query returns three documents:
+
+[source,json]
+--------------------------------------------------
+"hits" : [
+    {
+      "_id" :     "1",
+      "_score" :  1.0,
+      "_source" : { "tags" : ["search"] }
+    },
+    {
+      "_id" :     "5",
+      "_score" :  1.0,
+      "_source" : { "tags" : ["search", null] } <1>
+    },
+    {
+      "_id" :     "2",
+      "_score" :  1.0,
+      "_source" : { "tags" : ["search", "open source"] }
+    }
+]
+--------------------------------------------------
+<1> Doc `5` is returned even though it contains a `null` value. The field
+    exists because a real value tag was indexed, so the `null` had no impact
+    on the filter.
+
+The results are easy to understand.  Any document that has actual terms in the
+`tags` field was returned as a hit.  The only two documents that were excluded
+were documents `3` and `4`.
+
+==== Missing Filter
+
+The `missing` filter is essentially the inverse of the `exists`: it returns
+documents where there is _no_ value for a particular field, much like this
+SQL:
+
+[source,SQL]
+--------------------------------------------------
+SELECT tags
+FROM   posts
+WHERE  tags IS  NULL
+--------------------------------------------------
+
+Let's swap the `exists` filter for a `missing` filter from our example above:
+
+[source,js]
+--------------------------------------------------
+GET /my_index/posts/_search
+{
+    "query" : {
+        "filtered" : {
+            "missing" : { "field" : "tags" }
+        }
+    }
+}
+--------------------------------------------------
+
+And, as you would expect, we get back the two docs which have no real values
+in the `tags` field -- docs `3` and `4`:
+
+[source,json]
+--------------------------------------------------
+"hits" : [
+    {
+      "_id" :     "3",
+      "_score" :  1.0,
+      "_source" : { "other_field" : "some data" }
+    },
+    {
+      "_id" :     "4",
+      "_score" :  1.0,
+      "_source" : { "tags" : null }
+    }
+]
+--------------------------------------------------
+
+.When `null` means `null`
+****
+
+Sometimes you need to be able to distinguish between a field that doesn't have
+a value, and a field that has been explicitly set to `null`. With the default
+behavior that we saw above, this is impossible -- the data is lost. Luckily,
+there is an option that we can set that replaces explicit  `null` values with
+a ``placeholder'' value of our choosing.
+
+When specifying the mapping for a string, numeric, boolean or date field, you
+can also set a `null_value` which will be used whenever an explicit `null`
+value is encountered.  A field without a value will still be excluded from the
+inverted index.
+
+When choosing a suitable `null_value` ensure that:
+
+*  it matches the field's type.  You can't use a string `null_value` in a
+   field of type `date`
+
+*  it is different from the normal values that the field may contain, to
+   avoid confusing real values with `null` values
+
+****
+
+==== Exists/Missing on Objects
+
+The `exists` and `missing` filters also work on inner objects, not just core
+types.  With the following document:
+
+[source,js]
+--------------------------------------------------
+{
+   "name" : {
+      "first" : "John",
+      "last" :  "Smith"
+   }
+}
+--------------------------------------------------
+
+you can check for the existence of `name.first` and `name.last` but also just
+`name`. However, in <<mapping>> we said that an object like the above is
+flattened internally into a simple field-value structure, much like this:
+
+[source,js]
+--------------------------------------------------
+{
+   "name.first" : "John",
+   "name.last"  : "Smith"
+}
+--------------------------------------------------
+
+So how can we use an `exists` or `missing` filter on the `name` field, which
+doesn't really exist in the inverted index?
+
+The reason that it works is that a filter like:
+
+[source,js]
+--------------------------------------------------
+{
+    "exists" : { "field" : "name" }
+}
+--------------------------------------------------
+
+is really executed as:
+
+[source,js]
+--------------------------------------------------
+{
+    "bool": {
+        "should": [
+            { "exists": { "field": { "name.first" }}},
+            { "exists": { "field": { "name.last"  }}}
+        ]
+    }
+}
+--------------------------------------------------
+
+That also means that if `first` and `last` were both empty, then the `name`
+namespace would not exist.
+
+

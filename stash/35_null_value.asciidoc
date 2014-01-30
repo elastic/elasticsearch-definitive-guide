@@ -1,19 +1,14 @@
 
 ==== Default values for null fields
 
-As we saw above, Elasticsearch basically ignores any `null` value.  If it is
-in an array, it is as if nothing was specified.  If it is the value of a field,
-it is as if the field wasn't indexed at all.
+Sometimes you need to be able to distinguish between a field that doesn't have
+a value, and a field that has been explicitly set to `null`. With the default
+behavior that we saw above, this is impossible.  The data is  lost. Luckily,
+there is an option that we can set that replaces explicit  `null` values with
+a ``placeholder'' value.
 
-But sometimes you need to be able to distinguish between a field that doesn't 
-have a value, and a field that has been explicitly set to `null`
-
-With the default behavior that we saw above, this is impossible.  The data is 
-lost.  Luckily, there is an option that we can set that overwrites explicit 
-`null` with a "placeholder" value.
-
-Most core types (String, Number, Boolean, Date) support an option to define a 
-null value with your own placeholder.  This option is called `null_value` and 
+Most core types (String, Number, Boolean, Date) support an option to define a
+null value with your own placeholder.  This option is called `null_value` and
 is set in the mappings of a type.
 
 In this mapping, we define a string as the default when a `null` is encountered.
@@ -56,8 +51,8 @@ POST /my_index/posts/_bulk
 
 Now, whenever an explicit `null` is encountered, Elasticsearch will replace it
 with the term `"NULL"`.  This means the term `"NULL"` is now part of the
-inverted index, so Elasticsearch can use the term for more advanced behavior.  
-It also means that your null-placeholder must be unique and *not used in your 
+inverted index, so Elasticsearch can use the term for more advanced behavior.
+It also means that your null-placeholder must be unique and *not used in your
 normal data*, otherwise you'll get some very strange results!
 
 After this indexing, our inverted index will look like this:
@@ -89,7 +84,7 @@ GET /my_index/posts/_search
         "filtered" : {
             "filter" : {
                 "missing" : {"field" : "tags"}
-            } 
+            }
         }
     }
 }
@@ -100,17 +95,17 @@ Only document `3` is returned:
 
 [source,js]
 --------------------------------------------------
-"hits" : [ 
+"hits" : [
     {
       "_index" : "my_index",
       "_type" : "posts",
       "_id" : "3",
       "_score" : 1.0, "_source" : { "other_field" : "some data" }
-    } 
+    }
 ]
 --------------------------------------------------
 
-This makes sense when you think about what is happening internally.  
+This makes sense when you think about what is happening internally.
 Elasticsearch is indexing an actual value for the field (`"NULL"`), which means
 the field is not technically missing anymore.
 
@@ -119,8 +114,8 @@ were actually omitted in the original document, and fields that were explicitly
 set to `null` but now have a placeholder value.  By default, the `missing` filter
 will only show you documents where the field was omitted entirely.
 
-This behavior is modifiable using two different options: `null_value` and 
-`existence`.  Both values can be set true or false, and the different 
+This behavior is modifiable using two different options: `null_value` and
+`existence`.  Both values can be set true or false, and the different
 combinations of these two options will give you different search results.
 
 `null_value` controls how explicit `nulls` are handled.  By setting this to true,

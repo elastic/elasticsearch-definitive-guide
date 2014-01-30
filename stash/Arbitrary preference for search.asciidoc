@@ -1,0 +1,10 @@
+
+Arbitrary string::
+
+The `preference` parameter can be set to any arbitrary string, such as the
+session ID of a user, which would ensure that the user always gets results
+from the same node.  While this is less useful when retrieving individual
+documents, it can be very useful when searching: two documents that are ranked
+as equally relevant by a search query may be returned in a different order by
+different shards. Always returning results from the same shard means that the
+user will see the results in a consistent order.

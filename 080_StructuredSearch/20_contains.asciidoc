@@ -1,4 +1,3 @@
-
 ==== Contains, but does not equal
 
 It is important to understand that `term` and `terms` are "contains" operations,
@@ -10,7 +9,7 @@ _both_ of the following documents:
 [source,js]
 --------------------------------------------------
 { "tags" : ["search"] }
-{ "tags" : ["search", "open source"] } <1>
+{ "tags" : ["search", "open_source"] } <1>
 --------------------------------------------------
 
 <1> This document is returned, even though it has terms other than `"search"`
@@ -21,25 +20,28 @@ example, we have the following inverted index:
 
 [width="50%",frame="topbot"]
 |==========================
-| Token | DocIDs
-|`search`| `1`,`2`
+| Token        | DocIDs
 |`open_source` | `2`
+|`search`      | `1`,`2`
 |==========================
 
 When a `term` filter is executed for the token `search`, it goes straight to the
 corresponding entry in the inverted index and extracts the associated doc IDs.
-As you can see, both doc `1` and `2` contain the token in the inverted index, 
+As you can see, both doc `1` and `2` contain the token in the inverted index,
 therefore they are both returned as a result.
 
+****
 The nature of an inverted index also means that entire field equality is rather
 difficult to calculate.  How would you determine if a particular document
 *only* contains your request term?  You would have to find the term in
-the inverted index, extract the document IDs, then scan *every row in the 
+the inverted index, extract the document IDs, then scan *every row in the
 inverted index* looking for those IDs to see if a doc has any other terms.
 
 As you might imagine, that would be tremendously inefficient and expensive.
 For that reason, `term` and `terms` are "must contain" operations, not
 "must equal exactly".
+
+****
 
 ==== Equals exactly
 If you do want that behavior -- entire field equality -- the best way to
@@ -72,8 +74,13 @@ GET /my_index/my_type/_search
     }
 }
 --------------------------------------------------
-<1> Find all documents that have the term `"search"`
-<2> But make sure the document only has one tag
+<1> Find all documents that have the term `"search"`.
+<2> But make sure the document only has one tag.
 
-This query will now match only the document that has a single tag which is 
-`search`, rather than any document which contains `search`.  
+This query will now match only the document that has a single tag which is
+`search`, rather than any document which contains `search`.
+
+TIP: There is a special `token_count` field type which will index the number of
+tokens for you automatically. You can read about it in the
+{ref}mapping-core-types.html#token_count[`token_count` reference documentation].
+

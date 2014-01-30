@@ -143,7 +143,7 @@ because none contain that exact date:
 GET /_search?q=date:2014         # 0  results !
 --------------------------------------------------
 
-
+[[analyze-api]]
 ==== Testing analyzers
 
 You can use the `analyze` API to see how text is analyzed. Specify which

@@ -1,0 +1,68 @@
+=== Filter order
+
+The order of filters in a `bool` clause is important for performance. More
+specific filters should be placed before less specific filters in order to
+exclude as many documents as possible as early as possible.
+
+If Clause A could match 10 million documents, and Clause B could only match
+100 documents, then Clause B should be placed before Clause A.
+
+Cached filters are very fast, so they should be placed before filters which
+are not cacheable.  Imagine that we have an index that contains one month's
+worth of log events. However, we're mostly interested only in log events from
+the previous hour:
+
+[source,js]
+--------------------------------------------------
+GET /logs/2014-01/_search
+{
+    "query" : {
+        "filtered" : {
+            "filter" : {
+                "range" : {
+                    "timestamp" : {
+                        "gt" : "now-1h"
+                    }
+                }
+            }
+        }
+    }
+}
+--------------------------------------------------
+
+This filter is not cached because it uses the `now` function, the value of
+which changes every millisecond. That means that we have to examine one
+month's worth of log events every time we run this query!
+
+We could make this much more efficient by combining it with a cached filter:
+we can exclude most of the month's data by adding a filter which uses a fixed
+point in time, such as midnight last night.
+
+[source,js]
+--------------------------------------------------
+"bool": {
+    "must": [
+        { "range" : {
+            "timestamp" : {
+                "gt" : "2014-01-16 00:00:00" <1>
+            }
+        },
+        { "range" : {
+            "timestamp" : {
+                "gt" : "now-1h" <2>
+            }
+        }
+    ]
+}
+--------------------------------------------------
+<1> This filter is executed once a day, then cached. It excludes all documents
+    except those indexed since midnight last night.
+
+<2> This filter is not cached, but it only needs to check documents indexed
+    since midnight last night.
+
+The order of these clauses is important. It only works because the since-
+midnight clause comes before the last-hour clause. If they were the other way
+around, then the last-hour clause would need to examine all documents in the
+index, instead of just documents from today.
+
