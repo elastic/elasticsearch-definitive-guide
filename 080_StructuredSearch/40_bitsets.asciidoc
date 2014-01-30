@@ -66,24 +66,35 @@ performance benefits.
 Most ``leaf'' filters -- those dealing directly with fields like the `term`
 filter -- are cached, while compound filters, like the `bool` filter, are not.
 
+****
 Leaf filters have to consult the inverted index on disk, so it makes sense to
-cache them. Compound filters on the other hand just use fast bit logic to
-combine the bitsets resulting from their inner clauses, so it is efficient to
+cache them. Compound filters on the other hand use fast bit logic to combine
+the bitsets resulting from their inner clauses, so it is efficient to
 recalculate them every time.
-
-.Uncached leaf filters
 ****
 
-There are certain leaf filters that are not cached by default, because it
-doesn't make sense to do so. For instance, `range` filters on `date` fields
-which use the `now` function are not cached.  Every time the filter is run,
-`now` returns a new time, so older filters will never be reused.
+Certain leaf filters, however, are not cached by default, because it
+doesn't make sense to do so:
+
+Script filters::
+
+The results from {ref}/query-dsl-script-filter.html[`script` filters] cannot
+be cached because the meaning of the script is opaque to Elasticsearch.
+
+Geo filters::
 
 The geolocation filters, which we will talk more about in <<geoloc>>, are
-usually used to filter results on the geolocation of a specific user.  Since
-every user has their own unique geolocation, it is unlikely the geo filters
-will be reused.
-****
+usually used to filter results based on the geolocation of a specific user.
+Since every user has their own unique geolocation, it is unlikely that geo
+filters will be reused, so it makes no sense to cache them.
+
+Date ranges::
+
+Date ranges which use the `now` function, eg `"now-1h"`, result in values
+accurate to the millisecond. Every time the filter is run, `now` returns a new
+time. Older filters will never be reused so caching is disabled by default.
+However, when using `now` with rounding, eg `now/d` rounds to the nearest day,
+then caching is enabled by default.
 
 Sometimes the default caching strategy is not correct. Perhaps you have a
 complicated `bool` expression which is reused several times in the same query.

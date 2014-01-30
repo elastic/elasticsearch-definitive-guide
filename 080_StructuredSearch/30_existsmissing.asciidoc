@@ -67,7 +67,7 @@ Our objective is to find all documents where a tag is set.  We don't care what
 the tag is, so long as it exists within the document.  In SQL parlance,
 we would use an `IS NOT NULL` query:
 
-[source,SQL]
+[source,sql]
 --------------------------------------------------
 SELECT tags
 FROM   posts
@@ -126,7 +126,7 @@ The `missing` filter is essentially the inverse of the `exists`: it returns
 documents where there is _no_ value for a particular field, much like this
 SQL:
 
-[source,SQL]
+[source,sql]
 --------------------------------------------------
 SELECT tags
 FROM   posts

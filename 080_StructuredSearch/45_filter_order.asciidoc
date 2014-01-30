@@ -44,7 +44,7 @@ point in time, such as midnight last night.
     "must": [
         { "range" : {
             "timestamp" : {
-                "gt" : "2014-01-16 00:00:00" <1>
+                "gt" : "now/d" <1>
             }
         },
         { "range" : {
@@ -55,14 +55,21 @@ point in time, such as midnight last night.
     ]
 }
 --------------------------------------------------
-<1> This filter is executed once a day, then cached. It excludes all documents
-    except those indexed since midnight last night.
+<1> This filter is cached because it uses the `now` function with rounding.
 
-<2> This filter is not cached, but it only needs to check documents indexed
-    since midnight last night.
+<2> This filter is not cached because it uses the `now` function *without*
+    rounding.
 
-The order of these clauses is important. It only works because the since-
-midnight clause comes before the last-hour clause. If they were the other way
-around, then the last-hour clause would need to examine all documents in the
-index, instead of just documents from today.
+The `now/d` clause rounds to midnight last night and so excludes all documents
+created before today.  The resulting bitset is cached because `now` is used
+with rounding, which means that it is only executed once a day when the value
+for _midnight-last-night_ changes.  The `now-1h` clause isn't cached because
+`now` produces a time accurate to the nearest millisecond. However, thanks to
+the first filter, this second filter need only check documents that have been
+created since midnight.
+
+The order of these clauses is important. This approach works because the
+since-midnight clause comes before the last-hour clause. If they were the
+other  way around, then the last-hour clause would need to examine all
+documents in the index, instead of just documents from today.
 
