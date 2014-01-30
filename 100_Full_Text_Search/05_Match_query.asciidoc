@@ -6,10 +6,8 @@ whenever you need to query any field. It is a high-level _full-text query_
 meaning that it knows how to deal with both full-text fields and exact-value
 fields.
 
-That said, the main use case for the `match` query is for full text search. As
-we have already explained in <<term-vs-full-text>>, you should almost always
-prefer a filter over a query for exact value fields. So let's take a look at
-how full text search works, by looking at a simple example.
+That said, the main use case for the `match` query is for full text search. So
+let's take a look at how full text search works with a simple example.
 
 [[match-test-data]]
 ==== Index some data
@@ -19,14 +17,11 @@ First, we'll create a new index and index some documents using the
 
 [source,js]
 --------------------------------------------------
-# delete the index in case it already exists
-DELETE /my_index
+DELETE /my_index <1>
 
-# create a new index with 1 primary shard <1>
 PUT /my_index
-{ "settings": { "number_of_shards": 1 }}
+{ "settings": { "number_of_shards": 1 }} <2>
 
-# index some documents
 POST /my_index/my_type/_bulk
 { "index": { "_id": 1 }}
 { "title": "The quick brown fox" }
@@ -37,8 +32,8 @@ POST /my_index/my_type/_bulk
 { "index": { "_id": 4 }}
 { "title": "Brown fox brown dog" }
 --------------------------------------------------
-
-<1> Later on, in <<relevance-is-broken>>, we will explain why
+<1> Delete the index in case it already exists.
+<2> Later on, in <<relevance-is-broken>>, we will explain why
     we created this index with only one primary shard.
 
 ==== A single word query
@@ -82,7 +77,7 @@ list of documents that contain that term, in this case documents `1`, `2`, and
 The `term` query caculates the relevance `_score` for each matching document,
 by combining the term frequency (how often `"quick"` appears in the `title`
 field of each document), with the inverse document frequency (how often
-`"quick"` appears in the `title` field in all documents in the index), and the
+`"quick"` appears in the `title` field in *all* documents in the index), and the
 length of each field (shorter fields are considered more relevant).
 See <<relevance-intro>>.
 
@@ -92,22 +87,22 @@ This process gives us the following (abbreviated) results:
 --------------------------------------------------
 "hits": [
  {
-    "_id": "3",
-    "_score": 0.53033006, <1>
+    "_id":      "3",
+    "_score":   0.53033006, <1>
     "_source": {
        "title": "The quick brown fox jumps over the quick dog"
     }
  },
  {
-    "_id": "1",
-    "_score": 0.5, <2>
+    "_id":      "1",
+    "_score":   0.5, <2>
     "_source": {
        "title": "The quick brown fox"
     }
  },
  {
-    "_id": "2",
-    "_score": 0.375, <2>
+    "_id":      "2",
+    "_score":   0.375, <2>
     "_source": {
        "title": "The quick brown fox jumps over the lazy dog"
     }

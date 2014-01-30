@@ -8,8 +8,9 @@ document by combining the scores from several distinct queries.
 Imagine that we want to search for documents about "full text search"  but we
 want to give more _weight_ to documents which also mention "Elasticsearch" or
 "Lucene". By ``more weight'' we mean that documents which mention
-"Elasticsearch" or "Lucene" will get a higher relevance `_score`, which means
-that they will appear higher in the list of results.
+"Elasticsearch" or "Lucene" will receive a higher relevance `_score` than
+those that don't, which means that they will appear higher in the list of
+results.
 
 A simple `bool` query allows us to write this fairly complex query as follows:
 
@@ -21,13 +22,13 @@ GET /_search
         "bool": {
             "must": {
                 "match": {
-                    "content":
+                    "content": { <1>
                         "query":    "full text search",
                         "operator": "and"
                     }
                 }
             },
-            "should": [
+            "should": [ <2>
                 { "match": { "content": "Elasticsearch" }},
                 { "match": { "content": "Lucene"        }}
             ]
@@ -35,12 +36,15 @@ GET /_search
     }
 }
 --------------------------------------------------
+<1> The `content` field must contain all of the words `full`, `text` and `search`.
+<2> If the `content` field also contains `Elasticsearch` or `Lucene` then
+    the document will receive a higher `_score`.
 
 The more `should` clauses that match, the more relevant the document.  So far
 so good.
 
-But what if we want to give more weight to the docs which also contain
-"Lucene" and even more weight to the docs containing "Elasticsearch"?
+But what if we want to give more weight to the docs which contain "Lucene" and
+even more weight to the docs containing "Elasticsearch"?
 
 We can control the relative weight of any query clause by specifying a `boost`
 value, which defaults to `1`. A `boost` value greater than `1` increases the

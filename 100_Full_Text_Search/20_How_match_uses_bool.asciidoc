@@ -10,7 +10,10 @@ at least one clause must match. These two queries are equivalent:
 {
     "match": { "title": "brown fox"}
 }
+--------------------------------------------------
 
+[source,js]
+--------------------------------------------------
 {
   "bool": {
     "should": [
@@ -34,7 +37,10 @@ so *all* clauses must match. These two queries are equivalent:
         }
     }
 }
+--------------------------------------------------
 
+[source,js]
+--------------------------------------------------
 {
   "bool": {
     "must": [
@@ -53,13 +59,15 @@ directly through to the `bool` query, making these two queries equivalent:
 {
     "match": {
         "title": {
-            "query":                "brown fox",
+            "query":                "quick brown fox",
             "minimum_should_match": "75%"
         }
     }
 }
+--------------------------------------------------
 
-
+[source,js]
+--------------------------------------------------
 {
   "bool": {
     "should": [

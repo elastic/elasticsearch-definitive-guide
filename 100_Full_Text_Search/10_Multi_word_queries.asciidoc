@@ -24,29 +24,29 @@ The above query returns all four documents in the results list:
 {
   "hits": [
      {
-        "_id": "4",
-        "_score": 0.73185337, <1>
+        "_id":      "4",
+        "_score":   0.73185337, <1>
         "_source": {
            "title": "Brown fox brown dog"
         }
      },
      {
-        "_id": "2",
-        "_score": 0.47486103, <2>
+        "_id":      "2",
+        "_score":   0.47486103, <2>
         "_source": {
            "title": "The quick brown fox jumps over the lazy dog"
         }
      },
      {
-        "_id": "3",
-        "_score": 0.47486103, <2>
+        "_id":      "3",
+        "_score":   0.47486103, <2>
         "_source": {
            "title": "The quick brown fox jumps over the quick dog"
         }
      },
      {
-        "_id": "1",
-        "_score": 0.11914785, <3>
+        "_id":      "1",
+        "_score":   0.11914785, <3>
         "_source": {
            "title": "The quick brown fox"
         }
@@ -101,8 +101,7 @@ GET /my_index/my_type/_search
 <1> The structure of the `match` query has to change slightly in order to
     accomodate the `operator` parameter.
 
-The above query would exclude document 1 which only contains one of the two
-terms.
+This query would exclude document 1 which only contains one of the two terms.
 
 [[match-precision]]
 ==== Controlling precision
@@ -153,4 +152,4 @@ documentation see the
 **************************************************
 
 To fully understand how the `match` query handles multi-word queries, we need
-to examine how to combine multiple queries with the `bool` query.
+to look at how to combine multiple queries with the `bool` query.

@@ -1,13 +1,13 @@
 [[bool-query]]
 === Combining queries
 
-We have already discussed how to use the <<bool-filter,`bool` filter>> to
-combine multiple filter clauses with `and`, `or` and `not` logic.  In query
-land, the `bool` query does a similar job but with one important difference.
+In <<combining-filters>> we discussed how to use the `bool` filter to combine
+multiple filter clauses with `and`, `or` and `not` logic.  In query land, the
+`bool` query does a similar job but with one important difference.
 
 Filters make a binary decision: should this document be included in the
 results list or not? Queries, however, are more subtle. They not only decide
-whether to include a document or not, but also how relevant that document is.
+whether to include a document or not, but also how *relevant* that document is.
 
 Like the filter equivalent, the `bool` query accepts multiple query clauses
 under the `must`, `must_not` and `should` parameters.  For instance:
@@ -34,23 +34,23 @@ contains the term `"quick"`, except for those that also contain `"lazy"`. So
 far this is pretty similar to how the `bool` filter works.
 
 The difference comes in with the two `should` clauses, which say: _a document
-is not required to contain either `"brown"` or `"dog"`, but if it does, then
-it should be considered more relevant_:
+is *not required* to contain either `"brown"` or `"dog"`, but if it does, then
+it should be considered **more relevant**_:
 
 [source,js]
 --------------------------------------------------
 {
   "hits": [
      {
-        "_id": "3",
-        "_score": 0.70134366, <1>
+        "_id":      "3",
+        "_score":   0.70134366, <1>
         "_source": {
            "title": "The quick brown fox jumps over the quick dog"
         }
      },
      {
-        "_id": "1",
-        "_score": 0.3312608,
+        "_id":      "1",
+        "_score":   0.3312608,
         "_source": {
            "title": "The quick brown fox"
         }
@@ -59,7 +59,7 @@ it should be considered more relevant_:
 }
 --------------------------------------------------
 
-<1> Doc 3 scores higher because it contains `"dog"`.
+<1> Doc 3 scores higher because it contains both `"brown"` and `"dog"`.
 
 ==== Score calculation
 
@@ -95,11 +95,12 @@ GET /my_index/my_type/_search
         { "match": { "title": "fox"   }},
         { "match": { "title": "dog"   }}
       ],
-      "minimum_should_match": 2
+      "minimum_should_match": 2 <1>
     }
   }
 }
 --------------------------------------------------
+<1> This could also be expressed as a percentage.
 
 The results would only include documents whose `title` field contains `"brown"
 AND "fox"`, `"brown" AND "dog"`, or `"fox" AND "dog"`. If a document contains

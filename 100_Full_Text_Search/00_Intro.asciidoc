@@ -52,12 +52,17 @@ Full-text queries::
 --
 
 Queries like the `match` or `query_string` queries are high-level queries
-which understand the mapping of a field: If you query a `date` or `integer`
-field, they will treat the query string as a date or integer respectively.  If
-you query an exact value (`not_analyzed`) string field, they will treat the
-whole query string as a single term.  But if you query a full-text
-(`analyzed`) field, they will first pass the query string through the
-appropriate analyzer to produce the list of terms to be queried.
+which understand the mapping of a field:
+
+*  If you use them to query a `date` or `integer` field, they will treat the
+   query string as a date or integer respectively.
+
+*  If you query an exact value (`not_analyzed`) string field, they will treat
+   the whole query string as a single term.
+
+* But if you query a full-text (`analyzed`) field, they will first pass the
+  query string through the appropriate analyzer to produce the list of terms
+  to be queried.
 
 Once the query has assembled a list of terms, it executes the appropriate
 low-level query for each of these terms, then combines  their results to
@@ -74,7 +79,7 @@ internally).
 **************************************************
 
 If you do find yourself wanting to use a query on an exact value
-`not_analyzed` field, think of whether you really want a query or a filter.
+`not_analyzed` field, think about whether you really want a query or a filter.
 
 Single-term queries usually represent binary `yes`|`no` questions and are
 almost always better expressed as a filter, so that they can benefit from

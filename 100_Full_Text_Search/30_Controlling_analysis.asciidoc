@@ -2,7 +2,7 @@
 
 Queries can only find terms that actually exist in the inverted index, so it
 is important to ensure that the same analysis process is applied both to the
-document at index time, and to the query string at query time so that the
+document at index time, and to the query string at search time so that the
 terms in the query match the terms in the inverted index.
 
 While we say ``document'', really analyzers are determined per-field. Each
@@ -15,7 +15,7 @@ For instance, let's add a new field to `my_index`:
 
 [source,js]
 --------------------------------------------------
-PUT /my_index/my_type/_mapping
+PUT /my_index/_mapping/my_type
 {
     "my_type": {
         "properties": {
@@ -40,10 +40,10 @@ GET /my_index/_analyze?field=my_type.english_title <2>
 Foxes
 --------------------------------------------------
 
-<1> Field `title`, which uses the default `standard` analyzer returns the
+<1> Field `title`, which uses the default `standard` analyzer will return the
     term `foxes`
 
-<2> Field `english_title`, which uses the `english` analyzer returns the term
+<2> Field `english_title`, which uses the `english` analyzer will return the term
     `fox`.
 
 This means that, were we to run a low-level `term` query for the exact term
@@ -73,7 +73,7 @@ which returns this `explanation`:
     (title:foxes english_title:fox)
 
 The `match` query uses the appropriate analyzer for each field to ensure
-that it looks for the each term in the correct format for that field.
+that it looks for each term in the correct format for that field.
 
 ==== Default analyzers
 
@@ -122,7 +122,8 @@ To enable this distinction, Elasticsearch also supports the `index_analyzer`
 and `search_analyzer` parameters, and analyzers named `default_index` and
 `default_search`.
 
-The full sequence at index time really looks like this:
+Taking these extra parameters into account, the *full* sequence at index time
+really looks like this:
 
 * the `index_analyzer` defined in the field mapping, else
 * the `analyzer` defined in the field mapping, else
@@ -151,7 +152,9 @@ And at search time:
 ==== Configuring analyzers in practice
 
 The sheer number of places where you can specify an analyzer is quite
-overwhelming.  In practice, though, it is pretty simple.
+overwhelming.  In practice, though, it is pretty simple:
+
+===== Use index settings, not config files
 
 The first thing to remember is that, even though you may start out using
 Elasticsearch for a single purpose or a single application such as logging,
@@ -166,6 +169,8 @@ node and restarting every node which becomes a maintenance nightmare. It's a
 much better idea to keep Elasticsearch running and to manage settings only via
 the API.
 
+===== Keep it simple
+
 Most of the time, you will know what fields your documents will contain ahead
 of time.  The simplest approach is to set the analyzer for each full-text
 field when you create your index or add type mappings.  While this approach is
@@ -173,7 +178,7 @@ slightly more verbose, it makes it easy to see which analyzer is being applied
 to each field.
 
 Typically, most of your string fields will be exact-value `not_analyzed`
-fields such as tags or enums, plus two or three full-text fields which will
+fields such as tags or enums, plus a handful of full-text fields which will
 use some default analyzer like `standard` or `english` or some other language.
 Then you may have one or two fields which need custom analysis: perhaps the
 `title` field needs to be indexed in a way that supports _find-as-you-type_.
@@ -184,9 +189,10 @@ analyzer on the one or two fields that need it.  If, in your model, you need
 a different default analyzer per type, then use the type level `analyzer`
 setting instead.
 
+****
 A common work-flow for time based data like logging is to create a new index
 per day on the fly by just indexing into it.  While this work flow prevents
 you from creating your index up front, you can still use
 {ref}indices-templates.html[index templates]
 to specify the settings and mappings that a new index should have.
-
+****

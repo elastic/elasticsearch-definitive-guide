@@ -49,8 +49,8 @@ search requests. The `dfs` stands for _Distributed Frequency Search_ and it
 tells Elasticsearch to first retrieve the local IDF from each shard in order
 to calculate the global IDF across the whole index.
 
-Don't use `dfs_query_then_fetch` in production.  It really isn't required.
-Just having enough data will ensure that your term frequencies are well
-distributed and there is no reason to add this extra step to every query that
-you run.
+IMPORTANT: Don't use `dfs_query_then_fetch` in production.  It really isn't
+required. Just having enough data will ensure that your term frequencies are
+well distributed. There is no reason to add this extra DFS step to every query
+that you run.
 
