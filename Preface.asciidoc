@@ -113,7 +113,9 @@ and introduces some simple search syntax
 the more robust Query DSl and how to use it to perform complex searches
 * Chapter 8 ("sorting and relevance") dives deeper into search theory and gives 
 you the tools to understand why documents are returned as a search result
-* Finally, Chapter 9 ("index management") closes with some useful administrative
+* Chapter 8 ("distributed search execution") explains how search operates in a 
+distributed environment, and why it is different from other distributed operations
+* Finally, Chapter 10 ("index management") closes with some useful administrative
 tools to manage your indices
 
 ==== Part 2: "Search in Depth"
@@ -128,22 +130,21 @@ parallels to various facets of your data.  Not all sections will apply to your
 problem, but the concepts discussed will give you an idea how to think about
 finding data.
 
-* Chapter 10 ("structured search") introduces structured search and how it differs
+* Chapter 11 ("structured search") introduces structured search and how it differs
 from full-text searching
-* Chapter 11 and 12 discuss dates and times, and how they can be searched
-* Chapter 13 ("full text search") immerses you in the intricacies of full-text
+* Chapter 12 ("full text search") immerses you in the intricacies of full-text
 search.  This section will take your search results from "good" to "great", by 
 giving you a deeper understanding of what is happening *inside* of Elasticsearch
-* Chapter 14 ("multi-field search") is entirely about searching multiple fields
+* Chapter 13 ("multi-field search") is entirely about searching multiple fields
 at the same time, since this introduces many additional complexities in scoring
 and relevancy
-* Chapter 15 discusses making searches more exact with phrase matching, while
-Chapter 16 shows how to make your searches less precise with partial matches
-* Chapter 17 and 18 deal with the intricacies of written language and how to 
+* Chapter 14 discusses making searches more exact with phrase matching, while
+Chapter 15 shows how to make your searches less precise with partial matches
+* Chapter 16 and 17 deal with the intricacies of written language and how to 
 handle internationalization
-* Chapter 19 introduces fuzzy searching and tolerating typos
-* Chapter 20 exposes the nitty-gritty details of scoring, boosting and relevance
-* Chapter 21 talks about some of the ways to deal with text that isn't exactly prose:
+* Chapter 18 introduces fuzzy searching and tolerating typos
+* Chapter 19 exposes the nitty-gritty details of scoring, boosting and relevance
+* Chapter 20 talks about some of the ways to deal with text that isn't exactly prose:
 file paths, encodings, binary data
 
 ==== Part 3: "<something>"
