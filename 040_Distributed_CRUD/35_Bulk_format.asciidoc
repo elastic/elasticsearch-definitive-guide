@@ -1,7 +1,8 @@
 [[bulk-format]]
 ==== Why the funny format?
 
-You may have asked yourself: ``Why does the `bulk` API require the funny format
+When we learned about Bulk requests earlier in <<bulk>>, you
+may have asked yourself: ``Why does the `bulk` API require the funny format
 with the newline characters, instead of just sending the requests wrapped in
 a JSON array, like the `mget` API?''
 
