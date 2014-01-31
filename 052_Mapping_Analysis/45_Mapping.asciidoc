@@ -187,12 +187,13 @@ You can specify the mapping for a type when you first create an index.
 Alternatively, you can add the mapping for a new type (or update the mapping
 for an existing type) later, using the `/_mapping` endpoint.
 
-****
+[IMPORTANT]
+================================================
 While you can *add* to an existing mapping, you can't *change* it.  If a field
 already exists in the mapping, then it probably means that data from that
 field has already been indexed.  If you were to change the field mapping, then
 the already indexed data would be wrong and would not be properly searchable.
-****
+================================================
 
 We can update a mapping to add a new field, but we can't change an existing
 field from `analyzed` to `not_analyzed`.
