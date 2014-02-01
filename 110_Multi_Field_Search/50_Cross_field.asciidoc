@@ -9,7 +9,8 @@ The `cross` type takes a term-centric approach, quite different to the
 field-centric approach taken by `best` and `most`. It treats all of the
 fields as one big field, and looks for *each term* in *any field*.
 
-To illustrate, look at the `explanation` for this `most`-fields query:
+To illustrate the difference between field-centric and term-centric queries,
+look at the `explanation` for this field-centric `most`-fields query:
 
 [source,js]
 --------------------------------------------------
@@ -27,8 +28,8 @@ GET /_validate/query?explain
 --------------------------------------------------
 <1> All terms are required.
 
-For a document to match, both `peter` and `smith` must appear in either the
-`first_name` field or the `last_name` field:
+For a document to match, both `peter` and `smith` must appear in the same
+field: either the `first_name` field or the `last_name` field:
 
     (+first_name:peter +first_name:smith)
     (+last_name:peter  +last_name:smith)
@@ -72,19 +73,19 @@ frequencies across fields.
     +blended("smith", fields: [first_name, last_name])
 
 In other words, it looks up the IDF of `smith` in both the `first_name` and
-the `last_name` fields and uses the minimum value for both fields.  The fact
-that `smith` is a common last name means that it will be treated as a common
-first name too.
+the `last_name` fields and uses the minimum of the two as the IDF for both
+fields.  The fact that `smith` is a common last name means that it will be
+treated as a common first name too.
 
 [IMPORTANT]
 ==================================================
 For the `cross`-field query type to work optimally, all fields should have
-the same analyzer.  Fields which share an analyzer are grouped together
-as explained above.
+the same analyzer.  Fields which share an analyzer are grouped together as
+blended fields.
 
 If you include fields with a different analysis chain, they will be  added to
 the query in the same way as for `best`-field.  For instance, if we added the
-`title` field to the above query (and it uses a different analyzer), the
+`title` field to the above query (assuming it uses a different analyzer), the
 explanation would be as follows:
 
     (+title:peter +title:smith)
@@ -103,10 +104,10 @@ One of the advantages of using the `cross`-field query over
 <<custom-all,custom `_all` fields>> is that you can boost individual
 fields at query time.
 
-For fields like `first_name` and `last_name` this isn't required, but if you
-are searching for books using the `title` and `description` fields, you may
-want to give more weight to the `title` field.  This can be done as described
-before with the caret (`^`) syntax:
+For fields of equal value like `first_name` and `last_name` this generally
+isn't required, but if you were searching for books using the `title` and
+`description` fields, you might want to give more weight to the `title` field.
+This can be done as described before with the caret (`^`) syntax:
 
 [source,js]
 --------------------------------------------------
@@ -124,7 +125,8 @@ GET /books/_search
 <1> The `title` field has a boost of 2, while the `description` field
     has the default boost of 1.
 
-This advantage should be weighed against the cost of querying multiple fields
-instead of querying a single custom `_all` field. Use whichever of the two
-solutions that delivers the most bang for your buck.
+The advantage of being able to boost individual fields should be weighed
+against the cost of querying multiple fields instead of querying a single
+custom `_all` field. Use whichever of the two solutions that delivers the most
+bang for your buck.
 
