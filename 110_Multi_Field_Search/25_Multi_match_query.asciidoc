@@ -1,10 +1,19 @@
 === `multi_match` query
 
 The `multi_match` query provides us with a convenient shorthand way of running
-the same query against multiple fields. It generates a `match` query for each field
-and, by default, wraps them in a `dis_max` query.
+the same query against multiple fields.
 
-This `dis_max` query:
+****
+
+There are several ``types'' of `multi_match` query, three of which just
+happen to coincide with the three scenarios that we listed in
+<<know-your-data>>:  `best` field, `most` fields, and `cross` field.
+
+****
+
+By default it runs as type `best`, which means that it generates a `match`
+query for each field and wraps them in a `dis_max` query. This `dis_max`
+query:
 
 [source,js]
 --------------------------------------------------
@@ -33,49 +42,54 @@ This `dis_max` query:
 }
 --------------------------------------------------
 
-could be rewritten more concisely with `multi_match`:
+could be rewritten more concisely with `multi_match` as:
 
 [source,js]
 --------------------------------------------------
 {
     "multi_match": {
         "query":                "Quick brown fox",
-        "minimum_should_match": "30%", <1>
+        "type":                 "best", <1>
         "fields":               [ "title", "body" ]
-        "tie_breaker":          0.3
+        "tie_breaker":          0.3,
+        "minimum_should_match": "30%" <2>
     }
 }
 --------------------------------------------------
-<1> Parameters like `minimum_should_match` or `operator` are passed through to
+<1> The `best` type is the default and can be left out.
+<2> Parameters like `minimum_should_match` or `operator` are passed through to
     the generated `match` queries.
+
+==== Wildcards in field names
 
 Fieldnames can be specified with wildcards -- any field which matches the
 wildcard pattern will be included in the search. You could match on the
-`title`, `first_name`, `middle_name` and `last_name` fields, with the
-following:
+`book_title`, `chapter_title` and `section_title` fields, with the following:
 
 [source,js]
 --------------------------------------------------
 {
     "multi_match": {
-        "query":  "Mary Smith",
-        "fields": [ "title", "*_name" ]
+        "query":  "Quick brown fox",
+        "fields": "*_title"
     }
 }
 --------------------------------------------------
 
-Individual fields can be boosted using the caret (`^`) syntax: just add `^boost` after the field name, where `boost` is a
-floating point number:
+==== Boosting individual fields
+
+Individual fields can be boosted using the caret (`^`) syntax: just add
+`^boost` after the field name, where `boost` is a floating point number:
 
 [source,js]
 --------------------------------------------------
 {
     "multi_match": {
-        "query":  "Brown fox",
-        "fields": [ "title^2", "body" ] <1>
+        "query":  "Quick brown fox",
+        "fields": [ "*_title", "chapter_title^2" ] <1>
     }
 }
 --------------------------------------------------
 
-<1> The `title` field has a `boost` of 2, while the `body` field has the
-    default boost of 1.
+<1> The `chapter_title` field has a `boost` of 2, while the `book_title` and
+    `section_title` fields have a default boost of 1.

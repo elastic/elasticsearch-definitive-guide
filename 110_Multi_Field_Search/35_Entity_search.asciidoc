@@ -1,0 +1,91 @@
+=== Cross-field entity search
+
+Now we come to a common pattern: cross-field entity search.  With entities
+like `person`, `product`, or `address` the identifying information is spread
+across several fields.  We may have a `person` indexed as:
+
+[source,js]
+--------------------------------------------------
+{
+    "firstname":  "Peter",
+    "lastname":   "Smith"
+}
+--------------------------------------------------
+
+Or an address like:
+
+[source,js]
+--------------------------------------------------
+{
+    "street":   "5 Poland Street",
+    "city":     "London",
+    "country":  "United Kingdom",
+    "postcode": "W1V 3DG"
+}
+--------------------------------------------------
+
+This sounds a lot like the example we described in <<multi-query-strings>>,
+but there is a big difference between these two scenarios.  In
+<<multi-query-strings>>, we used a separate query string for each field. In
+this scenario, we want to search across multiple fields with a *single* query
+string.
+
+Our user might search for the person ``Peter Smith'' or for the address
+``Poland Street W1V''. Each of those words appears in a different field so
+using a `dis_max` / `best` query to find the *single* best matching
+field is clearly the wrong approach.
+
+==== A naive approach
+
+Really we want to query each field in turn and add up the scores of every
+field that matches, which sounds like it is a job for the `bool` query:
+
+[source,js]
+--------------------------------------------------
+{
+    "query": {
+        "bool": {
+            "should": [
+                { "match": { "street":    "Poland Street W1V" }},
+                { "match": { "city":      "Poland Street W1V" }},
+                { "match": { "country":   "Poland Street W1V" }},
+                { "match": { "postcode":  "Poland Street W1V" }}
+            ]
+        }
+    }
+}
+--------------------------------------------------
+
+Repeating the query string for every field soon becomes tedious. We can use
+the `multi_match` query instead, and set the `type` to `most` to tell it to
+combine the scores of all matching fields:
+
+[source,js]
+--------------------------------------------------
+{
+    "query": {
+        "multi_match": {
+            "query":       "Poland Street W1V",
+            "type":        "most",
+            "fields":      [ "street", "city", "country", "postcode" ]
+        }
+    }
+}
+--------------------------------------------------
+
+==== Problems with the `most` fields approach
+
+The `most` fields approach to entity search has some problems which are not
+immediately obvious:
+
+* It is designed to find the most fields matching *any* words, rather than to
+  find the most matching words *across all fields*.
+
+* It can't use the `operator` or `minimum_should_match` parameters
+  to reduce the long tail of less relevant results.
+
+* Term frequencies are different in each field and could interfere with each
+  other to produce badly ordered results.
+
+
+

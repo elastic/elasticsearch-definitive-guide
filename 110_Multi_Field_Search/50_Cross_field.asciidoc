@@ -1,0 +1,130 @@
+=== Cross-field queries
+
+The custom `_all` approach is a very good solution, as long as you thought
+about setting it up before you indexed your documents. However, Elasticsearch
+also provides a search time solution to the problem: the `multi_match` query
+with type `cross`.
+
+The `cross` type takes a term-centric approach, quite different to the
+field-centric approach taken by `best` and `most`. It treats all of the
+fields as one big field, and looks for *each term* in *any field*.
+
+To illustrate, look at the `explanation` for this `most`-fields query:
+
+[source,js]
+--------------------------------------------------
+GET /_validate/query?explain
+{
+    "query": {
+        "multi_match": {
+            "query":       "peter smith",
+            "type":        "most",
+            "operator":    "and", <1>
+            "fields":      [ "first_name", "last_name" ]
+        }
+    }
+}
+--------------------------------------------------
+<1> All terms are required.
+
+For a document to match, both `peter` and `smith` must appear in either the
+`first_name` field or the `last_name` field:
+
+    (+first_name:peter +first_name:smith)
+    (+last_name:peter  +last_name:smith)
+
+A *term-centric* approach would use this logic instead:
+
+    +(first_name:peter last_name:peter)
+    +(first_name:smith last_name:smith)
+
+In other words, the term `peter` must appear in either field, and the term
+`smith` must appear in either field.
+
+The `cross`-field type first analyzes the query string to produce a list of
+terms, then it searches for each term in any field. That difference alone
+solves two of the three problems that we listed in <<field-centric>>, leaving
+us just with the issue of differing inverse document frequencies.
+
+Fortunately, the `cross`-field type solves this too, as can be seen from this
+`validate-query` request:
+
+[source,js]
+--------------------------------------------------
+GET /_validate/query?explain
+{
+    "query": {
+        "multi_match": {
+            "query":       "peter smith",
+            "type":        "cross", <1>
+            "operator":    "and",
+            "fields":      [ "first_name", "last_name" ]
+        }
+    }
+}
+--------------------------------------------------
+<1> Use `cross`-field term-centric matching.
+
+It solves the term frequency problem by _blending_ inverse document
+frequencies across fields.
+
+    +blended("peter", fields: [first_name, last_name])
+    +blended("smith", fields: [first_name, last_name])
+
+In other words, it looks up the IDF of `smith` in both the `first_name` and
+the `last_name` fields and uses the minimum value for both fields.  The fact
+that `smith` is a common last name means that it will be treated as a common
+first name too.
+
+[IMPORTANT]
+==================================================
+For the `cross`-field query type to work optimally, all fields should have
+the same analyzer.  Fields which share an analyzer are grouped together
+as explained above.
+
+If you include fields with a different analysis chain, they will be  added to
+the query in the same way as for `best`-field.  For instance, if we added the
+`title` field to the above query (and it uses a different analyzer), the
+explanation would be as follows:
+
+    (+title:peter +title:smith)
+    (
+      +blended("peter", fields: [first_name, last_name])
+      +blended("smith", fields: [first_name, last_name])
+    )
+
+This is particularly important when using the `minimum_should_match` and
+`operator` parameters.
+==================================================
+
+==== Per-field boosting
+
+One of the advantages of using the `cross`-field query over
+<<custom-all,custom `_all` fields>> is that you can boost individual
+fields at query time.
+
+For fields like `first_name` and `last_name` this isn't required, but if you
+are searching for books using the `title` and `description` fields, you may
+want to give more weight to the `title` field.  This can be done as described
+before with the caret (`^`) syntax:
+
+[source,js]
+--------------------------------------------------
+GET /books/_search
+{
+    "query": {
+        "multi_match": {
+            "query":       "peter smith",
+            "type":        "cross",
+            "fields":      [ "title^2", "description" ] <1>
+        }
+    }
+}
+--------------------------------------------------
+<1> The `title` field has a boost of 2, while the `description` field
+    has the default boost of 1.
+
+This advantage should be weighed against the cost of querying multiple fields
+instead of querying a single custom `_all` field. Use whichever of the two
+solutions that delivers the most bang for your buck.
+

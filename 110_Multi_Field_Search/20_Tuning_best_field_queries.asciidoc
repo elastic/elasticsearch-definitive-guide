@@ -1,8 +1,8 @@
-=== Tuning competitive queries
+=== Tuning best field queries
 
-What would happen if the user had searched for ``quick pets''?  Both documents
-contain the word ``quick''  but only document 2 contains the word ``pets''.
-Neither document contains *both words* in the *same field*.
+What would happen if the user had searched instead for ``quick pets''?  Both
+documents contain the word ``quick''  but only document 2 contains the word
+``pets''. Neither document contains *both words* in the *same field*.
 
 A simple `dis_max` query like the following would choose the single best
 matching field, and ignore the other:
@@ -20,8 +20,6 @@ matching field, and ignore the other:
     }
 }
 --------------------------------------------------
-
-This would result in the following:
 
 [source,js]
 --------------------------------------------------
@@ -51,12 +49,12 @@ This would result in the following:
 We would probably expect documents that match on both the `title` field and
 the `body` field to rank higher than documents that match on just one field,
 but this isn't the case. Remember: the `dis_max` query simply uses the
-`_score` from the single best matching clause.
+`_score` from the *single* best matching clause.
 
 ==== `tie_breaker`
 
-It is possible, however, still to take the `_score` from the other matching clauses
-into account, by specifying the `tie_breaker` parameter.
+It is possible, however, to also take the `_score` from the other matching
+clauses into account, by specifying the `tie_breaker` parameter.
 
 [source,js]
 --------------------------------------------------
@@ -101,18 +99,21 @@ which gives us the following results:
 <1> Document 2 now has a small lead over document 1.
 
 The `tie_breaker` parameter makes the `dis_max` query behave more like a
-halfway house between `dis_max` and `bool`. The score is calculated as
-follows:
+halfway house between `dis_max` and `bool`. It changes the score calculation
+to the following:
 
 * take the `_score` of the best matching clause
-* multiply the score of each of the other matching clauses by `tie_breaker`
+* multiply the score of each of the other matching clauses by the `tie_breaker`
 * add them all together, and normalize
 
-So all matching clauses count, but the best matching clause counts most.
+With the `tiebreaker`, all matching clauses count, but the best matching
+clause counts most.
 
+****
 The `tie_breaker` can be a floating point value between `0` and `1`, where `0`
 uses just the best matching clause and `1` counts all matching clauses
 equally.  The exact value can be tuned based on your data and queries, but a
 reasonable value should be close to zero, eg `0.1 - 0.4`, in order not to
 overwhelm the ``best-matching'' nature of `dis_max`.
+****
 

@@ -1,4 +1,4 @@
-=== Competitive fields
+=== Best field
 
 Imagine that we have a website which allows users to search blog posts, such
 as these two documents:
@@ -18,7 +18,7 @@ PUT /my_index/my_type/2
 }
 --------------------------------------------------
 
-The user types in the words ``Brown fox'' and clicks `[Search]`.   We don't
+The user types in the words ``Brown fox'' and clicks ``Search''.   We don't
 know ahead of time if the user's search terms will be found in the `title` or
 the `body` field of the post, but it is likely that they are searching for
 related words.  To our eyes, Document 2 appears to be the better match, as it
@@ -78,20 +78,20 @@ are successful and have a score.  Document 2 contains both `"brown"` and
 score from the `body` query is added to the zero score from the `title` query,
 and divided by two, resulting in a lower overall score than for Document 1.
 
-In this example, the `title` and `body` fields are considered to be
-_competitive_. We want to find the single *best-matching* field.
+In this example, the `title` and `body` fields are competing with each other.
+We want to find the single *best-matching* field.
 
 What if, instead of combining the scores from each field, we used the score
 from the *best-matching* field as the overall score for the query?  This would
-give preference to fields that contain *both* of the words we are looking for,
-rather than the same word repeated in different fields.
+give preference to a single field that contain *both* of the words we are
+looking for, rather than the same word repeated in different fields.
 
 ==== `dis_max` query
 
 Instead of the `bool` query, we can use the  `dis_max` or _Disjunction Max
 Query_.  Disjunction means ``or'' (while conjunction means ``and'') so the
-Disjunction Max Query means: _return documents that match any of these
-queries, and calculate the score using the best matching query_:
+Disjunction Max Query simply means: _return documents that match any of these
+queries, and return the score of the best matching query_:
 
 [source,js]
 --------------------------------------------------

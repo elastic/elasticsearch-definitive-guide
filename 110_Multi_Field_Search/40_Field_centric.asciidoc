@@ -1,0 +1,158 @@
+[[field-centric]]
+=== Field centric queries
+
+All three of the above problems stem from the fact that `most` fields is
+_field-centric_ rather than _term-centric_ -- it looks for the  most matching
+*fields*, when really what we're interested is the most matching *terms*.
+
+****
+The `best` field type is also field centric and suffers from similar problems.
+****
+
+First we'll look at why these problems exist, then how we can combat them.
+
+==== Problem 1: Matching the same word in multiple fields
+
+Think about how the `most` query is executed: Elasticsearch generates a
+`match` query for each field and wraps them in an outer `bool` query.
+
+We can see this by passing our query through the `validate-query` API:
+
+[source,js]
+--------------------------------------------------
+GET /_validate/query?explain
+{
+    "query": {
+        "multi_match": {
+            "query":       "Poland Street W1V",
+            "type":        "most",
+            "fields":      [ "street", "city", "country", "postcode" ]
+        }
+    }
+}
+--------------------------------------------------
+
+which yields this `explanation`:
+
+    (
+       (street:poland   street:street   street:w1v)
+     | (city:poland     city:street     city:w1v)
+     | (country:poland  country:street  country:w1v)
+     | (postcode:poland postcode:street postcode:w1v)
+    )
+
+
+You can see that a document which matches just the word `poland` in *two* fields
+could score higher than a document which matches `poland` and `street` in one
+field.
+
+==== Problem 2: Trimming the long tail
+
+In <<match-precision>> we talked about using the `"and"` operator or the
+`minimum_should_match` parameter to trim the long tail of almost irrelevant
+results. Perhaps we could try this:
+
+[source,js]
+--------------------------------------------------
+{
+    "query": {
+        "multi_match": {
+            "query":       "Poland Street W1V",
+            "type":        "most",
+            "operator":    "and", <1>
+            "fields":      [ "street", "city", "country", "postcode" ]
+        }
+    }
+}
+--------------------------------------------------
+<1> All terms must be present.
+
+However, with `best` or `most` these parameters are passed down to the
+generated `match` queries. The `explanation` for this query shows the
+following:
+
+    (
+       (+street:poland   +street:street   +street:w1v)
+     | (+city:poland     +city:street     +city:w1v)
+     | (+country:poland  +country:street  +country:w1v)
+     | (+postcode:poland +postcode:street +postcode:w1v)
+    )
+
+In other words, using the `and` operator means that all words must exist *in
+the same field*, which is clearly wrong! It is unlikely that any documents
+would match this query.
+
+==== Problem 3: Term frequencies
+
+In <<relevance-intro>>, we explained that the default similarity algorithm
+used to calculate the relevance score for each term is TF/IDF:
+
+Term Frequency::
+
+    The more often a term appears in a field in a single document, the more
+    relevant the document.
+
+Inverse Document Frequency::
+
+    The more often a term appears in a field in all documents in the index,
+    the less relevant is that term.
+
+When searching against multiple fields, TF/IDF can introduce some surprising
+results.
+
+Consider our example of searching for ``Peter Smith'' using the `first_name`
+and `last_name` fields.  Peter is a common first name and Smith is a common
+last name -- both will have low IDFs.  But what if we have another person in
+the index whose name is ``Smith Williams''.  Smith as a first name is very
+uncommon and so will have a high IDF!
+
+A simple query like the following may well return ``Smith Williams'' above
+``Peter Smith'' in spite of the fact that the second person is a better match
+than the first.
+
+[source,js]
+--------------------------------------------------
+{
+    "query": {
+        "multi_match": {
+            "query":       "Peter Smith",
+            "type":        "most",
+            "fields":      [ "*_name" ]
+        }
+    }
+}
+--------------------------------------------------
+
+The high IDF of `smith` in the first name field can overwhelm the two low IDFs
+of `peter` as a first name and `smith` as a last name.
+
+==== Solution
+
+These problems only exist because we are dealing with multiple fields. If we
+were to combine all of these fields into a single field, the problems would
+vanish. We could achieve this by adding a `full_name` field to our `person`
+document:
+
+[source,js]
+--------------------------------------------------
+{
+    "first_name":  "Peter",
+    "last_name":   "Smith",
+    "full_name":   "Peter Smith"
+}
+--------------------------------------------------
+
+When querying just the `full_name` field:
+
+* Documents with more matching words would trump documents with the same word
+  repeated.
+
+* The `minimum_should_match` and `operator` parameters would function as
+  expected.
+
+* The inverse document frequencies for first and last names would be combined
+  so it wouldn't matter whether ``Smith'' were a first or last name anymore.
+
+While this would work, we don't like having to store redundant data.  Instead,
+Elasticsearch offers us two solutions -- one at index time and one at search
+time -- which we will discuss next.

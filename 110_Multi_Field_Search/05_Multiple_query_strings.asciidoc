@@ -110,6 +110,7 @@ GET /_search
 
 The ``best'' value for the `boost` parameter is most easily determined by
 trial and error: set a `boost` value, run test queries, repeat. A reasonable
-range for `boost` lies between `1` and `5`, maybe `10`. Boosts higher than
-10 have little more impact because of <<boost-normalization,normalization>>.
+range for `boost` lies between `1` and `10`, maybe `15`. Boosts higher than
+that have little more impact because scores are
+<<boost-normalization,normalized>>.
 

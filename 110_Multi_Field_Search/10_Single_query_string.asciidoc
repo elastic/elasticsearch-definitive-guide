@@ -6,47 +6,61 @@ individual fields.
 
 The problem is that, these days, users expect to be able to type all of their
 search terms into a single field, and that the application will figure out how
-to give them the right results.  It is ironic that the multi-field search
-form is known as _Advanced Search_ -- it may be advanced for the user, but it
-is much simpler to implement.
+to give them the right results.  It is ironic that the multi-field search form
+is known as _Advanced Search_ -- it may appear advanced to the user, but it is
+much simpler to implement.
 
 There is no simple _one-size-fits-all_ approach to multi-word multi-field
 queries.  To get the best results you have to *know your data* and to know how
 to use the appropriate tools.
 
+[[know-your-data]]
 ==== Know your data
 
 When your only user input is a single query string, there are three scenarios
 that you will encounter frequently:
 
-Competitive fields::
+Best field::
 
 When searching for words that represent a concept, such as ``brown fox'', the
 words mean more together than they do individually. Fields like the `title`
-and `body`, while related, can be considered to be competitive. Documents
-should have as many words as possible in *the same field*.
+and `body`, while related, can be considered to be in competition with each
+other. Documents should have as many words as possible in *the same field*
+and the score should come from the *best matching field*.
 
-Signal fields::
-
+Most fields::
++
+--
 A common technique for fine-tuning relevance is to index the same data into
-multiple fields, each with their own analysis chain. The main field may
-contain words in their stemmed form (eg ``jumping'', ``jumps'' and ``jumped''
-would all be indexed as ``jump''), synonyms (``jump'' and ``leap'') and words
-stripped of their diacritics (eg ``ésta'', ``está'' and ``esta'' would all be
-indexed without accents as ``esta'').  It is used to match as many documents
-as possible.  The same text could then be indexed in other fields to provide
-more precise matching.  One field may contain the unstemmed version, another
-the original word with accents and a third might use _shingles_ to provide
-information about <<proximity-matching,word proximity>>. These other fields
-act as _signals_ to increase the relevance score of each matching document.
-The more fields that match, the better.
+multiple fields, each with their own analysis chain.
 
-Cooperative fields::
+The main field may contain words in their stemmed form, synonyms and words
+stripped of their _diacritics_ or accents. It is used to match as many
+documents as possible.
 
-Cooperative fields each contain part of the required information, eg
-`first_name` and `last_name`,  for books: `title`, `author` and `description`,
-or for addresses: `street`, `city`, `country` and `postcode`. In this case we
-want to find as many words as possible in *any* of the listed fields.
+The same text could then be indexed in other fields to provide more precise
+matching.  One field may contain the unstemmed version, another the original
+word with accents and a third might use _shingles_ to provide information
+about <<proximity-matching,word proximity>>.
+
+These other fields act as _signals_ to increase the relevance score of each
+matching document. The *more fields that match*, the better.
+--
+
+Cross field::
++
+--
+For some entities, the identifying information is spread across multiple
+fields, each of which contains just a part of the whole:
+
+* Person: `first_name` and `last_name`
+* Book: `title`, `author` and `description`
+* Address:  `street`, `city`, `country` and `postcode`.
+
+In this case we want to find as many words as possible in *any* of the listed
+fields -- we need to search across multiple fields as if they were one big
+field.
+--
 
 All of the above are multi-word multi-field queries, but each requires a
 different strategy. We will examine each strategy in turn in the rest of this
