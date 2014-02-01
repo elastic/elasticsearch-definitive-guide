@@ -16,7 +16,7 @@ paragraph.
 Understanding how words relate to each other is a very complicated problem and
 we are not going to be able to solve it by just using another type of query,
 but we can at least find words that appear to be related because they appear
-near each other or even right next to each other.
+near to each other or even right next to each other.
 
 Each document may be much longer than the examples we present above -- `Sue`
 and `alligator` may be separated by paragraphs of other text. Perhaps we still
@@ -25,3 +25,10 @@ want to give documents where the words are close together a higher relevance
 score.
 
 This is the province of _phrase matching_ or _proximity matching_.
+
+****
+
+In this chapter we will be using the same example documents that we used for
+the <<match-test-data,`match` query>>.
+
+****

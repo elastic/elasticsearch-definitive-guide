@@ -120,101 +120,18 @@ Now we can proceed to setting up a field to use the new analyzer.
 
 ==== Multi-fields
 
-We said that it is cleaner to index unigrams and bigrams separately, which
-means that we need to index two fields.  We could change our JSON document
-to something like this:
+We said that it is cleaner to index unigrams and bigrams separately, so we
+will create the `title` field as a multi-field (see <<multi-fields>>):
 
 [source,js]
 --------------------------------------------------
-{
-    "title":            "Sue ate the alligator",
-    "title_shingles":   "Sue ate the alligator",
-}
---------------------------------------------------
-
-But we don't really want to have to duplicate fields and waste space with
-redundant data. Instead, we want to _index a single field in different ways
-for different purposes_.  Elasticsearch makes it easy to do this using _multi-
-fields_, which we have already met in <<signal-fields>>.
-
-Any simple field -- a field that contains a concrete value like a string or a
-number -- can be defined as a `multi_field`, but multi-fields are mostly used
-to analyze `string` fields with different analyzers, or even to index a
-`not_analyzed` version of the string for sorting or aggregation purposes.
-
-The old mapping for the `title` field looked like this:
-
-[source,js]
---------------------------------------------------
-{
-    "title": { "type": "string" } <1>
-}
---------------------------------------------------
-<1> A `string` field is `analyzed` by default, using the `standard` analyzer.
-
-The same field, rewritten as a multi-field, would have the following mapping:
-
-[source,js]
---------------------------------------------------
-{
-    "title": {
-        "type": "multi_field",
-        "fields": {
-            "title": {
-                "type": "string"
-            }
-        }
-    }
-}
---------------------------------------------------
-
-A multi-field can contain multiple ``sub-fields'' but it must have one _main_
-sub-field which has the same name as the field itself.  In other words, our
-field is called `title` and it has a sub-field also called `title`, which is
-the main field.  You can refer to the main field in queries either as
-`title.title` or as just `title`.  This is the field we will use for unigrams,
-as produced by the `standard` analyzer.
-
-Now we can add the bigram sub-field, which we will call `shingles`, and which
-will use our custom `my_shingle_analyzer`:
-
-[source,js]
---------------------------------------------------
-{
-    "title": {
-        "type": "multi_field",
-        "fields": {
-            "title":    {
-                "type":     "string"
-            },
-            "shingles": {
-                "type":     "string",
-                "analyzer": "my_shingle_analyzer"
-            }
-        }
-    }
-}
---------------------------------------------------
-
-With this mapping, values from  our JSON document in the field `title` will be
-indexed both as unigrams (`title` or `title.title`) and as bigrams
-(`title.shingles`), meaning that we can query these fields independently.
-
-We have already created the index so, to put this mapping in place, we need to
-use the `put mapping` API:
-
-[source,js]
---------------------------------------------------
-PUT /my_index/my_type/_mapping
+PUT /my_index/_mapping/my_type
 {
     "my_type": {
         "properties": {
             "title": {
-                "type": "multi_field",
+                "type": "string",
                 "fields": {
-                    "title":    {
-                        "type":     "string"
-                    },
                     "shingles": {
                         "type":     "string",
                         "analyzer": "my_shingle_analyzer"
@@ -225,6 +142,10 @@ PUT /my_index/my_type/_mapping
     }
 }
 --------------------------------------------------
+
+With this mapping, values from  our JSON document in the field `title` will be
+indexed both as unigrams (`title`) and as bigrams (`title.shingles`), meaning
+that we can query these fields independently.
 
 And finally, we can index our example documents:
 
@@ -265,21 +186,21 @@ have the same relevance score because they contain the same words:
   "hits": [
      {
         "_id": "1",
-        "_score": 0.29821485,
+        "_score": 0.44273707, <1>
         "_source": {
            "title": "Sue ate the alligator"
         }
      },
      {
         "_id": "2",
-        "_score": 0.29821485,
+        "_score": 0.44273707, <1>
         "_source": {
            "title": "The alligator ate Sue"
         }
      },
      {
-        "_id": "3", <1>
-        "_score": 0.06258427,
+        "_id": "3", <2>
+        "_score": 0.046571054,
         "_source": {
            "title": "Sue never goes anywhere without her alligator skin purse"
         }
@@ -287,7 +208,9 @@ have the same relevance score because they contain the same words:
   ]
 }
 --------------------------------------------------
-<1> We could have excluded document `3` by setting the `minimum_should_match`
+<1> Both documents contain `the`, `alligator` and `ate` and so have the
+    same score.
+<2> We could have excluded document `3` by setting the `minimum_should_match`
     parameter. See <<match-precision>>.
 
 Now let's add the `shingles` field into the query.  Remember that we want
@@ -325,21 +248,21 @@ first place because it matched the shingled term `"ate sue"`.
   "hits": [
      {
         "_id": "2",
-        "_score": 0.39806062,
+        "_score": 0.4883322,
         "_source": {
            "title": "The alligator ate Sue"
         }
      },
      {
         "_id": "1",
-        "_score": 0.08626416,
+        "_score": 0.13422975,
         "_source": {
            "title": "Sue ate the alligator"
         }
      },
      {
         "_id": "3",
-        "_score": 0.01810366,
+        "_score": 0.014119488,
         "_source": {
            "title": "Sue never goes anywhere without her alligator skin purse"
         }
@@ -365,6 +288,6 @@ to optimize for fast queries.
 
 This is a theme that you will encounter frequently in Elasticsearch: it makes
 it possible to achieve a lot with your existing data, without requiring any
-setup.  But once you understand your requirements better, it is worth putting
+setup.  But once you understand your requirements better it is worth putting
 in the extra effort to model your data at index time.  A little bit of
-preparation will help you to achieve better results and better performance.
+preparation will help you to achieve better results with better performance.

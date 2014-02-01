@@ -9,14 +9,14 @@ the `match_phrase` query would exclude it.
 
 Instead of using using proximity matching as an absolute requirement, we can
 use it as a _signal_ -- as one of potentially many queries, each of which
-contributes to the overall score for each document.
+contributes to the overall score for each document (see <<most-fields>>).
 
 The fact that we want to add together the scores from multiple queries implies
 that we should combine them using the `bool` query.
 
 We can use a simple `match` query as a `must` clause. This is the query that
-will determine which documents are included in our resultset --  we can tune
-the precision using the `minimum_must_match` parameter.  Then we can add other
+will determine which documents are included in our resultset --  we can trim
+the long tail with the `minimum_must_match` parameter.  Then we can add other
 more specific queries as `should` clauses -- every one that matches will
 increase the relevance of the matching docs.
 

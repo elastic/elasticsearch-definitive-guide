@@ -51,14 +51,12 @@ Fortunately, there is a simple workaround for cases like these, called the
 --------------------------------------------------
 DELETE /my_index/groups/ <1>
 
-PUT /my_index/groups/_mapping <2>
+PUT /my_index/_mapping/groups <2>
 {
-    "groups": {
-        "properties": {
-            "names": {
-                "type":                "string",
-                "position_offset_gap": 100
-            }
+    "properties": {
+        "names": {
+            "type":                "string",
+            "position_offset_gap": 100
         }
     }
 }
@@ -77,5 +75,5 @@ the following positions:
 * Position 104: `smith`
 
 Our phrase query would no longer match a document like this because `abraham`
-and `lincoln` are now 100 words apart. You would have to add a `slop` value of
-100 in order for this document to match.
+and `lincoln` are now 100 positions apart. You would have to add a `slop`
+value of 100 in order for this document to match.

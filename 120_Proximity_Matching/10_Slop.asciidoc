@@ -56,18 +56,3 @@ To make the query `"fox quick"` match our document, we need a `slop` of `3`:
     Switching word order from ``fox quick'' to ``quick fox'' thus requires two
     steps, or a `slop` of `2`.
 
-The `query_string` and `field` queries also support phrase `slop`, by adding a
-tilde (`~`) and the slop value after the phrase, as in this example:
-
-[source,js]
---------------------------------------------------
-GET /my_index/my_type/_search
-{
-    "query": {
-        "query_string": {
-            "query": "title:\"fox quick\"~3"
-        }
-    }
-}
---------------------------------------------------
-

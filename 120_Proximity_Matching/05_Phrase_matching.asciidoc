@@ -24,6 +24,23 @@ only keeps documents  which contains *all* of the search terms in the same
 would not match any of our documents because no document contains the word
 `"quick"` immediately followed by `"fox"`.
 
+****
+
+The `match_phrase` query can also be written as a `match` query with type
+`phrase`:
+
+[source,js]
+--------------------------------------------------
+"match": {
+    "title": {
+        "query": "quick brown fox",
+        "type":  "phrase"
+    }
+}
+--------------------------------------------------
+
+****
+
 ==== Term positions
 
 When a string is analyzed, the analyzer returns not only a list of terms, but
@@ -75,7 +92,7 @@ all of the words in exactly the order specified, with no words inbetween.
 
 For a document to be considered a match for the phrase ``quick brown fox'':
 
-* `quick`, `brown` and `fox` must all appear in the document
+* `quick`, `brown` and `fox` must all appear in the field
 
 * the position of `brown` must be `1` greater than the position of `quick`
 
@@ -83,29 +100,11 @@ For a document to be considered a match for the phrase ``quick brown fox'':
 
 If any of these conditions is not met, the document is not considered a match.
 
-==== Other queries
-
-Phrase matching is also supported by the `query_string` and `field` queries,
-where a phrase should be demarcated with double quotes:
-
-[source,js]
---------------------------------------------------
-GET /my_index/my_type/_search
-{
-    "query": {
-        "query_string": {
-            "query": "title:\"quick brown fox\""
-        }
-    }
-}
---------------------------------------------------
-
 **************************************************
 
-Internally, the `match_phrase` and `query_string` queries use the low-level
-`span` query family to do position-aware matching. Span queries are term-level
-queries, so they have no analysis phase -- they search for the exact term
-specified.
+Internally, the `match_phrase` query use the low-level `span` query family to
+do position-aware matching. Span queries are term-level queries, so they have
+no analysis phase -- they search for the exact term specified.
 
 Thankfully, most people never need to use the `span` queries directly as the
 `match_phrase` query is usually good enough. However, certain specialized

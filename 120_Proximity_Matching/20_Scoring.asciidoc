@@ -7,7 +7,9 @@ relevance `_score`. By setting a high `slop` value like `50` or `100`, you can
 exclude documents where the words are really too far apart, but give a higher
 score to documents where the words are closer together.
 
-The following proximity query for `"quick dog"`:
+The following proximity query for `"quick dog"` matches both documents which
+contain the words `"quick"` and `"dog"`, but gives a higher score to the
+document where the words are nearer to each other:
 
 [source,js]
 --------------------------------------------------
@@ -24,9 +26,6 @@ POST /my_index/my_type/_search
 }
 --------------------------------------------------
 <1> Note the high `slop` value
-
-matches both documents which contain the words `"quick"` and `"dog"`, but
-gives a higher score to the document where the words are nearer to each other:
 
 [source,js]
 --------------------------------------------------

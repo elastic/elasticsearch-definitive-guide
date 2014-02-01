@@ -23,7 +23,8 @@ on a busy cluster.
 In certain pathological cases phrase queries can be very costly, but this is
 unusual.  An example of a pathological case is DNA sequencing, where there are
 many many identical terms repeated in many positions. Using higher `slop`
-values in this case results in an exponential growth in position calculations.
+values in this case results in a huge growth in the number of position
+calculations.
 
 **************************************************************************
 
@@ -40,7 +41,7 @@ our users are only interested in the first few pages of results.
 
 A simple `match` query will already have ranked documents which contain all
 search terms near the top of the list. Really, we just want to rerank the *top
-results* to give an extra relevance bump to those documents that match the
+results* to give an extra relevance bump to those documents that also match the
 phrase query.
 
 The `search` API supports exactly this functionality via _rescoring_. The
