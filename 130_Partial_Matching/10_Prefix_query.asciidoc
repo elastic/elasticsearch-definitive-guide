@@ -65,7 +65,7 @@ And the shorter the prefix, the more terms need to be visited. If we were to
 look for the prefix `W` instead of `W1`, perhaps we would match 10 million
 terms instead of just one million.
 
-The `prefix` query or filter are useful for _ad hoc_ prefix matching, but
+CAUTION: The `prefix` query or filter are useful for _ad hoc_ prefix matching, but
 should be used with care.  They can be used freely on fields with a small
 number of terms, but they scale poorly and can put your cluster under a lot of
 strain.  Try to limit their impact on your cluster by using a long prefix --

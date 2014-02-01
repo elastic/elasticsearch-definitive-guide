@@ -1,7 +1,7 @@
 === `wildcard` and `regexp` queries
 
 The `wildcard` query is a low-level term-based query similar in nature to the
-`prefix` query, but allows you to specify a pattern instead of just a prefix.
+`prefix` query, but it allows you to specify a pattern instead of just a prefix.
 It uses the standard shell wildcards where `?` matches any character, and `*`
 matches zero or more characters.
 
@@ -21,10 +21,10 @@ GET /myindex/address/_search
 <1> The `?` will match the `1` and the `2`, while the `*` matches the space
     and the `7` and `8`.
 
-Imagine now that you wanted to match all postcodes in the `W` area.  A prefix
-match would include the postcode starting with `WC`, and you would have a
-similar problem with a wildcard match.  We only want to match postcodes that
-begin with a `W`, followed by a number.  The `regexp` query allows you to
+Imagine now that you wanted to match all postcodes just in the `W` area.  A
+prefix match would also include postcodes starting with `WC`, and you would
+have a similar problem with a wildcard match.  We only want to match postcodes
+that begin with a `W`, followed by a number.  The `regexp` query allows you to
 write these more complicated patterns:
 
 [source,js]

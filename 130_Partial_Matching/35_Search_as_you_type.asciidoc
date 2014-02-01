@@ -113,7 +113,7 @@ with the `update-mapping` API:
 
 [source,js]
 --------------------------------------------------
-PUT /myindex/mytype/_mapping
+PUT /myindex/_mapping/mytype
 {
     "mytype": {
         "properties": {
@@ -300,7 +300,7 @@ The edge n-gram approach can also be used for structured data, such as the
 postcodes example from <<prefix-query,earlier in this chapter>>.  Of course,
 the `postcode` field would need to be `analyzed` instead of `not_analyzed` but
 you could use the `keyword` tokenizer to treat the postcodes as if they were
-`not_indexed`.
+`not_analyzed`.
 
 *************************************************
 
@@ -308,7 +308,7 @@ The `keyword` tokenizer is the NOOP tokenizer, the tokenizer which does
 nothing.  Whatever string it receives as input, it emits exactly the same
 string a single token.  It can therefore be used for values that we would
 normally treat as `not_analyzed` but which require some other analysis
-transformation.
+transformation such as lowercasing.
 
 *************************************************
 

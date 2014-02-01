@@ -3,7 +3,8 @@
 
 Finally, let's take a look at how n-grams can be used to search languages with
 compound words.  German is famous for combining several small words into one
-massive compound word in order to capture precise or complex meanings, for example:
+massive compound word in order to capture precise or complex meanings. For
+example:
 
 _Aussprachewörterbuch_::
     Pronunciation dictionary
@@ -166,9 +167,12 @@ GET /myindex/mytype/_search
 }
 --------------------------------------------------
 
-This is a bit of a shotgun approach to full text search and results in a large
-inverted index, but it is an effective generic way of indexing languages which
-use many compound words. This technique is used to increase _recall_ -- the
-number of relevant documents which a search returns.  It is usually used in
-combination with other techniques, such as shingles (see <<shingles>>) to
-improve precision and the relevance score of each document.
+This is a bit of a shotgun approach to full text search and can result in a
+large inverted index, but it is an effective generic way of indexing languages
+which use many compound words or which don't use whitespace between words,
+such as Thai.
+
+This technique is used to increase _recall_ -- the number of relevant
+documents which a search returns.  It is usually used in combination with
+other techniques, such as shingles (see <<shingles>>) to improve precision and
+the relevance score of each document.
