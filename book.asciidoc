@@ -52,24 +52,32 @@ include::170_Relevance.asciidoc[]
 
 include::180_Non_Prose.asciidoc[]
 
-[[other-stuff]]
-= Other stuff
+include::190_Relationships.asciidoc[]
 
-include::190_Scripting.asciidoc[]
+[[more-than-search]]
+= More than search
 
 include::200_Aggregations.asciidoc[]
 
-include::210_Relationships.asciidoc[]
+include::210_Geolocation.asciidoc[]
 
-include::220_Time_Based.asciidoc[]
+include::220_Percolation.asciidoc[]
 
-include::230_Index_Per_User.asciidoc[]
+include::230_Scripting.asciidoc[]
 
-include::240_Geolocation.asciidoc[]
+[[modelling-your-data]]
 
-include::250_Percolation.asciidoc[]
+= Modelling your data
 
-include::260_Scaling.asciidoc[]
+include::240_Scaling.asciidoc[]
+
+include::250_Time_Based.asciidoc[]
+
+include::260_Index_Per_User.asciidoc[]
+
+[[administration]]
+
+= Administration and internals
 
 include::280_Cluster_Admin.asciidoc[]
 
