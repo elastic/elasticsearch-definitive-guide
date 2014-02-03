@@ -1,0 +1,25 @@
+[partintro]
+--
+
+In <<getting-started>> we covered the basic tools in just enough detail to
+allow you to start searching your data with Elasticsearch.  It won't take take
+long though before you find that you want more: more flexibility when matching
+user queries, more accurate ranking of results, more specific searches to
+cover different problem domains.
+
+To move to the next level, it is not enough to just use the `match` query. You
+need to understand your data and how you want to be able to search it. The
+chapters in this part will explain how to index and query your data to allow
+you to take advantage of word proximity, partial matching, fuzzy matching and
+language awareness.
+
+Understanding how each query contributes to the relevance `_score` will help
+you to tune your queries: to ensure that the documents you consider to be the
+best results appear on the first page, and to trim the ``long tail'' of barely
+relevant results.
+
+Search is not just about full text search: a large portion of your data will
+be structured values like dates and numbers. We will start by explaining how
+to combine structured search with full text search in the most performant way.
+
+--
