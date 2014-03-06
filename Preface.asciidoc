@@ -76,6 +76,29 @@ examples and explaining the theory where necessary.
 The existing reference documentation explains *how* to use features.  We want
 this book to explain *why* and *when* to use various features.
 
+=== How to read this book
+
+Elasticsearch tries very hard to make the complex simple, and to a large
+degree it succeeds in this. That said, search and distributed systems *are*
+complex and sooner or later you have to get to grips with some of the
+complexity in order to take full advantage of Elasticsearch.
+
+Complexity, however, is not the same as magic.  We tend to view complex
+systems as magical black boxes that respond to incantations, but there are
+usually simple processes at work within. Understanding these processes helps
+to disspell the magic -- instead of hoping that the black box will do what you
+want, understanding gives you certainty and clarity.
+
+This is a definitive guide: not only do we help you to get started with
+Elasticsearch, we tackle the deeper more interesting topics too. These include
+chapters such as <<distributed-cluster>>, <<distributed-docs>> and
+<<distributed-search>>, which are not essential reading but do give you a solid
+understanding of the internals.
+
+The first part of the book should be read in order as each chapter builds on
+the previous chapter (although you can skim over the chapters mentioned
+above).  Later chapters like <<partial-matching>> and <<proximity-matching>>
+are more standalone and can be referred to as needed.
 
 === Navigating this book
 
