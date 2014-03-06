@@ -1,0 +1,25 @@
+GET /_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "myfield": {
+              "query": "quick brown fox",
+              "fuzziness": "AUTO",
+              "minimum_should_match": "70%"
+            }
+          }
+        }
+      ],
+      "should": [
+        {
+          "match_phrase": {
+            "query": "quick brown fox"
+          }
+        }
+      ]
+    }
+  }
+}
