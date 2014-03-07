@@ -6,7 +6,7 @@ ahead and try it out. If we kill the first node our cluster looks like
 
 [[cluster-post-kill]]
 .Cluster after killing one node
-image::images/cluster_node2_node3.svg["The cluster after killing one node"]
+image::png/02-06_node_failure.png["The cluster after killing one node"]
 
 The node we killed was the master node. A cluster must have a master node in
 order to function correctly, so the first thing that happened was that the

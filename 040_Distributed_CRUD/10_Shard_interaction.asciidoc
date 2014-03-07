@@ -8,7 +8,7 @@ looks something like <<img-distrib>>.
 
 [[img-distrib]]
 .A cluster with three nodes and one index
-image::images/distrib.svg["A cluster with three nodes and one index"]
+image::png/04-01_index.png["A cluster with three nodes and one index"]
 
 We can send our requests to any node in the cluster. Every node is fully
 capable of serving any request.  Every node knows the location of every

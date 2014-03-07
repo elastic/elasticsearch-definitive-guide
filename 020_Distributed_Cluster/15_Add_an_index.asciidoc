@@ -45,7 +45,7 @@ PUT /blogs
 
 [[cluster-one-node]]
 .A single-node cluster with an index
-image::images/cluster_node1.svg["A single-node cluster with an index"]
+image::png/02-02_one_node.png["A single-node cluster with an index"]
 
 Our cluster now looks like <<cluster-one-node>> -- all 3 primary shards have
 been allocated to `Node 1`. If we were to check the

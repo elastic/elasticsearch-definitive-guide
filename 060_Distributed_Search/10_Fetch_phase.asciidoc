@@ -6,7 +6,7 @@ phase.
 
 [[img-distrib-fetch]]
 .Fetch Phase of distributed search
-image::images/distributed_search_fetch.png["Fetch Phase of distributed search"]
+image::png/06-02_fetch.png["Fetch Phase of distributed search"]
 
 1. The coordinating node identifies which documents need to be fetched and
    issues a multi `GET` request to the relevant shards.

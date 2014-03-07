@@ -9,7 +9,7 @@ The shard interaction is depicted in <<img-distrib-write>>.
 
 [[img-distrib-write]]
 .Creating, indexing or deleting a single document
-image::images/distrib_single_write.svg["Creating, indexing or deleting a single document"]
+image::png/04-02_write.png["Creating, indexing or deleting a single document"]
 
 1. The client sends a create, index or delete request to `Node_1`.
 

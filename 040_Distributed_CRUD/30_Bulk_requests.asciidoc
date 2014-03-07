@@ -14,7 +14,7 @@ The pattern for the `mget` API is depicted in <<img-distrib-mget>>.
 
 [[img-distrib-mget]]
 .Retrieving multiple documents with `mget`
-image::images/distrib_mget.svg["Retrieving multiple documents with mget"]
+image::png/04-05_mget.png["Retrieving multiple documents with mget"]
 
 1. The client sends an `mget` request to `Node_1`.
 
@@ -31,7 +31,7 @@ The pattern for the `bulk` API is depicted in <<img-distrib-bulk>>.
 
 [[img-distrib-bulk]]
 .Multiple document changes with `bulk`
-image::images/distrib_bulk.svg["Multiple document changes with bulk"]
+image::png/04-06_bulk.png["Multiple document changes with bulk"]
 
 1. The client sends a `bulk` request to `Node_1`.
 

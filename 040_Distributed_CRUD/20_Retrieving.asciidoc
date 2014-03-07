@@ -6,7 +6,7 @@ The request process is depicted in <<img-distrib-read>>.
 
 [[img-distrib-read]]
 .Retrieving a single document
-image::images/distrib_single_read.svg["Retrieving a single document"]
+image::png/04-03_get.png["Retrieving a single document"]
 
 1. The client sends a get request to `Node 1`.
 

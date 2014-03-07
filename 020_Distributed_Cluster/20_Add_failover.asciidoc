@@ -10,7 +10,7 @@ If we start a second node, our cluster would look like <<cluster-two-nodes>>.
 
 [[cluster-two-nodes]]
 .A two-node cluster -- all primary and replica shards are allocated
-image::images/cluster_node1_node2.svg["A two-node cluster"]
+image::png/02-03_two_nodes.png["A two-node cluster"]
 
 The second node has joined the cluster and three _replica shards_ have been
 allocated to it -- one for each primary shard.  That means that we can lose
