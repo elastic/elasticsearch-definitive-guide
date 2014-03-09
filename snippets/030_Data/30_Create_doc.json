@@ -1,0 +1,19 @@
+# Delete all data in the `website` index
+DELETE /website
+
+# Create a document with ID 123 if the doc doesn't already exist
+PUT /website/blog/123?op_type=create
+{
+  "title": "My first blog entry",
+  "text":  "Just trying this out...",
+  "date":  "2014/01/01"
+}
+
+# Conflict when trying to create a document which already exists
+PUT /website/blog/123?op_type=create
+{
+  "title": "My first blog entry",
+  "text":  "I am starting to get the hang of this...",
+  "date":  "2014/01/02"
+}
+

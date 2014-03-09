@@ -9,6 +9,8 @@ To get the document out of Elasticsearch, we use the the same `_index`,
 GET /website/blog/123?pretty
 --------------------------------------------------
 
+// SENSE: 030_Data/15_Get_document.json
+
 The response includes the by now familiar metadata elements, plus the `_source`
 field, which contains the original JSON document that we sent to Elasticsearch
 when we indexed it.
@@ -52,6 +54,8 @@ display the response headers:
 --------------------------------------------------
 curl -i -XGET /website/blog/124?pretty
 --------------------------------------------------
+// SENSE: 030_Data/15_Get_document.json
+
 
 The response now looks like this:
 
@@ -80,6 +84,8 @@ fields can be specified in a comma-separated list:
 --------------------------------------------------
 GET /website/blog/123?_source=title,text
 --------------------------------------------------
+// SENSE: 030_Data/15_Get_document.json
+
 
 The  `_source` field now contains just the fields that we requested and has
 filtered out the `date` field:
@@ -106,6 +112,7 @@ the `_source` endpoint:
 --------------------------------------------------
 GET /website/blog/123/_source
 --------------------------------------------------
+// SENSE: 030_Data/15_Get_document.json
 
 which returns just:
 

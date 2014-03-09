@@ -1,0 +1,18 @@
+# Delete all data in the `website` index
+DELETE /website
+
+# Create a document
+PUT /website/blog/123
+{
+  "title": "My first blog entry",
+  "text":  "I am starting to get the hang of this...",
+  "date":  "2014/01/02"
+}
+
+# Bulk API with errors
+POST /_bulk
+{ "create": { "_index": "website", "_type": "blog", "_id": "123" }}
+{ "title":    "Cannot create - it already exists" }
+{ "index":  { "_index": "website", "_type": "blog", "_id": "123" }}
+{ "title":    "But we can update it" }
+

@@ -75,6 +75,8 @@ POST /_bulk
 { "update": { "_index": "website", "_type": "blog", "_id": "123", "_retry_on_conflict" : 3} }
 { "doc" : {"title" : "My updated blog post"} } <2>
 --------------------------------------------------
+// SENSE: 030_Data/55_Bulk.json
+
 <1> Notice how the `delete` _action_ does not have a _request body_, it is
     followed immediately by another _action_.
 <2> Remember the final newline character.
@@ -120,6 +122,8 @@ each request, in the same order as we requested them:
    ]
 }}
 --------------------------------------------------
+// SENSE: 030_Data/55_Bulk.json
+
 <1> All sub-requests completed successfully.
 
 Each sub-request is executed independently, so the failure of one sub-request
@@ -136,7 +140,7 @@ POST /_bulk
 { "index":  { "_index": "website", "_type": "blog", "_id": "123" }}
 { "title":    "But we can update it" }
 --------------------------------------------------
-
+// SENSE: 030_Data/55_Bulk_independent.json
 
 In the response we can see that it failed to `create` document `123` because
 it already exists, but the subsequent `index` request, also on document `123`,
@@ -167,6 +171,8 @@ succeeded:
    ]
 }
 --------------------------------------------------
+// SENSE: 030_Data/55_Bulk_independent.json
+
 <1> One or more requests has failed.
 <2> The HTTP status code for this request reports `409 CONFLICT`.
 <3> The error message explaining why the request failed.
@@ -189,6 +195,8 @@ POST /website/_bulk
 { "index": { "_type": "log" }}
 { "event": "User logged in" }
 --------------------------------------------------
+// SENSE: 030_Data/55_Bulk_defaults.json
+
 
 You can still override the `_index` and `_type` in the metadata line, but it
 will use the values in the URL as defaults:
@@ -198,9 +206,10 @@ will use the values in the URL as defaults:
 POST /website/log/_bulk
 { "index": {}}
 { "event": "User logged in" }
-{ "index": { "_type": "blog" }
-{ "title": "Overriding the default type" }}
+{ "index": { "_type": "blog" }}
+{ "title": "Overriding the default type" }
 --------------------------------------------------
+// SENSE: 030_Data/55_Bulk_defaults.json
 
 ==== How big is too big?
 

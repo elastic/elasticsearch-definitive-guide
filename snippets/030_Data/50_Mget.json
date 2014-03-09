@@ -1,0 +1,48 @@
+# Delete all data in the `website` index
+DELETE /website
+
+# Insert two documents
+PUT /website/blog/2
+{
+  "title": "My first external blog entry",
+  "text":  "This is a piece of cake..."
+}
+
+PUT /website/pageviews/1
+{
+   "views": 2
+}
+
+# Retrieve multiple documents
+GET /_mget
+{
+   "docs" : [
+      {
+         "_index" : "website",
+         "_type" :  "blog",
+         "_id" :    2
+      },
+      {
+         "_index" : "website",
+         "_type" :  "pageviews",
+         "_id" :    1,
+         "_source": "views"
+      }
+   ]
+}
+
+# Retrieve multiple docs, with a default index and type
+GET /website/blog/_mget
+{
+   "docs" : [
+      { "_id" : 2 },
+      { "_type" : "pageviews", "_id" :   1 }
+   ]
+}
+
+# Retrieve multiple docs with a default index and type, short form
+GET /website/blog/_mget
+{
+   "ids" : [ "2", "1" ]
+}
+

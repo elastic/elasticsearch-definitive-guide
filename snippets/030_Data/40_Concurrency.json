@@ -1,0 +1,27 @@
+# Delete all data in the `website` index
+DELETE /website
+
+# Create a new document
+PUT /website/blog/1/_create
+{
+  "title": "My first blog entry",
+  "text":  "Just trying this out..."
+}
+
+# Retrieve the document
+GET /website/blog/1
+
+# Reindex the document only if it is still version 1
+PUT /website/blog/1?version=1
+{
+  "title": "My first blog entry",
+  "text":  "Starting to get the hang of this..."
+}
+
+# Fail with a conflict error because the document is now version 2
+PUT /website/blog/1?version=1
+{
+  "title": "My first blog entry",
+  "text":  "Starting to get the hang of this..."
+}
+

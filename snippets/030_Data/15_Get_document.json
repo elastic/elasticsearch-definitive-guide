@@ -1,0 +1,22 @@
+# Delete all data in the `website` index
+DELETE /website
+
+# Create a document with ID 123
+PUT /website/blog/123
+{
+  "title": "My first blog entry",
+  "text":  "Just trying this out...",
+  "date":  "2014/01/01"
+}
+
+# Retrieve document with ID 123
+GET /website/blog/123
+
+# Retrieve non-existent document
+GET /website/blog/124
+
+# Retrieve part of a document
+GET /website/blog/123?_source=title,text
+
+# Retrieve just the _source field
+GET /website/blog/123/_source

@@ -1,0 +1,23 @@
+# Delete all data in the `website` index
+DELETE /website
+
+# Set an external version number
+PUT /website/blog/2?version=5&version_type=external
+{
+  "title": "My first external blog entry",
+  "text":  "Starting to get the hang of this..."
+}
+
+# Reindex the document with a new external version
+PUT /website/blog/2?version=10&version_type=external
+{
+  "title": "My first external blog entry",
+  "text":  "This is a piece of cake..."
+}
+
+# Fail with a conflict error with an external version number
+PUT /website/blog/2?version=10&version_type=external
+{
+  "title": "My first external blog entry",
+  "text":  "This is a piece of cake..."
+}

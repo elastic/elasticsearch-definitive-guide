@@ -1,0 +1,17 @@
+# Delete all data in the `website` index
+DELETE /website
+
+# Create a document
+PUT /website/blog/123
+{
+  "title": "My first blog entry",
+  "text":  "I am starting to get the hang of this...",
+  "date":  "2014/01/02"
+}
+
+# Delete an existing document
+DELETE /website/blog/123
+
+# Delete an non-existent document
+DELETE /website/blog/123
+

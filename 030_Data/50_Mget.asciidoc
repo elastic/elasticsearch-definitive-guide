@@ -30,6 +30,7 @@ GET /_mget
    ]
 }
 --------------------------------------------------
+// SENSE: 030_Data/50_Mget.json
 
 The response body also contains a `docs` array which contains a response
 per document, in the same order as specified in the request. Each of these
@@ -58,13 +59,13 @@ responses is the same response body that we would expect from an individual
          "found" :    true,
          "_version" : 2,
          "_source" : {
-            "views" : 1
+            "views" : 2
          }
       }
    ]
 }
 --------------------------------------------------
-
+// SENSE: 030_Data/50_Mget.json
 
 If the documents you wish to retrieve are all in the same `_index` (and maybe
 even of the same `_type`) then you can specify a default `/_index` or a
@@ -82,6 +83,7 @@ GET /website/blog/_mget
    ]
 }
 --------------------------------------------------
+// SENSE: 030_Data/50_Mget.json
 
 In fact, if all the documents have the same `_index` and `_type`, then you
 can just pass an array of `ids` instead of the full `docs` array:
@@ -122,6 +124,7 @@ non-existence is reported in the response body:
   ]
 }
 --------------------------------------------------
+// SENSE: 030_Data/50_Mget.json
 <1> This document was not found.
 
 The fact that the second document wasn't found didn't affect the retrieval of

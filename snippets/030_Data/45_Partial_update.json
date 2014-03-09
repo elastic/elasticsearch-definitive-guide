@@ -1,0 +1,51 @@
+# Delete all data in the `website` index
+DELETE /website
+
+# Index a document
+PUT /website/blog/1
+{
+  "title": "My first blog entry",
+  "text":  "I am starting to get the hang of this..."
+}
+
+# Partial update with doc
+POST /website/blog/1/_update
+{
+   "doc" : {
+      "tags" : [ "testing" ],
+      "views": 0
+   }
+}
+
+# Retrieve the updated doc
+GET /website/blog/1
+
+# Partial update with a script
+POST /website/blog/1/_update
+{
+   "script" : "ctx._source.views+=1"
+}
+
+# Retrieve the updated doc
+GET /website/blog/1
+
+# Partial update with a script and params
+POST /website/blog/1/_update
+{
+   "script" : "ctx._source.tags+=new_tag",
+   "params" : {
+      "new_tag" : "search"
+   }
+}
+
+# Retrieve the updated doc
+GET /website/blog/1
+
+# Delete the document with the update API
+POST /website/blog/1/_update
+{
+   "script" : "ctx.op = ctx._source.views == count ? 'delete' : 'none'",
+    "params" : {
+        "count": 1
+    }
+}

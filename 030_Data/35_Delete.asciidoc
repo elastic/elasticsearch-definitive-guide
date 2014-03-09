@@ -8,6 +8,7 @@ already, but uses the `DELETE` method :
 --------------------------------------------------
 DELETE /website/blog/123
 --------------------------------------------------
+// SENSE: 030_Data/35_Delete_doc.json
 
 
 If the document is found, Elasticsearch will return an HTTP response code

@@ -1,0 +1,18 @@
+# Delete all data in the `website` index
+DELETE /website
+
+# Bulk API with default index
+POST /website/_bulk
+{ "index": { "_type": "log" }}
+{ "event": "User logged in" }
+
+
+# Bulk API with default index and type
+POST /website/log/_bulk
+{ "index": {}}
+{ "event": "User logged in" }
+{ "index": { "_type": "blog" }}
+{ "title": "Overriding the default type" }
+
+
+

@@ -1,0 +1,36 @@
+# Delete all data in the `website` index
+DELETE /website
+
+# Insert the `upsert` doc because the doc doesn't exist
+POST /website/pageviews/1/_update
+{
+   "script" : "ctx._source.views+=1",
+   "upsert": {
+       "views": 1
+   }
+}
+
+# Retrieve the doc
+GET /website/pageviews/1
+
+# Then run the script
+POST /website/pageviews/1/_update
+{
+   "script" : "ctx._source.views+=1",
+   "upsert": {
+       "views": 1
+   }
+}
+
+# Retrieve the doc
+GET /website/pageviews/1
+
+# Retry the update request up to 5 times
+POST /website/pageviews/1/_update?retry_on_conflict=5
+{
+   "script" : "ctx._source.views+=1",
+   "upsert": {
+       "views": 1
+   }
+}
+

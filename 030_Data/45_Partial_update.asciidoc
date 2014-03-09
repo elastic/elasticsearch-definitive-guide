@@ -32,6 +32,7 @@ POST /website/blog/1/_update
    }
 }
 --------------------------------------------------
+// SENSE: 030_Data/45_Partial_update.json
 
 If the request succeeds, we see a response similar to that
 of the `index` request:
@@ -64,6 +65,8 @@ Retrieving the document shows the updated `_source` field:
    }
 }
 --------------------------------------------------
+// SENSE: 030_Data/45_Partial_update.json
+
 <1> Our new fields have been added to the `_source`.
 
 ==== Using scripts to make partial updates
@@ -90,6 +93,8 @@ POST /website/blog/1/_update
    "script" : "ctx._source.views+=1"
 }
 --------------------------------------------------
+// SENSE: 030_Data/45_Partial_update.json
+
 
 We can also use a script to add a new tag to the `tags` array.  In this
 example we specify the new tag as a parameter rather than hard coding it in
@@ -107,6 +112,8 @@ POST /website/blog/1/_update
    }
 }
 --------------------------------------------------
+// SENSE: 030_Data/45_Partial_update.json
+
 
 Fetching the document shows the effect of the last two requests:
 
@@ -142,6 +149,7 @@ POST /website/blog/1/_update
     }
 }
 --------------------------------------------------
+// SENSE: 030_Data/45_Partial_update.json
 
 ==== Create or update
 
@@ -155,17 +163,18 @@ document that should be created if it doesn't already exist:
 
 [source,js]
 --------------------------------------------------
-POST /website/pageviews/1/_update?fields=views
+POST /website/pageviews/1/_update
 {
    "script" : "ctx._source.views+=1",
    "upsert": {
-       "views": 0
+       "views": 1
    }
 }
 --------------------------------------------------
+// SENSE: 030_Data/45_Upsert.json
 
 The first time we run this request, the `upsert` value is indexed as a new
-document, which  initializes the `views` field to `0`. On subsequent runs the
+document, which  initializes the `views` field to `1`. On subsequent runs the
 document already exists so the `script` update is applied instead,
 incrementing the `views` counter.
 
@@ -202,6 +211,7 @@ POST /website/pageviews/1/_update?retry_on_conflict=5 <1>
    }
 }
 --------------------------------------------------
+// SENSE: 030_Data/45_Upsert.json
 <1> Retry this update 5 times before failing.
 
 This works well for idempotent operations like incrementing a counter, but

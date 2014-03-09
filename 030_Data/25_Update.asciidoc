@@ -14,6 +14,7 @@ PUT /website/blog/123
   "date":  "2014/01/02"
 }
 --------------------------------------------------
+// SENSE: 030_Data/25_Reindex_doc.json
 
 In the response, we can see that Elasticsearch has incremented the `_version`
 number:

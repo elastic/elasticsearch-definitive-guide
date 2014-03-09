@@ -1,0 +1,10 @@
+# Delete all data in the `website` index
+DELETE /website
+
+# Create a document with an auto-generated ID
+POST /website/blog/
+{
+  "title": "My second blog entry",
+  "text":  "Still trying this out...",
+  "date":  "2014/01/01"
+}

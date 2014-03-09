@@ -32,6 +32,7 @@ PUT /website/blog/123
   "date":  "2014/01/01"
 }
 --------------------------------------------------
+// SENSE: 030_Data/10_Create_doc_123.json
 
 Elasticsearch responds with:
 
@@ -75,7 +76,7 @@ POST /website/blog/
   "date":  "2014/01/01"
 }
 --------------------------------------------------
-
+// SENSE: 030_Data/10_Create_doc_auto_ID.json
 
 The response is similar to what we saw before, except that the `_id`
 field has been generated for us:

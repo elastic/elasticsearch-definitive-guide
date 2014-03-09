@@ -1,0 +1,21 @@
+# Delete all data in the `website` index
+DELETE /website
+
+# Create a document with ID 123
+PUT /website/blog/123
+{
+  "title": "My first blog entry",
+  "text":  "Just trying this out...",
+  "date":  "2014/01/01"
+}
+
+# Reindex a document
+PUT /website/blog/123
+{
+  "title": "My first blog entry",
+  "text":  "I am starting to get the hang of this...",
+  "date":  "2014/01/02"
+}
+
+# Retrieve the document
+GET /website/blog/123
