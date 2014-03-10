@@ -1,15 +1,18 @@
 [[index-doc]]
 === Indexing a document
 
-Before we can store a document in Elasticsearch, we need to decide where it
-lives.  As we just discussed, a document's `_index`, `_type` and `_id`
-uniquely identify the document.  If your data has a natural identifier (e.g.
-`user_account` or some other value that identifies the document), you should
-provide your own `_id`.
+Documents are _indexed_ -- stored and made searchable -- using the `index`
+API. But first, we need to decide where the document  lives.  As we just
+discussed, a document's `_index`, `_type` and `_id` uniquely identify the
+document.  We can either provide our own `_id` value or let the `index` API
+generate one for us.
+
 
 ==== Using our own ID
 
-If we want to specify our own `_id`, then the form of the request is:
+If your document has a natural identifier (e.g. a `user_account` field
+or some other value that identifies the document), then you should provide
+your own `_id`, using this form of the `index` API:
 
 [source,js]
 --------------------------------------------------
@@ -60,7 +63,7 @@ made by another part.
 
 ==== Auto-generating IDs
 
-If our data doesn't have a natural ID, we can let Elasticsearch auto-generate
+If our data doesn't have a natural ID, we can let Elasticsearch autogenerate
 one for us.  The structure of the request changes: instead of using the `PUT`
 verb -- ``store this document at this URL'' -- we use the `POST` verb --
 ``store this document *under* this URL''.

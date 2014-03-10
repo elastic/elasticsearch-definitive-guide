@@ -1,9 +1,10 @@
 [[update-doc]]
-=== Updating a document
+=== Updating a whole document
 
 Documents in Elasticsearch are immutable -- we cannot change them. Instead, if
 we need to update an existing document, we _reindex_ or replace it, which we
-can do using the same `index` API that we have already discussed.
+can do using the same `index` API that we have already discussed in
+<<index-doc>>.
 
 [source,js]
 --------------------------------------------------
