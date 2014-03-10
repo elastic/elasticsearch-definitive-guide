@@ -15,6 +15,38 @@ An Elasticsearch cluster can contain multiple _indices_ (databases), which in
 turn contain multiple _types_ (tables). These types hold multiple _documents_
 (rows), and each document has multiple _fields_ (columns).
 
+.Index vs Index vs Index
+**************************************************
+
+You may already have noticed that the word ``index'' is overloaded with
+several different meanings in the context of Elasticsearch. A little
+clarification is necessary:
+
+Index (noun)::
+
+As explained above, an _index_ is like a _database_ in a traditional
+relational database. It is the place to store related documents. The plural of
+_index_ is _indices_ or _indexes_.
+
+Index (verb)::
+
+_To index a document_ is to store a document in an _index (noun)_ so that it can
+be retrieved and queried. It is much like the `INSERT` keyword in SQL except
+that, if the document already exists, then the new document would replace the old.
+
+Inverted index::
+
+Relational databases add an _index_, such as a B-Tree index, to specific
+columns in order to improve the speed of data retrieval.  Elasticsearch and
+Lucene use a structure called an _inverted index_ for exactly the same
+purpose.
++
+By default, every field in a document is _indexed_ -- has an inverted index --
+and thus is searchable. A field without an inverted index is not searchable.
+See <<inverted-index>> for an explanation of how this structure works.
+
+**************************************************
+
 ==== An example
 We are going to store a document in the `blogs` index, as type `user`, and we
 can assign this user the unique ID `johnsmith`. Notice how
