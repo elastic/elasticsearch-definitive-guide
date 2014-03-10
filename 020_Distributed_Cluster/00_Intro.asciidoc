@@ -8,10 +8,10 @@ add more nodes to the cluster and to spread load and reliability between them.
 
 With most databases, scaling horizontally usually requires a major overhaul of
 your application to take advantage of these extra boxes. In contrast,
-Elasticsearch is _distributed_ by nature. It knows how to manage multiple
+Elasticsearch is _distributed_ by nature: it knows how to manage multiple
 nodes to provide scale and high availability.  This also means that your
 application doesn't need to care about it.
 
-In this chapter we are going to look at how a cluster uses nodes and shards to
-scale with your needs and to ensure that your data is safe from hardware
-failure.
+In this chapter we are going to look at how you can setup your _cluster_,
+_nodes_ and _shards_ to scale with your needs and to ensure that your data is
+safe from hardware failure.

@@ -3,10 +3,18 @@
 
 .Supplemental Chapter
 ****
-As mentioned earlier, this is the first of several "supplemental" chapters about
-how Elasticsearch operates in a distributed environment.  It is useful and
-interesting data, but feel free to skip it.  You can use Elasticsearch for
-a long time without worrying about shards, replication and fallover.
+
+As mentioned earlier, this is the first of several ``supplemental'' chapters
+about how Elasticsearch operates in a distributed environment.  In this
+chapter we explain commonly used terminology like _cluster_, _node_ and
+_shard_, the mechanics of how Elasticsearch scales out, and how it deals with
+hardware failure.
+
+Although this chapter is not required reading -- you can use Elasticsearch for
+a long time without worrying about shards, replication and fallover -- it will
+help you to understand the processes at work inside Elasticsearch. Feel free
+to skim through the chapter and to refer to it again later.
+
 ****
 
 include::020_Distributed_Cluster/00_Intro.asciidoc[]
