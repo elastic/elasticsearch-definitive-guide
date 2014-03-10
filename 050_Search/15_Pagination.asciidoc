@@ -28,6 +28,7 @@ sorted before being returned. But remember that a search request usually spans
 multiple shards. Each shard generates its own sorted results, which then need
 to be sorted centrally to ensure that the overll order is correct.
 
+.Deep paging in distributed systems
 ****
 
 To understand why deep paging is problematic, let's imagine that we are
@@ -47,5 +48,5 @@ why web search engines don't return more than 1,000 results for any query.
 
 ****
 
-In <<reindex>> we will explain how you *can* retrieve large numbers of
+TIP: In <<reindex>> we will explain how you *can* retrieve large numbers of
 documents efficiently.
