@@ -14,7 +14,7 @@ GET /_validate/query?explain
     "query": {
         "multi_match": {
             "query":       "peter smith",
-            "type":        "cross",
+            "type":        "cross_fields",
             "fields":      [ "title", "first_name", "last_name" ]
         }
     }

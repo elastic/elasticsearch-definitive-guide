@@ -20,7 +20,7 @@ to use the appropriate tools.
 When your only user input is a single query string, there are three scenarios
 that you will encounter frequently:
 
-Best field::
+Best fields::
 
 When searching for words that represent a concept, such as ``brown fox'', the
 words mean more together than they do individually. Fields like the `title`
@@ -47,7 +47,7 @@ These other fields act as _signals_ to increase the relevance score of each
 matching document. The *more fields that match*, the better.
 --
 
-Cross field::
+Cross fields::
 +
 --
 For some entities, the identifying information is spread across multiple

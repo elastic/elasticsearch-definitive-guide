@@ -1,16 +1,16 @@
-=== Cross-field queries
+=== Cross-fields queries
 
 The custom `_all` approach is a very good solution, as long as you thought
 about setting it up before you indexed your documents. However, Elasticsearch
 also provides a search time solution to the problem: the `multi_match` query
-with type `cross`.
+with type `cross_fields`.
 
-The `cross` type takes a term-centric approach, quite different to the
-field-centric approach taken by `best` and `most`. It treats all of the
-fields as one big field, and looks for *each term* in *any field*.
+The `cross_fields` type takes a term-centric approach, quite different to the
+field-centric approach taken by `best_fields` and `most_fields`. It treats all
+of the fields as one big field, and looks for *each term* in *any field*.
 
 To illustrate the difference between field-centric and term-centric queries,
-look at the `explanation` for this field-centric `most`-fields query:
+look at the `explanation` for this field-centric `most_fields` query:
 
 [source,js]
 --------------------------------------------------
@@ -19,7 +19,7 @@ GET /_validate/query?explain
     "query": {
         "multi_match": {
             "query":       "peter smith",
-            "type":        "most",
+            "type":        "most_fields",
             "operator":    "and", <1>
             "fields":      [ "first_name", "last_name" ]
         }
@@ -42,12 +42,12 @@ A *term-centric* approach would use this logic instead:
 In other words, the term `peter` must appear in either field, and the term
 `smith` must appear in either field.
 
-The `cross`-field type first analyzes the query string to produce a list of
+The `cross_fields` type first analyzes the query string to produce a list of
 terms, then it searches for each term in any field. That difference alone
 solves two of the three problems that we listed in <<field-centric>>, leaving
 us just with the issue of differing inverse document frequencies.
 
-Fortunately, the `cross`-field type solves this too, as can be seen from this
+Fortunately, the `cross_fields` type solves this too, as can be seen from this
 `validate-query` request:
 
 [source,js]
@@ -57,14 +57,14 @@ GET /_validate/query?explain
     "query": {
         "multi_match": {
             "query":       "peter smith",
-            "type":        "cross", <1>
+            "type":        "cross_fields", <1>
             "operator":    "and",
             "fields":      [ "first_name", "last_name" ]
         }
     }
 }
 --------------------------------------------------
-<1> Use `cross`-field term-centric matching.
+<1> Use `cross_fields` term-centric matching.
 
 It solves the term frequency problem by _blending_ inverse document
 frequencies across fields.
@@ -79,12 +79,12 @@ treated as a common first name too.
 
 [IMPORTANT]
 ==================================================
-For the `cross`-field query type to work optimally, all fields should have
+For the `cross_fields` query type to work optimally, all fields should have
 the same analyzer.  Fields which share an analyzer are grouped together as
 blended fields.
 
 If you include fields with a different analysis chain, they will be  added to
-the query in the same way as for `best`-field.  For instance, if we added the
+the query in the same way as for `best_fields`.  For instance, if we added the
 `title` field to the above query (assuming it uses a different analyzer), the
 explanation would be as follows:
 
@@ -100,7 +100,7 @@ This is particularly important when using the `minimum_should_match` and
 
 ==== Per-field boosting
 
-One of the advantages of using the `cross`-field query over
+One of the advantages of using the `cross_fields` query over
 <<custom-all,custom `_all` fields>> is that you can boost individual
 fields at query time.
 
@@ -116,7 +116,7 @@ GET /books/_search
     "query": {
         "multi_match": {
             "query":       "peter smith",
-            "type":        "cross",
+            "type":        "cross_fields",
             "fields":      [ "title^2", "description" ] <1>
         }
     }

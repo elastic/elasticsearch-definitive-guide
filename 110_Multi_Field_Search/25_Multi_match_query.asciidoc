@@ -7,13 +7,13 @@ the same query against multiple fields.
 
 There are several ``types'' of `multi_match` query, three of which just
 happen to coincide with the three scenarios that we listed in
-<<know-your-data>>:  `best` field, `most` fields, and `cross` field.
+<<know-your-data>>:  `best_fields`, `most_fields`, and `cross_fields`.
 
 ****
 
-By default it runs as type `best`, which means that it generates a `match`
-query for each field and wraps them in a `dis_max` query. This `dis_max`
-query:
+By default it runs as type `best_fields`, which means that it generates a
+`match` query for each field and wraps them in a `dis_max` query. This
+`dis_max` query:
 
 [source,js]
 --------------------------------------------------
@@ -49,14 +49,14 @@ could be rewritten more concisely with `multi_match` as:
 {
     "multi_match": {
         "query":                "Quick brown fox",
-        "type":                 "best", <1>
+        "type":                 "best_fields", <1>
         "fields":               [ "title", "body" ]
         "tie_breaker":          0.3,
         "minimum_should_match": "30%" <2>
     }
 }
 --------------------------------------------------
-<1> The `best` type is the default and can be left out.
+<1> The `best_fields` type is the default and can be left out.
 <2> Parameters like `minimum_should_match` or `operator` are passed through to
     the generated `match` queries.
 

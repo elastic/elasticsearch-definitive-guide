@@ -152,14 +152,14 @@ GET /my_index/_search
    "query": {
         "multi_match": {
             "query":  "jumping rabbits",
-            "type":   "most", <1>
+            "type":   "most_fields", <1>
             "fields": [ "title", "title.std" ]
         }
     }
 }
 --------------------------------------------------
 <1>  We want to combine the scores from all matching fields, so we use the
-     `most` type.  This causes the `multi_match` query to wrap the two
+     `most_fields` type.  This causes the `multi_match` query to wrap the two
      field-clauses in a `bool` query instead of a `dis_max` query.
 
 [source,js]
@@ -201,7 +201,7 @@ GET /my_index/_search
    "query": {
         "multi_match": {
             "query":       "jumping rabbits",
-            "type":        "most",
+            "type":        "most_fields",
             "fields":      [ "title^10", "title.std" ] <1>
         }
     }
