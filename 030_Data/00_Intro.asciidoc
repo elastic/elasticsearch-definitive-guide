@@ -23,7 +23,7 @@ But what if we could store our objects as objects?  Instead of modeling our
 application around the limitations of spreadsheets, we can instead focus on
 actually *using* the data. The flexibility of objects is returned to us.
 
-An object is a language-specific, in-memory data structure. To send it across
+An _object_ is a language-specific, in-memory data structure. To send it across
 the network, or store it, we need to be able to represent it in some standard
 format. http://en.wikipedia.org/wiki/Json:[JSON (JavaScript Object Notation)]
 is a way of representing objects in human-readable text.  It has become the
