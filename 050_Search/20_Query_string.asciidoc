@@ -82,13 +82,11 @@ it's as if we had added an extra field called `_all` with the value:
 The query string search uses the `_all` field unless another
 field name has been specified.
 
-****
-The `_all` field is a useful feature while you are getting started with
+TIP: The `_all` field is a useful feature while you are getting started with
 a new application. Later, you will find that you have more control over
 your search results if you query specific fields instead of the `_all`
 field.  When the `_all` field is no longer useful to you, you can
-disable it.
-****
+disable it, as explained in <<all-field>>.
 
 ==== More complicated queries
 
