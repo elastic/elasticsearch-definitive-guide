@@ -1,5 +1,5 @@
 [[routing-value]]
-=== Routing a document to a shard.
+=== Routing a document to a shard
 
 When you index a document, it is stored on a single primary shard. How does
 Elasticsearch know which shard a document belongs to?  When we create a new

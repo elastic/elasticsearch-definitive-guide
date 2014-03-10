@@ -5,11 +5,13 @@ Create, index and delete requests are _write_ operations, which must be
 successfully completed on the primary shard before they can be copied to any
 associated replica shards.
 
-The shard interaction is depicted in <<img-distrib-write>>.
-
 [[img-distrib-write]]
 .Creating, indexing or deleting a single document
 image::png/04-02_write.png["Creating, indexing or deleting a single document"]
+
+Below we list the sequence of steps necessary to successfully create, index or
+delete a document on both the primary and any replica shards, as depicted in
+<<img-distrib-write>>:
 
 1. The client sends a create, index or delete request to `Node_1`.
 

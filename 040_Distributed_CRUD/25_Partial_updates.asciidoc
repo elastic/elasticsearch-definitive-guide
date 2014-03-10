@@ -1,11 +1,13 @@
 === Partial updates to a document
 
-The `update` API, depicted in <<img-distrib-update>>,  combines the read and
-write patterns explained above.
+The `update` API  combines the read and write patterns explained above.
 
 [[img-distrib-update]]
 .Partial updates to a document
 image::png/04-04_update.png["Partial updates to a document"]
+
+Below we list the sequence of steps used to perform a partial update on  a
+document, as depicted in <<img-distrib-update>>:
 
 1. The client sends an update request to `Node_1`.
 

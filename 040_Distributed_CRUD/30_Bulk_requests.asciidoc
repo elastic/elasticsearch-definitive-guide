@@ -10,11 +10,12 @@ participating node.
 Once it receives answers from each node, it collates their responses
 into a single response, which it returns to the client.
 
-The pattern for the `mget` API is depicted in <<img-distrib-mget>>.
-
 [[img-distrib-mget]]
 .Retrieving multiple documents with `mget`
 image::png/04-05_mget.png["Retrieving multiple documents with mget"]
+
+Below we list the sequence of steps necessary to retrieve multiple documents
+with a single `mget` request, as depicted in <<img-distrib-mget>>:
 
 1. The client sends an `mget` request to `Node_1`.
 
@@ -27,11 +28,13 @@ A `routing` parameter can be set for each document in the `docs` array,
 and the `preference` parameter can be set for the top-level `mget`
 request.
 
-The pattern for the `bulk` API is depicted in <<img-distrib-bulk>>.
-
 [[img-distrib-bulk]]
 .Multiple document changes with `bulk`
 image::png/04-06_bulk.png["Multiple document changes with bulk"]
+
+Below we list the sequence of steps necessary to execute multiple
+`create`, `index`, `delete` and `update` requests within a single
+`bulk` request, as depicted in <<img-distrib-bulk>>:
 
 1. The client sends a `bulk` request to `Node_1`.
 

@@ -2,11 +2,13 @@
 === Retrieving a document
 
 A document can be retrieved from a primary shard or from any of its replicas.
-The request process is depicted in <<img-distrib-read>>.
 
 [[img-distrib-read]]
 .Retrieving a single document
 image::png/04-03_get.png["Retrieving a single document"]
+
+Below we list the sequence of steps to retrieve a document from either a
+primary or replica shard, as depicted in <<img-distrib-read>>:
 
 1. The client sends a get request to `Node 1`.
 
