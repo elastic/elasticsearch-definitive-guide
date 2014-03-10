@@ -4,7 +4,7 @@ How you talk to Elasticsearch depends on whether you are using Java or not.
 
 ==== Java API
 
-If you are using Java, then Elasticsearch provides two built-in clients
+If you are using Java, then Elasticsearch comes with two built-in clients
 which you can use in your code:
 
 Node client::
@@ -28,6 +28,9 @@ not be able to form a cluster.
 The Java client must be from the same version of Elasticsearch as the nodes,
 otherwise they may not be able to understand each other.
 ====
+
+More information about the Java clients can be found in the Java API section
+of the http://www.elasticsearch.org/guide/[Guide].
 
 ==== RESTful API with JSON over HTTP
 
