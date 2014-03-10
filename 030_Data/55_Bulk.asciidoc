@@ -18,7 +18,8 @@ The `bulk` request body has the following, slightly unusual, format:
 ...
 --------------------------------------------------
 
-Two important points to note about the format:
+This format is like a _stream_ of valid one-line JSON documents joined
+together by newline `"\n"` characters. Two important points to note:
 
 * Every line must end with a newline character `"\n"`, *including the last
   line*. These are used as markers to allow for efficient line separation.
@@ -26,6 +27,8 @@ Two important points to note about the format:
 * The lines cannot contain unescaped newline characters, as they would
   interfere with parsing -- that means that the JSON must *not* be
   pretty-printed.
+
+TIP: In <<bulk-format>> we explain why the `bulk` API uses this format.
 
 The _action/metadata_ line specifies *what action* to do to *which document*.
 
