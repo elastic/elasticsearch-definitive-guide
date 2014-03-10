@@ -177,12 +177,17 @@ code where it makes sense.
 
 ==== Using versions from an external system
 
-If you are indexing data from another database into Elasticsearch, you
-may already have a version number in your external system.  If so,
-you can reuse these same version numbers in Elasticsearch by adding
-`version_type=external` to the query string. Version numbers must
-be integers greater than zero and less than about `9.2e+18` -- a positive
-`long` value in Java.
+A common setup it to use some other database as the primary datastore and
+Elasticsearch to make the data searchable, which means that all changes to the
+primary database need to be copied across to Elasticsearch as they happen.  If
+multiple processes are responsible for this data synchronization, then you may
+run into concurrency problems similar to those described above.
+
+If your main database already has version numbers -- or some value like a
+`timestamp` which can be used as a version number -- then  you can reuse these
+same version numbers in Elasticsearch by adding `version_type=external` to the
+query string. Version numbers must be integers greater than zero and less than
+about `9.2e+18` -- a positive `long` value in Java.
 
 The way external version numbers are handled is a bit different to the
 internal version numbers  we discussed above.  Instead of checking that the
