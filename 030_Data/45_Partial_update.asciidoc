@@ -156,12 +156,12 @@ POST /website/blog/1/_update
 --------------------------------------------------
 // SENSE: 030_Data/45_Partial_update.json
 
-==== Create or update
+==== Updating a document which may not yet exist
 
 Imagine that we need to store a pageview counter in Elasticsearch. Every time
 that a user views a page, we increment the counter for that page.  But if it
-is a new page, we can't be sure that a counter already exists, and if we try
-to update a non-existent document, the update will fail.
+is a new page, we can't be sure that the counter already exists. If we try to
+update a non-existent document, the update will fail.
 
 In cases like these, we can use the `upsert` parameter to specify the
 document that should be created if it doesn't already exist:
