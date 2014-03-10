@@ -99,7 +99,7 @@ Elasticsearch will return any results that it has managed to gather from
 shards which responded before the request timed out.
 
 .Timeout is not a circuit breaker
-[IMPORTANT]
+[WARNING]
 ================================================
 
 It should be noted that this `timeout` does not halt the execution of the
