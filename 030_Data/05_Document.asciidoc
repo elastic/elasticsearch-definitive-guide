@@ -57,15 +57,11 @@ elements are:
 An _index_ is a like a ``database'' in a relational database -- it is the place
 we store and index related data.
 
-****
-
-Actually, in Elasticsearch, our data is stored and indexed in _shards_, while an
-index is just a logical namespace which groups together one or more shards.
-However, this is an internal detail -- our application shouldn't care about
-shards at all.  As far as our application is concerned, our documents live in
-an _index_. Elasticsearch takes care of the details.
-
-****
+TIP: Actually, in Elasticsearch, our data is stored and indexed in _shards_,
+while an index is just a logical namespace which groups together one or more
+shards. However, this is an internal detail -- our application shouldn't care
+about shards at all.  As far as our application is concerned, our documents
+live in an _index_. Elasticsearch takes care of the details.
 
 We will discuss how to create and manage indices ourselves in <<index-management>>,
 but for now we will let Elasticsearch create the index for us.  All we have to
