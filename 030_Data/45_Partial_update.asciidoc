@@ -219,11 +219,11 @@ POST /website/pageviews/1/_update?retry_on_conflict=5 <1>
 // SENSE: 030_Data/45_Upsert.json
 <1> Retry this update 5 times before failing.
 
-This works well for idempotent operations like incrementing a counter, but
-there are other changes which are *not* idempotent and where the order of
+This works well for operations like incrementing a counter where the order of
+increments does not matter, but there are other situations where the order of
 changes *is* important. Like the <<index-doc,`index` API>>, the `update` API
 adopts a ``last-write-wins'' approach by default, but it also accepts a
-`version` parameter which to allow you to use
-<<optimistic-concurrency-control>> to specify which version of the document
-you intend to update.
+`version` parameter which allows you to use
+<<optimistic-concurrency-control,optimistic concurrency control>> to specify
+which version of the document you intend to update.
 
