@@ -29,9 +29,9 @@ PUT /blogs/_settings
 image::png/02-05_replicas.png["A three-node cluster with two replica shards"]
 
 As can be seen in <<cluster-three-nodes-two-replicas>>, the `blogs` index now
-has 9 shards: 3 primaries and 6 replicas. If we were to run a cluster with 9
-nodes (one shard per node), we would be able to handle *50%* more search
-requests than our previous 6-node cluster.
+has 9 shards: 3 primaries and 6 replicas. If we were to add another three
+nodes to our 6 node cluster, we would again have one shard per node, and our
+cluster would be able to handle *50%* more search requests than before.
 
 [NOTE]
 ===================================================
