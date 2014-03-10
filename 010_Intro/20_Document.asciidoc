@@ -38,7 +38,7 @@ Consider this JSON document which represents a user object:
     "bio":       "Eco-warrior and defender of the weak",
     "age":       25,
     "join_date": "2014/05/01",
-    "interests": ["dolphins", "whales"]
+    "interests": [ "dolphins", "whales" ]
 }
 --------------------------------------------------
 
@@ -46,3 +46,15 @@ Although the original `user` object was complex, the structure and meaning of
 the object has been retained in the JSON version. Converting an object to JSON
 for indexing in Elasticsearch is much simpler than the equivalent process for
 a flat table structure.
+
+.Converting your data to JSON
+**************************************************
+
+Almost all languages have modules which will convert arbitrary  data
+structures into JSON for you, but the details are specific  to each language.
+Look for modules which handle JSON __ ``serialization'' __
+or __ ``marshalling'' __.
+http://www.elasticsearch.org/guide[The official Elasticsearch clients] all
+handle conversion to and from JSON for you automatically.
+
+**************************************************
