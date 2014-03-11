@@ -10,7 +10,7 @@ GET /_search?q=2014-09-15        # 12 results !
 GET /_search?q=date:2014-09-15   # 1  result
 GET /_search?q=date:2014         # 0  results !
 --------------------------------------------------
-
+// SENSE: 052_Mapping_Analysis/25_Data_type_differences.json
 
 Why does querying the <<all-field-intro,`_all` field>> for the full date
 return all tweets, and querying the `date` field for just the year return no
@@ -27,6 +27,7 @@ for the `tweet` type in the `gb` index:
 --------------------------------------------------
 GET /gb/_mapping/tweet
 --------------------------------------------------
+// SENSE: 052_Mapping_Analysis/25_Data_type_differences.json
 
 
 which gives us:

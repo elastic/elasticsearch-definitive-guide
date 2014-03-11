@@ -116,6 +116,7 @@ all of them contain the term `2014`:
 --------------------------------------------------
 GET /_search?q=2014              # 12 results
 --------------------------------------------------
+// SENSE: 052_Mapping_Analysis/25_Data_type_differences.json
 
 When we query the `_all` field for `2014-09-15`, it first analyzes the query
 string to produce a query which matches *any* of the terms `2014`, `09` or
@@ -126,6 +127,7 @@ string to produce a query which matches *any* of the terms `2014`, `09` or
 --------------------------------------------------
 GET /_search?q=2014-09-15        # 12 results !
 --------------------------------------------------
+// SENSE: 052_Mapping_Analysis/25_Data_type_differences.json
 
 When we query the `_date` field for `2014-09-15`, it looks for that *exact*
 date, and finds one tweet only:
@@ -134,6 +136,7 @@ date, and finds one tweet only:
 --------------------------------------------------
 GET /_search?q=date:2014-09-15   # 1  result
 --------------------------------------------------
+// SENSE: 052_Mapping_Analysis/25_Data_type_differences.json
 
 When we query the `_date` field for `2014`, it finds no documents
 because none contain that exact date:
@@ -142,6 +145,7 @@ because none contain that exact date:
 --------------------------------------------------
 GET /_search?q=date:2014         # 0  results !
 --------------------------------------------------
+// SENSE: 052_Mapping_Analysis/25_Data_type_differences.json
 
 [[analyze-api]]
 ==== Testing analyzers
@@ -157,6 +161,7 @@ parameters,  and the text to analyze in the body:
 GET /_analyze?analyzer=standard
 Text to analyze
 --------------------------------------------------
+// SENSE: 052_Mapping_Analysis/40_Analyze.json
 
 
 Each element in the result represents a single term:

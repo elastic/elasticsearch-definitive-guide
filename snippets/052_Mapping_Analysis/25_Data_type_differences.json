@@ -1,0 +1,17 @@
+# First load the test data
+# https://gist.github.com/clintongormley/8579281
+
+# Find `2014` in the `_all` field: 12 results
+GET /_search?q=2014
+
+# Find `2014-09-15` in the `_all` field: 12 results
+GET /_search?q=2014-09-15
+
+# Find `2014-09-15` in the `date` field: 1 result
+GET /_search?q=date:2014-09-15
+
+# Find `2014` in the `date` field: 0 results
+GET /_search?q=date:2014
+
+# Retrieve the mapping for index:gb, type: tweet
+GET /gb/_mapping/tweet

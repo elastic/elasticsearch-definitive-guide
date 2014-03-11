@@ -205,6 +205,7 @@ index:
 --------------------------------------------------
 DELETE /gb
 --------------------------------------------------
+// SENSE: 052_Mapping_Analysis/45_Mapping.json
 
 Then create a new index, specifying that the `tweet` field should use
 the `english` analyzer:
@@ -234,6 +235,7 @@ PUT /gb <1>
   }
 }
 --------------------------------------------------
+// SENSE: 052_Mapping_Analysis/45_Mapping.json
 <1> This creates the index with the `mappings` specified in the body.
 
 Later on, we decide to add a new `not_analyzed` text field called `tag` to the
@@ -251,6 +253,7 @@ PUT /gb/_mapping/tweet
   }
 }
 --------------------------------------------------
+// SENSE: 052_Mapping_Analysis/45_Mapping.json
 
 Note that we didn't need to list all of the existing fields again, as we can't
 change them anyway.  Our new field has been merged into the existing mapping.
@@ -268,6 +271,7 @@ Black-cats <1>
 GET /gb/_analyze?field=tag
 Black-cats <1>
 --------------------------------------------------
+// SENSE: 052_Mapping_Analysis/45_Mapping.json
 <1> The text we want to analyze is passed in the body.
 
 The `tweet` field produces the two terms `"black"` and `"cat"`, while the
