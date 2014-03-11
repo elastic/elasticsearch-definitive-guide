@@ -1,0 +1,56 @@
+# Delete the `my_index` index
+DELETE /my_index
+
+# Create a custom analyzer
+PUT /my_index
+{
+  "settings": {
+    "analysis": {
+      "char_filter": {
+        "&_to_and": {
+          "type": "mapping",
+          "mappings": [
+            "&=> and "
+          ]
+        }
+      },
+      "filter": {
+        "my_stopwords": {
+          "type": "stop",
+          "stopwords": [
+            "the",
+            "a"
+          ]
+        }
+      },
+      "analyzer": {
+        "my_analyzer": {
+          "type": "custom",
+          "char_filter": [
+            "html_strip",
+            "&_to_and"
+          ],
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "my_stopwords"
+          ]
+        }
+      }
+    }
+  }
+}
+
+# Test out the new analyzer
+GET /my_index/_analyze?analyzer=my_analyzer&text=The quick %26 brown fox
+
+# Apply "my_analyzer" to the `title` field
+PUT /my_index/_mapping/my_type
+{
+  "properties": {
+    "title": {
+      "type": "string",
+      "analyzer": "my_analyzer"
+    }
+  }
+}

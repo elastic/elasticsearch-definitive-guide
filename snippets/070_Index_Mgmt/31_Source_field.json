@@ -1,0 +1,31 @@
+# Delete the `test` index
+DELETE /test
+
+# Insert some examples
+PUT /test/test/1
+{
+  "title": "Doc one",
+  "created": "2014-01-01",
+  "body": "The quick brown fox jumped over the lazy dog"
+}
+
+# Only return the `title` and `created` fields
+GET /test/_search
+{
+  "query": {
+    "match_all": {}
+  },
+  "_source": [
+    "title",
+    "created"
+  ]
+}
+
+# Don't return any fields
+GET /test/_search
+{
+  "query": {
+    "match_all": {}
+  },
+  "_source": false
+}

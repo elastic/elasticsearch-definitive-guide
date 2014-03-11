@@ -35,7 +35,7 @@ PUT /my_temp_index
     }
 }
 --------------------------------------------------
-
+// SENSE: 070_Index_Mgmt/10_Settings.json
 
 Later, we can change the number of replica shards dynamically using the
 `update-index-settings` API as follows:
@@ -47,5 +47,6 @@ PUT /my_temp_index/_settings
     "number_of_replicas": 1
 }
 --------------------------------------------------
+// SENSE: 070_Index_Mgmt/10_Settings.json
 
 

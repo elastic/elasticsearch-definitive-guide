@@ -41,6 +41,7 @@ PUT /my_index
     }
 }
 --------------------------------------------------
+// SENSE: 070_Index_Mgmt/33_ID_path.json
 <1> Extract the doc `_id` from the `doc_id` field.
 
 Then, when you index a document:
@@ -52,6 +53,7 @@ POST /my_index/my_type
     "doc_id": "123"
 }
 --------------------------------------------------
+// SENSE: 070_Index_Mgmt/33_ID_path.json
 
 
 the `_id` value will be extracted from the `doc_id` field in the document
@@ -70,11 +72,11 @@ body:
 <1> The `_id` has been extracted correctly.
 
 
-TIP: While this is very convenient, be aware that it has a slight performance
-impact on `bulk` requests (see <<bulk-format>>). The node handling the request
-can no longer make use of the optimized bulk format to parse just the metadata
-line in order to decide which shard should receive the request. Instead, it
-has to parse the document body as well.
+WARNING: While this is very convenient, be aware that it has a slight
+performance impact on `bulk` requests (see <<bulk-format>>). The node handling
+the request can no longer make use of the optimized bulk format to parse just
+the metadata line in order to decide which shard should receive the request.
+Instead, it has to parse the document body as well.
 
 
 

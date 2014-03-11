@@ -1,0 +1,21 @@
+# Delete the `spanish_docs` index
+DELETE /spanish_docs
+
+# Configuring an analyzer to use Spanish stopwords
+PUT /spanish_docs
+{
+    "settings": {
+        "analysis": {
+            "analyzer": {
+                "es_std": {
+                    "type":      "standard",
+                    "stopwords": "_spanish_"
+                }
+            }
+        }
+    }
+}
+
+# Test out the new analyzer
+GET /spanish_docs/_analyze?analyzer=es_std&text=El veloz zorro marrón
+

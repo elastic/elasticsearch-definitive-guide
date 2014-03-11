@@ -32,6 +32,8 @@ To start off, create the index `my_index_v1`, and setup the alias
 PUT /my_index_v1 <1>
 PUT /my_index_v1/_alias/my_index <2>
 --------------------------------------------------
+// SENSE: 070_Index_Mgmt/55_Aliases.json
+
 <1> Create the index `my_index_v1`
 <2> Set the `my_index` alias to point to `my_index_v1`
 
@@ -41,7 +43,7 @@ You can check which index the alias points to with:
 --------------------------------------------------
 GET /*/_alias/my_index
 --------------------------------------------------
-
+// SENSE: 070_Index_Mgmt/55_Aliases.json
 
 Or which aliases point to the index with:
 
@@ -49,7 +51,7 @@ Or which aliases point to the index with:
 --------------------------------------------------
 GET /my_index_v1/_alias/*
 --------------------------------------------------
-
+// SENSE: 070_Index_Mgmt/55_Aliases.json
 
 Both of these return:
 
@@ -75,15 +77,17 @@ PUT /my_index_v2
 {
     "mappings": {
         "my_type": {
-            "tags": {
-                "type":   "string",
-                "index":  "not_analyzed"
+            "properties": {
+                "tags": {
+                    "type":   "string",
+                    "index":  "not_analyzed"
+                }
             }
         }
     }
 }
 --------------------------------------------------
-
+// SENSE: 070_Index_Mgmt/55_Aliases.json
 
 Then we reindex our data from `my_index_v1` to `my_index_v2`, following
 the process described in <<reindex>>.  Once we are satisfied that our
@@ -105,6 +109,7 @@ POST /_aliases
     ]
 }
 --------------------------------------------------
+// SENSE: 070_Index_Mgmt/55_Aliases.json
 
 
 Your application has switched from using the old index to the new

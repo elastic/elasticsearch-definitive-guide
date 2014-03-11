@@ -1,0 +1,75 @@
+# Delete indices beginning with `my_index`
+DELETE /my_index*
+
+# Create index `my_index_v1`
+PUT /my_index_v1
+
+# Create alias `my_index` pointing to `my_index_v1`
+PUT /my_index_v1/_alias/my_index
+
+# Check alias `my_index`
+GET /*/_alias/my_index
+
+# Check index `my_index_v1`
+GET /my_index_v1/_alias/*
+
+# Index into alias `my_index`
+PUT /my_index/my_type/1
+{
+  "tags": "Some Tag"
+}
+
+# Search in alias `my_index`
+GET /my_index/_search
+{
+  "sort": "tags"
+}
+
+# Create index `my_index_v2` and make `tags` exact value
+PUT /my_index_v2
+{
+  "mappings": {
+    "my_type": {
+      "properties": {
+        "tags": {
+          "type": "string",
+          "index": "not_analyzed"
+        }
+      }
+    }
+  }
+}
+
+# Index doc into `my_index_v2`
+PUT /my_index_v2/my_type/1
+{
+  "tags": "Some Tag"
+}
+
+# Switch the alias to point to `my_index_v2`
+POST /_aliases
+{
+  "actions": [
+    {
+      "add": {
+        "index": "my_index_v2",
+        "alias": "my_index"
+      }
+    },
+    {
+      "remove": {
+        "index": "my_index_v1",
+        "alias": "my_index"
+      }
+    }
+  ]
+}
+
+# Check the aliases
+GET /_alias
+
+# Search in alias `my_index`
+GET /my_index/_search
+{
+  "sort": "tags"
+}

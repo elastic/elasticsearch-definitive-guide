@@ -163,6 +163,7 @@ PUT /my_index
             }}
 }}}
 --------------------------------------------------
+// SENSE: 070_Index_Mgmt/20_Custom_analyzer.json
 
 
 After creating the index, use the `analyze` API to test the new analyzer:
@@ -172,6 +173,7 @@ After creating the index, use the `analyze` API to test the new analyzer:
 GET /my_index/_analyze?analyzer=my_analyzer
 The quick & brown fox
 --------------------------------------------------
+// SENSE: 070_Index_Mgmt/20_Custom_analyzer.json
 
 
 The abbreviated results below show that our analyzer is working correctly:
@@ -203,5 +205,6 @@ PUT /my_index/_mapping/my_type
     }
 }
 --------------------------------------------------
+// SENSE: 070_Index_Mgmt/20_Custom_analyzer.json
 
 

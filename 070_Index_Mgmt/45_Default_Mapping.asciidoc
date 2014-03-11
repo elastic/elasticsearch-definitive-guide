@@ -15,14 +15,17 @@ For instance, we can disable the `_all` field for all types, using the
 --------------------------------------------------
 PUT /my_index
 {
-    "_default_": {
-        "_all": { "enabled":  false }
-    },
-    "blog": {
-        "_all": { "enabled":  true  }
+    "mappings": {
+        "_default_": {
+            "_all": { "enabled":  false }
+        },
+        "blog": {
+            "_all": { "enabled":  true  }
+        }
     }
 }
 --------------------------------------------------
+// SENSE: 070_Index_Mgmt/45_Default_mapping.json
 
 
 The `_default_` mapping can also be a good place to specify index-wide

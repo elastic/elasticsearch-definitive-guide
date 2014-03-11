@@ -45,6 +45,7 @@ PUT /spanish_docs
     }
 }
 --------------------------------------------------
+// SENSE: 070_Index_Mgmt/15_Configure_Analyzer.json
 
 The `es_std` analyzer is not global -- it only exists in the `spanish_docs`
 index where we have defined it. To test it with the `analyze` API, we must
@@ -52,9 +53,10 @@ specify the index name:
 
 [source,js]
 --------------------------------------------------
-POST /spanish_docs/_analyze?analyzer=es_std
+GET /spanish_docs/_analyze?analyzer=es_std
 El veloz zorro marrón
 --------------------------------------------------
+// SENSE: 070_Index_Mgmt/15_Configure_Analyzer.json
 
 The abbreviated results show that the Spanish stopword `"El"` has been
 removed correctly:

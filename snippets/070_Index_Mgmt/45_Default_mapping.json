@@ -1,0 +1,34 @@
+# Delete the `my_index` index
+DELETE /my_index
+
+#  Disable the `_all` field for all types except `blog`
+PUT /my_index
+{
+  "mappings": {
+    "_default_": {
+      "_all": {
+        "enabled": false
+      }
+    },
+    "blog": {
+      "_all": {
+        "enabled": true
+      }
+    }
+  }
+}
+
+# Index a blog and a user doc
+PUT /my_index/user/1
+{
+  "name": "John Smith"
+}
+
+PUT /my_index/blog/2
+{
+  "user_id": 1,
+  "title": "Using default mapping"
+}
+
+# Check the mapping
+GET /my_index/_mapping

@@ -1,0 +1,27 @@
+# Delete the `my_index` index
+DELETE /my_index
+
+# Map the `_id` to the `doc_id` field
+PUT /my_index
+{
+  "mappings": {
+    "my_type": {
+      "_id": {
+        "path": "doc_id"
+      },
+      "properties": {
+        "doc_id": {
+          "type": "string",
+          "index": "not_analyzed"
+        }
+      }
+    }
+  }
+}
+
+# Insert a document
+POST /my_index/my_type
+{
+  "doc_id": 123,
+  "title": "Some random text"
+}

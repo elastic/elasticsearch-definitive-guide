@@ -42,6 +42,7 @@ PUT /my_index
     }
 }
 --------------------------------------------------
+// SENSE: 070_Index_Mgmt/35_Dynamic_mapping.json
 <1> The `my_type` object will throw an exception if an unknown field
     is encountered.
 <2> The `stash` object will create new fields dynamically.
@@ -57,6 +58,7 @@ PUT /my_index/my_type/1
     "stash": { "new_field": "Success!" }
 }
 --------------------------------------------------
+// SENSE: 070_Index_Mgmt/35_Dynamic_mapping.json
 
 
 But trying to do the same at the top level will fail:
@@ -69,6 +71,7 @@ PUT /my_index/my_type/1
     "new_field": "Fail!"
 }
 --------------------------------------------------
+// SENSE: 070_Index_Mgmt/35_Dynamic_mapping.json
 
 
 NOTE: Setting `dynamic` to `false` doesn't alter the contents of the `_source`

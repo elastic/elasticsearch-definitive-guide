@@ -1,0 +1,42 @@
+# Delete the `my_index` index
+DELETE /my_index
+
+# Set dynamic to `strict` at the root object level
+# but allow dynamic mapping in the `stash` object
+PUT /my_index
+{
+  "mappings": {
+    "my_type": {
+      "dynamic": "strict",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "stash": {
+          "type": "object",
+          "dynamic": true
+        }
+      }
+    }
+  }
+}
+
+# Dynamically create a new field under `stash`
+PUT /my_index/my_type/1
+{
+  "title": "This doc adds a new field",
+  "stash": {
+    "new_field": "Success!"
+  }
+}
+
+# Check the mapping to verify
+GET /my_index/_mapping/my_type
+
+# Throw an error when trying to add a new field
+# to the root object
+PUT /my_index/my_type/1
+{
+  "title": "This throws a StrictDynamicMappingException",
+  "new_field": "Fail!"
+}

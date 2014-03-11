@@ -111,6 +111,8 @@ PUT /my_index
             ]
 }}}
 --------------------------------------------------
+// SENSE: 070_Index_Mgmt/40_Custom_dynamic_mapping.json
+
 <1> Match string fields whose name ends in `_es`.
 <2> Match all other string fields.
 

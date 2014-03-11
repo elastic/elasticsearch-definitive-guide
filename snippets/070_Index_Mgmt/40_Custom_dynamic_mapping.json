@@ -1,0 +1,46 @@
+# Delete the `my_index` index
+DELETE /my_index
+
+# Setup dynamic mapping to analyze any string field
+# ending in "_es" with the "spanish" analyzer,
+# and all other string fields with the "english"
+# analyzer
+PUT /my_index
+{
+  "mappings": {
+    "my_type": {
+      "dynamic_templates": [
+        {
+          "es": {
+            "match": "*_es",
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "string",
+              "analyzer": "spanish"
+            }
+          }
+        },
+        {
+          "en": {
+            "match": "*",
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "string",
+              "analyzer": "english"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+
+# Create a document
+PUT /my_index/my_type/1
+{
+  "title_en": "English title",
+  "title_es": "Titulo en Español"
+}
+
+# Check mapping
+GET /my_index/_mapping/my_type

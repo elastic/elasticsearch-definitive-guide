@@ -40,7 +40,7 @@ PUT /my_index
 }
 --------------------------------------------------
 
-In a search request, you can ask for certain fields only by specifying the
+In a search request, you can ask for only certain fields by specifying the
 `_source` parameter in the request body:
 
 [source,js]
@@ -51,6 +51,7 @@ GET /_search
     "_source": [ "title", "created" ]
 }
 --------------------------------------------------
+// SENSE: 070_Index_Mgmt/31_Source_field.json
 
 Values for these fields will be extracted from the `_source` field and
 returned instead of the full `_source`.
