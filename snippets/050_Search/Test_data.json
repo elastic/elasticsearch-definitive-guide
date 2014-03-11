@@ -1,0 +1,112 @@
+# Delete the `us` and `gb` indices
+DELETE /us,gb
+
+# Insert test data
+PUT /us/user/1
+{
+   "email" : "john@smith.com",
+   "name" : "John Smith",
+   "username" : "@john"
+}
+
+PUT /gb/user/2
+{
+   "email" : "mary@jones.com",
+   "name" : "Mary Jones",
+   "username" : "@mary"
+}
+
+PUT /gb/tweet/3
+{
+   "date" : "2014-09-13",
+   "name" : "Mary Jones",
+   "tweet" : "Elasticsearch means full text search has never been so easy",
+   "user_id" : 2
+}
+
+PUT /us/tweet/4
+{
+   "date" : "2014-09-14",
+   "name" : "John Smith",
+   "tweet" : "@mary it is not just text, it does everything",
+   "user_id" : 1
+}
+
+PUT /gb/tweet/5
+{
+   "date" : "2014-09-15",
+   "name" : "Mary Jones",
+   "tweet" : "However did I manage before Elasticsearch?",
+   "user_id" : 2
+}
+
+PUT /us/tweet/6
+{
+   "date" : "2014-09-16",
+   "name" : "John Smith",
+   "tweet" : "The Elasticsearch API is really easy to use",
+   "user_id" : 1
+}
+
+PUT /gb/tweet/7
+{
+   "date" : "2014-09-17",
+   "name" : "Mary Jones",
+   "tweet" : "The Query DSL is really powerful and flexible",
+   "user_id" : 2
+}
+
+PUT /us/tweet/8
+{
+   "date" : "2014-09-18",
+   "name" : "John Smith",
+   "user_id" : 1
+}
+
+PUT /gb/tweet/9
+{
+   "date" : "2014-09-19",
+   "name" : "Mary Jones",
+   "tweet" : "Geo-location aggregations are really cool",
+   "user_id" : 2
+}
+
+PUT /us/tweet/10
+{
+   "date" : "2014-09-20",
+   "name" : "John Smith",
+   "tweet" : "Elasticsearch surely is one of the hottest new NoSQL products",
+   "user_id" : 1
+}
+
+PUT /gb/tweet/11
+{
+   "date" : "2014-09-21",
+   "name" : "Mary Jones",
+   "tweet" : "Elasticsearch is built for the cloud, easy to scale",
+   "user_id" : 2
+}
+
+PUT /us/tweet/12
+{
+   "date" : "2014-09-22",
+   "name" : "John Smith",
+   "tweet" : "Elasticsearch and I have left the honeymoon stage, and I still love her.",
+   "user_id" : 1
+}
+
+PUT /gb/tweet/13
+{
+   "date" : "2014-09-23",
+   "name" : "Mary Jones",
+   "tweet" : "So yes, I am an Elasticsearch fanboy",
+   "user_id" : 2
+}
+
+PUT /us/tweet/14
+{
+   "date" : "2014-09-24",
+   "name" : "John Smith",
+   "tweet" : "How many more cheesy tweets do I have to write?",
+   "user_id" : 1
+}

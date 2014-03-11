@@ -1,0 +1,11 @@
+# First load the test data
+# https://gist.github.com/clintongormley/8579281
+
+# Results 0..4
+GET /_search?size=5
+
+# Results 5..9
+GET /_search?size=5&from=5
+
+# Results 10..14
+GET /_search?size=5&from=10

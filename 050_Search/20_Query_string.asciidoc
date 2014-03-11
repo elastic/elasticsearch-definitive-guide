@@ -14,7 +14,7 @@ contain the word `"elasticsearch"` in the `tweet` field:
 --------------------------------------------------
 GET /_all/tweet/_search?q=tweet:elasticsearch
 --------------------------------------------------
-
+// SENSE: 050_Search/20_Query_string.json
 
 The next query looks for `"john"` in the `name` field and `"mary"` in the
 `tweet` field. The actual query is just:
@@ -28,6 +28,7 @@ more cryptic than it really is:
 --------------------------------------------------
 GET /_search?q=%2Bname%3Ajohn+%2Btweet%3Amary
 --------------------------------------------------
+// SENSE: 050_Search/20_Query_string.json
 
 
 The `"+"` prefix indicates conditions which _must_ be satisfied for our query to
@@ -44,6 +45,7 @@ This simple search returns all documents which contain the word `"mary"`:
 --------------------------------------------------
 GET /_search?q=mary
 --------------------------------------------------
+// SENSE: 050_Search/20_All_field.json
 
 
 In the previous examples, we searched for words in the `tweet` or
@@ -101,6 +103,7 @@ The next query searches for tweets:
 --------------------------------------------------
 +name:(mary john) +date:>2014-09-10 +(aggregations geo)
 --------------------------------------------------
+// SENSE: 050_Search/20_All_field.json
 
 which, as a properly encoded query string looks like the slightly less
 readable:

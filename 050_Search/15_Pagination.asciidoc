@@ -21,6 +21,7 @@ GET /_search?size=5
 GET /_search?size=5&from=5
 GET /_search?size=5&from=10
 --------------------------------------------------
+// SENSE: 050_Search/15_Pagination.json
 
 
 Beware of paging too deep or requesting too many results at once. Results are

@@ -1,0 +1,11 @@
+# First load the test data
+# https://gist.github.com/clintongormley/8579281
+
+# Find `mary` in the `_all` field
+GET /_search?q=mary
+
+# Find documents where:
+#     `name` must contain `mary` or `john`
+# and `date` must be greater than `2014-09-10`
+# and `_all` must contain `aggregations` or `geo`
+GET /_search?q=%2Bname%3A(mary+john)+%2Bdate%3A%3E2014-09-10+%2B(aggregations+geo)
