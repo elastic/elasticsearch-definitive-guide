@@ -1,0 +1,29 @@
+# Delete the `test` index
+DELETE /test
+
+# Insert some example docs
+PUT /test/test/1
+{
+  "title": "Full text search is awesome",
+  "body": "Let's talk about information retrieval"
+}
+
+PUT /test/test/2
+{
+  "title": "Information retrieval",
+  "body": "Let's talk about full text search"
+}
+
+# Match "full text search" in the `title` or `body`
+GET /_search
+{
+  "query": {
+    "multi_match": {
+      "query": "full text search",
+      "fields": [
+        "title",
+        "body"
+      ]
+    }
+  }
+}

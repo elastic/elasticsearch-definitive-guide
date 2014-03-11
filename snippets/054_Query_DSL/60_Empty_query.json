@@ -1,0 +1,14 @@
+# First load the test data
+# https://gist.github.com/clintongormley/8579281
+
+# Empty query
+GET /_search
+{}
+
+# Match all query
+GET /_search
+{
+    "query": {
+        "match_all": {}
+    }
+}

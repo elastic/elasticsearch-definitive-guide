@@ -1,0 +1,43 @@
+# Delete the `gb` and `us` indices
+DELETE /gb,us
+
+# Set the `tweet` field in the `us` index to
+# use the "standard" analyzer (default)
+PUT /us
+{
+  "mappings": {
+    "tweet": {
+      "properties": {
+        "tweet": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
+
+# Set the `tweet` field in the `gb` index to
+# use the "english" analyzer
+PUT /gb
+{
+  "mappings": {
+    "tweet": {
+      "properties": {
+        "tweet": {
+          "type": "string",
+          "analyzer": "english"
+        }
+      }
+    }
+  }
+}
+
+# Get the explanation of a query
+GET /us,gb/_validate/query?explain
+{
+  "query": {
+    "match": {
+      "tweet": "really powerful"
+    }
+  }
+}

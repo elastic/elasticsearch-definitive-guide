@@ -17,7 +17,7 @@ booleans, or `not_analyzed` exact value string fields:
 { "term": { "tag":    "full_text"  }}
 { "term": { "public": true         }}
 --------------------------------------------------
-
+// SENSE: 054_Query_DSL/70_Term_filter.json
 
 ==== `terms` filter
 
@@ -29,7 +29,7 @@ the specified values, then the document matches:
 --------------------------------------------------
 { "terms": { "tag": [ "search", "full_text", "nosql" ] }}
 --------------------------------------------------
-
+// SENSE: 054_Query_DSL/70_Terms_filter.json
 
 ==== `range` filter
 
@@ -47,7 +47,7 @@ the specified range:
     }
 }
 --------------------------------------------------
-
+// SENSE: 054_Query_DSL/70_Range_filter.json
 
 The operators that it accepts are:
 
@@ -72,7 +72,7 @@ any values (`missing`). It is similar in nature to `IS_NULL` in SQL:
     }
 }
 --------------------------------------------------
-
+// SENSE: 054_Query_DSL/70_Exists_filter.json
 
 These filters are frequently used to apply a condition only if a field is
 present, and to apply a different condition if it is missing.
@@ -103,6 +103,7 @@ of filter clauses:
     }
 }
 --------------------------------------------------
+// SENSE: 054_Query_DSL/70_Bool_filter.json
 
 
 ==== `match_all` query
@@ -114,6 +115,7 @@ query which is used if no query has been specified.
 --------------------------------------------------
 { "match_all": {}}
 --------------------------------------------------
+// SENSE: 054_Query_DSL/70_Match_all_query.json
 
 
 This query is frequently used in combination with a filter, for instance to
@@ -131,8 +133,9 @@ the search:
 
 [source,js]
 --------------------------------------------------
-{ "match": { "tweet": "Cool, bonsai cool" }}
+{ "match": { "tweet": "About Search" }}
 --------------------------------------------------
+// SENSE: 054_Query_DSL/70_Match_query.json
 
 If you use it on a field containing an exact value, such as a date, a number,
 a boolean or a `not_analyzed` string field, then it will search for that
@@ -145,6 +148,7 @@ exact value:
 { "match": { "tag":    "full_text"  }}
 { "match": { "public": true         }}
 --------------------------------------------------
+// SENSE: 054_Query_DSL/70_Match_query.json
 
 TIP: For exact value searches, you probably want to use a filter instead of a
 query, as a filter will be cached.
@@ -169,7 +173,7 @@ fields:
     }
 }
 --------------------------------------------------
-
+// SENSE: 054_Query_DSL/70_Multi_match_query.json
 
 ==== `bool` query
 
@@ -200,14 +204,14 @@ match *both* conditions will rank even higher:
     "bool": {
         "must":     { "match": { "title": "how to make millions" }},
         "must_not": { "match": { "tag":   "spam" }},
-        "should: [
+        "should": [
             { "match": { "tag": "starred" }},
-            { "match": { "date": { "gte": "2014-01-01" }}
+            { "range": { "date": { "gte": "2014-01-01" }}}
         ]
     }
 }
 --------------------------------------------------
-
+// SENSE: 054_Query_DSL/70_Bool_query.json
 
 If there are no `must` clauses, then at least one `should` clause has to
 match, but if there is at least one `must` clause, then no `should`

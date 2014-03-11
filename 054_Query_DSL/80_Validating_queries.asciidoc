@@ -15,6 +15,7 @@ GET /gb/tweet/_validate/query
    }
 }
 --------------------------------------------------
+// SENSE: 054_Query_DSL/80_Validate_query.json
 
 
 The response to the above `validate` request tells us that the query is
@@ -49,6 +50,7 @@ GET /gb/tweet/_validate/query?explain <1>
    }
 }
 --------------------------------------------------
+// SENSE: 054_Query_DSL/80_Validate_query.json
 <1> The `explain` flag provides more information about why a query is
     invalid.
 
@@ -87,7 +89,7 @@ GET /_validate/query?explain
    }
 }
 --------------------------------------------------
-
+// SENSE: 054_Query_DSL/80_Understanding_queries.json
 
 An `explanation` is returned for each index that we query, because each
 index can have different mapping and analyzers:

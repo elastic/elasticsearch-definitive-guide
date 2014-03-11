@@ -1,0 +1,35 @@
+# Delete the `test` index
+DELETE /test
+
+# Insert some examples
+PUT /test/test/1
+{
+  "title": "About search",
+  "age": 26,
+  "date": "2014-09-01",
+  "tag": [
+    "full_text",
+    "search"
+  ],
+  "public": false
+}
+
+PUT /test/test/2
+{
+  "age": 38,
+  "date": "2014-09-02",
+  "tag": [
+    "full_text",
+    "nosql"
+  ],
+  "public": true
+}
+
+
+# Match all documents
+GET /test/test/_search
+{
+  "query": {
+    "match_all": {}
+  }
+}

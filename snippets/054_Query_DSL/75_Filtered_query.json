@@ -1,0 +1,82 @@
+# Delete the `test` index
+DELETE /test
+
+# Insert some example docs
+PUT /test/test/1
+{
+  "folder": "inbox",
+  "email": "Big opportunity"
+}
+
+PUT /test/test/2
+{
+  "folder": "spam",
+  "email": "Business opportunity"
+}
+
+PUT /test/test/3
+{
+  "folder": "inbox",
+  "email": "Urgent business proposal"
+}
+
+# Where `email` contains "business" or "opportunity
+# and `folder` is "inbox"
+GET /test/test/_search
+{
+  "query": {
+    "filtered": {
+      "query": {
+        "match": {
+          "email": "business opportunity"
+        }
+      },
+      "filter": {
+        "term": {
+          "folder": "inbox"
+        }
+      }
+    }
+  }
+}
+
+# Where `folder` is "inbox"
+GET /test/test/_search
+{
+  "query": {
+    "filtered": {
+      "filter": {
+        "term": {
+          "folder": "inbox"
+        }
+      }
+    }
+  }
+}
+
+# Where `folder` is "inbox"
+# and `email` must not contain "urgent", "business"
+# or "proposal"
+GET /test/test/_search
+{
+  "query": {
+    "filtered": {
+      "filter": {
+        "bool": {
+          "must": {
+            "term": {
+              "folder": "inbox"
+            }
+          },
+          "must_not": {
+            "query": {
+              "match": {
+                "email": "urgent business proposal"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

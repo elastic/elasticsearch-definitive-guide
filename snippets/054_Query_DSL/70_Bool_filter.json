@@ -1,0 +1,72 @@
+# Delete the `test` index
+DELETE /test
+
+# Insert some examples
+PUT /test/test/1
+{
+  "folder": "inbox",
+  "tag": [
+    "work"
+  ],
+  "starred": true,
+  "unread": false
+}
+
+PUT /test/test/2
+{
+  "folder": "inbox",
+  "tag": [
+    "spam"
+  ],
+  "starred": true,
+  "unread": false
+}
+
+PUT /test/test/3
+{
+  "folder": "inbox",
+  "tag": [
+    "other"
+  ],
+  "starred": false,
+  "unread": true
+}
+
+
+
+# Where `folder` is "inbox"
+# and `tag` is not spam
+# and either `starred` or `unread` is true
+GET /test/test/_search
+{
+  "query": {
+    "filtered": {
+      "filter": {
+        "bool": {
+          "must": {
+            "term": {
+              "folder": "inbox"
+            }
+          },
+          "must_not": {
+            "term": {
+              "tag": "spam"
+            }
+          },
+          "should": [
+            {
+              "term": {
+                "starred": true
+              }
+            },
+            {
+              "term": {
+                "unread": true
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,31 @@
+# Delete the `gb` index
+DELETE /gb
+
+# Insert an example doc
+PUT /gb/tweet/5
+{
+   "date" : "2014-09-15",
+   "name" : "Mary Jones",
+   "tweet" : "However did I manage before Elasticsearch?",
+   "user_id" : 2
+}
+
+# Validate query
+GET /gb/tweet/_validate/query
+{
+  "query": {
+    "tweet": {
+      "match": "really powerful"
+    }
+  }
+}
+
+# Validate query with explanation
+GET /gb/tweet/_validate/query?explain
+{
+  "query": {
+    "tweet": {
+      "match": "really powerful"
+    }
+  }
+}

@@ -1,0 +1,26 @@
+# First load the test data
+# https://gist.github.com/clintongormley/8579281
+
+# Bool query
+GET /_search
+{
+  "query": {
+    "bool": {
+      "must": {
+        "match": {
+          "tweet": "elasticsearch"
+        }
+      },
+      "must_not": {
+        "match": {
+          "name": "mary"
+        }
+      },
+      "should": {
+        "match": {
+          "tweet": "full text"
+        }
+      }
+    }
+  }
+}

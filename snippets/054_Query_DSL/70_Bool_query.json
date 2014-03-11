@@ -1,0 +1,68 @@
+# Delete the `test` index
+DELETE /test
+
+# Insert some example docs
+PUT /test/test/1
+{
+  "title": "How to make millions!",
+  "tag": [
+    "opportunity"
+  ],
+  "date": "2014-01-09"
+}
+
+PUT /test/test/2
+{
+  "title": "How to make millions!",
+  "tag": [
+    "spam"
+  ],
+  "date": "2014-01-09"
+}
+
+PUT /test/test/3
+{
+  "title": "How to make millions!",
+  "tag": [
+    "opportunity",
+    "starred"
+  ],
+  "date": "2013-01-09"
+}
+
+
+# Match "how to make millions" in the `title`
+# and `tag` must not include "spam"
+# and either `tag` should include "starred"
+# or `date` must be >= "2014-01-01"
+GET /test/test/_search
+{
+  "query": {
+    "bool": {
+      "must": {
+        "match": {
+          "title": "how to make millions"
+        }
+      },
+      "must_not": {
+        "match": {
+          "tag": "spam"
+        }
+      },
+      "should": [
+        {
+          "match": {
+            "tag": "starred"
+          }
+        },
+        {
+          "range": {
+            "date": {
+              "gte": "2014-01-01"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

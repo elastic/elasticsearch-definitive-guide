@@ -65,6 +65,7 @@ GET /_search
     }
 }
 --------------------------------------------------
+// SENSE: 054_Query_DSL/75_Filtered_query.json
 
 
 ==== Just a filter
@@ -84,6 +85,7 @@ GET /_search
     }
 }
 --------------------------------------------------
+// SENSE: 054_Query_DSL/75_Filtered_query.json
 
 
 If a query is not specified then it defaults to using the `match_all` query, so
@@ -130,11 +132,12 @@ GET /_search
     }
 }
 --------------------------------------------------
+// SENSE: 054_Query_DSL/75_Filtered_query.json
 <1> Note the `query` filter, which is allowing us to use the `match` *query*
     inside a `bool` *filter*.
 
 
-You seldom need to use a query as a filter, but we have included it for
+NOTE: You seldom need to use a query as a filter, but we have included it for
 completeness' sake.  The only time you may need it is when you need to use
 full text matching while in filter context.
 

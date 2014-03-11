@@ -28,7 +28,7 @@ GET /_search
     }
 }
 --------------------------------------------------
-
+// SENSE: 054_Query_DSL/60_Empty_query.json
 
 ==== Structure of a query clause
 
@@ -87,7 +87,7 @@ GET /_search
     }
 }
 --------------------------------------------------
-
+// SENSE: 054_Query_DSL/60_Match_query.json
 
 ==== Combining multiple clauses
 
@@ -106,11 +106,12 @@ other to create complex queries. Clauses can be:
 {
     "bool": {
         "must":     { "match": { "tweet": "elasticsearch" }},
-        "must_not": { "match": { "name":  "john" }},
+        "must_not": { "match": { "name":  "mary" }},
         "should":   { "match": { "tweet": "full text" }}
     }
 }
 --------------------------------------------------
+// SENSE: 054_Query_DSL/60_Bool_query.json
 
 
 It is important to note that a compound clause can combine *any* other

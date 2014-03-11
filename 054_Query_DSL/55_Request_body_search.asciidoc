@@ -20,6 +20,7 @@ which returns all documents in all indices.
 GET /_search
 {} <1>
 --------------------------------------------------
+// SENSE: 054_Query_DSL/60_Empty_query.json
 <1> This is an empty request body.
 
 Just as with query-string search, you can search on one, many or `_all`

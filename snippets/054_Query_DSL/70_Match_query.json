@@ -1,0 +1,93 @@
+# Delete the `test` index
+DELETE /test
+
+# Make the `tag` field an exact value field
+PUT /test
+{
+    "mappings": {
+        "test": {
+            "properties":{
+                "tag": {
+                    "type": "string",
+                    "index": "not_analyzed"
+                }
+            }
+        }
+    }
+}
+
+
+# Insert some examples
+PUT /test/test/1
+{
+  "title": "About search",
+  "age": 26,
+  "date": "2014-09-01",
+  "tag": [
+    "full_text",
+    "search"
+  ],
+  "public": false
+}
+
+PUT /test/test/2
+{
+  "age": 38,
+  "date": "2014-09-02",
+  "tag": [
+    "full_text",
+    "nosql"
+  ],
+  "public": true
+}
+
+# Where `title` includes "about" or "search"
+GET /test/test/_search
+{
+  "query": {
+    "match": {
+      "title": "About Search!"
+    }
+  }
+}
+
+
+# Where `age` is 26
+GET /test/test/_search
+{
+  "query": {
+    "match": {
+      "age": 26
+    }
+  }
+}
+
+# Where `date` is "2014-09-01"
+GET /test/test/_search
+{
+  "query": {
+    "match": {
+      "date": "2014-09-01"
+    }
+  }
+}
+
+# Where `tag` is "full_text"
+GET /test/test/_search
+{
+  "query": {
+    "match": {
+      "tag": "full_text"
+    }
+  }
+}
+
+# Where `public` is true
+GET /test/test/_search
+{
+  "query": {
+    "match": {
+      "public": true
+    }
+  }
+}
