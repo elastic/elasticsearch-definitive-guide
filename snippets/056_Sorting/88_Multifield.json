@@ -1,0 +1,71 @@
+# Delete the `test` index
+DELETE /test
+
+# Create the `test` index making the `tweet`
+# field a multi-field
+PUT /test
+{
+  "mappings": {
+    "tweet": {
+      "properties": {
+        "tweet": {
+          "type": "string",
+          "analyzer": "english",
+          "fields": {
+            "raw": {
+              "type": "string",
+              "index": "not_analyzed"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+# Insert some example docs
+PUT /test/tweet/1
+{
+   "date" : "2014-09-13",
+   "name" : "Mary Jones",
+   "tweet" : "Elasticsearch means full text search has never been so easy",
+   "user_id" : 2
+}
+
+PUT /test/tweet/2
+{
+   "date" : "2014-09-14",
+   "name" : "John Smith",
+   "tweet" : "@mary it is not just text, it does everything",
+   "user_id" : 1
+}
+
+PUT /test/tweet/3
+{
+   "date" : "2014-09-15",
+   "name" : "Mary Jones",
+   "tweet" : "However did I manage before Elasticsearch?",
+   "user_id" : 2
+}
+
+PUT /test/tweet/4
+{
+   "date" : "2014-09-16",
+   "name" : "John Smith",
+   "tweet" : "The Elasticsearch API is really easy to use",
+   "user_id" : 1
+}
+
+# Return docs where `tweet` contains "elasticsearch
+# sorted by the `tweet.raw` field
+GET /test/_search
+{
+  "query": {
+    "match": {
+      "tweet": "Elasticsearch"
+    }
+  },
+  "sort": {
+    "tweet.raw": "asc"
+  }
+}

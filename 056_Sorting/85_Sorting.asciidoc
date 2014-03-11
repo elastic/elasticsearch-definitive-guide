@@ -12,7 +12,7 @@ order is: `_score` descending.
 
 Sometimes, though, you don't have a meaningful relevance score. For instance,
 the following query just returns all tweets whose `user_id` field has the
-value `2`:
+value `1`:
 
 [source,js]
 --------------------------------------------------
@@ -51,7 +51,7 @@ GET /_search
     "sort": { "date": { "order": "desc" }}
 }
 --------------------------------------------------
-
+// SENSE: 056_Sorting/85_Sort_by_date.json
 
 You will notice two differences in the results:
 
@@ -66,7 +66,7 @@ You will notice two differences in the results:
         "_id" :         "14",
         "_score" :      null, <1>
         "_source" :     {
-             "date":    "2014-09-24", <2>
+             "date":    "2014-09-24",
              ...
         },
         "sort" :        [ 1411516800000 ] <2>
@@ -116,7 +116,7 @@ GET /_search
 {
     "query" : {
         "filtered" : {
-            "query":   { "match": { "tweet": "full text search" }},
+            "query":   { "match": { "tweet": "manage text search" }},
             "filter" : { "term" : { "user_id" : 2 }}
         }
     },
@@ -126,6 +126,7 @@ GET /_search
     ]
 }
 --------------------------------------------------
+// SENSE: 056_Sorting/85_Multilevel_sort.json
 
 Order is important.  Results are sorted by the first criterion first. Only
 results whose first `sort` value is identical will then be sorted by the

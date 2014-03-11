@@ -1,0 +1,22 @@
+# Delete the `test` index
+DELETE /test
+
+# Insert example doc
+PUT /test/tweet/1
+{
+  "date": "2014-09-22",
+  "name": "John Smith",
+  "tweet": "Elasticsearch and I have left the honeymoon stage, and I still love her.",
+  "user_id": 1
+}
+
+# Run a search with `explain`
+GET /_search?explain
+{
+  "query": {
+    "match": {
+      "tweet": "honeymoon"
+    }
+  }
+}
+

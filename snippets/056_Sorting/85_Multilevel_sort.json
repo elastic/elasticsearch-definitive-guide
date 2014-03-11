@@ -1,0 +1,66 @@
+# Delete the `test` index
+DELETE /test
+
+# Insert some example docs
+PUT /test/tweet/1
+{
+   "date" : "2014-09-13",
+   "name" : "Mary Jones",
+   "tweet" : "Elasticsearch means full text search has never been so easy",
+   "user_id" : 2
+}
+
+PUT /test/tweet/2
+{
+   "date" : "2014-09-14",
+   "name" : "John Smith",
+   "tweet" : "@mary it is not just text, it does everything",
+   "user_id" : 1
+}
+
+PUT /test/tweet/3
+{
+   "date" : "2014-09-15",
+   "name" : "Mary Jones",
+   "tweet" : "However did I manage before Elasticsearch?",
+   "user_id" : 2
+}
+
+PUT /test/tweet/4
+{
+   "date" : "2014-09-16",
+   "name" : "John Smith",
+   "tweet" : "The Elasticsearch API is really easy to use",
+   "user_id" : 1
+}
+
+# Return all docs for user 1 sorted by `date`
+GET /test/_search
+{
+  "query": {
+    "filtered": {
+      "query": {
+        "match": {
+          "tweet": "full text search"
+        }
+      },
+      "filter": {
+        "term": {
+          "user_id": 2
+        }
+      }
+    }
+  },
+  "sort": [
+    {
+      "date": {
+        "order": "desc"
+      }
+    },
+    {
+      "_score": {
+        "order": "desc"
+      }
+    }
+  ]
+}

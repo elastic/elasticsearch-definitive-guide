@@ -66,6 +66,7 @@ GET /_search?explain <1>
    "query"   : { "match" : { "tweet" : "honeymoon" }}
 }
 --------------------------------------------------
+// SENSE: 056_Sorting/90_Explain.json
 <1> The `explain` parameter adds an explanation of how the `_score` was
     calculated to every result.
 
@@ -190,12 +191,13 @@ GET /us/tweet/12/_explain
 {
    "query" : {
       "filtered" : {
-         "filter" : { "term" :  { "user_id" : 2      }},
-         "query" :  { "match" : { "tweet" :   "text" }}
+         "filter" : { "term" :  { "user_id" : 2           }},
+         "query" :  { "match" : { "tweet" :   "honeymoon" }}
       }
    }
 }
 --------------------------------------------------
+// SENSE: 056_Sorting/90_Explain_API.json
 
 Along with the full explanation that we saw above, we also now have a
 `description` element, which tells us:
