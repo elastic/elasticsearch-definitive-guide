@@ -1,0 +1,385 @@
+==== Retrieving a document
+
+Now that we have some data stored inside of Elasticsearch, we can start to 
+work on our business requirements for this application.  The first requirement
+is the ability to retrieve individual employee data. 
+
+This is very easy in Elasticsearch.  We simply execute an HTTP GET request
+and specify the "address" of the document -- the index, type and id.  Using
+those three pieces of information, we can return the original JSON document:
+
+[source,js]
+--------------------------------------------------
+curl -XGET 'localhost:9200/megacorp/employees/1'
+--------------------------------------------------
+
+And the response will be John Smith's original JSON document:
+
+[source,js]
+--------------------------------------------------
+{
+    "first_name" : "John",
+    "last_name" : "Smith",
+    "age" : 25,
+    "about" : "I love to go rock climbing",
+    "interests": ["sports", "music"]
+}
+--------------------------------------------------
+
+
+==== Search Lite
+
+A GET is fairly simple - you get back the document that you ask for.  Let's
+try something a little more advanced.  Let's try a simple search!
+
+The first search we will try is the simplest search possible.  We are going to
+search for all employees that have "Smith" as their last name, and we'll be 
+performing this search via a "lightweight" format which is easy to use from 
+the command line.
+
+This method is often referred to as a _"query string"_ search, since we pass
+the search as a URL query string parameter:
+
+[source,js]
+--------------------------------------------------
+curl -XGET 'localhost:9200/megacorp/employees/_search?q=last_name:smith'
+--------------------------------------------------
+
+Let's unpack that a little.  You can see that we are still operating on 
+`/megacorp/employees`, but now we specify the `/_search` endpoint instead of
+a document ID.  Then we specify `q=last_name:smith` as our search.
+
+The results that come back show all Smith's:
+
+[source,js]
+--------------------------------------------------
+{
+   "took": 12,
+   "timed_out": false,
+   "_shards": { ... },
+   "hits": {
+      "total": 2,
+      "max_score": 0.30685282,
+      "hits": [
+         {
+            "_index": "megacorp",
+            "_type": "employees",
+            "_id": "1",
+            "_score": 0.30685282,
+            "_source": {
+               "first_name": "John",
+               "last_name": "Smith",
+               "age": 25,
+               "about": "I love to go rock climbing",
+               "interests": ["sports","music"]
+            }
+         },
+         {
+            "_index": "megacorp",
+            "_type": "employees",
+            "_id": "2",
+            "_score": 0.30685282,
+            "_source": {
+               "first_name": "Jane",
+               "last_name": "Smith",
+               "age": 32,
+               "about": "I like to collect rock albums",
+               "interests": ["music"]
+            }
+         }
+      ]
+   }
+}
+--------------------------------------------------
+
+==== Search with Query DSL
+
+Query-string search is handy for _ad hoc_ searches via the command line, but in
+most cases it is too restrictive.  For that reason, Elasticsearch has a more 
+robust Domain Specific Language (DSL), called the Query DSL.  This allows
+much more complicated queries to be built.
+
+The DSL is specified using a request body.  We can represent the previous
+search for all John's like so:
+
+
+[source,js]
+--------------------------------------------------
+curl -XGET 'localhost:9200/megacorp/employees/_search' -d '
+{
+    "query" : {
+        "match" : {
+            "last_name" : "smith"
+        }
+    }
+}'
+--------------------------------------------------
+
+This will return the same results as the first query.  You can see that a number
+of things have changed.  For one, we are no longer using _query string_ parameters,
+but instead a request body.  This request body is built with JSON, and uses
+a `match` query (one of several types of queries, which we will learn about
+later).
+
+==== More complicated searching
+
+Let's make the search a little more complicated.  We still want to find all
+employees with a last name of "Smith", but  we only want employees who are
+older than 30.  Our query will change a little to accommodate a _filter_, which
+allows us to efficiently execute structured searches:
+
+[source,js]
+--------------------------------------------------
+curl -XGET 'localhost:9200/megacorp/employees/_search' -d '
+{
+    "query" : {
+        "filtered" : {
+            "filter" : {
+                "range" : {
+                    "age" : { "gt" : 30 } <1>
+                }
+            },
+            "query" : {
+                "match" : {
+                    "last_name" : "smith" <2>
+                }
+            }
+        }
+    }
+}'
+--------------------------------------------------
+<1> This portion of the query is a `range` _filter_, which will find all ages
+older than 30 ("gt" stands for "greater than")
+<2> This portion of the query is the same `match` _query_, which we saw earlier
+
+Don't worry about the syntax too much for now, we will cover it in great detail
+later.  Just recognize that we've added a _filter_ which performs a range search,
+and re-used the same `match` query as before.  Now our results only show
+one employee who happens to be 32 and named "John Smith":
+
+[source,js]
+--------------------------------------------------
+{
+   "took": 6,
+   "timed_out": false,
+   "_shards": {
+      "total": 5,
+      "successful": 5,
+      "failed": 0
+   },
+   "hits": {
+      "total": 1,
+      "max_score": 0.30685282,
+      "hits": [
+         {
+            "_index": "megacorp",
+            "_type": "employees",
+            "_id": "2",
+            "_score": 0.30685282,
+            "_source": {
+               "first_name": "Jane",
+               "last_name": "Smith",
+               "age": 32,
+               "about": "I like to collect rock albums",
+               "interests": ["music"]
+            }
+         }
+      ]
+   }
+}
+--------------------------------------------------
+
+==== Full-text search
+
+The searches so far have been fairly simple.  Single names, simple age filtering.
+Let's try a more advanced full-text search...an operation which databases would
+really struggle with.
+
+We are going to search for all employees who enjoy "rock climbing":
+
+[source,js]
+--------------------------------------------------
+curl -XGET 'localhost:9200/megacorp/employees/_search' -d '
+{
+    "query" : {
+        "match" : {
+            "about" : "rock climbing"
+        }
+    }
+}'
+--------------------------------------------------
+
+You can see that we re-use the `match` query, but instead of searching the 
+`first_name` field, we are now searching the `about`
+field for "rock climbing".  The results come back with two matches:
+
+[source,js]
+--------------------------------------------------
+{
+   "took": 32,
+   "timed_out": false,
+   "_shards": { ... },
+   "hits": {
+      "total": 2,
+      "max_score": 0.16273327,
+      "hits": [
+         {
+            "_index": "megacorp",
+            "_type": "employees",
+            "_id": "1",
+            "_score": 0.16273327,
+            "_source": {
+               "first_name": "John",
+               "last_name": "Smith",
+               "age": 25,
+               "about": "I love to go rock climbing",
+               "interests": ["sports","music"]
+            }
+         },
+         {
+            "_index": "megacorp",
+            "_type": "employees",
+            "_id": "2",
+            "_score": 0.016878016,
+            "_source": {
+               "first_name": "Jane",
+               "last_name": "Smith",
+               "age": 32,
+               "about": "I like to collect rock albums",
+               "interests": ["music"
+            }
+         }
+      ]
+   }
+}
+--------------------------------------------------
+
+By default, Elasticsearch sorts matching results by their score (e.g. by how
+well they matched the query).  The first and highest scoring hit is obvious:
+the `about` field clearly says "rock climbing" in it.
+
+But why did the second employee, Jane Smith, come back as a hit?  The reason 
+her document was returned is because the word "rock" was mentioned in her `about`
+field.  Because only "rock" was mentioned, and not "climbing", her score is 
+lower than John's score.
+
+This is a good example of how Elasticsearch can return "partial matches", and
+sort those matches by how relevant they were to the query.  This concept of 
+_relevance_ is important to Elasticsearch, and a concept that is completely 
+foreign to traditional relational databases.
+
+==== Phrase search
+
+Partial matches are all well and good, but what if we really want to find people
+who like "rock climbing" as a distinct concept?  In that case, we can use
+phrase searches.  Documents will only be considered a hit if they mention both 
+"rock" and "climbing" AND are next to each other in the phrase "rock climbing".
+
+We can use a slight variation of the `match` query called the `match_phrase`
+query:
+
+[source,js]
+--------------------------------------------------
+curl -XGET 'localhost:9200/megacorp/employees/_search' -d '
+{
+    "query" : {
+        "match_phrase" : {
+            "about" : "rock climbing"
+        }
+    }
+}'
+--------------------------------------------------
+
+Which, no surprise, returns only documents that contain the phrase "rock climbing""
+
+[source,js]
+--------------------------------------------------
+{
+   "took": 39,
+   "timed_out": false,
+   "_shards": { ... },
+   "hits": {
+      "total": 1,
+      "max_score": 0.23013961,
+      "hits": [
+         {
+            "_index": "megacorp",
+            "_type": "employees",
+            "_id": "1",
+            "_score": 0.23013961,
+            "_source": {
+               "first_name": "John",
+               "last_name": "Smith",
+               "age": 25,
+               "about": "I love to go rock climbing",
+               "interests": ["sports","music"]
+            }
+         }
+      ]
+   }
+}
+--------------------------------------------------
+
+==== Highlighting our searches
+
+Many applications like to _highlight_ search results so that the user can see
+what portion of the document matched their query.  Retrieving highlighted
+fragments is very easy in Elasticsearch.
+
+Let's re-run our last query, but add a new `highlight` parameter:
+
+[source,js]
+--------------------------------------------------
+curl -XGET 'localhost:9200/megacorp/employees/_search' -d '
+{
+    "query" : {
+        "match_phrase" : {
+            "about" : "rock climbing"
+        }
+    },
+    "highlight": {
+        "fields" : {
+            "about" : {}
+        }
+    }
+}'
+--------------------------------------------------
+
+When we run this query, the same hit is returned, but now we get a new
+section in the response labeled "highlight".  This contains the `about` field
+which has been enriched with fragments.  The matching terms are wrapped in 
+`<em></em>` HTML tags:
+
+[source,js]
+--------------------------------------------------
+{
+   "took": 80,
+   "timed_out": false,
+   "_shards": { ... },
+   "hits": {
+      "total": 1,
+      "max_score": 0.23013961,
+      "hits": [
+         {
+            "_index": "megacorp",
+            "_type": "employees",
+            "_id": "1",
+            "_score": 0.23013961,
+            "_source": {
+               "first_name": "John",
+               "last_name": "Smith",
+               "age": 25,
+               "about": "I love to go rock climbing",
+               "interests": ["sports","music"]
+            },
+            "highlight": {
+               "about": [
+                  "I love to go <em>rock</em> <em>climbing</em>" <1>
+               ]
+            }
+         }
+      ]
+   }
+}
+--------------------------------------------------
+<1> The highlighted fragment from the original text

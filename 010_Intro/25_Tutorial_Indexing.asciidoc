@@ -1,0 +1,140 @@
+=== Tutorial
+
+Let's walk through a simple tutorial, which covers basic concepts such as
+_indexing_, _search_ and _aggregations_.  The goal of this tutorial is to build
+an understanding of what is possible in Elasticsearch, and how easy it is
+to get started.
+
+We'll introduce some terminology and basic concepts, but it is OK if you don't
+understand everything that is going on.  We'll cover all the concepts introduced
+here in _much_ greater depth throughout the rest of the book.
+
+So, sit back and enjoy a whirlwind tour of what Elasticsearch is capable of.
+
+==== Let's build an employee directory.
+
+We happen to work for **Megacorp**, and as part of HR's new "We love our 
+drones!" initiative, we have been tasked with creating an employee directory.
+The directory is supposed to foster empathy and 
+synergistic-dynamic-collaboration (or something), so it has a few different
+business requirements:
+
+- Data can contain enumerations, multi-value tags, numbers and full-text
+- Retrieve any employee's full details
+- Allow structured search, such as finding employees over the age of 30
+- Allow full-text search on "about" field
+- Enable more complex phrase searches, and highlight snippets from the 
+matching documents
+- Enable management to build analytic dashboards over the data
+
+==== Indexing employee documents
+
+The first order of business is storing data about our employees.  This will take
+the form of a "employee document", where a single document represents a single
+employee.  The act of storing data in Elasticsearch is called _indexing_, but
+before we can index a document we need to decide _where_ to store it.
+
+In Elasticsearch, a document belongs to a _type_, and those types live inside
+an _index_. You can draw some (rough) parallels to a traditional relational database:
+
+    Relational DB  ⇒ Databases ⇒ Tables ⇒ Rows      ⇒ Columns
+    Elasticsearch  ⇒ Indices   ⇒ Types  ⇒ Documents ⇒ Fields
+
+An Elasticsearch cluster can contain multiple _indices_ (databases), which in
+turn contain multiple _types_ (tables). These types hold multiple _documents_
+(rows), and each document has multiple _fields_ (columns).
+
+.Index vs Index vs Index
+**************************************************
+
+You may already have noticed that the word ``index'' is overloaded with
+several different meanings in the context of Elasticsearch. A little
+clarification is necessary:
+
+Index (noun)::
+
+As explained above, an _index_ is like a _database_ in a traditional
+relational database. It is the place to store related documents. The plural of
+_index_ is _indices_ or _indexes_.
+
+Index (verb)::
+
+_To index a document_ is to store a document in an _index (noun)_ so that it can
+be retrieved and queried. It is much like the `INSERT` keyword in SQL except
+that, if the document already exists, then the new document would replace the old.
+
+Inverted index::
+
+Relational databases add an _index_, such as a B-Tree index, to specific
+columns in order to improve the speed of data retrieval.  Elasticsearch and
+Lucene use a structure called an _inverted index_ for exactly the same
+purpose.
++
+By default, every field in a document is _indexed_ -- has an inverted index --
+and thus is searchable. A field without an inverted index is not searchable.
+See <<inverted-index>> for an explanation of how this structure works.
+
+**************************************************
+
+So for our employee directory, we are going to do the following:
+
+- Index an `employee` _document_, which contains details about a single employee
+- That document will go into an `employees` _type_
+- That type will live in an `megacorp` _index_
+- That index will reside within our Elasticsearch cluster
+
+In practice, this is actually very easy (even though it looks like a lot of
+steps).  We can perform all of those actions in a single command:
+
+[source,js]
+--------------------------------------------------
+curl -XPUT 'localhost:9200/megacorp/employees/1' -d '
+{
+    "first_name" : "John",
+    "last_name" : "Smith",
+    "age" : 25,
+    "about" : "I love to go rock climbing",
+    "interests": ["sports", "music"]
+}'
+--------------------------------------------------
+
+Notice that the URI (`localhost:9200/megacorp/employees/1`) contains three pieces of information:
+
+- **megacorp** : the index name
+- **employees** : the type name
+- **1** : this is the ID of this particular employee
+
+The request body -- the JSON document -- contains all the information
+about this employee.  His name is "John Smith", he's 25 and enjoys 
+rock climbing.
+
+Simple!  Notice that there was no need to perform any administrative
+tasks first...just index a document.  Elasticsearch will build an index
+for you in the background with default settings, so you can focus on 
+other tasks for now.
+
+Before moving on, let's add a few more employees to the directory:
+
+[source,js]
+--------------------------------------------------
+curl -XPUT 'localhost:9200/megacorp/employees/2' -d '
+{
+    "first_name" : "Jane",
+    "last_name" : "Smith",
+    "age" : 32,
+    "about" : "I like to collect rock albums",
+    "interests": ["music"]
+}'
+
+curl -XPUT 'localhost:9200/megacorp/employees/3' -d '
+{
+    "first_name" : "Douglas",
+    "last_name" : "Fir",
+    "age" : 35,
+    "about":"I like to build cabinets",
+    "interests": ["forestry"]
+}'
+--------------------------------------------------
+
+
+
