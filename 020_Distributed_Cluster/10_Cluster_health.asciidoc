@@ -9,6 +9,7 @@ but the single most important one is the _cluster health_, which reports a
 --------------------------------------------------
 GET /_cluster/health
 --------------------------------------------------
+// SENSE: 020_Distributed_Cluster/10_Cluster_health.json
 
 which, on an empty cluster with no indices, will return something like:
 

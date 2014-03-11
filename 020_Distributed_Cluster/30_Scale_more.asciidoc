@@ -17,12 +17,10 @@ of replicas from the default of `1` to `2`:
 --------------------------------------------------
 PUT /blogs/_settings
 {
-   "index" : {
-      "number_of_replicas" : 2
-   }
+   "number_of_replicas" : 2
 }
 --------------------------------------------------
-
+// SENSE: 020_Distributed_Cluster/30_Replicas.json
 
 [[cluster-three-nodes-two-replicas]]
 .Increasing the `number_of_replicas` to 2

@@ -1,0 +1,5 @@
+# Delete ALL DATA IN THE CLUSTER!
+DELETE /_all
+
+# Retrieve the cluster health
+GET /_cluster/health

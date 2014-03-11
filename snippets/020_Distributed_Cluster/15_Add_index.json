@@ -1,0 +1,14 @@
+# Delete ALL DATA IN THE CLUSTER!
+DELETE /_all
+
+# Create an index with 3 primary shards with 1 replica each
+PUT /blogs
+{
+   "settings" : {
+      "number_of_shards" : 3,
+      "number_of_replicas" : 1
+   }
+}
+
+# Retrieve the cluster health
+GET /_cluster/health
