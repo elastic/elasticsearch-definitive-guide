@@ -28,6 +28,7 @@ GET /my_index/my_type/_search
   }
 }
 --------------------------------------------------
+// SENSE: 100_Full_Text_Search/15_Bool_query.json
 
 The results from the above query include any document whose `title` field
 contains the term `"quick"`, except for those that also contain `"lazy"`. So
@@ -100,6 +101,8 @@ GET /my_index/my_type/_search
   }
 }
 --------------------------------------------------
+// SENSE: 100_Full_Text_Search/15_Bool_query.json
+
 <1> This could also be expressed as a percentage.
 
 The results would only include documents whose `title` field contains `"brown"

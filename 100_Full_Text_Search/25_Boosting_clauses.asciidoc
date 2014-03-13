@@ -36,6 +36,8 @@ GET /_search
     }
 }
 --------------------------------------------------
+// SENSE: 100_Full_Text_Search/25_Boost.json
+
 <1> The `content` field must contain all of the words `full`, `text` and `search`.
 <2> If the `content` field also contains `Elasticsearch` or `Lucene` then
     the document will receive a higher `_score`.
@@ -59,7 +61,7 @@ GET /_search
         "bool": {
             "must": {
                 "match": {  <1>
-                    "content":
+                    "content": {
                         "query":    "full text search",
                         "operator": "and"
                     }
@@ -68,13 +70,13 @@ GET /_search
             "should": [
                 { "match": {
                     "content": {
-                        "query": Elasticsearch",
+                        "query": "Elasticsearch",
                         "boost": 3 <2>
                     }
                 }},
                 { "match": {
                     "content": {
-                        "query": Lucene",
+                        "query": "Lucene",
                         "boost": 2 <3>
                     }
                 }}
@@ -83,6 +85,7 @@ GET /_search
     }
 }
 --------------------------------------------------
+// SENSE: 100_Full_Text_Search/25_Boost.json
 
 <1> This clauses use the default `boost` of `1`.
 <2> This clause is the most important, as it has the highest `boost`.

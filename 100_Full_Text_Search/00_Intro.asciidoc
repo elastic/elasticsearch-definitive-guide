@@ -83,7 +83,7 @@ If you do find yourself wanting to use a query on an exact value
 
 Single-term queries usually represent binary `yes`|`no` questions and are
 almost always better expressed as a filter, so that they can benefit from
-filter caching:
+<<filter-caching,filter caching>>:
 
 [source,js]
 --------------------------------------------------

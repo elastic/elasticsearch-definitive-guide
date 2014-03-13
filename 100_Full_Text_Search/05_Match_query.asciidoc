@@ -1,10 +1,10 @@
 [[match-query]]
 === The `match` query
 
-The `match` query is the ``go-to'' query -- the first query that you reach for
-whenever you need to query any field. It is a high-level _full-text query_
-meaning that it knows how to deal with both full-text fields and exact-value
-fields.
+The `match` query is the ``go-to'' query -- the first query that you should
+reach for whenever you need to query any field. It is a high-level _full-text
+query_ meaning that it knows how to deal with both full-text fields and exact-
+value fields.
 
 That said, the main use case for the `match` query is for full text search. So
 let's take a look at how full text search works with a simple example.
@@ -32,6 +32,8 @@ POST /my_index/my_type/_bulk
 { "index": { "_id": 4 }}
 { "title": "Brown fox brown dog" }
 --------------------------------------------------
+// SENSE: 100_Full_Text_Search/05_Match_query.json
+
 <1> Delete the index in case it already exists.
 <2> Later on, in <<relevance-is-broken>>, we will explain why
     we created this index with only one primary shard.
@@ -52,6 +54,7 @@ GET /my_index/my_type/_search
     }
 }
 --------------------------------------------------
+// SENSE: 100_Full_Text_Search/05_Match_query.json
 
 Elasticsearch executes the above `match` query as follows:
 

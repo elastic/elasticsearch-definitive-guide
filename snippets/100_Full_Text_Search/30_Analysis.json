@@ -1,0 +1,49 @@
+# Delete the `my_index` index
+DELETE /my_index
+
+# Create `my_index` and map the:
+# `title` field to use the default `standard` analyzer,
+# `english_title` field to use the`english` analyzer
+PUT /my_index
+{
+  "mappings": {
+    "my_type": {
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "english_title": {
+          "type": "string",
+          "analyzer": "english"
+        }
+      }
+    }
+  }
+}
+
+# Test the analysis of the `title` field
+GET /my_index/_analyze?field=my_type.title&text=Foxes
+
+# Test the analysis of the `english_title` field
+GET /my_index/_analyze?field=my_type.english_title&text=Foxes
+
+# Get query explanation for `title` vs `english_title`
+GET /my_index/my_type/_validate/query?explain
+{
+  "query": {
+    "bool": {
+      "should": [
+        {
+          "match": {
+            "title": "Foxes"
+          }
+        },
+        {
+          "match": {
+            "english_title": "Foxes"
+          }
+        }
+      ]
+    }
+  }
+}

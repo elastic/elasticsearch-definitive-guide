@@ -27,6 +27,7 @@ PUT /my_index/_mapping/my_type
     }
 }
 --------------------------------------------------
+// SENSE: 100_Full_Text_Search/30_Analysis.json
 
 Now we can compare how values in the `english` field and the `title` field are
 analyzed at index time using the `analyze` API to analyze the word `"Foxes"`:
@@ -39,6 +40,7 @@ Foxes
 GET /my_index/_analyze?field=my_type.english_title <2>
 Foxes
 --------------------------------------------------
+// SENSE: 100_Full_Text_Search/30_Analysis.json
 
 <1> Field `title`, which uses the default `standard` analyzer will return the
     term `foxes`
@@ -59,14 +61,17 @@ in action with the `validate query` API:
 --------------------------------------------------
 GET /my_index/my_type/_validate/query?explain
 {
-    "bool": {
-        "should": [
-            { "match": { "title":         "Foxes"},
-            { "match": { "english_title": "Foxes"}
-        ]
+    "query": {
+        "bool": {
+            "should": [
+                { "match": { "title":         "Foxes"}},
+                { "match": { "english_title": "Foxes"}}
+            ]
+        }
     }
 }
 --------------------------------------------------
+// SENSE: 100_Full_Text_Search/30_Analysis.json
 
 which returns this `explanation`:
 

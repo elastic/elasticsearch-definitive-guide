@@ -16,6 +16,7 @@ GET /my_index/my_type/_search
     }
 }
 --------------------------------------------------
+// SENSE: 100_Full_Text_Search/05_Match_query.json
 
 The above query returns all four documents in the results list:
 
@@ -97,6 +98,7 @@ GET /my_index/my_type/_search
     }
 }
 --------------------------------------------------
+// SENSE: 100_Full_Text_Search/05_Match_query.json
 
 <1> The structure of the `match` query has to change slightly in order to
     accomodate the `operator` parameter.
@@ -135,6 +137,7 @@ GET /my_index/my_type/_search
   }
 }
 --------------------------------------------------
+// SENSE: 100_Full_Text_Search/05_Match_query.json
 
 When specified as a percentage, `minimum_should_match` does the right thing:
 in the example above with three terms, `75%` would be rounded down to `66.6%`
