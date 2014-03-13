@@ -1,0 +1,132 @@
+# Delete the `my_index` index
+DELETE /my_index
+
+# Create `my_index` with a single primary shard
+PUT /my_index
+{ "settings": { "number_of_shards": 1 }}
+
+# Index some example docs
+PUT /my_index/book/1
+{
+  "title": "War and Peace",
+  "author": "Leo Tolstoy",
+  "translator": [
+    "Louise Maude",
+    "Aylmer Maude"
+  ]
+}
+
+PUT /my_index/book/2
+{
+  "title": "War and Peace",
+  "author": "Leo Tolstoy",
+  "translator": "Constance Garnett"
+}
+
+PUT /my_index/book/3
+{
+  "title": "War and Peace",
+  "author": "Leo Tolstoy",
+  "translator": "Ann Dunnigan"
+}
+
+# Search for "War and Peace" by "Leo Tolstoy"
+GET /my_index/_search
+{
+  "query": {
+    "bool": {
+      "should": [
+        {
+          "match": {
+            "title": "War and Peace"
+          }
+        },
+        {
+          "match": {
+            "author": "Leo Tolstoy"
+          }
+        }
+      ]
+    }
+  }
+}
+
+# Prefer certain translators
+GET /my_index/_search
+{
+  "query": {
+    "bool": {
+      "should": [
+        {
+          "match": {
+            "title": "War and Peace"
+          }
+        },
+        {
+          "match": {
+            "author": "Leo Tolstoy"
+          }
+        },
+        {
+          "bool": {
+            "should": [
+              {
+                "match": {
+                  "translator": "Constance Garnett"
+                }
+              },
+              {
+                "match": {
+                  "translator": "Louise Maude"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
+
+# Boost title and author over translator
+GET /my_index/_search
+{
+  "query": {
+    "bool": {
+      "should": [
+        {
+          "match": {
+            "title": {
+              "query": "War and Peace",
+              "boost": 2
+            }
+          }
+        },
+        {
+          "match": {
+            "author": {
+              "query": "Leo Tolstoy",
+              "boost": 2
+            }
+          }
+        },
+        {
+          "bool": {
+            "should": [
+              {
+                "match": {
+                  "translator": "Constance Garnett"
+                }
+              },
+              {
+                "match": {
+                  "translator": "Louise Maude"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

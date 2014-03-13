@@ -22,24 +22,23 @@ We can see this by passing our query through the `validate-query` API:
 --------------------------------------------------
 GET /_validate/query?explain
 {
-    "query": {
-        "multi_match": {
-            "query":       "Poland Street W1V",
-            "type":        "most_fields",
-            "fields":      [ "street", "city", "country", "postcode" ]
-        }
+  "query": {
+    "multi_match": {
+      "query":   "Poland Street W1V",
+      "type":    "most_fields",
+      "fields":  [ "street", "city", "country", "postcode" ]
     }
+  }
 }
 --------------------------------------------------
+// SENSE: 120_Multi_Field_Search/40_Entity_search_problems.json
 
 which yields this `explanation`:
 
-    (
-       (street:poland   street:street   street:w1v)
-     | (city:poland     city:street     city:w1v)
-     | (country:poland  country:street  country:w1v)
-     | (postcode:poland postcode:street postcode:w1v)
-    )
+    (street:poland   street:street   street:w1v)
+    (city:poland     city:street     city:w1v)
+    (country:poland  country:street  country:w1v)
+    (postcode:poland postcode:street postcode:w1v)
 
 
 You can see that a document which matches just the word `poland` in *two* fields
@@ -65,18 +64,18 @@ results. Perhaps we could try this:
     }
 }
 --------------------------------------------------
+// SENSE: 120_Multi_Field_Search/40_Entity_search_problems.json
+
 <1> All terms must be present.
 
 However, with `best_fields` or `most_fields` these parameters are passed down
 to the generated `match` queries. The `explanation` for this query shows the
 following:
 
-    (
-       (+street:poland   +street:street   +street:w1v)
-     | (+city:poland     +city:street     +city:w1v)
-     | (+country:poland  +country:street  +country:w1v)
-     | (+postcode:poland +postcode:street +postcode:w1v)
-    )
+    (+street:poland   +street:street   +street:w1v)
+    (+city:poland     +city:street     +city:w1v)
+    (+country:poland  +country:street  +country:w1v)
+    (+postcode:poland +postcode:street +postcode:w1v)
 
 In other words, using the `and` operator means that all words must exist *in
 the same field*, which is clearly wrong! It is unlikely that any documents
@@ -122,6 +121,7 @@ than the first.
     }
 }
 --------------------------------------------------
+// SENSE: 120_Multi_Field_Search/40_Bad_frequencies.json
 
 The high IDF of `smith` in the first name field can overwhelm the two low IDFs
 of `peter` as a first name and `smith` as a last name.

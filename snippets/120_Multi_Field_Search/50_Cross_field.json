@@ -1,0 +1,83 @@
+# Delete the `my_index` index
+DELETE /my_index
+
+# Create `my_index` with a single primary shard
+PUT /my_index
+{ "settings": { "number_of_shards": 1 }}
+
+# Index some example docs
+POST /my_index/person/_bulk
+{"index":{"_id":1}}
+{"first_name":"John","last_name":"Smith"}
+{"index":{"_id":2}}
+{"first_name":"Peter","last_name":"Smith"}
+{"index":{"_id":3}}
+{"first_name":"Peter","last_name":"Jones"}
+{"index":{"_id":4}}
+{"first_name":"Mary","last_name":"Smith"}
+{"index":{"_id":5}}
+{"first_name":"Smith","last_name":"Johns"}
+
+# Explanation for most_fields
+GET /my_index/_validate/query?explain
+{
+  "query": {
+    "multi_match": {
+      "query": "peter smith",
+      "type": "most_fields",
+      "operator": "and",
+      "fields": [
+        "first_name",
+        "last_name"
+      ]
+    }
+  }
+}
+
+# Explanation for cross_fields
+GET /my_index/_validate/query?explain
+{
+  "query": {
+    "multi_match": {
+      "query": "peter smith",
+      "type": "cross_fields",
+      "operator": "and",
+      "fields": [
+        "first_name",
+        "last_name"
+      ]
+    }
+  }
+}
+
+# Cross-fields with operator "and"
+GET /my_index/_search
+{
+  "query": {
+    "multi_match": {
+      "query": "peter smith",
+      "type": "cross_fields",
+      "operator": "and",
+      "fields": [
+        "first_name",
+        "last_name"
+      ]
+    }
+  }
+}
+
+# Cross-fields with good frequencies
+GET /my_index/_search
+{
+  "query": {
+    "multi_match": {
+      "query": "peter smith",
+      "type": "cross_fields",
+      "fields": [
+        "first_name",
+        "last_name"
+      ]
+    }
+  }
+}
+

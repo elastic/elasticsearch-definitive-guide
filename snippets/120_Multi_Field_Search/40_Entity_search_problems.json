@@ -1,0 +1,87 @@
+# Delete the `my_index` index
+DELETE /my_index
+
+# Create `my_index` with a single primary shard
+PUT /my_index
+{ "settings": { "number_of_shards": 1 }}
+
+# Index some example docs
+PUT /my_index/my_type/1
+{
+    "street":   "5 Poland Street",
+    "city":     "London",
+    "country":  "United Kingdom",
+    "postcode": "W1V 3DG"
+}
+
+# A naive approach to multi-field search
+GET /my_index/_search
+{
+  "query": {
+    "multi_match": {
+      "query": "Poland Street W1V",
+      "type": "most_fields",
+      "fields": [
+        "street",
+        "city",
+        "country",
+        "postcode"
+      ]
+    }
+  }
+}
+
+# The above query explained
+GET /my_index/_validate/query?explain
+{
+  "query": {
+    "multi_match": {
+      "query": "Poland Street W1V",
+      "type": "most_fields",
+      "fields": [
+        "street",
+        "city",
+        "country",
+        "postcode"
+      ]
+    }
+  }
+}
+
+# With operator "and" - no results!
+GET /my_index/_search
+{
+  "query": {
+    "multi_match": {
+      "query": "Poland Street W1V",
+      "type": "most_fields",
+      "operator": "and",
+      "fields": [
+        "street",
+        "city",
+        "country",
+        "postcode"
+      ]
+    }
+  }
+}
+
+# The above query explained
+GET /my_index/_validate/query?explain
+{
+  "query": {
+    "multi_match": {
+      "query": "Poland Street W1V",
+      "type": "most_fields",
+      "operator": "and",
+      "fields": [
+        "street",
+        "city",
+        "country",
+        "postcode"
+      ]
+    }
+  }
+}
+
+

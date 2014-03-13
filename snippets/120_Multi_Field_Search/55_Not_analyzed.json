@@ -1,0 +1,45 @@
+# Delete the `my_index` index
+DELETE /my_index
+
+# Create `my_index` with a single primary shard
+# and set `title` to be not_analyzed
+PUT /my_index
+{
+  "settings": {
+    "number_of_shards": 1
+  },
+  "mappings": {
+    "person": {
+      "properties": {
+        "title": {
+          "type": "string",
+          "index": "not_analyzed"
+        }
+      }
+    }
+  }
+}
+
+# Index an example doc
+PUT /my_index/person/1
+{
+  "title": "Mr",
+  "first_name": "John",
+  "last_name": "Smith"
+}
+
+# Explanation for multi_match
+GET /my_index/_validate/query?explain
+{
+  "query": {
+    "multi_match": {
+      "query": "peter smith",
+      "type": "cross_fields",
+      "fields": [
+        "title",
+        "first_name",
+        "last_name"
+      ]
+    }
+  }
+}

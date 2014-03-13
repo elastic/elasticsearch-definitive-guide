@@ -18,27 +18,27 @@ By default it runs as type `best_fields`, which means that it generates a
 [source,js]
 --------------------------------------------------
 {
-    "dis_max": {
-        "queries":  [
-            {
-                "match": {
-                    "title": {
-                        "query": "Quick brown fox",
-                        "minimum_should_match": "30%"
-                    }
-                }
-            },
-            {
-                "match": {
-                    "body": {
-                        "query": "Quick brown fox",
-                        "minimum_should_match": "30%"
-                    }
-                }
-            },
-        ],
-        "tie_breaker": 0.3
-    }
+  "dis_max": {
+    "queries":  [
+      {
+        "match": {
+          "title": {
+            "query": "Quick brown fox",
+            "minimum_should_match": "30%"
+          }
+        }
+      },
+      {
+        "match": {
+          "body": {
+            "query": "Quick brown fox",
+            "minimum_should_match": "30%"
+          }
+        }
+      },
+    ],
+    "tie_breaker": 0.3
+  }
 }
 --------------------------------------------------
 
@@ -50,12 +50,14 @@ could be rewritten more concisely with `multi_match` as:
     "multi_match": {
         "query":                "Quick brown fox",
         "type":                 "best_fields", <1>
-        "fields":               [ "title", "body" ]
+        "fields":               [ "title", "body" ],
         "tie_breaker":          0.3,
         "minimum_should_match": "30%" <2>
     }
 }
 --------------------------------------------------
+// SENSE: 120_Multi_Field_Search/25_Best_fields.json
+
 <1> The `best_fields` type is the default and can be left out.
 <2> Parameters like `minimum_should_match` or `operator` are passed through to
     the generated `match` queries.

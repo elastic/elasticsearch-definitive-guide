@@ -1,0 +1,36 @@
+# Delete the `my_index` index
+DELETE /my_index
+
+# Create `my_index` with a single primary shard
+PUT /my_index
+{ "settings": { "number_of_shards": 1 }}
+
+# Index some example docs
+PUT /my_index/my_type/1
+{
+  "title": "Quick brown rabbits",
+  "body": "Brown rabbits are commonly seen."
+}
+
+PUT /my_index/my_type/2
+{
+  "title": "Keeping pets healthy",
+  "body": "My quick brown fox eats rabbits on a regular basis."
+}
+
+# Multi_match query
+GET /my_index/_search
+{
+  "query": {
+    "multi_match": {
+      "query": "Quick brown fox",
+      "type": "best_fields",
+      "fields": [
+        "title",
+        "body"
+      ],
+      "tie_breaker": 0.3,
+      "minimum_should_match": "30%"
+    }
+  }
+}

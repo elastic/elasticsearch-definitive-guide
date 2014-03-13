@@ -43,16 +43,16 @@ field that matches, which sounds like it is a job for the `bool` query:
 [source,js]
 --------------------------------------------------
 {
-    "query": {
-        "bool": {
-            "should": [
-                { "match": { "street":    "Poland Street W1V" }},
-                { "match": { "city":      "Poland Street W1V" }},
-                { "match": { "country":   "Poland Street W1V" }},
-                { "match": { "postcode":  "Poland Street W1V" }}
-            ]
-        }
+  "query": {
+    "bool": {
+      "should": [
+        { "match": { "street":    "Poland Street W1V" }},
+        { "match": { "city":      "Poland Street W1V" }},
+        { "match": { "country":   "Poland Street W1V" }},
+        { "match": { "postcode":  "Poland Street W1V" }}
+      ]
     }
+  }
 }
 --------------------------------------------------
 
@@ -63,13 +63,13 @@ combine the scores of all matching fields:
 [source,js]
 --------------------------------------------------
 {
-    "query": {
-        "multi_match": {
-            "query":       "Poland Street W1V",
-            "type":        "most_fields",
-            "fields":      [ "street", "city", "country", "postcode" ]
-        }
+  "query": {
+    "multi_match": {
+      "query":       "Poland Street W1V",
+      "type":        "most_fields",
+      "fields":      [ "street", "city", "country", "postcode" ]
     }
+  }
 }
 --------------------------------------------------
 

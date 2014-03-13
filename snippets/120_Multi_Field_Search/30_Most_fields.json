@@ -1,0 +1,105 @@
+# Delete the `my_index` index
+DELETE /my_index
+
+# Create `my_index` with a single primary shard
+# and map the `title` field to use the `english` analyzer
+# and the `title.std` field to use the `standard` analyzer
+PUT /my_index
+{
+  "settings": {
+    "number_of_shards": 1
+  },
+  "mappings": {
+    "my_type": {
+      "properties": {
+        "title": {
+          "type": "string",
+          "analyzer": "english",
+          "fields": {
+            "std": {
+              "type": "string",
+              "analyzer": "standard"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+# Index some example docs
+PUT /my_index/my_type/1
+{
+  "title": "My rabbit jumps"
+}
+
+PUT /my_index/my_type/2
+{
+  "title": "Jumping jack rabbits"
+}
+
+# Query just the stemmed `title` field - same score
+GET /my_index/_search
+{
+  "query": {
+    "match": {
+      "title": "jumping rabbits"
+    }
+  }
+}
+
+# Above query explained
+GET /my_index/_validate/query?explain
+{
+  "query": {
+    "match": {
+      "title": "jumping rabbits"
+    }
+  }
+}
+
+# Query the stemmed `title` field but also look
+# in the `title.std` field for unstemmed matches
+GET /my_index/_search
+{
+  "query": {
+    "multi_match": {
+      "query": "jumping rabbits",
+      "type": "most_fields",
+      "fields": [
+        "title",
+        "title.std"
+      ]
+    }
+  }
+}
+
+# Above query explained
+GET /my_index/_validate/query?explain
+{
+  "query": {
+    "multi_match": {
+      "query": "jumping rabbits",
+      "type": "most_fields",
+      "fields": [
+        "title",
+        "title.std"
+      ]
+    }
+  }
+}
+
+# Give a higher boost to the `title` field
+GET /my_index/_search
+{
+  "query": {
+    "multi_match": {
+      "query": "jumping rabbits",
+      "type": "most_fields",
+      "fields": [
+        "title^10",
+        "title.std"
+      ]
+    }
+  }
+}

@@ -1,0 +1,109 @@
+# Delete the `my_index` index
+DELETE /my_index
+
+# Create `my_index` with a single primary shard
+PUT /my_index
+{ "settings": { "number_of_shards": 1 }}
+
+# Index some example docs
+PUT /my_index/my_type/1
+{
+  "title": "Quick brown rabbits",
+  "body": "Brown rabbits are commonly seen."
+}
+
+PUT /my_index/my_type/2
+{
+  "title": "Keeping pets healthy",
+  "body": "My quick brown fox eats rabbits on a regular basis."
+}
+
+# Search for "Brown fox" in the `title` and `body` fields
+# using a bool query
+GET /my_index/_search
+{
+  "query": {
+    "bool": {
+      "should": [
+        {
+          "match": {
+            "title": "Brown fox"
+          }
+        },
+        {
+          "match": {
+            "body": "Brown fox"
+          }
+        }
+      ]
+    }
+  }
+}
+
+# Search for "Brown fox" in the `title` and `body` fields
+# using a dis_max query
+GET /my_index/_search
+{
+  "query": {
+    "dis_max": {
+      "queries": [
+        {
+          "match": {
+            "title": "Brown fox"
+          }
+        },
+        {
+          "match": {
+            "body": "Brown fox"
+          }
+        }
+      ]
+    }
+  }
+}
+
+# Search for "Quick pets" in the `title` and `body` fields
+# using a dis_max query
+GET /my_index/_search
+{
+  "query": {
+    "dis_max": {
+      "queries": [
+        {
+          "match": {
+            "title": "Quick pets"
+          }
+        },
+        {
+          "match": {
+            "body": "Quick pets"
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+# Search for "Quick pets" in the `title` and `body` fields
+# using a dis_max query with a tie_breaker
+GET /my_index/_search
+{
+  "query": {
+    "dis_max": {
+      "queries": [
+        {
+          "match": {
+            "title": "Quick pets"
+          }
+        },
+        {
+          "match": {
+            "body": "Quick pets"
+          }
+        }
+      ],
+      "tie_breaker": 0.3
+    }
+  }
+}

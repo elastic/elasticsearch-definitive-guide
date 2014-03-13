@@ -26,6 +26,8 @@ GET /_validate/query?explain
     }
 }
 --------------------------------------------------
+// SENSE: 120_Multi_Field_Search/50_Cross_field.json
+
 <1> All terms are required.
 
 For a document to match, both `peter` and `smith` must appear in the same
@@ -64,6 +66,8 @@ GET /_validate/query?explain
     }
 }
 --------------------------------------------------
+// SENSE: 120_Multi_Field_Search/50_Cross_field.json
+
 <1> Use `cross_fields` term-centric matching.
 
 It solves the term frequency problem by _blending_ inverse document
@@ -122,6 +126,7 @@ GET /books/_search
     }
 }
 --------------------------------------------------
+
 <1> The `title` field has a boost of 2, while the `description` field
     has the default boost of 1.
 

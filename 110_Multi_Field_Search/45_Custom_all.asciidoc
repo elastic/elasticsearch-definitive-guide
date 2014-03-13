@@ -33,6 +33,8 @@ PUT /my_index
     }
 }
 --------------------------------------------------
+// SENSE: 120_Multi_Field_Search/45_Custom_all.json
+
 <1> The values in the `first_name` and `last_name` fields
     are also copied to the `full_name` field.
 

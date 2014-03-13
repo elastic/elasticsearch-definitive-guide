@@ -17,6 +17,7 @@ PUT /my_index/my_type/2
     "body":  "My quick brown fox eats rabbits on a regular basis."
 }
 --------------------------------------------------
+// SENSE: 120_Multi_Field_Search/15_Best_fields.json
 
 The user types in the words ``Brown fox'' and clicks ``Search''.   We don't
 know ahead of time if the user's search terms will be found in the `title` or
@@ -39,6 +40,7 @@ Now we run the following `bool` query:
     }
 }
 --------------------------------------------------
+// SENSE: 120_Multi_Field_Search/15_Best_fields.json
 
 And we find that this query actually gives Document 1 the higher score:
 
@@ -106,6 +108,7 @@ queries, and return the score of the best matching query_:
     }
 }
 --------------------------------------------------
+// SENSE: 120_Multi_Field_Search/15_Best_fields.json
 
 This produces the results that we want:
 

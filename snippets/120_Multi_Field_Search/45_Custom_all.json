@@ -1,0 +1,69 @@
+# Delete the `my_index` index
+DELETE /my_index
+
+# Copy first_name and last_name to the full_name field
+PUT /my_index
+{
+  "settings": {
+    "number_of_shards": 1
+  },
+  "mappings": {
+    "person": {
+      "properties": {
+        "first_name": {
+          "type": "string",
+          "copy_to": "full_name"
+        },
+        "last_name": {
+          "type": "string",
+          "copy_to": "full_name"
+        },
+        "full_name": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
+
+# Index some example docs
+POST /my_index/person/_bulk
+{"index":{"_id":1}}
+{"first_name":"John","last_name":"Smith"}
+{"index":{"_id":2}}
+{"first_name":"Peter","last_name":"Smith"}
+{"index":{"_id":3}}
+{"first_name":"Peter","last_name":"Jones"}
+{"index":{"_id":4}}
+{"first_name":"Mary","last_name":"Smith"}
+{"index":{"_id":5}}
+{"first_name":"Smith","last_name":"Johns"}
+
+# With operator "and"
+GET /my_index/_search
+{
+  "query": {
+    "match": {
+      "full_name": {
+        "query": "Peter Smith",
+        "operator": "and"
+      }
+    }
+  }
+}
+
+# Good term frequencies
+GET /my_index/_search
+{
+  "query": {
+    "match": {
+      "full_name": {
+        "query": "Peter Smith"
+      }
+    }
+  }
+}
+
+
+
+
