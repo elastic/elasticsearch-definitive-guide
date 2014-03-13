@@ -1,0 +1,45 @@
+# Delete the `my_index` index
+DELETE /my_index
+
+# Index example docs
+PUT /my_index/my_type/1
+{
+  "tags": [
+    "search"
+  ],
+  "tag_count": 1
+}
+
+PUT /my_index/my_type/2
+{
+  "tags": [
+    "search",
+    "open_source"
+  ],
+  "tag_count": 2
+}
+
+# Where tags = "search" only
+GET /my_index/my_type/_search
+{
+  "query": {
+    "filtered": {
+      "filter": {
+        "bool": {
+          "must": [
+            {
+              "term": {
+                "tags": "search"
+              }
+            },
+            {
+              "term": {
+                "tag_count": 1
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

@@ -55,10 +55,9 @@ point in time, such as midnight last night.
     ]
 }
 --------------------------------------------------
-<1> This filter is cached because it uses the `now` function with rounding.
+<1> This filter is cached because it uses `now` rounded to midnight.
 
-<2> This filter is not cached because it uses the `now` function *without*
-    rounding.
+<2> This filter is not cached because it uses `now` *without* rounding.
 
 The `now/d` clause rounds to midnight last night and so excludes all documents
 created before today.  The resulting bitset is cached because `now` is used
@@ -68,8 +67,8 @@ for _midnight-last-night_ changes.  The `now-1h` clause isn't cached because
 the first filter, this second filter need only check documents that have been
 created since midnight.
 
-The order of these clauses is important. This approach works because the
-since-midnight clause comes before the last-hour clause. If they were the
-other  way around, then the last-hour clause would need to examine all
-documents in the index, instead of just documents from today.
+The order of these clauses is important. This approach works only because the
+_since-midnight_ clause comes before the _last-hour_ clause. If they were the
+other  way around, then the _last-hour_ clause would need to examine all
+documents in the index, instead of just documents created since midnight.
 

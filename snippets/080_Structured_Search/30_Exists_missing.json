@@ -1,0 +1,43 @@
+# Delete the `my_index` index
+DELETE /my_index
+
+# Index example docs
+POST /my_index/posts/_bulk
+{ "index": { "_id": "1"              }}
+{ "tags" : ["search"]                }
+{ "index": { "_id": "2"              }}
+{ "tags" : ["search", "open_source"] }
+{ "index": { "_id": "3"              }}
+{ "other_field" : "some data"        }
+{ "index": { "_id": "4"              }}
+{ "tags" : null                      }
+{ "index": { "_id": "5"              }}
+{ "tags" : ["search", null]          }
+
+# Where the `tags` field exists
+GET /my_index/posts/_search
+{
+  "query": {
+    "filtered": {
+      "filter": {
+        "exists": {
+          "field": "tags"
+        }
+      }
+    }
+  }
+}
+
+# Where the `tags` field is missing
+GET /my_index/posts/_search
+{
+  "query": {
+    "filtered": {
+      "filter": {
+        "missing": {
+          "field": "tags"
+        }
+      }
+    }
+  }
+}

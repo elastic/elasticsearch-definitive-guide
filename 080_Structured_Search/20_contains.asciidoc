@@ -33,13 +33,13 @@ therefore they are both returned as a result.
 ****
 The nature of an inverted index also means that entire field equality is rather
 difficult to calculate.  How would you determine if a particular document
-*only* contains your request term?  You would have to find the term in
+contains *only* your request term?  You would have to find the term in
 the inverted index, extract the document IDs, then scan *every row in the
 inverted index* looking for those IDs to see if a doc has any other terms.
 
 As you might imagine, that would be tremendously inefficient and expensive.
-For that reason, `term` and `terms` are "must contain" operations, not
-"must equal exactly".
+For that reason, `term` and `terms` are _must contain_ operations, not
+_must equal exactly_.
 
 ****
 
@@ -54,6 +54,7 @@ we now include a field that maintains the number of tags:
 { "tags" : ["search"], "tag_count" : 1 }
 { "tags" : ["search", "open_source"], "tag_count" : 2 }
 --------------------------------------------------
+// SENSE: 080_Structured_Search/20_Exact.json
 
 Once you have the count information indexed, you can construct a `bool` filter
 that enforces the appropriate number of terms:
@@ -62,25 +63,25 @@ that enforces the appropriate number of terms:
 --------------------------------------------------
 GET /my_index/my_type/_search
 {
-    "filtered" : {
-        "filter" : {
-             "bool" : {
-                "must" : [
-                    { "term" : { "tags" : "search" } }, <1>
-                    { "term" : { "tag_count" : 1 } } <2>
-                ]
+    "query": {
+        "filtered" : {
+            "filter" : {
+                 "bool" : {
+                    "must" : [
+                        { "term" : { "tags" : "search" } }, <1>
+                        { "term" : { "tag_count" : 1 } } <2>
+                    ]
+                }
             }
         }
     }
 }
 --------------------------------------------------
+// SENSE: 080_Structured_Search/20_Exact.json
+
 <1> Find all documents that have the term `"search"`.
 <2> But make sure the document only has one tag.
 
 This query will now match only the document that has a single tag which is
 `search`, rather than any document which contains `search`.
-
-TIP: There is a special `token_count` field type which will index the number of
-tokens for you automatically. You can read about it in the
-{ref}mapping-core-types.html#token_count[`token_count` reference documentation].
 

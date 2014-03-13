@@ -60,8 +60,8 @@ GET /my_store/products/_search
          "filter" : {
             "bool" : {
               "should" : [
-                 "term" : {"price" : 20}, <2>
-                 "term" : {"productID" : "XHDK-A-1293-#fJ3"} <2>
+                 { "term" : {"price" : 20}}, <2>
+                 { "term" : {"productID" : "XHDK-A-1293-#fJ3"}} <2>
               ],
               "must_not" : {
                  "term" : {"price" : 30} <3>
@@ -72,6 +72,8 @@ GET /my_store/products/_search
    }
 }
 --------------------------------------------------
+// SENSE: 080_Structured_Search/10_Bool_filter.json
+
 <1> Note that we still need to use a `filtered` query to wrap everything.
 <2> These two `term` filters are _children_ of the `bool` filter, and since they
     are placed inside the `should` clause, at least one of them needs to match.
@@ -134,13 +136,13 @@ GET /my_store/products/_search
          "filter" : {
             "bool" : {
               "should" : [
-                "term" : {"productID" : "KDKE-B-9947-#kL5"}, <1>
-                "bool" : { <1>
+                { "term" : {"productID" : "KDKE-B-9947-#kL5"}}, <1>
+                { "bool" : { <1>
                   "must" : [
-                    "term" : {"productID" : "JODL-X-1937-#pV7"}, <2>
-                    "term" : {"price" : 30}, <2>
+                    { "term" : {"productID" : "JODL-X-1937-#pV7"}}, <2>
+                    { "term" : {"price" : 30}} <2>
                   ]
-                }
+                }}
               ]
            }
          }
@@ -148,6 +150,8 @@ GET /my_store/products/_search
    }
 }
 --------------------------------------------------
+// SENSE: 080_Structured_Search/10_Bool_filter.json
+
 <1> Because the `term` and the `bool` are sibling clauses inside of the first
     boolean `should`, at least one of these filters must match for a document
     to be a hit.

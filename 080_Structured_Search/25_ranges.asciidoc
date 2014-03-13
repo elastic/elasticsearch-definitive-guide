@@ -30,10 +30,10 @@ The range filter supports both inclusive and exclusive ranges, through
 combinations of the following options:
 
 [horizontal]
-gt::  greater than (>), non-inclusive
-gte:: greater than or equal (>=), inclusive
-lt::  less than (<), non-inclusive
-lte:: less than or equal (<=), inclusive
+gt::  `>` greater than
+lt::  `<` less than
+gte:: `>=` greater than or equal to
+lte:: `<=` less than or equal to
 
 
 .Example range filter
@@ -46,8 +46,8 @@ GET /my_store/products/_search
             "filter" : {
                 "range" : {
                     "price" : {
-                        "gt" : 20,
-                        "lt" : 40
+                        "gte" : 20,
+                        "lt"  : 40
                     }
                 }
             }
@@ -55,6 +55,7 @@ GET /my_store/products/_search
     }
 }
 --------------------------------------------------
+// SENSE: 080_Structured_Search/25_Range_filter.json
 
 If you need an unbounded range (e.g. just >20), just omit one of the
 boundaries:
@@ -67,6 +68,7 @@ boundaries:
     }
 }
 --------------------------------------------------
+// SENSE: 080_Structured_Search/25_Range_filter.json
 
 ==== Ranges on dates
 
@@ -131,15 +133,15 @@ Terms in the inverted index are sorted in lexicographical order, which is why
 string ranges use this order.
 ****
 
-If we want a range from `a` to `b`, we can use the same range filter
-syntax:
+If we want a range from `a` up to but not including `b`, we can use the same
+range filter syntax:
 
 [source,js]
 --------------------------------------------------
 "range" : {
     "title" : {
-        "gt" : "a",
-        "lt" : "b"
+        "gte" : "a",
+        "lt" :  "b"
     }
 }
 --------------------------------------------------

@@ -20,8 +20,9 @@ can't!  An inverted index is simply a list of tokens and the documents that
 contain them.  If a field doesn't exist... it doesn't hold any tokens, which
 means it won't be represented in an inverted index data structure.
 
-Ultimately, this means that a `null`, `[]` (an empty array), and `[null]`
-are all equivalent...they simply don't exist in the inverted index!
+Ultimately, this means that a `null`, `""` (an empty string), `[]` (an empty
+array), and `[null]` are all equivalent... they simply don't exist in the
+inverted index!
 
 Obviously the world is not simple, and data is often missing fields, contains
 explicit nulls or empty arrays. To deal with these situations, Elasticsearch has
@@ -48,6 +49,8 @@ POST /my_index/posts/_bulk
 { "tags" : ["search", null]          }  <5>
 
 --------------------------------------------------
+// SENSE: 080_Structured_Search/30_Exists_missing.json
+
 <1> The `tags` field has one value.
 <2> The `tags` field has two values.
 <3> The `tags` field is missing altogether.
@@ -89,6 +92,8 @@ GET /my_index/posts/_search
     }
 }
 --------------------------------------------------
+// SENSE: 080_Structured_Search/30_Exists_missing.json
+
 
 Our query returns three documents:
 
@@ -141,11 +146,15 @@ GET /my_index/posts/_search
 {
     "query" : {
         "filtered" : {
-            "missing" : { "field" : "tags" }
+            "filter": {
+                "missing" : { "field" : "tags" }
+            }
         }
     }
 }
 --------------------------------------------------
+// SENSE: 080_Structured_Search/30_Exists_missing.json
+
 
 And, as you would expect, we get back the two docs which have no real values
 in the `tags` field -- docs `3` and `4`:

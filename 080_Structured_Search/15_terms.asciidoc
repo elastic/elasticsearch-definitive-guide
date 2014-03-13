@@ -25,6 +25,7 @@ actually use it:
 
 [source,js]
 --------------------------------------------------
+GET /my_store/products/_search
 {
     "query" : {
         "filtered" : {
@@ -37,6 +38,8 @@ actually use it:
     }
 }
 --------------------------------------------------
+// SENSE: 080_Structured_Search/15_Terms_filter.json
+
 <1> The `terms` filter as seen above, but placed inside the `filtered` query
 
 The query will return the second and third documents:

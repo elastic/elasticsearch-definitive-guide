@@ -1,0 +1,77 @@
+# Delete the `my_store` index
+DELETE /my_store
+
+# Index example docs
+POST /my_store/products/_bulk
+{"index":{"_id":1}}
+{"price":10,"productID":"XHDK-A-1293-#fJ3"}
+{"index":{"_id":2}}
+{"price":20,"productID":"KDKE-B-9947-#kL5"}
+{"index":{"_id":3}}
+{"price":30,"productID":"JODL-X-1937-#pV7"}
+{"index":{"_id":4}}
+{"price":30,"productID":"QQPX-R-3956-#aD8"}
+
+# Term filter with text - no results!
+GET /my_store/products/_search
+{
+  "query": {
+    "filtered": {
+      "filter": {
+        "term": {
+          "productID": "XHDK-A-1293-#fJ3"
+        }
+      }
+    }
+  }
+}
+
+# Test analysis of productID field
+GET /my_store/_analyze?field=productID&text=XHDK-A-1293-%23fJ3
+
+# Delete the `my_store` index
+DELETE /my_store
+
+# Map the `productID` field to be an "exact value"
+PUT /my_store
+{
+  "mappings": {
+    "products": {
+      "properties": {
+        "productID": {
+          "type": "string",
+          "index": "not_analyzed"
+        }
+      }
+    }
+  }
+}
+
+# Test analysis of productID field
+GET /my_store/_analyze?field=productID&text=XHDK-A-1293-%23fJ3
+
+# Index example docs
+POST /my_store/products/_bulk
+{"index":{"_id":1}}
+{"price":10,"productID":"XHDK-A-1293-#fJ3"}
+{"index":{"_id":2}}
+{"price":20,"productID":"KDKE-B-9947-#kL5"}
+{"index":{"_id":3}}
+{"price":30,"productID":"JODL-X-1937-#pV7"}
+{"index":{"_id":4}}
+{"price":30,"productID":"QQPX-R-3956-#aD8"}
+
+# Term filter with text - no results!
+GET /my_store/products/_search
+{
+  "query": {
+    "filtered": {
+      "filter": {
+        "term": {
+          "productID": "XHDK-A-1293-#fJ3"
+        }
+      }
+    }
+  }
+}
+

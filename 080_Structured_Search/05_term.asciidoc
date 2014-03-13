@@ -27,6 +27,7 @@ POST /my_store/products/_bulk
 { "index": { "_id": 4 }}
 { "price" : 30, "productID" : "QQPX-R-3956-#aD8" }
 --------------------------------------------------
+// SENSE: 080_Structured_Search/05_Term_number.json
 
 Our goal is to find all products with a certain price.  You may be familiar
 with SQL if you are coming from a relational database background.  If we
@@ -76,6 +77,8 @@ GET /my_store/products/_search
     }
 }
 --------------------------------------------------
+// SENSE: 080_Structured_Search/05_Term_number.json
+
 <1> The `filtered` query accepts both a `query` and a `filter`
 <2> A `match_all` is used to return all matching documents.  This is the default
 behavior, so in future examples we will simply omit the `query` section
@@ -137,6 +140,7 @@ GET /my_store/products/_search
     }
 }
 --------------------------------------------------
+// SENSE: 080_Structured_Search/05_Term_text.json
 
 Except there is a little hiccup... we don't get any results back!  Why is
 that? The problem isn't actually with the the `term` query, it is with the way
@@ -178,6 +182,7 @@ XHDK-A-1293-#fJ3
   } ]
 }
 --------------------------------------------------
+// SENSE: 080_Structured_Search/05_Term_text.json
 
 There are a couple of important points here:
 
@@ -217,6 +222,7 @@ PUT /my_store <2>
 
 }
 --------------------------------------------------
+// SENSE: 080_Structured_Search/05_Term_text.json
 <1> Deleting the index first is required, since we cannot change mappings that
     already exist.
 <2> With the index deleted, we can recreate it with out custom mapping.
@@ -236,6 +242,7 @@ POST /my_store/products/_bulk
 { "index": { "_id": 4 }}
 { "price" : 30, "productID" : "QQPX-R-3956-#aD8" }
 --------------------------------------------------
+// SENSE: 080_Structured_Search/05_Term_text.json
 
 Only now will our `term` filter work as expected.  Let's try it again on the
 newly indexed data (notice, the query and filter have not changed at all, just
@@ -256,6 +263,7 @@ GET /my_store/products/_search
     }
 }
 --------------------------------------------------
+// SENSE: 080_Structured_Search/05_Term_text.json
 
 Since the `productID` field is not analyzed, and the `term` filter performs no
 analysis, the query finds the exact match and returns document `1` as a hit.
