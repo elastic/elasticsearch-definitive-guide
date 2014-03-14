@@ -1,0 +1,64 @@
+# Delete the `my_index` index
+DELETE /my_index
+
+# Map the `postcode` field to use edge_ngrams at
+# index time, and the keyword tokenizer at search time
+PUT /my_index
+{
+  "settings": {
+    "analysis": {
+      "filter": {
+        "postcode_filter": {
+          "type": "edge_ngram",
+          "min_gram": 1,
+          "max_gram": 8
+        }
+      },
+      "analyzer": {
+        "postcode_index": {
+          "tokenizer": "keyword",
+          "filter": [
+            "postcode_filter"
+          ]
+        },
+        "postcode_search": {
+          "tokenizer": "keyword"
+        }
+      }
+    }
+  },
+  "mappings": {
+    "address": {
+      "properties": {
+        "postcode": {
+          "type": "string",
+          "index_analyzer": "postcode_index",
+          "search_analyzer": "postcode_search"
+        }
+      }
+    }
+  }
+}
+
+# Index some example docs
+PUT /my_index/address/_bulk
+{"index":{"_id":1}}
+{"postcode":"W1V 3DG"}
+{"index":{"_id":2}}
+{"postcode":"W2F 8HW"}
+{"index":{"_id":3}}
+{"postcode":"W1F 7HW"}
+{"index":{"_id":4}}
+{"postcode":"WC1N 1LZ"}
+{"index":{"_id":5}}
+{"postcode":"SW5 0BE"}
+
+# Find postcodes beginning with the exact prefix "W1"
+GET /my_index/address/_search
+{
+  "query": {
+    "match": {
+      "postcode": "W1"
+    }
+  }
+}

@@ -1,0 +1,114 @@
+# Delete the `my_index` index
+DELETE /my_index
+
+# Create `my_index` with a single primary shard
+# and set up the `autocomplete` analyzer using
+# edge ngrams
+PUT /my_index
+{
+  "settings": {
+    "number_of_shards": 1,
+    "analysis": {
+      "filter": {
+        "autocomplete_filter": {
+          "type": "edge_ngram",
+          "min_gram": 1,
+          "max_gram": 20
+        }
+      },
+      "analyzer": {
+        "autocomplete": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "autocomplete_filter"
+          ]
+        }
+      }
+    }
+  }
+}
+
+# Test the autocomplete analyzer
+GET /my_index/_analyze?analyzer=autocomplete&text=quick brown
+
+# Map the `name` field to use the `autocomplete` analyzer
+PUT /my_index/_mapping/mytype
+{
+  "mytype": {
+    "properties": {
+      "name": {
+        "type": "string",
+        "analyzer": "autocomplete"
+      }
+    }
+  }
+}
+
+# Index some example docs
+POST /my_index/mytype/_bulk
+{ "index": { "_id": 1            }}
+{ "name": "Brown foxes"    }
+{ "index": { "_id": 2            }}
+{ "name": "Yellow furballs" }
+
+# Simple query on `name` matches both docs!
+GET /my_index/mytype/_search
+{
+  "query": {
+    "match": {
+      "name": "brown fo"
+    }
+  }
+}
+
+# Get explanation for above query
+GET /my_index/mytype/_validate/query?explain
+{
+  "query": {
+    "match": {
+      "name": "brown fo"
+    }
+  }
+}
+
+# Use the "standard" analyzer on the query string
+# instead of the "autocomplete" analyzer
+GET /my_index/mytype/_search
+{
+  "query": {
+    "match": {
+      "name": {
+        "query": "brown fo",
+        "analyzer": "standard"
+      }
+    }
+  }
+}
+
+# Update the mapping for the `name` field
+# to use the "autocomplete" analyzer at index time
+# and the "standard" analyzer at search time
+PUT /my_index/mytype/_mapping
+{
+  "mytype": {
+    "properties": {
+      "name": {
+        "type": "string",
+        "index_analyzer": "autocomplete",
+        "search_analyzer": "standard"
+      }
+    }
+  }
+}
+
+# Repeat the simple query. Matches only one doc
+GET /my_index/mytype/_search
+{
+  "query": {
+    "match": {
+      "name": "brown fo"
+    }
+  }
+}

@@ -9,7 +9,7 @@ This query would match the documents containing `W1F 7HW` and `W2F 8HW`:
 
 [source,js]
 --------------------------------------------------
-GET /myindex/address/_search
+GET /my_index/address/_search
 {
     "query": {
         "wildcard": {
@@ -18,6 +18,8 @@ GET /myindex/address/_search
     }
 }
 --------------------------------------------------
+// SENSE: 130_Partial_Matching/15_Wildcard_regexp.json
+
 <1> The `?` will match the `1` and the `2`, while the `*` matches the space
     and the `7` and `8`.
 
@@ -29,7 +31,7 @@ write these more complicated patterns:
 
 [source,js]
 --------------------------------------------------
-GET /myindex/address/_search
+GET /my_index/address/_search
 {
     "query": {
         "regexp": {
@@ -38,6 +40,8 @@ GET /myindex/address/_search
     }
 }
 --------------------------------------------------
+// SENSE: 130_Partial_Matching/15_Wildcard_regexp.json
+
 <1> The regular expression says that the term must begin with a `W`, followed
     by any number from 0 to 9, followed by 1 or more other characters.
 
@@ -55,3 +59,31 @@ While prefix matching can be made more efficient by preparing your data at
 index time, wildcard and regular expression matching can only really be done
 at query time. These queries have their place, but should be used sparingly.
 
+[IMPORTANT]
+=================================================
+
+The `prefix`, `wildcard` and `regexp` queries operate on terms. If you use
+them to query an `analyzed` field then they will examine each term in the
+field, not the field as a whole.
+
+For instance, let's say that our `title` field contains ``Quick brown box''
+which produces the terms: `quick`, `brown` and `fox`.
+
+This query would match:
+
+[source,json]
+--------------------------------------------------
+{ "regexp": { "title": "br.*" }}
+--------------------------------------------------
+
+But neither of these queries would match:
+
+[source,json]
+--------------------------------------------------
+{ "regexp": { "title": "Qu.*" }} <1>
+{ "regexp": { "title": "quick br*" }} <2>
+--------------------------------------------------
+<1> The term in the index is `quick`, not `Quick`.
+<2> `quick` and `brown` are separate terms.
+
+=================================================

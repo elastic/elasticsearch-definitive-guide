@@ -43,7 +43,7 @@ A _trigram_ (length 3) is probably a good starting point:
 
 [source,js]
 --------------------------------------------------
-PUT /myindex
+PUT /my_index
 {
     "settings": {
         "analysis": {
@@ -67,7 +67,7 @@ PUT /myindex
         }
     },
     "mappings": {
-        "mytype": {
+        "my_type": {
             "properties": {
                 "text": {
                     "type":     "string",
@@ -78,6 +78,8 @@ PUT /myindex
     }
 }
 --------------------------------------------------
+// SENSE: 130_Partial_Matching/40_Compound_words.json
+
 <1> The `text` field uses the `trigrams` analyzer to index its contents as
     n-grams of length 3.
 
@@ -85,9 +87,10 @@ Testing the trigrams analyzer with the analyze API:
 
 [source,js]
 --------------------------------------------------
-GET /myindex/_analyze?analyzer=trigrams
+GET /my_index/_analyze?analyzer=trigrams
 Weißkopfseeadler
 --------------------------------------------------
+// SENSE: 130_Partial_Matching/40_Compound_words.json
 
 returns the terms:
 
@@ -97,7 +100,7 @@ We can index our example compound words to test out this approach:
 
 [source,js]
 --------------------------------------------------
-POST /myindex/mytype/_bulk
+POST /my_index/my_type/_bulk
 { "index": { "_id": 1 }}
 { "text": "Aussprachewörterbuch" }
 { "index": { "_id": 2 }}
@@ -109,13 +112,14 @@ POST /myindex/mytype/_bulk
 { "index": { "_id": 5 }}
 { "text": "Rindfleischetikettierungsüberwachungsaufgabenübertragungsgesetz" }
 --------------------------------------------------
+// SENSE: 130_Partial_Matching/40_Compound_words.json
 
 A search for ``Adler'' (eagle) becomes a query for the three terms `adl`, `dle`
 and `ler`:
 
 [source,js]
 --------------------------------------------------
-GET /myindex/mytype/_search
+GET /my_index/my_type/_search
 {
     "query": {
         "match": {
@@ -124,6 +128,7 @@ GET /myindex/mytype/_search
     }
 }
 --------------------------------------------------
+// SENSE: 130_Partial_Matching/40_Compound_words.json
 
 which correctly matches ``Weißkopfsee-__**adler**__'':
 
@@ -141,6 +146,7 @@ which correctly matches ``Weißkopfsee-__**adler**__'':
   ]
 }
 --------------------------------------------------
+// SENSE: 130_Partial_Matching/40_Compound_words.json
 
 A similar query for ``Gesundheit'' (health) correctly matches
 ``Welt-__**gesundheit**__-sorganisation'', but it also matches
@@ -154,7 +160,7 @@ present for a document to be considered a match:
 
 [source,js]
 --------------------------------------------------
-GET /myindex/mytype/_search
+GET /my_index/my_type/_search
 {
     "query": {
         "match": {
@@ -166,6 +172,7 @@ GET /myindex/mytype/_search
     }
 }
 --------------------------------------------------
+// SENSE: 130_Partial_Matching/40_Compound_words.json
 
 This is a bit of a shotgun approach to full text search and can result in a
 large inverted index, but it is an effective generic way of indexing languages

@@ -6,7 +6,7 @@ query:
 
 [source,js]
 --------------------------------------------------
-GET /myindex/address/_search
+GET /my_index/address/_search
 {
     "query": {
         "prefix": {
@@ -15,6 +15,7 @@ GET /myindex/address/_search
     }
 }
 --------------------------------------------------
+// SENSE: 130_Partial_Matching/10_Prefix_query.json
 
 The `prefix` query is a low-level query that works at the term level.  It
 doesn't analyze the query string before searching -- it assumes that you have

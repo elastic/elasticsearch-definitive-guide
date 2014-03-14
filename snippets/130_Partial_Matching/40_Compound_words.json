@@ -1,0 +1,101 @@
+# Delete the `my_index` index
+DELETE /my_index
+
+# Map the `text` field to be create ngrams of length 3
+PUT /my_index
+{
+  "settings": {
+    "analysis": {
+      "filter": {
+        "trigrams_filter": {
+          "type": "ngram",
+          "min_gram": 3,
+          "max_gram": 3
+        }
+      },
+      "analyzer": {
+        "trigrams": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "trigrams_filter"
+          ]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "my_type": {
+      "properties": {
+        "text": {
+          "type": "string",
+          "analyzer": "trigrams"
+        }
+      }
+    }
+  }
+}
+
+# Test the analyzer
+GET /my_index/_analyze?analyzer=trigrams&text=Weißkopfseeadler
+
+# Index some example docs
+POST /my_index/my_type/_bulk
+{"index":{"_id":1}}
+{"text":"Aussprachewörterbuch"}
+{"index":{"_id":2}}
+{"text":"Militärgeschichte"}
+{"index":{"_id":3}}
+{"text":"Weißkopfseeadler"}
+{"index":{"_id":4}}
+{"text":"Weltgesundheitsorganisation"}
+{"index":{"_id":5}}
+{"text":"Rindfleischetikettierungsüberwachungsaufgabenübertragungsgesetz"}
+
+# Simple search - matches correct doc
+GET /my_index/_search
+{
+  "query": {
+    "match": {
+      "text": "Adler"
+    }
+  }
+}
+
+# Simple search - matches too many docs!
+GET /my_index/_search
+{
+  "query": {
+    "match": {
+      "text": {
+        "query": "Gesundheit"
+      }
+    }
+  }
+}
+
+# Explanation of why the above query matches too many docs
+GET /my_index/_validate/query?explain
+{
+  "query": {
+    "match": {
+      "text": {
+        "query": "Gesundheit"
+      }
+    }
+  }
+}
+
+# Trimming the long tail with minimum_should_match
+GET /my_index/_search
+{
+  "query": {
+    "match": {
+      "text": {
+        "query": "Gesundheit",
+        "minimum_should_match": "80%"
+      }
+    }
+  }
+}

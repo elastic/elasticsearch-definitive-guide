@@ -28,6 +28,7 @@ called the `match_phrase_prefix` query.
     }
 }
 --------------------------------------------------
+// SENSE: 130_Partial_Matching/20_Match_phrase_prefix.json
 
 This query behaves in the same way as the `match_phrase` query, except that it
 treats the last word in the query string as a prefix.  In other words, the
@@ -56,6 +57,7 @@ make the word order and relative positions somewhat less rigid:
     }
 }
 --------------------------------------------------
+// SENSE: 130_Partial_Matching/20_Match_phrase_prefix.json
 
 <1> Even though the words are in the wrong order, the query still matches
     because we have set a high enough `slop` value to allow some flexibility
@@ -84,6 +86,7 @@ a reasonable number, such as 50.
     }
 }
 --------------------------------------------------
+// SENSE: 130_Partial_Matching/20_Match_phrase_prefix.json
 
 The `max_expansions` parameter controls how many terms the prefix is allowed
 to match.  It will find the first term starting with `bl` and keep collecting

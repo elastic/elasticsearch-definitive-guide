@@ -20,7 +20,7 @@ fields, so we could create our index as follows:
 
 [source,js]
 --------------------------------------------------
-PUT /myindex
+PUT /my_index
 {
     "mappings": {
         "address": {
@@ -34,25 +34,27 @@ PUT /myindex
     }
 }
 --------------------------------------------------
+// SENSE: 130_Partial_Matching/10_Prefix_query.json
 
 And index some postcodes:
 
 [source,js]
 --------------------------------------------------
-PUT /myindex/address/1
+PUT /my_index/address/1
 { "postcode": "W1V 3DG" }
 
-PUT /myindex/address/2
+PUT /my_index/address/2
 { "postcode": "W2F 8HW" }
 
-PUT /myindex/address/3
+PUT /my_index/address/3
 { "postcode": "W1F 7HW" }
 
-PUT /myindex/address/4
+PUT /my_index/address/4
 { "postcode": "WC1N 1LZ" }
 
-PUT /myindex/address/5
+PUT /my_index/address/5
 { "postcode": "SW5 0BE" }
 --------------------------------------------------
+// SENSE: 130_Partial_Matching/10_Prefix_query.json
 
 Now our data is ready to be queried.

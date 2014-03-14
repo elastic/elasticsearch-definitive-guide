@@ -1,0 +1,66 @@
+# Delete the `my_index` index
+DELETE /my_index
+
+# Create `my_index` with a single primary shard
+PUT /my_index
+{ "settings": { "number_of_shards": 1 }}
+
+# Index some example docs
+PUT /my_index/my_type/1
+{
+  "brand": "Johnnie Walker Black Label"
+}
+
+PUT /my_index/my_type/2
+{
+  "brand": "Johnnie Walker Blue Label"
+}
+
+# Match phrase prefix query
+GET /my_index/_search
+{
+  "query": {
+    "match_phrase_prefix": {
+      "brand": "Johnnie Walker Bl"
+    }
+  }
+}
+
+# Match phrase prefix query
+GET /my_index/_search
+{
+  "query": {
+    "match_phrase_prefix": {
+      "brand": "Johnnie Walker Bla"
+    }
+  }
+}
+
+# Match phrase prefix query with slop
+GET /my_index/_search
+{
+  "query": {
+    "match": {
+      "brand": {
+        "type": "phrase_prefix",
+        "query": "Walker Johnnie Bl",
+        "slop": 10
+      }
+    }
+  }
+}
+
+# Control the number of completions
+GET /my_index/_search
+{
+  "query": {
+    "match": {
+      "brand": {
+        "type": "phrase_prefix",
+        "query": "Johnnie Walker Bla",
+        "max_expansions": 50
+      }
+    }
+  }
+}
+

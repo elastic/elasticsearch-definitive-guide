@@ -55,7 +55,7 @@ analyzer looks like this:
 
 [source,js]
 --------------------------------------------------
-PUT /myindex
+PUT /my_index
 {
     "settings": {
         "number_of_shards": 1, <1>
@@ -81,6 +81,8 @@ PUT /myindex
     }
 }
 --------------------------------------------------
+// SENSE: 130_Partial_Matching/35_Search_as_you_type.json
+
 <1> See <<relevance-is-broken>>.
 <2> First we define our custom token filter.
 <3> Then we use it in an analyzer.
@@ -90,9 +92,10 @@ the `analyze` API:
 
 [source,js]
 --------------------------------------------------
-GET /myindex/_analyze?analyzer=autocomplete
+GET /my_index/_analyze?analyzer=autocomplete
 quick brown
 --------------------------------------------------
+// SENSE: 130_Partial_Matching/35_Search_as_you_type.json
 
 The results show us that the analyzer is working correctly. It returns the
 terms:
@@ -113,9 +116,9 @@ with the `update-mapping` API:
 
 [source,js]
 --------------------------------------------------
-PUT /myindex/_mapping/mytype
+PUT /my_index/_mapping/my_type
 {
-    "mytype": {
+    "my_type": {
         "properties": {
             "name": {
                 "type":     "string",
@@ -125,17 +128,19 @@ PUT /myindex/_mapping/mytype
     }
 }
 --------------------------------------------------
+// SENSE: 130_Partial_Matching/35_Search_as_you_type.json
 
 Now, we can index some test documents:
 
 [source,js]
 --------------------------------------------------
-POST /myindex/mytype/_bulk
+POST /my_index/my_type/_bulk
 { "index": { "_id": 1            }}
 { "name": "Brown foxes"    }
 { "index": { "_id": 2            }}
 { "name": "Yellow furballs" }
 --------------------------------------------------
+// SENSE: 130_Partial_Matching/35_Search_as_you_type.json
 
 ==== Querying the field
 
@@ -143,7 +148,7 @@ If you test out a query for ``brown fo'' using a simple `match` query:
 
 [source,js]
 --------------------------------------------------
-GET /myindex/mytype/_search
+GET /my_index/my_type/_search
 {
     "query": {
         "match": {
@@ -152,6 +157,7 @@ GET /myindex/mytype/_search
     }
 }
 --------------------------------------------------
+// SENSE: 130_Partial_Matching/35_Search_as_you_type.json
 
 you will see that *both* documents match, even though the ``Yellow furballs''
 doc contains neither `brown` nor `fo`:
@@ -183,13 +189,16 @@ As always, the `validate-query` API shines some light:
 
 [source,js]
 --------------------------------------------------
-GET /myindex/mytype/_validate/query?explain
+GET /my_index/my_type/_validate/query?explain
 {
-    "match": {
-        "name": "brown fo"
+    "query": {
+        "match": {
+            "name": "brown fo"
+        }
     }
 }
 --------------------------------------------------
+// SENSE: 130_Partial_Matching/35_Search_as_you_type.json
 
 The `explanation` shows us that the query is looking for edge n-grams of every
 word in the query string:
@@ -211,7 +220,7 @@ search analyzer is just to specify it in in the query:
 
 [source,js]
 --------------------------------------------------
-GET /myindex/mytype/_search
+GET /my_index/my_type/_search
 {
     "query": {
         "match": {
@@ -223,6 +232,8 @@ GET /myindex/mytype/_search
     }
 }
 --------------------------------------------------
+// SENSE: 130_Partial_Matching/35_Search_as_you_type.json
+
 <1> This overrides the `analyzer` setting on the `name` field.
 
 Alternatively, we can specify the `index_analyzer` and `search_analyzer` in
@@ -233,9 +244,9 @@ reindex our data:
 
 [source,js]
 --------------------------------------------------
-PUT /myindex/mytype/_mapping
+PUT /my_index/my_type/_mapping
 {
-    "mytype": {
+    "my_type": {
         "properties": {
             "name": {
                 "type":            "string",
@@ -246,6 +257,8 @@ PUT /myindex/mytype/_mapping
     }
 }
 --------------------------------------------------
+// SENSE: 130_Partial_Matching/35_Search_as_you_type.json
+
 <1> Use the `autocomplete` analyzer at index time to produce edge n-grams of
     every term.
 
@@ -335,6 +348,8 @@ transformation such as lowercasing.
     }
 }
 --------------------------------------------------
+// SENSE: 130_Partial_Matching/35_Postcodes.json
+
 <1> The `postcode_index` analyzer would use the `postcode_filter`
     to turn postcodes into edge n-grams.
 <2> The `postcode_search` analyzer would treat search terms as

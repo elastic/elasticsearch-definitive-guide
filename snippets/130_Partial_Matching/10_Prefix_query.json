@@ -1,0 +1,40 @@
+# Delete the `my_index` index
+DELETE /my_index
+
+# Map the `postcode` to be not_analyzed
+PUT /my_index
+{
+  "mappings": {
+    "address": {
+      "properties": {
+        "postcode": {
+          "type": "string",
+          "index": "not_analyzed"
+        }
+      }
+    }
+  }
+}
+
+# Index some example docs
+PUT /my_index/address/_bulk
+{"index":{"_id":1}}
+{"postcode":"W1V 3DG"}
+{"index":{"_id":2}}
+{"postcode":"W2F 8HW"}
+{"index":{"_id":3}}
+{"postcode":"W1F 7HW"}
+{"index":{"_id":4}}
+{"postcode":"WC1N 1LZ"}
+{"index":{"_id":5}}
+{"postcode":"SW5 0BE"}
+
+# Find postcodes beginning with the exact prefix "W1"
+GET /my_index/address/_search
+{
+  "query": {
+    "prefix": {
+      "postcode": "W1"
+    }
+  }
+}
