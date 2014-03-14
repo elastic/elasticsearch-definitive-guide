@@ -31,7 +31,7 @@ GET /_validate/query?explain
   }
 }
 --------------------------------------------------
-// SENSE: 120_Multi_Field_Search/40_Entity_search_problems.json
+// SENSE: 110_Multi_Field_Search/40_Entity_search_problems.json
 
 which yields this `explanation`:
 
@@ -64,7 +64,7 @@ results. Perhaps we could try this:
     }
 }
 --------------------------------------------------
-// SENSE: 120_Multi_Field_Search/40_Entity_search_problems.json
+// SENSE: 110_Multi_Field_Search/40_Entity_search_problems.json
 
 <1> All terms must be present.
 
@@ -121,7 +121,7 @@ than the first.
     }
 }
 --------------------------------------------------
-// SENSE: 120_Multi_Field_Search/40_Bad_frequencies.json
+// SENSE: 110_Multi_Field_Search/40_Bad_frequencies.json
 
 The high IDF of `smith` in the first name field can overwhelm the two low IDFs
 of `peter` as a first name and `smith` as a last name.

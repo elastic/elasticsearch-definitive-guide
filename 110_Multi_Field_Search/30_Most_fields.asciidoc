@@ -85,7 +85,7 @@ PUT /my_index
     }
 }
 --------------------------------------------------
-// SENSE: 120_Multi_Field_Search/30_Most_fields.json
+// SENSE: 110_Multi_Field_Search/30_Most_fields.json
 
 <1> See <<relevance-is-broken>>.
 <2> The `title` field is stemmed by the `english` analyzer.
@@ -101,7 +101,7 @@ PUT /my_index/my_type/1
 PUT /my_index/my_type/2
 { "title": "Jumping jack rabbits" }
 --------------------------------------------------
-// SENSE: 120_Multi_Field_Search/30_Most_fields.json
+// SENSE: 110_Multi_Field_Search/30_Most_fields.json
 
 A simple `match` query on the `title` field for ``jumping rabbits'':
 
@@ -116,7 +116,7 @@ GET /my_index/_search
     }
 }
 --------------------------------------------------
-// SENSE: 120_Multi_Field_Search/30_Most_fields.json
+// SENSE: 110_Multi_Field_Search/30_Most_fields.json
 
 becomes a query for the two stemmed terms `jump` and `rabbit`, thanks to the
 `english` analyzer. The `title` field of both documents contains both of those
@@ -162,7 +162,7 @@ GET /my_index/_search
     }
 }
 --------------------------------------------------
-// SENSE: 120_Multi_Field_Search/30_Most_fields.json
+// SENSE: 110_Multi_Field_Search/30_Most_fields.json
 
 <1>  We want to combine the scores from all matching fields, so we use the
      `most_fields` type.  This causes the `multi_match` query to wrap the two
@@ -213,7 +213,7 @@ GET /my_index/_search
     }
 }
 --------------------------------------------------
-// SENSE: 120_Multi_Field_Search/30_Most_fields.json
+// SENSE: 110_Multi_Field_Search/30_Most_fields.json
 
 <1> The `boost` value of `10` on the `title` field makes that field relatively
     much more important than the `title.std` field.

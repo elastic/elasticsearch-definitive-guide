@@ -56,7 +56,7 @@ could be rewritten more concisely with `multi_match` as:
     }
 }
 --------------------------------------------------
-// SENSE: 120_Multi_Field_Search/25_Best_fields.json
+// SENSE: 110_Multi_Field_Search/25_Best_fields.json
 
 <1> The `best_fields` type is the default and can be left out.
 <2> Parameters like `minimum_should_match` or `operator` are passed through to

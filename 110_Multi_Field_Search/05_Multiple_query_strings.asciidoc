@@ -21,7 +21,7 @@ GET /_search
   }
 }
 --------------------------------------------------
-// SENSE: 120_Multi_Field_Search/05_Multiple_query_strings.json
+// SENSE: 110_Multi_Field_Search/05_Multiple_query_strings.json
 
 The `bool` query takes a _more-matches-is-better_ approach, so the score from
 each `match` clause will be added together to provide the final `_score` for
@@ -53,7 +53,7 @@ GET /_search
   }
 }
 --------------------------------------------------
-// SENSE: 120_Multi_Field_Search/05_Multiple_query_strings.json
+// SENSE: 110_Multi_Field_Search/05_Multiple_query_strings.json
 
 
 Why did we put the translator clauses inside a separate `bool` query?  All four
@@ -107,7 +107,7 @@ GET /_search
   }
 }
 --------------------------------------------------
-// SENSE: 120_Multi_Field_Search/05_Multiple_query_strings.json
+// SENSE: 110_Multi_Field_Search/05_Multiple_query_strings.json
 
 <1> The `title` and `author` clauses have a `boost` value of 2.
 <2> The nested `bool` clauses has the default `boost` of 1.

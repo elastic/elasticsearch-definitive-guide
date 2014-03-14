@@ -20,7 +20,7 @@ GET /_validate/query?explain
     }
 }
 --------------------------------------------------
-// SENSE: 120_Multi_Field_Search/55_Not_analyzed.json
+// SENSE: 110_Multi_Field_Search/55_Not_analyzed.json
 
 Because the `title` field is not analyzed, it searches that field for a single
 term consisting of the whole query string!

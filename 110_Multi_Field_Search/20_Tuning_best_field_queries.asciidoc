@@ -20,7 +20,7 @@ matching field, and ignore the other:
     }
 }
 --------------------------------------------------
-// SENSE: 120_Multi_Field_Search/15_Best_fields.json
+// SENSE: 110_Multi_Field_Search/15_Best_fields.json
 
 [source,js]
 --------------------------------------------------
@@ -71,7 +71,7 @@ clauses into account, by specifying the `tie_breaker` parameter.
     }
 }
 --------------------------------------------------
-// SENSE: 120_Multi_Field_Search/15_Best_fields.json
+// SENSE: 110_Multi_Field_Search/15_Best_fields.json
 
 which gives us the following results:
 
