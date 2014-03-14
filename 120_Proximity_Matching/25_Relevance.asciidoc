@@ -16,7 +16,7 @@ that we should combine them using the `bool` query.
 
 We can use a simple `match` query as a `must` clause. This is the query that
 will determine which documents are included in our resultset --  we can trim
-the long tail with the `minimum_must_match` parameter.  Then we can add other
+the long tail with the `minimum_should_match` parameter.  Then we can add other
 more specific queries as `should` clauses -- every one that matches will
 increase the relevance of the matching docs.
 
@@ -29,13 +29,13 @@ GET /my_index/my_type/_search
       "must": {
         "match": { <1>
           "title": {
-            "query":              "quick brown fox",
-            "minimum_must_match": "30%"
+            "query":                "quick brown fox",
+            "minimum_should_match": "30%"
           }
         }
       },
       "should": {
-        "match_phrase": <2>
+        "match_phrase": { <2>
           "title": {
             "query": "quick brown fox",
             "slop":  50
@@ -46,6 +46,8 @@ GET /my_index/my_type/_search
   }
 }
 --------------------------------------------------
+// SENSE: 120_Proximity_Matching/25_Relevance.json
+
 <1> The `must` clause includes or excludes documents from the resultset.
 <2> The `should` clause increases the relevance score of those documents that
     match.

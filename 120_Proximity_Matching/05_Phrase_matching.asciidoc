@@ -16,6 +16,7 @@ GET /my_index/my_type/_search
     }
 }
 --------------------------------------------------
+// SENSE: 120_Proximity_Matching/05_Match_phrase_query.json
 
 Like the `match` query, the `match_phrase` query first analyzes the query
 string to produce a list of terms. It then searches for all the terms, but
@@ -38,6 +39,7 @@ The `match_phrase` query can also be written as a `match` query with type
     }
 }
 --------------------------------------------------
+// SENSE: 120_Proximity_Matching/05_Match_phrase_query.json
 
 ****
 
@@ -51,6 +53,7 @@ also the _position_ or order of each term in the original string:
 GET /_analyze?analyzer=standard
 Quick brown fox
 --------------------------------------------------
+// SENSE: 120_Proximity_Matching/05_Term_positions.json
 
 This returns:
 

@@ -25,6 +25,8 @@ POST /my_index/my_type/_search
    }
 }
 --------------------------------------------------
+// SENSE: 120_Proximity_Matching/20_Scoring.json
+
 <1> Note the high `slop` value
 
 [source,js]
@@ -33,14 +35,14 @@ POST /my_index/my_type/_search
   "hits": [
      {
         "_id":      "3",
-        "_score":   0.75,
+        "_score":   0.75, <1>
         "_source": {
            "title": "The quick brown fox jumps over the quick dog"
         }
      },
      {
         "_id":      "2",
-        "_score":   0.28347334,
+        "_score":   0.28347334, <2>
         "_source": {
            "title": "The quick brown fox jumps over the lazy dog"
         }
@@ -48,4 +50,5 @@ POST /my_index/my_type/_search
   ]
 }
 --------------------------------------------------
-
+<1> Higher score because `quick` and `dog` are close together.
+<2> Lower score because `quick` and `dog` are further apart.

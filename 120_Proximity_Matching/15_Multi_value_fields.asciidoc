@@ -10,6 +10,7 @@ PUT /my_index/groups/1
     "names": [ "John Abraham", "Lincoln Smith"]
 }
 --------------------------------------------------
+// SENSE: 120_Proximity_Matching/15_Multi_value_fields.json
 
 Then run a phrase query for `"Abraham Lincoln"`:
 
@@ -24,6 +25,7 @@ GET /my_index/groups/_search
     }
 }
 --------------------------------------------------
+// SENSE: 120_Proximity_Matching/15_Multi_value_fields.json
 
 Surprisingly our document matches, even though `"Abraham"` and `"Lincoln"`
 belong to two different people in the `names` array. The reason for this comes
@@ -61,6 +63,8 @@ PUT /my_index/_mapping/groups <2>
     }
 }
 --------------------------------------------------
+// SENSE: 120_Proximity_Matching/15_Multi_value_fields.json
+
 <1> First delete the `group` mapping and and documents of that type.
 <2> Then create a new `group` mapping with the correct values.
 

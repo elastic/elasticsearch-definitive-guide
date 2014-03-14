@@ -1,0 +1,42 @@
+# Delete the `my_index` index
+DELETE /my_index
+
+# Create `my_index` with a single primary shard
+PUT /my_index
+{ "settings": { "number_of_shards": 1 }}
+
+# Index some example docs
+POST /my_index/my_type/_bulk
+{ "index": { "_id": 1 }}
+{ "title": "The quick brown fox" }
+{ "index": { "_id": 2 }}
+{ "title": "The quick brown fox jumps over the lazy dog" }
+{ "index": { "_id": 3 }}
+{ "title": "The quick brown fox jumps over the quick dog" }
+{ "index": { "_id": 4 }}
+{ "title": "Brown fox brown dog" }
+
+# Combine phrase with match query to boost relevance
+GET /my_index/my_type/_search
+{
+  "query": {
+    "bool": {
+      "must": {
+        "match": {
+          "title": {
+            "query": "quick brown fox",
+            "minimum_should_match": "30%"
+          }
+        }
+      },
+      "should": {
+        "match_phrase": {
+          "title": {
+            "query": "quick brown fox",
+            "slop": 50
+          }
+        }
+      }
+    }
+  }
+}

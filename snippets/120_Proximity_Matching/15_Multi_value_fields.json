@@ -1,0 +1,68 @@
+# Delete the `my_index` index
+DELETE /my_index
+
+# Create `my_index` with a single primary shard
+PUT /my_index
+{ "settings": { "number_of_shards": 1 }}
+
+# Index an example doc
+PUT /my_index/groups/1
+{
+  "names": [
+    "John Abraham",
+    "Lincoln Smith"
+  ]
+}
+
+# Phrase "Abraham Lincoln" matches!
+GET /my_index/groups/_search
+{
+    "query": {
+        "match_phrase": {
+            "names": "Abraham Lincoln"
+        }
+    }
+}
+
+# Delete `groups` mapping and data
+DELETE /my_index/groups/
+
+# Map `names` to use position_offset_gap
+PUT /my_index/_mapping/groups
+{
+  "properties": {
+    "names": {
+      "type": "string",
+      "position_offset_gap": 100
+    }
+  }
+}
+
+# Reindex document
+PUT /my_index/groups/1
+{
+  "names": [
+    "John Abraham",
+    "Lincoln Smith"
+  ]
+}
+
+# Phrase "Abraham Lincoln" no longer matches
+GET /my_index/groups/_search
+{
+  "query": {
+    "match_phrase": {
+      "names": "Abraham Lincoln"
+    }
+  }
+}
+
+# But phrase "John Abraham" does
+GET /my_index/groups/_search
+{
+  "query": {
+    "match_phrase": {
+      "names": "John Abraham"
+    }
+  }
+}

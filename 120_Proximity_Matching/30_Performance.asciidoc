@@ -58,8 +58,8 @@ GET /my_index/my_type/_search
     "query": {
         "match": {  <1>
             "title": {
-                "query":              "quick brown fox",
-                "minimum_must_match": "30%"
+                "query":                "quick brown fox",
+                "minimum_should_match": "30%"
             }
         }
     },
@@ -67,7 +67,7 @@ GET /my_index/my_type/_search
         "window_size": 50, <2>
         "query": {         <3>
             "rescore_query": {
-                "match_phrase":
+                "match_phrase": {
                     "title": {
                         "query": "quick brown fox",
                         "slop":  50
@@ -78,6 +78,8 @@ GET /my_index/my_type/_search
     }
 }
 --------------------------------------------------
+// SENSE: 120_Proximity_Matching/30_Performance.json
+
 <1> The `match` query decides which results will be included in the final
     result set and ranks results according to TF/IDF.
 <2> The `window_size` is the number of top results to rescore, per shard.

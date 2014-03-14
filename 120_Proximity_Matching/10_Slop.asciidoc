@@ -20,6 +20,7 @@ GET /my_index/my_type/_search
     }
 }
 --------------------------------------------------
+// SENSE: 120_Proximity_Matching/10_Slop.json
 
 The `slop` parameter tells the `match_phrase` query how far apart terms are
 allowed to be while still considering the document a match. By ``how far

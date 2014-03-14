@@ -92,6 +92,7 @@ PUT /my_index
     }
 }
 --------------------------------------------------
+// SENSE: 120_Proximity_Matching/35_Shingles.json
 
 <1> See <<relevance-is-broken>>.
 <2> The default min/max shingle size is `2` so we don't really need to set
