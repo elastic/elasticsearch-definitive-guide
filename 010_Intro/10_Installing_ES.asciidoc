@@ -17,6 +17,22 @@ unzip elasticsearch-$VERSION.zip
 cd  elasticsearch-$VERSION
 --------------------------------------------------
 
+Let's also install link:http://www.elasticsearch.org/overview/marvel/[Marvel], a 
+cluster management and monitoring plugin developed by Elasticsearch.  Once 
+installed, all the code snippets in this book will display a _"View in Sense"_ link.
+Clicking this link will load the code into Sense -- an interactive console
+inside of Marvel -- and allow you to follow the example using your Elasticsearch
+installation.  
+
+Loading samples in Sense will allow you to play with live data and searches, 
+fiddle with parameters and generally make the book much more interactive.
+
+[source,js]
+--------------------------------------------------
+./bin/plugin -i elasticsearch/marvel/latest
+echo 'marvel.agent.enabled: false' >> ./config/elasticsearch.yml
+--------------------------------------------------
+
 Elasticsearch is now ready to run. You can start it up in the foreground
 with:
 
