@@ -6,17 +6,17 @@ an understanding of what is possible in Elasticsearch, and how easy it is
 to get started.
 
 We'll introduce some terminology and basic concepts, but it is OK if you don't
-understand everything that is going on.  We'll cover all the concepts introduced
+understand everything.  We'll cover all the concepts introduced
 here in _much_ greater depth throughout the rest of the book.
 
 So, sit back and enjoy a whirlwind tour of what Elasticsearch is capable of.
 
 ==== Let's build an employee directory.
 
-We happen to work for **Megacorp**, and as part of HR's new "We love our 
-drones!" initiative, we have been tasked with creating an employee directory.
-The directory is supposed to foster empathy and 
-synergistic-dynamic-collaboration (or something), so it has a few different
+We happen to work for **Megacorp**, and as part of HR's new _"We love our 
+drones!"_ initiative, we have been tasked with creating an employee directory.
+The directory is supposed to foster employer empathy and 
+real-time synergistic-dynamic-collaboration, so it has a few different
 business requirements:
 
 - Data can contain enumerations, multi-value tags, numbers and full-text
@@ -27,9 +27,9 @@ business requirements:
 matching documents
 - Enable management to build analytic dashboards over the data
 
-==== Indexing employee documents
+=== Indexing employee documents
 
-The first order of business is storing data about our employees.  This will take
+The first order of business is storing employee data.  This will take
 the form of a "employee document", where a single document represents a single
 employee.  The act of storing data in Elasticsearch is called _indexing_, but
 before we can index a document we need to decide _where_ to store it.
@@ -80,10 +80,10 @@ So for our employee directory, we are going to do the following:
 
 - Index an `employee` _document_, which contains details about a single employee
 - That document will go into an `employees` _type_
-- That type will live in an `megacorp` _index_
+- That type will live in a `megacorp` _index_
 - That index will reside within our Elasticsearch cluster
 
-In practice, this is actually very easy (even though it looks like a lot of
+In practice, this is very easy (even though it looks like a lot of
 steps).  We can perform all of those actions in a single command:
 
 [source,js]
@@ -108,10 +108,10 @@ The request body -- the JSON document -- contains all the information
 about this employee.  His name is "John Smith", he's 25 and enjoys 
 rock climbing.
 
-Simple!  Notice that there was no need to perform any administrative
-tasks first...just index a document.  Elasticsearch will build an index
-for you in the background with default settings, so you can focus on 
-other tasks for now.
+Simple!  There was no need to perform any administrative
+tasks first...just index a document.  Elasticsearch ships with defaults for everything,
+so all the necessary administration (building an index, allocating shards,
+assigning mappings) were performed in the background with defaults.
 
 Before moving on, let's add a few more employees to the directory:
 

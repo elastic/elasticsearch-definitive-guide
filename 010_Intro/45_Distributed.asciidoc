@@ -1,11 +1,17 @@
 === Distributed nature
 
-Elasticsearch is distributed by nature.  While it will happily run a cluster
-consisting of a single node on your laptop, it is designed to scale out to
-hundreds (or even thousands!) of machines.
+Elasticsearch is distributed by nature.  While it happily ran the tutorial
+on a single node living inside your laptop, it is designed to scale out to
+hundreds (or even thousands!) of machines.  If you were to rerun
+the tutorial, but this time start five nodes on your laptop, it would work
+just fine.
 
-The distributed aspect of Elasticsearch is largely transparent.  It just works.
-Some of the operations happening automatically under the hood include:
+The distributed aspect of Elasticsearch is largely transparent.  Nothing in the
+tutorial required you to know about distributed systems, sharding, cluster
+discovery or dozens of other distributed concepts.  
+
+Elasticsearch tries hard to hide the complexity of distributed systems. Some of 
+the operations happening automatically under the hood include:
 
  * Partitioning your documents into different containers or _shards_, which
    can be stored on a single node or on  multiple nodes.
