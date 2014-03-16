@@ -48,10 +48,11 @@ Ignore the syntax for now and just look at the results:
 }
 --------------------------------------------------
 
-We can see that two employees are interested in music, one in forestry and
-one in sports.  These aggregations are not precalculated -- they are caculated in the
-context of the current query. If we want to know the popular interests of people
-called ``Smith'', we can just add the appropriate query into the mix:
+We can see that two employees are interested in music, one in forestry and one
+in sports.  These aggregations are not precalculated -- they are generated on
+the fly from the documents which match the current query. If we want to know
+the popular interests of people called ``Smith'', we can just add the
+appropriate query into the mix:
 
 [source,js]
 --------------------------------------------------

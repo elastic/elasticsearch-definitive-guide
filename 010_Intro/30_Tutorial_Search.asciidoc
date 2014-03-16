@@ -331,10 +331,10 @@ traditional relational databases where a record either matches or it doesn't.
 Finding individual words in a field is all well and good, but sometimes you
 want to match exact sequences of words or _phrases_. For instance, we could
 perform a query that will only match  employees that contain both  ``rock''
-_and_ ``climbing'' _and_ where the words next to each other in the phrase
+_and_ ``climbing'' _and_ where the words are next to each other in the phrase
 ``rock climbing''.
 
-To do this, we can use a slight variation of the `match` query called the
+To do this, we use a slight variation of the `match` query called the
 `match_phrase` query:
 
 [source,js]
