@@ -1,11 +1,11 @@
 === Finding exact values
 
 When working with exact values, you will be working with filters. Filters are
-important because they are very, very fast.  Filters do not
-calculate relevance (avoiding the entire scoring phase) and are easily cached.
-We'll talk about the performance benefits of filters later in
-<<_all_about_caching>>, but for now, just keep in mind that you should
-use filters as often as you can.
+important because they are very, very fast.  Filters do not calculate
+relevance (avoiding the entire scoring phase) and are easily cached. We'll
+talk about the performance benefits of filters later in <<filter-caching>>,
+but for now, just keep in mind that you should use filters as often as you
+can.
 
 ==== Term Filter with Numbers
 
