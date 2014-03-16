@@ -1,4 +1,4 @@
-=== Starting Elasticsearch
+=== Installing Elasticsearch
 
 The easiest way to understand what Elasticsearch can do for you is to
 play with it, so let's get started!
@@ -8,7 +8,7 @@ Preferably, you should install the latest version of the official Java
 from http://www.java.com[www.java.com].
 
 You can download the latest version of Elasticsearch from
-http://www.elasticsearch.org/download/.
+http://www.elasticsearch.org/download/[elasticsearch.org/download].
 
 [source,js]
 --------------------------------------------------
@@ -17,21 +17,44 @@ unzip elasticsearch-$VERSION.zip
 cd  elasticsearch-$VERSION
 --------------------------------------------------
 
-Let's also install link:http://www.elasticsearch.org/overview/marvel/[Marvel], a 
-cluster management and monitoring plugin developed by Elasticsearch.  Once 
-installed, all the code snippets in this book will display a _"View in Sense"_ link.
-Clicking this link will load the code into Sense -- an interactive console
-inside of Marvel -- and allow you to follow the example using your Elasticsearch
-installation.  
+TIP: When installing Elasticsearch in production, you can use the method
+described above, or the Debian or RPM packages provided on the
+http://www.elasticsearch.org/downloads[downloads page]. You can also use
+the officially supported
+https://github.com/elasticsearch/puppet-elasticsearch[Puppet module] or
+https://github.com/elasticsearch/cookbook-elasticsearch[Chef cookbook].
 
-Loading samples in Sense will allow you to play with live data and searches, 
-fiddle with parameters and generally make the book much more interactive.
+[[marvel]]
+==== Installing Marvel
 
-[source,js]
+http://www.elasticsearch.com/marvel[Marvel] is a management and monitoring
+tool for Elasticsearch which is free for develoment use. It comes with an
+interactive console called Sense which makes it very easy to talk to
+Elasticsearch directly from your browser.
+
+Many of the code examples in this book include a ``View in Sense'' link. When
+clicked, it will open up a working example of the code in the Sense console.
+You do not have to install Marvel, but it will make this book much more
+interactive by allowing you to  experiment with the code samples on your local
+Elasticsearch cluster.
+
+Marvel is available as a plugin. To download and install it, run this command
+in the Elasticsearch directory:
+
+[source,sh]
 --------------------------------------------------
 ./bin/plugin -i elasticsearch/marvel/latest
+--------------------------------------------------
+
+You probably don't want Marvel to monitor your local cluster, so you can
+disable data collection with this command:
+
+[source,sh]
+--------------------------------------------------
 echo 'marvel.agent.enabled: false' >> ./config/elasticsearch.yml
 --------------------------------------------------
+
+=== Running Elasticsearch
 
 Elasticsearch is now ready to run. You can start it up in the foreground
 with:
@@ -58,12 +81,13 @@ You should see a response like this:
    "status": 200,
    "name": "Shrunken Bones",
    "version": {
-      "number": "1.0.0",
-      "lucene_version": "4.6.1"
+      "number": "1.1.0",
+      "lucene_version": "4.7"
    },
    "tagline": "You Know, for Search"
 }
 --------------------------------------------------
+// SENSE: 010_Intro/10_Info.json
 
 This means that your Elasticsearch _cluster_ is up and running, and we can
 start experimenting with it.

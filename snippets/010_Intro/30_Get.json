@@ -1,0 +1,35 @@
+# Delete the `megacorp` index in case it already exists
+DELETE /megacorp
+
+# Index an example document
+PUT /megacorp/employee/1
+{
+    "first_name" : "John",
+    "last_name" :  "Smith",
+    "age" :        25,
+    "about" :      "I love to go rock climbing",
+    "interests": [ "sports", "music" ]
+}
+
+# Retrieve the document
+GET /megacorp/employee/1
+
+# Update the document, by PUTing it again
+PUT /megacorp/employee/1
+{
+    "first_name" : "John",
+    "last_name" :  "Smith",
+    "age" :        26,
+    "about" :      "I love to go rock climbing",
+    "interests": [ "sports", "music", "movies" ]
+}
+
+# Retrieve the updated document
+GET /megacorp/employee/1
+
+# Delete the document
+DELETE /megacorp/employee/1
+
+# Note: HEAD/exists requests do not work in Sense
+# because they only return HTTP headers, not
+# a JSON body

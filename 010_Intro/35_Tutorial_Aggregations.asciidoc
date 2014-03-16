@@ -1,47 +1,45 @@
 === Analytics
 
-Finally, we come to our last business requirement: allow managers to run 
+Finally, we come to our last business requirement: allow managers to run
 analytics over the employee directory.  Elasticsearch has functionality called
-_aggregations_, which allow you to generate sophisticated analytics
-over your data.
+_aggregations_, which allow you to generate sophisticated analytics over your
+data. It is similar to `GROUP BY` in SQL, but much more powerful.
 
-For example, let's find all the types of interests our employees have, and how
-frequent each interest is.  We can use this query to do so:
+For example, let's find the most popular interests enjoyed by our employees:
 
 [source,js]
 --------------------------------------------------
-curl -XGET 'localhost:9200/megacorp/employees/_search?search_type=count' -d '
+GET /megacorp/employee/_search
 {
-    "aggs" : {
-        "all_interests" : {
-            "terms" : { "field" : "interests" }
-        }
+  "aggs": {
+    "all_interests": {
+      "terms": { "field": "interests" }
     }
-}'
+  }
+}
 --------------------------------------------------
+// SENSE: 010_Intro/35_Aggregations.json
 
-We can ignore the syntax for now and just look at the results:  
+Ignore the syntax for now and just look at the results:
 
 [source,js]
 --------------------------------------------------
 {
-   "took": 1,
-   "timed_out": false,
-   "_shards": { ... },
+   ...
    "hits": { ... },
    "aggregations": {
       "all_interests": {
          "buckets": [
             {
-               "key": "music",
+               "key":       "music",
                "doc_count": 2
             },
             {
-               "key": "forestry",
+               "key":       "forestry",
                "doc_count": 1
             },
             {
-               "key": "sports",
+               "key":       "sports",
                "doc_count": 1
             }
          ]
@@ -51,75 +49,108 @@ We can ignore the syntax for now and just look at the results:
 --------------------------------------------------
 
 We can see that two employees are interested in music, one in forestry and
-one in sports.  You can also see how these aggregations are built using the 
-same documents we used in search.
-
-Aggregations allow heirarchical rollups too.  For example, let's find the average
-age grouped by interest:
-
+one in sports.  These aggregations are not precalculated -- they are caculated in the
+context of the current query. If we want to know the popular interests of people
+called ``Smith'', we can just add the appropriate query into the mix:
 
 [source,js]
 --------------------------------------------------
-curl -XGET 'localhost:9200/megacorp/employees/_search?search_type=count' -d '
+GET /megacorp/employee/_search
+{
+  "query": {
+    "match": {
+      "last_name": "smith"
+    }
+  },
+  "aggs": {
+    "all_interests": {
+      "terms": {
+        "field": "interests"
+      }
+    }
+  }
+}
+--------------------------------------------------
+// SENSE: 010_Intro/35_Aggregations.json
+
+The `all_interests` aggregation has change to include only documents matching our query:
+
+[source,js]
+--------------------------------------------------
+  ...
+  "all_interests": {
+     "buckets": [
+        {
+           "key": "music",
+           "doc_count": 2
+        },
+        {
+           "key": "sports",
+           "doc_count": 1
+        }
+     ]
+  }
+--------------------------------------------------
+
+Aggregations allow hierarchical rollups too.  For example, let's find the
+average age of employees who share a particular interest:
+
+[source,js]
+--------------------------------------------------
+GET /megacorp/employee/_search
 {
     "aggs" : {
         "all_interests" : {
             "terms" : { "field" : "interests" },
             "aggs" : {
-                "avg_age" : { 
-                    "avg" : { "field" : "age" } 
-                }      
+                "avg_age" : {
+                    "avg" : { "field" : "age" }
+                }
             }
         }
     }
 }
 --------------------------------------------------
+// SENSE: 010_Intro/35_Aggregations.json
 
-The results that we get back are also more complicated, but fairly easy to
-understand:
+The aggregations that we get back are a bit more complicated, but still fairly
+easy to understand:
 
 [source,js]
 --------------------------------------------------
-{
-   "took": 7,
-   "timed_out": false,
-   "_shards": { ... },
-   "hits": { ... },
-   "aggregations": {
-      "all_interests": {
-         "buckets": [
-            {
-               "key": "music",
-               "doc_count": 2,
-               "avg_age_interest": {
-                  "value": 28.5
-               }
-            },
-            {
-               "key": "forestry",
-               "doc_count": 1,
-               "avg_age_interest": {
-                  "value": 35
-               }
-            },
-            {
-               "key": "sports",
-               "doc_count": 1,
-               "avg_age_interest": {
-                  "value": 25
-               }
-            }
-         ]
-      }
-   }
-}
+  ...
+  "all_interests": {
+     "buckets": [
+        {
+           "key": "music",
+           "doc_count": 2,
+           "avg_age": {
+              "value": 28.5
+           }
+        },
+        {
+           "key": "forestry",
+           "doc_count": 1,
+           "avg_age": {
+              "value": 35
+           }
+        },
+        {
+           "key": "sports",
+           "doc_count": 1,
+           "avg_age": {
+              "value": 25
+           }
+        }
+     ]
+  }
 --------------------------------------------------
 
 The output is basically an enriched version of the first aggregation we ran.
-We still have a list of interests and their counts, but now each interest
-has an additional `avg_age` which shows the average age for all employees
-having that interest.
+We still have a list of interests and their counts, but now each interest has
+an additional `avg_age` which shows the average age for all employees having
+that interest.
 
 Even if you don't understand the syntax yet, you can easily see how very
-complex aggregations and groupings can be accomplished using this feature.  The
-sky is the limit as to what kind of data you can extract!
+complex aggregations and groupings can be accomplished using this feature.
+The sky is the limit as to what kind of data you can extract!

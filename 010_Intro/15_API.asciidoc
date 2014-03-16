@@ -61,13 +61,13 @@ curl -XGET 'http://localhost:9200/_count?pretty' -d '
 }
 '
 --------------------------------------------------
-<1> The appropriate HTTP method or ``verb'': `GET`, `POST`, `PUT`, `HEAD` or
+<1> The appropriate HTTP _method_ or _verb_: `GET`, `POST`, `PUT`, `HEAD` or
     `DELETE`
 <2> The protocol, hostname and port of any node in the cluster.
 <3> The path of the request.
 <4> Any optional query string parameters, eg `?pretty` will _pretty-print_
-    the JSON response to make it easier to read
-<5> A JSON encoded request body (if the request needs one)
+    the JSON response to make it easier to read.
+<5> A JSON encoded request body (if the request needs one).
 
 Elasticsearch returns an HTTP status code like `200 OK` and (except for `HEAD`
 requests) a JSON encoded response body. The above `curl` request would respond
@@ -120,5 +120,8 @@ GET /_count
     }
 }
 --------------------------------------------------
+// SENSE: 010_Intro/15_Count.json
 
-TODO: Link to the Sense plugin?
+In fact, this is the same format that is used by the Sense console that we
+installed with <<marvel,Marvel>>. You can open and run this code example in
+Sense by clicking the ``View in Sense'' link above.

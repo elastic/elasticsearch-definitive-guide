@@ -1,36 +1,36 @@
-=== Tutorial
+=== Getting started
 
-Let's walk through a simple tutorial, which covers basic concepts such as
-_indexing_, _search_ and _aggregations_.  The goal of this tutorial is to build
-an understanding of what is possible in Elasticsearch, and how easy it is
-to get started.
+In order to give you a feel for what is possible in Elasticsearch and how easy
+it is to use, let's start by walking through a simple tutorial which covers
+basic concepts such as _indexing_, _search_ and _aggregations_.
 
-We'll introduce some terminology and basic concepts, but it is OK if you don't
-understand everything.  We'll cover all the concepts introduced
-here in _much_ greater depth throughout the rest of the book.
+We'll introduce some new terminology and basic concepts along the way, but it
+is OK if you don't understand everything immediately.  We'll cover all the
+concepts introduced here in _much_ greater depth throughout the rest of the
+book.
 
 So, sit back and enjoy a whirlwind tour of what Elasticsearch is capable of.
 
 ==== Let's build an employee directory.
 
-We happen to work for **Megacorp**, and as part of HR's new _"We love our 
+We happen to work for **Megacorp**, and as part of HR's new _"We love our
 drones!"_ initiative, we have been tasked with creating an employee directory.
-The directory is supposed to foster employer empathy and 
+The directory is supposed to foster employer empathy and
 real-time synergistic-dynamic-collaboration, so it has a few different
 business requirements:
 
-- Data can contain enumerations, multi-value tags, numbers and full-text
-- Retrieve any employee's full details
-- Allow structured search, such as finding employees over the age of 30
-- Allow full-text search on "about" field
-- Enable more complex phrase searches, and highlight snippets from the 
-matching documents
-- Enable management to build analytic dashboards over the data
+* Data can contain multi-value tags, numbers and full-text.
+* Retrieve the full details of any employee.
+* Allow structured search, such as finding employees over the age of 30.
+* Allow simple full text search and more complex _phrase_ searches.
+* Returned highlighted search _snippets_ from the text in the
+  matching documents.
+* Enable management to build analytic dashboards over the data
 
 === Indexing employee documents
 
-The first order of business is storing employee data.  This will take
-the form of a "employee document", where a single document represents a single
+The first order of business is storing employee data.  This will take the form
+of an ``employee document'', where a single document represents a single
 employee.  The act of storing data in Elasticsearch is called _indexing_, but
 before we can index a document we need to decide _where_ to store it.
 
@@ -59,9 +59,10 @@ _index_ is _indices_ or _indexes_.
 
 Index (verb)::
 
-_To index a document_ is to store a document in an _index (noun)_ so that it can
-be retrieved and queried. It is much like the `INSERT` keyword in SQL except
-that, if the document already exists, then the new document would replace the old.
+__ ``To index a document'' __ is to store a document in an _index (noun)_ so
+that it can be retrieved and queried. It is much like the `INSERT` keyword in
+SQL except that, if the document already exists, then the new document would
+replace the old.
 
 Inverted index::
 
@@ -70,71 +71,76 @@ columns in order to improve the speed of data retrieval.  Elasticsearch and
 Lucene use a structure called an _inverted index_ for exactly the same
 purpose.
 +
-By default, every field in a document is _indexed_ -- has an inverted index --
+By default, every field in a document is _indexed_ (has an inverted index)
 and thus is searchable. A field without an inverted index is not searchable.
-See <<inverted-index>> for an explanation of how this structure works.
+We discuss inverted indexes in more detail in <<inverted-index>>.
 
 **************************************************
 
 So for our employee directory, we are going to do the following:
 
-- Index an `employee` _document_, which contains details about a single employee
-- That document will go into an `employees` _type_
-- That type will live in a `megacorp` _index_
-- That index will reside within our Elasticsearch cluster
+*  Index a _document_ per employee, which contains all the details of a single
+   employee.
+*  Each document will be of _type_ `employee`.
+* That type will live in the `megacorp` _index_
+* That index will reside within our Elasticsearch cluster
 
-In practice, this is very easy (even though it looks like a lot of
-steps).  We can perform all of those actions in a single command:
+In practice, this is very easy (even though it looks like a lot of steps).  We
+can perform all of those actions in a single command:
 
 [source,js]
 --------------------------------------------------
-curl -XPUT 'localhost:9200/megacorp/employees/1' -d '
+PUT /megacorp/employee/1
 {
     "first_name" : "John",
-    "last_name" : "Smith",
-    "age" : 25,
-    "about" : "I love to go rock climbing",
-    "interests": ["sports", "music"]
-}'
+    "last_name" :  "Smith",
+    "age" :        25,
+    "about" :      "I love to go rock climbing",
+    "interests": [ "sports", "music" ]
+}
 --------------------------------------------------
+// SENSE: 010_Intro/25_Index.json
 
-Notice that the URI (`localhost:9200/megacorp/employees/1`) contains three pieces of information:
+Notice that the path `/megacorp/employee/1` contains three pieces of
+information:
 
-- **megacorp** : the index name
-- **employees** : the type name
-- **1** : this is the ID of this particular employee
+[horizontal]
+*megacorp*::    the index name
+*employee*::    the type name
+*1*::           the ID of this particular employee
 
-The request body -- the JSON document -- contains all the information
-about this employee.  His name is "John Smith", he's 25 and enjoys 
-rock climbing.
+The request body -- the JSON document -- contains all the information about
+this employee.  His name is ''John Smith´´, he's 25 and enjoys rock climbing.
 
-Simple!  There was no need to perform any administrative
-tasks first...just index a document.  Elasticsearch ships with defaults for everything,
-so all the necessary administration (building an index, allocating shards,
-assigning mappings) were performed in the background with defaults.
+Simple!  There was no need to perform any administrative tasks first, like
+creating an index or specifying the type of data that each field contains. We
+could just index a document directly.  Elasticsearch ships with defaults for
+everything, so all the necessary administration tasks were taken care of in
+the background, using default values.
 
 Before moving on, let's add a few more employees to the directory:
 
 [source,js]
 --------------------------------------------------
-curl -XPUT 'localhost:9200/megacorp/employees/2' -d '
+PUT /megacorp/employee/2
 {
-    "first_name" : "Jane",
-    "last_name" : "Smith",
-    "age" : 32,
-    "about" : "I like to collect rock albums",
-    "interests": ["music"]
-}'
+    "first_name" :  "Jane",
+    "last_name" :   "Smith",
+    "age" :         32,
+    "about" :       "I like to collect rock albums",
+    "interests":  [ "music" ]
+}
 
-curl -XPUT 'localhost:9200/megacorp/employees/3' -d '
+PUT /megacorp/employee/3
 {
-    "first_name" : "Douglas",
-    "last_name" : "Fir",
-    "age" : 35,
-    "about":"I like to build cabinets",
-    "interests": ["forestry"]
-}'
+    "first_name" :  "Douglas",
+    "last_name" :   "Fir",
+    "age" :         35,
+    "about":        "I like to build cabinets",
+    "interests":  [ "forestry" ]
+}
 --------------------------------------------------
+// SENSE: 010_Intro/25_Index.json
 
 
 
