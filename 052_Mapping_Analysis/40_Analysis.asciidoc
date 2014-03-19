@@ -53,7 +53,7 @@ splits the text on _word boundaries_, as defined by the
 http://www.unicode.org/reports/tr29/[Unicode Consortium], and removes most
 punctuation. Finally, it lowercases all terms. It would produce:
 +
-    set, the, shape, to, semi, transparent, by calling, set_trans, 5
+    set, the, shape, to, semi, transparent, by, calling, set_trans, 5
 
 Simple analyzer::
 
@@ -129,7 +129,7 @@ GET /_search?q=2014-09-15        # 12 results !
 --------------------------------------------------
 // SENSE: 052_Mapping_Analysis/25_Data_type_differences.json
 
-When we query the `_date` field for `2014-09-15`, it looks for that *exact*
+When we query the `date` field for `2014-09-15`, it looks for that *exact*
 date, and finds one tweet only:
 
 [source,sh]
@@ -138,7 +138,7 @@ GET /_search?q=date:2014-09-15   # 1  result
 --------------------------------------------------
 // SENSE: 052_Mapping_Analysis/25_Data_type_differences.json
 
-When we query the `_date` field for `2014`, it finds no documents
+When we query the `date` field for `2014`, it finds no documents
 because none contain that exact date:
 
 [source,sh]

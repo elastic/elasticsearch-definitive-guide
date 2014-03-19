@@ -10,13 +10,14 @@ in combination:
 *   Wikipedia uses Elasticsearch to provide full text search with highlighted
     search snippets, and _search-as-you-type_ and _did-you_mean_ suggestions.
 
-*   The Guardian uses Elasticsearch to process social network data to provide
-    real-time feedback to their editors about the public's response to new
-    articles.
+*   The Guardian uses Elasticsearch to combine visitor logs with social
+    network data to provide real-time feedback to their editors about the
+    public's response to new articles.
 
 *   StackOverflow combines full text search with geolocation queries and uses
-    _more-like-this_ to find related questions and answers. GitHub uses
-    Elasticsearch to query 130 billion lines of code.
+    _more-like-this_ to find related questions and answers.
+
+*   GitHub uses Elasticsearch to query 130 billion lines of code.
 
 *   Goldman Sachs uses it to index 5TB of log data every day, and a number of
     investment banks use it purely to analyze movements in the stock market.
