@@ -16,7 +16,7 @@ It may happen that shard 1 contains 3 of the `"foo"` documents and shard
 2 contains the other 3.  In other words, our documents are well distributed.
 
 In <<relevance-intro>> we described the default similarity algorithm used in
-Elastisearch, called _Term Frequency / Inverse Document Frequency_ or TF/IDF.
+Elasticsearch, called _Term Frequency / Inverse Document Frequency_ or TF/IDF.
 Term frequency counts how many times a term appears within the field we are
 querying in the current document.  The more times it appears, the more
 relevant is this document. The _inverse document frequency_ takes into account

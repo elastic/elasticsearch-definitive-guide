@@ -1,6 +1,6 @@
 === How `match` uses `bool`
 
-By now, you have probably realised that <<match-multi-word,multi-word `match`
+By now, you have probably realized that <<match-multi-word,multi-word `match`
 queries>> simply wrap the generated `term` queries in a `bool` query. With the
 default `"or"` operator, each `term` query is added as a `should` clause, so
 at least one clause must match. These two queries are equivalent:

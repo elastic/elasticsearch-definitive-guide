@@ -101,7 +101,7 @@ GET /my_index/my_type/_search
 // SENSE: 100_Full_Text_Search/05_Match_query.json
 
 <1> The structure of the `match` query has to change slightly in order to
-    accomodate the `operator` parameter.
+    accommodate the `operator` parameter.
 
 This query would exclude document 1 which only contains one of the two terms.
 
@@ -115,7 +115,7 @@ Setting `"operator"` to `"and"` would exclude this document.
 Sometimes that is exactly what you want, but for most full-text search use
 cases, you want to include documents which may be relevant but exclude those
 that are unlikely to be relevant.  In other words, we need something
-inbetween.
+in-between.
 
 The `match` query supports the `minimum_should_match` parameter which allows
 you to specify how many terms must match for a document to be considered
