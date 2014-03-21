@@ -28,15 +28,15 @@ The query phase process is depicted in <<img-distrib-search>>.
 .Query Phase of distributed search
 image::png/06-01_query.png["Query Phase of distributed search"]
 
-1. The client sends a `search` request to `Node 1` which creates an empty
+1. The client sends a `search` request to `Node 3` which creates an empty
    priority queue of size `from + size`.
 
-2. `Node 1` forwards the search request to a primary or replica copy of every
+2. `Node 3` forwards the search request to a primary or replica copy of every
    shard in the index. Each shard executes the query locally and adds the
    results into a local sorted priority queue of size `from + size`.
 
 3. Each shard returns the doc IDs and sort values of all of the docs in its
-   priority queue to the coordinating node, `Node 1`, which merges these
+   priority queue to the coordinating node, `Node 3`, which merges these
    values into its own priority queue to produce a globally sorted list of
    results.
 
@@ -71,5 +71,3 @@ shards. A search against *multiple* or *all* indices works in exactly the same
 way --  there are just more shards involved.
 
 ****
-
-
