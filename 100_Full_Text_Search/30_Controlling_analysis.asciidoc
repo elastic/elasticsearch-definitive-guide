@@ -116,11 +116,11 @@ index. We will look at this technique in more detail in <<languages>>.
 
 **************************************************
 
-Occasionally, it makese sense to use a different analyzer at index and search
+Occasionally, it makes sense to use a different analyzer at index and search
 time. For instance, at index time we may want to index synonyms, eg for every
 occurrence of `quick` we also index `fast`, `rapid` and `speedy`. But at
 search time, we don't need to search for all of these synonyms.  Instead we
-can just lookup the single word that the user has entered, be it `quick`,
+can just look up the single word that the user has entered, be it `quick`,
 `fast`, `rapid` or `speedy`.
 
 To enable this distinction, Elasticsearch also supports the `index_analyzer`
@@ -189,7 +189,7 @@ Then you may have one or two fields which need custom analysis: perhaps the
 `title` field needs to be indexed in a way that supports _find-as-you-type_.
 
 You can set the `default` analyzer in the index to the analyzer you want to
-use for almost all full-text fields, and just configure the specialised
+use for almost all full-text fields, and just configure the specialized
 analyzer on the one or two fields that need it.  If, in your model, you need
 a different default analyzer per type, then use the type level `analyzer`
 setting instead.

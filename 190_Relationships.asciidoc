@@ -1,7 +1,7 @@
 [[relations]]
 == Related Documents (TODO)
 
-Unlike a relational database which has normalised data, the data stored in a
+Unlike a relational database which has normalized data, the data stored in a
 NoSQL database is highly denormalised, and each document is independent.
 However, Elasticsearch provides two features which enable us to run queries
 whose results depend on the relationship between two separate documents:

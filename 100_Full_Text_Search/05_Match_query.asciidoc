@@ -77,7 +77,7 @@ list of documents that contain that term, in this case documents `1`, `2`, and
 
 4. *Score each doc*
 +
-The `term` query caculates the relevance `_score` for each matching document,
+The `term` query calculates the relevance `_score` for each matching document,
 by combining the term frequency (how often `"quick"` appears in the `title`
 field of each document), with the inverse document frequency (how often
 `"quick"` appears in the `title` field in *all* documents in the index), and the
