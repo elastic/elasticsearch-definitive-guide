@@ -1,7 +1,7 @@
 [[get-doc]]
 === Retrieving a document
 
-To get the document out of Elasticsearch, we use the the same `_index`,
+To get the document out of Elasticsearch, we use the same `_index`,
 `_type` and `_id`, but the HTTP verb changes to `GET`:
 
 [source,sh]
