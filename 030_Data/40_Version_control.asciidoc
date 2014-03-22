@@ -177,7 +177,7 @@ code where it makes sense.
 
 ==== Using versions from an external system
 
-A common setup it to use some other database as the primary datastore and
+A common setup is to use some other database as the primary datastore and
 Elasticsearch to make the data searchable, which means that all changes to the
 primary database need to be copied across to Elasticsearch as they happen.  If
 multiple processes are responsible for this data synchronization, then you may
