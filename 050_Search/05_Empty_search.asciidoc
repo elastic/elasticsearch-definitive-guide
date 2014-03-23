@@ -86,7 +86,7 @@ to search requests. In this case, Elasticsearch would report the shard as
 
 The `timed_out` value tells us whether the query timed out or not.  By
 default, search requests do not timeout.  If low response times are more
-important to you than complete results, then can specify a `timeout` as `10`
+important to you than complete results, you can specify a `timeout` as `10`
 or `"10ms"` (10 milliseconds), or `"1s"` (1 second):
 
 [source,js]
