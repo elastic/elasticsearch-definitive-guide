@@ -101,7 +101,7 @@ As a shortcut, you can specify just the name of the field to sort on:
 --------------------------------------------------
 
 Fields will be sorted in ascending order by default, and
-the `_source` value in descending order.
+the `_score` value in descending order.
 
 ****
 
