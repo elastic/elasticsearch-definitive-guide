@@ -116,7 +116,7 @@ index. We will look at this technique in more detail in <<languages>>.
 
 **************************************************
 
-Occasionally, it makese sense to use a different analyzer at index and search
+Occasionally, it makes sense to use a different analyzer at index and search
 time. For instance, at index time we may want to index synonyms, eg for every
 occurrence of `quick` we also index `fast`, `rapid` and `speedy`. But at
 search time, we don't need to search for all of these synonyms.  Instead we
