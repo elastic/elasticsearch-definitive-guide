@@ -75,7 +75,7 @@ to execute.
 ==== `shards`
 
 The `_shards` element tells us the `total` number of shards that were involved
-in the query and, of them, how many were `succesful` and how many `failed`.
+in the query and, of them, how many were `successful` and how many `failed`.
 We wouldn't normally expect shards to fail, but it can happen. If we were to
 suffer a major disaster in which we lost both the primary and the replica copy
 of the same shard, there would be no copies of that shard available to respond
