@@ -28,7 +28,7 @@ to just return the next batch of results from every shard which still has
 results to return.
 
 To use _scan-and-scroll_, we execute a search request setting `search_type` to
-`scan`, and passing a `scroll` paramater telling Elasticsearch how long it
+`scan`, and passing a `scroll` parameter telling Elasticsearch how long it
 should keep the scroll open:
 
 [source,js]
@@ -57,7 +57,7 @@ xfaGl0czoxOw==
 <1> Keep the scroll open for another minute.
 
 Note that we again specify `?scroll=1m`.  The scroll expiry time is refreshed
-every time we run a scroll request, so it only needs to be give us enough time
+every time we run a scroll request, so it only needs to give us enough time
 to process the current batch of results, not all of the documents that match
 the query.
 
