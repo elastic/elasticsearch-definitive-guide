@@ -54,20 +54,6 @@ GET /test/test/_search
   }
 }
 
-# Where `tag` is "full_text"
-GET /test/test/_search
-{
-  "query": {
-    "filtered": {
-      "filter": {
-        "term": {
-          "tag": "full_text"
-        }
-      }
-    }
-  }
-}
-
 # Where `public` is true
 GET /test/test/_search
 {
@@ -76,6 +62,20 @@ GET /test/test/_search
       "filter": {
         "term": {
           "public": true
+        }
+      }
+    }
+  }
+}
+
+# Where `tag` is "full_text"
+GET /test/test/_search
+{
+  "query": {
+    "filtered": {
+      "filter": {
+        "term": {
+          "tag": "full_text"
         }
       }
     }

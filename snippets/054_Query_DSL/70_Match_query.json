@@ -72,22 +72,22 @@ GET /test/test/_search
   }
 }
 
-# Where `tag` is "full_text"
-GET /test/test/_search
-{
-  "query": {
-    "match": {
-      "tag": "full_text"
-    }
-  }
-}
-
 # Where `public` is true
 GET /test/test/_search
 {
   "query": {
     "match": {
       "public": true
+    }
+  }
+}
+
+# Where `tag` is "full_text"
+GET /test/test/_search
+{
+  "query": {
+    "match": {
+      "tag": "full_text"
     }
   }
 }
