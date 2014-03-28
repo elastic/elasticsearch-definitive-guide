@@ -14,7 +14,7 @@ used for full text fields, is a good choice for most Western languages.
 It consists of:
 
 * the `standard` tokenizer, which splits the input text on word boundaries
-* the `standard` token filter, which is intended to tidy up the the tokens
+* the `standard` token filter, which is intended to tidy up the tokens
   emitted by the tokenizer (but currently is a no-op)
 * the `lowercase` token filter which converts all tokens into lowercase
 * the `stop` token filter which removes stopwords -- common words
