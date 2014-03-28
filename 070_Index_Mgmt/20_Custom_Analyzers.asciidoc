@@ -54,7 +54,7 @@ but there are many more available in Elasticsearch.
 {ref}/analysis-stemmer-tokenfilter.html[Stemming token filters]
 ``stem'' words to their root form. The
 {ref}/analysis-asciifolding-tokenfilter.html[`ascii_folding` filter]
-removes diacritcs, converting a term like `"très"` into `"tres"`. The
+removes diacritics, converting a term like `"très"` into `"tres"`. The
 {ref}/analysis-ngram-tokenfilter.html[`ngram`] and
 {ref}/analysis-edgengram-tokenfilter.html[`edge_ngram` token filters] can produce
 tokens suitable for partial matching or autocomplete.
