@@ -27,7 +27,7 @@ GET /_search?size=5&from=10
 Beware of paging too deep or requesting too many results at once. Results are
 sorted before being returned. But remember that a search request usually spans
 multiple shards. Each shard generates its own sorted results, which then need
-to be sorted centrally to ensure that the overll order is correct.
+to be sorted centrally to ensure that the overall order is correct.
 
 .Deep paging in distributed systems
 ****
