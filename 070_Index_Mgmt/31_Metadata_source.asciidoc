@@ -10,7 +10,7 @@ This is almost always desired functionality because it means that:
 * the full document is available directly from the search results -- no need
   for a separate round trip to fetch the document from another datastore
 
-* `update` requests will not function without the `_source` field
+* partial `update` requests will not function without the `_source` field
 
 * when your mapping changes and you need to reindex your data, you can
   do so directly from Elasticsearch instead of having to retrieve all of your
