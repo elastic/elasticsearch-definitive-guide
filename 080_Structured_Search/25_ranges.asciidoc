@@ -98,7 +98,7 @@ in the last hour:
 --------------------------------------------------
 
 This filter will now constantly find all documents with a timestamp greater
-than the current time minus 1 hour, making the filter a sliding window''
+than the current time minus 1 hour, making the filter a sliding window
 across your documents.
 
 Date math can also be applied to actual dates, rather than a placeholder like
