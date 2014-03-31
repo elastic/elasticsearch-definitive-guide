@@ -10,7 +10,7 @@ from http://www.java.com[www.java.com].
 You can download the latest version of Elasticsearch from
 http://www.elasticsearch.org/download/[elasticsearch.org/download].
 
-[source,js]
+[source,sh]
 --------------------------------------------------
 curl -L -O http://download.elasticsearch.org/PATH/TO/LATEST/$VERSION.zip
 unzip elasticsearch-$VERSION.zip
@@ -59,7 +59,7 @@ echo 'marvel.agent.enabled: false' >> ./config/elasticsearch.yml
 Elasticsearch is now ready to run. You can start it up in the foreground
 with:
 
-[source,js]
+[source,sh]
 --------------------------------------------------
 ./bin/elasticsearch
 --------------------------------------------------
@@ -67,7 +67,7 @@ Add `-d` if you want to run it in the background as a daemon.
 
 Test it out by opening another terminal window and running:
 
-[source,js]
+[source,sh]
 --------------------------------------------------
 curl 'http://localhost:9200/?pretty'
 --------------------------------------------------
