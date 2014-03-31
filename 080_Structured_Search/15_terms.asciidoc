@@ -8,7 +8,7 @@ Rather than using multiple `term` filters, you can instead use a single `terms`
 filter (note the ``s'' at the end).  The `terms` filter is simply the plural
 version of the singular `term` filter.
 
-It looks looks nearly identical to a vanilla `term` too.  Instead of
+It looks nearly identical to a vanilla `term` too.  Instead of
 specifying a single price, we are now specifying an array of values:
 
 [source,js]
