@@ -56,8 +56,8 @@ unstemmed fields to illustrate this technique.
 ==== Multi-field mapping
 
 The first thing to do is to setup our field to be indexed twice: once in a
-stemmed form and once in an unstemmed form.  To do this we will use _multi-
-fields_ which we introduced in <<multi-fields>>.
+stemmed form and once in an unstemmed form.  To do this we will use 
+_multi-fields_ which we introduced in <<multi-fields>>.
 
 
 [source,js]
