@@ -6,8 +6,8 @@ one or more physical _shards_.
 
 A _shard_ is a low-level ``worker unit''. Each shard is a single instance of
 Lucene, and is a complete search engine in its own right. Our documents are
-stored and indexed in shards, but we don't talk to them directly.  Instead,
-our applications talk to an index.
+stored and indexed in shards, but our applications don't talk to them directly.
+Instead, they talk to an index.
 
 Shards are how Elasticsearch distributes data around your cluster. Think of
 shards as containers for data. Documents are stored in shards, and shards are
