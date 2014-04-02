@@ -15,7 +15,7 @@ The fact that we want to add together the scores from multiple queries implies
 that we should combine them using the `bool` query.
 
 We can use a simple `match` query as a `must` clause. This is the query that
-will determine which documents are included in our resultset --  we can trim
+will determine which documents are included in our result set --  we can trim
 the long tail with the `minimum_should_match` parameter.  Then we can add other
 more specific queries as `should` clauses -- every one that matches will
 increase the relevance of the matching docs.
