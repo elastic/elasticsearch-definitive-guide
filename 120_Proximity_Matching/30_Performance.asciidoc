@@ -36,7 +36,7 @@ need to be examined by the phrase query.
 
 In <<proximity-relevance,the last section>> we discussed using proximity
 queries just for relevance purposes, not to include or exclude results from
-the resultset.  A query may match millions of results, but chances are that
+the result set.  A query may match millions of results, but chances are that
 our users are only interested in the first few pages of results.
 
 A simple `match` query will already have ranked documents which contain all
