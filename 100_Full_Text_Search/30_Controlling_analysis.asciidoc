@@ -29,7 +29,7 @@ PUT /my_index/_mapping/my_type
 --------------------------------------------------
 // SENSE: 100_Full_Text_Search/30_Analysis.json
 
-Now we can compare how values in the `english` field and the `title` field are
+Now we can compare how values in the `english_title` field and the `title` field are
 analyzed at index time using the `analyze` API to analyze the word `"Foxes"`:
 
 [source,js]
