@@ -108,7 +108,7 @@ to the following:
 * multiply the score of each of the other matching clauses by the `tie_breaker`
 * add them all together, and normalize
 
-With the `tiebreaker`, all matching clauses count, but the best matching
+With the `tie_breaker`, all matching clauses count, but the best matching
 clause counts most.
 
 ****
