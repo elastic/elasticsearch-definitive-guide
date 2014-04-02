@@ -11,7 +11,7 @@ them results for ``Johnnie Walker Black Label'' and ``Johnnie Walker Blue
 Label'' before they can finish typing their query.
 
 As always, there are more ways than one to skin a cat! We will start by
-looking at the way that is simplest to implement.  You don't need prepare your
+looking at the way that is simplest to implement.  You don't need to prepare your
 data in any way; you can implement _search-as-you-type_ at query time on any
 full text field.
 
@@ -93,7 +93,7 @@ to match.  It will find the first term starting with `bl` and keep collecting
 terms (in alphabetical order) until it either runs out of terms with prefix
 `bl`, or it has more terms than `max_expansions`.
 
-Don't forget that we are run this query every time the user types another
+Don't forget that we have to run this query every time the user types another
 character, so it needs to be fast.  If the first set of results isn't what the
 user is after, they'll keep typing until they get the results that they want.
 
