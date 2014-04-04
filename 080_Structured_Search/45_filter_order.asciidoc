@@ -44,14 +44,14 @@ point in time, such as midnight last night.
     "must": [
         { "range" : {
             "timestamp" : {
-                "gt" : "now/d" <1>
+                "gt" : "now-1h/d" <1>
             }
-        },
+        }},
         { "range" : {
             "timestamp" : {
                 "gt" : "now-1h" <2>
             }
-        }
+        }}
     ]
 }
 --------------------------------------------------
@@ -59,7 +59,7 @@ point in time, such as midnight last night.
 
 <2> This filter is not cached because it uses `now` *without* rounding.
 
-The `now/d` clause rounds to midnight last night and so excludes all documents
+The `now-1h/d` clause rounds to the previous midnight and so excludes all documents
 created before today.  The resulting bitset is cached because `now` is used
 with rounding, which means that it is only executed once a day when the value
 for _midnight-last-night_ changes.  The `now-1h` clause isn't cached because
