@@ -39,7 +39,7 @@ a document containing `"quick brown fox"` we need a `slop` of just `1`:
     Slop 1:     quick                 ↳     fox
 
 While all words need to be present in phrase matching, even when using `slop`,
-the words don't neccessarily need to be in the same sequence in order to
+the words don't necessarily need to be in the same sequence in order to
 match. With a high enough `slop` value, words can be arranged in any order.
 
 To make the query `"fox quick"` match our document, we need a `slop` of `3`:
