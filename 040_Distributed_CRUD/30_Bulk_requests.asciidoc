@@ -21,7 +21,7 @@ with a single `mget` request, as depicted in <<img-distrib-mget>>:
 
 2. `Node 1` builds a multi-get request per shard, and forwards these
    requests in parallel to the nodes hosting each required primary or replica
-   shard. Once all replies have been received, `Node 3` builds the response
+   shard. Once all replies have been received, `Node 1` builds the response
    and returns it to the client.
 
 A `routing` parameter can be set for each document in the `docs` array,
