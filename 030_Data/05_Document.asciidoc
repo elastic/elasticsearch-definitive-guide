@@ -95,7 +95,7 @@ underscore, or contain commas.  We shall use `user` for our type name.
 
 ==== `_id`
 
-The _id_ is a string that, when combined with the `_index` and `type`,
+The _id_ is a string that, when combined with the `_index` and `_type`,
 uniquely identifies a document in Elasticsearch. When creating a new document,
 you can either provide your own `_id` or let Elasticsearch generate one for
 you.
