@@ -13,7 +13,7 @@ Character filters::
 +
 --
 Character filters are used to ``tidy up'' a string before it is tokenized.
-For instance, if our text is in HTML format, it will contains HTML tags like
+For instance, if our text is in HTML format, it will contain HTML tags like
 `<p>` or `<div>` that we don't want to be indexed. We can use the
 {ref}/analysis-htmlstrip-charfilter.html[`html_strip` character filter]
 to remove all HTML tags and to convert HTML entities like `&Aacute;` into the
