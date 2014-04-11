@@ -47,7 +47,7 @@ phrase query.
 The `search` API supports exactly this functionality via _rescoring_. The
 rescore phase allows you to apply a more expensive scoring algorithm -- like a
 `phrase` query -- to just the top `K` results from each shard. These top
-results are then resorted accoring to their new scores.
+results are then resorted according to their new scores.
 
 The actual request looks like this:
 
