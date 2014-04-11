@@ -185,7 +185,7 @@ incrementing the `views` counter.
 
 ==== Updates and conflicts
 
-In the introduction to this section, we said that the smaller window between
+In the introduction to this section, we said that the smaller the window between
 the _retrieve_ and _reindex_ steps, the smaller the opportunity for
 conflicting changes. But it doesn't eliminate the possibility completely. It
 is still possible that a request from another process could change the
