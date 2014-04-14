@@ -1,3 +1,6 @@
+[[full-body-search]]
+== Full body search
+
 Search _lite_ -- <<search-lite,query string search>> --  is useful for _ad
 hoc_ queries from the command line. To harness the full power of search,
 however, you should use the _request body_ `search` API, so called because

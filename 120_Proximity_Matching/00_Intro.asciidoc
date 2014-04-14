@@ -1,3 +1,6 @@
+[[proximity-matching]]
+== Proximity matching
+
 Standard full text search with TF/IDF treats documents, or at least each field
 within a document, as a big _bag of words_.  The `match` query can tell us if
 that bag contains our search terms or not, but that is only part of the story.

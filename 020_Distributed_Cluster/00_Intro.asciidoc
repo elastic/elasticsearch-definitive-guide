@@ -1,3 +1,22 @@
+[[distributed-cluster]]
+== Life inside a Cluster
+
+.Supplemental Chapter
+****
+
+As mentioned earlier, this is the first of several ``supplemental'' chapters
+about how Elasticsearch operates in a distributed environment.  In this
+chapter we explain commonly used terminology like _cluster_, _node_ and
+_shard_, the mechanics of how Elasticsearch scales out, and how it deals with
+hardware failure.
+
+Although this chapter is not required reading -- you can use Elasticsearch for
+a long time without worrying about shards, replication and failover -- it will
+help you to understand the processes at work inside Elasticsearch. Feel free
+to skim through the chapter and to refer to it again later.
+
+****
+
 Elasticsearch is built to be always available, and to scale with your needs.
 Scale can come from buying bigger servers (_vertical scale_ or _scaling up_)
 or from buying more servers (_horizontal scale_ or _scaling out_).
