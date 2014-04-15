@@ -25,7 +25,7 @@ actually *using* the data. The flexibility of objects is returned to us.
 
 An _object_ is a language-specific, in-memory data structure. To send it across
 the network, or store it, we need to be able to represent it in some standard
-format. http://en.wikipedia.org/wiki/Json:[JSON (JavaScript Object Notation)]
+format. http://en.wikipedia.org/wiki/Json[JSON (JavaScript Object Notation)]
 is a way of representing objects in human-readable text.  It has become the
 _de facto_ standard for exchanging data in the NoSQL world. When an object has
 been serialized into JSON it is known as a _JSON document_.
