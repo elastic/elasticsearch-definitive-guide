@@ -59,7 +59,7 @@ before even attempting a write operation.  This is to prevent writing data to th
 
     int( (primary + number_of_replicas) / 2 ) + 1
 
-The allowed values for `consistency` `one` (just the primary shard), `all`
+The allowed values for `consistency` are `one` (just the primary shard), `all`
 (the primary and all replicas) or the default `quorum` or majority of shard
 copies.
 
