@@ -91,7 +91,7 @@ The second is that the `_score` and `max_score` are both `null`.  Calculating
 the `_score` can be quite expensive and usually its only purpose is for
 sorting -- we're not sorting by relevance, so it doesn't make sense to keep
 track of the `_score`.  If you want the `_score` to be calculated regardless,
-then you can set the `track_score` parameter to `true`.
+then you can set the `track_scores` parameter to `true`.
 
 .Default ordering
 ****
