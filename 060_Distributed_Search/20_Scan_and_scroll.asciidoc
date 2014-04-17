@@ -49,12 +49,14 @@ results:
 [source,js]
 --------------------------------------------------
 GET /_search/scroll?scroll=1m <1>
-c2Nhbjs1OzExODpRNV9aY1VyUVM4U0NMd2pjWlJ3YWlBOzExOTpRNV9aY1VyUVM4U0
+c2Nhbjs1OzExODpRNV9aY1VyUVM4U0NMd2pjWlJ3YWlBOzExOTpRNV9aY1VyUVM4U0 <2>
 NMd2pjWlJ3YWlBOzExNjpRNV9aY1VyUVM4U0NMd2pjWlJ3YWlBOzExNzpRNV9aY1Vy
 UVM4U0NMd2pjWlJ3YWlBOzEyMDpRNV9aY1VyUVM4U0NMd2pjWlJ3YWlBOzE7dG90YW
 xfaGl0czoxOw==
 --------------------------------------------------
 <1> Keep the scroll open for another minute.
+<2> The `_scroll_id` can be passed in the body, in the URL or as a
+    query parameter.
 
 Note that we again specify `?scroll=1m`.  The scroll expiry time is refreshed
 every time we run a scroll request, so it only needs to give us enough time
