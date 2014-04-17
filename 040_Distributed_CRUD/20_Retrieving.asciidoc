@@ -14,11 +14,14 @@ primary or replica shard, as depicted in <<img-distrib-read>>:
 
 2. The node uses the document's `_id` to determine that the document
    belongs to shard `0`. Copies of shard `0` exist on all three nodes.
-   On this occasion, it forwards the request to `Node 2`, which returns
-   the document.
+   On this occasion, it forwards the request to `Node 2`.
+
+3. `Node 2` returns the document to `Node 1` which returns the document
+   to the client.
 
 For read requests, the requesting node will choose a different shard copy on
-every request -- it round-robins through the nodes.
+every request in order to balance the load -- it round-robins through all
+shard copies.
 
 It is possible that a document has been indexed on the primary shard but
 has not yet been copied to the replica shards. In this case a replica
