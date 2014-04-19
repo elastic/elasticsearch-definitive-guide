@@ -1,6 +1,10 @@
 === Talking to Elasticsearch
 
-How you talk to Elasticsearch depends on whether you are using Java or not.
+There are two ways to communicate with Elasticsearch, the Java API and the
+RESTful API.  If you are calling Elasticsearch from a Java application then
+you will find both options viable, as the RESTful API is merely a wrapper 
+around the JAVA API.  If your client application is not written in Java, 
+however, then you will most likely use the HTTP RESTful API.
 
 ==== Java API
 
