@@ -2,7 +2,7 @@
 
 Finally, we come to our last business requirement: allow managers to run
 analytics over the employee directory.  Elasticsearch has functionality called
-_aggregations_, which allow you to generate sophisticated analytics over your
+_aggregations_, which allows you to generate sophisticated analytics over your
 data. It is similar to `GROUP BY` in SQL, but much more powerful.
 
 For example, let's find the most popular interests enjoyed by our employees:
