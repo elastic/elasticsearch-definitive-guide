@@ -9,7 +9,7 @@ the `mget` API?''
 To answer this, we need to explain a little background:
 
 Each document referenced in a bulk request may belong to a different primary
-shard, each which may be allocated to any of the nodes in the cluster. This
+shard, each of which may be allocated to any of the nodes in the cluster. This
 means that every _action_ inside a `bulk` request needs to be forwarded to the
 correct shard on the correct node.
 
