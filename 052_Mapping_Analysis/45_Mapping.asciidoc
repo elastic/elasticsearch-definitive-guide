@@ -44,7 +44,7 @@ String: `"foo bar"`                ::          `"string"`
 NOTE: This means that, if you index a number in quotes -- `"123"` it will be
 mapped as type `"string"`, not type `"long"`. However, if the field is
 already mapped as type `"long"`, then Elasticsearch will try to convert
-the string into a long, and throw an error if it can't.
+the string into a long, and throw an exception if it can't.
 
 ==== Viewing the mapping
 
