@@ -9,7 +9,7 @@ my $inkscape = '/Applications/Inkscape.app/Contents/Resources/bin/inkscape';
 my $width = shift @ARGV or die "USAGE: $0 [width]\n";
 
 my $src = dir('svg');
-my $out = dir('png');
+my $out = dir('images');
 
 $out->rmtree;
 $out->mkpath;

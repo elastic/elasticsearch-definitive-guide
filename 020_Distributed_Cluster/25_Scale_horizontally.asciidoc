@@ -6,7 +6,7 @@ third node, our cluster reorganizes itself to look like
 
 [[cluster-three-nodes]]
 .A three-node cluster -- shards have been reallocated to spread the load
-image::png/02-04_three_nodes.png["A three-node cluster"]
+image::images/02-04_three_nodes.png["A three-node cluster"]
 
 One shard each from `Node 1` and `Node 2` have moved to the new
 `Node 3` and we have two shards per node, instead of three.

@@ -12,7 +12,7 @@ into a single response, which it returns to the client.
 
 [[img-distrib-mget]]
 .Retrieving multiple documents with `mget`
-image::png/04-05_mget.png["Retrieving multiple documents with mget"]
+image::images/04-05_mget.png["Retrieving multiple documents with mget"]
 
 Below we list the sequence of steps necessary to retrieve multiple documents
 with a single `mget` request, as depicted in <<img-distrib-mget>>:
@@ -30,7 +30,7 @@ request.
 
 [[img-distrib-bulk]]
 .Multiple document changes with `bulk`
-image::png/04-06_bulk.png["Multiple document changes with bulk"]
+image::images/04-06_bulk.png["Multiple document changes with bulk"]
 
 Below we list the sequence of steps necessary to execute multiple
 `create`, `index`, `delete` and `update` requests within a single

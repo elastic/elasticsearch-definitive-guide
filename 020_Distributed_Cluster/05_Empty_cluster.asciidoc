@@ -5,7 +5,7 @@ If we start a single node, with no data and no indices, our cluster looks like
 
 [[img-cluster]]
 .A cluster with one empty node
-image::png/02-01_cluster.png["A cluster with one empty node"]
+image::images/02-01_cluster.png["A cluster with one empty node"]
 
 A _node_ is a running instance of Elasticsearch, while a _cluster_ consists of
 one or more nodes with the same `cluster.name` that are working together to

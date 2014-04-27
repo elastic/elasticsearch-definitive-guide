@@ -24,7 +24,7 @@ processing the sale of one widget each:
 
 [[img-data-lww]]
 .Consequence of no concurrency control
-image::png/03-01_concurrency.png["Consequence of no concurrency control",width="50%",align="center"]
+image::images/03-01_concurrency.png["Consequence of no concurrency control",width="50%",align="center"]
 
 The change that `web_1` made to the `stock_count` has been lost because
 `web_2` is unaware that its copy of the `stock_count` is out of date. The
