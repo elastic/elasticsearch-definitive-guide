@@ -31,15 +31,15 @@ Consider this JSON document which represents a user object:
 [source,js]
 --------------------------------------------------
 {
-    "email":     "john@smith.com",
-    "name": {
-        "first": "John",
-        "last":  "Smith"
+    "email":      "john@smith.com",
+    "first_name": "John",
+    "last_name":  "Smith",
+    "about": {
+        "bio":         "Eco-warrior and defender of the weak",
+        "age":         25,
+        "interests": [ "dolphins", "whales" ]
     },
-    "bio":       "Eco-warrior and defender of the weak",
-    "age":       25,
     "join_date": "2014/05/01",
-    "interests": [ "dolphins", "whales" ]
 }
 --------------------------------------------------
 
