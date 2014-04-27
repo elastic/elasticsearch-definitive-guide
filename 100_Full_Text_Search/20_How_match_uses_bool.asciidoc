@@ -75,7 +75,7 @@ directly through to the `bool` query, making these two queries equivalent:
       { "term": { "title": "fox"   }},
       { "term": { "title": "quick" }}
     ],
-    "minimum_should_match": "75%"
+    "minimum_should_match": "2"
   }
 }
 --------------------------------------------------
