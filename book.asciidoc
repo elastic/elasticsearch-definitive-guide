@@ -4,7 +4,7 @@
 
 include::Preface.asciidoc[]
 
-
+// Part 1
 
 include::00_Getting_started.asciidoc[]
 
@@ -29,8 +29,9 @@ include::060_Distributed_Search.asciidoc[]
 include::070_Index_Mgmt.asciidoc[]
 
 
+// Part 2
 
-include::00_Search_in_depth.asciidoc[]
+include::01_Search_in_depth.asciidoc[]
 
 include::080_Structured_Search.asciidoc[]
 
@@ -42,17 +43,32 @@ include::120_Proximity_Matching.asciidoc[]
 
 include::130_Partial_Matching.asciidoc[]
 
-include::140_Synonyms_Stopwords.asciidoc[]
-
-include::150_Multilingual.asciidoc[]
-
-include::160_Fuzzy_Matching.asciidoc[]
-
 include::170_Relevance.asciidoc[]
 
 include::180_Non_Prose.asciidoc[]
 
-include::290_Relationships.asciidoc[]
+
+// Part 3
+
+include::02_Dealing_with_language.asciidoc[]
+
+include::200_Language_tokenization.asciidoc[]
+
+include::210_Token_normalization.asciidoc[]
+
+include::220_Stemming.asciidoc[]
+
+include::230_Stopwords.asciidoc[]
+
+include::240_Multilingual.asciidoc[]
+
+include::250_Synonyms.asciidoc[]
+
+include::260_Fuzzy_matching.asciidoc[]
+
+include::270_Suggesters.asciidoc[]
+
+// Part 4
 
 [[more-than-search]]
 = More than search (TODO)
@@ -65,25 +81,31 @@ include::320_Percolation.asciidoc[]
 
 include::330_Scripting.asciidoc[]
 
+// Part 5
+
 [[modelling-your-data]]
 
 = Modelling your data (TODO)
 
-include::340_Scaling.asciidoc[]
+include::400_Relationships.asciidoc[]
 
-include::350_Time_Based.asciidoc[]
+include::410_Scaling.asciidoc[]
 
-include::360_Index_Per_User.asciidoc[]
+include::420_Time_Based.asciidoc[]
+
+include::430_Index_Per_User.asciidoc[]
+
+// Part 6
 
 [[administration]]
 
 = Administration and internals (TODO)
 
-include::380_Cluster_Admin.asciidoc[]
+include::500_Cluster_Admin.asciidoc[]
 
-include::390_Deployment.asciidoc[]
+include::510_Deployment.asciidoc[]
 
-include::400_Lucene.asciidoc[]
+include::520_Lucene.asciidoc[]
 
 [[TODO]]
 [appendix]

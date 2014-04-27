@@ -1,0 +1,35 @@
+[[fuzzy-matching]]
+== Fuzzy matching
+
+We expect a query on structured data like dates and prices to only return
+documents that match exactly.  However, good full text search shouldn't have the
+same restriction. Instead, we can widen the net to include words that *may*
+match, but use the relevance score to push the better matches to the top
+of the result set.
+
+In fact, full text search which only matches exactly will probably frustrate
+your users. Wouldn't you expect a search for ``quick brown fox'' to match a
+document containing ``fast brown foxes'', ``Johnny Walker'' to match
+``Johnnie Walker'', or ``Arnold Shcwarzenneger'' to match ``Arnold
+Schwarzenegger''?
+
+If documents exist which *do* contain exactly what the user has queried then
+they should appear at the top of the result set, but weaker matches can be
+included further down the list.  If no documents match exactly, at least we
+can show the user potential matches -- they may even be what the user
+originally intended!
+
+There are several lines of attack:
+
+*   Language specific stemmer token filters reduce each word to its root form,
+    indexing ``foxes'' as `fox`, or ``jumping'', ``jumps'' and ``jumped'' as
+    `jump`.
+
+*   Synonym token filters can add synonyms into the token stream, allowing a
+    query for ``quick'' to match ``fast'' or ``rapid'', or a query for ``UK``
+    to match ``United Kingdom``.
+
+*   Fuzzy queries
+*   Phonetic token filters can
+
+

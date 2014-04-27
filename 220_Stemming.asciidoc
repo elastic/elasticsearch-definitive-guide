@@ -1,0 +1,20 @@
+[[stemming]]
+== Reducing words to their root form
+
+Stemming vs lemmatization
+
+algorithmic stemmers
+    porter stem token filter
+    stemmer token filter
+    kstem token filter
+    snowball token filter
+
+dictionary based
+    hunspell
+
+controlling stemmers
+    stemmer override token filter
+    keyword marker token filter
+
+    keyword repeat token filter
+    unique token filter

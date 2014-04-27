@@ -1,0 +1,53 @@
+[[dealing-with-language]]
+= Dealing with human language
+
+[partintro]
+--
+
+[quote,Matt Groening]
+``I know all those words, but that sentence makes no sense to me.''
+
+In <<search-in-depth>> we covered the mechanics of search, but we didn't pay
+much attention to the words themselves. It is not enough for full text  search
+to just match the exact words that the user has queried. Instead, we need to
+spread the net wider, to also search for words that are not exactly the same
+as the original, but are related.
+
+Wouldn't you expect a search for ``quick brown fox'' to match a document
+containing ``fast brown foxes'', ``Johnny Walker'' to match ``Johnnie
+Walker'', or ``Arnold Shcwarzenneger'' to match ``Arnold Schwarzenegger''?
+
+If documents exist which *do* contain exactly what the user has queried then
+those documents should appear at the top of the result set, but weaker matches
+can be included further down the list.  If there are no documents which match
+exactly, then at least we can show the user potential matches -- they may even
+be what the user originally intended!
+
+There are several lines of attack:
+
+*   Remove diacritics like +´+, +^+ and +¨+ so that a search for ``rôle'' will
+    also match ``role''. See <<token-normalization>>.
+
+*   Remove the distinction between singular and plural -- ``fox'' vs ``foxes''
+    -- or between different tenses -- ``jumping'' vs ``jumped'' vs ``jumps''
+    -- by _stemming_ each word to its root form. See <<stemming>>.
+
+*   Remove commonly used words or _stopwords_ like ``the'', ``and'', and ``or''
+    to improve search performance.  See <<stopwords>>.
+
+*   Including synonyms so that a query for ``quick'' could also match ``fast'',
+    or ``UK'' could match ``United Kingdom''. See <<synonyms>>.
+
+*   Check for misspellings or alternate spellings, or match on _homophones_
+    -- words that sound the same like ``their'' vs ``there'', ``meat'' vs
+    ``meet''  vs ``mete''. See <<fuzzy-matching>>.
+
+*   We can use a _search-as-you-type_ suggester to direct users towards data
+    that we know exists in the index, and a _did-you-mean_ suggester to
+    redirect users who may have mistyped a search term.
+
+But before we can manipulate individual words, we need to divide text up into
+words, which means that we need to know what constitutes a _word_. See
+<<language-tokenization>>.
+
+--
