@@ -1,4 +1,4 @@
-[[dealing-with-language]]
+[[languages]]
 = Dealing with human language
 
 [partintro]
@@ -15,7 +15,7 @@ as the original, but are related.
 
 Wouldn't you expect a search for ``quick brown fox'' to match a document
 containing ``fast brown foxes'', ``Johnny Walker'' to match ``Johnnie
-Walker'', or ``Arnold Shcwarzenneger'' to match ``Arnold Schwarzenegger''?
+Walker'', or ``Arnolt Schwarzenneger'' to match ``Arnold Schwarzenegger''?
 
 If documents exist which *do* contain exactly what the user has queried then
 those documents should appear at the top of the result set, but weaker matches
@@ -25,8 +25,8 @@ be what the user originally intended!
 
 There are several lines of attack:
 
-*   Remove diacritics like +´+, +^+ and +¨+ so that a search for ``rôle'' will
-    also match ``role''. See <<token-normalization>>.
+*   Remove diacritics like +´+, `^` and `¨` so that a search for ``rôle'' will
+    also match ``role'', and vice versa. See <<token-normalization>>.
 
 *   Remove the distinction between singular and plural -- ``fox'' vs ``foxes''
     -- or between different tenses -- ``jumping'' vs ``jumped'' vs ``jumps''
@@ -44,10 +44,10 @@ There are several lines of attack:
 
 *   We can use a _search-as-you-type_ suggester to direct users towards data
     that we know exists in the index, and a _did-you-mean_ suggester to
-    redirect users who may have mistyped a search term.
+    redirect users who may have mistyped a search term. See <<suggesters>>.
 
 But before we can manipulate individual words, we need to divide text up into
-words, which means that we need to know what constitutes a _word_. See
-<<language-tokenization>>.
+words, which means that we need to know what constitutes a _word_, which we
+will tackle in <<language-analysis>>.
 
 --
