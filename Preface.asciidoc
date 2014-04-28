@@ -26,26 +26,26 @@ allowing you to tailor your searches to fit your requirements.
 Elasticsearch is not just about full text search. We explain structured
 search, analytics, query percolation, geolocation and autocomplete or _did-
 you-mean_ suggesters. Again, don't worry if you don't know what these terms mean.
- We will also discuss how best to model your data to take
+ We will also discuss how best to organize your data to take
 advantage of the horizontal scalability of Elasticsearch, and how to configure
-and monitor your cluster when moving to production.
+and monitor your Elasticsearch servers  when moving to production.
 
 === Who should read this book
 
 This book is for anybody who wants to put their data to work.  It doesn't
 matter whether you are starting a new project and have the flexibility to
 design the system from the ground up, or whether you need to give new life to
-a legacy system.  Elasticsearch will help you to solve existing problems and
+a legacy system.  Elasticsearch will help you solve existing problems and
 open the way to using new techniques that you haven't yet considered.
 
 This book is suitable for novices and experienced users alike. We expect you
 to have some programming background and, although not required, it would help
 to have used SQL and a relational database. We explain concepts from first
-principles, helping novices to gain a sure footing in the complex world of
+principles, helping novices gain sure footing in the complex world of
 search.
 
 The reader with a search background will also benefit from this book.
-Elasticsearch is a new technology which has some familiar concepts.  The more
+Elasticsearch is a new technology based on some familiar concepts.  The more
 experienced user will gain an understanding of how those concepts have been
 implemented and how they interact in Elasticsearch. Even in the
 early chapters, there are nuggets of information that will be useful to the
@@ -55,7 +55,7 @@ Finally, maybe you are in DevOps. While the other departments are stuffing
 data into Elasticsearch as fast as they can, you're the one charged with
 preventing their servers from bursting into flames. Elasticsearch scales
 effortlessly, as long as your users play by the rules. You need to know
-how to setup a stable cluster before going into production, then be able to
+how to setup a stable Elasticsearch environment before going into production, then be able to
 recognize the warning signs at 3am in the morning in order to prevent
 catastrophe. The earlier chapters may be of less interest to you but the last
 part of the book is essential reading -- all you need to know to avoid
@@ -75,7 +75,7 @@ beginner -- to both search and distributed systems -- can pick it up and start
 building a prototype within a few chapters.
 
 We have taken a problem based approach: this is the problem, how do I solve
-it, and what are the trade-offs compared to the alternative solutions? We start with the
+it, and what are the trade-offs compared to the alternatives? We start with the
 basics, building each chapter on the preceding ones, providing practical
 examples and explaining the theory where necessary.
 
@@ -113,22 +113,22 @@ This book is divided into five parts:
 *  Chapters 1 through 10 provide an introduction to Elasticsearch. They
    explain how to get your data in and out of Elasticsearch, how Elasticsearch
    interprets the data in your documents, how basic search works and how to
-   manage indices. By the end of this part you will already be able to
+   manage indices. By the end of this part you will be ready to
    add Elasticsearch to your application. Chapters 2, 4 and 9 are
    supplemental chapters which provide more insight into distributed
    search, but are not required reading.
 
 *  Chapters 11 through 21 offer a deep dive into search -- how to index and
-   query your data to allow  you to take advantage of more advanced concepts
+   query your data to take advantage of more advanced concepts
    like word proximity, partial matching, fuzzy matching and language
    awareness. You will understand how relevance works and how to control it
-   to ensure that the best results are on the first page.
+   to ensure that the best results come first.
 
-*  Chapters 22 through 25 tackle subjects such as aggregations or analytics,
+*  Chapters 22 through 25 tackle subjects such as aggregations, analytics,
    geolocation, query percolation and scripting.
 
 *  Chapters 26 through 28 teach how to understand the flow of data through
-   your system and how to model your data to work well with the infrastructure
+   your system and how to organize your data to work well with the infrastructure
    provided by Elasticsearch.
 
 *  Finally, chapters 29 through 31 discuss moving to production: important
