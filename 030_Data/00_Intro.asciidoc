@@ -41,7 +41,7 @@ retrieved from any node in the cluster.
 Of course, we don't only need to store data, we must also query it, _en masse_
 and at speed. While a number of NoSQL solutions exist which allow us to store
 objects as documents, they still require us to think about how we want to
-query our data, and which fields require a index in order to make data
+query our data, and which fields require an index in order to make data
 retrieval fast.
 
 In Elasticsearch, *all data in every field* is *indexed by default*. That is,
@@ -53,4 +53,3 @@ In this chapter we will discuss the APIs that we use to create, retrieve,
 update and delete documents. For the moment, we don't care about the data
 inside our documents or how to query it. All we care about is how to store our
 documents safely in Elasticsearch, and how to get them back again.
-
