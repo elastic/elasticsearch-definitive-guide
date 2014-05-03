@@ -72,7 +72,7 @@ arrives after a new version, it can simply be ignored.
 
 We can take advantage of the `_version` number to ensure that conflicting
 changes made by our application do not result in data loss. We do this by
-specifying the `version number of the document that we wish to change.  If that
+specifying the `version` number of the document that we wish to change.  If that
 version is no longer current, our request fails.
 
 Let's create a new blog post:
@@ -253,5 +253,3 @@ The request succeeds and sets the current `_version` to `10`:
 If you were to rerun this request, it would fail with the same conflict error
 we saw before, because the specified external version number is not higher
 than the current version in Elasticsearch.
-
-

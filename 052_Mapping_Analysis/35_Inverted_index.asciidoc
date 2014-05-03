@@ -52,7 +52,7 @@ If we apply a naive _similarity algorithm_ which just counts the number of
 matching terms, then we can say that the first document is a better match --
 is _more relevant_ to our query -- than the second document.
 
-Bu there are a few problems with our current inverted index:
+But there are a few problems with our current inverted index:
 
 1. `"Quick"` and `"quick"` appear as separate terms, while the user probably
    thinks of them as the same word.
