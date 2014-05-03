@@ -1,0 +1,63 @@
+[[standard-tokenizer]]
+=== `standard` tokenizer
+
+A tokenizer accepts a string as input, processes the string to break it up
+into individual words or _tokens_ (perhaps discarding some characters like
+punctuation), and emits a _token stream_ as output.
+
+What is interesting is the algorithm that is used to *identify* words. The
+`whitespace` tokenizer simply breaks on whitespace -- spaces, tabs, line
+feeds etc. -- and assumes that contiguous non-whitespace characters form a
+single token. For instance:
+
+[source,js]
+--------------------------------------------------
+GET /_analyze?tokenizer=whitespace
+You're the 1st runner home!
+--------------------------------------------------
+
+The above request would return the following terms:
+`You're`, `the`, `1st`, `runner`, `home!`
+
+The `letter` tokenizer, on the other hand, breaks on any character which is
+not a letter, and so would return the following terms: `You`, `re`, `the`,
+`st`, `runner`,`home`
+
+The `standard` tokenizer uses the Unicode Text Segmentation algorithm (as
+defined in http://unicode.org/reports/tr29/[Unicode Standard Annex #29]) to
+find the boundaries *between* words, and emits everything in-between. It's
+knowledge of Unicode allows it to successfully tokenize text containing a
+mixture of languages.
+
+Punctuation may or may not be considered to be part of a word, depending on
+where it appears:
+
+[source,js]
+--------------------------------------------------
+GET /_analyze?tokenizer=standard
+You're my 'favourite'.
+--------------------------------------------------
+
+In the above example, the apostrophe in `You're` is treated as part of the
+word while the single quotes in `'favourite'` are not, resulting in the
+following terms: `You're`, `my`, `favourite`.
+
+.`uax_url_email` tokenizer
+***************************************************
+
+The `uax_url_email` tokenizer works in exactly the same way as the `standard`
+tokenizer, except that it recognises email addresses and URLs as emits them as
+single tokens. The `standard` tokenizer, on the other hand, would try to
+break them up into individual words. For instance, the email address
+`joe-bloggs@foo-bar.com` would result in the tokens `joe`, `bloggs`, `foo`,
+`bar.com`.
+
+***************************************************
+
+The `standard` tokenizer is a reasonable starting point for tokenizing most
+languages, especially Western languages.  In fact, it forms the basis of most
+of the language-specific analyzers like the `english`, `french`, and `spanish`
+analyzers.
+
+Its support for Asian languages, however, is limited and you should consider
+using the `icu_tokenizer` instead, which is available in the ICU plugin.

@@ -1,0 +1,28 @@
+[[identifying-words]]
+== Identifying words
+
+A word in English is relatively simple to spot: words are separated by
+whitespace or (some) punctuation. Even in English, though, there can be
+controversy: is ``you're'' one word or two? What about ``o'clock'',
+``co-operate'', ``half-baked'' or ``eyewitness''?
+
+Languages like German or Dutch combine individual words to create longer
+compound words like ``Weißkopfseeadler'' (white head sea eagle), but in order
+to be able to return ``Weißkopfseeadler'' as a result for the query ``Adler''
+(eagle), we need to understand how to break up compound words into their
+constituent parts.
+
+Asian languages are even more complex: some have no whitespace between words,
+sentences or even paragraphs. Some words can be represented by a single
+character, but the same single character, when placed next to other
+characters, can form just a part of a longer word with a quite different
+meaning.
+
+It should be obvious that there is no ``silver bullet'' analyzer that will
+miraculously deal with all human languages. Elasticsearch ships with dedicated
+analyzers for a number of languages, and more language-specific analyzers are
+available as plugins.
+
+However, not all languages have dedicated analyzers, and sometimes you won't
+even be sure which language(s) you are dealing with.  For these situations, we
+need good standard tools which do a reasonable job regardless of language.

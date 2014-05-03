@@ -1,0 +1,20 @@
+[[standard-analyzer]]
+=== `standard` analyzer
+
+The `standard` analyzer is used by default for any full-text `analyzed` string
+field.  If we were to ``reimplement'' the  `standard` analyzer as a
+<<custom-analyzer,`custom` analyzer>>, it would be defined as follows:
+
+[source,js]
+--------------------------------------------------
+{
+    "type":      "custom",
+    "tokenizer": "standard",
+    "filter":  [ "standard", "lowercase", "stop" ]
+}
+--------------------------------------------------
+
+In <<token-normalization>> and <<stopwords>> we will talk about the
+`standard`, `lowercase`, and `stop` *token filters*, but for the moment,
+let's focus on the `standard` *tokenizer*.
+

@@ -1,0 +1,31 @@
+[[using-tokenizer]]
+=== Using a tokenizer
+
+Tokenizers are not standalone -- they have to be wrapped in a `custom`
+analyzer before they can be used.
+
+[source,js]
+--------------------------------------------------
+PUT /my_index
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "my_analyzer": {
+          "type":      "custom",
+          "tokenizer": "icu_tokenizer"
+        }
+      }
+    }
+  }
+}
+
+GET /my_index/_analyze?analyzer=my_analyzer
+Some text to analyze
+--------------------------------------------------
+
+But breaking text up into tokens is only half the job. In order to make those
+tokens more easily searchable, they need to go through some _normalization_
+process, such as lowercasing them and stemming them to their root form.
+This is the job of the token filters which we will discuss in the following
+chapters.
