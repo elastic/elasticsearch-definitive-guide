@@ -8,22 +8,23 @@ allows you to explore your data at a speed and at a scale never before
 possible.
 
 It is used for full text search, structured search, analytics, and all three
-in combination:
+in any combination:
 
 *   Wikipedia uses Elasticsearch to provide full text search with highlighted
     search snippets, and _search-as-you-type_ and _did-you-mean_ suggestions.
 
 *   The Guardian uses Elasticsearch to combine visitor logs with social
-    network data to provide real-time feedback to their editors about the
-    public's response to new articles.
+    network data to provide real-time feedback to their editors about
+    public response to new articles.
 
 *   StackOverflow combines full text search with geolocation queries and uses
     _more-like-this_ to find related questions and answers.
 
 *   GitHub uses Elasticsearch to query 130 billion lines of code.
 
-*   Goldman Sachs uses it to index 5TB of log data every day, and a number of
-    investment banks use it purely to analyze movements in the stock market.
+*   Goldman Sachs uses Elasticsearch to index 5TB of log data every day.
+
+*   A number of investment banks use Elasticsearch to analyze movements in the stock market.
 
 But Elasticsearch is not just for mega-corporations. It has enabled many
 startups like DataDog and Klout to prototype ideas and to turn them into
@@ -32,22 +33,22 @@ hundreds of servers and petabytes of data.
 
 No individual part of Elasticsearch is new or revolutionary. Full text search
 has been done before, as have analytics systems and distributed databases. The
-revolution is the combination of these individually useful parts into a
-single, coherent, real-time application. It has a low barrier to entry for the
-new user, but can keep pace with you as your skills and needs grow.
+revolution is how Elasticsearch combines these individually useful parts into a
+single, coherent, real-time application. Elasticsearch is easy to learn
+but can keep pace as your skills and needs grow.
 
 If you are picking up this book, it is because you have data, and there is no
 point in having data unless you plan to *do something* with it.
 
-Unfortunately, most databases are astonishingly inept at extracting actionable
-knowledge from your data. Sure, they can filter by timestamp or exact values,
+Unfortunately, most databases are astonishingly inept at extracting something useful
+from your data. Sure, databases can filter by timestamp or exact values,
 but can they perform full-text search, handle synonyms and score documents by
 relevance?  Can they generate analytics and aggregations from the same data?
 Most importantly, can they do this in real-time without big batch processing
 jobs?
 
 This is what sets Elasticsearch apart: Elasticsearch encourages you to explore
-and utilize your data, rather than letting it rot in a warehouse because it is
+gain insight from your data, rather than letting it rot in a warehouse because it is
 too difficult to query.
 
 Elasticsearch is your new best friend.

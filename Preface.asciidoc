@@ -25,8 +25,8 @@ allowing you to tailor your searches to fit your requirements.
 
 Elasticsearch is not just about full text search. We explain structured
 search, analytics, query percolation, geolocation and autocomplete or _did-
-you-mean_ suggesters. Again, don't worry if you don't know what these terms mean.
- We will also discuss how best to organize your data to take
+you-mean_ suggesters. Again, don't worry if you don't know what these terms mean yet.
+We will also discuss how best to organize your data to take
 advantage of the horizontal scalability of Elasticsearch, and how to configure
 and monitor your Elasticsearch servers  when moving to production.
 
@@ -40,7 +40,7 @@ open the way to using new techniques that you haven't yet considered.
 
 This book is suitable for novices and experienced users alike. We expect you
 to have some programming background and, although not required, it would help
-to have used SQL and a relational database. We explain concepts from first
+if you have used SQL and a relational database. We explain concepts from first
 principles, helping novices gain sure footing in the complex world of
 search.
 
@@ -53,7 +53,7 @@ more advanced user.
 
 Finally, maybe you are in DevOps. While the other departments are stuffing
 data into Elasticsearch as fast as they can, you're the one charged with
-preventing their servers from bursting into flames. Elasticsearch scales
+preventing servers from bursting into flames. Elasticsearch scales
 effortlessly, as long as your users play by the rules. You need to know
 how to setup a stable Elasticsearch environment before going into production, then be able to
 recognize the warning signs at 3am in the morning in order to prevent
