@@ -10,11 +10,11 @@ field.  If we were to ``reimplement'' the  `standard` analyzer as a
 {
     "type":      "custom",
     "tokenizer": "standard",
-    "filter":  [ "standard", "lowercase", "stop" ]
+    "filter":  [ "lowercase", "stop" ]
 }
 --------------------------------------------------
 
 In <<token-normalization>> and <<stopwords>> we will talk about the
-`standard`, `lowercase`, and `stop` *token filters*, but for the moment,
-let's focus on the `standard` *tokenizer*.
+`lowercase`, and `stop` *token filters*, but for the moment, let's focus on
+the `standard` *tokenizer*.
 

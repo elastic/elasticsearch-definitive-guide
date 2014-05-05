@@ -1,0 +1,161 @@
+[[char-filters]]
+=== Tidying up input text
+
+Tokenizers produce the best results when the input text is clean, ``valid''
+text, where ``valid'' means that it follows the punctuation rules that the
+Unicode algorithm expects.  Quite often, though, the text we need to process
+is anything but clean. Cleaning it up before tokenization improves the quality
+of the output.
+
+==== Tokenizing HTML
+
+Passing HTML through the `standard` tokenizer or the `icu_tokenizer` produces
+poor results.  These tokenizers just don't know what to do with the HTML tags.
+For example:
+
+[source,js]
+--------------------------------------------------
+GET /_analyzer?tokenizer=standard
+<p>Some d&eacute;j&agrave; vu <a href="http://somedomain.com>">website</a>
+--------------------------------------------------
+
+The `standard` tokenizer confuses HTML tags and entities, and emits the
+following tokens: `p`, `Some`, `d`, `eacute`, `j`, `agrave`, `vu`, `a`,
+`href`, `http`, `somedomain.com`, `website`, `a`.  Clearly not what was
+intended!
+
+_Character filters_ can be added to an analyzer to preprocess the text
+*before* it is passed to the tokenizer.  In this case, we can use the
+`html_strip` character filter to remove HTML tags and to decode HTML entities
+like `&eacute;` into the corresponding Unicode characters.
+
+Character filters can be tested out via the `analyze` API by specifying them
+in the query string:
+
+[source,js]
+--------------------------------------------------
+GET /_analyzer?tokenizer=standard&char_filters=html_strip
+<p>Some d&eacute;j&agrave; vu <a href="http://somedomain.com>">website</a>
+--------------------------------------------------
+
+To use them as part of the analyzer, they should be added to a `custom`
+analyzer definition:
+
+[source,js]
+--------------------------------------------------
+PUT /my_index
+{
+    "settings": {
+        "analysis": {
+            "analyzer": {
+                "my_html_analyzer": {
+                    "tokenizer":     "standard",
+                    "char_filter": [ "html_strip" ]
+                }
+            }
+        }
+    }
+}
+--------------------------------------------------
+
+Once created, our new `my_html_analyzer` can be tested with the `analyze` API:
+
+[source,js]
+--------------------------------------------------
+GET /my_index/_analyzer?analyzer=my_html_analyzer
+<p>Some d&eacute;j&agrave; vu <a href="http://somedomain.com>">website</a>
+--------------------------------------------------
+
+This emits the tokens that we expect: `Some`, ++déjà++, `vu`, `website`
+
+==== Tidying up punctuation
+
+The `standard` tokenizer and `icu_tokenizer` both understand that an
+apostrophe *within* a word should be treated as part of the word, while single
+quotes which *surround* a word should not. Tokenizing the text `You're my
+'favourite'.` would correctly emit the tokens: `You're`, `my`, `favourite`.
+
+Unfortunately, Unicode lists a number of characters which are sometimes used
+as apostrophes:
+
+[horizontal]
+`U+0027`:: Apostrophe (`'`) -- the original ASCII character.
+`U+2018`:: Left single quotation mark (`‘`) -- opening quote when single quoting.
+`U+2019`:: Right single quotation mark (`’`) -- closing quote when single
+           quoting, but also the  preferred character to use as an apostrophe.
+
+Both tokenizers treat these three characters as an apostrophe (and thus as
+part of the word) when they appear within a word. Then there are another three
+apostrophe-like characters:
+
+[horizontal]
+`U+201B`:: Single high-reversed-9 quotation mark (`‛`) -- same as `U+2018` but
+           differs in appearance.
+`U+0091`:: Left single quotation mark in ISO-8859-1 -- should not be used in Unicode.
+`U+0092`:: Right single quotation mark in ISO-8859-1 -- should not be used in Unicode.
+
+Both tokenizers treat these three characters as word boundaries -- a place to
+break up text into tokens. Unfortunately, some publishers use `U+201B` as a
+stylised way to write names like `M‛coy`, and the second two characters may well
+be produced by your word processor, depending on its age.
+
+Even when using the ``acceptable'' quotation marks, a word written with a
+single right quotation mark -- `You’re` -- is not the same as the word written
+with an apostrophe -- `You're` -- which means that a query for one variant
+will not find the other.
+
+Fortunately, it is possible to sort out this mess with the `mapping` character
+filter, which allows us to replace all instances of one character with
+another.  In this case, we will replace all apostrophe variants with the
+simple `U+0027` apostrophe:
+
+[source,js]
+--------------------------------------------------
+PUT /my_index
+{
+  "settings": {
+    "analysis": {
+      "char_filter": { <1>
+        "quotes": {
+          "type": "mapping",
+          "mappings": [ <2>
+            "\\u0091=>\\u0027",
+            "\\u0092=>\\u0027",
+            "\\u2018=>\\u0027",
+            "\\u2019=>\\u0027",
+            "\\u201B=>\\u0027"
+          ]
+        }
+      },
+      "analyzer": {
+        "quotes_analyzer": {
+          "tokenizer":     "standard",
+          "char_filter": [ "quotes" ] <3>
+        }
+      }
+    }
+  }
+}
+--------------------------------------------------
+<1> We define a custom `char_filter` called `quotes` which
+    maps all apostrophe variants to a simple apostrophe.
+<2> For clarity, we have used the JSON Unicode escape syntax
+    for each character, but we could just have used the
+    characters themselves: `"‘=>'"`.
+<3> We use our custom `quotes` character filter to create
+    a new analyzer called `quotes_analyzer`.
+
+As always, we test the analyzer after creating it:
+
+[source,js]
+--------------------------------------------------
+GET /my_index/_analyze?analyzer=quotes_analyzer
+You’re my ‘favourite’ M‛Coy
+--------------------------------------------------
+
+The above example returns the following tokens, with all of the in-word
+quotation marks replaced by apostrophes: `You're`, `my`, `favourite`, `M'Coy`.
+
+The more effort that you put into ensuring that the tokenizer receives good
+quality input, the better your search results will be.
+
