@@ -1,0 +1,150 @@
+
+=== Aggregation Test-drive
+
+We could spend the next few pages defining the various aggregations
+available and their syntax, but aggregations are truly best learned by example.
+Once you learn how to think about aggregations, and how to nest them appropriately,
+the syntax is fairly trivial.
+
+So let's just dive in and start with an example.  We are going to build some
+aggregations that might be useful to a car dealer.  Our data will be about car
+transactions: the car model, manufacturer, sale price, when it sold, etc.
+
+First we will bulk index some data to work with:
+
+[source,js]
+--------------------------------------------------
+POST /cars/transactions/_bulk
+{ "index": {}}
+{ "price" : 10000, "color" : "red", "make" : "honda", "sold" : "2014-10-28" }
+{ "index": {}}
+{ "price" : 20000, "color" : "red", "make" : "honda", "sold" : "2014-11-05" }
+{ "index": {}}
+{ "price" : 30000, "color" : "green", "make" : "ford", "sold" : "2014-05-18" }
+{ "index": {}}
+{ "price" : 15000, "color" : "blue", "make" : "toyota", "sold" : "2014-07-02" }
+{ "index": {}}
+{ "price" : 12000, "color" : "green", "make" : "toyota", "sold" : "2014-08-19" }
+{ "index": {}}
+{ "price" : 20000, "color" : "red", "make" : "honda", "sold" : "2014-11-05" }
+{ "index": {}}
+{ "price" : 80000, "color" : "red", "make" : "bmw", "sold" : "2014-01-01" }
+{ "index": {}}
+{ "price" : 25000, "color" : "blue", "make" : "ford", "sold" : "2014-02-12" }
+--------------------------------------------------
+// SENSE: 300_Aggregations/20_basic_example.json
+
+Now that we have some data, let's construct our first aggregation.  A car dealer
+may want to know which color car sells the best.  This is easily accomplished
+using a simple aggregation.
+
+The syntax may look overwhelming at first, but hold on...we'll decompose the query
+and discuss what each portion means.  First, the aggregation:
+
+[source,js]
+--------------------------------------------------
+GET /cars/transactions/_search?search_type=count <1>
+{
+    "aggs" : { <2>
+        "colors" : { <3>
+            "terms" : {
+              "field" : "color" <4> 
+            }
+        }
+    }
+}
+--------------------------------------------------
+// SENSE: 300_Aggregations/20_basic_example.json
+<1> Because we don't care about search results, we are going to use the `count`
+search_type, which will be faster
+<2> Aggregations are placed under the top-level `"aggs"` (the longer `"aggregations"` 
+will also work if you prefer that)
+<3> We then name the aggregation whatever we want -- "colors" in this example
+<4> Finally, we define a single bucket of type `terms`
+
+The first thing to notice is that aggregations are executed as a search, using the
+`/_search` endpoint.  As mentioned at the top of the chapter, aggregations are built
+from the same data structures that power search, which means they use the same
+endpoint.  Aggregations are also defined as a top-level parameter, just like using 
+`"query"` for search.  
+
+.Can you use aggregations and queries together?
+****
+Absolutely!  But hold that thought, we'll discuss it later in <todo>
+****
+
+Next we define a name for our aggregation.  This is entirely up to you...
+the response will be labeled with the name you provide so that your application
+can parse the results. You may also specify more than one aggregation per search
+request, so giving each aggregation a unique, identifiable name is important
+(we'll look at an example of this later).
+
+Next we define the aggregation itself.  For this example, we are defining
+a single `terms` bucket.  The `terms` bucket will dynamically create a new 
+bucket for every unique term it encounters.  Since we are telling it to use the 
+"color" field, the `terms` bucket will dynamically create a new bucket for each color.
+
+Let's execute that aggregation and take a look at the results:
+
+[source,js]
+--------------------------------------------------
+{
+   "took": 2,
+   "timed_out": false,
+   "_shards": { ... },
+   "hits": {
+      "total": 8,
+      "max_score": 0,
+      "hits": [] <1>
+   },
+   "aggregations": {
+      "colors": { <2>
+         "buckets": [
+            {
+               "key": "red", <3>
+               "doc_count": 4 <4>
+            },
+            {
+               "key": "blue",
+               "doc_count": 2
+            },
+            {
+               "key": "green",
+               "doc_count": 2
+            }
+         ]
+      }
+   }
+}
+--------------------------------------------------
+<1> No search hits are returned because we used the `search_type=count` param
+<2> Our "colors" aggregation is returned as part of the "aggregations" field
+<3> The key to each bucket corresponds to a unique term found in the "color" field
+<4> The count of each bucket represents the number of documents with this color
+
+
+The response contains a list of buckets, each corresponding to a unique color
+(red, green, etc). Each bucket also includes a count of how many documents 
+"fell into" that particular bucket.  For example, there are four red cars.
+
+Before we move on, there are some important yet not immediately obvious things
+to point out.
+
+- The buckets were created dynamically.  Our application had no prior knowledge about
+how many colors in the index.  If you were to index a "silver" car next, a new
+"silver" bucket would automatically appear in the response.
+- The aggregations are operating on the search infrastructure, which means they
+are updated in near real-time just like search.  These aggregations can be piped
+directly into graphing libraries for near real-time dashboards
+- The aggregation is operating on all of the documents in your index at the moment.
+This can be changed, which we will talk about <here>.
+
+Voila!  Your first aggregation! 
+
+
+
+
+
+
+
+

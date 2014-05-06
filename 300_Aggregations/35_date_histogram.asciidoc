@@ -1,0 +1,168 @@
+
+=== Looking at time
+
+If search is the most popular activity in Elasticsearch, building date 
+histograms must be the second most popular.  Why would you want to use a date
+histogram?
+
+Imagine your data has a timestamp.  It doesn't matter what the data is -- Apache
+log events, stock buy/sell transaction dates, baseball game times
+-- anything with a timestamp can benefit from the date histogram.  When you have
+a timestamp, you often want to build metrics which are expressed _over time_.
+
+- How many cars sold each month this year?
+- What was the price of this stock for the last 12 hours?
+- What was the average latency of our website every hour in the last week?
+
+While regular histograms are often represented as bar charts, date histograms
+tend to be converted into line graphs representing time series.  Many 
+companies use Elasticsearch _solely_ for analytics over time-
+series data.  The `date_histogram` bucket is their bread and butter.
+
+The `date_histogram` bucket works very similar to the regular `histogram`.  Rather
+than building buckets based on a numeric field representing numeric ranges,
+it builds buckets based on a date.  Each bucket is therefore defined as a certain
+calendar size (e.g. `1 month` or `2.5 days`, etc).
+
+.Can a regular histogram work with dates?
+****
+Technically, yes.  A regular `histogram` bucket will work with dates.  However,
+it is not calendar-aware.  With the `date_histogram`, you can specify intervals
+such as `1 month`, which knows that February is shorter than December.
+
+The regular histogram will interpret dates as numbers, which means you must specify
+intervals in terms of milliseconds.  And the aggregation doesn't know about
+calendar intervals, which makes it largely useless for dates.
+****
+
+Our first example will build a simple line chart: how many cars were sold each month?
+
+[source,js]
+--------------------------------------------------
+GET /cars/transactions/_search?search_type=count
+{
+   "aggs": {
+      "sales": {
+         "date_histogram": {
+            "field": "sold",
+            "interval": "month", <1>
+            "format": "yyyy-MM-dd" <2>
+         }
+      }
+   }
+}
+--------------------------------------------------
+// SENSE: 300_Aggregations/35_date_histogram.json
+<1> The interval is requested in calendar terminology (e.g. one month per bucket)
+<2> We provide a date format so that bucket keys are pretty
+
+Pretty simple stuff.  Our query has a single aggregation, which builds a bucket
+per month.  This will give us the number of cars sold in each month.  An additional
+"format" parameter is provided so that the buckets have "pretty" keys.  Internally,
+dates are simply represented as a numeric value.  This tends to make UI designers
+grumpy, however, so a prettier format can be specified using common date formatting.
+
+The response is both expected and a little surprising:
+
+[source,js]
+--------------------------------------------------
+{
+   ...
+   "aggregations": {
+      "sales": {
+         "buckets": [
+            {
+               "key_as_string": "2014-01-01",
+               "key": 1388534400000,
+               "doc_count": 1
+            },
+            {
+               "key_as_string": "2014-02-01",
+               "key": 1391212800000,
+               "doc_count": 1
+            },
+            {
+               "key_as_string": "2014-05-01",
+               "key": 1398902400000,
+               "doc_count": 1
+            },
+            {
+               "key_as_string": "2014-07-01",
+               "key": 1404172800000,
+               "doc_count": 1
+            },
+            {
+               "key_as_string": "2014-08-01",
+               "key": 1406851200000,
+               "doc_count": 1
+            },
+            {
+               "key_as_string": "2014-10-01",
+               "key": 1412121600000,
+               "doc_count": 1
+            },
+            {
+               "key_as_string": "2014-11-01",
+               "key": 1414800000000,
+               "doc_count": 2
+            }
+         ]
+...
+}
+--------------------------------------------------
+
+The aggregation is represented in full.  As you can see, we have buckets
+which represent months, a count of docs in each month, and our pretty "key_as_string".
+
+==== Returning empty buckets
+
+Notice something odd?
+
+Yep, that's right.  We are missing months!  By default, the `date_histogram` 
+and (`histogram` too, for that matter) only returns buckets which have a non-zero
+document count.
+
+This means your histogram will be a minimal response.  Often, this is not the 
+behavior you actually want.  For many applications, you would like to dump the 
+response directly into a graphing library without doing any post-processing.
+
+There are two additional parameters we can set which will provide this behavior:
+
+[source,js]
+--------------------------------------------------
+GET /cars/transactions/_search?search_type=count
+{
+   "aggs": {
+      "sales": {
+         "date_histogram": {
+            "field": "sold",
+            "interval": "month",
+            "format": "yyyy-MM-dd",
+            "min_doc_count" : 0, <1>
+            "extended_bounds" : { <2>
+                "min" : "2014-01-01",
+                "max" : "2014-12-31"
+            }
+         }
+      }
+   }
+}
+--------------------------------------------------
+// SENSE: 300_Aggregations/35_date_histogram.json
+<1> This parameter forces empty buckets to be returned
+<2> While this parameter forces the entire year to be returned
+
+The two additional parameters will force the response to return all months in the
+year, regardless of their doc count.  The `min_doc_count` is very understandable:
+it forces buckets to be returned even if they are empty.
+
+The `extended_bounds` parameter requires a little explanation.  The `min_doc_count`
+parameter forces empty buckets to be returned, but by default Elasticsearch will
+only return buckets that are between the minimum and maximum value in your data.
+
+So if your data falls between April and July, you'll only have buckets representing
+those months (empty or otherwise).  To get the full year, we need to tell 
+Elasticsearch that we want buckets even if they fall _after_ the maximum value.
+
+The `extended_bounds` parameter does just that.  Once you add those two settings,
+you'll get a response that is easy to plug straight into your graphing libraries.

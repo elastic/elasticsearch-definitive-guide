@@ -1,0 +1,97 @@
+
+=== Histograms
+
+Aggregations really start to click once you see the various combinations of
+metrics and buckets.  For the rest of the chapter, we are going to focus
+on various analytics that we can wring out of our toy dataset.
+
+The `histogram` bucket is particularly useful.  Histograms are essentially
+bar charts, and if you've ever built a report or analytics dashboard, you
+undoubtedly had a few bar charts in it.
+
+The histogram works by specifying an interval.  If we were histogramming sale
+prices, you might specify an interval of 20,000.  This would create a new bucket
+every $20,000.  Documents are then sorted into buckets.  Just like the `terms` 
+bucket, you are free to nest more buckets and metrics inside.
+
+Since you've already seen a few examples of aggregations, we'll go straight to a
+nested example.  For our dashboard, we want a bar chart of car sale prices, but we
+also want to know the top selling make per price range.  This is easily accomplished
+using a `terms` bucket nested inside the `histogram`:
+
+[source,js]
+--------------------------------------------------
+GET /cars/transactions/_search?search_type=count
+{
+   "aggs":{
+      "price":{
+         "histogram":{
+            "field":"price",    <1>
+            "interval":20000    <1>
+         },
+         "aggs":{
+            "make":{
+               "terms":{
+                  "field":"make",   <2>
+                  "size":1
+               }
+            }
+         }
+      }
+   }
+}
+--------------------------------------------------
+// SENSE: 300_Aggregations/30_histogram.json
+<1> The `histogram` bucket requires two parameters: a numeric field, and an 
+interval which defines bucket size
+<2> A `terms` bucket is nested inside each price range, which will show us the
+top make per price range
+
+As you can see, our query is built around the "price" aggregation.  We have
+specified a `histogram` bucket.  This bucket requires a numeric field to calculate
+buckets on, and an interval size.  The interval defines how "wide" each bucket
+is.  An interval of 20000 means we will have ranges [0-20000, 20000-40000, etc]
+
+Next, we define a nested bucket inside of the histogram.  This is a `terms` bucket
+over the "make" field.  There is also a new "size" parameter, which defines how
+many terms we want to generate.  A size of one means we only want the top make
+for each price range (e.g. the make that has the highest doc count).
+
+And here is the response (truncated):
+
+[source,js]
+--------------------------------------------------
+{
+...
+   "aggregations": {
+      "price": {
+         "buckets": [
+            {
+               "key": 0,
+               "doc_count": 3,
+               "make": {
+                  "buckets": [
+                     {
+                        "key": "honda",
+                        "doc_count": 1
+                     }
+                  ]
+               }
+            },
+            {
+               "key": 20000,
+               "doc_count": 4,
+               "make": {
+                  "buckets": [
+                     {
+                        "key": "ford",
+                        "doc_count": 2
+                     }
+                  ]
+               }
+            },
+...
+}
+--------------------------------------------------
+
+

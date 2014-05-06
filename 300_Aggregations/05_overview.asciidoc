@@ -1,0 +1,35 @@
+
+=== Elasticsearch offers more than just search
+
+Up until this point, the this book has been dedicated to search.  The following
+chapters deal with Aggregations, an entirely different set of functionality
+built into Elasticsearch.
+
+With search, we have a query and we wish to find a subset of documents which
+match the query.  We are looking for the proverbial needle(s) in the 
+haystack.
+
+Aggregations take a step back.  Instead of looking for individual documents, 
+we want to analyze and summarize our complete set of data.  
+
+- How many needles are in the haystack?  
+- What is the average length of the needles?  
+- What is the median length of needle broken down by manufacturer?
+- How many needles were added to the haystack each month?
+
+Aggregations allow us to ask sophisticated questions of our data.  And yet, while
+the functionality is completely different from search, it leverages the 
+same data-structures.  This means aggregations execute quickly and are
+_near-realtime_, just like search.
+
+This is extremely powerful for reporting and dashboards.  Instead of performing
+nightly "rollups" of your data (_e.g. large, batch SQL joins which
+are run nightly on a cron job because they are so slow_), you can slice and dice
+your data in realtime.
+
+Finally, aggregations operate alongside search requests, which means you can
+both search/filter documents _and_ perform analytics at the same time, on the
+same data, in a single request.
+
+Aggregations are so powerful that many companies have built large Elasticsearch
+clusters solely for aggregations.
