@@ -1,10 +1,10 @@
 === Installing Elasticsearch
 
-The easiest way to understand what Elasticsearch can do for you is to
+The easiest way to understand Elasticsearch is to
 play with it, so let's get started!
 
 The only requirement for installing Elasticsearch is a recent version of Java.
-Preferably, you should install the latest version of the official Java
+Ideally, you should use the latest version of Java
 from http://www.java.com[www.java.com].
 
 You can download the latest version of Elasticsearch from
@@ -35,8 +35,7 @@ Elasticsearch directly from your browser.
 Many of the code examples in this book include a ``View in Sense'' link. When
 clicked, it will open up a working example of the code in the Sense console.
 You do not have to install Marvel, but it will make this book much more
-interactive by allowing you to  experiment with the code samples on your local
-Elasticsearch cluster.
+interactive by allowing you to  experiment with the code samples.
 
 Marvel is available as a plugin. To download and install it, run this command
 in the Elasticsearch directory:
@@ -73,7 +72,7 @@ curl 'http://localhost:9200/?pretty'
 --------------------------------------------------
 
 
-You should see a response like this:
+You should see a response similar to this:
 
 [source,js]
 --------------------------------------------------

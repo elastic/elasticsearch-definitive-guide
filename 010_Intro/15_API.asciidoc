@@ -1,11 +1,11 @@
 === Talking to Elasticsearch
 
-How you talk to Elasticsearch depends on whether you are using Java or not.
+How you talk to Elasticsearch depends on whether you are using Java.
 
 ==== Java API
 
-If you are using Java, then Elasticsearch comes with two built-in clients
-which you can use in your code:
+If you are using Java, then you can use either of the two built-in clients
+that come with Elasticsearch:
 
 Node client::
     The node client joins a local cluster as a _non-data node_. In other
@@ -20,12 +20,12 @@ Transport client::
 
 Both Java clients talk to the cluster over *port 9300*, using the native
 Elasticsearch _transport_ protocol.  The nodes in the cluster also communicate
-with each other over port 9300. If this port is not open, then your nodes will
-not be able to form a cluster.
+with each other over port 9300. If this port is not open on a node, then the node will
+not be able to join a cluster.
 
 [TIP]
 ====
-The Java client must be from the same version of Elasticsearch as the nodes,
+The Java client software must be from the same version of Elasticsearch as the nodes,
 otherwise they may not be able to understand each other.
 ====
 
@@ -34,7 +34,7 @@ of the http://www.elasticsearch.org/guide/[Guide].
 
 ==== RESTful API with JSON over HTTP
 
-All other languages can communicate with Elasticsearch over *port 9200* using
+All languages can communicate with Elasticsearch over *port 9200* using
 a RESTful API, accessible with your favorite web client. In fact, as you have
 seen above, you can even talk to Elasticsearch from the command line using the
 `curl` command.
@@ -47,7 +47,7 @@ found in the http://www.elasticsearch.org/guide/[Guide].
 
 **************************************************
 
-A request to Elasticsearch consists of the same parts as any HTTP request. For
+A request to Elasticsearch looks the same as any HTTP request. For
 instance, to count the number of documents in the cluster, we could use:
 
 [source,js]
