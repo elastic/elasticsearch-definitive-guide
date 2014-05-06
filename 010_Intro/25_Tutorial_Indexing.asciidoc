@@ -23,7 +23,7 @@ business requirements:
 * Retrieve the full details of any employee.
 * Allow structured search, such as finding employees over the age of 30.
 * Allow simple full text search and more complex _phrase_ searches.
-* Returned highlighted search _snippets_ from the text in the
+* Return highlighted search _snippets_ from the text in the
   matching documents.
 * Enable management to build analytic dashboards over the data
 
@@ -79,11 +79,11 @@ We discuss inverted indexes in more detail in <<inverted-index>>.
 
 So for our employee directory, we are going to do the following:
 
-*  Index a _document_ per employee, which contains all the details of a single
+*  Index a _document_ which contains all the details of a single
    employee.
 *  Each document will be of _type_ `employee`.
 * That type will live in the `megacorp` _index_
-* That index will reside within our Elasticsearch cluster
+* That index will reside in our Elasticsearch cluster
 
 In practice, this is very easy (even though it looks like a lot of steps).  We
 can perform all of those actions in a single command:
@@ -114,7 +114,7 @@ this employee.  His name is ``John Smith'', he's 25 and enjoys rock climbing.
 
 Simple!  There was no need to perform any administrative tasks first, like
 creating an index or specifying the type of data that each field contains. We
-could just index a document directly.  Elasticsearch ships with defaults for
+could just index a document.  Elasticsearch ships with defaults for
 everything, so all the necessary administration tasks were taken care of in
 the background, using default values.
 

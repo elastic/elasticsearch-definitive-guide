@@ -1,10 +1,10 @@
 === Document oriented
 
-Objects in an application are seldom just a simple list of keys and values.
-More often than not they are complex data structures which may contain dates,
+Applications often deal with things other than just simple lists of keys and values.
+More often than not applications maintain complex data structures which may contain dates,
 geo-locations, objects, or arrays of values.
 
-Sooner or later you're going to want to store these objects in a database.
+Sooner or later you're going to want your application to store these things in a database.
 Trying to do this with the rows and columns of a relational database is the
 equivalent of trying to squeeze your rich expressive objects into a very big
 spreadsheet: you have to flatten the object to fit the table schema -- usually
@@ -43,8 +43,8 @@ Consider this JSON document which represents a user object:
 }
 --------------------------------------------------
 
-Although the original `user` object was complex, the structure and meaning of
-the object has been retained in the JSON version. Converting an object to JSON
+Although the original `user` object was complex, the JSON version retains the structure and meaning of
+the object. Converting an object to JSON
 for indexing in Elasticsearch is much simpler than the equivalent process for
 a flat table structure.
 
@@ -52,10 +52,10 @@ a flat table structure.
 **************************************************
 
 Almost all languages have modules which will convert arbitrary  data
-structures or objects into JSON for you, but the details are specific  to each
+structures or objects into JSON, but the details are specific  to each
 language. Look for modules which handle JSON __ ``serialization'' __ or __
 ``marshalling'' __. http://www.elasticsearch.org/guide[The official
-Elasticsearch clients] all handle conversion to and from JSON for you
+Elasticsearch clients] all handle conversion to and from JSON
 automatically.
 
 **************************************************

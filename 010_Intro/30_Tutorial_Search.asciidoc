@@ -1,11 +1,11 @@
 === Retrieving a document
 
-Now that we have some data stored in Elasticsearch, we can get to work on the
+Now that we have some documents stored in Elasticsearch, we can get to work on the
 business requirements for this application.  The first requirement is the
 ability to retrieve individual employee data.
 
 This is very easy in Elasticsearch.  We simply execute an HTTP GET request and
-specify the ``address'' of the document -- the index, type and id.  Using
+specify the ``address'' of the document -- its index, type and id.  Using
 those three pieces of information, we can return the original JSON document:
 
 [source,js]
@@ -31,8 +31,8 @@ And the response will be John Smith's original JSON document:
 
 In the same way that we changed the HTTP verb from `PUT` to `GET` in order to
 retrieve the document, we could use the `DELETE` verb to delete the  document,
-and the `HEAD` verb to check whether or not the document exists. To replace an
-existing document with an updated version, we just `PUT` it again.
+and the `HEAD` verb to check whether the document exists. To replace an
+existing document with an updated version, just `PUT` it again.
 
 ****
 
@@ -110,13 +110,13 @@ a search will return the top 10 results.
 --------------------------------------------------
 
 NOTE: The response not only tells us which documents matched, but it also
-includes the whole document itself: all of the information that we need to
+contains all the matched documents: all of the information that we need to
 display the search results to the user.
 
 Next, let's try searching for employees who have ``Smith'' in their last name.
 To do this, we'll use a ``lightweight'' search method which is easy to use
 from the command line. This method is often referred to as a _query string_
-search, since we pass the search as a URL query string parameter:
+search, since we pass the string we're looking for as a URL query string parameter:
 
 [source,js]
 --------------------------------------------------
@@ -124,7 +124,7 @@ GET /megacorp/employee/_search?q=last_name:Smith
 --------------------------------------------------
 // SENSE: 010_Intro/30_Simple_search.json
 
-We use the same `_search` endpoint in the path, and we add the query itself in
+We use the same `_search` endpoint in the path as in the previous search, and we add the query itself in
 the `q=` parameter. The results that come back show all Smith's:
 
 [source,js]
@@ -167,8 +167,8 @@ it has its limitations (see <<search-lite>>). Elasticsearch provides a rich,
 flexible, query language called the _Query DSL_, which allows us to build
 much more complicated, robust queries.
 
-The DSL (_Domain Specific Language_) is specified using a JSON request body.
-We can represent the previous search for all Smith's like so:
+The Query DSL (_Domain Specific Language_) is specified using a JSON request body.
+We can represent the previous search for all Smith's in the Query DSL like so:
 
 
 [source,js]
@@ -186,7 +186,7 @@ GET /megacorp/employee/_search
 
 This will return the same results as the previous query.  You can see that a
 number of things have changed.  For one, we are no longer using _query string_
-parameters, but instead a request body.  This request body is built with JSON,
+parameters, but instead a request body.  This request body contains JSON,
 and uses a `match` query (one of several types of queries, which we will learn
 about later).
 
@@ -316,7 +316,7 @@ that is: by how well each document matched the query.  The first and highest
 scoring result is obvious: John Smith's `about` field clearly says ``rock
 climbing'' in it.
 
-But why did Jane Smith, come back as a result?  The reason her document was
+But why did Jane Smith come back as a result?  The reason her document was
 returned is because the word ``rock'' was mentioned in her `about` field.
 Because only ``rock'' was mentioned, and not ``climbing'', her `_score` is
 lower than John's.
@@ -403,7 +403,7 @@ GET /megacorp/employee/_search
 --------------------------------------------------
 // SENSE: 010_Intro/30_Query_DSL.json
 
-When we run this query, the same hit is returned as before, but now we get a
+When we run this query, the same response is returned as before, but now we get a
 new section in the response called `highlight`.  This contains a snippet of
 text from the `about` field with the matching words wrapped in `<em></em>`
 HTML tags:

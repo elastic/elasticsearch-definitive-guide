@@ -1,11 +1,11 @@
 === Talking to Elasticsearch
 
-How you talk to Elasticsearch depends on whether you are using Java or not.
+How you talk to Elasticsearch depends on whether you are using Java.
 
 ==== Java API
 
-If you are using Java, then Elasticsearch comes with two built-in clients
-which you can use in your code:
+If you are using Java, then you can use either of the two built-in clients
+that come with Elasticsearch:
 
 Node client::
     The node client joins a local cluster as a _non-data node_. In other
@@ -47,7 +47,7 @@ found in the http://www.elasticsearch.org/guide/[Guide].
 
 **************************************************
 
-A request to Elasticsearch is constructed the same way as any HTTP request. For
+A request to Elasticsearch looks the same as any HTTP request. For
 instance, to count the number of documents in the cluster, we could use:
 
 [source,js]
