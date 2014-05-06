@@ -25,7 +25,7 @@ business requirements:
 * Allow simple full text search and more complex _phrase_ searches.
 * Returned highlighted search _snippets_ from the text in the
   matching documents.
-* Enable management to build analytic dashboards over the data
+* Enable management to build analytic dashboards over the data.
 
 === Indexing employee documents
 
@@ -82,8 +82,8 @@ So for our employee directory, we are going to do the following:
 *  Index a _document_ per employee, which contains all the details of a single
    employee.
 *  Each document will be of _type_ `employee`.
-* That type will live in the `megacorp` _index_
-* That index will reside within our Elasticsearch cluster
+* That type will live in the `megacorp` _index_.
+* That index will reside within our Elasticsearch cluster.
 
 In practice, this is very easy (even though it looks like a lot of steps).  We
 can perform all of those actions in a single command:
