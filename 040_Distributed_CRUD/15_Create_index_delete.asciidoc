@@ -68,7 +68,7 @@ the index settings, not the number of replicas that are currently active.  If
 you have specified that an index should have 3 replicas then a quorum would
 be:
 
-    int( (primary + 3 replicas)) / 2) + 1 = 3
+    int( (primary + 3 replicas) / 2 ) + 1 = 3
 
 But if you only start 2 nodes, then there will be insufficient active shard 
 copies to satisfy the quorum and you will be unable to index or delete any
