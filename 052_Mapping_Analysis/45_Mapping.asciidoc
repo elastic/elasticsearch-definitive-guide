@@ -55,7 +55,7 @@ of this chapter>> we already retrieved the mapping for type `tweet` in index
 
 [source,js]
 --------------------------------------------------
-GET /gb/_mapping/tweet
+GET /gb/tweet/_mapping
 --------------------------------------------------
 
 This shows us the mapping for the fields (called _properties_) that
