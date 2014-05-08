@@ -65,6 +65,10 @@ The `standard` tokenizer in the above example would emit each character
 as a separate token: `向`, `日`, `葵`, while the `icu_tokenizer` would
 emit the single token `向日葵` (sunflower).
 
+Another difference between the `standard` tokenizer and the `icu_tokenizer` is
+that the latter will break a word containing characters written in different
+scripts (e.g. `βeta`) into separate tokens -- `β`, `eta` -- while the
+former will emit the word as a single token: `βeta`.
 
 
 
