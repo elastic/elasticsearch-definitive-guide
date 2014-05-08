@@ -14,16 +14,24 @@ GET /megacorp/employee/1
 --------------------------------------------------
 // SENSE: 010_Intro/30_Get.json
 
-And the response will be John Smith's original JSON document:
+And the response contains some metadata about the document, and John Smith's 
+original JSON document as the `_source` field:
 
 [source,js]
 --------------------------------------------------
 {
-    "first_name" :  "John",
-    "last_name" :   "Smith",
-    "age" :         25,
-    "about" :       "I love to go rock climbing",
-    "interests":  [ "sports", "music" ]
+  "_index" :   "megacorp",
+  "_type" :    "employee",
+  "_id" :      "1",
+  "_version" : 1,
+  "found" :    true,
+  "_source" :  {
+      "first_name" :  "John",
+      "last_name" :   "Smith",
+      "age" :         25,
+      "about" :       "I love to go rock climbing",
+      "interests":  [ "sports", "music" ]
+  }
 }
 --------------------------------------------------
 
