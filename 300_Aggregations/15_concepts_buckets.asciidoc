@@ -29,8 +29,8 @@ inside the bucket and the aggregation continues.
 
 Buckets can also be nested inside of other buckets, giving you a hierarchy or
 conditional partitioning scheme.  For example, "Cincinnati" would be placed inside
-the "Ohio" state bucket, and "Ohio" would be placed inside the "USA" country
-bucket.
+the "Ohio" state bucket, and _entire_ "Ohio" bucket would be placed inside the 
+"USA" country bucket.
 
 There are a variety of different buckets in Elasticsearch, which allow you to
 partition documents in many different ways (histograms, ranges, unique terms, 

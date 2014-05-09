@@ -21,8 +21,8 @@ series data.  The `date_histogram` bucket is their bread and butter.
 
 The `date_histogram` bucket works very similar to the regular `histogram`.  Rather
 than building buckets based on a numeric field representing numeric ranges,
-it builds buckets based on a date.  Each bucket is therefore defined as a certain
-calendar size (e.g. `1 month` or `2.5 days`, etc).
+it builds buckets based on a time ranges.  Each bucket is therefore defined as a 
+certain calendar size (e.g. `1 month` or `2.5 days`, etc).
 
 .Can a regular histogram work with dates?
 ****
@@ -116,7 +116,7 @@ which represent months, a count of docs in each month, and our pretty "key_as_st
 
 ==== Returning empty buckets
 
-Notice something odd?
+Notice something odd about that last response?
 
 Yep, that's right.  We are missing months!  By default, the `date_histogram` 
 and (`histogram` too, for that matter) only returns buckets which have a non-zero
@@ -166,3 +166,104 @@ Elasticsearch that we want buckets even if they fall _after_ the maximum value.
 
 The `extended_bounds` parameter does just that.  Once you add those two settings,
 you'll get a response that is easy to plug straight into your graphing libraries.
+
+==== Extended Example
+
+Just like we've seen a dozen times already, buckets can be nested in buckets for
+more sophisticated behavior.  For illustration, we'll build an aggregation
+which shows the average price of the top-selling car each month.
+
+
+[source,js]
+--------------------------------------------------
+GET /cars/transactions/_search?search_type=count
+{
+   "aggs": {
+      "sales": {
+         "date_histogram": {
+            "field": "sold",
+            "interval": "month",
+            "format": "yyyy-MM-dd",
+            "min_doc_count" : 0,
+            "extended_bounds" : {
+                "min" : "2014-01-01",
+                "max" : "2014-12-31"
+            }
+         },
+         "aggs": {
+            "top_selling": {
+               "terms": {
+                  "field": "make",
+                  "size": 1
+               },
+               "aggs": {
+                  "avg_price": {
+                     "avg": { "field": "price" }
+                  }
+               }
+            }
+         }
+      }
+   }
+}
+--------------------------------------------------
+// SENSE: 300_Aggregations/35_date_histogram.json
+
+Which returns a (heavily truncated) response:
+
+[source,js]
+--------------------------------------------------
+{
+...
+   "aggregations": {
+      "sales": {
+         "buckets": [
+            {
+               "key_as_string": "2014-01-01",
+               "key": 1388534400000,
+               "doc_count": 1,
+               "top_selling": {
+                  "buckets": [
+                     {
+                        "key": "bmw",
+                        "doc_count": 1,
+                        "avg_price": {
+                           "value": 80000
+                        }
+                     }
+                  ]
+               }
+            },
+            {
+               "key_as_string": "2014-02-01",
+               "key": 1391212800000,
+               "doc_count": 1,
+               "top_selling": {
+                  "buckets": [
+                     {
+                        "key": "ford",
+                        "doc_count": 1,
+                        "avg_price": {
+                           "value": 25000
+                        }
+                     }
+                  ]
+               }
+            },
+            {
+               "key_as_string": "2014-03-01",
+               "key": 1393632000000,
+               "doc_count": 0,
+               "top_selling": {
+                  "buckets": []<1>
+               }
+            }
+...
+}
+--------------------------------------------------
+<1> Empty bucket because no cars were sold in March
+
+As you would expect, we see a list of buckets corresponding to each month,
+including months that had no car sales (e.g. March).  Each month
+then has bucket corresponding to the top selling make, and that
+bucket contains a metric which calculates the average price for that month.
