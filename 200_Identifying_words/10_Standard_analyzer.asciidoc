@@ -3,7 +3,7 @@
 
 The `standard` analyzer is used by default for any full-text `analyzed` string
 field.  If we were to ``reimplement'' the  `standard` analyzer as a
-<<custom-analyzer,`custom` analyzer>>, it would be defined as follows:
+<<custom-analyzers,`custom` analyzer>>, it would be defined as follows:
 
 [source,js]
 --------------------------------------------------
