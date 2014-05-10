@@ -1,13 +1,14 @@
-[[token-normalization]]
-== Normalizing tokens
+include::210_Token_normalization/00_Intro.asciidoc[]
 
-lowercase
-ascii_folding
+include::210_Token_normalization/10_Lowercasing.asciidoc[]
 
- - normalization
- - knfc_cf
+include::210_Token_normalization/20_Removing_diacritics.asciidoc[]
 
-language specific
+include::210_Token_normalization/30_Unicode_world.asciidoc[]
 
- - collations / sorting
- - truncate?
+include::210_Token_normalization/40_Case_folding.asciidoc[]
+
+include::210_Token_normalization/50_Character_folding.asciidoc[]
+
+include::210_Token_normalization/60_Sorting_and_collations.asciidoc[]
+

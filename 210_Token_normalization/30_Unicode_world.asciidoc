@@ -1,0 +1,90 @@
+[[unicode-normalization]]
+=== Living in a Unicode world
+
+When Elasticsearch compares one token with another, it does so at the byte
+level. In other words, for two tokens to be considered the same, they need to
+consist of exactly the same bytes.  Unicode, however, allows you to write the
+same letter in different ways.
+
+For instance, what's the difference between ``&#x00e9;'' and ``e&#769;''? It
+depends on who you ask... According to Elasticsearch, the first one consists of
+the two bytes `0xC3 0xA9` and the second one consists of three bytes: `0x65
+0xCC 0x81`.
+
+According to Unicode, the differences in how they are represented as bytes is
+irrelevant and they are the same letter. The first one is the single letter
+`é` while the second is a plain `e` combined with an acute accent +´+.
+
+If you get your data from more than one source, it may happen that you have
+the same  letters encoded in different ways, which may results in one form of
+++déjà++ not matching another!
+
+Fortunately, a solution is at hand.  There are four Unicode _normalization
+forms_, all of which convert Unicode characters into a standard format, making
+all characters comparable at a byte level: `nfc`, `nfd`, `nfkc`, `nfkd`.
+
+.Unicode normalization forms
+********************************************
+
+The _composed_ forms -- `nfc` and `nfkc` -- represent characters in the fewest
+bytes possible.  So `é` is represented as the single letter `é`.  The
+_decomposed_ forms -- `nfd` and `nfkd` -- represent characters by their
+constituent parts, that is `e` + `´`.
+
+The _canonical_ forms  -- `nfc` and `nfd` -- represent characters like `ﬃ` as
+a single character, while the _compatibility_ forms -- `nfkc` and `nfkd` --
+break down these composed characters into a simpler multi-letter equivalent:
+`f` + `f` + `i`.
+
+********************************************
+
+It doesn't really matter which normalization form you choose, as long as all
+of your text is in the same form.  That way, the same tokens consist of the
+same bytes.  That said, the _compatibility_ forms allow you to compare
+ligatures like `ﬃ` with their simpler representation `ffi`.
+
+You can use the `icu_normalizer` token filter to ensure that all of your
+tokens are in the same form:
+
+[source,js]
+--------------------------------------------------
+PUT /my_index
+{
+  "settings": {
+    "analysis": {
+      "filter": {
+        "nfkc_normalizer": { <1>
+          "type": "icu_normalizer",
+          "name": "nfkc"
+        }
+      },
+      "analyzer": {
+        "my_normalizer": {
+          "tokenizer": "icu_tokenizer",
+          "filter":  [ "nfkc_normalizer" ]
+        }
+      }
+    }
+  }
+}
+--------------------------------------------------
+<1> Normalize all tokens into the `nfkc` normalization form.
+
+.When to normalize
+**************************************************
+
+Besides the `icu_normalizer` token filter mentioned above, there is also an
+`icu_normalizer` *character* filter, which does the same job as the token
+filter, but it does it before the text reaches the tokenizer.  When using the
+`standard` tokenizer or `icu_tokenizer`, this doesn't really matter.  These
+tokenizers know how to deal with all forms of Unicode correctly.
+
+However, if you plan on using a different tokenizer, such as the `ngram`,
+`edge_ngram` or `pattern` tokenizers, then it woud make sense to use the
+`icu_normalizer` character filter in preference to the token filter.
+
+**************************************************
+
+Usually, though, not only will you want to normalize the byte order of tokens,
+but also to lowercase them. This can be done with the `icu_normalizer` using
+the custom normalization form `nfkc_cf`, which we discuss in the next section.

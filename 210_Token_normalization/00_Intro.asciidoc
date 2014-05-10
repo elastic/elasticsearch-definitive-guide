@@ -1,0 +1,15 @@
+[[token-normalization]]
+== Normalizing tokens
+
+Breaking text up into tokens is only half the job. In order to make those
+tokens more easily searchable, they need to go through some _normalization_
+process to remove insignificant differences between otherwise identical words,
+such as uppercase vs lowercase.  Perhaps we also need to remove significant
+differences, to make `esta`, `ésta` and `está` all searchable as the same
+word.  Would you search for `déjà vu`, or just for `deja vu`?
+
+This is the job of the token filters, which receive a stream of tokens from
+the tokenizer.  You can have multiple token filters, each doing its particular
+job.  Each receives the new token stream as output by the token filter before
+it.
+
