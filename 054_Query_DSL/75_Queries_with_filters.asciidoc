@@ -1,7 +1,7 @@
 === Combining queries with filters
 
-Queries can be used in _query context_ and filters can be used
-in _filter context_.  Throughout the Elasticsearch API you will see parameters
+Queries can be used in _query contexts_ and filters can be used
+in _filter contexts_.  Throughout the Elasticsearch API you will see parameters
 with `query` or `filter` in the name.  These
 expect a single argument containing either a single query or filter clause
 respectively. In other words, they establish the
