@@ -82,7 +82,8 @@ The `english` analyzer would produce the following:
 +
     set, shape, semi, transpar, call, set_tran, 5
 +
-Note how `"transparent"` and `"calling"` have been stemmed to their root form.
+Note how `"transparent"`, `"calling"`, and `"set_trans"` have been stemmed to
+their root form.
 
 ==== When analyzers are used
 
