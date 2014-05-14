@@ -75,10 +75,14 @@ directly through to the `bool` query, making these two queries equivalent:
       { "term": { "title": "fox"   }},
       { "term": { "title": "quick" }}
     ],
-    "minimum_should_match": "75%"
+    "minimum_should_match": 2 <1>
   }
 }
 --------------------------------------------------
+<1> Because there are only three clauses, the `minimum_should_match`
+    value of `75%` in the `match` query is rounded down to `2` --
+    at least 2 out of the 3 `should`  clauses must match.
+
 
 Of course, we would normally write these types of queries using the `match`
 query, but understanding how the `match` query works internally lets you take
