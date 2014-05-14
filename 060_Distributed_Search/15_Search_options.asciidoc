@@ -44,7 +44,7 @@ The `timeout` parameter tells the coordinating node how long it should wait
 before giving up and just returning the results that it already has. It can be
 better to return some results than none at all.
 
-The response to a search request will indicate whether the search timed out
+The response to a search request will indicate whether the search timed out and
 how many shards responded successfully:
 
 [source,js]
