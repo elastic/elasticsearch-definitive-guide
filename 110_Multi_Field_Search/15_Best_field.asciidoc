@@ -71,14 +71,15 @@ And we find that this query actually gives Document 1 the higher score:
 To understand why, think about how the `bool` query calculates its score:
 
 * First, it runs both of the queries in the `should` clause
-* then it adds their scores together
-* and divides the total by the number of clauses, ie two.
+* then it adds their scores together,
+* multiplies the total by the number of matching clauses,
+* and divides the result by the total number of clauses, ie two.
 
 Document 1 contains the word `"brown"` in both fields, so both `match` clauses
 are successful and have a score.  Document 2 contains both `"brown"` and
 `"fox"` in the `body` field but neither word in the `title` field. The high
 score from the `body` query is added to the zero score from the `title` query,
-and divided by two, resulting in a lower overall score than for Document 1.
+and multiplied by ½, resulting in a lower overall score than for Document 1.
 
 In this example, the `title` and `body` fields are competing with each other.
 We want to find the single *best-matching* field.
