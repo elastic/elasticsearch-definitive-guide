@@ -1,18 +1,20 @@
-
+// new chapter
 === Building Bar Charts
 
 One of the exciting aspects of aggregations are how easily they are converted
 into charts and graphs.  For the rest of the chapter, we are going to focus
-on various analytics that we can wring out of our toy dataset.  We will also 
+on various analytics that we can wring out of our toy dataset.  We will also
 demonstrate the different types of charts aggregations can power.
 
 The `histogram` bucket is particularly useful.  Histograms are essentially
 bar charts, and if you've ever built a report or analytics dashboard, you
 undoubtedly had a few bar charts in it.
 
+// Perhaps "demonstrate" that a car of 28,000 gets dropped into the "20,000" bucket,while a car of 15,000 gets dropped into the "0" bucket
+// Delete "Just like the ...."
 The histogram works by specifying an interval.  If we were histogram'ing sale
 prices, you might specify an interval of 20,000.  This would create a new bucket
-every $20,000.  Documents are then sorted into buckets.  Just like the `terms` 
+every $20,000.  Documents are then sorted into buckets.  Just like the `terms`
 bucket, you are free to nest more buckets and metrics inside.
 
 Since you've already seen a few examples of aggregations, we'll go straight to a
@@ -43,11 +45,13 @@ GET /cars/transactions/_search?search_type=count
 }
 --------------------------------------------------
 // SENSE: 300_Aggregations/30_histogram.json
-<1> The `histogram` bucket requires two parameters: a numeric field, and an 
-interval which defines bucket size
+<1> The `histogram` bucket requires two parameters: a numeric field, and an
+interval which defines the bucket size
+// Mention use of "size" to get back just the top result?
 <2> A `terms` bucket is nested inside each price range, which will show us the
 top make per price range
 
+// Make the point that the upper limit is exclusive
 As you can see, our query is built around the "price" aggregation, which contains
 a `histogram` bucket.  This bucket requires a numeric field to calculate
 buckets on, and an interval size.  The interval defines how "wide" each bucket

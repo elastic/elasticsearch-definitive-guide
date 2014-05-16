@@ -1,7 +1,7 @@
 
 === Looking at time
 
-If search is the most popular activity in Elasticsearch, building date 
+If search is the most popular activity in Elasticsearch, building date
 histograms must be the second most popular.  Why would you want to use a date
 histogram?
 
@@ -15,15 +15,16 @@ a timestamp, you often want to build metrics which are expressed _over time_.
 - What was the average latency of our website every hour in the last week?
 
 While regular histograms are often represented as bar charts, date histograms
-tend to be converted into line graphs representing time series.  Many 
+tend to be converted into line graphs representing time series.  Many
 companies use Elasticsearch _solely_ for analytics over time-
 series data.  The `date_histogram` bucket is their bread and butter.
 
 The `date_histogram` bucket works very similar to the regular `histogram`.  Rather
 than building buckets based on a numeric field representing numeric ranges,
-it builds buckets based on a time ranges.  Each bucket is therefore defined as a 
+it builds buckets based on a time ranges.  Each bucket is therefore defined as a
 certain calendar size (e.g. `1 month` or `2.5 days`, etc).
 
+// Mention how you can display results in the appropriate time zone for each user
 .Can a regular histogram work with dates?
 ****
 Technically, yes.  A regular `histogram` bucket will work with dates.  However,
@@ -54,6 +55,7 @@ GET /cars/transactions/_search?search_type=count
 --------------------------------------------------
 // SENSE: 300_Aggregations/35_date_histogram.json
 <1> The interval is requested in calendar terminology (e.g. one month per bucket)
+// "pretty"-> "readable by humans". mention that otherwise get back ms-since-epoch?
 <2> We provide a date format so that bucket keys are pretty
 
 Pretty simple stuff.  Our query has a single aggregation, which builds a bucket
@@ -116,14 +118,16 @@ which represent months, a count of docs in each month, and our pretty "key_as_st
 
 ==== Returning empty buckets
 
+// Nice. I didn't :)
 Notice something odd about that last response?
 
-Yep, that's right.  We are missing months!  By default, the `date_histogram` 
+Yep, that's right.  We are missing months!  By default, the `date_histogram`
 and (`histogram` too, for that matter) only returns buckets which have a non-zero
 document count.
 
-This means your histogram will be a minimal response.  Often, this is not the 
-behavior you actually want.  For many applications, you would like to dump the 
+// Note: most graphing libraries handle missing intervals correctly
+This means your histogram will be a minimal response.  Often, this is not the
+behavior you actually want.  For many applications, you would like to dump the
 response directly into a graphing library without doing any post-processing.
 
 There are two additional parameters we can set which will provide this behavior:
@@ -160,9 +164,10 @@ The `extended_bounds` parameter requires a little explanation.  The `min_doc_cou
 parameter forces empty buckets to be returned, but by default Elasticsearch will
 only return buckets that are between the minimum and maximum value in your data.
 
-So if your data falls between April and July, you'll only have buckets representing
-those months (empty or otherwise).  To get the full year, we need to tell 
-Elasticsearch that we want buckets even if they fall _after_ the maximum value.
+So if your data falls between April and July, you'll only have buckets
+representing those months (empty or otherwise).  To get the full year, we need
+to tell  Elasticsearch that we want buckets even if they fall _before_ the
+minimum value or _after_ the maximum value.
 
 The `extended_bounds` parameter does just that.  Once you add those two settings,
 you'll get a response that is easy to plug straight into your graphing libraries.

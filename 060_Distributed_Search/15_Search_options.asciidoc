@@ -82,6 +82,7 @@ GET /_search?routing=user_1,user2
 This technique comes in useful when designing very large search systems and we
 discuss it in detail in <<scale>>.
 
+[[search-type]]
 ==== `search_type`
 
 While `query_then_fetch` is the default search type, other search types can

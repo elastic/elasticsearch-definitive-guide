@@ -1,35 +1,44 @@
 
 === Elasticsearch offers more than just search
 
+// "the following chapters"... obvious. just delete the 2nd sentence, and merge with next para
 Up until this point, the this book has been dedicated to search.  The following
 chapters deal with Aggregations, an entirely different set of functionality
 built into Elasticsearch.
 
 With search, we have a query and we wish to find a subset of documents which
-match the query.  We are looking for the proverbial needle(s) in the 
+match the query.  We are looking for the proverbial needle(s) in the
 haystack.
 
-Aggregations take a step back.  Instead of looking for individual documents, 
-we want to analyze and summarize our complete set of data.  
+// perhaps "zoom out to get an overview"?
+// something about "showing users the data that exists in your index, leading them to the right results"?
+Aggregations take a step back.  Instead of looking for individual documents,
+we want to analyze and summarize our complete set of data.
 
-- How many needles are in the haystack?  
-- What is the average length of the needles?  
+// Popular manufacturers? Unusual clumps of needles in the haystack?
+- How many needles are in the haystack?
+- What is the average length of the needles?
 - What is the median length of needle broken down by manufacturer?
 - How many needles were added to the haystack each month?
 
 Aggregations allow us to ask sophisticated questions of our data.  And yet, while
-the functionality is completely different from search, it leverages the 
+the functionality is completely different from search, it leverages the
 same data-structures.  This means aggregations execute quickly and are
 _near-realtime_, just like search.
 
+// perhaps hadoop instead of sql? reputation for slowness
+// "slice ... realtime" -> "visualize your data in realtime, allowing you to respond immediately"
 This is extremely powerful for reporting and dashboards.  Instead of performing
 nightly "rollups" of your data (_e.g. large, batch SQL joins which
 are run nightly on a cron job because they are so slow_), you can slice and dice
 your data in realtime.
 
+// Perhaps mention "not precalculated, out of date, and irrelevant"?
+// Perhaps "aggs are calculated in the context of the user's search, so you're not showing them that you have 10 4 star hotels on your site, but that you have 10 4 star hotels that *match their criteria*".
 Finally, aggregations operate alongside search requests, which means you can
 both search/filter documents _and_ perform analytics at the same time, on the
 same data, in a single request.
 
+// for aggs -> for analytics?
 Aggregations are so powerful that many companies have built large Elasticsearch
 clusters solely for aggregations.

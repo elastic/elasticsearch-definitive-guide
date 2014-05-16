@@ -1,10 +1,11 @@
 
 === Adding a metric to the mix
 
-The previous example told us how many documents were in each bucket, which is 
+The previous example told us how many documents were in each bucket, which is
 useful.  But often, our applications require more sophisticated _metrics_ about
 the documents. For example, what is the average price of cars in each bucket?
 
+// "nesting"-> need to tell Elasticsearch which metrics to calculate, and on which fields.
 To get this information, we need to start nesting metrics inside of the buckets.
 Metrics will calculate some kind of mathematical statistic based on the values
 in the documents residing within a particular bucket.
@@ -36,15 +37,16 @@ GET /cars/transactions/_search?search_type=count
 <2> We then give the metric a name: "avg_price"
 <3> And finally define it as an `avg` metric over the "price" field
 
-As you can see, we took the previous example and tacked on a new `agg` level.
+As you can see, we took the previous example and tacked on a new `agga` level.
 This new aggregation level allows us to nest the `avg` metric inside the
 `terms` bucket.  Effectively, this means we will generate an average for each
 color.
 
-Just like the "colors" example, we need to name our metric ("avg_price") so we 
-can retrieve the values later.  Finally, we specify the metric itself (`avg`) 
+Just like the "colors" example, we need to name our metric ("avg_price") so we
+can retrieve the values later.  Finally, we specify the metric itself (`avg`)
 and what field we want the average to be calculated on (`price`).
 
+// Delete this para
 The response is, not surprisingly, nearly identical to the previous response...except
 there is now a new "avg_price" element added to each color bucket:
 
@@ -84,6 +86,7 @@ there is now a new "avg_price" element added to each color bucket:
 --------------------------------------------------
 <1> New "avg_price" element in response
 
+// Would love to have a graph under each example showing how the data can be displayed (later, i know)
 Although the response has changed minimally, the data we get out of it has grown
 substantially.  Before, we knew there were four red cars.  Now we know that the
 average price of red cars is $32,500.  This is something that you can plug directly
@@ -91,7 +94,7 @@ into reports or graphs.
 
 === Buckets inside of buckets
 
-The true power of aggregations becomes apparent once you start playing with 
+The true power of aggregations becomes apparent once you start playing with
 different nesting schemes.  In the previous examples, we saw how you could nest
 a metric inside a bucket, which is already quite powerful.
 
@@ -132,7 +135,7 @@ GET /cars/transactions/_search?search_type=count
 each car make
 
 A few interesting things happened here.  First, you'll notice that the previous
-"avg_price" metric is left entirely intact.  Each "level" of an aggregation can 
+"avg_price" metric is left entirely intact.  Each "level" of an aggregation can
 have many metrics or buckets.  The "avg_price" metric tells us the average price
 for each car color.  This is independent of other buckets and metrics which
 are also being built.
@@ -211,7 +214,7 @@ GET /cars/transactions/_search?search_type=count
             },
             "make" : {
                 "terms" : {
-                    "field" : "make"   
+                    "field" : "make"
                 },
                 "aggs" : { <1>
                     "min_price" : { "min": { "field": "price"} }, <2>
@@ -224,6 +227,9 @@ GET /cars/transactions/_search?search_type=count
 }
 --------------------------------------------------
 // SENSE: 300_Aggregations/20_basic_example.json
+
+// Careful with the "no surprise", it makes it sound like you're bored :)
+
 <1> No surprise...we need to add another "aggs" level for nesting
 <2> Then we include a `min` metric
 <3> And a `max` metric
@@ -249,7 +255,7 @@ Which gives us the following output (again, truncated):
                            "value": 10000 <1>
                         },
                         "max_price": {
-                           "value": 20000 <2>
+                           "value": 20000 <1>
                         }
                      },
                      {
@@ -270,11 +276,12 @@ Which gives us the following output (again, truncated):
             },
 ...
 --------------------------------------------------
-<1><2> The `min` and `max` metrics that we added now appear under each "make"
+<1> The `min` and `max` metrics that we added now appear under each "make"
 
 With those two buckets, we've expanded the information derived from this query
 to include:
 
+// Nice, but "Similar analytics.." -> "etc."?
 - There are four red cars
 - The average price of a red car is $32,500
 - Three of the red cars are made by Honda, and one is a BMW
