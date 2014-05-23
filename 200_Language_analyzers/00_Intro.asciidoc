@@ -1,0 +1,47 @@
+[[language-analyzers]]
+== Language analyzers
+
+Elasticsearch ships with a collection of language analyzers which provide
+good, basic, out-of-the-box support for a number of the world's most common
+languages:
+
+Arabic, Armenian, Basque, Brazilian, Bulgarian, Catalan, Chinese,
+Czech, Danish, Dutch, English, Finnish, French, Galician, German, Greek,
+Hindi, Hungarian, Indonesian, Italian, Japanese, Korean, Norwegian, Persian,
+Portuguese, Romanian, Russian, Spanish, Swedish, Turkish, and Thai.
+
+These analyzers typically perform four roles:
+
+* Tokenize text into individual words:
++
+`The quick brown foxes` -> [`The`, `quick`, `brown`, `foxes`]
+
+* Lowercase tokens:
++
+`The` -> `the`
+
+* Remove commom _stopwords_:
++
+&#91;`The`, `quick`, `brown`, `foxes`] -> [`quick`, `brown`, `foxes`]
+
+* Stem tokens to their root form:
++
+`foxes` -> `fox`
+
+Each analyzer may also apply other transformations specific to its language in
+order to make words from that language more searchable:
+
+* the `english` analyzer removes the possessive `'s`:
++
+`John's` -> `john`
+
+* the `french` analyzer removes _elisions_ like `l'` and `qu'` and
+  _diactrics_ like `¨` or `^`:
++
+`l'église` -> `eglis`
+
+* the `german` analyzer normalizes terms, replacing `ä` and `ae` with `a`, or
+  `ß` with `ss`, among others:
++
+`äußerst` -> `ausserst`
+

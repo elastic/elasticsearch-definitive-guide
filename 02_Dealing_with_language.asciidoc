@@ -7,11 +7,13 @@
 [quote,Matt Groening]
 ``I know all those words, but that sentence makes no sense to me.''
 
-In <<search-in-depth>> we covered the mechanics of search, but we didn't pay
-much attention to the words themselves. It is not enough for full text  search
-to just match the exact words that the user has queried. Instead, we need to
+Full text search is a battle between _precision_ -- returning as few
+irrelevant documents as possible -- and _recall_ -- returning as many relevant
+documents as possible. While matching only the exact words that the user has
+queried would be precise, it is not enough. We would miss out on many
+documents that the user would consider to be relevant. Instead, we need to
 spread the net wider, to also search for words that are not exactly the same
-as the original, but are related.
+as the original but are related.
 
 Wouldn't you expect a search for ``quick brown fox'' to match a document
 containing ``fast brown foxes'', ``Johnny Walker'' to match ``Johnnie
@@ -46,8 +48,9 @@ There are several lines of attack:
     that we know exists in the index, and a _did-you-mean_ suggester to
     redirect users who may have mistyped a search term. See <<suggesters>>.
 
-But before we can manipulate individual words, we need to divide text up into
-words, which means that we need to know what constitutes a _word_, which we
-will tackle in <<identifying-words>>.
+Before we can manipulate individual words, we need to divide text up into
+words, which means that we need to know what constitutes a _word_. We will
+tackle this in <<identifying-words>>.
 
+But first, let's take a look at how to get started quickly and easily.
 --

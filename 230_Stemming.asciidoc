@@ -1,0 +1,32 @@
+include::230_Stemming/00_Intro.asciidoc[]
+
+include::230_Stemming/10_Algorithmic_stemmers.asciidoc[]
+
+algorithmic stemmers
+    porter stem token filter
+    stemmer token filter
+    kstem token filter
+    snowball token filter
+
+dictionary based
+    hunspell
+
+controlling stemmers
+    stemmer override token filter
+    keyword marker token filter
+
+    keyword repeat token filter
+    unique token filter
+
+Mix stemmers for different languages
+
+porter stem token filter
+stemmer token filter
+stemmer override token filter
+keyword marker token filter
+keyword repeat token filter
+kstem token filter
+snowball token filter
+elision token filter
+unique token filter
+normalization token filter

@@ -1,0 +1,63 @@
+[[algorithmic-stemmers]]
+=== Algorithmic stemmers
+
+Most of the stemmers available in Elasticsearch are algorithmic in that they
+apply a set of rules to a word in order to reduce them to their root forms,
+such as stripping the final `s` or `es` from plurals.   They don't have to
+know anything about individual words in order to stem them.
+
+These algorithmic stemmers have the advantage that they are available out of
+the box, are fast, use little memory, and work well for regular words.  The
+downside is that they don't cope well with irrgular words like `be`, `are`,
+`am`.
+
+One of the earliest stemming algorithms was the Porter stemmer for English,
+which is still the recommended English stemmer today.  Martin Porter
+subsequently went on to create the
+http://snowball.tartarus.org/[Snowball language] for creating stemming
+algorithms and a number of the stemmers available in Elasticsearch are
+written in Snowball.
+
+********************************************
+
+The `kstem` token filter is a stemmer for English which combines the
+algorithmic approach with a built-in dictionary. The dictionary contains a
+list of root words and exceptions in order to avoid conflating words
+incorrectly.
+
+********************************************
+
+All of the algorithmic stemmers can be accessed by creating a custom
+{ref}analysis-stemmer-tokenfilter.html[`stemmer` token filter] and specifying the
+`language`. For instance, perhaps you find the default stemmer used by the
+`german` analyzer to be too aggressive and you want to replace it with the
+`light_german` stemmer.  At the same time, you would like to take advantage of
+the <<character-folding,`icu_folding` filter>>.  You would do so like this:
+
+[source,js]
+--------------------------------------------------
+PUT /my_index
+{
+  "settings": {
+    "analysis": {
+      "filter": {
+        "light_german_stemmer": {  <1>
+          "type":     "stemmer",
+          "language": "light_german"
+        }
+      },
+      "analyzer": {
+        "light_german_analyzer": { <2>
+          "tokenizer":  "icu_tokenizer",
+          "filter": [
+                        "lowercase",
+                        "light_german_stemmer",
+                        "icu_folding"
+          ]
+        }
+      }
+    }
+  }
+}
+--------------------------------------------------
+

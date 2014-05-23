@@ -44,7 +44,7 @@ http://icu-project.org/apiref/icu4j/com/ibm/icu/text/UnicodeSet.html[_UnicodeSet
 characters may be folded.  For instance, to exclude the Swedish letters `å`,
 `ä`, `ö`, ++Å++, `Ä` and `Ö` from folding, you would specify a character class
 representing all Unicode characters, except for those letters: `[^åäöÅÄÖ]`
-(`^` means ``except'').
+(`^` means ``everything except'').
 
 [source,js]
 --------------------------------------------------
