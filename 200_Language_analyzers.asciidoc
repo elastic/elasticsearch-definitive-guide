@@ -1,10 +1,19 @@
+:ref: http://foo.com/
+
 include::200_Language_analyzers/00_Intro.asciidoc[]
 
 include::200_Language_analyzers/10_Using.asciidoc[]
 
 include::200_Language_analyzers/20_Configuring.asciidoc[]
 
-include::200_Language_analyzers/30_Multiple_languages.asciidoc[]
+include::200_Language_analyzers/30_Language_pitfalls.asciidoc[]
 
+include::200_Language_analyzers/40_One_language_per_doc.asciidoc[]
+
+include::200_Language_analyzers/50_One_language_per_field.asciidoc[]
+
+include::200_Language_analyzers/60_Mixed_language_fields.asciidoc[]
+
+include::200_Language_analyzers/70_Conclusion.asciidoc[]
 
 
