@@ -198,16 +198,24 @@ The UCA takes a string and a collation as inputs and outputs a binary sort
 key. Sorting a collection of strings according to the specified collation then
 becomes a simple comparison of their binary sort keys.
 
-==== Unicode sorting
+==== Unicode sorting (TODO)
+
+[WARNING]
+=================================================
+The `icu_collation` field explained in this section has not yet
+been implemented in Elasticsearch.  Currently, there is an `icu_collation`
+token filter which serves a similar purpose but is considerably less
+efficient.
+=================================================
 
 The <<icu-plugin,`icu` plugin>> enables a new type of field -- an
 `icu_collation` field -- dedicated to multilingual sorting.  This field
 converts its string value into a binary sort key, using the specified
 collation.
 
-TODO: The only purpose of this sort key is for sorting, not search, so
-the sort key is not added to the inverted index but is instead stored on disk
-in a data structure known as _doc values_.
+The only purpose of this sort key is for sorting, not search, so the sort key
+is not added to the inverted index but is instead stored on disk in a data
+structure known as _doc values_.
 
 .Doc values
 *************************************************
@@ -215,10 +223,8 @@ in a data structure known as _doc values_.
 Doc values, like <<fielddata-intro>> allows Elasticsearch to lookup the value of
 a field for a particular document. Unlike field data, doc values are stored on
 disk rather than being loaded into memory.  This greatly reduces the amount of
-RAM that is required, especially when dealing with string values.  Of course,
-accessing data on disk is somewhat slower than
-
-TODO
+RAM that is required, especially when dealing with string values. The new
+`icu_collation` field should be available in Elasticsearch v1.3.0.
 
 *************************************************
 
@@ -291,7 +297,15 @@ The above search returns our docs in this order: `bailey`, `Boffey`, `Böhm`,
 English and German, but it is still incorrect for German phonebooks and
 Swedish. The next step is to customize our mapping for different languages.
 
-==== Specifying a language
+==== Specifying a language (TODO)
+
+[WARNING]
+=================================================
+The `icu_collation` field explained in this section has not yet
+been implemented in Elasticsearch.  Currently, there is an `icu_collation`
+token filter which serves a similar purpose but is considerably less
+efficient.
+=================================================
 
 The `icu_collation` field can be configured to use the collation table for a
 specific language, a country-specific version of a language, or some other
