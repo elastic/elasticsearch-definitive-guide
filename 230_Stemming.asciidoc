@@ -1,5 +1,6 @@
-[[stemming]]
-== Reducing words to their root form (TODO)
+include::230_Stemming/00_Intro.asciidoc[]
+
+include::230_Stemming/10_Algorithmic_stemmers.asciidoc[]
 
 algorithmic stemmers
     porter stem token filter
