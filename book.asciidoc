@@ -70,10 +70,21 @@ include::280_Suggesters.asciidoc[]
 
 // Part 4
 
+include::301_Aggregation_Overview.asciidoc[]
+
+include::302_Example_Walkthrough.asciidoc[]
+
+include::303_Making_Graphs.asciidoc[]
+
+include::304_Approximate_Aggregations.asciidoc[]
+
+include::305_Significant_Terms.asciidoc[]
+
+include::306_Practical_Considerations.asciidoc[]
+
+// Part 5
 [[more-than-search]]
 = More than search (TODO)
-
-include::300_Aggregations.asciidoc[]
 
 include::310_Geolocation.asciidoc[]
 
@@ -81,7 +92,7 @@ include::320_Percolation.asciidoc[]
 
 include::330_Scripting.asciidoc[]
 
-// Part 5
+// Part 6
 
 [[modelling-your-data]]
 
@@ -95,7 +106,7 @@ include::420_Time_Based.asciidoc[]
 
 include::430_Index_Per_User.asciidoc[]
 
-// Part 6
+// Part 7
 
 [[administration]]
 
