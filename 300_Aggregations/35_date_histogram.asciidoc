@@ -24,12 +24,13 @@ than building buckets based on a numeric field representing numeric ranges,
 it builds buckets based on a time ranges.  Each bucket is therefore defined as a
 certain calendar size (e.g. `1 month` or `2.5 days`, etc).
 
-// Mention how you can display results in the appropriate time zone for each user
 .Can a regular histogram work with dates?
 ****
 Technically, yes.  A regular `histogram` bucket will work with dates.  However,
 it is not calendar-aware.  With the `date_histogram`, you can specify intervals
-such as `1 month`, which knows that February is shorter than December.
+such as `1 month`, which knows that February is shorter than December.  The
+`date_histogram` also has the advantage of being able to work with timezones,
+such as displaying a graph in the timezone of the user rather than the server.
 
 The regular histogram will interpret dates as numbers, which means you must specify
 intervals in terms of milliseconds.  And the aggregation doesn't know about
@@ -58,7 +59,7 @@ GET /cars/transactions/_search?search_type=count
 // "pretty"-> "readable by humans". mention that otherwise get back ms-since-epoch?
 <2> We provide a date format so that bucket keys are pretty
 
-Pretty simple stuff.  Our query has a single aggregation, which builds a bucket
+Our query has a single aggregation, which builds a bucket
 per month.  This will give us the number of cars sold in each month.  An additional
 "format" parameter is provided so that the buckets have "pretty" keys.  Internally,
 dates are simply represented as a numeric value.  This tends to make UI designers
@@ -118,14 +119,12 @@ which represent months, a count of docs in each month, and our pretty "key_as_st
 
 ==== Returning empty buckets
 
-// Nice. I didn't :)
 Notice something odd about that last response?
 
 Yep, that's right.  We are missing months!  By default, the `date_histogram`
 and (`histogram` too, for that matter) only returns buckets which have a non-zero
 document count.
 
-// Note: most graphing libraries handle missing intervals correctly
 This means your histogram will be a minimal response.  Often, this is not the
 behavior you actually want.  For many applications, you would like to dump the
 response directly into a graphing library without doing any post-processing.

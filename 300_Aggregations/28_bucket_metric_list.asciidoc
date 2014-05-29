@@ -34,10 +34,7 @@ exact parameters.
 
 ==== Metrics
 
-    - http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-aggregations-metrics-min-aggregation.html[Min]: calculates the minimum value for documents in the bucket
-    - http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-aggregations-metrics-max-aggregation.html[Max]: calculates the maximum value for documents in the bucket
-    - http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-aggregations-metrics-avg-aggregation.html[Avg]: calculates the average value for documents in the bucket
-    - http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-aggregations-metrics-sum-aggregation.html[Sum]: calculates the sum of all values for documents in the bucket
+    - Individual statistics: http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-aggregations-metrics-min-aggregation.html[Min], http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-aggregations-metrics-max-aggregation.html[Max], http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-aggregations-metrics-avg-aggregation.html[Avg], http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-aggregations-metrics-sum-aggregation.html[Sum]
     - http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-aggregations-metrics-stats-aggregation.html[Stats]: calculates min/mean/max/sum/count of documents in bucket
     - http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-aggregations-metrics-extendedstats-aggregation.html[Extended Stats]: Same as stats, except it also includes variance, std deviation, sum of squares
     - http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-aggregations-metrics-valuecount-aggregation.html[Value Count]: calculates the number of values, which may

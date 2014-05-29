@@ -37,18 +37,14 @@ POST /cars/transactions/_bulk
 
 Now that we have some data, let's construct our first aggregation.  A car dealer
 may want to know which color car sells the best.  This is easily accomplished
-using a simple aggregation.
-
-// I don't think it's overwhelming, and users probably won't either... unless you mention it ;)
-The syntax may look overwhelming at first, but hold on... we'll decompose the query
-and discuss what each portion means.  First, the aggregation:
+using a simple aggregation.  We will do this using a `terms` bucket:
 
 [source,js]
 --------------------------------------------------
 GET /cars/transactions/_search?search_type=count <1>
 {
     "aggs" : { <2>
-        "colors" : { <3>
+        "popular_colors" : { <3>
             "terms" : {
               "field" : "color" <4>
             }
@@ -63,46 +59,32 @@ GET /cars/transactions/_search?search_type=count <1>
 <<search-type,`search_type`>, which will be faster.
 <2> Aggregations are placed under the top-level `"aggs"` parameter (the longer `"aggregations"`
 will also work if you prefer that)
-<3> We then name the aggregation whatever we want -- "colors" in this example
+<3> We then name the aggregation whatever we want -- "popular_colors" in this example
 <4> Finally, we define a single bucket of type `terms`
 
-// Meh - Point here is that aggregations are executed in the context of the search results, rather than which endpoint is used.
-The first thing to notice is that aggregations are executed as a search, using the
-`/_search` endpoint.  As mentioned at the top of the chapter, aggregations are built
-from the same data structures that power search, which means they use the same
-endpoint.  Aggregations are also defined as a top-level parameter, just like using
-`"query"` for search.
+Aggregations are executed in the context of search results, which means it is
+just another top-level parameter in a search request (e.g. using the `/_search`
+endpoint).  Aggregations can be paired with queries, but we'll tackle that later
+in <<_scoping_aggregations>>.
 
-// Delete this and make the point in the para above. It feels like you're scared to introduce the idea of context this early. I think it's OK.  You don't have to explain how to change the context yet, but at least make the point that there is one.
-.Can you use aggregations and queries together?
-****
-Absolutely!  But hold that thought, we'll discuss it later in <todo>
-****
 
-// I think it is OK to assume that naming aggs is a good idea.  Probably easier to make the point if you name it "popular_colors"
-Next we define a name for our aggregation.  This is entirely up to you...
+Next we define a name for our aggregation.  Naming is up to you...
 the response will be labeled with the name you provide so that your application
-can parse the results. You may also specify more than one aggregation per search
-request, so giving each aggregation a unique, identifiable name is important
-(we'll look at an example of this later).
+can parse the results later
 
 Next we define the aggregation itself.  For this example, we are defining
 a single `terms` bucket.  The `terms` bucket will dynamically create a new
 bucket for every unique term it encounters.  Since we are telling it to use the
 "color" field, the `terms` bucket will dynamically create a new bucket for each color.
 
-// Trim the results here.  By this stage people have gone through 300 pages, so they should be familiar with what ES returns.  Also, they can execute the query themselves in Sense
+
 Let's execute that aggregation and take a look at the results:
 
 [source,js]
 --------------------------------------------------
 {
-   "took": 2,
-   "timed_out": false,
-   "_shards": { ... },
+...
    "hits": {
-      "total": 8,
-      "max_score": 0,
       "hits": [] <1>
    },
    "aggregations": {
@@ -127,29 +109,19 @@ Let's execute that aggregation and take a look at the results:
 --------------------------------------------------
 <1> No search hits are returned because we used the `search_type=count` param
 <2> Our "colors" aggregation is returned as part of the "aggregations" field
-<3> The key to each bucket corresponds to a unique term found in the "color" field
-
-// Perhaps: We always get back the `doc_count` metric which tells us how many documents contained this term.
-
+<3> The key to each bucket corresponds to a unique term found in the "color" field.
+It also always includes `doc_count` which tells us how many docs contained the term
 <4> The count of each bucket represents the number of documents with this color
-
 
 The response contains a list of buckets, each corresponding to a unique color
 (red, green, etc). Each bucket also includes a count of how many documents
 "fell into" that particular bucket.  For example, there are four red cars.
 
-Before we move on, there are some important yet not immediately obvious things
-to point out.
-
-// Delete the above line and make the realtime point in a para, which says that you could pipe this into a graphing library and display a dashboard showing real time trends. As soon as you sell a silver car, it'll show up in the graph.  (And no need for the last sentence)
-- The buckets were created dynamically.  Our application had no prior knowledge about
-how many colors in the index.  If you were to index a "silver" car next, a new
-"silver" bucket would automatically appear in the response.
-- The aggregations are operating on the search infrastructure, which means they
-are updated in near real-time just like search.  These aggregations can be piped
-directly into graphing libraries for near real-time dashboards
-- The aggregation is operating on all of the documents in your index at the moment.
-This can be changed, which we will talk about <here>.
+The above example is operating entirely in real-time: if the documents are searchable,
+they can be aggregated.  This means you can take the aggregation results and
+pipe them straight into a graphing library to generate real-time dashboards.
+As soon as you sell a silver car, your graphs would dynamically update to include
+statistics about silver cars.
 
 Voila!  Your first aggregation!
 

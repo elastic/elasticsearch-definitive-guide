@@ -1,5 +1,5 @@
-// new chapter
-=== Building Bar Charts
+
+== Building Bar Charts
 
 One of the exciting aspects of aggregations are how easily they are converted
 into charts and graphs.  For the rest of the chapter, we are going to focus
@@ -14,8 +14,7 @@ undoubtedly had a few bar charts in it.
 // Delete "Just like the ...."
 The histogram works by specifying an interval.  If we were histogram'ing sale
 prices, you might specify an interval of 20,000.  This would create a new bucket
-every $20,000.  Documents are then sorted into buckets.  Just like the `terms`
-bucket, you are free to nest more buckets and metrics inside.
+every $20,000.  Documents are then sorted into buckets.
 
 Since you've already seen a few examples of aggregations, we'll go straight to a
 nested example.  For our dashboard, we want a bar chart of car sale prices, but we
