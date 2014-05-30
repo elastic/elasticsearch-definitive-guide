@@ -1,5 +1,5 @@
 
-=== Sorting multi-value buckets
+== Sorting multi-value buckets
 
 Multi-value buckets -- like the `terms`, `histogram` and `date_histogram` -- 
 dynamically produce many buckets.  How does Elasticsearch decide what order
@@ -12,7 +12,7 @@ criteria: price, population, frequency.
 But sometimes you'll want to modify this sort order, and there are a few ways to
 do it depending on the bucket.
 
-==== Intrinsic sorts
+=== Intrinsic sorts
 
 These sort modes are "intrinsic" to the bucket...they operate on data that bucket
 generates such as `doc_count`.  They share the same syntax but differ slightly
@@ -47,7 +47,7 @@ one of several values:
 - `_key`: Sort by the numeric value of each bucket's key (conceptually similar to `_term`).
 Works only with `histogram` and `date_histogram`
 
-==== Sorting by a metric
+=== Sorting by a metric
 
 Often, you'll find yourself wanting to sort based on a metric's calculated value.
 For our car sales analytics dashboard, we may want to build a bar chart of
@@ -86,14 +86,8 @@ the name of the metric.  Some metrics, however, emit multiple values.  The
 `extended_stats` metric is a good example: it provides half a dozen individual 
 metrics.
 
-[INFO]
-.Applicable buckets
-====
-Metric-based sorting works with `terms`, `histogram` and `date_histogram`
-====
-
-If you want to sort on a multi-value metric, you just need to use the fully-qualified
-dot path:
+If you want to sort on a multi-value metric, you just need to use the
+dot-path to the metric of interest:
 
 [source,js]
 --------------------------------------------------
@@ -122,7 +116,7 @@ GET /cars/transactions/_search?search_type=count
 In this example we are sorting on the variance of each bucket, so that colors
 with the least variance in price will appear before those that have more variance.
 
-==== Sorting based on "deep" metrics
+=== Sorting based on "deep" metrics
 
 In the prior examples, the metric was a direct child of the bucket.  An average
 price was calculated for each term.  It is possible to sort on "deeper" metrics,

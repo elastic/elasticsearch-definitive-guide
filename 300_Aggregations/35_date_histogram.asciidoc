@@ -1,5 +1,5 @@
 
-=== Looking at time
+== Looking at time
 
 If search is the most popular activity in Elasticsearch, building date
 histograms must be the second most popular.  Why would you want to use a date
@@ -30,14 +30,15 @@ Technically, yes.  A regular `histogram` bucket will work with dates.  However,
 it is not calendar-aware.  With the `date_histogram`, you can specify intervals
 such as `1 month`, which knows that February is shorter than December.  The
 `date_histogram` also has the advantage of being able to work with timezones,
-such as displaying a graph in the timezone of the user rather than the server.
+which allows you to customize graphs to the timezone of the user, not the server.
 
 The regular histogram will interpret dates as numbers, which means you must specify
 intervals in terms of milliseconds.  And the aggregation doesn't know about
 calendar intervals, which makes it largely useless for dates.
 ****
 
-Our first example will build a simple line chart: how many cars were sold each month?
+Our first example will build a simple line chart to answer the question:
+how many cars were sold each month?
 
 [source,js]
 --------------------------------------------------
@@ -65,7 +66,8 @@ per month.  This will give us the number of cars sold in each month.  An additio
 dates are simply represented as a numeric value.  This tends to make UI designers
 grumpy, however, so a prettier format can be specified using common date formatting.
 
-The response is both expected and a little surprising:
+The response is both expected and a little surprising (see if you can spot
+the "surprise"):
 
 [source,js]
 --------------------------------------------------
@@ -117,19 +119,20 @@ The response is both expected and a little surprising:
 The aggregation is represented in full.  As you can see, we have buckets
 which represent months, a count of docs in each month, and our pretty "key_as_string".
 
-==== Returning empty buckets
+=== Returning empty buckets
 
 Notice something odd about that last response?
 
-Yep, that's right.  We are missing months!  By default, the `date_histogram`
-and (`histogram` too, for that matter) only returns buckets which have a non-zero
+Yep, that's right.  We are missing a few months!  By default, the `date_histogram`
+(and `histogram` too) only returns buckets which have a non-zero
 document count.
 
 This means your histogram will be a minimal response.  Often, this is not the
 behavior you actually want.  For many applications, you would like to dump the
 response directly into a graphing library without doing any post-processing.
 
-There are two additional parameters we can set which will provide this behavior:
+Essentially, we want buckets even if they have a count of zero. There are two 
+additional parameters we can set which will provide this behavior:
 
 [source,js]
 --------------------------------------------------
@@ -153,7 +156,7 @@ GET /cars/transactions/_search?search_type=count
 --------------------------------------------------
 // SENSE: 300_Aggregations/35_date_histogram.json
 <1> This parameter forces empty buckets to be returned
-<2> While this parameter forces the entire year to be returned
+<2> This parameter forces the entire year to be returned
 
 The two additional parameters will force the response to return all months in the
 year, regardless of their doc count.  The `min_doc_count` is very understandable:
@@ -171,7 +174,7 @@ minimum value or _after_ the maximum value.
 The `extended_bounds` parameter does just that.  Once you add those two settings,
 you'll get a response that is easy to plug straight into your graphing libraries.
 
-==== Extended Example
+=== Extended Example
 
 Just like we've seen a dozen times already, buckets can be nested in buckets for
 more sophisticated behavior.  For illustration, we'll build an aggregation

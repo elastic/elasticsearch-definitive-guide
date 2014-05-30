@@ -1,5 +1,5 @@
 
-=== Scoping Aggregations
+== Scoping Aggregations
 
 With all of the aggregation examples given so far, you may have noticed that we
 omitted a `query` from the search request.  The entire request was
@@ -136,11 +136,11 @@ by adding a search bar.  This allows the user to search for terms and see all
 of the graphs (which are powered by aggregations, and thus scoped to the query)
 update in real-time.  Try that with Hadoop!
 
-<TODO> Maybe add two screenshots of a Kibana dashboard that changes considerably
+//<TODO> Maybe add two screenshots of a Kibana dashboard that changes considerably
 when the search changes?
 
 
-==== Global Bucket
+=== Global Bucket
 
 You'll often want your aggregation to be scoped to your query.  But sometimes
 you'll want to search for some subset of data, but aggregate across _all_ of

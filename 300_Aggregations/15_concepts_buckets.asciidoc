@@ -1,5 +1,5 @@
 
-=== High-level concepts
+== High-level concepts
 
 Like the query DSL, aggregations have a _composable_ syntax: independent units
 of functionality can be mixed and matched to provide the custom behavior that 
@@ -14,12 +14,12 @@ _Metrics_:: Statistics calculated on the documents in a bucket.
 That's it!  Every aggregation is simply a combination of one or more buckets
 and zero or more metrics. To translate into rough SQL terms:
 
-[source]
-----
+[source,sql]
+--------------------------------------------------
 SELECT COUNT(color) <1>
 FROM table 
 GROUP BY color <2>
-----
+--------------------------------------------------
 <1> `COUNT(color)` is equivalent to a metric
 <2> `GROUP BY color` is equivalent to a bucket
 
@@ -29,7 +29,7 @@ to `COUNT()`, `SUM()`, `MAX()`, etc
 
 Let's dig into both of these concepts and see what they entail.
 
-==== Buckets
+=== Buckets
 
 A bucket is simply a collection of documents that meet a certain criteria.
 
@@ -51,7 +51,7 @@ partition documents in many different ways (by hour, by most popular terms, by
 age ranges, by geographical location, etc).  But fundamentally they all operate 
 on the same principle: partitioning documents based on a criteria.
 
-==== Metrics
+=== Metrics
 
 Buckets allow us to partition documents into useful subsets, but ultimately what
 we want is some kind of _metric_ calculated on those documents in each bucket.  
@@ -63,7 +63,7 @@ which are calculated using the document values.  In practical terms, metrics all
 you to calculate quantities such as the average salary, or the maximum sale price,
 or the 95th percentile for query latency.
 
-==== Combining the two
+=== Combining the two
 
 An aggregation is a combination of buckets and metrics.  An aggregation may have
 a single bucket, or a single metric, or one of each.  It may even have multiple
