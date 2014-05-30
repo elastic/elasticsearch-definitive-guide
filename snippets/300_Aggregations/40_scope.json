@@ -1,0 +1,69 @@
+
+# Recap of the previous examples so far -- just an aggregation, no query
+GET /cars/transactions/_search?search_type=count
+{
+    "aggs" : {
+        "colors" : {
+            "terms" : {
+              "field" : "color"
+            }
+        }
+    }
+}
+
+# The above request is equivalent to this (no query == match_all)
+GET /cars/transactions/_search?search_type=count
+{
+    "query" : {
+        "match_all" : {}
+    }
+    "aggs" : {
+        "colors" : {
+            "terms" : {
+              "field" : "color"
+            }
+        }
+    }
+}
+
+# Adding a query to our request, aggregation operates in the "query scope"
+GET /cars/transactions/_search
+{
+    "query" : {
+        "match" : {
+            "make" : "ford"
+        }
+    },
+    "aggs" : {
+        "colors" : {
+            "terms" : {
+              "field" : "color"
+            }
+        }
+    }
+}
+
+# Global bucket allows us to "escape" the query scope and calculate an agg
+# on all documents
+GET /cars/transactions/_search?search_type=count
+{
+    "query" : {
+        "match" : {
+            "make" : "ford"
+        }
+    },
+    "aggs" : {
+        "single_avg_price": {
+            "avg" : { "field" : "price" }
+        },
+        "all": {
+            "global" : {},
+            "aggs" : {
+                "avg_price": {
+                    "avg" : { "field" : "price" }
+                }
+                
+            }
+        }
+    }
+}

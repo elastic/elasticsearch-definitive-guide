@@ -1,0 +1,66 @@
+
+# Create a histogram over time - this agg will generate a 
+# histogram of sales over time
+GET /cars/transactions/_search?search_type=count
+{
+   "aggs": {
+      "sales": {
+         "date_histogram": {
+            "field": "sold",
+            "interval": "month",
+            "format": "yyyy-MM-dd"
+         }
+      }
+   }
+}
+
+# Display all months in the year, including empty buckets
+GET /cars/transactions/_search?search_type=count
+{
+   "aggs": {
+      "sales": {
+         "date_histogram": {
+            "field": "sold",
+            "interval": "month",
+            "format": "yyyy-MM-dd",
+            "min_doc_count" : 0,
+            "extended_bounds" : {
+                "min" : "2014-01-01",
+                "max" : "2014-12-31"
+            }
+         }
+      }
+   }
+}
+
+# Find the average price of each month's top-selling car type
+GET /cars/transactions/_search?search_type=count
+{
+   "aggs": {
+      "sales": {
+         "date_histogram": {
+            "field": "sold",
+            "interval": "month",
+            "format": "yyyy-MM-dd",
+            "min_doc_count" : 0,
+            "extended_bounds" : {
+                "min" : "2014-01-01",
+                "max" : "2014-12-31"
+            }
+         },
+         "aggs": {
+            "top_selling": {
+               "terms": {
+                  "field": "make",
+                  "size": 1
+               },
+               "aggs": {
+                  "avg_price": {
+                     "avg": { "field": "price" }
+                  }
+               }
+            }
+         }
+      }
+   }
+}

@@ -20,27 +20,31 @@ POST /cars/transactions/_bulk
 { "index": {}}
 { "price" : 25000, "color" : "blue", "make" : "ford", "sold" : "2014-02-12" }
 
-# Basic aggregation - number of documents in the index
+# Basic aggregation - most popular car colors
 GET /cars/transactions/_search?search_type=count
 {
-    "aggregations" : {
-        "counts" : {
-            "global" : {}   
+    "aggs" : {
+        "popular_colors" : {
+            "terms" : {
+              "field" : "color"
+            }
         }
     }
 }
 
 
-# Now we nest a terms bucket inside the global bucket
+# Find the average price of each car color
 GET /cars/transactions/_search?search_type=count
 {
-   "aggs":{ 
-      "count": {
-         "global": {},
-         "aggs": {  
-            "colors": { 
-               "terms": { 
-                  "field": "color"
+   "aggs": {
+      "colors": {
+         "terms": {
+            "field": "color"
+         },
+         "aggs": {
+            "avg_price": {
+               "avg": {
+                  "field": "price"
                }
             }
          }
@@ -49,24 +53,50 @@ GET /cars/transactions/_search?search_type=count
 }
 
 
-# Now nest an avg metric inside the terms bucket
+# Nest a second bucket to determine top makes per color
 GET /cars/transactions/_search?search_type=count
 {
    "aggs": {
-      "count": {
-         "global": {},
+      "colors": {
+         "terms": {
+            "field": "color"
+         },
          "aggs": {
-            "colors": {
-               "terms": {
-                  "field":"color"
-               },
-               "aggs": { 
-                  "avg_price": { 
-                     "avg": {
-                        "field":"price"
-                     }
-                  }
+            "avg_price": {
+               "avg": {
+                  "field": "price"
                }
+            },
+            "make": {
+                "terms": {
+                    "field": "make"
+                }
+            }
+         }
+      }
+   }
+}
+
+
+# Finally, add some extra metrics to determine min/max price per-make, per-color
+GET /cars/transactions/_search?search_type=count
+{
+   "aggs": {
+      "colors": {
+         "terms": {
+            "field": "color"
+         },
+         "aggs": {
+            "avg_price": { "avg": { "field": "price" }
+            },
+            "make" : {
+                "terms" : {
+                    "field" : "make"
+                },
+                "aggs" : {
+                    "min_price" : { "min": { "field": "price"} },
+                    "max_price" : { "max": { "field": "price"} } 
+                }
             }
          }
       }

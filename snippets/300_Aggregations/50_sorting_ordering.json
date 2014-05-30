@@ -1,0 +1,81 @@
+
+
+# Sort colors by count ascending
+GET /cars/transactions/_search?search_type=count
+{
+    "aggs" : {
+        "colors" : {
+            "terms" : {
+              "field" : "color",
+              "order": {
+                "_count" : "asc"
+              }
+            }
+        }
+    }
+}
+
+# Sort colors by average price of cars in that color (using metric as a sort value)
+GET /cars/transactions/_search?search_type=count
+{
+    "aggs" : {
+        "colors" : {
+            "terms" : {
+              "field" : "color",
+              "order": {
+                "avg_price" : "asc"
+              }
+            },
+            "aggs": {
+                "avg_price": {
+                    "avg": {"field": "price"}
+                }
+            }
+        }
+    }
+}
+
+# Similar to above, but sorting on a multi-valued metric
+GET /cars/transactions/_search?search_type=count
+{
+    "aggs" : {
+        "colors" : {
+            "terms" : {
+              "field" : "color",
+              "order": {
+                "stats.variance" : "asc"
+              }
+            },
+            "aggs": {
+                "stats": {
+                    "extended_stats": {"field": "price"}
+                }
+            }
+        }
+    }
+}
+
+
+# Sorting on a "grandchild" nested metric
+GET /cars/transactions/_search?search_type=count
+{
+    "aggs" : {
+        "colors" : {
+            "histogram" : {
+              "field" : "price",
+              "interval": 20000,
+              "order": {
+                "red_green_cars>stats.variance" : "asc"
+              }
+            },
+            "aggs": {
+                "red_green_cars": { 
+                    "filter": { "terms": {"color": ["red", "green"]}},
+                    "aggs": {
+                        "stats": {"extended_stats": {"field" : "price"}}
+                    }
+                }
+            }
+        }
+    }
+}
