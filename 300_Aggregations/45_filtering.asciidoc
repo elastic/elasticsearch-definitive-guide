@@ -5,6 +5,7 @@ A natural extension to aggregation scoping is filtering.  Because the aggregatio
 operates in the context of the query scope, any filter applied to the query
 will also apply to the aggregation.
 
+[float]
 === Filtered Query
 If we want to find all cars over $10,000 and also calculate the average price
 for those cars, we can simply use a `filtered` query:
@@ -36,6 +37,7 @@ query like we discussed in the last section.  The query (which happens to includ
 a filter) returns a certain subset of documents, and the aggregation operates
 on those documents.
 
+[float]
 === Filter bucket
 
 But what if you would like to filter just the aggregation results?  Imagine we
@@ -91,6 +93,7 @@ Since the `filter` bucket operates like any other bucket, you are free to nest
 other buckets and metrics inside.  All nested components will "inherit" the filter.
 This allows you to filter selective portions of the aggregation as required.
 
+[float]
 === Post Filter
 
 So far, we have a way to filter the both search results and aggregations (a
@@ -163,6 +166,7 @@ The `post_filter` should only be used in combination with aggregations, and only
 when you need differential filtering.
 ====
 
+[float]
 ==== Recap
 
 Choosing the appropriate type of filtering -- search hits, aggregations or
