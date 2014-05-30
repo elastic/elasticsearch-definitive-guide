@@ -1,4 +1,8 @@
+[[aggregations]]
+= Aggregations
 
+[partintro]
+--
 Up until this point, the this book has been dedicated to search.  With search, 
 we have a query and we wish to find a subset of documents which
 match the query.  We are looking for the proverbial needle(s) in the
@@ -38,3 +42,4 @@ you're displaying a count four-star hotels that _match their search criteria_.
 
 Aggregations are so powerful that many companies have built large Elasticsearch
 clusters solely for analytics.
+--
