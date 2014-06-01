@@ -2,7 +2,7 @@
 === One language per document
 
 A single predominant language per document requires a relatively simple setup.
-Documents from different languages can stored in separate indices -- `blogs-en`,
+Documents from different languages can be stored in separate indices -- `blogs-en`,
 `blogs-fr`, etc. -- which use the same type and the same fields for each index,
 just with different analyzers:
 
@@ -93,7 +93,7 @@ words are effectively synonyms, which we will discuss in <<synonyms>>.
 You may be tempted to use a separate type for each language, instead of a
 separate index. For best results, you should avoid using types for this
 purpose.  As explained in <<mapping>>, fields from different types but with
-the same fieldname are indexed into the *same inverted index*.  This means
+the same field name are indexed into the *same inverted index*.  This means
 that the term frequencies from each type (and thus each language) are mixed
 together.
 
