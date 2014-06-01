@@ -64,7 +64,7 @@ could be rewritten more concisely with `multi_match` as:
 
 ==== Wildcards in field names
 
-Fieldnames can be specified with wildcards -- any field which matches the
+Field names can be specified with wildcards -- any field which matches the
 wildcard pattern will be included in the search. You could match on the
 `book_title`, `chapter_title` and `section_title` fields, with the following:
 
