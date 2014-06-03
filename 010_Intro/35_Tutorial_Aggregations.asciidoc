@@ -9,7 +9,7 @@ For example, let's find the most popular interests enjoyed by our employees:
 
 [source,js]
 --------------------------------------------------
-GET /megacorp/employee/_search
+POST /megacorp/employee/_search
 {
   "aggs": {
     "all_interests": {
@@ -56,7 +56,7 @@ appropriate query into the mix:
 
 [source,js]
 --------------------------------------------------
-GET /megacorp/employee/_search
+POST /megacorp/employee/_search
 {
   "query": {
     "match": {
@@ -98,7 +98,7 @@ average age of employees who share a particular interest:
 
 [source,js]
 --------------------------------------------------
-GET /megacorp/employee/_search
+POST /megacorp/employee/_search
 {
     "aggs" : {
         "all_interests" : {
