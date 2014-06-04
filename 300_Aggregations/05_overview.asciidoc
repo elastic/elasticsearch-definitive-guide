@@ -3,7 +3,7 @@
 
 [partintro]
 --
-Up until this point, the this book has been dedicated to search.  With search, 
+Up until this point, this book has been dedicated to search.  With search, 
 we have a query and we wish to find a subset of documents which
 match the query.  We are looking for the proverbial needle(s) in the
 haystack.
@@ -38,7 +38,7 @@ Finally, aggregations operate alongside search requests. This means you can
 both search/filter documents _and_ perform analytics at the same time, on the
 same data, in a single request.  And because aggregations are calculated in the
 context of a user's search, you're not just displaying a count of four-star hotels...
-you're displaying a count four-star hotels that _match their search criteria_.
+you're displaying a count of four-star hotels that _match their search criteria_.
 
 Aggregations are so powerful that many companies have built large Elasticsearch
 clusters solely for analytics.
