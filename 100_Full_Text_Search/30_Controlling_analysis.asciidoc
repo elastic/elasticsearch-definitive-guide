@@ -111,8 +111,8 @@ The two lines in bold above highlight differences in the index time sequence
 and the search time sequence.  The `_analyzer` field allows you to specify a
 default analyzer for each document (eg `english`, `french`, `spanish`) while
 the `analyzer` parameter in the query specifies which analyzer to use on the
-query string. This is one way of handling multiple languages in a single
-index. We will look at this technique in more detail in <<languages>>.
+query string. However, this is not the best way to handle multiple languages
+in a single index because of the pitfalls highlighted in <<languages>>.
 
 **************************************************
 
