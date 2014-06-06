@@ -185,7 +185,7 @@ GET /megacorp/employee/_search
 {
     "query" : {
         "match" : {
-            "last_name" : "smith"
+            "last_name" : "Smith"
         }
     }
 }
