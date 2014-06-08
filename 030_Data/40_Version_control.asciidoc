@@ -64,7 +64,7 @@ these replication requests are sent in parallel, and may arrive at their
 destination *out of sequence*. It needs a way of ensuring that an older
 version of a document never overwrites a newer version.
 
-When we discussed `index`, `get` and `delete` requests above, we pointed out
+When we discussed `index`, `put` and `delete` requests above, we pointed out
 that every document has a `_version` number which is incremented whenever a
 document is changed. Elasticsearch uses this `_version` number to ensure that
 changes are applied in the correct order. If an older version of a document
