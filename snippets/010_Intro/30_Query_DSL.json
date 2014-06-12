@@ -48,3 +48,39 @@ GET /megacorp/employee/_search
         }
     }
 }
+
+# Find all employees who enjoy "rock" or "climbing"
+GET /megacorp/employee/_search
+{
+    "query" : {
+        "match" : {
+            "about" : "rock climbing"
+        }
+    }
+}
+
+# Find all employees who enjoy "rock climbing"
+GET /megacorp/employee/_search
+{
+    "query" : {
+        "match_phrase" : {
+            "about" : "rock climbing"
+        }
+    }
+}
+
+# Find all employees who enjoy "rock climbing"
+# and highlight the matches
+GET /megacorp/employee/_search
+{
+    "query" : {
+        "match_phrase" : {
+            "about" : "rock climbing"
+        }
+    },
+    "highlight": {
+        "fields" : {
+            "about" : {}
+        }
+    }
+}
