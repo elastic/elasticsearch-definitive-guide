@@ -38,7 +38,7 @@ order to make words from that language more searchable:
 * the `french` analyzer removes _elisions_ like `l'` and `qu'` and
   _diactrics_ like `¨` or `^`:
 +
-`l'église` -> `eglis`
+`l'église` -> `eglise`
 
 * the `german` analyzer normalizes terms, replacing `ä` and `ae` with `a`, or
   `ß` with `ss`, among others:
