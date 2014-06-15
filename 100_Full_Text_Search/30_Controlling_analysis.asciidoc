@@ -38,7 +38,7 @@ GET /my_index/_analyze?field=my_type.title   <1>
 Foxes
 
 GET /my_index/_analyze?field=my_type.english_title <2>
-Foxes
+Fox
 --------------------------------------------------
 // SENSE: 100_Full_Text_Search/30_Analysis.json
 
