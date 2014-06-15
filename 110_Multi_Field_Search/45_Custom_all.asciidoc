@@ -3,7 +3,7 @@
 
 In <<all-field>> we explained that the special `_all` field indexes the values
 from all other fields as one big string. Having all fields indexed into one
-field is not terribly flexible though.  It would be nice to have once custom
+field is not terribly flexible though.  It would be nice to have one custom
 `_all` field for the person's name, and another custom `_all` field for their
 address.
 
