@@ -22,7 +22,7 @@ will call the `autocomplete_filter`:
 }
 --------------------------------------------------
 
-This configuration says that, for any term that this token filter it receives,
+This configuration says that, for any term that this token filter receives,
 it should produce an n-gram anchored to the start of the word of minimum
 length 1 and maximum length 20.
 
