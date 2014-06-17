@@ -17,8 +17,8 @@ While inflection aids expressivity, it interferes with retrievability as a
 single root _word sense_ or meaning may be represented by many different
 sequences of letters. English is a weakly inflected language -- you could
 ignore inflections and still get reasonable search results -- but some other
-languages are highly inflected and need extra work in order to attain
-reasonable results.
+languages are highly inflected and need extra work in order to achieve
+high quality search results.
 
 _Stemming_ attempts to remove the difference between inflected forms of a
 word, in order to reduce each word to its root form. For instance `foxes` may
@@ -41,7 +41,7 @@ root. For example, `jumped`, and `jumps` may be reduced to `jump`, while
 relevant documents are not returned.
 
 Overstemming is the failure to keep two words with distinct meaning separate.
-For instance `general` and `generate` may both be reduced to `gener`.
+For instance `general` and `generate` may both be stemmed to `gener`.
 Overstemming reduces precision -- irrelevant documents are returned when they
 shouldn't be.
 
@@ -55,8 +55,8 @@ the words it is related to but sometimes it doesn't -- the lemma of `is`,
 
 Lemmatisation, like stemming, tries to group related words, but it goes one
 step further than stemming in that it tries to group words by their _word
-sense_ or meaning.  The same word may represent two different meanings -
-``wake'' can mean ``to wake up '' or ``a funeral''.  While lemmatisation would
+sense_ or meaning.  The same word may represent two different meanings --
+``wake'' can mean ``to wake up'' or ``a funeral''.  While lemmatisation would
 try to distinguish these two word senses, stemming would incorrectly conflate
 them.
 

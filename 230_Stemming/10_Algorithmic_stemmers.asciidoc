@@ -2,16 +2,16 @@
 === Algorithmic stemmers
 
 Most of the stemmers available in Elasticsearch are algorithmic in that they
-apply a set of rules to a word in order to reduce them to their root forms,
-such as stripping the final `s` or `es` from plurals.   They don't have to
-know anything about individual words in order to stem them.
+apply a series of rules to a word in order to reduce it to its root form, such
+as stripping the final `s` or `es` from plurals.   They don't have to know
+anything about individual words in order to stem them.
 
 These algorithmic stemmers have the advantage that they are available out of
 the box, are fast, use little memory, and work well for regular words.  The
 downside is that they don't cope well with irrgular words like `be`, `are`,
-`am`.
+and `am`, or `mice` and `mouse`.
 
-One of the earliest stemming algorithms was the Porter stemmer for English,
+One of the earliest stemming algorithms is the Porter stemmer for English,
 which is still the recommended English stemmer today.  Martin Porter
 subsequently went on to create the
 http://snowball.tartarus.org/[Snowball language] for creating stemming
@@ -20,19 +20,93 @@ written in Snowball.
 
 ********************************************
 
-The `kstem` token filter is a stemmer for English which combines the
-algorithmic approach with a built-in dictionary. The dictionary contains a
-list of root words and exceptions in order to avoid conflating words
-incorrectly.
+The {ref}analysis-kstem-tokenfilter.html[`kstem` token filter] is a stemmer
+for English which combines the algorithmic approach with a built-in
+dictionary. The dictionary contains a list of root words and exceptions in
+order to avoid conflating words incorrectly. `kstem` tends to stem less
+aggressively than the Porter stemmer.
 
 ********************************************
 
-All of the algorithmic stemmers can be accessed by creating a custom
-{ref}analysis-stemmer-tokenfilter.html[`stemmer` token filter] and specifying the
-`language`. For instance, perhaps you find the default stemmer used by the
-`german` analyzer to be too aggressive and you want to replace it with the
-`light_german` stemmer.  At the same time, you would like to take advantage of
-the <<character-folding,`icu_folding` filter>>.  You would do so like this:
+==== Using an algorithmic stemmer
+
+While you can use the
+{ref}analysis-porter-stem-tokenfilter.html[`porter_stem`] or
+{ref}analysis-kstem-tokenfilter.html[`kstem`] token filter directly, or
+create a language-specific Snowball stemmer with the
+{ref}analysis-snowball-tokenfilter.html[`snowball`] token filter, all of the
+algorithmic stemmers are exposed via a single unified interface:
+the {ref}analysis-stemmer-tokenfilter.html[`stemmer` token filter], which
+accepts the `language` parameter.
+
+For instance, perhaps you find the default stemmer used by the `english`
+analyzer to be too aggressive and you want to make it less aggressive.
+The first step is to lookup the configuration for the `english` analyzer
+in the {ref}analysis-lang-analyzer.html#english-analyzer[language analyzers]
+documentation, which shows the following:
+
+[source,js]
+--------------------------------------------------
+{
+  "settings": {
+    "analysis": {
+      "filter": {
+        "english_stop": {
+          "type":       "stop",
+          "stopwords":  "_english_"
+        },
+        "english_keywords": {
+          "type":       "keyword_marker", <1>
+          "keywords":   []
+        },
+        "english_stemmer": {
+          "type":       "stemmer",
+          "language":   "english" <2>
+        },
+        "english_possessive_stemmer": {
+          "type":       "stemmer",
+          "language":   "possessive_english" <2>
+        }
+      },
+      "analyzer": {
+        "english": {
+          "tokenizer":  "standard",
+          "filter": [
+            "english_possessive_stemmer",
+            "lowercase",
+            "english_stop",
+            "english_keywords",
+            "english_stemmer"
+          ]
+        }
+      }
+    }
+  }
+}
+--------------------------------------------------
+<1> The `keyword_marker` token filter lists words which should not be
+    stemmed.  This defaults to the empty list.
+
+<2> The `english` analyzer uses two stemmers: the `possessive_english`
+    and the `english` stemmer. The possessive stemmer removes `'s`
+    from any words before passing them on to the `english_stop`,
+    `english_keywords` and `english_stemmer`.
+
+Having reviewed the current configuration, we can use it as the basis for
+a new analyzer, with the following changes:
+
+*   Change the `english_stemmer` from `english` (which maps to the
+    {ref}analysis-porter-stem-tokenfilter.html[`porter_stem`] token filter)
+    to `light_english` (which maps to the less aggressive
+    {ref}analysis-kstem-tokenfilter.html[`kstem`] token filter).
+
+*   Add the <<asciifolding-token-filter,`asciifolding`>> token filter to
+    remove any diacritcs from foreign words.
+
+*   Remove the `keyword_marker` token filter as we don't need it.
+    (We will discuss this in more detail in <<stemmer-exclude>>.)
+
+Our new custom analyzer would look like this:
 
 [source,js]
 --------------------------------------------------
@@ -41,18 +115,28 @@ PUT /my_index
   "settings": {
     "analysis": {
       "filter": {
-        "light_german_stemmer": {  <1>
-          "type":     "stemmer",
-          "language": "light_german"
+        "english_stop": {
+          "type":       "stop",
+          "stopwords":  "_english_"
+        },
+        "light_english_stemmer": {
+          "type":       "stemmer",
+          "language":   "light_english" <1>
+        },
+        "english_possessive_stemmer": {
+          "type":       "stemmer",
+          "language":   "possessive_english"
         }
       },
       "analyzer": {
-        "light_german_analyzer": { <2>
-          "tokenizer":  "icu_tokenizer",
+        "english": {
+          "tokenizer":  "standard",
           "filter": [
-                        "lowercase",
-                        "light_german_stemmer",
-                        "icu_folding"
+            "english_possessive_stemmer",
+            "lowercase",
+            "english_stop",
+            "light_english_stemmer", <1>
+            "asciifolding" <2>
           ]
         }
       }
@@ -60,4 +144,48 @@ PUT /my_index
   }
 }
 --------------------------------------------------
+<1> Replaced the `english` stemmer with the less aggressive
+    `light_english` stemmer.
+<2> Added the `asciifolding` token filter.
 
+==== Choosing an algorithmic stemmer
+
+The documentation for the
+{ref}analysis-stemmer-tokenfilter.html[`stemmer` token filter]
+lists multiple stemmers for some languages.  For Portuguese we have:
+
+* `portuguese`
+* `light_portuguese`
+* `minimal_portuguese`
+* `portuguese_rslp`
+
+For English we have:
+
+* `english`
+* `light_english`
+* `minimal_english`
+* `lovins`
+* `porter`
+* `porter2`
+* `possessive_english`
+
+One thing is for sure: whenever more than one solution exists for a problem,
+it means that none of the solutions solves the problem adequately. This
+certainly applies to stemming -- each stemmer is based on a different
+algorithm which overstems and understems words to a different degree.
+
+The {ref}analysis-stemmer-tokenfilter.html[`stemmer` token filter] reference
+documentation highlights the recommended choice for each language in bold,
+but the recommended stemmer may not be appropriate for all use cases. It is
+usually chosen because it offers a reasonable compromise between performance
+and accuracy.  You may find that, for your particular use case, the
+recommended stemmer is either too aggressive or not aggressive enough, in
+which case you may want to try a different stemmer.
+
+The `light_` stemmers are less aggressive than the standard stemmers, and the
+`minimal_` stemmers are less aggressive still. The Snowball-based stemmers
+tend to be slower than the other hand-coded stemmers, although that very much
+depends upon the implementation.
+
+Choosing the ``best'' stemmer is largely a case of trying each one out and
+selecting the one that seems to produce the best results for your documents.

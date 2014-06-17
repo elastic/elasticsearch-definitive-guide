@@ -1,0 +1,267 @@
+[[hunspell]]
+=== Hunspell stemmer
+
+Elasticsearch provides dictionary-based stemming via the
+{ref}analysis-hunspell-tokenfilter.html[`hunspell` token filter].
+Hunspell (http://hunspell.sourceforge.net/[hunspell.sourceforge.net]) is the
+spell checker used by Open and Libre Office, Chrome, Firefox, Thunderbird and many
+other open and closed source projects.
+
+Hunspell dictionaries can be obtained from:
+
+* http://extensions.openoffice.org/[extensions.openoffice.org] -- download and
+  unzip the `.oxt` extension file
+* https://addons.mozilla.org/en-US/thunderbird/language-tools/[addons.mozilla.org] --
+  download and unzip the `.xpi` addon file
+* http://archive.services.openoffice.org/pub/mirror/OpenOffice.org/contrib/dictionaries/[Open Office archive]
+  -- download and unzip the `.zip` file
+
+A Hunspell dictionary consists of two files with the same base name -- such as
+`en_US` --  but with one of two extensions:
+
+`.dic`::
+
+    Contains all of the root words, in alphabetical order, plus a code representing
+    all possible suffixes and prefixes (which collectively are known as _affixes_).
+
+`.aff`::
+
+    Contains the actual prefix or suffix transformation for each of the codes listed
+    in the `.dic` file.
+
+==== Installing a dictionary
+
+The Hunspell token filter looks for dictionaries within a dedicated Hunspell
+directory, which defaults to  `./config/hunspell/`. The `.dic` and `.aff`
+files should be placed in a sub-directory whose name represents the language
+or locale of the dictionaries.  For instance, we could create a Hunspell
+stemmer for American English with the following layout:
+
+[source,txt]
+------------------------------------------------
+config/
+  └ hunspell/ <1>
+      └ en_US/ <2>
+          ├ en_US.dic
+          ├ en_US.aff
+          └ settings.yml <3>
+------------------------------------------------
+<1> The location of the Hunspell directory can be changed by setting
+    `indices.analysis.hunspell.dictionary.location` in the
+    `config/elasticsearch.yml` file.
+<2> `en_US` will be the name of the locale or `language` that we pass to the
+    `hunspell` token filter.
+<3> Per-language settings file, see below.
+
+==== Per-language settings
+
+The `settings.yml` file contains settings which apply to all of the
+dictionaries within the language directory, such as:
+
+[source,yaml]
+-------------------------
+---
+ignore_case:          true
+strict_affix_parsing: true
+
+-------------------------
+
+The meaning of these settings is as follows:
+
+`ignore_case`::
++
+--
+
+Hunspell dictionaries are case-sensitive by default: the surname `Booker` is a
+different word from the noun `booker`, and so should be stemmed differently.  It
+may seem like a good idea to use the `hunspell` stemmer in case-sensitive
+mode, but that can complicate things:
+
+* A word at the beginning of a sentence will be capitalised, and thus appear
+  to be a proper noun.
+* The input text may be all upper case, in which case almost no words will be
+  found.
+* The user may search for names in all lower case, in which case no capitalised
+  words will be found.
+
+As a general rule, it is a good idea to set `ignore_case` to `true`.
+
+--
+
+`strict_affix_parsing`::
+
+The quality of dictionaries varies greatly. Some of the dictionaries that are
+available online have malformed rules in the `.aff` file.  By default, Lucene
+will throw an exception if it can't parse an affix rule. If you need to deal
+with a broken affix file, you can set `strict_affix_parsing` to `false` to tell
+Lucene to just ignore the broken rules.
+
+.Custom dictionaries
+***********************************************
+If multiple dictionaries (`.dic`/`.aff` pairs) are placed in the same
+directory, they will be merged together at load time. This allows you to
+tailor the downloaded dictionaries with your own custom word lists:
+
+[source,txt]
+------------------------------------------------
+config/
+  └ hunspell/
+      └ en_US/  <1>
+          ├ en_US.dic
+          ├ en_US.aff
+          ├ custom.dic
+          ├ custom.aff
+          └ settings.yml
+------------------------------------------------
+<1> The `custom` and `en_US` dictionaries will be merged together.
+
+The format of the `.dic` and `.aff` files is discussed in
+<<hunspell-dictionary-format>>.
+
+***********************************************
+
+==== Creating a Hunspell token filter
+
+Once your dictionaries are installed on all nodes, you can define a `hunspell`
+token filter which uses them:
+
+[source,json]
+------------------------------------------------
+PUT /my_index
+{
+  "settings": {
+    "analysis": {
+      "filter": {
+        "en_US": {
+          "type":     "hunspell",
+          "language": "en_US" <1>
+        }
+      },
+      "analyzer": {
+        "en_US": {
+          "tokenizer":  "standard",
+          "filter":   [ "lowercase", "en_US" ]
+        }
+      }
+    }
+  }
+}
+------------------------------------------------
+<1> The `language` has the same name as the directory where
+    the dictionary lives.
+
+You can test out the new analyzer with the `analyze` API,
+and compare its output to that of the `english` analyzer:
+
+[source,json]
+------------------------------------------------
+GET /my_index/_analyze?analyzer=en_US <1>
+reorganizes
+
+GET /_analyze?analyzer=english <2>
+reorganizes
+------------------------------------------------
+<1> Returns `organize`.
+<2> Returns `reorgan`.
+
+An interesting property of the `hunspell` stemmer, as can be seen in the
+example above, is that it can remove prefixes as well as as suffixes. Most
+algorithmic stemmers remove suffixes only.
+
+***********************************************
+
+Hunspell dictionaries can consume a few megabytes of RAM.  Fortunately,
+Elasticsearch only creates a single instance of a dictionary per node.  All
+shards which use the same Hunspell analyzer share the same instance.
+
+***********************************************
+
+==== When to use Hunspell
+
+In theory, the Hunspell stemmer promises accurate, configurable stemming.  The
+reality, sadly, falls short of the theory. The main problem is the difficulty
+of finding high quality, up to date dictionaries, with friendly licenses. Most
+dictionaries are incomplete and out of date.
+
+Hunspell tends to stem quite aggressively, reducing every word to the shortest
+form possible.  While this does increase recall, it also reduces precision. Of
+course, you can control the stemming process if you are willing to customize
+your own dictionary, but that requires a lot of effort and research.
+
+In practice, if a good algorithmic stemmer is available for your language, it
+makes more sense to use that rather than Hunspell.  It will be faster, consume
+less memory and the results will generally be as good or better than with
+Hunspell.
+
+[[hunspell-dictionary-format]]
+==== Hunspell dictionary format
+
+While it is not necessary to understand the format of a Hunspell dictionary in
+order to use the `hunspell` tokenizer, understanding the format will help you
+to write your own custom dictionaries.  It is quite simple.
+
+For instance, in the US English dictionary, the `en_US.dic` file contains an entry for
+the word `analyze`, which looks like this:
+
+[source,txt]
+-----------------------------------
+analyze/ADSG
+-----------------------------------
+
+The `en_US.aff` file contains the prefix or suffix rules for the `A`, `G`,
+`D`, and `S` flags.  Each flag consists of a number of rules, only one of
+which should match. Each rule has the following format:
+
+[source,txt]
+-----------------------------------
+[type] [flag] [letters to remove] [letters to add] [condition]
+-----------------------------------
+
+For instance, the following is suffix (`SFX`) rule `D`.  It says that,  when a
+word ends in a consonant (anything but `a`, `e`, `i`, `o`, or `u`) followed by
+a `y`, it can have the `y` removed and `ied` added (e.g. `ready` ->
+`readied`).
+
+[source,txt]
+-----------------------------------
+SFX    D      y   ied  [^aeiou]y
+-----------------------------------
+
+The rules for the `A`, `G`, `D` and `S` flags mentioned above are as follows:
+
+[source,txt]
+-----------------------------------
+SFX D Y 4
+SFX D   0     d          e <1>
+SFX D   y     ied        [^aeiou]y
+SFX D   0     ed         [^ey]
+SFX D   0     ed         [aeiou]y
+
+SFX S Y 4
+SFX S   y     ies        [^aeiou]y
+SFX S   0     s          [aeiou]y
+SFX S   0     es         [sxzh]
+SFX S   0     s          [^sxzhy] <2>
+
+SFX G Y 2
+SFX G   e     ing        e <3>
+SFX G   0     ing        [^e]
+
+PFX A Y 1
+PFX A   0     re         . <4>
+-----------------------------------
+<1> `analyze` ends in an `e`, so it can become `analyzed` by adding a `d`.
+<2> `analyze` does not end in `s`, `x`, `z`, `h` or `y`, so it can become
+    `analyzes` by adding an `s`.
+
+<3> `analyze` ends in an `e`, so it can become `analyzing` by removing the `e`
+    `and adding `ing`.
+
+<4> The prefix `re` can be added to form `reanalyze`. This rule can be
+    combined with the suffix rule to form `reanalyzes`, `reanalyzed`,
+    `reanalyzing`.
+
+More information about the Hunspell syntax can be found on the Hunspell
+documentation site:
+http://sourceforge.net/projects/hunspell/files/Hunspell/Documentation/[
+sourceforge.net/projects/hunspell/files/Hunspell/Documentation]
