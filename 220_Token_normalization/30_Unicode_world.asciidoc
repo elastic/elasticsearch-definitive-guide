@@ -31,10 +31,10 @@ bytes possible.  So `é` is represented as the single letter `é`.  The
 _decomposed_ forms -- `nfd` and `nfkd` -- represent characters by their
 constituent parts, that is `e` + `´`.
 
-The _canonical_ forms  -- `nfc` and `nfd` -- represent characters like `ﬃ` as
-a single character, while the _compatibility_ forms -- `nfkc` and `nfkd` --
-break down these composed characters into a simpler multi-letter equivalent:
-`f` + `f` + `i`.
+The _canonical_ forms  -- `nfc` and `nfd` -- represent ligatures like `ﬃ` or
+`œ` as a single character, while the _compatibility_ forms -- `nfkc` and
+`nfkd` -- break down these composed characters into a simpler multi-letter
+equivalent: `f` + `f` + `i` or `o` + `e`.
 
 ********************************************
 
