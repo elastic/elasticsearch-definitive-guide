@@ -31,7 +31,7 @@ aggressively than the Porter stemmer.
 ==== Using an algorithmic stemmer
 
 While you can use the
-{ref}analysis-porter-stem-tokenfilter.html[`porter_stem`] or
+{ref}analysis-porterstem-tokenfilter.html[`porter_stem`] or
 {ref}analysis-kstem-tokenfilter.html[`kstem`] token filter directly, or
 create a language-specific Snowball stemmer with the
 {ref}analysis-snowball-tokenfilter.html[`snowball`] token filter, all of the
@@ -96,7 +96,7 @@ Having reviewed the current configuration, we can use it as the basis for
 a new analyzer, with the following changes:
 
 *   Change the `english_stemmer` from `english` (which maps to the
-    {ref}analysis-porter-stem-tokenfilter.html[`porter_stem`] token filter)
+    {ref}analysis-porterstem-tokenfilter.html[`porter_stem`] token filter)
     to `light_english` (which maps to the less aggressive
     {ref}analysis-kstem-tokenfilter.html[`kstem`] token filter).
 
