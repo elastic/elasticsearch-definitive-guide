@@ -104,7 +104,7 @@ a new analyzer, with the following changes:
     remove any diacritcs from foreign words.
 
 *   Remove the `keyword_marker` token filter as we don't need it.
-    (We will discuss this in more detail in <<stemmer-exclude>>.)
+    (We will discuss this in more detail in <<controlling-stemming>>.)
 
 Our new custom analyzer would look like this:
 
