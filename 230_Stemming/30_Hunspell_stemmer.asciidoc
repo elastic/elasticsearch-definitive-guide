@@ -176,23 +176,6 @@ shards which use the same Hunspell analyzer share the same instance.
 
 ***********************************************
 
-==== When to use Hunspell
-
-In theory, the Hunspell stemmer promises accurate, configurable stemming.  The
-reality, sadly, falls short of the theory. The main problem is the difficulty
-of finding high quality, up to date dictionaries, with friendly licenses. Most
-dictionaries are incomplete and out of date.
-
-Hunspell tends to stem quite aggressively, reducing every word to the shortest
-form possible.  While this does increase recall, it also reduces precision. Of
-course, you can control the stemming process if you are willing to customize
-your own dictionary, but that requires a lot of effort and research.
-
-In practice, if a good algorithmic stemmer is available for your language, it
-makes more sense to use that rather than Hunspell.  It will be faster, consume
-less memory and the results will generally be as good or better than with
-Hunspell.
-
 [[hunspell-dictionary-format]]
 ==== Hunspell dictionary format
 

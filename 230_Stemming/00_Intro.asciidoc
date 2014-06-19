@@ -62,13 +62,16 @@ them.
 
 Lemmatisation is a much more complicated and expensive process that needs to
 understand the context in which words to appear in order to make decisions
-about what they mean. For now, stemmers are the best tools that we have
-available.
+about what they mean. In practice, stemming appears to be just as effective
+as lemmatisation, but with a much lower cost.
 
 **********************************************
 
-There are two types of stemmers available: algorithmic stemmers and dictionary
-stemmers.
+First we will discuss the two classes of stemmers available in Elasticsearch
+-- <<algorithmic-stemmers>> and <<dictionary-stemmers>> -- then look at how to
+choose the right stemmer for your needs in <<choosing-a-stemmer>>.  Finally,
+we will discuss options for tailoring stemming in <<controlling-stemming>> and
+<<stemming-in-situ>>.
 
 
 
