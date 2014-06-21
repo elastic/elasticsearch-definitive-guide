@@ -1,0 +1,239 @@
+:ref: http://foo.com/
+
+[[using-stopwords]]
+=== Using stopwords
+
+The removal of stopwords is handled by the
+{ref}analysis-stop-tokenfilter.html[`stop` token filter] which can be used
+when creating a `custom` analyzer, as described below in <<stop-token-filter>>.
+However, some out-of-the-box analyzers have the `stop` filter integrated
+already:
+
+{ref}analysis-lang-analyzer.html[Language analyzers]::
+
+    Each language analyzer defaults to using the appropriate stopwords list
+    for that language. For instance, the `english` analyzer uses the
+    `_english_` stopwords list.
+
+{ref}analysis-standard-analyzer.html[`standard` analyzer]::
+
+    Defaults to the empty stopwords list: `_none_`, essentially disabling
+    stopwords.
+
+{ref}analysis-pattern-analyzer.html[`pattern` analyzer]::
+
+    Defaults to `_none_`, like the `standard` analyzer.
+
+==== Stopwords and the `standard` analyzer
+
+To use custom stopwords in conjunction with the `standard` analyzer, all we
+need to do is to create a configured version of the analyzer and pass in the
+list of `stopwords that we require:
+
+[source,json]
+---------------------------------
+PUT /my_index
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "my_analyzer": { <1>
+          "type": "standard", <2>
+          "stopwords": [ <3>
+            "and",<3>
+            "the"
+          ]
+}}}}}
+---------------------------------
+<1> This is a custom analyzer called `my_analyzer`.
+<2> This analyzer is the `standard` analyzer with some custom configuration.
+<3> The stopwords to filter out are `and` and `the`.
+
+TIP: The same technique can be used to configure custom stopword lists for
+any of the language analyzers.
+
+==== Maintaining positions
+
+The output from the `analyze` API is quite interesting:
+
+[source,json]
+---------------------------------
+GET /my_index/_analyze?analyzer=my_analyzer
+The quick and the dead
+---------------------------------
+
+[source,json]
+---------------------------------
+{
+   "tokens": [
+      {
+         "token":        "quick",
+         "start_offset": 4,
+         "end_offset":   9,
+         "type":         "<ALPHANUM>",
+         "position":     2 <1>
+      },
+      {
+         "token":        "dead",
+         "start_offset": 18,
+         "end_offset":   22,
+         "type":         "<ALPHANUM>",
+         "position":     5 <1>
+      }
+   ]
+}
+---------------------------------
+<1> Note the `position` of each token.
+
+The stopwords have been filtered out, as expected, but the interesting part is
+that the `position` of the two remaining terms is unchanged: `quick` is the
+second word in the original sentence, and `dead` is the fifth. This is
+important for phrase queries -- if the positions of each term had been
+adjusted, then a phrase query for `"quick dead"` would have matched the above
+example incorrectly.
+
+==== Specifying stopwords
+
+Stopwords can be passed inline, as we did in the previous example, by
+specifying an array:
+
+[source,json]
+---------------------------------
+"stopwords": [ "and", "the" ]
+---------------------------------
+
+The default stopword list for a particular language can be specified using the
+`_lang_` notation:
+
+[source,json]
+---------------------------------
+"stopwords": "_english_"
+---------------------------------
+
+TIP: The predefined language-specific stopword lists available in
+Elasticsearch can be found in the
+{ref}analysis-stop-tokenfilter.html[`stop` token filter] documentation.
+
+Stopwords can be disabled by specifying the special list: `_none_`.  For
+instance, to use the `english` analyzer without stopwords, you can do the
+following:
+
+[source,json]
+---------------------------------
+PUT /my_index
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "my_english": {
+          "type":      "english", <1>
+          "stopwords": "_none_" <2>
+        }
+      }
+    }
+  }
+}
+---------------------------------
+<1> The `my_english` analyzer is based on the `english` analyzer.
+<2> But stopwords are disabled.
+
+Finally, stopwords can also be listed in a file with one word per line.  The
+file must be present on all nodes in the cluster, and the path can be
+specified with the `stopwords_path` parameter:
+
+[source,json]
+---------------------------------
+PUT /my_index
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "my_english": {
+          "type":           "english",
+          "stopwords_path": "config/stopwords/english.txt" <1>
+        }
+      }
+    }
+  }
+}
+---------------------------------
+<1> The path to the stopwords file, relative to the Elasticsearch directory.
+
+[[stop-token-filter]]
+==== Using the `stop` token filter
+
+The {ref}analysis-stop-tokenfilter.html[`stop` token filter] can be used
+directly when you need to create a `custom` analyzer.  For instance, let's say
+that we wanted to create a Spanish analyzer with a custom stopwords list
+and the `light_spanish` stemmer, which also
+<<asciifolding-token-filter,removes diacritics>>.
+
+We could set that up as follows:
+
+[source,json]
+---------------------------------
+PUT /my_index
+{
+  "settings": {
+    "analysis": {
+      "filter": {
+        "spanish_stop": {
+          "type":        "stop",
+          "stopwords": [ "si", "esta", "el", "la" ]  <1>
+        },
+        "light_spanish": { <2>
+          "type":     "stemmer",
+          "language": "light_spanish"
+        }
+      },
+      "analyzer": {
+        "my_spanish": {
+          "tokenizer": "spanish",
+          "filter": [ <3>
+            "lowercase",
+            "asciifolding",
+            "spanish_stop",
+            "light_spanish"
+          ]
+        }
+      }
+    }
+  }
+}
+---------------------------------
+<1> The `stop` token filter takes the same `stopwords` and `stopwords_path`
+    parameters as the `standard` analyzer.
+<2> See <<using-an-algorithmic-stemmer>>.
+<3> The order of token filters is important, see below.
+
+The `spanish_stop` filter comes after the `asciifolding` filter.  This means
+that `esta`, `èsta` and ++està++ will first have their diacritics removed to
+become just `esta`, which is removed as a stopword. If, instead, we wanted to
+remove `esta` and `èsta`, but not ++està++,  then we would have to put the
+`spanish_stop` filter *before* the `asciifolding` filter, and specify both
+words in the stopwords list.
+
+[[updating-stopwords]]
+==== Updating stopwords
+
+There are a few techniques which can be used to update the list of stopwords
+in use. Analyzers are instantiated at index creation time, when a node is
+restarted, or when a closed index is reopened.
+
+If you specify stopwords inline with the `stopwords` parameter, then your
+only option is to close the index, update the analyzer configuration with the
+{ref}indices-update-settings.html[update index settings API], then reopen
+the index.
+
+Updating stopwords is easier if you specify them in a file with the
+`stopwords_path` parameter.  You can just update the file (on every node in
+the cluster) then force the analyzers to be recreated by:
+
+* closing and reopening the index
+  (see {ref}indices-open-close.html[open/close index]), or
+* restarting each node in the cluster, one by one.
+
+Of course, updating the stopwords list will not change any documents that have
+already been indexed.  It will only apply to searches and to new or updated
+documents.  To apply the changes to existing documents you will need to
+reindex your data. See <<reindex>>
