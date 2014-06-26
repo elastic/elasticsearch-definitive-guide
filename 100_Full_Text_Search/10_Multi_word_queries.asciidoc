@@ -73,6 +73,7 @@ The important thing to take away from the above is that any document whose
 `title` field contains *at least one of the specified terms* will match the
 query.  The more terms that match, the more relevant the document.
 
+[[match-improving-precision]]
 ==== Improving precision
 
 Matching any document which contains *any* of the query terms may result in  a

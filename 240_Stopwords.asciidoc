@@ -1,14 +1,14 @@
-
 include::240_Stopwords/10_Intro.asciidoc[]
 
 include::240_Stopwords/20_Using_stopwords.asciidoc[]
 
+include::240_Stopwords/30_Stopwords_and_performance.asciidoc[]
 
-common terms query
-match query
+include::240_Stopwords/40_Divide_and_conquer.asciidoc[]
 
-relevance
+include::240_Stopwords/50_Phrase_queries.asciidoc[]
 
-bm25
+include::240_Stopwords/60_Common_grams.asciidoc[]
 
-common grams token filter
+include::240_Stopwords/70_Relevance.asciidoc[]
+

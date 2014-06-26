@@ -51,16 +51,18 @@ stopwords used in Elasticsearch are:
 These _stopwords_ can usually be filtered out before indexing with little
 negative impact on retrieval. But is it a good idea to do so?
 
+[[pros-cons-stopwords]]
 [float]
 === Pros and cons of stopwords
 
 We have more disk space, more RAM, and better compression algorithms than
 existed back in the day. Excluding the above 33 common words from the index
 will only save about 4MB per million documents.  Using stopwords for the sake
-of reducing index size is no longer a valid reason.
+of reducing index size is no longer a valid reason. (Although, there is one
+caveat to this statement which we will discuss in <<stopwords-phrases>>.)
 
 On top of that, by removing words from the index we are reducing our ability
-to perform certain types of search.  Filtering out the above stopwords
+to perform certain types of search.  Filtering out the words listed above
 prevents us from:
 
 * distinguishing ``happy'' from ``not happy''.
@@ -78,8 +80,8 @@ the `_score` for all 1 million documents.  This second query simply cannot
 perform as well as the first.
 
 Fortunately, there are techniques which we can use to keep common words
-searchable, while benefiting from the performance gain of stopwords. First,
-let's start with how to use stopwords.
+searchable, while still maintaining good performance. First, we'll start with
+how to use stopwords.
 
 
 

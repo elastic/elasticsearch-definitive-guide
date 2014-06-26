@@ -1,0 +1,193 @@
+[[common-terms]]
+=== Divide and conquer
+
+The terms in a query string can be divided into more important (low frequency)
+and less important (high frequency) terms. Documents that match only the less
+important terms are probably of very little interest.  Really, we want
+documents that match as many of the more important terms as possible.
+
+The `match` query accepts a `cutoff_frequency` parameter, which allows it to
+divide the terms in the query string into a low frequency and high frequency
+group. The low frequency group (more important terms) form the bulk of the
+query, while the high frequency group (less important terms) is used only for
+scoring, not for matching. By treating these two groups differently, we can
+gain a real boost of speed on previously slow queries.
+
+.Domain specific stopwords
+*********************************************
+
+One of the benefits of `cutoff_frequency` is that you get _domain specific_
+stopwords for free. For instance, a website about movies may use the words
+``movie'', ``color'', ``black'' and ``white'' so often that they could be
+considered almost meaningless.  With the `stop` token filter, these domain
+specific terms would have to be added to the stopwords list manually. However,
+because the `cutoff_frequency` looks at the actual frequency of terms in the
+index,  these words would be classified as _high frequency_ automatically.
+
+*********************************************
+
+Take this query as an example:
+
+[source,json]
+---------------------------------
+{
+  "match": {
+    "text": {
+      "query": "Quick and the dead",
+      "cutoff_frequency": 0.01 <1>
+    }
+}
+---------------------------------
+<1> Any term that occurs in more than 1% of documents is considered to be high
+    frequency. The `cutoff_frequency` can be specified as a fraction (`0.01`)
+    or as an absolute number (`5`).
+
+This query uses the `cutoff_frequency` to first divide the query terms into a
+low frequency group: (`quick`, `dead`), and a high frequency group: (`and`,
+`the`). Then, the query is rewritten to produce the following `bool` query:
+
+[source,json]
+---------------------------------
+{
+  "bool": {
+    "must": { <1>
+      "bool": {
+        "should": [
+          { "term": { "text": "quick" }},
+          { "term": { "text": "dead"  }}
+        ]
+      }
+    },
+    "should": { <2>
+      "bool": {
+        "should": [
+          { "term": { "text": "and" }},
+          { "term": { "text": "the" }}
+        ]
+      }
+    }
+  }
+}
+---------------------------------
+<1> At least one low frequency / high importance term *must* match.
+<2> High frequency / low importance terms are entirely optional.
+
+The `must` clause means that at least one of the low frequency terms --
+`quick` or `dead` -- *must* be present for a document to be considered a
+match. All other documents are excluded.  The `should` clause then looks for
+the high frequency terms `and` and `the`,  but only in the documents collected
+by the `must` clause. The sole job of the `should` clause is to score a
+document like ``Quick **AND THE** dead'' higher than ``**THE** quick but
+dead''.  This approach greatly reduces the number of documents that need to be
+examined and scored.
+
+.`and` query
+********************************
+
+Setting the operator parameter to `and` would simply make all low and high
+frequency terms required.  As we saw in <<stopwords-and>>, this is already an
+efficient query.
+
+********************************
+
+==== Controlling precision
+
+The `minimum_should_match` parameter can be combined with `cutoff_frequency`
+but it only applies to the low frequency terms.  This query:
+
+[source,json]
+---------------------------------
+{
+  "match": {
+    "text": {
+      "query": "Quick and the dead",
+      "cutoff_frequency": 0.01,
+      "minimum_should_match": "75%"
+    }
+}
+---------------------------------
+
+would be rewritten as:
+
+[source,json]
+---------------------------------
+{
+  "bool": {
+    "must": {
+      "bool": {
+        "should": [
+          { "term": { "text": "quick" }},
+          { "term": { "text": "dead"  }}
+        ],
+        "minimum_should_match": 1 <1>
+      }
+    },
+    "should": { <2>
+      "bool": {
+        "should": [
+          { "term": { "text": "and" }},
+          { "term": { "text": "the" }}
+        ]
+      }
+    }
+  }
+}
+---------------------------------
+<1> Because there are only two terms, the original 75% is rounded down
+    to `1`, that is: ``1 out of 2 low frequency terms must match''.
+<2> The high frequency terms are still optional and used only for scoring.
+
+==== Only high frequency terms
+
+An `or` query for high frequency terms only -- ``To be or not to be'' -- is
+the worst case for performance. It is pointless to score *all* of the
+documents that contain only one of these terms in order to return just the top
+ten matches. We are really only interested in documents where they all occur
+together, so in the case where there are no low frequency terms, the query is
+rewritten to make all high frequency terms required:
+
+[source,json]
+---------------------------------
+{
+  "bool": {
+    "must": [
+      { "term": { "text": "to" }},
+      { "term": { "text": "be" }},
+      { "term": { "text": "or" }},
+      { "term": { "text": "not" }},
+      { "term": { "text": "to" }},
+      { "term": { "text": "be" }}
+    ]
+  }
+}
+---------------------------------
+
+==== More control with `common` terms
+
+While the high/low frequency functionality in the `match` query is useful,
+sometimes you want more control over how the high and low frequency groups
+should be handled.  The `match` query just exposes a subset of the
+functionality available in the `common` terms query.
+
+For instance, we could make all low frequency terms, and 75% of high
+frequency terms required with a query like this:
+
+[source,json]
+---------------------------------
+{
+  "common": {
+    "text": {
+      "query":                  "Quick and the dead",
+      "cutoff_frequency":       0.01,
+      "low_freq_operator":      "and",
+      "minimum_should_match": {
+        "high_freq":            "75%"
+      }
+    }
+  }
+}
+---------------------------------
+
+See the {ref}query-dsl-common-terms-query.html[`common` terms query] reference
+page for more options.
+
