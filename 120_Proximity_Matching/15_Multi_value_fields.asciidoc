@@ -68,7 +68,7 @@ PUT /my_index/_mapping/groups <2>
 <1> First delete the `group` mapping and and documents of that type.
 <2> Then create a new `group` mapping with the correct values.
 
-The `position_offset_gap` settings tells Elasticsearch that it should increase
+The `position_offset_gap` setting tells Elasticsearch that it should increase
 the current term `position` by the specified value for every new array
 element.  So now, when we index the array of names, the terms are emitted with
 the following positions:
