@@ -24,7 +24,7 @@ places, only one bitset is calculated and then reused.
 
 Let's look at this example query which looks for emails that are either:
 
-* in the inbox and have been read
+* in the inbox and have not been read
 * or are *not* in the inbox but have been marked as important
 
 [source,js]
