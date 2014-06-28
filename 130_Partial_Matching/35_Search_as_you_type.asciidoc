@@ -319,7 +319,7 @@ you could use the `keyword` tokenizer to treat the postcodes as if they were
 
 The `keyword` tokenizer is the NOOP tokenizer, the tokenizer which does
 nothing.  Whatever string it receives as input, it emits exactly the same
-string a single token.  It can therefore be used for values that we would
+string as a single token.  It can therefore be used for values that we would
 normally treat as `not_analyzed` but which require some other analysis
 transformation such as lowercasing.
 
