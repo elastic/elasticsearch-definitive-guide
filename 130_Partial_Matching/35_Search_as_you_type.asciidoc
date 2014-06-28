@@ -206,7 +206,7 @@ word in the query string:
     name:b name:br name:bro name:brow name:brown name:f name:fo
 
 The `name:f` condition is satisfied by the second document because
-``Furballs'' has been indexed as `f`, `fu`, `fur`, etc.  In retrospect, this
+``furballs'' has been indexed as `f`, `fu`, `fur`, etc.  In retrospect, this
 is not surprising.  The same `autocomplete` analyzer is being applied both at
 index time and at search time which, in most situations, is the right thing to
 do. This is one of the few occasions when it makes sense to break this rule.
