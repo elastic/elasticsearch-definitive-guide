@@ -65,7 +65,7 @@ PUT /my_index/_mapping/groups <2>
 --------------------------------------------------
 // SENSE: 120_Proximity_Matching/15_Multi_value_fields.json
 
-<1> First delete the `group` mapping and and documents of that type.
+<1> First delete the `group` mapping and all documents of that type.
 <2> Then create a new `group` mapping with the correct values.
 
 The `position_offset_gap` settings tells Elasticsearch that it should increase
