@@ -20,7 +20,7 @@ GET /my_index/my_type/_search
 
 Like the `match` query, the `match_phrase` query first analyzes the query
 string to produce a list of terms. It then searches for all the terms, but
-only keeps documents  which contains *all* of the search terms in the same
+only keeps documents which contain *all* of the search terms in the same
 *positions*, relative to each other.  A query for the phrase `"quick fox"`
 would not match any of our documents because no document contains the word
 `"quick"` immediately followed by `"fox"`.
