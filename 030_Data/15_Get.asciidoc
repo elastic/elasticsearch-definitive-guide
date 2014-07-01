@@ -52,7 +52,7 @@ display the response headers:
 
 [source,sh]
 --------------------------------------------------
-curl -i -XGET /website/blog/124?pretty
+curl -i -XGET http://localhost:9200/website/blog/124?pretty
 --------------------------------------------------
 // SENSE: 030_Data/15_Get_document.json
 
