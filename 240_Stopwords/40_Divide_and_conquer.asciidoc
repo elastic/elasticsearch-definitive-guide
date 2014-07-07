@@ -84,9 +84,12 @@ examined and scored.
 .`and` query
 ********************************
 
-Setting the operator parameter to `and` would simply make all low and high
-frequency terms required.  As we saw in <<stopwords-and>>, this is already an
-efficient query.
+Setting the operator parameter to `and` would make *all* low frequency terms
+required, and score documents that contain *all* high frequency terms higher.
+However, matching documents would not be required to contain all high
+frequency terms.  If you would prefer all low and high frequency terms to be
+required, then you should use a `bool` query instead.   As we saw in
+<<stopwords-and>>, this is already an efficient query.
 
 ********************************
 
@@ -169,8 +172,8 @@ sometimes you want more control over how the high and low frequency groups
 should be handled.  The `match` query just exposes a subset of the
 functionality available in the `common` terms query.
 
-For instance, we could make all low frequency terms, and 75% of high
-frequency terms required with a query like this:
+For instance, we could make all low frequency terms required, and only score
+documents that have 75% of all high frequency terms with a query like this:
 
 [source,json]
 ---------------------------------
