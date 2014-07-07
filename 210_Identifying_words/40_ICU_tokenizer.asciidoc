@@ -8,7 +8,7 @@ Japanese, and Korean, and using custom rules to break Myanmar and Khmer text
 into syllables.
 
 For instance, compare the tokens produced by the `standard` and
-`icu_tokenizers` respectively when tokenizing ``Hello. I am from Bangkok'' in
+`icu_tokenizers` respectively when tokenizing ``Hello. I am from Bangkok.'' in
 Thai:
 
 [source,js]
