@@ -25,7 +25,7 @@ not a letter, and so would return the following terms: `You`, `re`, `the`,
 
 The `standard` tokenizer uses the Unicode Text Segmentation algorithm (as
 defined in http://unicode.org/reports/tr29/[Unicode Standard Annex #29]) to
-find the boundaries *between* words, and emits everything in-between. It's
+find the boundaries *between* words, and emits everything in-between. Its
 knowledge of Unicode allows it to successfully tokenize text containing a
 mixture of languages.
 
