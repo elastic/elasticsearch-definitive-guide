@@ -98,7 +98,7 @@ Lucene to just ignore the broken rules.
 
 .Custom dictionaries
 ***********************************************
-If multiple dictionaries (`.dic`/`.aff` pairs) are placed in the same
+If multiple dictionaries (`.dic` files) are placed in the same
 directory, they will be merged together at load time. This allows you to
 tailor the downloaded dictionaries with your own custom word lists:
 
@@ -108,12 +108,13 @@ config/
   └ hunspell/
       └ en_US/  <1>
           ├ en_US.dic
-          ├ en_US.aff
+          ├ en_US.aff <2>
           ├ custom.dic
-          ├ custom.aff
           └ settings.yml
 ------------------------------------------------
 <1> The `custom` and `en_US` dictionaries will be merged together.
+<2> Multiple `.aff` files are not allowed, as they could use
+    conflicting rules.
 
 The format of the `.dic` and `.aff` files is discussed in
 <<hunspell-dictionary-format>>.
