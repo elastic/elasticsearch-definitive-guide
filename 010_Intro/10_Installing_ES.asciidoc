@@ -102,3 +102,13 @@ and to provide failover and scale, although a single node can form a cluster
 all by itself.
 
 ****
+
+==== Viewing Marvel and Sense
+
+If you installed the <<marvel,Marvel>> management and monitoring tool you can
+view it in a web browser by visiting:
+http://localhost:9200/_plugin/marvel/.
+
+You can reach the *Sense* developer console either by clicking on the ``Marvel
+dashboards'' dropdown in Marvel, or by visiting:
+http://localhost:9200/_plugin/marvel/sense/.
