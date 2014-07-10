@@ -32,7 +32,7 @@ But also:
 * _case-folds_ characters into a form suitable for case comparison
 
 In other words, `nfkc_cf` is the equivalent of the `lowercase` token filter,
-but suitable for use with all languages. The ``on-steriods'' equivalent of the
+but suitable for use with all languages. The ``on-steroids'' equivalent of the
 `standard` analyzer would be the following:
 
 [source,js]
