@@ -25,7 +25,7 @@ ever emits a single token for each string value.
 
 Imagine that we have three `user` documents whose `name` field contain `Boffey`,
 `BROWN`, and `bailey` respectively.  First we will apply the technique
-described in <<multi-fields>> of using a `not_indexed` field for sorting:
+described in <<multi-fields>> of using a `not_analyzed` field for sorting:
 
 [source,js]
 --------------------------------------------------
