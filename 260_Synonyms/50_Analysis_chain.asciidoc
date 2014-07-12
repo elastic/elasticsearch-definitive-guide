@@ -1,0 +1,76 @@
+[[synonyms-analysis-chain]]
+=== Synonyms and the analysis chain
+
+The example we showed in <<synonym-formats>>,  used `u s a` as a synonym. Why
+did we use that instead of `U.S.A.`?  The reason is that the `synonym` token
+filter only sees the terms that the previous token filter or tokenizer has
+emitted.
+
+Imagine that we have an analyzer which consists of the `standard` tokenizer,
+with the `lowercase` token filter followed by a `synonym` token filter. The
+analysis process for the text `U.S.A.` would look like this:
+
+[source,text]
+------------------------------------------------
+original string                  → "U.S.A."
+standard           tokenizer     → (U),(S),(A)
+lowercase          token filter  → (u),(s),(a)
+synonym            token filter  → (usa)
+------------------------------------------------
+
+If we had specified the synonym as `U.S.A.`, it would never match anything
+because, by the time `my_synonym_filter` sees the terms, the `.`'s have been
+removed and the letters have been lowercased.
+
+This is an important point to consider.  What if we want to combine synonyms
+with stemming, so that `jumps`, `jumped`, `jump`, `leaps`, `leaped`, and
+`leap` are all indexed as the single term `jump`?  We could place the synonyms
+filter before the stemmer and list all inflections:
+
+    "jumps,jumped,leap,leaps,leaped => jump"
+
+But the more concise way would be to place the synonyms filter after the
+stemmer, and to list just the root words that would be emitted by the stemmer:
+
+    "leap => jump"
+
+==== Case-sensitive synonyms
+
+Normally, synonym filters are placed after the `lowercase` token filter and so
+all synonyms are written in lowercase, but sometimes that can lead to odd
+conflations. For instance, a `CAT` scan and a `cat` are quite difference, as
+are `PET` (Positron Emmision Tomography) and a `pet`. For that matter, the
+surname `Little` is distinct from the adjective `little` (although if a
+sentence starts with the adjective, it will be upper-cased anyway).
+
+If you need use case to distinguish between word senses, then you will need to
+place your synonym filter before the `lowercase` filter. Of course, that means
+that your synonym rules would need to list all of the case variations that you
+want to match, e.g. `Little,LITTLE,little`.
+
+Instead of that, you could have two synonym filters: one to catch the case-sensitive
+synonyms and one for all the case-insentive synonyms.  For instance, the
+case-sensitive rules could look like this:
+
+    "CAT,CAT scan           => cat_scan"
+    "PET,PET scan           => pet_scan"
+    "Johnny Little,J Little => johnny_little"
+    "Johnny Small,J Small   => johnny_small"
+
+And the case-insentive rules could look like this:
+
+    "cat                    => cat,pet"
+    "dog                    => dog,pet"
+    "cat scan,cat_scan scan => cat_scan"
+    "pet scan,pet_scan scan => pet_scan"
+    "little,small"
+
+The case-insensitive rules would match `CAT scan` but would only match the
+`CAT` in `CAT Scan`. For this reason, we have the odd looking rule `cat_scan
+scan` in the case-insensitive list to catch bad replacements.
+
+TIP: You can see how quickly it can get complicated. As always, the `analyze` API
+is your friend -- use it to check that your analyzers are configured
+correctly.  See <<analyze-api>>.
+
+

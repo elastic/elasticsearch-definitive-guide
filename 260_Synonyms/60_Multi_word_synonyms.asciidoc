@@ -1,0 +1,183 @@
+[[multi-word-synonyms]]
+=== Multi-word synonyms and phrase queries
+
+So far, synonyms appear to be quite straightforward. Unfortunately, this is
+where things start to go wrong. For <<phrase-matching,phrase queries>> to
+function correctly, Elasticsearch needs to know the position that each term
+occupies in the original text. Multi-word synonyms can play havoc with term
+positions, especially when the injected synonyms are of differing lengths.
+
+To demonstrate, we'll create a synonym token filter that uses this rule:
+
+    "usa,united states,u s a,united states of america"
+
+[source,json]
+-----------------------------------
+PUT /my_index
+{
+  "settings": {
+    "analysis": {
+      "filter": {
+        "my_synonym_filter": {
+          "type": "synonym",
+          "synonyms": [
+            "usa,united states,u s a,united states of america"
+          ]
+        }
+      },
+      "analyzer": {
+        "my_synonyms": {
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "my_synonym_filter"
+          ]
+        }
+      }
+    }
+  }
+}
+
+GET /my_index/_analyze?analyzer=my_synonyms&text=
+The United States is wealthy
+-----------------------------------
+
+The tokens emitted by the `analyze` request look like this:
+
+[source,text]
+-----------------------------------
+Pos 1:  (the)
+Pos 2:  (usa,united,u,united)
+Pos 3:  (states,s,states)
+Pos 4:  (is,a,of)
+Pos 5:  (wealthy,america)
+-----------------------------------
+
+If we were to index a document analyzed with synonyms as above, and then run a
+phrase query without synonyms, we'd have some surprising results.  These
+phrases would not match:
+
+* ``the usa is wealthy''
+* ``the united states of america is wealthy''
+* ``the U.S.A. is wealthy''
+
+While these phrases would:
+
+* ``united states is wealthy''
+* ``usa states of wealthy''
+* ``the U.S. of wealthy''
+* ``U.S. is america''
+
+If we were to use synonyms at query time instead, we would see even more
+bizarre matches. Look at the output of this `validate-query` request:
+
+[source,json]
+-----------------------------------
+GET /my_index/_validate/query?explain
+{
+  "query": {
+    "match_phrase": {
+      "text": {
+        "query": "usa is wealthy",
+        "analyzer": "my_synonyms"
+      }
+    }
+  }
+}
+-----------------------------------
+
+The explanation from the above is:
+
+    "(usa united u united) (is states s states) (wealthy a of) america"
+
+which would match documents containg `u is of america` but wouldn't match any
+document that didn't contain the term `america`.
+
+.Synonyms and highlighting
+***********************************
+
+Multi-word synonyms affects highlighting in a similar way.  A query for `USA`
+could end up returning a highlighted snippet like: ``The *United* *States*
+*is* *wealthy*''.
+
+***********************************
+
+==== Use simple contraction for phrase queries
+
+The way avoid this mess is to use <<synonyms-contraction,simple contraction>>
+to inject a single term which represents all synonyms, and to use the same
+synonym token filter at query time:
+
+[source,json]
+-----------------------------------
+PUT /my_index
+{
+  "settings": {
+    "analysis": {
+      "filter": {
+        "my_synonym_filter": {
+          "type": "synonym",
+          "synonyms": [
+            "united states,u s a,united states of america=>usa"
+          ]
+        }
+      },
+      "analyzer": {
+        "my_synonyms": {
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "my_synonym_filter"
+          ]
+        }
+      }
+    }
+  }
+}
+
+GET /my_index/_analyze?analyzer=my_synonyms
+The United States is wealthy
+-----------------------------------
+
+The result of the above `analyze` request looks much more sane:
+
+[source,text]
+-----------------------------------
+Pos 1:  (the)
+Pos 2:  (usa)
+Pos 3:  (is)
+Pos 5:  (wealthy)
+-----------------------------------
+
+And repeating the `validate-query` request that we made above yields a simple,
+sane explanation:
+
+    "usa is wealthy"
+
+The downside of this approach is that, by reducing `united states of america`
+down to the single term `usa`, you can't use the same field to find just the
+word `united` or `states`. You would need to use a separate field with a
+different analysis chain for that purpose.
+
+==== Synonyms and the `query_string` query
+
+We have tried to avoid discussing the `query_string` query because we don't
+recommend using it.  In <<query-string-query>> we said that, because the
+`query_string` query supports a terse mini ``search-syntax'', it could
+frequently lead to surpising results or even syntax errors.
+
+One of the gotchas of this query involves multi-word synonyms. In order to
+support its search-syntax, it has to parse the query string to recognise
+special operators like `AND`, `OR`, `+`, `-`, `field:` etc.  (See the full
+{ref}query-dsl-query-string-query.html#query-string-syntax[`query_string` syntax]
+here.)
+
+As part of this parsing process, it breaks up the query string on whitespace,
+and passes each word that it finds to the relevant analyzer separately. This
+means that your synonym analyzer will never receive a multi-word synonym.
+Instead of seeing `United States` as a single string, the analyzer will
+receive `United` and `States` separately.
+
+Fortunately, the trustworthy `match` query supports no such syntax and
+multi-word synonyms will be passed to the analyzer in their entirety.
+
