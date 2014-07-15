@@ -1,0 +1,304 @@
+[[lucene-default-similarity]]
+=== Lucene's default similarity algorithm
+
+Lucene (and thus Elasticsearch) uses the
+http://en.wikipedia.org/wiki/Standard_Boolean_model[Boolean model]
+to find matching documents, and a formula called the _Practical Scoring
+Function_ to calculate relevance.  This formula borrows concepts from
+http://en.wikipedia.org/wiki/Tfidf[Term Frequency/Inverse Document Frequency] and the
+http://en.wikipedia.org/wiki/Vector_space_model[Vector space model]
+but adds more modern features like a coordination factor, field length
+normalization and term or query clause boosting.
+
+****
+
+Don't be alarmed!  These concepts are not as complicated as the names make
+them appear. We will work our way through each of them step-by-step.
+
+****
+
+[[boolean-model]]
+==== Boolean model
+
+The Boolean model simply applies the `AND`, `OR` and `NOT` conditions
+expressed in the query to find all of the documents that match. A query for:
+
+    full AND text AND search AND (elasticsearch OR lucene)
+
+will only include documents that contain all of the terms `full`, `text`, and
+`search`, and either `elasticsearch` or `lucene`.
+
+This process is simple and fast.  It is used to exclude any documents which
+cannot possibly match the query.
+
+[[tfidf]]
+==== Term frequency/Inverse document frequency
+
+Once we have a list of matching documents, they need to be ranked by
+relevance. Not all documents will contain all of the terms, and some terms are
+more important than other terms. The relevance score of the whole document
+depends on the _weight_ of each of the matching terms in that document.
+
+The weight of each term is determined by three factors, which we have already
+introduced in <<relevance-intro>>. The formulae are included for interest's
+sake, but you are not required to remember them:
+
+[[tf]] Term-frequency::
++
+--
+How often does the term appear in this document? The more often, the
+*higher* the weight.  A field containing five mentions of the same term is
+more likely to be relevant than a field containing just one mention.
+The term frequency is calculated as:
+
+..........................
+tf(t in d) = √frequency
+..........................
+--
+
+[[idf]] Inverse document frequency::
++
+--
+How often does the term appear in all documents in the collection?  The more
+often, the *lower* the weight. Common terms like `and` or `the` contribute
+little to relevance as they appear in most documents, while uncommon terms
+like `elastic` or `hippopotamus` help us to zoom in on the most interesting
+documents. The inverse document frequency is calculated as follows:
+
+..........................
+idf(t) = 1 + log ( numDocs / (docFreq + 1))
+..........................
+--
+
+[[field-norm]] Field length norm::
++
+--
+How long is the field?  The shorter the field, the *higher* the weight. A term
+appearing in a short `title` field carries more weight than the same term
+appearing in a long `content` field. The field length norm is calculated as:
+
+..........................
+norm(d) = √numTerms
+..........................
+--
+
+These three factors are calculated and stored at index time.  Together, they
+are used to calculate the _weight_ of a term in a particular document.
+
+
+[[vector-space-model]]
+==== Vector space model
+
+The Vector Space Model represents both the document and the query as
+_vectors_. A vector is really just a one-dimensional array containing numbers,
+like:
+
+    [1,2,5,22,3,8]
+
+In the Vector Space Model, the numbers in the vector represent the _weight_ of
+each term.
+
+*****************************************
+
+By default, Lucene uses <<tfidf,Term Frequency-Inverse Document Frequency>>
+(TF/IDF) to calculate these term weights, but there are other formulae that
+could be used instead. TF/IDF is the default because it is a  simple,
+efficient algorithm which produces high quality search results, and has stood
+the test of time.
+
+*****************************************
+
+Imagine that we have a query for ``happy hippopotamus''.  A common word like
+`happy` will have a low weight, while an uncommon term like `hippopotamus`
+will have a high weight. Let's assume that `happy` has a weight of 2 and
+`hippopotamus` has a weight of 5.  We can plot this simple two-dimensional
+vector (`[2,5]`) as a line on a graph starting at point (0,0) and extending to
+point (2,5).
+
+[[img-vector-query]]
+image::images/170_01_query.png["The query vector plotted on a graph"]
+
+Now, imagine we have three documents:
+
+1. ``I am *happy* in summer''
+2. ``After Christmas I'm a *hippopotamus*''
+3. ``The *happy hippopotamus* helped Harry''
+
+We can create a similar vector for each document, consisting of the weight of
+each of the terms in the query -- `happy` and `hippopotamus` -- and we plot
+them on the same graph:
+
+* Document 1: `(happy,____________)` -- `[2,0]`
+* Document 2: `( ___ ,hippopotamus)` -- `[0,5]`
+* Document 3: `(happy,hippopotamus)` -- `[2,5]`
+
+[[img-vector-docs]]
+image::images/170_02_docs.png["The query and document vectors plotted on a graph"]
+
+The nice thing about vectors is that they can be compared. By measuring the
+angle between the query vector and the document vector, it is possible to
+assign a relevance score to each document. The angle between document 1 and
+the query is large, so it is of low relevance.  Document 2 is closer to the
+query, meaning that it is reasonably relevant, and document 3 is a perfect
+match.
+
+**********************************************
+
+In practice, only two-dimensional vectors (queries with two terms) can  be
+plotted easily on a graph. Fortunately, _linear algebra_ -- the branch of
+mathematics which deals with vectors -- provides us with tools to compare the
+angle between multi-dimensional vectors, which means that we can apply the
+same principles explained above to queries which consist of many terms.
+
+You can read more about how to compare two vectors using _Cosine Similarity_
+at http://en.wikipedia.org/wiki/Cosine_similarity.
+
+**********************************************
+
+
+[[practical-scoring-function]]
+
+==== Lucene's Practical Scoring Function
+
+Lucene takes the Boolean Model, TF/IDF, and the Vector Space Model and
+combines them in a single efficient formula called the _Practical Scoring
+Function_. This formula looks intimidating, but don't be put off -- most of
+the components you already know.  It introduces a few new elements which we
+discuss below.
+
+................................
+score(q,d)  =               <1>
+            coord(q,d)          <2>
+          · queryNorm(q)        <3>
+          · ∑ (                 <4>
+                tf(t in d)         <5>
+              · idf(t)²            <6>
+              · t.getBoost()       <7>
+              · norm(t,d)          <8>
+            ) (t in q)          <4>
+................................
+
+<1> `score(q,d)` is the relevance score of document `d` for query `q`.
+<2> `coord(q,d)` is the <<coord,_coordination_ factor>>. [NEW]
+<3> `queryNorm(q)` is the <<query-norm,_query normalization_ factor>>. [NEW]
+<4> The sum of the weights for each term `t` in the query `q` for document `d`.
+<5> `tf(t in d)` is the <<tf,term frequency>> for term `t` in document `d`.
+<6> `idf(t)` is the <<idf,inverse document frequency>> for term `t`.
+<7> `t.getBoost()` is the <<get-boost,_boost_>>  that has been applied to
+    the query. [NEW]
+<8> `norm(t,d)` is the <<field-norm,field length norm>>, combined with the
+    <<index-boost,index-time field-level boost>>, if any. [NEW]
+
+You should recognise `score`, `tf`, and `idf`. The `coord`, `queryNorm`,
+`t.getBoost` and `norm` are new, and are explained below:
+
+[[coord]]
+===== Coordination factor
+
+The coordination factor is used to reward documents which contain more of the
+query terms. Imagine that we have a query for `quick brown fox`, and that the
+weight for each term is 1.5.  Without the coordination factor, the score would
+just be the sum of the weights of the terms in a document. For instance:
+
+* Document with `fox` -> score: 1.5
+* Document with `quick fox` -> score: 3.0
+* Document with `quick brown fox` -> score: 4.5
+
+The coordination factor multiplies the score by the number of matching terms
+in the document, and divides it by the total number of terms in the query.
+With the coordination factor, the scores would be as follows:
+
+* Document with `fox` -> score: `1.5 * 1 / 3` = 0.5
+* Document with `quick fox` -> score: `3.0 * 2 / 3` = 2.0
+* Document with `quick brown fox` -> score: `4.5 * 3 / 3` = 4.5
+
+The coordination factor results in the document that contains all 3 terms
+being much more relevant than the document that contains just 2 of them.
+
+[[query-norm]]
+===== Query normalization factor
+
+The query normalization factor is an attempt to ``normalize'' a query so that
+the results from one query may be compared with the results of another. This
+factor is calculated at the beginning of the query. The actual calculation
+depends on the queries involved but a typical implementation would be:
+
+..........................
+queryNorm = 1 / √sumOfSquaredWeights
+..........................
+
+The same query normalization factor is applied to every result and, for all
+intents and purposes, can be ignored.
+
+[[get-boost]]
+===== Query time boosting
+
+In <<prioritising-clauses>> we explained how you could use the `boost`
+parameter to give one query clause more importance than another.  For
+instance:
+
+[source,json]
+------------------------------
+GET /_search
+{
+  "query": {
+    "bool": {
+      "should": [
+        { "match": {
+            "title": {
+              "query": "quick brown fox",
+              "boost": 2 <1>
+        }}},
+        { "match": {
+            "body": "quick brown fox"
+        }}
+      ]
+    }
+  }
+}
+------------------------------
+<1> The `title` query clause is twice as important as the `body` query
+    clause, because it has been boosted by a factor of 2.
+
+These `boost` values are not applied at the level that they appear in the
+query DSL.  Instead, any boost values are combined and passsed down to the
+individual terms.  The `t.getBoost()` method returns any `boost` value applied
+to the term itself or to any of the queries higher up the chain.
+
+[[index-boost]]
+===== Index time boosting
+
+It is possible to boost a field at index time instead of search time.  In
+order to store this boost value in the index without using up more space, this
+field-level index-time boost is combined with the field length norm that we
+discussed in <<field-norm>> and stored in the index as a single byte. This is the
+value returned by `norm(t,d)` in the equation above.
+
+[TIP]
+
+=========================================
+
+We strongly recommend against using field-level index-time boosts for a few
+reasons:
+
+1.  Combining the boost with the field length norm and storing it in a single
+    bytes means that the field length norm loses precision. The result is that
+    Elasticsearch is unable to distinguish between a field containing 3 words
+    and a field containing 5 words.
+
+2.  To change an index-time boost, you have to reindex all of your documents.
+    A query-time boost, on the other hand, can be changed with every query.
+
+3.  If a field with index-time boost has multiple values, the boost is
+    multiplied with itself for every value, dramatically increasing
+    the weight for that field.
+
+Query-time field boosting is a much simpler, cleaner, more flexible option.
+
+=========================================
+
+With the above, you understand all of the factors that can affect the
+relevance score.  The next step is learning to control them, which we will
+deal with in the rest of this chapter.
+
+

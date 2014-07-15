@@ -1,5 +1,28 @@
-[[relevance]]
-== Controlling relevance (TODO)
+
+include::170_Relevance/10_Intro.asciidoc[]
+
+include::170_Relevance/20_Lucene_default_similarity.asciidoc[]
+
+
+///////////
+simple term query
+
+    tf idf norm
+
+bool query
+
+    coord
+    disable_coord
+
+bool term query with boost
+
+    boost
+
+bool query with match and boost
+
+
+  BM25
+
 
 === Similarity
 
@@ -14,17 +37,16 @@ norms? doc boost
 
 boost
 
-disable_coord
 
 index_boost
 
 boosting_query
 
-custom_boost_factor
 
 === Ignoring relevance
 
 constant_score
+custom_boost_factor
 
 === Boosting with filters
 
@@ -41,3 +63,5 @@ min_score
 === Boosting and performance
 
 rescore phase
+
+///////////
