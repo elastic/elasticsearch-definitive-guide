@@ -1,0 +1,209 @@
+
+=== Cardinality Metric
+
+The first approximate aggregation provided by Elasticsearch is the `cardinality`
+metric.  This provides the cardinality of a field, also called "distinct" or
+"unique" count.  You may be familiar with the SQL version:
+
+[source, sql]
+--------
+SELECT DISTINCT(color) 
+FROM cars
+--------
+
+Distinct counts are a common operation, and answer many fundamental business questions:
+
+- How many unique visitors have come to my website?
+- How many unique cars have we sold?
+- How many distinct users purchased a product each month?
+
+We can use the `cardinality` metric to determine the number of car colors being
+sold at our dealership:
+
+[source,js]
+--------------------------------------------------
+GET /cars/transactions/_search?search_type=count
+{
+    "aggs" : {
+        "distinct_colors" : {
+            "cardinality" : {
+              "field" : "color"
+            }
+        }
+    }
+}
+--------------------------------------------------
+// SENSE: 300_Aggregations/60_cardinality.json
+
+Which returns a minimal response show that we have sold three different colored
+cars:
+
+[source,js]
+--------------------------------------------------
+...
+"aggregations": {
+  "distinct_colors": {
+     "value": 3
+  }
+}
+...
+--------------------------------------------------
+
+We can make our example more useful:  how many colors were sold each month?  For
+that metric, we just nest the `cardinality` metric under a `date_histogram`:
+
+[source,js]
+--------------------------------------------------
+GET /cars/transactions/_search?search_type=count
+{
+  "aggs" : {
+      "months" : {
+        "date_histogram": {
+          "field": "sold",
+          "interval": "month"
+        },
+        "aggs": {
+          "distinct_colors" : {
+              "cardinality" : {
+                "field" : "color"
+              }
+          }
+        }
+      }
+  }
+}
+--------------------------------------------------
+
+
+==== Understanding the Tradeoffs
+As mentioned at the top of this chapter, the `cardinality` metric is an approximate
+algorithm.  It is based on the http://static.googleusercontent.com/media/research.google.com/fr//pubs/archive/40671.pdf[HyperLogLog++] (HLL) algorithm.  HLL works by
+hashing your input and using the bits from the hash to make probabilistic estimations
+on the cardinality.
+
+You don't need to understand the technical details (although if you're interested,
+the paper is a great read!), but you should be aware of the *properties* of the
+algorithm:
+
+- Configurable precision, which decides on how to trade memory for accuracy,
+- Excellent accuracy on low-cardinality sets
+- Fixed memory usage. no matter if there are tens or billions of unique values, memory usage only depends on the configured precision.
+
+To configure the precision, you must specify the `precision_threshold` parameter.
+This threshold defines the point under which cardinalities are expected to be very
+close to accurate.  So for example:
+
+[source,js]
+--------------------------------------------------
+GET /cars/transactions/_search?search_type=count
+{
+    "aggs" : {
+        "distinct_colors" : {
+            "cardinality" : {
+              "field" : "color",
+              "precision_threshold" : 100
+            }
+        }
+    }
+}
+--------------------------------------------------
+// SENSE: 300_Aggregations/60_cardinality.json
+
+Will ensure that fields with cardinality 100 and under will be extremely accurate.
+Although not guaranteed by the algorithm, if a cardinality us under the threshold
+it is almost always 100% accurate.  Cardinalities above this will begin to trade 
+accuracy for memory savings and a little error will creep into the metric.
+
+For a given threshold, the HLL data-structure will use about
+`precision_threshold * 8` bytes of memory.  So you must balance how much memory
+you are willing to sacrifice for additional accuracy.
+
+Practically speaking, a threshold of `100` maintains an error under 5% even when
+counting millions of unique values.  
+
+==== Optimizing for speed
+The nature of counting distinct objects usually means you are querying your entire
+data-set (or nearly all of it).  HyperLogLog is very fast already -- it simply
+hashes your data and does some bit-twiddling.
+
+If speed is very important to you, we can optimize it further.  Since HLL simply
+needs the hash of the field, we can precompute that hash at index time.  Then
+when you query, we can skip the hashing computation and load the value directly
+out of field data.
+
+[NOTE]
+=========================
+Pre-computing hashes is usually only useful on very large and/or high-cardinality 
+fields as it saves CPU and memory. However, on numeric fields, hashing is very 
+fast and storing the original values requires as much or less memory than storing the hashes. 
+
+This is also true on low-cardinality string fields, especially given that those 
+have an optimization in order to make sure that hashes are computed at most once 
+per unique value per segment.
+
+Basically, pre-computing hashes is not guaranteed to make all fields faster -- 
+only those that have high cardinality and/or large strings.  And remember, 
+pre-computing simply shifts the cost to index-time...meaning indexing will require
+more CPU.
+=========================
+
+To do this, we need to add a new multi-field to our data.  We'll delete our index,
+add a new mapping which includes the hashed field, then reindex:
+
+[source,js]
+----
+DELETE /cars/
+
+PUT /cars/
+{
+  "mappings": {
+    "color": {
+      "type": "string",
+      "fields": {
+          "hash": {
+              "type": "murmur3" <1>
+          }
+      }
+    }
+  }
+}
+
+POST /cars/transactions/_bulk
+{ "index": {}}
+{ "price" : 10000, "color" : "red", "make" : "honda", "sold" : "2014-10-28" }
+{ "index": {}}
+{ "price" : 20000, "color" : "red", "make" : "honda", "sold" : "2014-11-05" }
+{ "index": {}}
+{ "price" : 30000, "color" : "green", "make" : "ford", "sold" : "2014-05-18" }
+{ "index": {}}
+{ "price" : 15000, "color" : "blue", "make" : "toyota", "sold" : "2014-07-02" }
+{ "index": {}}
+{ "price" : 12000, "color" : "green", "make" : "toyota", "sold" : "2014-08-19" }
+{ "index": {}}
+{ "price" : 20000, "color" : "red", "make" : "honda", "sold" : "2014-11-05" }
+{ "index": {}}
+{ "price" : 80000, "color" : "red", "make" : "bmw", "sold" : "2014-01-01" }
+{ "index": {}}
+{ "price" : 25000, "color" : "blue", "make" : "ford", "sold" : "2014-02-12" }
+----
+// SENSE: 300_Aggregations/60_cardinality.json
+<1> This multi-field is of type `murmur3`, which is a hashing function
+
+Now when we run an aggregation, we use the `"color.hash"` field instead of the
+`"color"` field:
+
+[source,js]
+--------------------------------------------------
+GET /cars/transactions/_search?search_type=count
+{
+    "aggs" : {
+        "distinct_colors" : {
+            "cardinality" : {
+              "field" : "color.hash" <1>
+            }
+        }
+    }
+}
+--------------------------------------------------
+// SENSE: 300_Aggregations/60_cardinality.json
+<1> Notice that we specify the hashed multi-field, rather than the original
