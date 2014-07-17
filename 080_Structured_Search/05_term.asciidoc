@@ -225,7 +225,7 @@ PUT /my_store <2>
 // SENSE: 080_Structured_Search/05_Term_text.json
 <1> Deleting the index first is required, since we cannot change mappings that
     already exist.
-<2> With the index deleted, we can recreate it with out custom mapping.
+<2> With the index deleted, we can recreate it with our custom mapping.
 <3> Here we explicitly say that we don't want `productID` to be analyzed.
 
 Now we can go ahead and reindex our documents:
