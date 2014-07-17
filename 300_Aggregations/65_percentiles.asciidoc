@@ -19,18 +19,21 @@ metric is easily skewed by just a single outlier.
 
 This graph visualizes the problem.  If you rely on simple metrics like mean or median, you might see a graph that looks like this:
 
-image::images/300_65_percentile1.png
+[[percentile-mean-median]]
+image::images/300_65_percentile1.png["Assessing website latency using mean/median"]
 
 Everything looks fine.  There is a slight bump, but nothing to be concerned about.
 But if we load up the 99th percentile (the value which accounts for the slowest 1%
 of latencies), we see an entirely different story:
 
-image::images/300_65_percentile2.png
+[[percentile-mean-median-percentile]]
+image::images/300_65_percentile2.png["Assessing website latency using percentiles"]
 
 Woah!  At 9:30 AM, the mean is only 75ms.  As a system administrator, you wouldn't
 look at this value twice.  Everything normal!  But the 99th percentile is telling
 you that 1% of your customers are seeing latency in excess of 850ms...a very
-different story.
+different story.  There is also a smaller spike at 4:48 AM which wasn't even
+noticeable in the mean/median.
 
 This is just one use-case for a percentile.  They can also be used to quickly
 eyeball the distribution of data, check for skew or bimodalities, etc.
