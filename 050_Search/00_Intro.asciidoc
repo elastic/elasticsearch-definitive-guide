@@ -18,7 +18,8 @@ consider doing with a traditional database.
 A _search_ can be:
 
 * a structured query on concrete fields like `gender` or `age`, sorted by
-  `join_date`, similar to a query that you could construct in SQL
+  a field like `join_date`, similar to the type of query that you could construct 
+  in SQL
 
 * a full text query, which finds all documents matching the search keywords,
   and returns them sorted by _relevance_
