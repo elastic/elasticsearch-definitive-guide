@@ -1,0 +1,75 @@
+[[query-scoring]]
+=== Manipulating relevance with query structure
+
+The Elasticsearch Query DSL is immensely flexible.  You can move individual
+query clauses up and down the query hierarchy to make a clause more or less
+important.  For instance, imagine the following query:
+
+    quick OR brown OR red OR fox
+
+We could write this as a `bool` query with all terms at the same level:
+
+[source,json]
+------------------------------
+GET /_search
+{
+  "query": {
+    "bool": {
+      "should": [
+        { "term": { "text": "quick" }},
+        { "term": { "text": "brown" }},
+        { "term": { "text": "red"   }},
+        { "term": { "text": "fox"   }}
+      ]
+    }
+  }
+}
+------------------------------
+
+But this query might score a document which contains `quick`, `red` and
+`brown` the same as another document which contains `quick`, `red` and `fox`.
+Red and brown are synonyms and we probably only need one of them to match.
+Perhaps we really want to express the query as:
+
+    quick OR (brown OR red) OR fox
+
+According to standard Boolean logic, this is exactly the same as the original
+query but, as we have already seen in <<bool-query>>, a `bool` query does not
+only concern itself with whether a document matches or not, but also with how
+*well* it matches.
+
+A better way to write this query would be as follows:
+
+[source,json]
+------------------------------
+GET /_search
+{
+  "query": {
+    "bool": {
+      "should": [
+        { "term": { "text": "quick" }},
+        { "term": { "text": "fox"   }},
+        {
+          "bool": {
+            "should": [
+              { "term": { "text": "brown" }},
+              { "term": { "text": "red"   }}
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
+------------------------------
+
+Now, `red` and `brown` compete with each other at their own level and `quick`,
+`fox` and `red OR brown` are the top-level competitive terms.
+
+We have already discussed how the <<match-query,`match`>>,
+<<multi-match-query,`multi_match`>>, <<term-vs-full-text,`term`>>,
+<<bool-query,`bool`>>, and  <<dis-max-query,`dis_max`>> queries can be used
+to manipulate scoring. In the rest of this chapter, we are going to look at
+three other scoring-related queries: the `boosting` query, the
+`constant_score` query and the `function_score` query.
+

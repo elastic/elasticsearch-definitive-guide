@@ -1,0 +1,71 @@
+[[not-quite-not]]
+=== Not quite not
+
+A search on the Internet for ``Apple'' is likely to return results about the
+company, the fruit, and various recipes.  We could try to narrow it down to
+just the company by excluding words like `pie`, `tart`, `crumble`, and `tree`,
+using a `must_not` clause in a `bool` query:
+
+[source,json]
+-------------------------------
+GET /_search
+{
+  "query": {
+    "bool": {
+      "must": {
+        "match": {
+          "text": "apple"
+        }
+      },
+      "must_not": {
+        "match": {
+          "text": "pie tart fruit crumble tree"
+        }
+      }
+    }
+  }
+}
+-------------------------------
+
+But who is to say that we wouldn't miss a very relevant document about Apple
+the company by excluding `tree` or `crumble`?  Sometimes, `must_not` can be
+too strict.
+
+[[boosting-query]]
+==== `boosting` query
+
+The {ref}query-dsl-boosting-query.html[`boosting` query] solves this problem.
+It allows us to still include results which appear to be about the fruit or
+the pastries, but to downgrade them -- to rank them lower than they would
+otherwise be:
+
+[source,json]
+-------------------------------
+GET /_search
+{
+  "query": {
+    "boosting": {
+      "positive": {
+        "match": {
+          "text": "apple"
+        }
+      },
+      "negative": {
+        "match": {
+          "text": "pie tart fruit crumble tree"
+        }
+      },
+      "negative_boost": 0.5
+    }
+  }
+}
+-------------------------------
+
+It accepts a `postive` query and `negative` query.  Only documents which match
+the `positive` query will be included in the results list, but documents which
+also match the `negative` query will be downgraded by multiplying the original
+`_score` of the document with the `negative_boost`.
+
+For this to work, the `negative_boost` must be less than `1.0`.  In our above
+example, any documents which contain any of the negative terms will have their
+`_score` cut in half.

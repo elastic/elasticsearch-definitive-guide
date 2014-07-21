@@ -33,7 +33,7 @@ Inverse document frequency::
   relevant. Terms that appear in many documents have a lower _weight_ than
   more uncommon terms.
 
-Field norm::
+Field length norm::
 
   How long is the field? The longer it is, the less likely it is that words in
   the field will be relevant. A term appearing in a short `title` field
@@ -51,6 +51,7 @@ When multiple query clauses are combined using a compound query like the
 `bool` query, the `_score` from each of these query clauses is combined to
 calculate the overall `_score` for the document.
 
+[[explain]]
 ==== Understanding the score
 
 When debugging a complex query, it can be difficult to understand
@@ -141,7 +142,7 @@ sub-calculations that were required:
 <1> Summary of the score calculation for `honeymoon`
 <2> Term frequency
 <3> Inverse document frequency
-<4> Field norm
+<4> Field length norm
 
 The first part is the summary of the calculation. It tells us that it has
 calculated the _weight_ -- term frequency/inverse document frequency or TF/IDF
@@ -160,7 +161,7 @@ Inverse document frequency::
     How many times did the term `honeymoon` appear in the `tweet` field
     of all documents in the index?
 
-Field norm::
+Field length norm::
 
     How long is the `tweet` field in this document -- the longer the field,
     the smaller this number.
@@ -177,6 +178,7 @@ when it is formatted as YAML. Just add `format=yaml` to the query string.
 ==================================================================
 
 
+[[explain-api]]
 ==== Understanding why a document matched
 
 While the `explain` option adds an explanation for every result, you can use

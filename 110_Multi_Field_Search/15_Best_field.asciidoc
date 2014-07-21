@@ -89,6 +89,7 @@ from the *best-matching* field as the overall score for the query?  This would
 give preference to a single field that contain *both* of the words we are
 looking for, rather than the same word repeated in different fields.
 
+[[dis-max-query]]
 ==== `dis_max` query
 
 Instead of the `bool` query, we can use the  `dis_max` or _Disjunction Max

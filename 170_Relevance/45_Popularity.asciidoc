@@ -1,0 +1,228 @@
+[[boosting-by-popularity]]
+=== Boosting by popularity
+
+Imagine that we have a website hosting blogposts where users can upvote the
+blogposts that they like. We would more popular posts to appear higher in the
+results list, but still have the full text score as the main relevance driver.
+We can do this easily by storing the number of votes with each blogspost:
+
+[source,json]
+-------------------------------
+PUT /blogposts/post/1
+{
+  "title":   "About popularity",
+  "content": "In this post we will talk about...",
+  "votes":   6
+}
+-------------------------------
+
+At search time, we can use the `function_score` query with the
+`field_value_factor` function to combine the number of votes with the full
+text relevance score:
+
+[source,json]
+-------------------------------
+GET /blogposts/post/_search
+{
+  "query": {
+    "function_score": { <1>
+      "query": { <2>
+        "multi_match": {
+          "query":    "popularity",
+          "fields": [ "title", "content" ]
+        }
+      },
+      "field_value_factor": { <3>
+        "field": "votes" <4>
+      }
+    }
+  }
+}
+-------------------------------
+<1> The `function_score` query wraps the main query and the function we would
+    like to apply.
+<2> The main query is executed first.
+<3> The `field_value_factor` function is appled to every document matching
+    the main `query`.
+<4> Every document *must* have a number in the `votes` field for
+    the `function_score` to work.
+
+In the example above, the final `_score` for each document has been altered as
+follows:
+
+    new_score = old_score * number_of_votes
+
+The above will not give us great results.  The full text `_score` range
+usually falls somewhere between 0 and 10, so a blogpost with 10 votes will
+completely swamp the effect of the full text score.
+
+    TODO: INSERT GRAPH
+
+==== `modifier`
+
+A better way to incorporate popularity is to smooth out the `votes` value
+with some `modifier`.  In other words, we want the first few votes to count a
+lot, but for each subsequent vote to count less.  The difference between 0
+votes and 1 vote should be much bigger than the difference between 10 votes
+and 11 votes.
+
+A typical `modifier` for this use case is `log1p`, which changes the formula
+to the following:
+
+    new_score = old_score * log(1 + number_of_votes)
+
+The `log` function smooths out the effect of the `votes` field to provide a
+curve like this:
+
+    TODO: INSERT GRAPH
+
+The request with the `modifier` parameter looks like the following:
+
+[source,json]
+-------------------------------
+GET /blogposts/post/_search
+{
+  "query": {
+    "function_score": {
+      "query": {
+        "multi_match": {
+          "query":    "popularity",
+          "fields": [ "title", "content" ]
+        }
+      },
+      "field_value_factor": {
+        "field":    "votes",
+        "modifier": "log1p" <1>
+      }
+    }
+  }
+}
+-------------------------------
+<1> Set the `modifier` to `log1p`.
+
+The available modifiers are: `none` (the default) , `log`, `log1p`, `log2p`,
+`ln`, `ln1p`, `ln2p`, `square`, `sqrt`,  and `reciprocal`.  You can read more
+about them in the
+{ref}http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-function-score-query.html#_field_value_factor[`field_value_factor` documentation].
+
+==== `factor`
+
+The strength of the popularity effect can be increased or decreased by
+multiplying the value in the `votes` field by some number, called the
+`factor`:
+
+[source,json]
+-------------------------------
+GET /blogposts/post/_search
+{
+  "query": {
+    "function_score": {
+      "query": {
+        "multi_match": {
+          "query":    "popularity",
+          "fields": [ "title", "content" ]
+        }
+      },
+      "field_value_factor": {
+        "field":    "votes",
+        "modifier": "log1p",
+        "factor":   2 <1>
+      }
+    }
+  }
+}
+-------------------------------
+<1> Doubles the popularity effect.
+
+Adding in a `factor` changes the formula to this:
+
+    new_score = old_score * log(1 + factor * number_of_votes)
+
+A `factor` greater than 1 increases the effect:
+
+    TODO: INSERT GRAPH
+
+And a `factor` less than 1 decreases the effect:
+
+    TODO: INSERT GRAPH
+
+
+==== `boost_mode`
+
+Perhaps multiplying the full text score by the result of the
+`field_value_factor` function still has too large an effect.  We can control
+how the result of a function is combined with the `_score` from the query
+using the `boost_mode` parameter, which accepts the following values:
+
+[horizontal]
+`multiply`::    Multiply the `_score` with the function result. (default)
+`sum`::         Add the function result to the `_score`.
+`min`::         The lower of the `_score` and the function result.
+`max`::         The higher of the `_score` and the function result.
+`replace`::     Replace the `_score` with the function result.
+
+If, instead of multiplying, we add the function result to the `_score`, we can
+achieve a much smaller effect, especially if we use a low `factor`:
+
+[source,json]
+-------------------------------
+GET /blogposts/post/_search
+{
+  "query": {
+    "function_score": {
+      "query": {
+        "multi_match": {
+          "query":    "popularity",
+          "fields": [ "title", "content" ]
+        }
+      },
+      "field_value_factor": {
+        "field":    "votes",
+        "modifier": "log1p",
+        "factor":   0.1
+      },
+      "boost_mode": "sum" <1>
+    }
+  }
+}
+-------------------------------
+<1> Add the function result to the `_score`.
+
+The formula for the above request now looks like this:
+
+    new_score = old_score + log(1 + 0.1 * number_of_votes)
+
+==== `max_boost`
+
+Finally, we can cap the maximimum effect that the function can have using the
+`max_boost` parameter:
+
+[source,json]
+-------------------------------
+GET /blogposts/post/_search
+{
+  "query": {
+    "function_score": {
+      "query": {
+        "multi_match": {
+          "query":    "popularity",
+          "fields": [ "title", "content" ]
+        }
+      },
+      "field_value_factor": {
+        "field":    "votes",
+        "modifier": "log1p",
+        "factor":   0.1
+      },
+      "boost_mode": "sum",
+      "max_boost":  1.5 <1>
+    }
+  }
+}
+-------------------------------
+<1> Whatever the result of the `field_value_factor` function, it will never be
+    greater than `1.5`.
+
+NOTE: The `max_boost` applies a limit to the result of the function only, not
+to the final `_score`.
+

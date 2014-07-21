@@ -1,0 +1,97 @@
+[[random-scoring]]
+=== Random scoring
+
+coming[1.4.0]
+
+TODO: REWRITE IN LIGHT OF https://github.com/elasticsearch/elasticsearch/issues/6907
+
+You may have been wondering what ``consistently random scoring'' is, or why
+you would ever want to use it.  The previous example provides a good use case.
+All results from the previous example would receive a final `_score` of 1, 2,
+3, 4, or 5. Maybe there are only a few homes which score 5, but presumably
+there would be a lot of homes scoring 2 or 3.
+
+As the owner of the website, you want to give your advertisers as much
+exposure as possible.  With the current query, results with the same `_score`
+would be returned in the same order every time.  It would be good to introduce
+some randomness here, to ensure that all documents in a single score ``level''
+get a similar amount of exposure.
+
+For all documents which score 2, we can randomize their score to be somewhere
+between 2.0 and less than 3.0 -- we don't want results to leave their
+``level'', just to be randomized within it.
+
+We want every user to see a different random order, but we want the same user
+to see the same order when they click on page 2, 3, etc.  This is what is
+meant by _consistently random_.
+
+The `random_score` function will produce consistently random results if it is
+provided with:
+
+* the same `seed` value, such as a user's session ID.
+* a unique (or at least high cardinality) numeric or date field.
+
+It is easier to understand with an example:
+
+[source,json]
+--------------------------------
+GET /_search
+{
+  "query": {
+    "function_score": {
+      "filter": {
+        "term": { "city": "Barcelona" }
+      },
+      "functions": [
+        {
+          "filter": { "term": { "features": "wifi" }},
+          "boost_factor": 1
+        },
+        {
+          "filter": { "term": { "features": "garden" }},
+          "boost_factor": 1
+        },
+        {
+          "filter": { "term": { "features": "pool" }},
+          "boost_factor": 2
+        },
+        {
+          "random_score": { <1>
+            "seed":  "the users session id", <2>
+            "field": "created_date", <3>
+            "max":   0.99 <4>
+          }
+        }
+      ],
+      "score_mode": "sum",
+    }
+  }
+}
+--------------------------------
+<1> The `random_score` clause doesn't have any `filter` so it will
+    be applied to all documents.
+<2> Pass the user's session ID as the `seed`, to make randomization
+    consistent for that user. The same `seed` will result in the
+    same randomization.
+<3> The `created_date` is a high cardinality date field, which will
+    be used to keep randomization consistent, even when segment
+    merges happen in the background.
+<4> The result of `random_score` should be between 0.0 and 0.99, to
+    ensure that documents aren't randomized out of their ``level''.
+
+The `field` parameter deserves special mention. If it isn't provided, then
+documents are randomized based on the order in which they appear in the index.
+However, if you keep making changes to the index, this order will change as
+smaller segments are merged to form bigger segments in the background.
+
+If you provide a `field` parameter, it will (with the same `seed`)
+consistently randomize results in the same order.  You can use any unique or
+high cardinality numeric or date field or, if you don't have one of those, the
+`_uid` field will work.
+
+Of course, if you were to add a document that appears near the top of the
+results list based on the features it has, that document will be appear in its
+proper place in the results list regardless of the `field` or `seed`
+parameters.
+
+

@@ -5,19 +5,15 @@ Databases which deal purely in structured data (such as dates, numbers, and
 string enums) have it easy -- they just have to check whether a document (or a
 row, in a relational database) matches the query or not.
 
-Boolean yes/no matches are insufficient for full text search.  Instead, we
-need to know how relevant each document is to the query.  Full text search
-engines not only have to find the matching documents, but also to sort them in
-descending order of relevance.
+While Boolean yes/no matches are an essential part of full text search, they
+are not enough by themselves. Instead, we also  need to know how relevant each
+document is to the query.  Full text search engines not only have to find the
+matching documents, but also to sort them by relevance.
 
 Full text relevance formulae, or _similarity algorithms_,  combine several
 factors to produce a single relevance `_score` for each document.  In this
 chapter, we will examine the various moving parts and discuss how they can be
 controlled.
-
-A query is likely to consider more than one field -- perhaps the `title` and
-`body` of an email.  Not all fields are equal, and each field should be given
-more or less weight depending on its significance.
 
 Of course, relevance is not just about full text queries -- it may need to
 take structured data into account as well. Perhaps we are looking for hotels
@@ -29,7 +25,6 @@ still taking the relevance of a full text query into account.
 All of this is possible thanks to the powerful relevance infrastructure
 available in Elasticsearch.
 
-NOTE: While this chapter mentions algorithms, formulae and mathematical
-models, it is intended for consumption by mere humans.  Understanding the
-algorithms themselves is not as important as understanding the factors that
-they take into account.
+We will start by looking at the theoretical side of how Lucene calculates
+relevance, then move on to practical examples of how you can control the
+process.
