@@ -51,7 +51,7 @@ are usually shorter than the related content -- so don't blindly boost fields
 just because you think they should be boosted.  Apply a boost and check the
 results. Change the boost and check again.
 
-===== Boosting an index
+==== Boosting an index
 
 When searching across multipled indices, you can boost an entire index over
 the others with the `indices_boost` parameter.  This could be used, as in the
@@ -78,7 +78,7 @@ GET /docs_2014_*/_search <1>
     in `docs_2014_09` by `2`, and any other matching indices will have
     a neutral boost of `1`.
 
-===== `t.getBoost()`
+==== `t.getBoost()`
 
 These boost values are represented in the <<practical-scoring-function>> by
 the `t.getBoost()` element. Boosts are not applied at the level that they

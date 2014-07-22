@@ -16,13 +16,13 @@ chapter, we will examine the various moving parts and discuss how they can be
 controlled.
 
 Of course, relevance is not just about full text queries -- it may need to
-take structured data into account as well. Perhaps we are looking for hotels
-with particular features (air-conditioning, sea view, free wi-fi).  The more
-features that a hotel has, the more relevant the hotel. Or perhaps we want to
-factor in sliding-scales like recency, price, popularity or distance, while
-still taking the relevance of a full text query into account.
+take structured data into account as well. Perhaps we are looking for a
+holiday home with particular features (air-conditioning, sea view, free
+wi-fi).  The more features that a property has, the more relevant it is. Or
+perhaps we want to factor in sliding-scales like recency, price, popularity or
+distance, while still taking the relevance of a full text query into account.
 
-All of this is possible thanks to the powerful relevance infrastructure
+All of this is possible thanks to the powerful scoring infrastructure
 available in Elasticsearch.
 
 We will start by looking at the theoretical side of how Lucene calculates

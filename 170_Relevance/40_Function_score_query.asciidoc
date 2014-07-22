@@ -20,21 +20,21 @@ It supports a number of predefined functions out of the box:
 `field_value_factor`::
 
     Use the value of a field in the document to alter the `_score`,  such as
-    factoring in a `popularity` count or `stars`.
+    factoring in a `popularity` count or number of `votes`.
 
-`random`::
+`random_score`::
 
     Apply consistently random sorting to your results to ensure that documents
     would otherwise have the same score are randomly shown to different users,
     while maintaining the same sort order for each user.
 
-`decay`::
+Decay functions -- `linear`, `exp`, `gauss`::
 
     Incorporate sliding-scale values like `publish_date`, `geo_location`, or
     `price` into the `_score` to prefer recently published document, documents
     near a lat-lon point, or documents near a specified price-point.
 
-`script`::
+`script_score`::
 
     Use a custom script to take complete control of the scoring logic. If your
     needs extend beyond those of the functions listed above, write a custom

@@ -22,49 +22,11 @@ include::170_Relevance/50_Boosting_filtered_subsets.asciidoc[]
 
 include::170_Relevance/55_Random_scoring.asciidoc[]
 
-///////////
+include::170_Relevance/60_Decay_functions.asciidoc[]
 
+include::170_Relevance/65_Script_score.asciidoc[]
 
+include::170_Relevance/70_Pluggable_similarities.asciidoc[]
 
-decay
+include::170_Relevance/75_Changing_similarities.asciidoc[]
 
-script
-
-
-  BM25
-
-
-=== Similarity
-
-TF/IDF
-BM25
-
-
-=== Boosting at query time
-
-
-boosting_query
-
-
-=== Ignoring relevance
-
-constant_score
-custom_boost_factor
-
-=== Boosting with filters
-
-custom_filters_score
-
-=== Boosting with scripts
-
-custom_score
-
-distance_score
-
-min_score
-
-=== Boosting and performance
-
-rescore phase
-
-///////////

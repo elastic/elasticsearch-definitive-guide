@@ -1,0 +1,129 @@
+[[decay-functions]]
+=== The closer, the better
+
+There are many variables that could influence the user's choice of holiday
+home.  Maybe they would like to be close to the centre of town, but perhaps
+they would be willing to settle for a place which is a bit further from the
+centre if the price is low enough.  Perhaps the reverse is true: they would be
+willing to pay more for the best location.
+
+If we were to add a filter which excluded any holiday homes further than 1
+kilometre from the center, or any holiday homes that cost more than £100 a
+night, we might exclude results that the user would consider to be a good
+compromise.
+
+The `function_score` query gives us the ability to trade off one sliding scale
+(like location) against another sliding scale (like price), with a group of
+functions known as the _decay functions_.
+
+There are three decay functions, called `linear`, `exp` and `gauss`, which
+operate on numeric fields, date fields or lat-lon geo-points.  Allthree take
+the same parameters:
+
+[horizontal]
+`origin`::
+
+    The ``central point'', or the best possible value for the field.
+    Documents that fall at the `origin` will get a full `_score` of `1.0`.
+
+`scale`::
+
+    The rate of decay -- how quickly the `_score` should drop the further from
+    the `origin` that a document lies, eg every £10 or every 100 metres.
+
+`decay`::
+
+    The `_score` that a document at `scale` distance from the `origin` should
+    receive. Defaults to `0.5`.
+
+`offset`::
+
+    Setting a non-zero `offset` expands the ``central point'' to cover a range
+    of values instead of just the single point specified by the `origin`. All
+    values in the range `-offset <= origin <= +offset` will receive the full
+    `_score` of `1.0`.
+
+The only difference between these three functions is the shape of the decay
+curve. The difference is most easily illustrated with a graph:
+
+[[img-decay-functions]]
+.Decay function curves
+image::images/170_10_decay.png["The curves of the decay functions"]
+
+The curves shown in <<img-decay-functions>> all have their `origin` -- the
+central point -- set to `40`.  The `offset` is `5`, meaning that all values in
+the range `40 - 5 <= value <= 40 + 5` are treated as though they were at the
+`origin` -- they all get the full score of `1.0`.
+
+Outside of this range, the score starts to decay.  The rate of decay is
+determined by the `scale` which, in this example, is set to `5`, and the
+`decay` which is set to the default of `0.5`. The result is that all three
+curves return a score of `0.5` at `origin +/- (offset + scale)`, or at points
+`30` and `50`.
+
+The difference between them is the shape of the curve at other points in the range:
+
+* The `linear` funtion is just a straight line. Once the line hits zero,
+  all values outside the line will return a score of `0.0`.
+* The `exp` (exponential) function decays rapidly, then slows down.
+* The `gauss` (Gaussian) function is bell-shaped -- it decayd slowly, then
+  rapidly, then slowing down again.
+
+Which curve you choose depends entirely on how quickly you want the `_score`
+to decay, the further a value is from the `origin`.
+
+To return to our example: our user would prefer to rent a holiday home close
+to the centre of London (`{ "lat": 51.50, "lon": 0.12}`) and to pay no more
+than £100 a night.  We could write this query as:
+
+[source,json]
+----------------------------------
+GET /_search
+{
+  "query": {
+    "function_score": {
+      "functions": [
+        {
+          "gauss": {
+            "location": { <1>
+              "origin": { "lat": 51.5, "lon": 0.12 },
+              "offset": "2km",
+              "scale":  "3km"
+            }
+          }
+        },
+        {
+          "gauss": {
+            "price": { <2>
+              "origin": "50", <3>
+              "offset": "50",
+              "scale":  "20"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+----------------------------------
+<1> The `location` field is mapped as a `geo_point`.
+<2> The `price` field is numeric.
+<3> See below for the reason why `origin` is `50` instead of `100`.
+
+The `location` clause is easy to understand:
+
+* We have specified an `origin` which corresponds to the centre of London.
+* Any location within `2km` of the `origin` receives the full score of `1.0`.
+* Locations more than `5km` (`offset + scale`) from the centre receive a score
+  `0.5`.
+
+The `price` clause is a little trickier.  The user's preferred price is
+anything up to £100, but this example sets the origin to £50.  Prices can't be
+negative, but the lower they are the better.  Really, any price between £0 and
+£100 should be considered optimal.  If we were to set the `origin` to £100,
+then prices below £100 would receive a lower score. Instead, we set both the
+`origin` and the `offset` to £50.  That way, the score only decays for any
+prices above £100 (`origin + offset`).
+
+
+

@@ -32,6 +32,7 @@ So what can we do to limit the performance cost of phrase and proximity
 queries? One useful approach is to reduce the total number of documents that
 need to be examined by the phrase query.
 
+[[rescore-api]]
 ==== Rescoring results
 
 In <<proximity-relevance,the last section>> we discussed using proximity
