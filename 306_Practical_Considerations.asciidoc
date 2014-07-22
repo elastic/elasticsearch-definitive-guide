@@ -1,3 +1,17 @@
 
-== Practical Considerations (todo)
-TODO
+== Practical Considerations
+
+include::300_Aggregations/90_fielddata.asciidoc[]
+
+include::300_Aggregations/95_analyzed_vs_not.asciidoc[]
+
+include::300_Aggregations/90_circuit_breaker_fd_settings.asciidoc[]
+
+include::300_Aggregations/90_filtering.asciidoc[]
+
+include::300_Aggregations/90_docvalues.asciidoc[]
+
+include::300_Aggregations/90_eager.asciidoc[]
+
+include::300_Aggregations/90_breadth_vs_depth.asciidoc[]
+

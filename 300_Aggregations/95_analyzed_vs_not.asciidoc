@@ -1,0 +1,163 @@
+
+=== Aggregations and Analysis
+
+Some aggregations, such as the `terms` bucket, operate on string fields.  And 
+string fields may be either `analyzed` or `not_analyzed`, which begs the question:
+how does analysis affect aggregations?
+
+The answer is "a lot", but it is best shown through an example.  First, index
+some documents representing four different states:
+
+[source,js]
+----
+POST /agg_analysis/data/_bulk
+{ "index": {}}
+{ "state" : "New York" }
+{ "index": {}}
+{ "state" : "New Jersey" }
+{ "index": {}}
+{ "state" : "New Mexico" }
+{ "index": {}}
+{ "state" : "New York" }
+{ "index": {}}
+{ "state" : "New York" }
+----
+
+We want to build a list of states in our dataset, complete with counts.  Simple...
+let's use a `terms` bucket:
+
+[source,js]
+----
+GET /agg_analysis/data/_search?search_type=count
+{
+    "aggs" : {
+        "states" : {
+            "terms" : {
+                "field" : "state"
+            }
+        }
+    }
+}
+----
+
+Which gives us the results....
+
+[source,js]
+----
+{
+...
+   "aggregations": {
+      "states": {
+         "buckets": [
+            {
+               "key": "new",
+               "doc_count": 5
+            },
+            {
+               "key": "york",
+               "doc_count": 3
+            },
+            {
+               "key": "jersey",
+               "doc_count": 1
+            },
+            {
+               "key": "mexico",
+               "doc_count": 1
+            }
+         ]
+      }
+   }
+}
+----
+
+Oh dear, that's not at all what we want!  Instead of counting states, the aggregation
+is counting tokens.  This is because the field is analyzed, so `"New York"` is
+tokenized into `["new", "york"]` in the inverted index.  When field data is built,
+it uses the tokens in the inverted index exactly.
+
+This means that all aggregations operate "post-analysis", and thus will display
+results like that above.  This is obviously not the behavior that we wanted, but
+luckily it is easily corrected.
+
+We need to define a multi-field for "state" and set it to `not_analyzed`.  This
+will prevent `"New York"` from being analyzed, which means it will stay a single
+token in the aggregation.  Let's try the whole process over, but this time
+specify a "raw" multi-field:
+
+[source,js]
+----
+DELETE /agg_analysis/
+PUT /agg_analysis
+{
+  "mappings": {
+    "data": {
+      "properties": {
+        "state" : {
+          "type": "string",
+          "fields": { 
+            "raw" : {
+              "type": "string",
+              "index": "not_analyzed"<1>
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+POST /agg_analysis/data/_bulk
+{ "index": {}}
+{ "state" : "New York" }
+{ "index": {}}
+{ "state" : "New Jersey" }
+{ "index": {}}
+{ "state" : "New Mexico" }
+{ "index": {}}
+{ "state" : "New York" }
+{ "index": {}}
+{ "state" : "New York" }
+
+GET /agg_analysis/data/_search?search_type=count
+{
+  "aggs" : {
+    "states" : {
+        "terms" : {
+            "field" : "state.raw" <2>
+        }
+    }
+  }
+}
+----
+<1> This time we explicitly map out the "state" field and include a multi-field
+which adds a `not_analyzed` field
+<2> The aggregation is run on "state.raw" instead of "state"
+
+Now when we run our aggregation, we get results that make sense:
+
+[source,js]
+----
+{
+...
+   "aggregations": {
+      "states": {
+         "buckets": [
+            {
+               "key": "New York",
+               "doc_count": 3
+            },
+            {
+               "key": "New Jersey",
+               "doc_count": 1
+            },
+            {
+               "key": "New Mexico",
+               "doc_count": 1
+            }
+         ]
+      }
+   }
+}
+----
+

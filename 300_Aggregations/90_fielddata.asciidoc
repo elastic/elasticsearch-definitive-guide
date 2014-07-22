@@ -1,0 +1,93 @@
+
+=== Field Data
+
+Aggregations work via a data structure known as *field data* (briefly introduced 
+in <<fielddata-intro>>).  Field data is often the largest consumer of memory
+in an Elasticsearch cluster, so it is important to understand how it works.
+
+Field data exists because inverted indices are only efficient for certain operations.
+The inverted index excels at finding documents which contain a term.  It does not
+perform well in the opposite direction: finding the terms in a single document.
+Aggregations need this secondary access pattern.  
+
+Consider the following inverted index:
+
+    Term      Doc_1   Doc_2   Doc_3
+    ------------------------------------
+    Quick   |       |   X   |   X
+    The     |   X   |       |
+    brown   |   X   |   X   |  
+    dog     |   X   |       |   X
+    dogs    |       |   X   |   X  
+    fox     |   X   |       |   X
+    foxes   |       |   X   |  
+    in      |       |   X   |  
+    jumped  |   X   |       |   X
+    lazy    |   X   |   X   |  
+    leap    |       |   X   |  
+    over    |   X   |   X   |   X  
+    quick   |   X   |       |
+    summer  |       |   X   |  
+    the     |   X   |       |   X
+    ------------------------------------
+
+We want a list of terms in all documents that mention "brown".  We could devise
+a query like so:
+
+[source,js]
+----
+GET /my_index/_search
+{
+    "query" : {
+        "match" : {
+            "body" : "brown"
+        }
+    },
+    "aggs" : {
+        "terms" : {
+            "field" : "body"
+        }
+    }
+}
+----
+
+The query portion is easy and efficient.  First find "brown" in the inverted index,
+then scan across all the columns to see which docs contain "brown".  We can very
+quickly see that `Doc_1` and `Doc_2` contain the token "brown".
+
+Now we need to find all the unique terms in `Doc_1` and `Doc_2`.  With the inverted
+index, this is a very expensive process.  The only way to do so is by iterating
+row by row and collecting tokens from `Doc_1` and `Doc_2` columns.  This is slow
+and scales poorly: as the number of terms and documents grows, so does the execution
+speed.
+
+To address this problem, field data inverts the inverted index.  We can transform
+the inverted index above into the following field data representation:
+
+    Doc      Terms
+    -----------------------------------------------------------------
+    Doc_1 | The, brown, dog, fox, jumped, lazy, over, quick, the
+    Doc_2 | Quick, brown, dogs, foxes, in, lazy, leap, over, summer
+    Doc_3 | Quick, dog, dogs, fox, jumped, over, the
+    -----------------------------------------------------------------
+
+Once the data has been uninverted, it is trivial to collect the unique tokens from
+`Doc_1` and `Doc_2`.  Go to the rows for each document, collect all the terms and
+take the union of the two sets.
+
+[INFO]
+====
+You may be objecting that this would be horribly inefficient in terms of memory
+usage.  And you would be right.
+
+Internally, field data is more sophisticated.  Values are stored in per-segment 
+ordinal maps (and global ordinals for certain types).  Field data is also compressed
+using a variety of bit packing tricks: packed integers, monotonic delta compression,
+etc.
+
+Conceptually, however, the above description holds true.
+====   
+
+Thus, search and aggregations are closely intertwined.  Search finds documents
+using the inverted index.  Aggregations collect and aggregate values from field
+data, which is itself generated from the inverted index.
