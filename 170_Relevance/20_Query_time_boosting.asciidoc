@@ -90,8 +90,8 @@ value applied to the term itself or to any of the queries higher up the chain.
 
 In fact, reading the <<explain,`explain`>> output is a little more complex
 than that. You won't see the `boost` value or `t.getBoost()` mentioned in the
-`explanation` at all.  Instead, the boost is rolled into the <<query-
-norm,`queryNorm`>> that is applied to a particular term. Although we said that
+`explanation` at all.  Instead, the boost is rolled into the
+<<query-norm,`queryNorm`>> that is applied to a particular term. Although we said that
 the `queryNorm` is the  same for every term, you will see that the `queryNorm`
 for a boosted term is higher than the `queryNorm` for an unboosted term.
 

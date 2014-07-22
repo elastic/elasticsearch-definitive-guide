@@ -4,7 +4,7 @@
 Lucene (and thus Elasticsearch) uses the
 http://en.wikipedia.org/wiki/Standard_Boolean_model[_Boolean model_]
 to find matching documents, and a formula called the
-<<practical-scoring,_Practical Scoring Function_>>
+<<practical-scoring-function,_Practical Scoring Function_>>
 to calculate relevance.  This formula borrows concepts from
 http://en.wikipedia.org/wiki/Tfidf[_Term Frequency/Inverse Document Frequency_] and the
 http://en.wikipedia.org/wiki/Vector_space_model[_Vector Space Model_]

@@ -49,12 +49,18 @@ BM25, on the other hand, does have an upper limit.  Terms that appear 5 to 10
 times in a document have a significantly larger impact on relevance than terms
 that appear just once or twice.  However, terms that appear 20 times in a
 document have almost the same impact as terms that appear a thousand times or
-more. This is known as _non-linear term frequency saturation_.
+more.
+
+This is known as _non-linear term frequency saturation_.
+
+[[img-bm25-saturation]]
+.Term frequency saturation for TF/IDF and BM25
+image::images/170_11_term_saturation.png[Term frequency saturation for TF/IDF and BM25]
 
 [[bm25-normalization]]
 ===== Field length normalization
 
-In <<field-length-norm>> we said that Lucene considers shorter fields to have
+In <<field-norm>> we said that Lucene considers shorter fields to have
 more weight than longer fields -- the frequency of a term in a field is offset
 by the length of the field.  However, the Practical Scoring Functions treats
 all fields in the same way.  It will treat all `title` fields (because they

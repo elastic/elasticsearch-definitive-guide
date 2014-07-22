@@ -5,68 +5,13 @@ The last topic to cover before moving on from stopwords is that of relevance.
 Leaving stopwords in your index can potentially make the relevance calculation
 less accurate, especially if your documents are very long.
 
-To understand why, consider how the relevance `_score` is calculated with
-TF/IDF.  The weight of a term depends on the interplay of these two factors:
+As we have already discussed in <<bm25-saturation>>, the reason for this is
+that <<tfidf,Term frequency/Inverse document frequency>> doesn't impose an
+upper limit on the impact of term frequency.  Very common words may have a low
+weight because of inverse document frequency but, in long documents, the sheer
+number of occurrences of stopwords in a single document may lead to their
+weight being artificially boosted.
 
-Term frequency::
+You may want to consider using the <<bm25,Okapi BM25>> similarity on long
+fields which include stopwords instead of the default Lucene similarity.
 
-    The more often a word appears in the same document, the *more* relevant the
-    document.
-
-Inverse document frequency::
-
-    The more documents a word appears in, the *less* relevant the word.
-
-Usually, common terms have a very low weight because of their inverse document
-frequency.   However, globally common words are also locally common. The word
-`the` may occur many times in the same field -- the longer the document, the
-more often it appears.  With TF/IDF, this increase in term frequency can
-offset the low inverse document frequency, giving more weight to common words
-than they deserve.
-
-Removing stopwords essentially solves this issue, but that comes with reduced
-searchability. It is a poor solution to the problem.
-
-While TF/IDF is the default similarity algorithm used in Lucene, it is not the
-only one.  Lucene (and Elasticsearch) support a number of other similarity
-algorithms, one of which is particularly pertinent to the problem described
-above: BM25.
-
-The BM25 model is similar to TF/IDF, but also normalizes term frequencies.
-What this means is that, unlike TF/IDF,  the maximum weight contributed by term
-frequency has a ceiling -- the more often a word appears in a document, the
-more relevant is that term, but only up to a point.  This essentially solves
-the relevance issue with common words.
-
-It is possible to change the default similarity algorithm globally, by adding
-the following to the `config/elasticsearch.yml` file:
-
-[source,yaml]
----------------------------
-index.similarity.default.type: BM25
----------------------------
-
-But similarity can also be configured on a field-by-field basis, when the
-field is created.  For instance:
-
-[source,json]
----------------------------
-PUT /my_index
-{
-  "mappings": {
-    "my_type": {
-      "properties": {
-        "text": {
-          "type":       "string",
-          "similarity": "BM25"
-        }
-      }
-    }
-  }
-}
----------------------------
-
-TF/IDF is a tried and tested algorithm that has long served search well.  BM25
-was developed in the 1970's and has been further refined since then.  It is
-considered to be a state of the art algorithm and is worth trying out if you
-find that stopwords are adversely affecting the quality of your results.
