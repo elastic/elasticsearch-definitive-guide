@@ -73,6 +73,13 @@ Retrieving the document shows the updated `_source` field:
 
 ****
 
+// As MVEL is going to be replaced by Groovy this makes me think
+// that maybe there should be a word somewhere about the
+// version of ES this book covers. Maybe a word saying
+// that ES evolves really fast, that the content in the book 
+// will mostly be relevant for all versions but was written
+// for version X.X.X. Maybe also a word explaining that the content
+// of the book will be updated regularly to comply with the product evolution.
 We will discuss scripting in more detail in <<scripting>>, but for now it is
 enough to know that scripts can be used in several places in Elasticsearch to
 achieve custom actions that are not directly supported by the API. The
