@@ -4,6 +4,8 @@ To add data to Elasticsearch, we need an _index_ -- a place to store related
 data.  In reality, an index is just a ``logical namespace'' which points to
 one or more physical _shards_.
 
+// Maybe it could clearer for the reader to explain that a shard is a bit
+// like a slice of an index? 
 A _shard_ is a low-level ``worker unit''. Each shard is a single instance of
 Lucene, and is a complete search engine in its own right. Our documents are
 stored and indexed in shards, but our applications don't talk to them directly.
