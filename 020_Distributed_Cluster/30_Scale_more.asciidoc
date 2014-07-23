@@ -26,6 +26,11 @@ PUT /blogs/_settings
 .Increasing the `number_of_replicas` to 2
 image::images/02-05_replicas.png["A three-node cluster with two replica shards"]
 
+// I have the feeling that the sentence "If we were to add another three nodes
+// to our 6 nodes cluster" is a bit confusing because it is just under 
+// a 3 nodes cluster and it refers to an example a bit far before.
+// Maybe it would be better to say something like "If we were to add
+// 6 nodes to this 3 nodes clusters, ..."
 As can be seen in <<cluster-three-nodes-two-replicas>>, the `blogs` index now
 has 9 shards: 3 primaries and 6 replicas. If we were to add another three
 nodes to our 6 node cluster, we would again have one shard per node, and our
