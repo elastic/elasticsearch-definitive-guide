@@ -63,6 +63,11 @@ shards. However, this is an internal detail -- our application shouldn't care
 about shards at all.  As far as our application is concerned, our documents
 live in an _index_. Elasticsearch takes care of the details.
 
+// When explaining what is a valid index or type name maybe it should be stated
+// that there are more restrictions (https://github.com/elasticsearch/elasticsearch/issues/6736)
+// I know this is not the place here to explain the restrictions in details
+// but it feels a bit weird to begin explaining what is a valid name and not
+// being precise.
 We will discuss how to create and manage indices ourselves in <<index-management>>,
 but for now we will let Elasticsearch create the index for us.  All we have to
 do is to choose an index name.  This name must be lower case, cannot begin with an
