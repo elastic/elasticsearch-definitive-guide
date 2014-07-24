@@ -1,0 +1,13 @@
+
+=== Limiting Memory Usage
+
+Because aggregations are the largest user of field data, and field data tends
+to be the largest memory consumer in Elasticsearch, there are several mechanisms
+to limit the amount of memory used by field data.
+
+These hard and soft limits are important.  From a stability point of view, it is
+important to never try and allocate more memory than is available since that could
+cause an OutOfMemory exception.  From a performance point of view, it is important
+to give enough memory to field data so that the data structure is fully loaded
+and resident in memory.
+
