@@ -161,3 +161,34 @@ Now when we run our aggregation, we get results that make sense:
 }
 ----
 
+==== High Cardinality Memory Implications
+
+When you try to aggregate over analyzed strings, you often notice it right away
+because you get strange results like the previous example.  This alone is often
+enough to fix your mappings.
+
+But there is another reason -- high cardinality fields consume a large amount of
+memory when loaded into field data.  The analysis often (although not always) 
+generates a large number of tokens, many of which are unique.  This increases
+the overall cardinality of the field and contributes to more memory pressure.
+
+Some types of analysis are *extremely* unfriendly with regards to memory.
+Consider an ngram analysis process.  The term "New York" might be ngram'ed into
+the following tokens:
+
+- `ne`
+- `ew`
+- `w `
+- ` y`
+- `yo`
+- `or`
+- `rk`
+
+You can imagine how the ngramming process creates a huge amount of unique tokens,
+especially when analyzing paragraphs of text.  When these are loaded into memory
+you can easily exhaust your heap space.
+
+So, before aggregating across fields, take a second to verify that the fields are
+`not_analyzed`.  And if you want to aggregate analyzed fields, ensure the analysis
+process is not creating an obscene number of tokens.
+
