@@ -1,4 +1,4 @@
-[[chaning-similarities]]
+[[changing-similarities]]
 === Changing similarities
 
 The similarity algorithm can be set on a per-field basis.  It's just a matter
@@ -43,7 +43,7 @@ PUT /my_index
     "similarity": {
       "my_bm25": { <1>
         "type": "BM25",
-        "d":    0 <2>
+        "b":    0 <2>
       }
     }
   },
