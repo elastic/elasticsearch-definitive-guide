@@ -5,9 +5,91 @@ Because aggregations are the largest user of field data, and field data tends
 to be the largest memory consumer in Elasticsearch, there are several mechanisms
 to limit the amount of memory used by field data.
 
-These hard and soft limits are important.  From a stability point of view, it is
+These limits are important.  From a stability point of view, it is
 important to never try and allocate more memory than is available since that could
 cause an OutOfMemory exception.  From a performance point of view, it is important
 to give enough memory to field data so that the data structure is fully loaded
 and resident in memory.
+
+==== Field data size
+The first setting you should be concerned with is `indices.fielddata.cache.size`.
+This value controls how much heap memory field data should use.  After a query
+executes, Elasticsearch will evaluate how much memory is being used by field
+data.  If it is larger than `size`, data will be evicted from field data.
+Evictions are costly and should be avoided, because it means that subsequent
+queries will need to re-load data from disk into memory.
+
+By default this setting is configured as *unbounded*, meaning Elasticsearch will 
+never evict data from field data.  This can, obviously, cause problems if you
+attempt to load more into field data than you have space for.
+
+It is hard to set a proper default for this value because an appropriate setting 
+is dependent on your data and use-case.  You should perform tests to determine
+average field data usage, ensure it is within your hardware capabilities, and set
+`indices.fielddata.cache.size` appropriately.  
+
+The setting is changed via the `elasticsearch.yml` file and can either be a
+hard value (`5gb`) or a percentage of the heap (`30%`).
+
+[WARNING]
+====
+There is another setting which you may see online:  `indices.fielddata.cache.expire`
+
+We plead with you to *never* use this setting!  We wish it was removed!  This
+setting tells Elasticsearch to evict values from field data if they are older
+than `expire`, whether the values are being used or not.
+
+This is *terrible* for performance.  Field data is an in-memory data structure,
+not a cache.  If values are resident in field data, they are required for fast
+access.  Periodically evicting entries will only slow down your queries and
+increase Disk I/O contention.
+
+There is no good reason to use this setting, and hopefully it will be depreciated
+in the future.  It is only mentioned here since it is, sadly, recommended in
+various articles on the internet as a good "performance tip".
+====
+
+
+==== Circuit Breaker
+
+An astute reader might have noticed a problem with the field data size settings.
+Field data size is checked *after* the data is loaded.  What happens if a query
+arrives which tries to load more into field data than available memory?  The
+answer is ugly: you would get an OutOfMemoryException.
+
+Luckily, Elasticsearch includes a "circuit breaker" which is designed to deal
+with this situation.  The circuit breaker estimates the memory requirement of a
+query by introspecting the fields involved (their type, cardinality, size, etc).
+It then checks to see if this estimated size is under a configured percentage
+of the heap.
+
+If the estimated query size is larger than the configured value, the circuit is
+"tripped" and the query will return an exception.  This happens *before* data
+is loaded, which means you won't hit an OutOfMemoryException.
+
+By default, the circuit breaker will trip if a query tries to load more than
+60% of the heap size.  This value can be changed via the Update Cluster Settings API:
+
+[source,js]
+----
+PUT /_cluster/settings
+{
+    "persistent" : {
+        "indices.fielddata.breaker.limit" : 40% <1>
+    }
+}
+----
+<1> The limit is a percentage of the heap
+
+It is best to configure the circuit breaker with a relatively conservative
+value -- the default `60%` is a good setting.  Overly optimistic settings
+can cause potential OOM exceptions, which will take down an entire node.  Conversely,
+overly conservative numbers will just return a query exception which can be
+handled, and are sometimes a sign that trouble is on the way (e.g. why does a 
+single query need >= 60% of available heap?)
+
+
+
+
+
 
