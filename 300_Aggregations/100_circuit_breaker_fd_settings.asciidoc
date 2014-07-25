@@ -12,7 +12,7 @@ to give enough memory to field data so that the data structure is fully loaded
 and resident in memory.
 
 ==== Field data size
-The first setting you should be concerned with is `indices.fielddata.cache.size`.
+The first setting you should be aware of is `indices.fielddata.cache.size`.
 This value controls how much heap memory field data should use.  After a query
 executes, Elasticsearch will evaluate how much memory is being used by field
 data.  If it is larger than `size`, data will be evicted from field data.
@@ -20,22 +20,34 @@ Evictions are costly and should be avoided, because it means that subsequent
 queries will need to re-load data from disk into memory.
 
 By default this setting is configured as *unbounded*, meaning Elasticsearch will 
-never evict data from field data.  This can, obviously, cause problems if you
-attempt to load more into field data than you have space for.
+never evict data from field data.  This default was chosen deliberately.  Field
+data is not a cache; it is an in-memory data structure that must be accessible
+for fast queries.  If something is loaded to field data, it needs to be in memory.
 
-It is hard to set a proper default for this value because an appropriate setting 
-is dependent on your data and use-case.  You should perform tests to determine
-average field data usage, ensure it is within your hardware capabilities, and set
-`indices.fielddata.cache.size` appropriately.  
+By configuring a bounded size, Elasticsearch might be forced to "thrash" the data
+structure, constantly loading and unloading data from disk.  This can cause query
+latency to spike to unacceptable levels...but the root cause is often
+difficult to find.
+
+Instead, the default is chosen such that the field data structure is unbounded
+in size, and we rely on the Circuit Breaker (described next) to eliminate the 
+majority of "dangerous" queries.
+
+If you are a logging use-case (e.g. you index operational logs and only rarely
+search for them), or otherwise using Elasticsearch for something where you can 
+tolerate unpredictably long query latencies, you might configure `size` to something
+other than unbounded.
 
 The setting is changed via the `elasticsearch.yml` file and can either be a
-hard value (`5gb`) or a percentage of the heap (`30%`).
+hard value (`5gb`) or a percentage of the heap (`30%`).  Once the size becomes
+bounded, you are subject to potential load/unload thrashing and heavy Disk IO
+costs.
 
 [WARNING]
 ====
 There is another setting which you may see online:  `indices.fielddata.cache.expire`
 
-We plead with you to *never* use this setting!  We wish it was removed!  This
+We beg that you *never* use this setting!  We wish it was removed!  This
 setting tells Elasticsearch to evict values from field data if they are older
 than `expire`, whether the values are being used or not.
 
@@ -88,7 +100,11 @@ overly conservative numbers will just return a query exception which can be
 handled, and are sometimes a sign that trouble is on the way (e.g. why does a 
 single query need >= 60% of available heap?)
 
-
+Furthermore, the circuit breaker compares estimated query size against the
+total heap size, *not* the amount of heap memory used.  This is done for a variety
+of technical reasons (e.g. much of the heap may be "used" but garbage waiting
+to be collected).  But as the end-user, this means the setting needs to be 
+conservative, since it is comparing against total heap...not "free" heap.
 
 
 
