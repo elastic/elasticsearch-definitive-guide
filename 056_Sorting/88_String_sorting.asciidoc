@@ -48,7 +48,7 @@ into a _multi-field_ mapping like this:
     }
 }
 --------------------------------------------------
-// SENSE: 056_Sorting/85_Multifield.json
+// SENSE: 056_Sorting/88_Multifield.json
 
 <1> The main `tweet` field is just the same as before: an `analyzed` full text
     field.
@@ -69,7 +69,7 @@ GET /_search
     "sort": "tweet.raw"
 }
 --------------------------------------------------
-// SENSE: 056_Sorting/85_Multifield.json
+// SENSE: 056_Sorting/88_Multifield.json
 
 WARNING: Sorting on a full text `analyzed` field can use a lot of memory.  See
 <<fielddata-intro>> for more.
