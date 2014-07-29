@@ -120,10 +120,11 @@ The `location` clause is easy to understand:
 The `price` clause is a little trickier.  The user's preferred price is
 anything up to £100, but this example sets the origin to £50.  Prices can't be
 negative, but the lower they are the better.  Really, any price between £0 and
-£100 should be considered optimal.  If we were to set the `origin` to £100,
-then prices below £100 would receive a lower score. Instead, we set both the
-`origin` and the `offset` to £50.  That way, the score only decays for any
-prices above £100 (`origin + offset`).
+£100 should be considered optimal.
+
+If we were to set the `origin` to £100, then prices below £100 would receive a
+lower score. Instead, we set both the `origin` and the `offset` to £50.  That
+way, the score only decays for any prices above £100 (`origin + offset`).
 
 
 
