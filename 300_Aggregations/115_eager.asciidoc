@@ -237,3 +237,11 @@ drastically slow down how long it takes for new segments to be made searchable.
 In practice, select a handful of queries which represent the majority of your
 user's queries and register those.
 ====
+
+There are a number of administrative details (getting existing warmers, deleting
+warmers, etc) which have been omitted from this explanation.  Refer to the
+http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-warmers.html#warmer-adding:[Online Documentation] for the rest of the details.
+
+
+
+
