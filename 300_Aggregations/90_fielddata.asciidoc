@@ -75,7 +75,7 @@ Once the data has been uninverted, it is trivial to collect the unique tokens fr
 `Doc_1` and `Doc_2`.  Go to the rows for each document, collect all the terms and
 take the union of the two sets.
 
-[INFO]
+[NOTE]
 ====
 You may be objecting that this would be horribly inefficient in terms of memory
 usage.  And you would be right.

@@ -49,7 +49,7 @@ PUT /fielddata/eager/_mapping
 <1> By setting `fielddata.loading: eager`, we tell Elasticsearch to pre-load
 this field's contents into memory
 
-[WARN]
+[WARNING]
 ====
 When eager loading is enabled, it may reduce the "real time" aspect of your data.
 Eager loading simply shifts the cost of loading field data.  Instead of paying
@@ -152,7 +152,7 @@ Eagerly loading ordinals *also* eagerly loads the field data, since it is requir
 to build the ordinal map.  So be aware that when you load ordinals, you also
 inherit the pros/cons of eagerly loaded field data.
 
-[WARN]
+[WARNING]
 ====
 The warning about eager loading field data applies to eager global ordinals too.
 This setting shifts the cost of creating the ordinal map from query-time to
@@ -227,7 +227,7 @@ registered in your warmers.  The act of executing these queries will force
 caches to be loaded.  Only after all warmers have been executed will the segment
 be made visible to search.
 
-[WARN]
+[WARNING]
 ====
 Similar to eager loading, warmers shift the cost of cold caches to index-time.
 When registering warmers, it is important to be judicious.  You *could* add
