@@ -222,7 +222,10 @@ way relationship depending on what data you need.  For example:
 - 119's percentile rank is 50
 
 So imagine that our website must maintain an SLA of 210ms response times or less.
-You would like to know what percentage of requests are actually meeting that SLA.
+And, just for fun, you're boss has threatened to fire you if response times
+creep over 800ms.  Understandably, you would like to know what percentage of 
+requests are actually meeting that SLA (and hopefully at least under 800ms!).
+
 For this, you can apply the `percentile_ranks` metric instead of `percentiles`:
 
 [source,js]
@@ -238,7 +241,7 @@ GET /website/logs/_search?search_type=count
                 "load_times" : {
                     "percentile_ranks" : {
                       "field" : "latency",
-                      "values" : [210] <1>
+                      "values" : [210, 800] <1>
                     }
                 }
             } 
@@ -249,10 +252,53 @@ GET /website/logs/_search?search_type=count
 // SENSE: 300_Aggregations/65_percentiles.json
 <1> The `percentile_ranks` metric accepts an array of values that you want ranks for
 
+After running this aggregation, we get two values back:
 
-TODO did this actually make it into 1.3?
+[source,js]
+----
+"aggregations": {
+  "zones": {
+     "buckets": [
+        {
+           "key": "eu",
+           "doc_count": 6,
+           "load_times": {
+              "values": {
+                 "210.0": 31.944444444444443,
+                 "800.0": 100
+              }
+           }
+        },
+        {
+           "key": "us",
+           "doc_count": 6,
+           "load_times": {
+              "values": {
+                 "210.0": 100,
+                 "800.0": 100
+              }
+           }
+        }
+     ]
+  }
+}
+----
 
-==== Understanding the Tradeoffs
+This tells us three important things:
+
+1. In the EU zone, the percentile rank for 210ms is 31.94%. 
+2. In the US zone, the percentile rank for 210ms is 100%
+3. In both EU and US, the percentile rank for 800ms is 100%
+
+In plain english, this means that the EU zone is only meeting the SLA 32% of the
+time, while the US zone is always meeting the SLA.  But luckily for you, both
+zones are under 800ms so you won't be fired (yet!).
+
+The `percentile_rank` metric provides the same information as `percentile`, but
+presented in a different format which may be more convenient if you have a 
+specific value(s) that you are interested in.
+
+==== Understanding the Trade-offs
 
 Like cardinality, calculating percentiles requires an approximate algorithm.
 The naive implementation would maintain a sorted list of all values...but this
