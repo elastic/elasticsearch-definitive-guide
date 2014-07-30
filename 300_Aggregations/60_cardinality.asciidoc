@@ -1,5 +1,5 @@
 
-=== Cardinality Metric
+=== Finding Distinct Counts
 
 The first approximate aggregation provided by Elasticsearch is the `cardinality`
 metric.  This provides the cardinality of a field, also called "distinct" or
@@ -85,9 +85,11 @@ You don't need to understand the technical details (although if you're intereste
 the paper is a great read!), but you should be aware of the *properties* of the
 algorithm:
 
-- Configurable precision, which decides on how to trade memory for accuracy,
+- Configurable precision, which decides controls memory usage (more precise
+== more memory)
 - Excellent accuracy on low-cardinality sets
-- Fixed memory usage. no matter if there are tens or billions of unique values, memory usage only depends on the configured precision.
+- Fixed memory usage. No matter if there are thousands or billions of unique 
+values, memory usage only depends on the configured precision.
 
 To configure the precision, you must specify the `precision_threshold` parameter.
 This threshold defines the point under which cardinalities are expected to be very
@@ -101,16 +103,18 @@ GET /cars/transactions/_search?search_type=count
         "distinct_colors" : {
             "cardinality" : {
               "field" : "color",
-              "precision_threshold" : 100
+              "precision_threshold" : 100 <1>
             }
         }
     }
 }
 --------------------------------------------------
+<1> `precision_threshold` accepts a number from 0 - 40,000.  Larger values
+are treated equivalent to 40,000.
 // SENSE: 300_Aggregations/60_cardinality.json
 
-Will ensure that fields with cardinality 100 and under will be extremely accurate.
-Although not guaranteed by the algorithm, if a cardinality us under the threshold
+Will ensure that fields with 100 or fewer distinct values will be extremely accurate.
+Although not guaranteed by the algorithm, if a cardinality is under the threshold
 it is almost always 100% accurate.  Cardinalities above this will begin to trade 
 accuracy for memory savings and a little error will creep into the metric.
 
@@ -122,29 +126,31 @@ Practically speaking, a threshold of `100` maintains an error under 5% even when
 counting millions of unique values.  
 
 ==== Optimizing for speed
-The nature of counting distinct objects usually means you are querying your entire
-data-set (or nearly all of it).  HyperLogLog is very fast already -- it simply
+If you want a distinct count, you _usually_ want to query your entire data-set 
+(or nearly all of it).  Any operation on all your data needs to execute quickly,
+for obvious reasons. HyperLogLog is very fast already -- it simply
 hashes your data and does some bit-twiddling.
 
-If speed is very important to you, we can optimize it further.  Since HLL simply
-needs the hash of the field, we can precompute that hash at index time.  Then
-when you query, we can skip the hashing computation and load the value directly
-out of field data.
+But if speed is very important to you, we can optimize it a little bit further.  
+Since HLL simply needs the hash of the field, we can pre-compute that hash at 
+index time.  When the query executes, we can skip the hash computation and load 
+the value directly out of field data.
 
 [NOTE]
 =========================
-Pre-computing hashes is usually only useful on very large and/or high-cardinality 
-fields as it saves CPU and memory. However, on numeric fields, hashing is very 
-fast and storing the original values requires as much or less memory than storing the hashes. 
+Pre-computing hashes is only useful on very large and/or high-cardinality 
+fields. Calculating the hash on these fields is non-negligible at query-time.
 
-This is also true on low-cardinality string fields, especially given that those 
-have an optimization in order to make sure that hashes are computed at most once 
-per unique value per segment.
+
+However, numeric fields hash very quickly and storing the original numeric often
+requires the same (or less) memory. This is also true on low-cardinality string 
+fields -- there are internal optimizations which guarantee that hashes are 
+calculated only once per unique value.
 
 Basically, pre-computing hashes is not guaranteed to make all fields faster -- 
 only those that have high cardinality and/or large strings.  And remember, 
-pre-computing simply shifts the cost to index-time...meaning indexing will require
-more CPU.
+pre-computing simply shifts the cost to index-time.  You still pay the price,
+you just choose _when_ to pay it.
 =========================
 
 To do this, we need to add a new multi-field to our data.  We'll delete our index,
@@ -207,3 +213,13 @@ GET /cars/transactions/_search?search_type=count
 --------------------------------------------------
 // SENSE: 300_Aggregations/60_cardinality.json
 <1> Notice that we specify the hashed multi-field, rather than the original
+
+Now the `cardinality` metric will load the values (e.g. the pre-computed hashes)
+from `"color.hash"` and use those in place of dynamically hashing the original
+value.  
+
+The savings per document is small, but if hashing each field adds an additional 
+10ns and your aggregation touches 100m documents...that adds an additional 1s per 
+query.  If you find yourself using `cardinality` across many documents, 
+perform some profiling to see if pre-computing hashes makes sense for your 
+deployment.

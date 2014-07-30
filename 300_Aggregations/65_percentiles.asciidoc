@@ -1,12 +1,14 @@
-=== Percentiles
+=== Calculating Percentiles
 
 The other approximate metric offered by Elasticsearch is the `percentiles` metric.
 Percentiles show the point at which a certain percentage of observed values occur. 
 For example, the 95th percentile is the value which is greater than 95% of the 
 data.
 
-Percentiles are often used to find outliers. In normal distributions, the 0.13th and 99.87th percentiles represents three standard deviations from the mean. Any data which falls outside three standard deviations is often considered an anomaly because it
-is so different from the average value.
+Percentiles are often used to find outliers. In (statistically) normal 
+distributions, the 0.13th and 99.87th percentiles represents three standard 
+deviations from the mean. Any data which falls outside three standard deviations 
+is often considered an anomaly because it is so different from the average value.
 
 To be more concrete, imagine that you are running a large website and it is your
 job to guarantee fast response times to visitors.  You must therefore monitor
@@ -218,8 +220,8 @@ There is another, closely related metric called `percentile_rank`.  The
 tells you what percentile a specific value belongs too.  It is basically a two-
 way relationship depending on what data you need.  For example:
 
-- The 50th percentile is 119
-- 119's percentile rank is 50
+- The 50th percentile is 119ms
+- 119ms percentile rank is the 50th percentile
 
 So imagine that our website must maintain an SLA of 210ms response times or less.
 And, just for fun, you're boss has threatened to fire you if response times
@@ -306,17 +308,17 @@ clearly is not possible when you have billions of values distributed across
 dozens of nodes.
 
 Instead, percentiles uses an algorithm called TDigest (introduced by Ted Dunning 
-in https://github.com/tdunning/t-digest/blob/master/docs/t-digest-paper/histo.pdf:[Computing Accurate Quantiles using T-Digests]). Like HyperLogLOg, it isn't
+in https://github.com/tdunning/t-digest/blob/master/docs/t-digest-paper/histo.pdf:[Computing Accurate Quantiles using T-Digests]). Like HyperLogLog, it isn't
 necessary to understand the full technical details, but it is good to know
 the properties of the algorithm:
 
 - Percentile accuracy is proportional to how "extreme" the percentile is. This 
-means that percentiles such as 99th are more accurate than less extreme percentiles, 
-such as the median.  This is just a property of how the data structure works, but
+means that percentiles such as the 1st or 99th are more accurate than the 50th.  
+This is just a property of how the data structure works, but
 it happens to be a nice property because most people care about extreme percentiles
 
 - For small sets of values, percentiles are highly accurate.  If the dataset is
-small enough, the percentiles may be 100% accurate.
+small enough, the percentiles may be 100% exact.
 
 - As the quantity of values in a bucket grows, the algorithm begins to 
 approximate the percentiles. It is effectively trading accuracy for memory 
@@ -327,12 +329,13 @@ Similar to `cardinality`, you can control the memory : accuracy ratio by changin
 a parameter: `compression`.
 
 The TDigest algorithm uses a number of "nodes" to approximate percentiles 
--— the more nodes available, the higher the accuracy (and large memory footprint) proportional to the volume of data. The compression parameter limits the maximum 
-number of nodes to 20 * compression.
+-— the more nodes available, the higher the accuracy (and large memory footprint) 
+proportional to the volume of data. The compression parameter limits the maximum 
+number of nodes to `20 * compression`.
 
 Therefore, by increasing the compression value, you can increase the accuracy of
- your percentiles at the cost of more memory. Larger compression values also 
- make the algorithm slower since the underlying tree data structure grows in size, resulting in more expensive operations. The default compression value is 100.
+your percentiles at the cost of more memory. Larger compression values also 
+make the algorithm slower since the underlying tree data structure grows in size, resulting in more expensive operations. The default compression value is `100`.
 
 A "node" uses roughly 32 bytes of memory, so under worst-case scenarios (large 
 amount of data which arrives sorted and in-order) the default settings will 
