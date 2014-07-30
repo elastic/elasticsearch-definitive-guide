@@ -28,7 +28,7 @@ for the `tweet` type in the `gb` index:
 
 [source,js]
 --------------------------------------------------
-GET /gb/_mapping/tweet
+GET /gb/tweet/_mapping
 --------------------------------------------------
 // SENSE: 052_Mapping_Analysis/25_Data_type_differences.json
 
