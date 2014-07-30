@@ -6,9 +6,10 @@ memory usage, we are going to talk about ways to reduce the memory burden of
 field data.  There are several techniques, each with their own benefits and
 downsides.
 
-The first that we will talk about is field data *filtering*.  When field data is
-being loaded, the data is first passed through one or more pre-configured filters.
-The memory savings are directly proportional to how strict your filters are.
+The first that we will talk about is field data _filtering_.  When field data is
+being loaded, the data can be passed through one or more pre-configured filters.
+These filter limit what is loaded to memory, and the memory savings are directly 
+proportional to how strict your filters are.
 
 Why might filtering be useful?  Imagine you only run `terms` aggregations, which
 are used to calculate the "top-ten tags" for your website.  You may have
@@ -63,7 +64,11 @@ also be excluded.
 
 Finally, there is a `min_segment_size`, which skips segments which have fewer than
 500 docs.  This is usually important since small segments don't have enough documents
-to follow Zipf's law, and might skew results if they are not ignored.
+to follow Zipf's law.  Filtering small segments might skew results and so we just
+skip them completely.
+
+All three parameters are optional, so mix and match as appropriate for your 
+requirements.
 
 Field data filtering can have *massive* impacts on memory usage.  The trade-off is
 fairly obvious: you are essentially ignoring data.  But for many applications,

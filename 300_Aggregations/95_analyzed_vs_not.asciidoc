@@ -7,7 +7,7 @@ string fields may be either `analyzed` or `not_analyzed`, which begs the questio
 how does analysis affect aggregations?
 
 The answer is "a lot", but it is best shown through an example.  First, index
-some documents representing four different states:
+some documents representing some different states in the US:
 
 [source,js]
 ----
@@ -24,8 +24,8 @@ POST /agg_analysis/data/_bulk
 { "state" : "New York" }
 ----
 
-We want to build a list of states in our dataset, complete with counts.  Simple...
-let's use a `terms` bucket:
+We want to build a list of unique states in our dataset, complete with counts.  
+Simple...let's use a `terms` bucket:
 
 [source,js]
 ----
@@ -73,13 +73,16 @@ Which gives us the results....
 ----
 
 Oh dear, that's not at all what we want!  Instead of counting states, the aggregation
-is counting tokens.  This is because the field is analyzed, so `"New York"` is
-tokenized into `["new", "york"]` in the inverted index.  When field data is built,
-it uses the tokens in the inverted index exactly.
+is counting individual words.  The underlying reason is simple: aggregations
+are built from the inverted index, and the inverted index is "post-analysis".
 
-This means that all aggregations operate "post-analysis", and thus will display
-results like that above.  This is obviously not the behavior that we wanted, but
-luckily it is easily corrected.
+When we added those documents to Elasticsearch, the string `"New York"` was
+analyzed/tokenized into `["new", "york"]`.  These individual tokens were then 
+used to populate field data, and ultimately we see counts for `"new"` instead of 
+`"New York"`
+
+This is obviously not the behavior that we wanted, but luckily it is easily 
+corrected.
 
 We need to define a multi-field for "state" and set it to `not_analyzed`.  This
 will prevent `"New York"` from being analyzed, which means it will stay a single
@@ -162,16 +165,19 @@ Now when we run our aggregation, we get results that make sense:
 }
 ----
 
+In practice, this kind of problem is very easy to spot.  Your aggregations
+will simply return strange buckets and you'll remember the analysis issue.
+It is a generalization, but there are not many instances where you want to use 
+an analyzed  field in an aggregation.  When in doubt, add a multi-field so that
+you have the option for both.
+
 ==== High Cardinality Memory Implications
 
-When you try to aggregate over analyzed strings, you often notice it right away
-because you get strange results like the previous example.  This alone is often
-enough to fix your mappings.
-
-But there is another reason -- high cardinality fields consume a large amount of
-memory when loaded into field data.  The analysis often (although not always) 
-generates a large number of tokens, many of which are unique.  This increases
-the overall cardinality of the field and contributes to more memory pressure.
+There is another reason to avoid aggregating analyzed fields -- high cardinality 
+fields consume a large amount of memory when loaded into field data.  The 
+analysis process often (although not always) generates a large number of tokens, 
+many of  which are unique.  This increases the overall cardinality of the field 
+and contributes to more memory pressure.
 
 Some types of analysis are *extremely* unfriendly with regards to memory.
 Consider an ngram analysis process.  The term "New York" might be ngram'ed into

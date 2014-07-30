@@ -1,13 +1,13 @@
 
 === Doc Values
 
-The default data structure for field data is called *paged-bytes*, and it is
+The default data structure for field data is called _paged-bytes_, and it is
 basically what it sounds like: pages of packed bytes.  The representation is
 compressed, but optimized for in-memory access and speed.  It is not serialized
 to disk at all and is "all or nothing".  It either fits in memory, or it
 cannot be loaded.
 
-There is an alternative format known as *doc values*.  Doc values are special
+There is an alternative format known as _doc values_.  Doc values are special
 data structures which are built at index-time and written to disk.  They are then
 loaded to memory and accessed in place of the standard paged-bytes implementation.
 
@@ -30,7 +30,7 @@ datasets that are too large to fit in heap.  In these cases, doc values have to
 stream from disk and you are limited to the speed of Disk IO.
 
 But, considering that paged-bytes would simply explode, this is often a reasonable
-tradeoff.
+tradeoff for truly massive data.
 
 ==== Enabling Doc Values
 
@@ -60,6 +60,9 @@ PUT /fielddata/filtering/_mapping
 geopoints
 <2> Doc values are enabled by setting the `"fielddata.format"` parameter to
 `doc_values`
+
+That's it!  Queries and aggregations will function as normal...they'll just be
+using doc values now.  There is no other configuration necessary.
 
 Work on doc values continues to make them faster and more flexible.  It is possible
 doc values will become the default format in the near future, rather than

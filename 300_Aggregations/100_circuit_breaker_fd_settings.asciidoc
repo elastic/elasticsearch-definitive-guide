@@ -6,80 +6,79 @@ to be the largest memory consumer in Elasticsearch, there are several mechanisms
 to limit the amount of memory used by field data.
 
 These limits are important.  From a stability point of view, it is
-important to never try and allocate more memory than is available since that could
-cause an OutOfMemory exception.  From a performance point of view, it is important
+important to never allocate more memory than is available (since that could
+cause an OutOfMemory exception).  From a performance point of view, it is important
 to give enough memory to field data so that the data structure is fully loaded
 and resident in memory.
 
 ==== Field data size
 The first setting you should be aware of is `indices.fielddata.cache.size`.
-This value controls how much heap memory field data should use.  After a query
-executes, Elasticsearch will evaluate how much memory is being used by field
-data.  If it is larger than `size`, data will be evicted from field data.
-Evictions are costly and should be avoided, because it means that subsequent
-queries will need to re-load data from disk into memory.
+This controls how much heap space is allocated to field data.  After a query
+executes, Elasticsearch will evaluate the memory utilization of field
+data.  If it is larger than `size`, data will be evicted from memory.
 
-By default this setting is configured as *unbounded*, meaning Elasticsearch will 
-never evict data from field data.  This default was chosen deliberately.  Field
-data is not a cache; it is an in-memory data structure that must be accessible
+By default this setting is *unbounded*;  Elasticsearch will never evict data 
+from field data.  This default was chosen deliberately.  Field
+data is not a cache. It is an in-memory data structure that must be accessible
 for fast queries.  If something is loaded to field data, it needs to be in memory.
 
-By configuring a bounded size, Elasticsearch might be forced to "thrash" the data
-structure, constantly loading and unloading data from disk.  This can cause query
-latency to spike to unacceptable levels...but the root cause is often
-difficult to find.
+A bounded size forces the data structure to evict data.  This often
+degenerates into a performance blackhole as data is perpetually loaded from disk
+and then unloaded from memory.  Evictions cause heavy disk I/O  and generate
+a large amount of "garbage" in memory, which must be garbage collected later.
 
-Instead, the default is chosen such that the field data structure is unbounded
-in size, and we rely on the Circuit Breaker (described next) to eliminate the 
-majority of "dangerous" queries.
+===== What if I'm OK with slow queries?
+Inevitably, people say _"Well, I'm fine with bad performance"_. If you are indexing
+logs, or can otherwise  tolerate unpredictably long query latencies, it _might_ make
+sense to configure `size`.  Some applications can tolerate the performance hit
+associated with evictions, and would prefer long query times rather than adding
+more nodes.
 
-If you are a logging use-case (e.g. you index operational logs and only rarely
-search for them), or otherwise using Elasticsearch for something where you can 
-tolerate unpredictably long query latencies, you might configure `size` to something
-other than unbounded.
-
-The setting is changed via the `elasticsearch.yml` file and can either be a
-hard value (`5gb`) or a percentage of the heap (`30%`).  Once the size becomes
-bounded, you are subject to potential load/unload thrashing and heavy Disk IO
-costs.
+If you land in this camp, the setting is changed via the `elasticsearch.yml` 
+file and can either be a hard value (`5gb`) or a percentage of the heap (`30%`).  
+Once the size becomes bounded, you are subject to potential load/unload 
+thrashing and heavy Disk IO costs.  You've been warned!
 
 [WARNING]
 ====
 There is another setting which you may see online:  `indices.fielddata.cache.expire`
 
-We beg that you *never* use this setting!  We wish it was removed!  This
-setting tells Elasticsearch to evict values from field data if they are older
+We beg that you *never* use this setting!  It will likely be depreciated in the
+future.  
+
+This setting tells Elasticsearch to evict values from field data if they are older
 than `expire`, whether the values are being used or not.
 
-This is *terrible* for performance.  Field data is an in-memory data structure,
-not a cache.  If values are resident in field data, they are required for fast
-access.  Periodically evicting entries will only slow down your queries and
-increase Disk I/O contention.
+This is *terrible* for performance.  Evictions are costly, and this effectively
+_schedules_ evictions on purpose, for no real gain.
 
-There is no good reason to use this setting, and hopefully it will be depreciated
-in the future.  It is only mentioned here since it is, sadly, recommended in
-various articles on the internet as a good "performance tip".
+There isn't a good reason to use this setting; we literally cannot theory-craft
+a hypothetically useful situation. It only exists for backwards compatibility at
+the moment.  We only mention the setting in this book since, sadly, it has been
+recommended in various articles on the internet as a good "performance tip".
+
+It is not. Never use it!
 ====
 
 
 ==== Circuit Breaker
 
 An astute reader might have noticed a problem with the field data size settings.
-Field data size is checked *after* the data is loaded.  What happens if a query
+Field data size is checked _after_ the data is loaded.  What happens if a query
 arrives which tries to load more into field data than available memory?  The
 answer is ugly: you would get an OutOfMemoryException.
 
-Luckily, Elasticsearch includes a "circuit breaker" which is designed to deal
+Elasticsearch includes a _circuit breaker_ which is designed to deal
 with this situation.  The circuit breaker estimates the memory requirement of a
 query by introspecting the fields involved (their type, cardinality, size, etc).
 It then checks to see if this estimated size is under a configured percentage
 of the heap.
 
 If the estimated query size is larger than the configured value, the circuit is
-"tripped" and the query will return an exception.  This happens *before* data
+"tripped" and the query will return an exception.  This happens before data
 is loaded, which means you won't hit an OutOfMemoryException.
 
-By default, the circuit breaker will trip if a query tries to load more than
+By default, the circuit breaker will trip if a query attempts to load more than
 60% of the heap size.  This value can be changed via the Update Cluster Settings API:
 
 [source,js]
@@ -95,16 +94,18 @@ PUT /_cluster/settings
 
 It is best to configure the circuit breaker with a relatively conservative
 value -- the default `60%` is a good setting.  Overly optimistic settings
-can cause potential OOM exceptions, which will take down an entire node.  Conversely,
-overly conservative numbers will just return a query exception which can be
-handled, and are sometimes a sign that trouble is on the way (e.g. why does a 
-single query need >= 60% of available heap?)
+can cause potential OOM exceptions, which will take down an entire node.  
 
-Furthermore, the circuit breaker compares estimated query size against the
-total heap size, *not* the amount of heap memory used.  This is done for a variety
-of technical reasons (e.g. much of the heap may be "used" but garbage waiting
-to be collected).  But as the end-user, this means the setting needs to be 
-conservative, since it is comparing against total heap...not "free" heap.
+On the other hand, an overly conservative value will just simply return a query exception 
+which can be handled by your application.  An exception is better than a crash.
+These exceptions are also good warning signs to re-assess your query (e.g. 
+why does a  single query need >= 60% of available heap?)
+
+It is important to note that the circuit breaker compares estimated query size 
+against the total heap size, *not* the amount of heap memory used.  This is done 
+for a variety of technical reasons (e.g. the heap may look "full" but is actually
+just garbage waiting to be collected, which is hard to estimate properly).  
+But as the end-user, this means the setting needs to be conservative, since it is comparing against total heap...not "free" heap.
 
 
 

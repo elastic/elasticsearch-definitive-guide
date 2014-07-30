@@ -1,11 +1,11 @@
 
 === Pre-Loading Field Data
 
-The default behavior of Elasticsearch is to load field data *lazily*.  The first
+The default behavior of Elasticsearch is to load field data _lazily_.  The first
 time Elasticsearch encounters a query which needs field data for a particular
 field, it will load that entire field into memory.
 
-For small datasets, this is a negligible amount of time.  But if you have a few
+For small datasets, this requires a negligible amount of time.  But if you have a few
 billion documents and need to load 8gb into memory, the loading time could
 last a second or two (or more).  If the query was servicing a consumer-facing
 site, this latency could have a real impact on your business.  Customers are 
@@ -17,15 +17,14 @@ the same concept: pre-load the field data so that there is no latency spike.
 
 ==== Eagerly Loading Field Data
 
-The first tool is called *eager loading* (as opposed to the default *lazy* loading).
+The first tool is called _eager loading_ (as opposed to the default lazy loading).
 When enabled for a field, Elasticsearch will pre-load field data at index-time.
-Immediately after a new segment has been generated, but *before* the segment is
+Immediately after a new segment has been generated, but _before_ the segment is
 added to the "searchable" pool, eager fields are pre-loaded into memory.
 
 Only after eager fields have been pre-loaded will the segment become visible to
-search.  This means that the fields are already resident in memory and an aggregation
-using the field will never experience a hit to latency while the data structure
-is being "hydrated".
+search.  This means that the fields are already resident in memory and a user
+will never experience a "cold cache" and corresponding latency spike.
 
 Eager loading is enabled on a per field basis, so you can control which fields
 are pre-loaded:
@@ -66,11 +65,11 @@ The trade-off for hiding query latency is reducing the realtime-ness of your ind
 ==== Eagerly loading Global Ordinals
 
 There is an optimization for string fields which reduces their memory footprint
-and increases query speed.  This optimization, called *global ordinals*, maintains
-a map of string values to unique IDs.  Recall the example that as shown to describe
-field data structure:
+and increases query speed.  This optimization, called _global ordinals_, maintains
+a map of string values to unique IDs.  Recall the example we used to describe
+field data at the top of the chapter:
 
-    Doc      Terms
+    Doc   | Terms
     -----------------------------------------------------------------
     Doc_1 | The, brown, dog, fox, jumped, lazy, over, quick, the
     Doc_2 | Quick, brown, dogs, foxes, in, lazy, leap, over, summer
@@ -79,31 +78,32 @@ field data structure:
 
 You may have thought this wasn't terribly efficient memory layout, and you would
 be right.  For example, the term `"jumped"` appears twice, taking up 12 bytes total
-(six bytes * two documents).  This inefficiency is exaggerated as more documents
-share the same term.  Ordinals fix this inefficiency by replacing
-string representations with an integer and using that to look up the value
-in the ordinal map later.  For example, the data structure looks more like this:
+(six bytes * two documents).  This inefficiency is increases as more documents
+share the same terms, and as terms get larger.  Ordinals fix this inefficiency 
+by replacing string representations with an integer and using that to look up the 
+value in the ordinal map later.  For example, the data structure looks more like 
+these two maps:
 
-    Ordinal Term 
-    --------------
-    1   | Quick 
-    2   | The
-    3   | brown 
-    4   | dog 
-    5   | dogs 
-    6   | fox 
-    7   | foxes 
-    8   | in 
-    9   | jumped
-    10  | lazy 
-    11  | leap 
-    12  | over 
-    13  | quick  
-    14  | summer 
-    15  | the 
-    --------------
+    Ordinal | Term 
+    ------------------
+    1       | Quick 
+    2       | The
+    3       | brown 
+    4       | dog 
+    5       | dogs 
+    6       | fox 
+    7       | foxes 
+    8       | in 
+    9       | jumped
+    10      | lazy 
+    11      | leap 
+    12      | over 
+    13      | quick  
+    14      | summer 
+    15      | the 
+    -------------------
 
-    Doc      Ordinals
+    Doc   | Ordinals
     -----------------------------------------------------------------
     Doc_1 | 2, 3, 4, 6, 9, 10, 12, 13, 15
     Doc_2 | 1, 3, 5, 7, 8, 10, 11, 12, 14
@@ -118,13 +118,14 @@ Ordinal maps are maintained for each segment -- each segment only has a unique
 mapping of terms-to-ordinals for the data within that segment.  But when an
 aggregation is compiling results (say, the top 10 terms) it obtains terms from
 across many segments.  Since it needs to decode the ordinal map, aggregations
-perform a process which merges ordinal maps into a *global* ordinal.
+perform a process which merges individual segment-level ordinal maps into a 
+single _global_ ordinal.
 
 This global ordinal represents the unique mapping of every term in your index
 to a unique numeric ID.  By default, this happens every time you execute an 
 aggregation.
 
-It isn't a *super* slow process, but it does add execution time to your query.
+It isn't a fairly fast process, but it does add execution time to your query.
 Similar to field data, the global ordinal map can be pre-built and loaded into
 memory.  Queries will use the pre-loaded version instead of recomputing on
 each execution.  
@@ -148,7 +149,7 @@ PUT /fielddata/eager/_mapping
 }
 ----
 
-Eagerly loading ordinals *also* eagerly loads the field data, since it is required
+Eagerly loading ordinals _also_ eagerly loads the field data, since it is required
 to build the ordinal map.  So be aware that when you load ordinals, you also
 inherit the pros/cons of eagerly loaded field data.
 
@@ -163,7 +164,7 @@ Eager loading simply gets rid of the latency for "cold" data structures - the
 time required to load the data to memory.  Eagerly loading field data is a one-time
 cost savings.
 
-Global ordinals, however, are rebuilt on each query execution.  If your application
+Global ordinals are rebuilt on each query execution.  If your application
 is search-heavy, eagerly loading the global ordinals will save you time on each
 search execution.  Assuming you can pay the index-time cost of refreshing
 the ordinal map, it can shave considerable time off your queries.
@@ -171,7 +172,7 @@ the ordinal map, it can shave considerable time off your queries.
 
 ==== Warmers
 
-Finally, we come to *warmers*.  The previous two techniques were very
+Finally, we come to _warmers_.  The previous two techniques were very
 special-purpose.  Warmers, in contrast, are a more general tool used to pre-load
 a variety of caches in Elasticsearch.
 
@@ -222,7 +223,7 @@ aggregations, sort values, scripts...literally any valid query DSL.  The point i
 to register queries that are representative of the traffic that your users will
 generate, so that appropriate caches can be pre-populated.
 
-When a new segment is created, Elasticsearch will *literally* execute the queries
+When a new segment is created, Elasticsearch will _literally_ execute the queries
 registered in your warmers.  The act of executing these queries will force
 caches to be loaded.  Only after all warmers have been executed will the segment
 be made visible to search.

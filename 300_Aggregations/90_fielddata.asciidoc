@@ -1,14 +1,14 @@
 
 === Field Data
 
-Aggregations work via a data structure known as *field data* (briefly introduced 
+Aggregations work via a data structure known as _field data_ (briefly introduced 
 in <<fielddata-intro>>).  Field data is often the largest consumer of memory
 in an Elasticsearch cluster, so it is important to understand how it works.
 
 Field data exists because inverted indices are only efficient for certain operations.
 The inverted index excels at finding documents which contain a term.  It does not
-perform well in the opposite direction: finding the terms in a single document.
-Aggregations need this secondary access pattern.  
+perform well in the opposite direction: determining which terms exist in a single 
+document. Aggregations need this secondary access pattern.  
 
 Consider the following inverted index:
 
@@ -31,8 +31,8 @@ Consider the following inverted index:
     the     |   X   |       |   X
     ------------------------------------
 
-We want a list of terms in all documents that mention "brown".  We could devise
-a query like so:
+If we want to compile a complete list of terms in any document that mentions 
+"brown", we might build a query like so:
 
 [source,js]
 ----
@@ -55,11 +55,11 @@ The query portion is easy and efficient.  First find "brown" in the inverted ind
 then scan across all the columns to see which docs contain "brown".  We can very
 quickly see that `Doc_1` and `Doc_2` contain the token "brown".
 
-Now we need to find all the unique terms in `Doc_1` and `Doc_2`.  With the inverted
-index, this is a very expensive process.  The only way to do so is by iterating
-row by row and collecting tokens from `Doc_1` and `Doc_2` columns.  This is slow
-and scales poorly: as the number of terms and documents grows, so does the execution
-speed.
+Now for the aggregation portion we need to find all the unique terms in `Doc_1` 
+and `Doc_2`.  With the inverted index, this is a very expensive process.  The 
+only way to do so is by iterating row by row and collecting tokens from `Doc_1` 
+and `Doc_2` columns.  This is slow and scales poorly: as the number of terms and 
+documents grows, so does the execution time.
 
 To address this problem, field data inverts the inverted index.  We can transform
 the inverted index above into the following field data representation:
@@ -91,3 +91,6 @@ Conceptually, however, the above description holds true.
 Thus, search and aggregations are closely intertwined.  Search finds documents
 using the inverted index.  Aggregations collect and aggregate values from field
 data, which is itself generated from the inverted index.
+
+The rest of this chapter will be discussing various functionality that either
+decreases field data's memory footprint, or speeds up execution speed.
