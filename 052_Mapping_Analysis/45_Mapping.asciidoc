@@ -244,7 +244,7 @@ Later on, we decide to add a new `not_analyzed` text field called `tag` to the
 
 [source,js]
 --------------------------------------------------
-PUT /gb/_mapping/tweet
+PUT /gb/tweet/_mapping
 {
   "properties" : {
     "tag" : {
