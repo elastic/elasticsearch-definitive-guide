@@ -201,7 +201,7 @@ The `token` is the actual term that will be stored in the index. The
 text. The `start_offset` and `end_offset` indicate the character positions
 that the original word occupied in the original string.
 
-The `analyze` API is really useful tool for understanding what is happening
+The `analyze` API is a really useful tool for understanding what is happening
 inside Elasticsearch indices, and we will talk more about it as we progress.
 
 ==== Specifying analyzers
