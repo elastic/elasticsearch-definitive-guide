@@ -42,7 +42,7 @@ GET /blogposts/post/_search
 <1> The `function_score` query wraps the main query and the function we would
     like to apply.
 <2> The main query is executed first.
-<3> The `field_value_factor` function is appled to every document matching
+<3> The `field_value_factor` function is applied to every document matching
     the main `query`.
 <4> Every document *must* have a number in the `votes` field for
     the `function_score` to work.
