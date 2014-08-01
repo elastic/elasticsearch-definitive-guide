@@ -98,8 +98,8 @@ in the index for each field.  Valid values are:
 
     Store `docs`, `freqs`, `positions` and the start and end character offsets
     of each term in the original string.  This information is used by the
-    {ref}postings-highlighter.html[`postings` highlighter] but is disabled
-    by default.
+    {ref}search-request-highlighting.html#postings-highlighter[`postings` highlighter]
+    but is disabled by default.
 
 You can set `index_options` on fields added at index creation time, or when
 adding new fields using the `put-mapping` API. This setting can't be changed
