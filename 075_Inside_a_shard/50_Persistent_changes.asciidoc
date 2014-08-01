@@ -1,0 +1,108 @@
+[[translog]]
+=== Making changes persistent
+
+Without an `fsync` to flush data in the file-system cache to disk, we cannot
+be sure that the data will still be there after a power failure, or even after
+exiting the application normally.  For Elasticsearch to be reliable, it needs
+to ensure that changes are persisted to disk.
+
+In <<dynamic-indices>> we said that a full commit flushes segments to disk and
+writes a commit point, which lists all known segments.  Elasticsearch uses
+this commit point during startup or when reopening an index to decide which
+segments belong to the current shard.
+
+While we refresh once every second to achieve near real-time search, we still
+need to do full commits regularly to make sure that we can recover from
+failure.  But what about the document changes that happen between commits?  We
+don't want to lose those either.
+
+Elasticsearch added a _translog_ or transaction log, which records every
+operation in Elasticsearch as it happens.  With the translog, the process now
+looks like this:
+
+1. When a document is indexed, it is added to the in-memory buffer AND
+   appended to the translog.
+2. Once every second, the shard is refreshed:
+
+   ** The docs in the in-memory buffer are written to a new segment,
+      without an `fsync`.
+   ** The segment is opened to make it visible to search.
+
+   ** The in-memory buffer is cleared.
+
+3. Every so often -- such as when the translog is getting too big --
+   a new translog is created and a full commit is performed:
+
+   ** Any docs in the in-memory buffer are written to a new segment.
+   ** The buffer is cleared.
+   ** A commit point is written to disk.
+   ** The file-system cache is flushed with an `fsync`.
+
+4. Once the commit has completed successfully, the old translog is deleted.
+
+The translog provides a persistent record of all operations that have not yet
+been flushed to disk. When starting up, Elasticsearch will use the last commit
+point to recover known segments from disk, and will then replay all operations
+in the translog to add the changes that happened after the last commit.
+
+The translog is also used to provide real-time CRUD.  When you try to
+retrieve, update, or delete a document by ID, it first checks the translog for
+any recent changes before trying to retrieve the document from the relevant
+segment. This means that it always has access to the latest known version of
+the document, in real-time.
+
+
+[[flush-api]]
+==== `flush` API
+
+The action of performing a commit and truncating the translog is known in
+Elasticsearch as a _flush_.  Shards are flushed automatically every 30
+minutes, or when the translog becomes too big. See the
+{ref}index-modules-translog.html[`translog` documentation] for settings
+that can be used to control these thresholds.
+
+The {ref}indices-flush.html[`flush` API] can be used to perform a manual flush:
+
+[source,json]
+-----------------------------
+POST /blogs/_flush <1>
+
+POST /_flush?wait_for_ongoing <2>
+-----------------------------
+<1> Flush the `blogs` index.
+<2> Flush all indices and wait until all flushes have completed before
+    returning.
+
+You seldom need to issue a manual `flush` yourself -- usually automatic
+flushing is all that is required.
+
+That said, it is beneficial to flush your indices before restarting a node or
+{ref}indices-open-close.html[closing an index]. When Elasticsearch tries to
+recover or reopen an index, it has to replays all of the operations in the
+translog, so the shorter the log, the faster the recovery.
+
+.How safe is the translog?
+****************************************
+
+The purpose of the translog is to ensure that operations are not lost.  This
+begs the question: how safe is the translog?
+
+Writes to a file will not survive a reboot until the file has been
+++fsync++'ed to disk.  By default, the translog is ++fsync++'ed every 5
+seconds. Potentially, we could lose 5 seconds worth of data... if the translog
+were the only mechanism that we had for dealing with failure.
+
+Fortunately, the translog is only part of a much bigger system.  Remember that
+an indexing request is only considered to be successful once it has  completed
+on both the primary shard and all replica shards.  Even were the node holding
+the primary shard to suffer catastrophic failure, it would be unlikely to
+affect the nodes holding the replica shards at the same time.
+
+While we could force the translog to `fsync` more frequently (at the cost of
+indexing performance), it is unlikely to provide more reliability.
+
+****************************************
+
+
+
+

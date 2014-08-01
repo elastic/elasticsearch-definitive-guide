@@ -1,0 +1,72 @@
+[[dynamic-indices]]
+=== Dynamically updatable indices
+
+The next problem that needed to be solved was: how to make an inverted index
+updatable without losing the benefits of immutability?  The answer turned out
+to be: use more than one index.
+
+Instead of rewriting the whole inverted index, add new supplementary indices
+to reflect more recent changes. Each inverted index can be queried in turn --
+starting with the oldest -- and the results combined.
+
+Lucene, the Java libraries on which Elasticsearch is based, introduced  the
+concept of _per-segment search_.  A _segment_ is an inverted index in its own
+right,  but now the word _index_ in Lucene came to mean a ``collection of
+segments'' plus a _commit point_ -- a file which lists all known segments.
+
+.Index vs. Shard
+***************************************
+
+To add to the confusion, a _Lucene index_ is what we call a _shard_ in
+Elasticsearch, while an _index_ in Elasticsearch is a collection of shards.
+When Elasticsearch searches an ``index'', it sends the query out to a copy of
+every shard (Lucene index) that belongs to the index, then reduces the
+per-shards results to a global result set, as described in
+<<distributed-search>>.
+
+***************************************
+
+The way that per-segment search works is as follows:
+
+1. New documents are collected in an in-memory indexing buffer.
+2. Every so often, the buffer is _commited_:
+
+** A new segment -- a supplementary inverted index -- is written to disk.
+** A new _commit point_ is written to disk, which includes the name of the new
+   segment.
+** The disk is _fsync'ed_ -- all writes waiting in the file-system cache are
+   flushed to disk, to ensure that they have been physically written.
+
+3. The new segment is opened, making the documents it contains visible to search.
+4. The in-memory buffer is cleared, and is ready to accept new documents.
+
+When a query is issued, all known segments are queried in turn. Term
+statistics are aggregated across all segments to ensure that the relevance of
+each term and each document is calculated accurately. In this way, new
+documents can be added to the index relatively cheaply.
+
+==== Deletes and updates
+
+Segments are immutable, so documents cannot be removed from older segments,
+nor can older segments be updated to reflect a newer version of a document.
+Instead, every commit point includes a `.del` file which lists which documents
+in which segments have been deleted.
+
+When a document is ``deleted'', it is actually just *marked* as deleted in the
+`.del` file. A document which has been marked as deleted can still match a
+query, but it is removed from the results list before the final query results
+are returned.
+
+Document updates work in a similar way: when a document is updated, the old
+version of the document is marked as deleted, and the new version of the
+document is indexed in a new segement. Perhaps both versions of the document
+will match a query, but the older deleted version is removed before the query
+results are returned.
+
+In <<merge-process>>, we will talk about how deleted documents are purged from
+the file system.
+
+
+
+
+

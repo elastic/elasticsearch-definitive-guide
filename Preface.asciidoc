@@ -2,9 +2,9 @@
 == Preface
 
 ****
-This book is a work in progress – new chapters will be added as they are written. The content of this book targets the latest version of Elasticsearch. 
+This book is a work in progress – new chapters will be added as they are written. The content of this book targets the latest version of Elasticsearch.
 
-We welcome feedback – if you spot any errors or would like to suggest improvements, please https://github.com/elasticsearch/elasticsearch-definitive-guide/issues[open an issue] on the GitHub repo. 
+We welcome feedback – if you spot any errors or would like to suggest improvements, please https://github.com/elasticsearch/elasticsearch-definitive-guide/issues[open an issue] on the GitHub repo.
 ****
 
 The world is swimming in data.  For years we have been simply overwhelmed by
@@ -97,9 +97,9 @@ want, understanding gives you certainty and clarity.
 
 This is a definitive guide: not only do we help you to get started with
 Elasticsearch, we tackle the deeper more interesting topics too. These include
-chapters such as <<distributed-cluster>>, <<distributed-docs>> and
-<<distributed-search>>, which are not essential reading but do give you a solid
-understanding of the internals.
+chapters such as <<distributed-cluster>>, <<distributed-docs>>,
+<<distributed-search>>, and <<inside-a-shard>>, which are not essential
+reading but do give you a solid understanding of the internals.
 
 The first part of the book should be read in order as each chapter builds on
 the previous chapter (although you can skim over the chapters mentioned
