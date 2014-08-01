@@ -61,10 +61,10 @@ GET /_search
 }
 -------------------------------
 
-It accepts a `postive` query and `negative` query.  Only documents which match
-the `positive` query will be included in the results list, but documents which
-also match the `negative` query will be downgraded by multiplying the original
-`_score` of the document with the `negative_boost`.
+It accepts a `positive` query and a `negative` query.  Only documents which
+match the `positive` query will be included in the results list, but documents
+which also match the `negative` query will be downgraded by multiplying the
+original `_score` of the document with the `negative_boost`.
 
 For this to work, the `negative_boost` must be less than `1.0`.  In our above
 example, any documents which contain any of the negative terms will have their
