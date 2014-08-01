@@ -8,7 +8,7 @@ field, it will load that entire field into memory.
 For small datasets, this requires a negligible amount of time.  But if you have a few
 billion documents and need to load 8gb into memory, the loading time could
 last a second or two (or more).  If the query was servicing a consumer-facing
-site, this latency could have a real impact on your business.  Customers are 
+site, this latency could have a real impact on your business.  Customers are
 accustomed to sub-second response times, and all of a sudden are hit by a response
 of 4s.
 
@@ -55,8 +55,8 @@ Eager loading simply shifts the cost of loading field data.  Instead of paying
 at query-time, you pay at index-time.
 
 After a segment is created (because of new documents, or merges of existing
-segments) the eager fields must be preloaded before the segment is searchable.  
-If the segment is  large, or the fields are unusually large, this will add time 
+segments) the eager fields must be preloaded before the segment is searchable.
+If the segment is  large, or the fields are unusually large, this will add time
 before the segment is "searchable".
 
 The trade-off for hiding query latency is reducing the realtime-ness of your index.
@@ -79,28 +79,28 @@ field data at the top of the chapter:
 You may have thought this wasn't terribly efficient memory layout, and you would
 be right.  For example, the term `"jumped"` appears twice, taking up 12 bytes total
 (six bytes * two documents).  This inefficiency is increases as more documents
-share the same terms, and as terms get larger.  Ordinals fix this inefficiency 
-by replacing string representations with an integer and using that to look up the 
-value in the ordinal map later.  For example, the data structure looks more like 
+share the same terms, and as terms get larger.  Ordinals fix this inefficiency
+by replacing string representations with an integer and using that to look up the
+value in the ordinal map later.  For example, the data structure looks more like
 these two maps:
 
-    Ordinal | Term 
+    Ordinal | Term
     ------------------
-    1       | Quick 
+    1       | Quick
     2       | The
-    3       | brown 
-    4       | dog 
-    5       | dogs 
-    6       | fox 
-    7       | foxes 
-    8       | in 
+    3       | brown
+    4       | dog
+    5       | dogs
+    6       | fox
+    7       | foxes
+    8       | in
     9       | jumped
-    10      | lazy 
-    11      | leap 
-    12      | over 
-    13      | quick  
-    14      | summer 
-    15      | the 
+    10      | lazy
+    11      | leap
+    12      | over
+    13      | quick
+    14      | summer
+    15      | the
     -------------------
 
     Doc   | Ordinals
@@ -118,17 +118,17 @@ Ordinal maps are maintained for each segment -- each segment only has a unique
 mapping of terms-to-ordinals for the data within that segment.  But when an
 aggregation is compiling results (say, the top 10 terms) it obtains terms from
 across many segments.  Since it needs to decode the ordinal map, aggregations
-perform a process which merges individual segment-level ordinal maps into a 
+perform a process which merges individual segment-level ordinal maps into a
 single _global_ ordinal.
 
 This global ordinal represents the unique mapping of every term in your index
-to a unique numeric ID.  By default, this happens every time you execute an 
+to a unique numeric ID.  By default, this happens every time you execute an
 aggregation.
 
 It isn't a fairly fast process, but it does add execution time to your query.
 Similar to field data, the global ordinal map can be pre-built and loaded into
 memory.  Queries will use the pre-loaded version instead of recomputing on
-each execution.  
+each execution.
 
 Eagerly loading global ordinals is enabled on a per-field basis:
 
@@ -160,7 +160,7 @@ This setting shifts the cost of creating the ordinal map from query-time to
 index-time.
 
 There is a difference, however.  Field data is loaded once and then reused constantly.
-Eager loading simply gets rid of the latency for "cold" data structures - the 
+Eager loading simply gets rid of the latency for "cold" data structures - the
 time required to load the data to memory.  Eagerly loading field data is a one-time
 cost savings.
 
@@ -239,9 +239,10 @@ In practice, select a handful of queries which represent the majority of your
 user's queries and register those.
 ====
 
-There are a number of administrative details (getting existing warmers, deleting
-warmers, etc) which have been omitted from this explanation.  Refer to the
-http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-warmers.html#warmer-adding:[Online Documentation] for the rest of the details.
+There are a number of administrative details (getting existing warmers,
+deleting warmers, etc) which have been omitted from this explanation.  Refer
+to the indices-warmers.html#warmer-adding[warmers documentation] for the rest
+of the details.
 
 
 

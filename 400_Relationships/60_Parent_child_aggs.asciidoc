@@ -3,9 +3,19 @@
 
 coming[1.4.0]
 
+/////////////////////
+
+TODO: Uncomment when docs exist on ref site
+
 Parent-child has a
 {ref}search-aggregations-bucket-children-aggregation.html[`children` aggregation] and a
 {ref}search-aggregations-bucket-parent-aggregation.html[`parent` aggregation],
+as direct analogs to the `nested` and `reverse_nested` aggregations discussed
+in <<nested-aggregation>>.
+
+/////////////////////
+
+Parent-child has a `children` aggregation and a `parent` aggregation,
 as direct analogs to the `nested` and `reverse_nested` aggregations discussed
 in <<nested-aggregation>>.
 
