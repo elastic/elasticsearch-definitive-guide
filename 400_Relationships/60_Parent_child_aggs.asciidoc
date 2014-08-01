@@ -1,0 +1,84 @@
+[[parent-child-aggs]]
+=== Parent-child aggregations
+
+coming[1.4.0]
+
+Parent-child has a
+{ref}search-aggregations-bucket-children-aggregation.html[`children` aggregation] and a
+{ref}search-aggregations-bucket-parent-aggregation.html[`parent` aggregation],
+as direct analogs to the `nested` and `reverse_nested` aggregations discussed
+in <<nested-aggregation>>.
+
+This example demonstrates how we could determine the favourite hobbies of our
+employees by country:
+
+[source,json]
+-------------------------
+GET /company/branch/_search?search_type=count
+{
+  "aggs": {
+    "country": {
+      "terms": { <1>
+        "field": "country"
+      },
+      "aggs": {
+        "employees": {
+          "children": { <2>
+            "type": "employee"
+          },
+          "aggs": {
+            "hobby": {
+              "terms": { <3>
+                "field": "hobby"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+-------------------------
+<1> The `country` field in the `branch` documents.
+<2> The `children` aggregation joins the parent documents with
+    their associated children of type `employee`.
+<3> The `hobby` field from the `employee` child documents.
+
+The `parent` aggregation can be used to turn the previous example on its head.
+This example shows how to find out in which country each hobby is most
+popular:
+
+[source,json]
+-------------------------
+GET /company/employee/_search?search_type=count
+{
+  "aggs": {
+    "hobby": {
+      "terms": { <1>
+        "field": "hobby"
+      },
+      "aggs": {
+        "branches": {
+          "parent": { <2>
+            "type": "branch"
+          },
+          "aggs": {
+            "country": {
+              "terms": { <3>
+                "field": "country"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+-------------------------
+<1> The `hobby` field in the `employee` documents.
+<2> The `parent` aggregation joins the child documents with
+    their associated parent of type `branch`.
+<3> The `country` field from the `branch` parent documents.
+
+
+

@@ -75,6 +75,6 @@ we make the next scroll request, we must pass the `_scroll_id` returned by the
 
 When no more hits are returned, we have processed all matching documents.
 
-TIP: All of the http://www.elasticsearch.org/guide[official Elasticsearch clients]
+TIP: Some of the http://www.elasticsearch.org/guide[official Elasticsearch clients]
 provide _scan-and-scroll_ helpers which provide an easy wrapper around this
 functionality.

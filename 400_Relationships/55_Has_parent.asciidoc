@@ -1,0 +1,49 @@
+[[has-parent]]
+=== Finding children by their parents
+
+While a `nested` query can only ever return the root document as a result,
+parent and child documents are independent and each can be queried
+independently.  The `has_child` query allows us to return parents based on
+data in their children, and the `has_parent` query returns children based on
+data in their parents.
+
+It looks very similar to the `has_child` query.  This example returns
+employees who work in the UK:
+
+[source,json]
+-------------------------
+GET /company/employee/_search
+{
+  "query": {
+    "has_parent": {
+      "type": "branch", <1>
+      "query": {
+        "match": {
+          "country": "UK"
+        }
+      }
+    }
+  }
+}
+-------------------------
+<1> Returns children who have parents of type `branch`.
+
+The `has_parent` query also supports the `score_mode`, but it only accepts two
+settings: `none` (the default) and `score`.  Each child can only have one
+parent, so there is no need to reduce multiple scores into a single score for
+the child.  The choice is simply between using the score (`score`) or not
+(`none`).
+
+.`has_parent` filter
+**************************
+
+The `has_parent` filter works in the same way as the `has_parent` query, except
+that it doesn't support the `score_mode` parameter. It can only be used in
+``filter context'' -- such as inside a `filtered` query --  and they behaves
+like any other filter: it includes or excludes, but doesn't score.
+
+While the results of a `has_parent` filter are not cached, the usual caching
+rules apply to the filter *inside* the `has_parent` filter.
+
+**************************
+

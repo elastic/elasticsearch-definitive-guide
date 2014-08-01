@@ -1,0 +1,84 @@
+[[nested-sorting]]
+=== Sorting by nested fields
+
+It is possible to sort by the value of a nested field, even though the value
+exists in a separate nested document.  In order to make the result more
+interesting, we will add another record:
+
+[source,json]
+--------------------------
+PUT /my_index/blogpost/2
+{
+  "title": "Investment secrets",
+  "body":  "What they don't tell you ...",
+  "tags":  [ "shares", "equities" ],
+  "comments": [
+    {
+      "name":    "Mary Brown",
+      "comment": "Lies, lies, lies",
+      "age":     42,
+      "stars":   1,
+      "date":    "2014-10-18"
+    },
+    {
+      "name":    "John Smith",
+      "comment": "You're making it up!",
+      "age":     28,
+      "stars":   2,
+      "date":    "2014-10-16"
+    }
+  ]
+}
+--------------------------
+
+Imagine that we want to retrieve blogposts that received comments in October,
+ordered by the lowest number of `stars` that each blogpost received. The
+search request would look like this:
+
+[source,json]
+--------------------------
+GET /_search
+{
+  "query": {
+    "nested": { <1>
+      "path": "comments",
+      "filter": {
+        "range": {
+          "comments.date": {
+            "gte": "2014-10-01",
+            "lt":  "2014-11-01"
+          }
+        }
+      }
+    }
+  },
+  "sort": {
+    "comments.stars": { <2>
+      "order": "asc",   <2>
+      "mode":  "min",   <2>
+      "nested_filter": { <3>
+        "range": {
+          "comments.date": {
+            "gte": "2014-10-01",
+            "lt":  "2014-11-01"
+          }
+        }
+      }
+    }
+  }
+}
+--------------------------
+<1> The `nested` query limits the results to blogposts which received a
+    comment in October.
+<2> Results are sorted in ascending (`asc`) order by the lowest value (`min`)
+    in the `comment.stars` field in any matching comments.
+<3> The `nested_filter` in the sort clause is the same as the `nested` query in
+    the main `query` clause.  See below for the reason.
+
+Why do we need to repeat the query conditions in the `nested_filter`?  The
+reason is that sorting happens after the query has been executed.  The query
+matches blogposts that received comments in October, but it returns
+blogpost documents as the result.  If we didn't include the `nested_filter`
+clause, we would end up sorting based on any comments that the blogpost has
+ever received, not just those received in October.
+

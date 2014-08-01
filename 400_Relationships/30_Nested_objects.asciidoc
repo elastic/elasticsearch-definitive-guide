@@ -1,0 +1,124 @@
+[[nested-objects]]
+=== Nested objects
+
+Given the fact that creating, deleting and updating a single document in
+Elasticsearch is atomic, it makes sense to store closely related entities
+within the same document.  For instance, we could store an order and all of
+its order lines in one document, or we could store a blogpost and all of its
+comments together, by passing an array of `comments`:
+
+[source,json]
+--------------------------
+PUT /my_index/blogpost/1
+{
+  "title": "Nest eggs",
+  "body":  "Making your money work...",
+  "tags":  [ "cash", "shares" ],
+  "comments": [ <1>
+    {
+      "name":    "John Smith",
+      "comment": "Great article",
+      "age":     28,
+      "stars":   4,
+      "date":    "2014-09-01"
+    },
+    {
+      "name":    "Alice White",
+      "comment": "More like this please",
+      "age":     31,
+      "stars":   5,
+      "date":    "2014-10-22"
+    }
+  ]
+}
+--------------------------
+<1> If we rely on <<dynamic-mapping,dynamic mapping>>, the `comments`
+    field will be auto-created as an `object` field.
+
+Because all of the content is in the same document, there is no need to join
+blogposts and comments at query time, so searches perform well.
+
+The problem is that the document above would match a query like this:
+
+[source,json]
+--------------------------
+GET /_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        { "match": { "name": "Alice" }},
+        { "match": { "age":  28      }} <1>
+      ]
+    }
+  }
+}
+--------------------------
+<1> Alice is 31, not 28!
+
+The reason for this cross-object matching, as discussed in <<object-arrays>>,
+is that our beautifully structured JSON document is flattened into a simple
+key-value format in the index which looks like this:
+
+[source,json]
+--------------------------
+{
+  "title":            [ eggs, nest ],
+  "body":             [ making, money, work, your ],
+  "tags":             [ cash, shares ],
+  "comments.name":    [ alice, john, smith, white ],
+  "comments.comment": [ article, great, like, more, please, this ],
+  "comments.age":     [ 28, 31 ],
+  "comments.stars":   [ 4, 5 ],
+  "comments.date":    [ 2014-09-01, 2014-10-22 ]
+}
+--------------------------
+
+The correlation between ``Alice'' and 31, or between ``John'' and
+"2014-09-01", has been irretrievably lost.  While fields of type `object` (see
+<<inner-objects>>) are useful for storing a *single* object, they are useless,
+from a search point of view, for storing an array of objects.
+
+This is the problem that _nested objects_ are designed to solve.  By mapping
+the `commments` field as type `nested` instead of type `object`, each nested
+object is indexed as a *hidden separate document*, something like this:
+
+[source,json]
+--------------------------
+{ <1>
+  "comments.name":    [ john, smith ],
+  "comments.comment": [ article, great ],
+  "comments.age":     [ 28 ],
+  "comments.stars":   [ 4 ],
+  "comments.date":    [ 2014-09-01 ]
+}
+{ <2>
+  "comments.name":    [ alice, white ],
+  "comments.comment": [ like, more, please, this ],
+  "comments.age":     [ 31 ],
+  "comments.stars":   [ 5 ],
+  "comments.date":    [ 2014-10-22 ]
+}
+{ <3>
+  "title":            [ eggs, nest ],
+  "body":             [ making, money, work, your ],
+  "tags":             [ cash, shares ]
+}
+--------------------------
+<1> First `nested` object.
+<2> Second `nested` object.
+<3> The _root_  or parent document.
+
+By indexing each nested object separately, the fields within the object
+maintain their relationship. We can run queries that will only match if the
+match occurs within the same nested object.
+
+Not only that, because of the way that nested objects are indexed, joining the
+nested documents to the root document at query time is fast -- almost as fast
+as if they were a single document.
+
+These extra nested documents are hidden -- we can't access them directly.  To
+update, add or remove a nested object, we have to reindex the whole document.
+Importantly, the result returned by a search request is not the nested object
+alone, it is the whole document.
+

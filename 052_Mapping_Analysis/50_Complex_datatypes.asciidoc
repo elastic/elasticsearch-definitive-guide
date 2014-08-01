@@ -52,7 +52,7 @@ indexed:
 "array_with_null_value":    [ null ]
 --------------------------------------------------
 
-
+[[inner-objects]]
 ==== Multi-level objects
 
 The last native JSON datatype that we need to discuss is the _object_
@@ -153,6 +153,7 @@ NOTE: In the simple flattened document above, there is no field called `user`
 and no field called `user.name`.  Lucene only indexes scalar or simple values,
 not complex datastructures.
 
+[[object-arrays]]
 ==== Arrays of inner objects
 
 Finally, consider how an array containing inner objects would be indexed.
@@ -194,5 +195,5 @@ but we can't get an accurate answer to:
 
 Correlated inner objects, which are able to answer queries like these,
 are called _nested_ objects, and we will discuss them later on in
-<<relations>>.
+<<nested-objects>>.
 
