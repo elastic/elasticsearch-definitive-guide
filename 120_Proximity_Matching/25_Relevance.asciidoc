@@ -7,7 +7,7 @@ present can make them overly strict. It's the same issue that we discussed in
 a document is probably relevant enough to be worth showing to the user, but
 the `match_phrase` query would exclude it.
 
-Instead of using using proximity matching as an absolute requirement, we can
+Instead of using proximity matching as an absolute requirement, we can
 use it as a _signal_ -- as one of potentially many queries, each of which
 contributes to the overall score for each document (see <<most-fields>>).
 
