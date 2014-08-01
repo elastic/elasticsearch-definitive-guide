@@ -73,7 +73,7 @@ You can appreciate how quickly combinatorial expansion can grow, making this
 strategy untenable.  There is not enough memory in the world to support uncontrolled
 combinatorial explosions.
 
-===== Depth-first vs Breadth-first
+==== Depth-first vs Breadth-first
 Elasticsearch allows you to change the _collection mode_ of an aggregation, for
 exactly this situation.  The strategy we outlined above -- building the tree fully
 and then pruning -- is called _depth-first_ and it is the default.  Depth-first
