@@ -140,7 +140,7 @@ GET /_search
 
 Really, though, each of these ``features'' should be treated like a filter.  A
 holiday home either has the feature or it doesn't -- a filter seems like it
-would be a natural fit.  On top of that, if we use filters then wwe can
+would be a natural fit.  On top of that, if we use filters then we can
 benefit from filter caching.
 
 The problem is this: filters don't score. What we need is a way of bridging
