@@ -37,7 +37,7 @@ Pos 4: (jumped,jump)
 <1> The stemmed and unstemmed forms are the same, and so are repeated
     needlessly.
 
-To prevent the useless repition of terms which are the same in their stemmed
+To prevent the useless repetition of terms which are the same in their stemmed
 and unstemmed forms, we add the
 {ref}analysis-unique-tokenfilter.html[`unique`] token filter into the mix:
 
