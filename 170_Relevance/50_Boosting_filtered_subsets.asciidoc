@@ -92,7 +92,7 @@ values:
                 document.
 
 In this case, we want to add the `boost_factor` results from each matching
-filter together to produce the final score, we we have used the `sum` score
+filter together to produce the final score, so we have used the `sum` score
 mode.
 
 Documents which don't match any of the filters will keep their original
