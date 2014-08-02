@@ -23,12 +23,12 @@ high quality search results.
 _Stemming_ attempts to remove the difference between inflected forms of a
 word, in order to reduce each word to its root form. For instance `foxes` may
 be reduced to the root `fox`, to remove the difference between singular and
-plural in the same way that we removed the difference betwen lower case and
+plural in the same way that we removed the difference between lower case and
 upper case.
 
 The root form of a word may not even be a real word. The words `jumping` and
 `jumpiness` may both be stemmed to `jumpi`. It doesn't matter -- as long as
-the same terms are prodced at index time and at search time, search will just
+the same terms are produced at index time and at search time, search will just
 work.
 
 If stemming were easy, there would be only one implementation. Unfortunately,
@@ -61,7 +61,7 @@ try to distinguish these two word senses, stemming would incorrectly conflate
 them.
 
 Lemmatisation is a much more complicated and expensive process that needs to
-understand the context in which words to appear in order to make decisions
+understand the context in which words appear in order to make decisions
 about what they mean. In practice, stemming appears to be just as effective
 as lemmatisation, but with a much lower cost.
 
