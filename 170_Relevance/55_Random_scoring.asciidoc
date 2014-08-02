@@ -90,7 +90,7 @@ high cardinality numeric or date field or, if you don't have one of those, the
 `_uid` field will work.
 
 Of course, if you were to add a document that appears near the top of the
-results list based on the features it has, that document will be appear in its
+results list based on the features it has, that document will appear in its
 proper place in the results list regardless of the `field` or `seed`
 parameters.
 
