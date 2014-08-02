@@ -45,7 +45,7 @@ return profit / target
 -------------------------
 
 The default scripting language in Elasticsearch is
-http://groovy.codehaus.org/[Groovy] which, for the most past, looks a lot like
+http://groovy.codehaus.org/[Groovy] which, for the most part, looks a lot like
 Javascript. The above algorithm as a Groovy script would look like this:
 
 [source,groovy]
