@@ -1,23 +1,15 @@
-[[scale]]
-== Big data - Designing for scale (TODO)
+include::410_Scaling/10_Intro.asciidoc[]
 
-Elasticsearch is designed to work well with a small dataset and to scale
-to big data.  However, there are a few design decisions that need to be made
-to take advantage of this scale.  This chapter discusses the techniques
-that are available to make scaling easy.
+include::410_Scaling/20_Shard.asciidoc[]
 
-=== The problem
-.
+include::410_Scaling/30_Overallocation.asciidoc[]
 
+include::410_Scaling/40_Kagillion_shards.asciidoc[]
 
-=== Overallocation: the Kagillion shards solution
-.
+include::410_Scaling/50_Capacity_planning.asciidoc[]
 
+include::410_Scaling/60_Replica_shards.asciidoc[]
 
-=== Time-based indices
-.
+include::410_Scaling/70_Multiple_indices.asciidoc[]
 
-=== Index-per user
-* Using aliases with routing and filters
-* Handling one big client
 
