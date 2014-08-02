@@ -8,7 +8,7 @@ anything about individual words in order to stem them.
 
 These algorithmic stemmers have the advantage that they are available out of
 the box, are fast, use little memory, and work well for regular words.  The
-downside is that they don't cope well with irrgular words like `be`, `are`,
+downside is that they don't cope well with irregular words like `be`, `are`,
 and `am`, or `mice` and `mouse`.
 
 One of the earliest stemming algorithms is the Porter stemmer for English,
@@ -101,7 +101,7 @@ a new analyzer, with the following changes:
     {ref}analysis-kstem-tokenfilter.html[`kstem`] token filter).
 
 *   Add the <<asciifolding-token-filter,`asciifolding`>> token filter to
-    remove any diacritcs from foreign words.
+    remove any diacritics from foreign words.
 
 *   Remove the `keyword_marker` token filter as we don't need it.
     (We will discuss this in more detail in <<controlling-stemming>>.)
