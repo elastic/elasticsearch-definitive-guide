@@ -39,7 +39,7 @@ it means that none of the solutions solves the problem adequately. This
 certainly applies to stemming -- each stemmer uses a different approach which
 overstems and understems words to a different degree.
 
-The `stemmer` documentation page highights the ``recommended'' stemmer for
+The `stemmer` documentation page highlights the ``recommended'' stemmer for
 each language in bold, usually because it offers a reasonable compromise
 between performance and quality. That said, the recommended stemmer may not be
 appropriate for all use cases. There is no single right answer to the question
@@ -81,7 +81,7 @@ the algorithm.
 
 If a good algorithmic stemmer is available for your language, it makes sense
 to use it rather than Hunspell.  It will be faster, consume less memory and
-will generall be as good or better than the Hunspell equivalent.
+will generally be as good or better than the Hunspell equivalent.
 
 If accuracy and customizability is very important to you, and you need (and
 have the resources) to maintain a custom dictionary, then Hunspell gives you
