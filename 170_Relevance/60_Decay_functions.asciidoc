@@ -17,7 +17,7 @@ The `function_score` query gives us the ability to trade off one sliding scale
 functions known as the _decay functions_.
 
 There are three decay functions, called `linear`, `exp` and `gauss`, which
-operate on numeric fields, date fields or lat-lon geo-points.  Allthree take
+operate on numeric fields, date fields or lat-lon geo-points.  All three take
 the same parameters:
 
 [horizontal]
@@ -66,7 +66,7 @@ The difference between them is the shape of the curve at other points in the ran
 * The `linear` funtion is just a straight line. Once the line hits zero,
   all values outside the line will return a score of `0.0`.
 * The `exp` (exponential) function decays rapidly, then slows down.
-* The `gauss` (Gaussian) function is bell-shaped -- it decayd slowly, then
+* The `gauss` (Gaussian) function is bell-shaped -- it decays slowly, then
   rapidly, then slowing down again.
 
 Which curve you choose depends entirely on how quickly you want the `_score`
@@ -115,7 +115,7 @@ The `location` clause is easy to understand:
 * We have specified an `origin` which corresponds to the centre of London.
 * Any location within `2km` of the `origin` receives the full score of `1.0`.
 * Locations more than `5km` (`offset + scale`) from the centre receive a score
-  `0.5`.
+of `0.5`.
 
 The `price` clause is a little trickier.  The user's preferred price is
 anything up to £100, but this example sets the origin to £50.  Prices can't be
