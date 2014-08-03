@@ -1,0 +1,152 @@
+[[shared-index]]
+=== Shared index
+
+We can use a large shared index for the many smaller forums by indexing
+the forum identifier in a field and using it as a filter:
+
+[source,json]
+------------------------------
+PUT /forums
+{
+  "settings": {
+    "number_of_shards": 10 <1>
+  },
+  "mappings": {
+    "post": {
+      "properties": {
+        "forum_id": { <2>
+          "type":  "string",
+          "index": "not_analyzed"
+        }
+      }
+    }
+  }
+}
+
+PUT /forums/post/1
+{
+  "forum_id": "baking", <2>
+  "title":    "Easy recipe for ginger nuts",
+  ...
+}
+------------------------------
+<1> Create an index large enough to hold thousands of smaller forums.
+<2> Each post must include a `forum_id` to identify which forum it belongs
+    to.
+
+We can use the `forum_id` as a filter to search within a single forum.  The
+filter will exclude most of the documents in the index (those from other
+forums) and filter caching will ensure that responses are fast:
+
+[source,json]
+------------------------------
+GET /forums/post/_search
+{
+  "query": {
+    "filtered": {
+      "query": {
+        "match": {
+          "title": "ginger nuts"
+        }
+      },
+      "filter": {
+        "term": { <1>
+          "forum_id": {
+            "baking"
+          }
+        }
+      }
+    }
+  }
+}
+------------------------------
+<1> The `term` filter is cached by default.
+
+This approach works, but we can do better.  The posts from a single forum
+would fit easily onto one shard but currently they are scattered across all 10
+shards in the index. This means that every search request has to be forwarded
+to a primary or replica of all 10 shards. What would be ideal is to ensure
+that all the posts from a single forum are stored on the same shard.
+
+In <<routing-value>>, we explained that a document is allocated to a
+particular shard using this formula:
+
+    shard = hash(routing) % number_of_primary_shards
+
+The `routing` value defaults to the document's `_id`, but we can override that
+and provide our own custom routing value, such as the `forum_id`.  All
+documents with the same `routing` value will be stored on the same shard:
+
+[source,json]
+------------------------------
+PUT /forums/post/1?routing=baking <1>
+{
+  "forum_id": "baking", <1>
+  "title":    "Easy recipe for ginger nuts",
+  ...
+}
+------------------------------
+<1> Using the `forum_id` as the routing value ensures that all posts from the
+    same forum are stored on the same shard.
+
+When we search for posts in a particular forum, we can pass the same `routing`
+value to ensure that the search request is only run on the single shard that
+holds our documents:
+
+[source,json]
+------------------------------
+GET /forums/post/_search?routing=baking <1>
+{
+  "query": {
+    "filtered": {
+      "query": {
+        "match": {
+          "title": "ginger nuts"
+        }
+      },
+      "filter": {
+        "term": { <2>
+          "forum_id": {
+            "baking"
+          }
+        }
+      }
+    }
+  }
+}
+------------------------------
+<1> The query is only run on the shard that corresponds to this `routing` value.
+<2> We still need the filter, as a single shard can hold posts from many forums.
+
+Multiple forums can be queried by passing a comma-separated list of `routing`
+values, and including each `forum_id` in a `terms` filter:
+
+[source,json]
+------------------------------
+GET /forums/post/_search?routing=baking,cooking,recipes <1>
+{
+  "query": {
+    "filtered": {
+      "query": {
+        "match": {
+          "title": "ginger nuts"
+        }
+      },
+      "filter": {
+        "terms": {
+          "forum_id": {
+            [ "baking", "cooking", "recipes" ]
+          }
+        }
+      }
+    }
+  }
+}
+------------------------------
+
+While this approach is technically efficient, it looks a bit clumsy because of
+the need to specify `routing` values and `terms` filters on every query or
+indexing request.  Things look a lot better once we add index aliases into the
+mix.
+
+

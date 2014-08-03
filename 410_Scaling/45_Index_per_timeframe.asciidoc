@@ -1,5 +1,5 @@
 [[time-based]]
-=== Time-based documents
+=== Time-based data
 
 One of the most common use cases for Elasticsearch is for logging, so common
 in fact that Elasticsearch provides an integrated logging platform called the
@@ -48,16 +48,18 @@ DELETE /logs/event/_query
 <1> Deletes all documents where Logstash's `@timestamp` field is
     older than 90 days.
 
-But this approach is very inefficient.  Remember that when you delete a
+But this approach is *very inefficient*.  Remember that when you delete a
 document, it is only marked as deleted (see <<deletes-and-updates>>). It won't
 be physically deleted until the segment containing it is merged away.
 
 Instead, use an _index per-timeframe_. You could start out with an index per
-year -- `logs_2014` -- or per month -- `logs_2014-10`. Perhaps, when your
+year -- `logs_2014` -- or per month -- `logs_2014-10`.  Perhaps, when your
 website gets really busy, you need to switch to an index per day --
-`logs_2014-10-24`.  The point is: you can adjust your indexing capacity as you
-go.  There is no need to make a final decision up front.
+`logs_2014-10-24`.  Purging old data is easy -- just delete old indices.
 
+This approach has the advantage of allowing you to scale as and when you need
+to.  You don't have to make any difficult decisions up front.  Every day is a
+new opportunity to change your indexing timeframes to suit the current demand.
 Apply the same logic to how big you make each index.  Perhaps all you need is
 one primary shard per week initially.  Later, maybe you need 5 primary shards
 per day.  It doesn't matter -- you can adjust to new circumstances at any

@@ -18,5 +18,12 @@ are aware of those limitations and work with them, the growing process will be
 pleasant.  If you treat Elasticsearch badly, you could be in for a world of
 pain.
 
+The default settings in Elasticsearch will take you a long way but, to get the
+most bang for your buck, you need to think about how data flows through your
+system.  We will talk about two common data flows: <<time-based>> like log
+events or social network streams where relevance is driven by recency, and
+<<user-based>> where a large document corpus can be subdivided by user or
+customer.
+
 This chapter will help you to make the right decisions up front, to avoid
 nasty surprises later on.
