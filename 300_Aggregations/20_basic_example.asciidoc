@@ -70,7 +70,7 @@ in <<_scoping_aggregations>>.
 
 Next we define a name for our aggregation.  Naming is up to you...
 the response will be labeled with the name you provide so that your application
-can parse the results later
+can parse the results later.
 
 Next we define the aggregation itself.  For this example, we are defining
 a single `terms` bucket.  The `terms` bucket will dynamically create a new
@@ -114,7 +114,7 @@ It also always includes `doc_count` which tells us how many docs contained the t
 <4> The count of each bucket represents the number of documents with this color
 
 The response contains a list of buckets, each corresponding to a unique color
-(red, green, etc). Each bucket also includes a count of how many documents
+(red, green, etc.). Each bucket also includes a count of how many documents
 "fell into" that particular bucket.  For example, there are four red cars.
 
 The above example is operating entirely in real-time: if the documents are searchable,
