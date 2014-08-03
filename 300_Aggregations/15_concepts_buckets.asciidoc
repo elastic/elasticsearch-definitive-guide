@@ -24,7 +24,7 @@ GROUP BY color <2>
 <2> `GROUP BY color` is equivalent to a bucket
 
 Buckets are conceptually similar to grouping in SQL, while metrics are similar
-to `COUNT()`, `SUM()`, `MAX()`, etc
+to `COUNT()`, `SUM()`, `MAX()`, etc.
 
 
 Let's dig into both of these concepts and see what they entail.
@@ -48,7 +48,7 @@ the "Ohio" state bucket, and the _entire_ "Ohio" bucket would be placed inside t
 
 There are a variety of different buckets in Elasticsearch, which allow you to
 partition documents in many different ways (by hour, by most popular terms, by
-age ranges, by geographical location, etc).  But fundamentally they all operate 
+age ranges, by geographical location, etc.).  But fundamentally they all operate 
 on the same principle: partitioning documents based on a criteria.
 
 === Metrics
@@ -58,7 +58,7 @@ we want is some kind of _metric_ calculated on those documents in each bucket.
 Bucketing is the means to an end - it provides a way to group documents in a way 
 that you can calculate interesting metrics.
 
-Most metrics are simple mathematical operations (min, mean, max, sum, etc)
+Most metrics are simple mathematical operations (min, mean, max, sum, etc.)
 which are calculated using the document values.  In practical terms, metrics allow
 you to calculate quantities such as the average salary, or the maximum sale price,
 or the 95th percentile for query latency.
