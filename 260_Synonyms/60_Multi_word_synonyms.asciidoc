@@ -104,7 +104,7 @@ could end up returning a highlighted snippet like: ``The *United* *States*
 
 ==== Use simple contraction for phrase queries
 
-The way avoid this mess is to use <<synonyms-contraction,simple contraction>>
+The way to avoid this mess is to use <<synonyms-contraction,simple contraction>>
 to inject a single term which represents all synonyms, and to use the same
 synonym token filter at query time:
 
@@ -164,7 +164,7 @@ different analysis chain for that purpose.
 We have tried to avoid discussing the `query_string` query because we don't
 recommend using it.  In <<query-string-query>> we said that, because the
 `query_string` query supports a terse mini ``search-syntax'', it could
-frequently lead to surpising results or even syntax errors.
+frequently lead to surprising results or even syntax errors.
 
 One of the gotchas of this query involves multi-word synonyms. In order to
 support its search-syntax, it has to parse the query string to recognise
