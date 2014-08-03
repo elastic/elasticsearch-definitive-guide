@@ -63,7 +63,7 @@ all of which have to be stored in the cluster state.  Every time a new referer
 is seen, a new field is added to the already bloated cluster state, which then
 has to be published to every node in the cluster.
 
-A much better approach is to use <<nested-object,nested objects>>, with one
+A much better approach is to use <<nested-objects,nested objects>>, with one
 field for the parameter name -- `referer` -- and another field for its
 associated value -- `count`:
 
