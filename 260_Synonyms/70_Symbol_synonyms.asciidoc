@@ -60,7 +60,7 @@ ensuring that important symbols like emoticons are included in the index can
 be very helpful when doing sentiment analysis.  Of course, we could equally
 have used real words, like `happy` and `sad`.
 
-TIP: The `mapping` character filter is useful for simple replacments of exact
+TIP: The `mapping` character filter is useful for simple replacements of exact
 character sequences. For more flexible pattern matching, you can use regular
 expressions with the
 {ref}analysis-pattern-replace-charfilter.html[`pattern_replace` character filter].
