@@ -66,8 +66,8 @@ Pos 5: (queen,monarch) <1>
 <1> All synonyms occupy the same position as the original term.
 
 A document like this will match queries for any of: ``English queen'',
-``British queen'', ``English monarch'' or ``British monarch'' will be able to
-find this document.  Even a phrase query will work, because the position of
+``British queen'', ``English monarch'' or ``British monarch''. 
+Even a phrase query will work, because the position of
 each term has been preserved.
 
 [IMPORTANT]
