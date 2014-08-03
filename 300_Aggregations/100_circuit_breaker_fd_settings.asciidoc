@@ -43,7 +43,7 @@ thrashing and heavy Disk IO costs.  You've been warned!
 ====
 There is another setting which you may see online:  `indices.fielddata.cache.expire`
 
-We beg that you *never* use this setting!  It will likely be depreciated in the
+We beg that you *never* use this setting!  It will likely be deprecated in the
 future.  
 
 This setting tells Elasticsearch to evict values from field data if they are older
