@@ -45,6 +45,7 @@ statistics are aggregated across all segments to ensure that the relevance of
 each term and each document is calculated accurately. In this way, new
 documents can be added to the index relatively cheaply.
 
+[[deletes-and-updates]]
 ==== Deletes and updates
 
 Segments are immutable, so documents cannot be removed from older segments,

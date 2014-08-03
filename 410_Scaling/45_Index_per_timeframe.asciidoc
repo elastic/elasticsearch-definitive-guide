@@ -1,0 +1,84 @@
+[[time-based]]
+=== Time-based documents
+
+One of the most common use cases for Elasticsearch is for logging, so common
+in fact that Elasticsearch provides an integrated logging platform called the
+ELK stack --  Elasticsearch, Logstash, and Kibana -- to make the process easy.
+
+http://www.elasticsearch.org/overview/logstash[Logstash] collects, parses, and
+enriches logs before indexing them into Elasticsearch.  Elasticsearch acts as
+a centralised logging server, and
+http://www.elasticsearch.org/overview/kibana[Kibana] is a graphic frontend
+which makes it easy to query and visualise what is happening across your
+network in near real-time.
+
+Most traditional use cases for search engines involve a relatively static
+corpus of documents which grows slowly. Searches look for the most relevant
+documents, regardless of when they were created.
+
+Logging -- and other time-based data streams such as social-network activity
+-- are very different in nature.  The number of documents in the index grows
+rapidly, often accelerating with time.  Documents are almost never updated,
+and searches mostly target the most recent documents.  As documents age, they
+lose value.
+
+We need to adapt our index design to function with the flow of time-based
+data.
+
+[[index-per-timeframe]]
+==== Index per timeframe
+
+If we were to have one big index for documents of this type, we would soon run
+out of space. Logging events just keep on coming, without pause or
+interruption. We could delete the old events, with a `delete-by-query`:
+
+[source,json]
+-------------------------
+DELETE /logs/event/_query
+{
+  "query": {
+    "range": {
+      "@timestamp": { <1>
+        "lt": "now-90d"
+      }
+    }
+  }
+}
+-------------------------
+<1> Deletes all documents where Logstash's `@timestamp` field is
+    older than 90 days.
+
+But this approach is very inefficient.  Remember that when you delete a
+document, it is only marked as deleted (see <<deletes-and-updates>>). It won't
+be physically deleted until the segment containing it is merged away.
+
+Instead, use an _index per-timeframe_. You could start out with an index per
+year -- `logs_2014` -- or per month -- `logs_2014-10`. Perhaps, when your
+website gets really busy, you need to switch to an index per day --
+`logs_2014-10-24`.  The point is: you can adjust your indexing capacity as you
+go.  There is no need to make a final decision up front.
+
+Apply the same logic to how big you make each index.  Perhaps all you need is
+one primary shard per week initially.  Later, maybe you need 5 primary shards
+per day.  It doesn't matter -- you can adjust to new circumstances at any
+time.
+
+Aliases can help to make switching indices more transparent.  For indexing,
+you can point `logs_current` to the index currently accepting new log events,
+and for searching, update `last_3_months` to point to all indices for the
+previous three months:
+
+[source,json]
+-------------------------
+POST /_aliases
+{
+  "actions": [
+    { "add":    { "alias": "logs_current",  "index": "logs_2014-10" }}, <1>
+    { "remove": { "alias": "logs_current",  "index": "logs_2014-09" }}, <1>
+    { "add":    { "alias": "last_3_months", "index": "logs_2014-10" }}, <2>
+    { "remove": { "alias": "last_3_months", "index": "logs_2014-07" }}  <2>
+  ]
+}
+-------------------------
+<1> Switch `logs_current` from September to October.
+<2> Add October to `last_3_months` and remove July.
