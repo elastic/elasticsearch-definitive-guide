@@ -27,7 +27,7 @@ GET /cars/transactions/_search?search_type=count
 --------------------------------------------------
 // SENSE: 300_Aggregations/40_scope.json
 
-...you can see that that the aggregation is in isolation.  In reality, Elasticsearch
+...you can see that the aggregation is in isolation.  In reality, Elasticsearch
 assumes "no query specified" is equivalent to "query all documents". The above
 query is internally translated into:
 
