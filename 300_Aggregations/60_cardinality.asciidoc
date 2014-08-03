@@ -109,9 +109,9 @@ GET /cars/transactions/_search?search_type=count
     }
 }
 --------------------------------------------------
+// SENSE: 300_Aggregations/60_cardinality.json
 <1> `precision_threshold` accepts a number from 0 - 40,000.  Larger values
 are treated equivalent to 40,000.
-// SENSE: 300_Aggregations/60_cardinality.json
 
 Will ensure that fields with 100 or fewer distinct values will be extremely accurate.
 Although not guaranteed by the algorithm, if a cardinality is under the threshold
