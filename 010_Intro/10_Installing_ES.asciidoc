@@ -102,3 +102,16 @@ and to provide failover and scale, although a single node can form a cluster
 all by itself.
 
 ****
+
+==== Viewing Marvel
+
+.Viewing Marvel
+****
+
+If you installed Marvel you can now view it with a web browser at:
+[source,sh]
+--------------------------------------------------
+http://any-server-in-cluster:9200/_plugin/marvel/
+--------------------------------------------------
+
+****
