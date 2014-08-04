@@ -2,9 +2,23 @@
 
 Running a single node means that you have a single point of failure -- there
 is no redundancy. Fortunately all we need to do to protect ourselves from data
-loss is to start another node. A new node will join the cluster automatically
-as long as it has the same cluster name set in its config file, and it can
-talk to the other nodes.
+loss is to start another node.
+
+.Starting a second node
+***************************************
+
+To test out what happens when you add a second node, you can start a new node
+in exactly the same way as you started the first one (see
+<<running-elasticsearch>>), and from the same directory -- multiple nodes can
+share the same directory.
+
+As long as the second node has the same `cluster.name` as the first node (see
+the `./config/elasticsearch.yml` file), it should automatically discover and
+join the cluster run by the first node. If it doesn't, check the logs to find
+out what went wrong.  It may be that multicast is disable on your network, or
+there is a firewall preventing your nodes from communicating.
+
+***************************************
 
 If we start a second node, our cluster would look like <<cluster-two-nodes>>.
 

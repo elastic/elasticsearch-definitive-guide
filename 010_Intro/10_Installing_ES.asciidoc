@@ -54,6 +54,7 @@ disable data collection with this command:
 echo 'marvel.agent.enabled: false' >> ./config/elasticsearch.yml
 --------------------------------------------------
 
+[[running-elasticsearch]]
 === Running Elasticsearch
 
 Elasticsearch is now ready to run. You can start it up in the foreground
