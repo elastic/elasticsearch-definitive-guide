@@ -1,7 +1,7 @@
 [[intro]]
 == You know, for Search...
 
-Elasticsearch is a search engine built on top of
+Elasticsearch is an open-source search engine built on top of
 https://lucene.apache.org/core/[Apache Lucene(TM)] , a full-text search engine
 library.  Lucene is arguably the most advanced, performant and fully-featured
 search engine library in existence today -- both open source and proprietary.
@@ -11,17 +11,17 @@ and to integrate Lucene directly with your application. Worse, you will likely
 require a degree in Information Retrieval to understand how it works.  Lucene
 is *very* complex.
 
-Elasticsearch uses Lucene internally for all of its indexing and search, but
-it aims to make full text search easy by hiding the complexities of Lucene
-behind a simple, coherent API.
+Elasticsearch is also written in Java and uses Lucene internally for all of
+its indexing and search, but it aims to make full text search easy by hiding
+the complexities of Lucene behind a simple, coherent, RESTful API.
 
 However, Elasticsearch is much more than just Lucene and much more than
 ``just'' full text search. It is also:
 
-* a distributed real-time document store where *every field* is indexed and
-   searchable
-* a distributed search engine with real-time analytics
-* capable of scaling to hundreds of servers and petabytes of structured
+* A distributed real-time document store where *every field* is indexed and
+  searchable.
+* A distributed search engine with real-time analytics.
+* Capable of scaling to hundreds of servers and petabytes of structured
   and unstructured data.
 
 And it packages up all of this functionality into a standalone server that
@@ -33,7 +33,10 @@ and hides complicated search theory away from beginners. It _just works_,
 right out of the box. With minimal understanding, you can soon become
 productive.
 
+Elasticsearch can be downloaded, used and modified free of charge. It is
+available under the http://www.apache.org/licenses/LICENSE-2.0.html[Apache 2 license],
+one of the most flexible open source licenses available.
+
 As your knowledge grows, you can leverage more of Elasticsearch's advanced
 features. The entire engine is configurable and very flexible. Pick and choose
 from the advanced features to tailor Elasticsearch to your problem domain.
-
