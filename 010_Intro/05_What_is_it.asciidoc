@@ -1,6 +1,14 @@
 [[intro]]
 == You know, for Search...
 
+// For the general introduction of ES I think maybe a few things could be added:
+// 1) It is written in Java
+// 2) It is licensed under Apache 2
+// 3) Maybe one or two sentences explaining the history of the project:
+// When was it started? By whom? Why? Even if the point is not about personifying 
+// the project too much. It is always nice to have a bit of background information
+// and it could be stated here that the project has a few hundreds contributors worldwide.
+
 Elasticsearch is a search engine built on top of
 https://lucene.apache.org/core/[Apache Lucene(TM)] , a full-text search engine
 library.  Lucene is arguably the most advanced, performant and fully-featured
@@ -32,6 +40,9 @@ It is easy to get started with Elasticsearch. It ships with sensible defaults
 and hides complicated search theory away from beginners. It _just works_,
 right out of the box. With minimal understanding, you can soon become
 productive.
+
+// Maybe it could be nice to add near "very flexible" pluginable.
+// That would introduce a bit the incoming Marvel just after
 
 As your knowledge grows, you can leverage more of Elasticsearch's advanced
 features. The entire engine is configurable and very flexible. Pick and choose
