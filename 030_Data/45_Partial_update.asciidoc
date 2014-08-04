@@ -71,18 +71,22 @@ Retrieving the document shows the updated `_source` field:
 
 ==== Using scripts to make partial updates
 
+.Scripting with Groovy
 ****
 
-We will discuss scripting in more detail in <<scripting>>, but for now it is
-enough to know that scripts can be used in several places in Elasticsearch to
-achieve custom actions that are not directly supported by the API. The
-default scripting language is called MVEL, but Elasticsearch also supports
-JavaScript, Groovy and Python.
+For those moments when the API just isn't enough, Elasticsearch allows you to
+write your own custom logic in a script. Scripting is supported in many APIs
+like search, sorting, aggregations, and document updates. Scripts can be
+passed in as part of the  request, retrieved from the special `.scripts`
+index, or loaded from disk.
 
-MVEL is a simple fast Java-based dynamic scripting language with a syntax
-similar to Javascript. You can read more about MVEL in the
-http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-scripting.html[Elasticsearch scripting docs]
-and on the http://mvel.codehaus.org/Getting+Started+for+2.0[MVEL website].
+The default scripting language is a http://groovy.codehaus.org/[Groovy], a
+fast and expressive scripting language, similar in syntax to Javascript.  It
+runs in a _sandbox_ to prevent malicious users from breaking out of
+Elasticsearch and attacking the server.
+
+You can read more about scripting in the
+{ref}modules-scripting.html[scripting reference documentation].
 
 ****
 
