@@ -30,6 +30,12 @@ currently only one replica is assigned. This prevents us from reaching
 application could *still* keep running without data loss because `Node 3`
 contains a copy of every shard.
 
+If we restart `Node 1`, the cluster would be able to allocate the missing
+replica shards, resulting in a state similar to the one described in
+<<cluster-three-nodes-two-replicas>>.  If `Node 1` still has copies of the old
+shards, it will try to reuse them, only copying over from the primary shard
+the files that have changed in the meantime.
+
 By now you should have a reasonable idea of how shards allow Elasticsearch to
 scale horizontally and to ensure that your data is safe. Later we will examine
 the life-cycle of a shard in more detail.
