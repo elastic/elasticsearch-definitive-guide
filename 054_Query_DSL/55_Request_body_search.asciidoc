@@ -47,12 +47,22 @@ GET /_search
 --------------------------------------------------
 
 
-[TIP]
-====
+.A `GET` request with a body?
+*************************************************
 
-Some languages, such as JavaScript, don't allow request bodies with a `GET`
-request. For this reason, the `search` API can also be used as a `POST`
-request:
+The HTTP libraries of certain languages (notably Javascript) don't allow `GET`
+requests to have a request body.  In fact, some users are suprised that `GET`
+requests are ever allowed to have a body.
+
+The truth is that http://tools.ietf.org/html/rfc7231#page-24[RFC 7231] -- the
+RFC which deals with HTTP semantics and content -- does not define what should
+happen to a `GET` request with a body!  As a result, some HTTP servers allow
+it, and some -- especially caching proxies -- don't.
+
+The authors of Elasticsearch prefer using `GET` for a search request because
+they feel that it describes the action -- retrieving information -- better
+than the `POST` verb.  However, because `GET` with a request body is not
+universally supported, the `search` API also accepts `POST` requests:
 
 [source,js]
 --------------------------------------------------
@@ -62,7 +72,10 @@ POST /_search
     "size": 10
 }
 --------------------------------------------------
-====
+
+The same rule applies to any other `GET` API which requires a request body.
+
+*************************************************
 
 We will talk about <<TODO,highlighting_matches>>, <<aggregations>>, and
 <<TODO,did_you_mean>> suggestions in later chapters. For now, we're going to
