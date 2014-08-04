@@ -107,7 +107,7 @@ our query string, it would become a query for `"+quick +fox"`, which would
 match both documents!
 
 IMPORTANT: This is very important. You can only find terms that actually exist in your
-index, so: *both the indexed text and and query string must be normalized
+index, so: *both the indexed text and the query string must be normalized
 into the same form*.
 
 This process of tokenization and normalization is called _analysis_, which we
