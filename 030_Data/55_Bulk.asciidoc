@@ -32,9 +32,18 @@ TIP: In <<bulk-format>> we explain why the `bulk` API uses this format.
 
 The _action/metadata_ line specifies *what action* to do to *which document*.
 
-The _action_ must be one of `index`, `create`, `update` or `delete`. The
-_metadata_ should specify the `_index`, `_type` and `_id` of the document to
-be indexed, created, updated or deleted.
+The _action_ must be one of the following:
+
+[horizontal]
+`create`:: Create a document only if the document not already exist.
+           See <<create-doc>>.
+`index`::  Create a new document or replace an existing document.
+           See <<index-doc>> and <<update-doc>>.
+`update`:: Do a partial update on a document. See <<partial-updates>>.
+`delete`:: Delete a document. See <<delete-doc>>.
+
+The _metadata_ should specify the `_index`, `_type` and `_id` of the document
+to be indexed, created, updated or deleted.
 
 For instance, a `delete` request could look like this:
 
