@@ -39,7 +39,7 @@ POST /company/country/_bulk
 { "index": { "_id": "uk" }}
 { "name": "UK" }
 { "index": { "_id": "france" }}
-{ "name": "Republique de France" }
+{ "name": "France" }
 
 POST /company/branch/_bulk
 { "index": { "_id": "london", "parent": "uk" }}
