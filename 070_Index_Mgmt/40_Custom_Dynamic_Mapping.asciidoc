@@ -120,7 +120,7 @@ The `match_mapping_type`  allows you to apply the template only
 to fields of the specified type, as detected by the standard dynamic
 mapping rules, eg `string`, `long` etc.
 
-The `match` parameter matches just the field name and the `match_path`
+The `match` parameter matches just the field name and the `path_match`
 parameter matches the full path to a field in an object, so
 the pattern `"address.*.name"` would match a field like this:
 
@@ -136,7 +136,7 @@ the pattern `"address.*.name"` would match a field like this:
 --------------------------------------------------
 
 
-The `unmatch` and `unmatch_path` patterns can be used to exclude fields
+The `unmatch` and `path_unmatch` patterns can be used to exclude fields
 that would otherwise match.
 
 More configuration options can be found in the
