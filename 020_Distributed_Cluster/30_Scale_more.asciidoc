@@ -27,9 +27,9 @@ PUT /blogs/_settings
 image::images/02-05_replicas.png["A three-node cluster with two replica shards"]
 
 As can be seen in <<cluster-three-nodes-two-replicas>>, the `blogs` index now
-has 9 shards: 3 primaries and 6 replicas. If we were to add another three
-nodes to our 6 node cluster, we would again have one shard per node, and our
-cluster would be able to handle *50%* more search requests than before.
+has 9 shards: 3 primaries and 6 replicas. This means that we can scale out to
+a total of 9 nodes, again with one shard per node.  This would allow us to
+*triple* search performance compared to our original three node cluster.
 
 [NOTE]
 ===================================================
@@ -39,7 +39,7 @@ increase our performance at all because each shard has access to a smaller
 fraction of its node's resources.  You need to add hardware to increase
 throughput.
 
-But these extra replicas do mean that we have more redundancy. With the node
+But these extra replicas do mean that we have more redundancy: with the node
 configuration above, we can now afford to lose two nodes without losing any
 data.
 
