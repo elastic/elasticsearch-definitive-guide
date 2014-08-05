@@ -27,3 +27,9 @@ It is possible that a document has been indexed on the primary shard but
 has not yet been copied to the replica shards. In this case a replica
 might report that the document doesn't exist, while the primary would have
 returned the document successfully.
+
+// I think it would be nice to mention, explain the "preference" parameter here.
+// Or at least link to the "search options" section of the book where
+// it is explained. It would be useful for the reader here and it is 
+// also mentionned in the "multi-document pattern" section without being explained
+// just after.
