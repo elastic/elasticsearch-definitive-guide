@@ -96,6 +96,9 @@ start experimenting with it.
 .Clusters and nodes
 ****
 
+// It could be nice maybe to add after cluster.name that it is a configuration
+// and that it will be explained later not to afraid the new user.
+
 A _node_ is a running instance of Elasticsearch. A _cluster_ is a group of
 nodes with the same `cluster.name` that are working together to share data
 and to provide failover and scale, although a single node can form a cluster
