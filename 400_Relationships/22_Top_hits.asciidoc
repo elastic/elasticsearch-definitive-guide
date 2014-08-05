@@ -83,9 +83,9 @@ GET /my_index/blogpost/_search?search_type=count <1>
 <1> The blogposts that we are interested in are returned under the
     `blogposts` aggregation, so we can disable the usual search `hits` by
     setting the `search_type=count`.
-<2> The `query` returns blogposts about ``relevance'' by users named ``John''.
+<2> The `query` returns blogposts about ``relationships'' by users named ``John''.
 <3> The `terms` aggregation creates a bucket for each `user.name.raw` value.
-<4> The `top_score` aggregation orders the terms in the the `users` aggregation
+<4> The `top_score` aggregation orders the terms in the `users` aggregation
     by the top scoring document in each bucket.
 <5> The `top_hits` aggregation returns just the `title` field of the 5 most
     relevant blogposts for each user.
