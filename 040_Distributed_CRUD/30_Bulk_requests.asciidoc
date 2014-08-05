@@ -24,9 +24,7 @@ with a single `mget` request, as depicted in <<img-distrib-mget>>:
    shard. Once all replies have been received, `Node 1` builds the response
    and returns it to the client.
 
-A `routing` parameter can be set for each document in the `docs` array,
-and the `preference` parameter can be set for the top-level `mget`
-request.
+A `routing` parameter can be set for each document in the `docs` array.
 
 [[img-distrib-bulk]]
 .Multiple document changes with `bulk`
