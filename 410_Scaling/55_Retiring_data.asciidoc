@@ -13,7 +13,7 @@ delete old data -- just delete the indices that are no longer relevant:
 DELETE /logs_2013*
 -------------------------
 
-Deleting a whole index is much more efficient than dealing individual
+Deleting a whole index is much more efficient than deleting individual
 documents -- Elasticsearch just removes whole directories.
 
 But deleting an index is very... final.  There are a number of things we can
@@ -27,12 +27,12 @@ today.  All new documents will be added to that index, and almost all queries
 will target that index.  It should use your best hardware.
 
 How does Elasticsearch know which servers are your best servers? You tell it,
-by assigning arbitrary tags to each server.  For instance, you culd start a
+by assigning arbitrary tags to each server.  For instance, you could start a
 node with:
 
     ./bin/elasticsearch --node.box_type strong
 
-The `box_type` parameter is completely aribtrary -- you could have named it
+The `box_type` parameter is completely arbitrary -- you could have named it
 whatever you like -- but you can use these arbitrary values to tell
 Elasticsearch where to allocate an index.
 
