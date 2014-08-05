@@ -2,7 +2,7 @@
 === Practical considerations
 
 Parent-child joins can be a useful technique for managing relationships when
-index-time performance is more important than search-time perormance, but it
+index-time performance is more important than search-time performance, but it
 comes at a significant cost.  Parent-child queries can be 5 to 10 times slower
 than the equivalent nested query!
 
@@ -19,7 +19,7 @@ consulting the `indices-stats` API (for a summary at the index level) or the
 -------------------------
 GET /_nodes/stats/indices/id_cache?human <1>
 -------------------------
-<1> Returns memory use of the ID cache summarized by node.
+<1> Returns memory use of the ID cache summarized by node in a human friendly format.
 
 The ability to join multiple generations (see <<grandparents>>) sounds very
 attractive until you think of the costs involved:
