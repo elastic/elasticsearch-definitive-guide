@@ -4,10 +4,12 @@ To add data to Elasticsearch, we need an _index_ -- a place to store related
 data.  In reality, an index is just a ``logical namespace'' which points to
 one or more physical _shards_.
 
-A _shard_ is a low-level ``worker unit''. Each shard is a single instance of
-Lucene, and is a complete search engine in its own right. Our documents are
-stored and indexed in shards, but our applications don't talk to them directly.
-Instead, they talk to an index.
+A _shard_ is a low-level ``worker unit'' which holds just a slice of all the
+data in the index. In <<inside-a-shard>>, we will explain in detail how a
+shard works, but for now it is enough to know that a shard is a single
+instance of Lucene, and is a complete search engine in its own right. Our
+documents are stored and indexed in shards, but our applications don't talk to
+them directly. Instead, they talk to an index.
 
 Shards are how Elasticsearch distributes data around your cluster. Think of
 shards as containers for data. Documents are stored in shards, and shards are
