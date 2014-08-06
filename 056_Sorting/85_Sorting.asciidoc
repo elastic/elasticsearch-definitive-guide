@@ -113,6 +113,7 @@ the `_score` value in descending order.
 Perhaps we want to combine the `_score` from a query with the `date`, and
 show all matching results sorted first by date, then by relevance:
 
+// The SENSE content is missing 
 [source,js]
 --------------------------------------------------
 GET /_search
