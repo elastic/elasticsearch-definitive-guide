@@ -24,7 +24,7 @@ looks like this:
 1. When a document is indexed, it is added to the in-memory buffer AND
    appended to the translog.
 +
-[[img-pre-refresh]]
+[[img-xlog-pre-refresh]]
 .New documents are added to the in-memory buffer and appended to the transaction log
 image::images/075_50_pre_refresh.png["New documents are added to the in-memory buffer and appended to the transaction log"]
 
@@ -37,7 +37,7 @@ image::images/075_50_pre_refresh.png["New documents are added to the in-memory b
 
    ** The in-memory buffer is cleared.
 
-[[img-post-refresh]]
+[[img-xlog-post-refresh]]
 .After a refresh, the buffer is cleared but the transaction log is not
 image::images/075_50_post_refresh.png["After a refresh, the buffer is cleared but the transaction log is not"]
 --
@@ -45,7 +45,7 @@ image::images/075_50_post_refresh.png["After a refresh, the buffer is cleared bu
 3.  This process continues with more documents being added to the in-memory
     buffer and appended to the transaction log.
 +
-[[img-pre-flush]]
+[[img-xlog-pre-flush]]
 .The transaction log keeps accumulating documents
 image::images/075_50_pre_flush.png["The transaction log keeps accumulating documents"]
 
@@ -60,7 +60,7 @@ image::images/075_50_pre_flush.png["The transaction log keeps accumulating docum
    ** The file-system cache is flushed with an `fsync`.
    ** The old translog is deleted.
 
-[[img-post-flush]]
+[[img-xlog-post-flush]]
 .After a flush, the segments are fully commited and the transaction log is cleared
 image::images/075_50_post_flush.png["After a flush, the segments are fully commited and the transaction log is cleared"]
 --
