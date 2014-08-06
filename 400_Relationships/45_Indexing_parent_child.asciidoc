@@ -49,7 +49,7 @@ when retrieving a child document with a `GET` request, or when indexing,
 updating, or deleting a child document.  Unlike a search request, which is
 forwarded to all shards in an index, these single-document requests are
 forwarded only to the shard which holds the document -- if the `parent` ID is
-not specified, the request will be forwarded to the wrong shard.
+not specified, the request can be forwarded to the wrong shard.
 
 The `parent` ID should also be specified when using the `bulk` API:
 
