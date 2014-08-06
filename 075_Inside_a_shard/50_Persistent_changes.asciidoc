@@ -20,25 +20,50 @@ Elasticsearch added a _translog_ or transaction log, which records every
 operation in Elasticsearch as it happens.  With the translog, the process now
 looks like this:
 
+
 1. When a document is indexed, it is added to the in-memory buffer AND
    appended to the translog.
-2. Once every second, the shard is refreshed:
++
+[[img-pre-refresh]]
+.New documents are added to the in-memory buffer and appended to the transaction log
+image::images/075_50_pre_refresh.png["New documents are added to the in-memory buffer and appended to the transaction log"]
 
+2. Once every second, the shard is refreshed:
++
+--
    ** The docs in the in-memory buffer are written to a new segment,
       without an `fsync`.
    ** The segment is opened to make it visible to search.
 
    ** The in-memory buffer is cleared.
 
-3. Every so often -- such as when the translog is getting too big --
-   a new translog is created and a full commit is performed:
+[[img-post-refresh]]
+.After a refresh, the buffer is cleared but the transaction log is not
+image::images/075_50_post_refresh.png["After a refresh, the buffer is cleared but the transaction log is not"]
+--
 
+3.  This process continues with more documents being added to the in-memory
+    buffer and appended to the transaction log.
++
+[[img-pre-flush]]
+.The transaction log keeps accumulating documents
+image::images/075_50_pre_flush.png["The transaction log keeps accumulating documents"]
+
+
+4. Every so often -- such as when the translog is getting too big -- the index
+   is flushed: a new translog is created and a full commit is performed:
++
+--
    ** Any docs in the in-memory buffer are written to a new segment.
    ** The buffer is cleared.
    ** A commit point is written to disk.
    ** The file-system cache is flushed with an `fsync`.
+   ** The old translog is deleted.
 
-4. Once the commit has completed successfully, the old translog is deleted.
+[[img-post-flush]]
+.After a flush, the segments are fully commited and the transaction log is cleared
+image::images/075_50_post_flush.png["After a flush, the segments are fully commited and the transaction log is cleared"]
+--
 
 The translog provides a persistent record of all operations that have not yet
 been flushed to disk. When starting up, Elasticsearch will use the last commit

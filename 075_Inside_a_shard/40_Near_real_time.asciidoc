@@ -19,10 +19,19 @@ segment is written to the file-system cache first -- which is cheap -- and
 only later is it flushed to disk -- which is expensive.  But once a file is in
 the cache it can be opened and read, just like any other file.
 
+[[img-pre-refresh]]
+.A Lucene index with new documents in the in-memory buffer
+image::images/075_40_pre_refresh.png["A Lucene index with new documents in the in-memory buffer"]
+
 Lucene allows new segments to be written and opened -- making the documents
 they contain visible to search -- without performing a full commit. This is a
 much lighter process than a commit, and can be done frequently without ruining
 performance.
+
+[[img-post-refresh]]
+.The buffer contents have been written to a segment, which is searchable, but is not yet commited
+image::images/075_40_post_refresh.png["The buffer contents have been written to a segment, which is searchable, but is not yet commited"]
+
 
 [[refresh-api]]
 ==== `refresh` API

@@ -14,6 +14,10 @@ concept of _per-segment search_.  A _segment_ is an inverted index in its own
 right,  but now the word _index_ in Lucene came to mean a ``collection of
 segments'' plus a _commit point_ -- a file which lists all known segments.
 
+[[img-index-segments]]
+.A Lucene index with a commit point and three segments
+image::images/075_30_index.png["A Lucene index with a commit point and three segments"]
+
 .Index vs. Shard
 ***************************************
 
@@ -26,9 +30,14 @@ per-shards results to a global result set, as described in
 
 ***************************************
 
+[[img-memory-buffer]]
+.A Lucene index with new documents in the in-memory buffer, ready to commit
+image::images/075_30_pre_commit.png["A Lucene index with new documents in the in-memory buffer, ready to commit"]
+
 The way that per-segment search works is as follows:
 
 1. New documents are collected in an in-memory indexing buffer.
+   See <<img-memory-buffer>>.
 2. Every so often, the buffer is _commited_:
 
 ** A new segment -- a supplementary inverted index -- is written to disk.
@@ -39,6 +48,10 @@ The way that per-segment search works is as follows:
 
 3. The new segment is opened, making the documents it contains visible to search.
 4. The in-memory buffer is cleared, and is ready to accept new documents.
+
+[[img-post-commit]]
+.After a commit, a new segment is added to the commit point and the buffer is cleared
+image::images/075_30_post_commit.png["After a commit, a new segment is added to the index and the buffer is cleared"]
 
 When a query is issued, all known segments are queried in turn. Term
 statistics are aggregated across all segments to ensure that the relevance of

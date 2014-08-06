@@ -24,13 +24,24 @@ while you are indexing and searching. The process works like this:
 2. The merge process selects a few segments of similar size and merges them
    into a new bigger segment in the background. This does not interrupt
    indexing and searching.
++
+[[img-merge]]
+.Two commited segments and one uncommited segment in the process of being merged into a bigger segment
+image::images/075_60_merge.png["Two commited segments and one uncommited segment in the process of being merged into a bigger segment"]
 
 3. When the merge completes:
++
+--
     ** The new segment is flushed to disk.
     ** A new commit point is written which includes the new segment and
        excludes the old, smaller segments.
     ** The new segment is opened for search.
     ** The old segments are deleted.
+
+[[img-post-merge]]
+.Once merging has finished, the old segments are deleted
+image::images/075_60_post_merge.png["Once merging has finished, the old segments are deleted"]
+--
 
 The merging of big segments can use a lot of I/O and CPU, which can hurt
 search performance if left unchecked.  By default, Elasticsearch throttles the
