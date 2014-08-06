@@ -78,7 +78,7 @@ field data at the top of the chapter:
 
 You may have thought this wasn't terribly efficient memory layout, and you would
 be right.  For example, the term `"jumped"` appears twice, taking up 12 bytes total
-(six bytes * two documents).  This inefficiency is increases as more documents
+(six bytes * two documents).  This inefficiency is increased as more documents
 share the same terms, and as terms get larger.  Ordinals fix this inefficiency
 by replacing string representations with an integer and using that to look up the
 value in the ordinal map later.  For example, the data structure looks more like
@@ -125,7 +125,7 @@ This global ordinal represents the unique mapping of every term in your index
 to a unique numeric ID.  By default, this happens every time you execute an
 aggregation.
 
-It isn't a fairly fast process, but it does add execution time to your query.
+It is a fairly fast process, but it does add execution time to your query.
 Similar to field data, the global ordinal map can be pre-built and loaded into
 memory.  Queries will use the pre-loaded version instead of recomputing on
 each execution.
