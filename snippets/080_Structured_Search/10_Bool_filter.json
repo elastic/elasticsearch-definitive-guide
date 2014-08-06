@@ -1,6 +1,21 @@
 # Delete the `my_store` index
 DELETE /my_store
 
+# Map the `productID` field to be an "exact value"
+PUT /my_store
+{
+  "mappings": {
+    "products": {
+      "properties": {
+        "productID": {
+          "type": "string",
+          "index": "not_analyzed"
+        }
+      }
+    }
+  }
+}
+
 # Index example docs
 POST /my_store/products/_bulk
 {"index":{"_id":1}}
