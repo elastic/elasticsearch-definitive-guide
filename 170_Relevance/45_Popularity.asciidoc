@@ -2,7 +2,7 @@
 === Boosting by popularity
 
 Imagine that we have a website hosting blogposts where users can upvote the
-blogposts that they like. We would more popular posts to appear higher in the
+blogposts that they like. We would like more popular posts to appear higher in the
 results list, but still have the full text score as the main relevance driver.
 We can do this easily by storing the number of votes with each blogspost:
 
