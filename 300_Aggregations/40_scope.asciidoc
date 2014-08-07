@@ -37,7 +37,7 @@ GET /cars/transactions/_search?search_type=count
 {
     "query" : {
         "match_all" : {}
-    }
+    },
     "aggs" : {
         "colors" : {
             "terms" : {
