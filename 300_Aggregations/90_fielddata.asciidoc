@@ -80,6 +80,9 @@ take the union of the two sets.
 You may be objecting that this would be horribly inefficient in terms of memory
 usage.  And you would be right.
 
+// I think here the introduction of per-segment ordinal map is a bit abrupt for the Lucene newbies
+// It could be nice to at least add a pointer to "eagerly loading global ordinals" part
+// which explains it later.
 Internally, field data is more sophisticated.  Values are stored in per-segment 
 ordinal maps (and global ordinals for certain types).  Field data is also compressed
 using a variety of bit packing tricks: packed integers, monotonic delta compression,
