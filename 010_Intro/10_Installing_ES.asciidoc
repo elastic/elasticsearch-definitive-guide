@@ -127,3 +127,6 @@ http://localhost:9200/_plugin/marvel/.
 You can reach the *Sense* developer console either by clicking on the ``Marvel
 dashboards'' dropdown in Marvel, or by visiting:
 http://localhost:9200/_plugin/marvel/sense/.
+
+For newbies, if you are accesing to your ElasticSearch server via an external machine, you remember to substitute "localhost" for the name of your server.
+Example, trying with Firefox, you write in the address bar: http://myserver.mydomain:9200/_plugin/marvel/
