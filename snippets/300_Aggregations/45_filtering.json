@@ -4,9 +4,11 @@ GET /cars/transactions/_search?search_type=count
 {
     "query" : {
         "filtered": {
-            "range": {
-                "price": {
-                    "gte": 10000
+            "filter": {
+                "range": {
+                    "price": {
+                        "gte": 10000
+                    }
                 }
             }
         }
