@@ -42,6 +42,7 @@ GET /my_store/products/_search
 
 <1> The `terms` filter as seen above, but placed inside the `filtered` query
 
+// Shouldn't it also return document 4?
 The query will return the second and third documents:
 
 [source,json]
