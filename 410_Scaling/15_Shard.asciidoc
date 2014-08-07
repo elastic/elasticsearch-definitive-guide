@@ -36,6 +36,10 @@ _replica_ shards later on in <<replica-shards>>.
 One glorious day, the Internet discovers us, and a single node just can't keep up with
 the traffic.  We decide to add a second node.  What happens?
 
+[[img-one-shard]]
+.An index with one shard has no scale factor
+image::images/410_15_one_shard.png["An index with one shard has no scale factor"]
+
 The answer is: nothing.  Because we have only one shard, there is nothing to
 put on the second node. We can't increase the number of shards in the index,
 because the number of shards is an important element in the algorithm used to
