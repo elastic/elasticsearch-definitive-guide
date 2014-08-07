@@ -42,7 +42,7 @@ GET /my_store/products/_search
 
 <1> The `terms` filter as seen above, but placed inside the `filtered` query
 
-The query will return the second and third documents:
+The query will return the second, third, and fourth documents:
 
 [source,json]
 --------------------------------------------------
@@ -62,7 +62,15 @@ The query will return the second and third documents:
           "price" :     30,
           "productID" : "JODL-X-1937-#pV7"
         }
-    }
+    },
+    {
+        "_id":     "4",
+        "_score":  1.0,
+        "_source": {
+           "price":     30,
+           "productID": "QQPX-R-3956-#aD8"
+        }
+     }
 ]
 --------------------------------------------------
 
