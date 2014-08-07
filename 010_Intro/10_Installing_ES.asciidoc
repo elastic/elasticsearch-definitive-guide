@@ -127,3 +127,6 @@ http://localhost:9200/_plugin/marvel/.
 You can reach the *Sense* developer console either by clicking on the ``Marvel
 dashboards'' dropdown in Marvel, or by visiting:
 http://localhost:9200/_plugin/marvel/sense/.
+
+For newbies, if you are working/accesing ElectricSearch in an external server via telnet o security shell, you will need to substitute "localhost" for the name of your server.
+Example: http://myservername.domain:9200/_plugin/marvel/.
