@@ -101,4 +101,51 @@ The response is fairly self-explanatory, but it should be noted that the
 histogram keys correspond to the lower boundary of the interval.  The key `0`
 means `0-20,000`, the key `20000` means `20,000-40,000`, etc.
 
+Graphically, you could represent the above data in a histogram like this:
+
+[[barcharts-histo1]]
+image::images/300_30_histo1.png["Histogram of top makes per price range"]
+
+Of course, you can build bar charts with any aggregation which emits categories
+and statistics, not just the `histogram` bucket.  Let's build a bar chart of
+popular makes, their average price, and then calculate the standard error
+to add error bars on our chart.  This will make use of the `terms` bucket
+and an `extended_stats` metric:
+
+[source,js]
+----
+GET /cars/transactions/_search?search_type=count
+{
+  "aggs": {
+    "makes": {
+      "terms": {
+        "field": "make",
+        "size": 10
+      },
+      "aggs": {
+        "stats": {
+          "extended_stats": {
+            "field": "price"
+          }
+        }
+      }
+    }
+  }
+}
+----
+
+This will return a list of makes (sorted by popularity) and a variety of statistics
+about each.  In particular, we are interested in `stats.avg`, `stats.count`,
+and `stats.std_deviation`.  Using this information, we can calculate the standard error:
+
+................................
+std_err = std_deviation / count
+................................
+
+Which will allow us to build a chart like this:
+
+[[barcharts-bar1]]
+image::images/300_30_bar1.png["Barchart of average price per make, with error bars"]
+
+
 
