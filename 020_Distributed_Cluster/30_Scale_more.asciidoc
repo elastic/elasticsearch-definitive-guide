@@ -1,6 +1,6 @@
 ==== Then scale some more
 
-But what if we want to scale our search to more than 6 nodes?
+But what if we want to scale our search to more than 6 shards?
 
 The number of primary shards is fixed at the moment an index is created.
 Effectively, that number defines the maximum amount of data that can be
@@ -28,7 +28,7 @@ image::images/02-05_replicas.png["A three-node cluster with two replica shards"]
 
 As can be seen in <<cluster-three-nodes-two-replicas>>, the `blogs` index now
 has 9 shards: 3 primaries and 6 replicas. This means that we can scale out to
-a total of 9 nodes, again with one shard per node.  This would allow us to
+a total of 9 shards, again with one shard per node.  This would allow us to
 *triple* search performance compared to our original three node cluster.
 
 [NOTE]
