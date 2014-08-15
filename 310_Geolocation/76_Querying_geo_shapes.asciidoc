@@ -1,0 +1,77 @@
+[[querying-geo-shapes]]
+=== Querying geo-shapes
+
+The unusual thing about the {ref}query-dsl-geo-shape-query.html[`geo_shape`
+query] and {ref}query-dsl-geo-shape-filter.html[`geo_shape` filter] is that
+they allow us to query using shapes, rather than just points.
+
+For instance, if our user steps out of the central train station in Amsterdam,
+we could find all landmarks within a 1km radius with a query like this:
+
+[source,json]
+-----------------------
+GET /attractions/landmark/_search
+{
+  "query": {
+    "geo_shape": {
+      "location": { <1>
+        "shape": { <2>
+          "type":   "circle", <3>
+          "radius": "1km"
+          "coordinates": [ <4>
+            4.89994,
+            52.37815
+          ]
+        }
+      }
+    }
+  }
+}
+-----------------------
+<1> The query looks at geo-shapes in the `location` field.
+<2> The `shape` key indicates that the shape is specified inline in the query.
+<3> The shape is a circle, with a radius of 1km.
+<4> This point is situated at the entrance of the central train station in
+    Amsterdam.
+
+By default, the query (or filter -- they do the same job) looks for indexed
+shapes which intersect with the query shape.  The `relation` parameter can be
+set to `disjoint` to find indexed shapes which don't intersect with the query
+shape, or `within` to find indexed shapes that are completely contained by the
+query shape.
+
+For instance, we could find all landmarks in the centre of Amsterdam with this
+query:
+
+[source,json]
+-----------------------
+GET /attractions/landmark/_search
+{
+  "query": {
+    "geo_shape": {
+      "location": {
+        "relation": "within", <1>
+        "shape": {
+          "type": "polygon",
+          "coordinates": [[ <2>
+              [4.88330,52.38617],
+              [4.87463,52.37254],
+              [4.87875,52.36369],
+              [4.88939,52.35850],
+              [4.89840,52.35755],
+              [4.91909,52.36217],
+              [4.92656,52.36594],
+              [4.93368,52.36615],
+              [4.93342,52.37275],
+              [4.92690,52.37632],
+              [4.88330,52.38617]
+            ]]
+        }
+      }
+    }
+  }
+}
+-----------------------
+<1> Only match indexed shapes that are completely within the query shape.
+<2> This polygon represents the centre of Amsterdam.
+

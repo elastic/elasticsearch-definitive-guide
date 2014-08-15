@@ -1,0 +1,65 @@
+[[mapping-geo-shapes]]
+=== Mapping geo-shapes
+
+Like fields of type `geo_point`, geo-shapes have to be mapped explicitly
+before they can be used:
+
+[source,json]
+-----------------------
+PUT /attractions
+{
+  "mappings": {
+    "landmark": {
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "location": {
+          "type": "geo_shape"
+        }
+      }
+    }
+  }
+}
+-----------------------
+
+There are two important settings that you should consider changing:
+
+==== `precision`
+
+The `precision` parameter controls the maximum length of the geohashes that
+are generated.  It defaults to a precision of `9`, which equates to a
+<<geohashes,geohash>> with dimensions of about 5m x 5m. That is probably far
+more precise than you actually need.
+
+The lower the precision, the fewer terms that will be indexed and the faster
+search will be.  But of course, the lower the precision, the less accurate are
+your geo-shapes.  Consider just how accurate you need your shapes to be --
+even 1 or 2 levels of precision can represent a significant saving.
+
+You can specify precisions using distances -- e.g. `50m` or `2km` -- but
+ultimately these distances are converted to the same levels as described in
+<<geohashes>>.
+
+==== `distance_error_pct`
+
+When indexing a polygon, the big central continuous part can be represented
+cheaply by a short geohash.  It is the edges that matter. Edges require much
+smaller geohashes to represent them with any accuracy.
+
+If you're indexing a small landmark, you want the edges to be quite accurate.
+It wouldn't be good to have the one monument overlapping with the next.  When
+indexing an entire country, you don't need quite as much precision. Fifty
+meters here or there isn't likely to start any wars.
+
+The `distance_error_pct` specifies the maximum allowable error based on the
+size of the shape.  It defaults to `0.025` or 2.5%. In other words, big shapes
+like countries are allowed to have fuzzier edges than small shapes, like
+monuments.
+
+The default of `0.025` is a good starting point but the more error that is
+allowed, the fewer terms that are required to index a shape.
+
+
+
+

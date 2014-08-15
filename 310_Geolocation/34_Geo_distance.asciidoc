@@ -1,0 +1,130 @@
+[[geo-distance]]
+=== `geo_distance` filter
+
+The `geo_distance` filter draws a circle around the specified location and
+finds all documents that have a geo-point within that circle:
+
+[source,json]
+---------------------
+GET /attractions/restaurant/_search
+{
+  "query": {
+    "filtered": {
+      "filter": {
+        "geo_distance": {
+          "distance": "1km", <1>
+          "location": { <2>
+            "lat":  40.715,
+            "lon": -73.988
+          }
+        }
+      }
+    }
+  }
+}
+---------------------
+<1> Find all `location` fields within `1km` of the specified point.
+    See {ref}common-options.html#distance-units[Distance Units] for
+    a list of the accepted units.
+<2> The central point can be specified as a string, an array, or (as in this
+    example) as an object. See <<lat-lon-formats>>.
+
+A geo-distance calculation is expensive.  To optimize performance,
+Elasticsearch draws a box around the circle and first uses the less expensive
+bounding-box calculation to exclude as many documents as it can.  It only runs
+the geo-distance calculation on those points that fall within the bounding
+box.
+
+TIP: Do your users really require an accurate circular filter to be applied to
+their results? Using a rectangular <<geo-bounding-box,bounding box>> is much
+more efficient than geo-distance and will usually serve their purposes just as
+well.
+
+==== Faster geo-distance calculations
+
+The distance between two points can be calculated using different algorithms,
+which trade performance for accuracy.
+
+`arc`::
+
+The slowest but most accurate is the `arc` calculation, which treats the world
+as a sphere.  Accuracy is still limited because the world isn't really a sphere.
+
+`plane`::
+
+The `plane` calculation, which treats the world as if it were flat, is faster
+but less accurate. It is most accurate at the equator and becomes less
+accurate towards the poles.
+
+`sloppy_arc`::
+
+So called because it uses the `SloppyMath` Lucene class to trade accuracy for speed,
+the `sloppy_arc` calculation uses the
+http://en.wikipedia.org/wiki/Haversine_formula[Haversine formula] to calculate
+distance. It is four to five times as fast as `arc`, and distances are 99.9% accurate.
+This is the default calculation.
+
+You can specify a different calculation as follows:
+
+[source,json]
+---------------------
+GET /attractions/restaurant/_search
+{
+  "query": {
+    "filtered": {
+      "filter": {
+        "geo_distance": {
+          "distance":      "1km",
+          "distance_type": "plane", <1>
+          "location": {
+            "lat":  40.715,
+            "lon": -73.988
+          }
+        }
+      }
+    }
+  }
+}
+---------------------
+<1> Use the faster but less accurate `plane` calculation.
+
+TIP: Will your users really care if a restaurant is a few metres outside of
+their specified radius? While some geo applications require great accuracy,
+less accurate but faster calculations will suit the majority of use cases just
+fine.
+
+[[geo-distance-range]]
+==== `geo_distance_range` filter
+
+The only difference between the `geo_distance` and `geo_distance_range`
+filters is that the latter has a doughnut shape and excludes documents within
+the central hole.
+
+Instead of specifying a single `distance` from the centre, you specify a
+minimum distance (with `gt` or `gte`)  and maximum distance (with `lt` or
+`lte`), just like a `range` filter:
+
+[source,json]
+---------------------
+GET /attractions/restaurant/_search
+{
+  "query": {
+    "filtered": {
+      "filter": {
+        "geo_distance_range": {
+          "gte":    "1km", <1>
+          "lt":     "2km", <1>
+          "location": {
+            "lat":  40.715,
+            "lon": -73.988
+          }
+        }
+      }
+    }
+  }
+}
+---------------------
+<1> Matches locations which are at least `1km` from the centre, and less than
+    `2km` from the centre.
+
+

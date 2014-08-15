@@ -1,0 +1,105 @@
+[[sorting-by-distance]]
+=== Sorting by distance
+
+Search results can be sorted by distance from a point:
+
+TIP: While you *can* sort by distance, <<scoring-by-distance>> is usually a
+better solution.
+
+[source,json]
+----------------------------
+GET /attractions/restaurant/_search
+{
+  "query": {
+    "filtered": {
+      "filter": {
+        "geo_bounding_box": {
+          "type":       "indexed",
+          "location": {
+            "top":      40.8,
+            "bottom":   40.7,
+            "left":    -74,
+            "right":   -73
+          }
+        }
+      }
+    }
+  },
+  "sort": [
+    {
+      "_geo_distance": {
+        "location": { <1>
+          "lat":  40.715,
+          "lon": -73.998
+        },
+        "order":         "asc",
+        "unit":          "km", <2>
+        "distance_type": "plane" <3>
+      }
+    }
+  ]
+}
+----------------------------
+<1> Calculate the distance between the specified `lat/lon` point and the
+    geo-point in the `location` field of each document.
+<2> Return the distance in `km` in the `sort` keys for each result.
+<3> Use the faster but less accurate `plane` calculation.
+
+You may ask yourself: why do we specify the distance `unit`? For sorting, it
+doesn't matter whether we compare distances in miles, kilometres or light
+years.  The reason is that the actual value used for sorting is returned with
+each result, in the `sort` element:
+
+[source,json]
+----------------------------
+...
+  "hits": [
+     {
+        "_index": "attractions",
+        "_type": "restaurant",
+        "_id": "2",
+        "_score": null,
+        "_source": {
+           "name": "New Malaysia",
+           "location": {
+              "lat": 40.715,
+              "lon": -73.997
+           }
+        },
+        "sort": [
+           0.08425653647614346 <1>
+        ]
+     },
+...
+----------------------------
+<1> This restaurant is 0.084km from the location we specified.
+
+You can set the `unit` to return these values in whatever form makes sense for
+your application.
+
+.Multi-location sorting
+****************************
+
+Geo-distance sorting can also handle multiple geo-points, both in the document
+and in the sort parameters.  Use the `sort_mode` to specify whether it should
+use the `min`, `max`, or `avg` distance between each combination of locations.
+This can be used to return ``friends nearest to my work and home locations''.
+
+****************************
+
+[[scoring-by-distance]]
+==== Scoring by distance
+
+It may be that distance is the only important factor in deciding the order in
+which results are returned, but more frequently we need to combine distance
+with other factors, such as full text relevance, popularity, and price.
+
+In these situations we should reach for the
+<<function-score-query,`function_score` query>> which allows us to blend all
+of these factors into an overall score.  See <<decay-functions>> for an
+example which uses geo-distance to influence scoring.
+
+The other drawback of sorting by distance is performance: the distance has to
+be calculated for all matching documents.  The `function_score` query, on the
+other hand, can be executed during the <<rescore-api,`rescore` phase>>,
+limiting the number of calculations to just the top _N_  results.

@@ -1,32 +1,56 @@
-[[geoloc]]
-== Geolocation  (TODO)
+:ref:  http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/
 
-The web is increasingly location aware – users expect to see local results,
-or to be able to filter results by their position on a map.
+include::310_Geolocation/10_Intro.asciidoc[]
 
-This chapter explains how to use geolocation in Elasticsearch, including
-optimization tips.
+include::310_Geolocation/20_Geopoints.asciidoc[]
+
+include::310_Geolocation/30_Filter_by_geopoint.asciidoc[]
+
+include::310_Geolocation/32_Bounding_box.asciidoc[]
+
+include::310_Geolocation/34_Geo_distance.asciidoc[]
+
+include::310_Geolocation/36_Caching_geofilters.asciidoc[]
+
+include::310_Geolocation/38_Reducing_memory.asciidoc[]
+
+include::310_Geolocation/40_Geohashes.asciidoc[]
+
+include::310_Geolocation/50_Sorting_by_distance.asciidoc[]
+
+include::310_Geolocation/60_Geo_aggs.asciidoc[]
+
+include::310_Geolocation/62_Geo_distance_agg.asciidoc[]
+
+include::310_Geolocation/64_Geohash_grid_agg.asciidoc[]
+
+include::310_Geolocation/66_Geo_bounds_agg.asciidoc[]
+
+include::310_Geolocation/70_Geoshapes.asciidoc[]
+
+include::310_Geolocation/72_Mapping_geo_shapes.asciidoc[]
+
+include::310_Geolocation/74_Indexing_geo_shapes.asciidoc[]
+
+include::310_Geolocation/76_Querying_geo_shapes.asciidoc[]
+
+include::310_Geolocation/78_Indexed_geo_shapes.asciidoc[]
+
+include::310_Geolocation/80_Caching_geo_shapes.asciidoc[]
 
 
-=== Adding geolocation to your documents
-* Mapping the geo-point type
-* Indexing documents with geo-points
-
-[[geoloc-filters]]
-=== Geolocation-aware search
-* geo-distance and geo-distance-range filters
-* geo-bounding-box filter
-* geo-polygon filter
-
-=== Sorting by distance
-.
+////////
 
 
-=== Geo-shapes
-.
 
+geo_shape:
+    mapping
+        tree
+        precision
+        type of shapes
+    indexing
+        indexed shapes
+    filters
+        geoshape
 
-=== Optimizing geo-queries
-.
-
-
+////////

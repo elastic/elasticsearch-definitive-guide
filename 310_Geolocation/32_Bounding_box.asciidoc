@@ -1,0 +1,96 @@
+[[geo-bounding-box]]
+=== `geo_bounding_box` filter
+
+This is by far the most performant geo-filter because its calculation is very
+simple.  You provide it with the `top`, `bottom`, `left`, and `right`
+coordinates of a rectangle and all it does is compare the latitude with the
+left and right coordinates, and the longitude with the top and bottom
+coordinates.
+
+[source,json]
+---------------------
+GET /attractions/restaurant/_search
+{
+  "query": {
+    "filtered": {
+      "filter": {
+        "geo_bounding_box": {
+          "location": { <1>
+            "top":     40.8,
+            "bottom":  40.7,
+            "left":   -74.0,
+            "right":  -73.0
+          }
+        }
+      }
+    }
+  }
+}
+---------------------
+<1> These coordinates can also be specified as `top_left` and `bottom_right`
+    pairs, or `bottom_left` and `top_right` pairs.
+
+[[optimize-bounding-box]]
+==== Optimizing bounding boxes
+
+The `geo_bounding_box` is the one geo-filter which doesn't require all
+geo-points to be loaded into memory.  Because all it has to do is to check
+whether the `lat` and `lon` values fall within the specified ranges, it can
+use the inverted index to do a glorified `range` filter.
+
+In order to use this optimization, the `geo_point` field must be mapped to
+index the `lat` and `lon` values separately:
+
+[source,json]
+-----------------------
+PUT /attractions
+{
+  "mappings": {
+    "restaurant": {
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "location": {
+          "type":    "geo_point",
+          "lat_lon": true <1>
+        }
+      }
+    }
+  }
+}
+-----------------------
+<1> The `location.lat` and `location.lon` fields will be indexed separately.
+    These fields can be used for searching, but their values cannot be retrieved.
+
+Now, when we run our query, we have to tell Elasticsearch to use the indexed
+`lat` and `lon` values:
+
+[source,json]
+---------------------
+GET /attractions/restaurant/_search
+{
+  "query": {
+    "filtered": {
+      "filter": {
+        "geo_bounding_box": {
+          "type":    "indexed", <1>
+          "location": {
+            "top":     40.8,
+            "bottom":  40.7,
+            "left":   -74.0,
+            "right":  -73.0
+          }
+        }
+      }
+    }
+  }
+}
+---------------------
+<1> Setting the `type` parameter to `indexed` (instead of the default
+    `memory`) tells Elasticsearch to use the inverted index for this filter.
+
+IMPORTANT: While a `geo_point` field can contain multiple geo-points, the
+`lat_lon` optimization can only be used on fields which contain a single
+geo-point.
+

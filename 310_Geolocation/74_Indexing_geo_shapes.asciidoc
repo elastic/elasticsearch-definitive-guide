@@ -1,0 +1,62 @@
+[[indexing-geo-shapes]]
+=== Indexing geo-shapes
+
+Shapes are represented using http://geojson.org/[GeoJSON], a simple open
+standard for encoding two dimensional shapes in JSON.  Each shape definition
+contains the type of shape --  `point`, `line`, `polygon`, `envelope`, etc. --
+and one or more arrays of longitude/latitude points.
+
+IMPORTANT: In GeoJSON, coordinates are always written as *longitude*  followed
+by *latitude*.
+
+For instance, we can index a polygon representing Dam Square in Amsterdam as
+follows:
+
+[source,json]
+-----------------------
+PUT /attractions/landmark/dam_square
+{
+    "name" : "Dam Square, Amsterdam",
+    "location" : {
+        "type" : "polygon", <1>
+        "coordinates" : [[ <2>
+          [ 4.89218, 52.37356 ],
+          [ 4.89205, 52.37276 ],
+          [ 4.89301, 52.37274 ],
+          [ 4.89392, 52.37250 ],
+          [ 4.89431, 52.37287 ],
+          [ 4.89331, 52.37346 ],
+          [ 4.89305, 52.37326 ],
+          [ 4.89218, 52.37356 ]
+        ]]
+    }
+}
+-----------------------
+<1> The `type` parameter indicates the type of shape that the coordinates
+    represent.
+<2> The list of `lon/lat` points which describe the polygon.
+
+The excess of square brackets in the example may look confusing, but the
+GeoJSON syntax is quite simple:
+
+1. Each `lon/lat` point is represented as an array:
++
+    [lon,lat]
+
+2. A list of points is wrapped in an array to represent a polygon:
++
+    [[lon,lat],[lon,lat], ... ]
+
+3. A shape of type `polygon` can optionally contain several polygons: the
+   first represents the polygon proper while any subsequent polygons represent
+   holes in the first:
++
+    [
+      [[lon,lat],[lon,lat], ... ],  # main polygon
+      [[lon,lat],[lon,lat], ... ],  # hole in main polygon
+      ...
+    ]
+
+See the {ref}mapping-geo-shape-type.html[Geo-shape mapping documentation] for
+more details about the supported shapes.
+

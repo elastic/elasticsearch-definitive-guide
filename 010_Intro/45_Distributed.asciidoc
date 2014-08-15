@@ -34,8 +34,9 @@ the operations happening automatically under the hood include:
 As you read through this book, you'll encounter supplemental chapters about the
 distributed nature of Elasticsearch.  These chapters will teach you about
 how the cluster scales and deals with failover (<<distributed-cluster>>),
-handles document storage (<<distributed-docs>>) and executes distributed search
-(<<distributed-search>>).
+handles document storage (<<distributed-docs>>), executes distributed search
+(<<distributed-search>>), and what a shard is and how it works
+(<<inside-a-shard>>).
 
 These chapters are not required reading -- you can use Elasticsearch without
 understanding these internals -- but they will provide insight that will make

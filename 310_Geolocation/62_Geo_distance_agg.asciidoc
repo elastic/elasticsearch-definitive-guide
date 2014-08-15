@@ -1,0 +1,117 @@
+[[geo-distance-agg]]
+=== `geo_distance` aggregation
+
+The `geo_distance` agg is useful for the types of searches where a user wants
+to find ``all pizza restaurants within 1km of me''. The search results
+should, indeed, be limited to the 1km radius specified by the user, but we can
+add: ``Another result found within 2km'':
+
+[source,json]
+----------------------------
+GET /attractions/restaurant/_search
+{
+  "query": {
+    "filtered": {
+      "query": {
+        "match": { <1>
+          "name": "pizza"
+        }
+      },
+      "filter": {
+        "geo_bounding_box": {
+          "location": { <2>
+            "top":    40.8,
+            "bottom": 40.4,
+            "left":  -74.1,
+            "right": -73.7
+          }
+        }
+      }
+    }
+  },
+  "aggs": {
+    "per_ring": {
+      "geo_distance": { <3>
+        "field":    "location",
+        "unit":     "km",
+        "origin": {
+          "lat":    40.712,
+          "lon":   -73.988
+        },
+        "ranges": [
+          { "from": 0, "to": 1 },
+          { "from": 1, "to": 2 }
+        ]
+      }
+    }
+  },
+  "post_filter": { <4>
+    "geo_distance": {
+      "distance":   "1km",
+      "location": {
+        "lat":      40.712,
+        "lon":     -73.988
+      }
+    }
+  }
+}
+----------------------------
+<1> The main query looks for restaurants with `pizza` in the name.
+<2> The bounding box filters these results down to just those in
+    the greater New York area.
+<3> The `geo_distance` agg counts the number of results within
+    1km of the user, and between 1km and 2km from the user.
+<4> Finally, the `post_filter` reduces the search results to just
+    those restaurants within 1km of the user.
+
+The response from the above request is as follows:
+
+[source,json]
+----------------------------
+"hits": {
+  "total":     1,
+  "max_score": 0.15342641,
+  "hits": [ <1>
+     {
+        "_index": "attractions",
+        "_type":  "restaurant",
+        "_id":    "3",
+        "_score": 0.15342641,
+        "_source": {
+           "name": "Mini Munchies Pizza",
+           "location": [
+              -73.983,
+              40.719
+           ]
+        }
+     }
+  ]
+},
+"aggregations": {
+  "per_ring": { <2>
+     "buckets": [
+        {
+           "key":       "*-1.0",
+           "from":      0,
+           "to":        1,
+           "doc_count": 1
+        },
+        {
+           "key":       "1.0-2.0",
+           "from":      1,
+           "to":        2,
+           "doc_count": 1
+        }
+     ]
+  }
+}
+----------------------------
+<1> The `post_filter` has reduced the search hits to just the single
+    pizza restaurant within 1km of the user.
+<2> The aggregation includes the search result plus the other pizza
+    restaurant within 2km of the user.
+
+In this example, we have just counted the number of restaurants which fall
+into each concentric ring.  Of course, we could nest sub-aggregations under
+the `per_rings` aggregation to calculate the average price per ring, the
+maximium popularity, etc.
