@@ -15,8 +15,9 @@ understand how it works and how to make it work for your needs.
 
 Handling relationships between entities is not as obvious as it is with a
 dedicated relational store.  The golden rule of a relational database --
-``normalize your data'' -- does not apply to Elasticsearch. In <<relations>>
-we will discuss the pros and cons of the available approaches.
+``normalize your data'' -- does not apply to Elasticsearch. In <<relations>>,
+<<nested-objects>>, and <<parent-child>> we will discuss the pros and cons of
+the available approaches.
 
 Then in <<scale>> we will talk about the features that Elasticsearch offers
 which enable you to scale out quickly and flexibly.  Scale is not  one-size-

@@ -1,5 +1,5 @@
 [[parent-child]]
-=== Parent-child relationship
+== Parent-child relationship
 
 The _parent-child_ relationship is similar in nature to the
 <<nested-objects,nested model>> -- both allow you to associate one entity
@@ -25,7 +25,7 @@ it does place a limitation on the parent-child relationship: the parent
 document and all of its children *must* live on the same shard.
 
 [[parent-child-mapping]]
-==== Parent-child mapping
+=== Parent-child mapping
 
 All that is needed in order to establish the parent-child relationship, is to
 specify which document type should be the parent of a child type.  This must
