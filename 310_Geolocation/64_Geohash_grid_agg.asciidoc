@@ -28,7 +28,7 @@ GET /attractions/restaurant/_search?search_type=count
     "filtered": {
       "filter": {
         "geo_bounding_box": {
-          "location": {
+          "location": { <1>
             "top_left": {
               "lat":  40,8,
               "lon": -74.1
