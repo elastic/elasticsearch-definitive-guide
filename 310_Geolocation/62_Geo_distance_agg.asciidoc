@@ -20,10 +20,14 @@ GET /attractions/restaurant/_search
       "filter": {
         "geo_bounding_box": {
           "location": { <2>
-            "top":    40.8,
-            "bottom": 40.4,
-            "left":  -74.1,
-            "right": -73.7
+            "top_left": {
+              "lat":  40,8,
+              "lon": -74.1
+            },
+            "bottom_right": {
+              "lat":  40.4,
+              "lon": -73.7
+            }
           }
         }
       }

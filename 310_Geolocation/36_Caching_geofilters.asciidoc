@@ -40,10 +40,14 @@ GET /attractions/restaurant/_search
                 "type": "indexed",
                 "_cache": true, <1>
                 "location": {
-                  "top": 40.8,
-                  "bottom": 40.4,
-                  "left": -74.1,
-                  "right": -73.7
+                  "top_left": {
+                    "lat":  40,8,
+                    "lon": -74.1
+                  },
+                  "bottom_right": {
+                    "lat":  40.4,
+                    "lon": -73.7
+                  }
                 }
               }
             },
@@ -51,7 +55,7 @@ GET /attractions/restaurant/_search
               "geo_distance": { <2>
                 "distance": "1km",
                 "location": {
-                  "lat": 40.715,
+                  "lat":  40.715,
                   "lon": -73.988
                 }
               }

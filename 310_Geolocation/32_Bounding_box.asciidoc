@@ -16,10 +16,14 @@ GET /attractions/restaurant/_search
       "filter": {
         "geo_bounding_box": {
           "location": { <1>
-            "top":     40.8,
-            "bottom":  40.7,
-            "left":   -74.0,
-            "right":  -73.0
+            "top_left": {
+              "lat":  40,8,
+              "lon": -74.0
+            },
+            "bottom_right": {
+              "lat":  40.7,
+              "lon": -73.0
+            }
           }
         }
       }
@@ -27,8 +31,7 @@ GET /attractions/restaurant/_search
   }
 }
 ---------------------
-<1> These coordinates can also be specified as `top_left` and `bottom_right`
-    pairs, or `bottom_left` and `top_right` pairs.
+<1> These coordinates can also be specified as `bottom_left` and `top_right`.
 
 [[optimize-bounding-box]]
 ==== Optimizing bounding boxes
@@ -76,10 +79,14 @@ GET /attractions/restaurant/_search
         "geo_bounding_box": {
           "type":    "indexed", <1>
           "location": {
-            "top":     40.8,
-            "bottom":  40.7,
-            "left":   -74.0,
-            "right":  -73.0
+            "top_left": {
+              "lat":  40,8,
+              "lon": -74.0
+            },
+            "bottom_right": {
+              "lat":  40.7,
+              "lon":  -73.0
+            }
           }
         }
       }
