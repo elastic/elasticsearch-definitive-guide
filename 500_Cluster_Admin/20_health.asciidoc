@@ -1,0 +1,222 @@
+
+=== Cluster Health
+
+An Elasticsearch cluster may consist of a single node with a single index.  Or it
+may have a hundred data nodes, three dedicated masters, a few dozen clients nodes
+...all operating on a thousand indices (and tends of thousands of shards).
+
+No matter the scale of the cluster, you'll want a quick way to assess the status
+of your cluster.  The _Cluster Health_ API fills that role.  You can think of it
+as a ten-thousand foot view of your cluster.  It can reassure you that everything
+is alright, or alert you to a problem somewhere in your cluster.
+
+Let's execute a Health API and see what the response looks like:
+
+[source,bash]
+----
+GET _cluster/health
+----
+
+Like other APIs in Elasticsearch, Cluster Health will return a JSON response.
+This makes it convenient to parse for automation and alerting.  The response
+contains some critical information about your cluster:
+
+[source,js]
+----
+{
+   "cluster_name": "elasticsearch_zach",
+   "status": "green",
+   "timed_out": false,
+   "number_of_nodes": 1,
+   "number_of_data_nodes": 1,
+   "active_primary_shards": 10,
+   "active_shards": 10,
+   "relocating_shards": 0,
+   "initializing_shards": 0,
+   "unassigned_shards": 0
+}
+----
+
+The most important piece of information in the response is the `"status"` field.
+The status may be one of three values:
+
+- *Green:* all primary and replica shards are allocated. Your cluster is 100%
+operational
+- *Yellow:* all primary shards are allocated, but at least one replica is missing.
+No data is missing so search results will still be complete. However,  your 
+high-availability is compromised to some degree.  If _more_ shards disappear, you
+might lose data.  Think of Yellow as a warning which should prompt investigation.
+- *Red:* at least one primary shard (and all of it's replicas) are missing. This means
+that you are missing data: searches will return partial results and indexing
+into that shard will return an exception.
+
+The Green/Yellow/Red status is a great way to glance at your cluster and understand
+what's going on.  The rest of the metrics give you a general summary of your cluster:
+
+- `number_of_nodes` and `number_of_data_nodes` are fairly self-descriptive.
+- `active_primary_shards` are the number of primary shards in your cluster. This
+is an aggregate total across all indices.
+- `active_shards` is an aggregate total of _all_ shards across all indices, which
+includes replica shards
+- `relocating_shards` shows the number of shards that are currently moving from
+one node to another node.  This number is often zero, but can increase when
+Elasticsearch decides a cluster is not properly balanced, a new node is added,
+a node is taken down, etc.
+- `initializing_shards` is a count of shards that are being freshly created. For 
+example, when you first create an index, the shards will all briefly reside in
+"initializing" state.  This is typically a transient event and shards shouldn't
+linger in "initializing" too long.  You may also see initializing shards when a 
+node is first restarted...as shards are loaded from disk they start as "initializing"
+- `unassigned_shards` are shards that exist in the cluster state, but cannot be
+found in the cluster itself.  A common source of unassigned shards are unassigned
+replicas.  For example, an index with 5 shards and 1 replica will have 5 unassigned
+replicas in a single-node cluster.  Unassigned shards will also be present if your
+cluster is red (since primaries are missing)
+
+==== Drilling deeper: finding problematic indices
+
+Imagine something goes wrong one day, and you notice that your cluster health
+looks like this:
+
+[source,js]
+----
+{
+   "cluster_name": "elasticsearch_zach",
+   "status": "red",
+   "timed_out": false,
+   "number_of_nodes": 8,
+   "number_of_data_nodes": 8,
+   "active_primary_shards": 90,
+   "active_shards": 180,
+   "relocating_shards": 0,
+   "initializing_shards": 0,
+   "unassigned_shards": 20
+}
+----
+
+Ok, so what can we deduce from this health status?  Well, our cluster is Red,
+which means we are missing data (primary + replicas).  We know our cluster has
+ten nodes, but only see 8 data nodes listed in the health.  Two of our nodes
+have gone missing.  We see that there are 20 unassigned shards.  
+
+That's about all the information we can glean.  The nature of those missing
+shards are still a mystery.  Are we missing 20 indices with one primary shard each?
+One index with 20 primary shards? Ten indices with one primary + one replica?
+Which index? 
+
+To answer these questions, we need to ask the Cluster Health for a little more
+information by using the `level` parameter.
+
+[source,bash]
+----
+GET _cluster/health?level=indices
+----
+
+This parameter will make the Cluster Health API to add a list of indices in our
+cluster and details about each of those indices (status, number of shards,
+unassigned shards, etc):
+
+[source,js]
+----
+{
+   "cluster_name": "elasticsearch_zach",
+   "status": "red",
+   "timed_out": false,
+   "number_of_nodes": 8,
+   "number_of_data_nodes": 8,
+   "active_primary_shards": 90,
+   "active_shards": 180,
+   "relocating_shards": 0,
+   "initializing_shards": 0,
+   "unassigned_shards": 20
+   "indices": {
+      "v1": {
+         "status": "green",
+         "number_of_shards": 10,
+         "number_of_replicas": 1,
+         "active_primary_shards": 10,
+         "active_shards": 20,
+         "relocating_shards": 0,
+         "initializing_shards": 0,
+         "unassigned_shards": 0
+      },
+      "v2": {
+         "status": "red", <1>
+         "number_of_shards": 10,
+         "number_of_replicas": 1,
+         "active_primary_shards": 0,
+         "active_shards": 0,
+         "relocating_shards": 0,
+         "initializing_shards": 0,
+         "unassigned_shards": 20 <2>
+      },
+      "v3": {
+         "status": "green",
+         "number_of_shards": 10,
+         "number_of_replicas": 1,
+         "active_primary_shards": 10,
+         "active_shards": 20,
+         "relocating_shards": 0,
+         "initializing_shards": 0,
+         "unassigned_shards": 0
+      },
+      ....
+   }
+}
+----
+<1> We can now see that the `v2` index is the index which has made the cluster Red
+<2> And it becomes clear that all 20 missing shards are from this index
+
+Once we ask for the indices output, it becomes immediately clear which index is
+having problems: the `v2` index.  We also see that the index has 10 primary shards
+and one replica, and that all 20 shards are missing.  Presumably these 20 shards
+were on the two nodes that are missing from our cluster.
+
+The `level` parameter accepts one more option:
+
+[source,bash]
+----
+GET _cluster/health?level=shards
+----
+
+The `shards` option will provide a very verbose output, which lists the status 
+and location of every shard inside every index.  This output is sometimes useful,
+but due to the verbosity can difficult to work with.  Once you know the index
+that is having problems, other APIs that we discuss in this chapter will tend 
+to be more helpful.
+
+==== Blocking for status changes
+
+The Cluster Health API has another neat trick which is very useful when building
+unit and integration tests, or automated scripts that work with Elasticsearch.
+You can specify a `wait_for_status` parameter, which will make the call block
+until the status is satisfied.  For example:
+
+[source,bash]
+----
+GET _cluster/health?wait_for_status=green
+----
+
+This call will block (e.g. not return control to your program) until the cluster
+health has turned green, meaning all primary + replica shards have been allocated.
+This is very important for automated scripts and tests.
+
+If you create an index, Elasticsearch must broadcast the change in cluster state
+to all nodes.  Those nodes must initialize those new shards, then respond to the
+master that the shards are Started.  This process is very fast, but due to network
+latency may take 10-20ms.
+
+If you have an automated script that A) creates an index and then B) immediately
+attempts to index a document, this operation may fail since the index has not
+been fully initialized yet.  The time between A) and B) will likely be <1ms...
+not nearly enough time to account for network latency.
+
+Rather than sleeping, just have your script/test call the cluster health with
+a `wait_for_status` parameter.  As soon as the index is fully created, the cluster
+health will change to Green, the call returns control to your script, and you may
+begin indexing.
+
+Valid options are `green`, `yellow` and `red`.  The call will return when the 
+requested status (or one "higher") is reached.  E.g. if you request `yellow`,
+a status change to `yellow` or `green` will unblock the call.
+
