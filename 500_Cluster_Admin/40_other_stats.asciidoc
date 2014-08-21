@@ -1,0 +1,160 @@
+
+=== Cluster Stats
+
+The _Cluster Stats_ API provides very similar output to the Node Stats.  There
+is one crucial difference: Node Stats shows you statistics per-node, while
+Cluster Stats will show you the sum total of all nodes in a single metric.
+
+This provides some useful stats to glance at.  You can see that your entire cluster
+is using 50% available heap, filter cache is not evicting heavily, etc.  It's
+main use is to provide a quick summary which is more extensive than
+the Cluster Health, but less detailed than Node Stats.  It is also useful for
+clusters which are very large, which makes Node Stats output difficult
+to read.
+
+The API may be invoked with:
+
+[source,js]
+----
+GET _cluster/stats
+----
+
+=== Index Stats
+
+So far, we have been looking at _node-centric_ statistics.  How much memory does 
+this node have?  How much CPU is being used?  How many searches is this node
+servicing?  Etc. etc.
+
+Sometimes it is useful to look at statistics from an _index-centric_ perspective.
+How many search requests is _this index_ receiving?  How much time is spent fetching
+docs in _that index_, etc.
+
+To do this, select the index (or indices) that you are interested in and 
+execute an Index Stats API:
+
+[source,js]
+----
+GET my_index/_stats <1>
+
+GET my_index,another_index/_stats <2>
+
+GET _all/_stats <3>
+----
+<1> Stats for `my_index`
+<2> Stats for multiple indices can be requested by comma separating their names
+<3> Stats indices can be requested using the special `_all` index name
+
+The stats returned will be familar to the Node Stats output: search, fetch, get,
+index, bulk, segment counts, etc
+
+Index-centric stats can be useful for identifying or verifying "hot" indices
+inside your cluster, or trying to determine while some indices are faster/slower
+than others.
+
+In practice, however, node-centric statistics tend to be more useful.  Entire
+nodes tend to bottleneck, not individual indices.  And because indices
+are usually spread across multiple nodes, index-centric statistics
+are usually not very helpful because it aggregates different physical machines
+operating in different environments.
+
+Index-centric stats are a useful tool to keep in your repertoire, but are not usually
+the first tool to reach for.
+
+=== Pending Tasks
+
+There are certain tasks that only the master can perform, such as creating a new 
+index or moving shards around the cluster.  Since a cluster can only have one
+master, only one node can ever process cluster-level metadata changes.  In 
+99.9999% of the time, this is never a problem.  The queue of metadata changes
+remains essentially zero.
+
+In some _very rare_ clusters, the number of metadata changes occurs faster than
+the master can process them.  This leads to a build up of pending actions which
+are queued.
+
+The _Pending Tasks_ API will show you what (if any) cluster-level metadata changes
+are pending in the queue:
+
+[source,js]
+----
+GET _cluster/pending_tasks
+----
+
+Usually, the response will look like this:
+
+[source,js]
+----
+{
+   "tasks": []
+}
+----
+
+Meaning there are no pending tasks.  If you have one of the rare clusters that
+bottlenecks on the master node, your pending task list may look like this:
+
+[source,js]
+----
+{
+   "tasks": [
+      {
+         "insert_order": 101,
+         "priority": "URGENT",
+         "source": "create-index [foo_9], cause [api]",
+         "time_in_queue_millis": 86,
+         "time_in_queue": "86ms"
+      },
+      {
+         "insert_order": 46,
+         "priority": "HIGH",
+         "source": "shard-started ([foo_2][1], node[tMTocMvQQgGCkj7QDHl3OA], [P], s[INITIALIZING]), reason [after recovery from gateway]",
+         "time_in_queue_millis": 842,
+         "time_in_queue": "842ms"
+      },
+      {
+         "insert_order": 45,
+         "priority": "HIGH",
+         "source": "shard-started ([foo_2][0], node[tMTocMvQQgGCkj7QDHl3OA], [P], s[INITIALIZING]), reason [after recovery from gateway]",
+         "time_in_queue_millis": 858,
+         "time_in_queue": "858ms"
+      }
+  ]
+}
+----
+
+You can see that tasks are assigned a priority (`URGENT` is processed before `HIGH`,
+etc), the order it was inserted, how long the action has been queued and
+what the action is trying to perform.  In the above list, there is a Create Index
+action and two Shard Started actions pending.
+
+.When should I worry about Pending Tasks?
+****
+As mentioned, the master node is rarely the bottleneck for clusters.  The only
+time it can potentially bottleneck is if the cluster state is both very large 
+_and_ updated frequently.
+
+For example, if you allow customers to create as many dynamic fields as they wish,
+and have a unique index for each customer every day, you're cluster state will grow
+very large.  The cluster state includes (among other things) a list of all indices,
+their types, and the fields for each index.
+
+So if you have 100,000 customers, and each customer averages 1000 fields and 90
+days of retention....that's nine billion fields to keep in the cluster state.
+Whenever this changes, the nodes must be notified.  
+
+The master must process these changes which requires non-trivial CPU overhead,
+plus the network overhead of pushing the updated cluster state to all nodes.
+
+It is these clusters which may begin to see cluster state actions queuing up.
+There is no easy solution to this problem, however.  You have three options:
+
+- Obtain a beefier master node.  Vertical scaling just delays the inevitable, 
+unfortunately 
+- Restrict the dynamic nature of the documents in some way, so as to limit the 
+cluster state size.  
+- Spin up another cluster once a certain threshold has been crossed.
+****
+
+
+
+
+
