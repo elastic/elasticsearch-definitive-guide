@@ -392,5 +392,150 @@ discussed in <<TODO>>
 
 ==== Threadpool Section
 
+Elasticsearch maintains a number of threadpools internally.  These threadpools
+cooperate to get work done, passing work between each other as necessary. In
+general, you don't need to configure or tune the threadpools, but it is sometimes
+useful to see their stats so you can gain insight into how your cluster is behaving.
+
+There are about a dozen threadpools, but they all share the same format:
+
+[source,js]
+----
+          "index": {
+             "threads": 1,
+             "queue": 0,
+             "active": 0,
+             "rejected": 0,
+             "largest": 1,
+             "completed": 1
+          }
+----
+
+Each threadpool lists the number of threads that are configured (`threads`),
+how many of those threads are actively processing some work (`active`) and how
+many work units are sitting in a queue (`queue`).  
+
+If the queue fills up to its limit, new workunits will begin to be rejected and
+you will see that reflected in the `rejected` statistic.  This is often a sign
+that your cluster is starting to bottleneck on some resources, since a full 
+queue means your node/cluster is processing at maximum speed but unable to keep
+up with the influx of work.
+
+.Bulk Rejections
+****
+If you are going to encounter queue rejections, it will most likely be caused
+by Bulk indexing requests.  It is easy to send many Bulk requests to Elasticsearch
+using concurrent import processes.  More is better, right?
+
+In reality, each cluster has a certain limit at which it can not keep up with
+ingestion.  Once this threshold is crossed, the queue will quickly fill up and
+new bulks will be rejected.
+
+This is a _good thing_.  Queue rejections are a useful form of back-pressure.  They
+let you know that your cluster is at maximum capacity, which is much better than
+sticking data into an in-memory queue.  Increasing the queue size doesn't increase
+performance, it just hides the problem.  If your cluster can only process 10,000
+doc/s, it doesn't matter if the queue is 100 or 10,000,000...your cluster can
+still only process 10,000 docs/s.  
+
+The queue simply hides the performance problem and carries real risk of data-loss.
+Anything sitting in a queue is by definition not processed yet.  If the node
+goes down, all those requests are lost forever.  Furthermore, the queue eats
+up a lot of memory, which is not ideal.
+
+It is much better to handle queuing in your application by gracefully handling
+the back-pressure from a full queue.  When you receive bulk rejections you should:
+
+1. Pause the import thread for 3-5 seconds
+2. Extract the rejected actions from the bulk response, since it is probable that
+many of the actions were successful. The bulk response will tell you which succeeded,
+and which were rejected.
+3. Send a new bulk request with just the rejected actions
+4. Repeat at step 1. if rejections were encountered again
+
+Using this procedure, your code naturally adapts to the load of your cluster and
+naturally backs off.
+
+Rejections are not errors: they just mean you should try again later.
+****
+
+There are a dozen different threadpools.  Most you can safely ignore, but a few
+are good to keep an eye on:
+
+- `indexing`: threadpool for normal indexing requests
+- `bulk`: bulk requests, which are distinct from the non-bulk indexing requests
+- `get`: GET-by-ID operations 
+- `search`: all search and query requests
+- `merging`: threadpool dedicated to managing Lucene merges
+
+==== FS and Network sections
+
+Continuing down the Node Stats API, you'll see a bunch of statistics about your
+filesystem:  free space, data directory paths, disk IO stats, etc.  If you are
+not monitoring free disk space, you can get those stats here.  The Disk IO stats
+are also handy, but often more specialized command-line tools (`iostat`, etc) 
+are more useful.
+
+Obviously, Elasticsearch has a difficult time functioning if you run out of disk
+space...so make sure you don't :)
+
+There are also two sections on network statistics:
+
+[source,js]
+----
+        "transport": {
+            "server_open": 13,
+            "rx_count": 11696,
+            "rx_size_in_bytes": 1525774,
+            "tx_count": 10282,
+            "tx_size_in_bytes": 1440101928
+         },
+         "http": {
+            "current_open": 4,
+            "total_opened": 23
+         },
+----
+
+- `transport` shows some very basic stats about the "transport address".  This
+relates to inter-node communication (often on port 9300) and any TransportClient
+or NodeClient connections.  Don't worry yourself if you see many connections here,
+Elasticsearch maintains a large number of connections between nodes
+
+- `http` represents stats about the HTTP port (often 9200).  If you see a very
+large `total_opened` number that is constantly increasing, that is a sure-sign
+that one of your HTTP clients is not using keep-alive connections.  Persistent,
+keep-alive connections are important for performance, since building up and tearing
+down sockets is expensive (and wastes file descriptors).  Make sure your clients
+are configured appropriately.
+
+==== Circuit Breaker 
+
+Finally, we come to the last section: stats about the field data circuit breaker 
+(introduced in <<circuit_breaker>>):
+
+[source,js]
+----
+         "fielddata_breaker": {
+            "maximum_size_in_bytes": 623326003,
+            "maximum_size": "594.4mb",
+            "estimated_size_in_bytes": 0,
+            "estimated_size": "0b",
+            "overhead": 1.03,
+            "tripped": 0
+         }
+----
+
+Here, you can determine what the maximum circuit breaker size is (e.g. at what
+size the circuit breaker will trip if a query attempts to use more memory).  It
+will also let you know how many times the circuit breaker has been tripped, and
+the currently configured "overhead".  The overhead is used to pad estimates
+since some queries are more difficult to estimate than others.
+
+The main thing to watch is the `tripped` metric.  If this number is large, or
+consistently increasing, it's a sign that your queries may need to be optimized
+or that you may need to obtain more memory (either per box, or by adding more
+nodes).
+
+
 
 
