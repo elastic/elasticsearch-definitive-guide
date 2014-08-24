@@ -1,5 +1,5 @@
 [[fuzzy-matching]]
-== Fuzzy matching
+== Typoes and mispelings
 
 We expect a query on structured data like dates and prices to only return
 documents that match exactly.  However, good full text search shouldn't have the
@@ -19,17 +19,11 @@ included further down the list.  If no documents match exactly, at least we
 can show the user potential matches -- they may even be what the user
 originally intended!
 
-There are several lines of attack:
+We have already looked at diacritic-free matching in <<token-normalization>>,
+word stemming in <<stemming>>, and synonyms in <<synonyms>>, but all of those
+approaches presuppose that words are spelled correctly, or that there is only
+one way to spell each word.
 
-*   Language specific stemmer token filters reduce each word to its root form,
-    indexing ``foxes'' as `fox`, or ``jumping'', ``jumps'' and ``jumped'' as
-    `jump`.
-
-*   Synonym token filters can add synonyms into the token stream, allowing a
-    query for ``quick'' to match ``fast'' or ``rapid'', or a query for ``UK``
-    to match ``United Kingdom``.
-
-*   Fuzzy queries
-*   Phonetic token filters can
-
+Fuzzy matching allows for query-time matching of misspelled words, while
+phonetic token filters at index time can be used for _sounds-like_ matching.
 

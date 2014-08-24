@@ -1,0 +1,134 @@
+[[phonetic-matching]]
+=== Phonetic matching
+
+In a last, desperate, attempt to match something, anything, we could resort to
+searching for words that sound similar, even if their spelling differs.
+
+A number of algorithms exist for converting words into some phonetic
+representation. The http://en.wikipedia.org/wiki/Soundex[Soundex] algorithm is
+the granddaddy of them all, and most other phonetic algorithms are
+improvements or specializations of Soundex, such as
+http://en.wikipedia.org/wiki/Metaphone[Metaphone] and
+http://en.wikipedia.org/wiki/Metaphone#Double_Metaphone[Double Metaphone]
+(which expands phonetic matching to languages other than English),
+http://en.wikipedia.org/wiki/Caverphone[Caverphone] for matching names in New
+Zealand, the
+http://en.wikipedia.org/wiki/Beider%E2%80%93Morse_Phonetic_Name_Matching_Algorithm[Beider-Morse] algorithm, which adopts the Soundex algorithm
+for better matching of German and Yiddish names, and the
+http://de.wikipedia.org/wiki/K%C3%B6lner_Phonetik[Kölner Phonetik] for better
+handling of German words.
+
+The thing to take away from this list is that phonetic algorithms are fairly
+crude, and very specific to the languages they were designed for, usually
+either English or German.  This limits their usefulness.  Still, for certain
+purposes, and in combination with other techniques, phonetic matching can be a
+useful tool.
+
+First, you will need to install the Phonetic Analysis plugin from
+https://github.com/elasticsearch/elasticsearch-analysis-phonetic on very node
+in the cluster, and restart each node.
+
+Once restarted, you can create a custom analyzer which uses one of the
+phonetic token filters and try it out:
+
+[source,json]
+-----------------------------------
+PUT /my_index
+{
+  "settings": {
+    "analysis": {
+      "filter": {
+        "dbl_metaphone": { <1>
+          "type":    "phonetic",
+          "encoder": "double_metaphone"
+        }
+      },
+      "analyzer": {
+        "dbl_metaphone": {
+          "tokenizer": "standard",
+          "filter":    "dbl_metaphone" <2>
+        }
+      }
+    }
+  }
+}
+-----------------------------------
+<1> First, configure a custom `phonetic` token filter which uses the
+    `double_metaphone` encoder.
+<2> Then use the custom token filter in a custom analyzer.
+
+Now we can test it out with the `analyze` API:
+
+
+[source,json]
+-----------------------------------
+GET /my_index/_analyze?analyzer=dbl_metaphone
+Smith Smythe
+-----------------------------------
+
+Each of `Smith` and `Smythe` produce two tokens in the same position:  `SM0`
+and  `XMT`. Running `John`, `Jon`, and `Johnnie` through the analyzer will all
+produce the two tokens: `JN` and `AN`, while `Jonathon` results in the tokens
+`JN0N` and `ANTN`.
+
+The phonetic analyzer can be used just like any other analyzer. First map a
+field to use it, then index some data:
+
+[source,json]
+-----------------------------------
+PUT /my_index/_mapping/my_type
+{
+  "properties": {
+    "name": {
+      "type": "string",
+      "fields": {
+        "phonetic": { <1>
+          "type":     "string",
+          "analyzer": "dbl_metaphone"
+        }
+      }
+    }
+  }
+}
+
+PUT /my_index/my_type/1
+{
+  "name": "John Smith"
+}
+
+PUT /my_index/my_type/2
+{
+  "name": "Jonnie Smythe"
+}
+-----------------------------------
+<1> The `name.phonetic` field uses the custom `dbl_metaphone` analyzer.
+
+The `match` query can be used for searching:
+
+[source,json]
+-----------------------------------
+GET /my_index/my_type/_search
+{
+  "query": {
+    "match": {
+      "name.phonetic": {
+        "query": "Jahnnie Smeeth",
+        "operator": "and"
+      }
+    }
+  }
+}
+-----------------------------------
+
+This query returns both documents, demonstrating just how coarse phonetic
+matching is.  Scoring with a phonetic algorithm is pretty much worthless. The
+purpose of phonetic matching is not to increase precision, but to increase
+recall -- to spread the net wide enough to catch any documents which might
+possibly match.
+
+It usually makes more sense to use phonetic algorithms when retrieving results
+which will be consumed and post-processed by another computer, rather than by
+human users.
+
+
+

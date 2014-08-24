@@ -1,22 +1,14 @@
-[[fuzzy-matching]]
-== Fuzzy matching (TODO)
+include::270_Fuzzy_matching/10_Intro.asciidoc[]
 
-TODO
+include::270_Fuzzy_matching/20_Fuzziness.asciidoc[]
 
-=== What is fuzzy matching?
+include::270_Fuzzy_matching/30_Fuzzy_query.asciidoc[]
 
-TODO
+include::270_Fuzzy_matching/40_Fuzzy_match_query.asciidoc[]
 
-=== Fuzzy terms
+include::270_Fuzzy_matching/50_Scoring_fuzziness.asciidoc[]
 
-fuzzy query
+include::270_Fuzzy_matching/60_Phonetic_matching.asciidoc[]
 
-=== Searching typos
-
-fuzziness in match and query_string
-
-=== Phonetic matching
-
-TODO
 
 

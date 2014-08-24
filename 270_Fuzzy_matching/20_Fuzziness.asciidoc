@@ -1,0 +1,53 @@
+[[fuzziness]]
+=== Fuzziness
+
+Fuzzy matching treats two words which are ``fuzzily'' similar as if they were
+the same word. First, we need to define what we mean by _fuzziness_.
+
+In 1965, Vladimir Levenshtein developed the
+http://en.wikipedia.org/wiki/Levenshtein_distance[Levenshtein distance], which
+measures the number of single character edits which are required to transform
+one word into the other. He proposed three types of one character edits:
+
+* *substitution* of one character for another: +**F**ox+ -> +**B**ox+
+
+* *insertion* of a new character: +sic+ -> +sic**K**+
+
+* *deletion* of a character:: +b**L**ack+ -> +back+
+
+http://en.wikipedia.org/wiki/Frederick_J._Damerau[Frederick Damerau]
+later expanded these operations to include:
+
+* *transposition* of two adjacent characters: +**ST**ar+ -> +**TS**ar+
+
+For example, to convert the word `bieber` into `beaver` would require the
+following steps:
+
+* Substitute `v` for `b`: +bie**B**er+ -> +bie**V**er+
+* Substitute `a` for `i`: +b**I**ever+ -> +b**A**ever+
+* Transpose `a` and `e`:  +b**AE**ver+ -> +b**EA**ver+
+
+These 3 steps represent a
+http://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance[Damerau-Levenshtein edit distance]
+of 3.
+
+Clearly, `bieber` is a long way from `beaver` -- they are too far apart to be
+considered a simple misspelling.  Damerau observed that 80% of human
+misspellings have an edit distance of 1. In other words, 80% of misspellings
+could be corrected with a *single edit* to the original string.
+
+Elasticsearch supports a maximum edit distance, specified with the `fuzziness`
+parameter, of 2.
+
+Of course, the impact that a single edit has on a string depends upon the
+length of the string.  Two edits to the word `hat` can produce `mad`, so
+allowing two edits on a string of length three is overkill. The `fuzziness`
+parameter can be set to `AUTO`, which results in a maximum edit distance of:
+
+* `0` for strings of 1 or 2 characters.
+* `1` for strings of 3, 4, or 5 characters.
+* `2` for strings of more than 5 characters.
+
+Of course, you may find that an edit distance of `2` is still overkill, and
+returns results which don't appear to be related. You may get better results,
+and better performance, with a maximum `fuzziness` of `1`.
