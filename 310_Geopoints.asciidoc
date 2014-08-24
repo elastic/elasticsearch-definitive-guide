@@ -1,0 +1,14 @@
+include::310_Geopoints/20_Geopoints.asciidoc[]
+
+include::310_Geopoints/30_Filter_by_geopoint.asciidoc[]
+
+include::310_Geopoints/32_Bounding_box.asciidoc[]
+
+include::310_Geopoints/34_Geo_distance.asciidoc[]
+
+include::310_Geopoints/36_Caching_geofilters.asciidoc[]
+
+include::310_Geopoints/38_Reducing_memory.asciidoc[]
+
+include::310_Geopoints/50_Sorting_by_distance.asciidoc[]
+

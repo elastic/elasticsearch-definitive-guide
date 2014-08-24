@@ -1,8 +1,12 @@
-[[indexing-geopoints]]
-=== Indexing geo-points
+[[geopoints]]
+== Geo-points
+
+A geo-point is a single latitude-longitude point on the Earth's surface. They
+can be used to calculate distance from a point, to determine whether a point
+falls within a bounding box, or in aggregations.
 
 Geo-points cannot be automatically detected with
-<<dynamic-mapping,dynamic mapping>>. Instead, geo-points fields should be
+<<dynamic-mapping,dynamic mapping>>. Instead, `geo_point` fields should be
 mapped explicitly:
 
 [source,json]
@@ -25,7 +29,8 @@ PUT /attractions
 -----------------------
 
 [[lat-lon-formats]]
-==== Lat/Lon formats
+[float]
+=== Lat/Lon formats
 
 With the `location` field defined as a `geo_point`, we can proceed to index
 documents containing latitude/longitude pairs, which can be formatted as

@@ -83,13 +83,17 @@ include::305_Significant_Terms.asciidoc[]
 
 include::306_Practical_Considerations.asciidoc[]
 
+
 // Part 5
-[[more-than-search]]
-= More than search (TODO)
+include::04_Geolocation.asciidoc[]
 
-include::310_Geolocation.asciidoc[]
+include::310_Geopoints.asciidoc[]
 
-include::320_Percolation.asciidoc[]
+include::320_Geohashes.asciidoc[]
+
+include::330_Geo_aggs.asciidoc[]
+
+include::340_Geoshapes.asciidoc[]
 
 // Part 6
 

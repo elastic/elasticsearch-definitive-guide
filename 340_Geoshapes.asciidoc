@@ -1,0 +1,13 @@
+include::340_Geoshapes/70_Geoshapes.asciidoc[]
+
+include::340_Geoshapes/72_Mapping_geo_shapes.asciidoc[]
+
+include::340_Geoshapes/74_Indexing_geo_shapes.asciidoc[]
+
+include::340_Geoshapes/76_Querying_geo_shapes.asciidoc[]
+
+include::340_Geoshapes/78_Indexed_geo_shapes.asciidoc[]
+
+include::340_Geoshapes/80_Caching_geo_shapes.asciidoc[]
+
+
