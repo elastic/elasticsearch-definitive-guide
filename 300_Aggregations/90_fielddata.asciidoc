@@ -1,96 +1,116 @@
 
-=== Field Data
+=== Fielddata
 
-Aggregations work via a data structure known as _field data_ (briefly introduced 
-in <<fielddata-intro>>).  Field data is often the largest consumer of memory
+Aggregations work via a data structure known as _fielddata_ (briefly introduced
+in <<fielddata-intro>>).  Fielddata is often the largest consumer of memory
 in an Elasticsearch cluster, so it is important to understand how it works.
 
-Field data exists because inverted indices are only efficient for certain operations.
+.Fielddata: memory vs. disk
+**********************************
+
+Fielddata can be loaded on-the-fly into memory, or built at index time and
+stored on disk.  Later, we will talk about on-disk fielddata in
+<<doc-values>>. For now we will focus on in-memory fielddata as it is
+currently the default mode of operation in Elasticsearch. This may well change
+in a future version.
+
+**********************************
+
+Fielddata exists because inverted indices are only efficient for certain operations.
 The inverted index excels at finding documents which contain a term.  It does not
-perform well in the opposite direction: determining which terms exist in a single 
-document. Aggregations need this secondary access pattern.  
+perform well in the opposite direction: determining which terms exist in a single
+document. Aggregations need this secondary access pattern.
 
 Consider the following inverted index:
 
     Term      Doc_1   Doc_2   Doc_3
     ------------------------------------
-    Quick   |       |   X   |   X
-    The     |   X   |       |
-    brown   |   X   |   X   |  
+    brown   |   X   |   X   |
     dog     |   X   |       |   X
-    dogs    |       |   X   |   X  
+    dogs    |       |   X   |   X
     fox     |   X   |       |   X
-    foxes   |       |   X   |  
-    in      |       |   X   |  
+    foxes   |       |   X   |
+    in      |       |   X   |
     jumped  |   X   |       |   X
-    lazy    |   X   |   X   |  
-    leap    |       |   X   |  
-    over    |   X   |   X   |   X  
-    quick   |   X   |       |
-    summer  |       |   X   |  
+    lazy    |   X   |   X   |
+    leap    |       |   X   |
+    over    |   X   |   X   |   X
+    quick   |   X   |   X   |   X
+    summer  |       |   X   |
     the     |   X   |       |   X
     ------------------------------------
 
-If we want to compile a complete list of terms in any document that mentions 
+If we want to compile a complete list of terms in any document that mentions
 "brown", we might build a query like so:
 
 [source,js]
 ----
 GET /my_index/_search
 {
-    "query" : {
-        "match" : {
-            "body" : "brown"
-        }
-    },
-    "aggs" : {
-        "terms" : {
-            "field" : "body"
-        }
+  "query" : {
+    "match" : {
+      "body" : "brown"
     }
+  },
+  "aggs" : {
+    "popular_terms": {
+      "terms" : {
+        "field" : "body"
+      }
+    }
+  }
 }
 ----
 
-The query portion is easy and efficient.  First find "brown" in the inverted index,
-then scan across all the columns to see which docs contain "brown".  We can very
-quickly see that `Doc_1` and `Doc_2` contain the token "brown".
+The query portion is easy and efficient.  The inverted index is sorted by
+terms, so first we find "brown" in the terms list, then scan across all the
+columns to see which documents contain "brown".  We can very quickly see that
+`Doc_1` and `Doc_2` contain the token "brown".
 
-Now for the aggregation portion we need to find all the unique terms in `Doc_1` 
-and `Doc_2`.  With the inverted index, this is a very expensive process.  The 
-only way to do so is by iterating row by row and collecting tokens from `Doc_1` 
-and `Doc_2` columns.  This is slow and scales poorly: as the number of terms and 
-documents grows, so does the execution time.
+Then, for the aggregation portion, we need to find all the unique terms in
+`Doc_1`  and `Doc_2`.  Trying to do this with the inverted index would be a
+very expensive process: we would have to iterate overy every term in the index
+and collect tokens from `Doc_1`  and `Doc_2` columns.  This would be very slow
+and scale poorly: as the number of terms and  documents grows, so would the
+execution time.
 
-To address this problem, field data inverts the inverted index.  We can transform
-the inverted index above into the following field data representation:
+Fielddata addresses this problem by inverting the relationship. While the
+inverted index maps terms to the documents containing the term, fielddata
+maps documents to the terms contained by the document:
 
     Doc      Terms
     -----------------------------------------------------------------
-    Doc_1 | The, brown, dog, fox, jumped, lazy, over, quick, the
-    Doc_2 | Quick, brown, dogs, foxes, in, lazy, leap, over, summer
-    Doc_3 | Quick, dog, dogs, fox, jumped, over, the
+    Doc_1 | brown, dog, fox, jumped, lazy, over, quick, the
+    Doc_2 | brown, dogs, foxes, in, lazy, leap, over, quick, summer
+    Doc_3 | dog, dogs, fox, jumped, over, quick, the
     -----------------------------------------------------------------
 
 Once the data has been uninverted, it is trivial to collect the unique tokens from
 `Doc_1` and `Doc_2`.  Go to the rows for each document, collect all the terms and
 take the union of the two sets.
 
-[NOTE]
-====
-You may be objecting that this would be horribly inefficient in terms of memory
-usage.  And you would be right.
 
-Internally, field data is more sophisticated.  Values are stored in per-segment 
-ordinal maps (and global ordinals for certain types).  Field data is also compressed
-using a variety of bit packing tricks: packed integers, monotonic delta compression,
-etc.
+*************************************
 
-Conceptually, however, the above description holds true.
-====   
+The fielddata cache is per-segment. In other words, when a new segment becomes
+visible to search, the fielddata caches from old segments remain valid. Only
+the data for the new segment needs to be loaded into memory.
+
+*************************************
 
 Thus, search and aggregations are closely intertwined.  Search finds documents
-using the inverted index.  Aggregations collect and aggregate values from field
-data, which is itself generated from the inverted index.
+using the inverted index.  Aggregations collect and aggregate values from
+fielddata, which is itself generated from the inverted index.
 
 The rest of this chapter will be discussing various functionality that either
-decreases field data's memory footprint, or speeds up execution speed.
+decreases fielddata's memory footprint, or increases execution speed.
+
+*************************************
+
+Fielddata is not just used for aggregations.  It is required for any
+operation that needs to look up the value contained in a specific document.
+Besides aggregations, this includes sorting, scripts which access field
+values, parent-child relationships (see <<parent-child>>), and certain types
+of queries or filters, such as the <<geo-distance,`geo_distance`>> filter.
+
+*************************************

@@ -1,3 +1,5 @@
+[[significant-terms]]
+== Significant Terms
 
 The Significant Terms aggregation is rather different from the rest of the
 aggregations.  Everything we have seen so far are essentially simple math
@@ -9,11 +11,11 @@ machine learning.  The SigTerm aggregation finds "uncommonly common" terms
 in your data-set.
 
 What do we mean by "uncommonly common"?  These are terms which are statistically
-unusual -- data that appears more frequently than the background rate would 
+unusual -- data that appears more frequently than the background rate would
 suggest.  These statistical anomalies are usually indicative of something
 interesting in your data.
 
-For example, imagine you are in charge of detecting and tracking down credit 
+For example, imagine you are in charge of detecting and tracking down credit
 card fraud.  Customers call and complain about unusual transactions appearing
 on their credit card -- their account has been compromised.  These transactions
 are actually just symptoms of a larger problem.  Somewhere in the recent past,

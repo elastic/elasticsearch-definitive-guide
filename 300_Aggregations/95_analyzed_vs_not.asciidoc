@@ -2,7 +2,7 @@
 [[aggregations-and-analysis]]
 === Aggregations and Analysis
 
-Some aggregations, such as the `terms` bucket, operate on string fields.  And 
+Some aggregations, such as the `terms` bucket, operate on string fields.  And
 string fields may be either `analyzed` or `not_analyzed`, which begs the question:
 how does analysis affect aggregations?
 
@@ -24,7 +24,7 @@ POST /agg_analysis/data/_bulk
 { "state" : "New York" }
 ----
 
-We want to build a list of unique states in our dataset, complete with counts.  
+We want to build a list of unique states in our dataset, complete with counts.
 Simple...let's use a `terms` bucket:
 
 [source,js]
@@ -77,11 +77,11 @@ is counting individual words.  The underlying reason is simple: aggregations
 are built from the inverted index, and the inverted index is "post-analysis".
 
 When we added those documents to Elasticsearch, the string `"New York"` was
-analyzed/tokenized into `["new", "york"]`.  These individual tokens were then 
-used to populate field data, and ultimately we see counts for `"new"` instead of 
+analyzed/tokenized into `["new", "york"]`.  These individual tokens were then
+used to populate fielddata, and ultimately we see counts for `"new"` instead of
 `"New York"`
 
-This is obviously not the behavior that we wanted, but luckily it is easily 
+This is obviously not the behavior that we wanted, but luckily it is easily
 corrected.
 
 We need to define a multi-field for "state" and set it to `not_analyzed`.  This
@@ -99,7 +99,7 @@ PUT /agg_analysis
       "properties": {
         "state" : {
           "type": "string",
-          "fields": { 
+          "fields": {
             "raw" : {
               "type": "string",
               "index": "not_analyzed"<1>
@@ -134,9 +134,8 @@ GET /agg_analysis/data/_search?search_type=count
   }
 }
 ----
-<1> This time we explicitly map out the "state" field and include a multi-field
-which adds a `not_analyzed` field
-<2> The aggregation is run on "state.raw" instead of "state"
+<1> This time we explicitly map the "state" field and include a `not_analyzed` sub-field.
+<2> The aggregation is run on "state.raw" instead of "state".
 
 Now when we run our aggregation, we get results that make sense:
 
@@ -167,16 +166,16 @@ Now when we run our aggregation, we get results that make sense:
 
 In practice, this kind of problem is very easy to spot.  Your aggregations
 will simply return strange buckets and you'll remember the analysis issue.
-It is a generalization, but there are not many instances where you want to use 
+It is a generalization, but there are not many instances where you want to use
 an analyzed  field in an aggregation.  When in doubt, add a multi-field so that
 you have the option for both.
 
 ==== High Cardinality Memory Implications
 
-There is another reason to avoid aggregating analyzed fields -- high cardinality 
-fields consume a large amount of memory when loaded into field data.  The 
-analysis process often (although not always) generates a large number of tokens, 
-many of  which are unique.  This increases the overall cardinality of the field 
+There is another reason to avoid aggregating analyzed fields -- high cardinality
+fields consume a large amount of memory when loaded into fielddata.  The
+analysis process often (although not always) generates a large number of tokens,
+many of  which are unique.  This increases the overall cardinality of the field
 and contributes to more memory pressure.
 
 Some types of analysis are *extremely* unfriendly with regards to memory.
@@ -191,11 +190,21 @@ the following tokens:
 - `or`
 - `rk`
 
-You can imagine how the ngramming process creates a huge amount of unique tokens,
+You can imagine how the ngramming process creates a huge number of unique tokens,
 especially when analyzing paragraphs of text.  When these are loaded into memory
 you can easily exhaust your heap space.
 
 So, before aggregating across fields, take a second to verify that the fields are
 `not_analyzed`.  And if you want to aggregate analyzed fields, ensure the analysis
 process is not creating an obscene number of tokens.
+
+***************************************
+
+At the end of the day, it doesn't matter whether a field is `analyzed` or
+`not_analyzed`.   The more unique values in a field -- the higher the
+cardinality of the field --  the more memory that is required. This is
+especially true for string fields where every unique string must be held in
+memory -- longer strings use more memory.
+
+***************************************
 

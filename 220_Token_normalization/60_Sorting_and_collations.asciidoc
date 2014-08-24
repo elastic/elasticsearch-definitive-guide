@@ -221,7 +221,7 @@ structure known as _doc values_.
 *************************************************
 
 Doc values, like <<fielddata-intro>> allows Elasticsearch to lookup the value of
-a field for a particular document. Unlike field data, doc values are stored on
+a field for a particular document. Unlike fielddata, doc values are stored on
 disk rather than being loaded into memory.  This greatly reduces the amount of
 RAM that is required, especially when dealing with string values. The new
 `icu_collation` field should be available in Elasticsearch v1.3.0.

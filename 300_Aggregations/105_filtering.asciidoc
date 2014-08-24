@@ -1,77 +1,85 @@
 
-=== Field Data Filtering
+=== Fielddata Filtering
 
-Now that we've seen how field data is stored in memory, and how to limit that
-memory usage, we are going to talk about ways to reduce the memory burden of
-field data.  There are several techniques, each with their own benefits and
-downsides.
+Imagine that you are running a website that allows users to listen to their
+favourite songs.  To make it easier for them to manage their music library,
+users can tag songs with whatever tags make sense to them.  You will end up
+with a lot of tracks tagged with `rock`, `hiphop`, `electronica`, etc., but
+also with some tracks tagged with `my_16th_birthday_favourite_anthem`.
 
-The first that we will talk about is field data _filtering_.  When field data is
-being loaded, the data can be passed through one or more pre-configured filters.
-These filter limit what is loaded to memory, and the memory savings are directly 
-proportional to how strict your filters are.
+Now imagine that you want to show users the most popular three tags for each
+song.  It is highly likely that tags like `rock` will show up in the top
+three, but `my_16th_birthday_favourite_anthem` is very unlikely to make the
+grade.  However, in order to calculate the most popular tags, you have been
+forced to load all of these one-off terms into memory.
 
-Why might filtering be useful?  Imagine you only run `terms` aggregations, which
-are used to calculate the "top-ten tags" for your website.  You may have
-thousands of tags, but you only display the top ten.  Most data follows
-a Zipfian distribution and might look something like this:
+Thanks to fielddata filtering, we can take control of this situation.  We
+*know* that we're only interested in the most popular terms, so we can simply
+avoid loading any of the terms that fall into the less interesting long tail.
 
-TODO: image of zipf distribution
-
-A handful of tags have large counts, but the vast majority are very infrequent.
-These tags are guaranteed to never show up in your top-ten -- they are loaded
-to memory for no real purpose. Additionally, all of these values add time to the 
-aggregation execution, meaning the entire query takes longer than it needs to.
-
-If you have this scenario -- a long tail of data that is never used -- you might
-consider enabling frequency-based filtering.  This is enabled in the mappings
-of the field:
 
 [source,js]
 ----
-PUT /fielddata/filtering/_mapping
+PUT /music/_mapping/song
 {
-    "filtering" : {
-        "properties" : {
-            "tag": {
-                "type":      "string",
-                "fielddata": {  <1>
-                    "filter": {
-                        "frequency": {  <2>
-                            "min":              0.01, <3>
-                            "max":              0.4, <4>
-                            "min_segment_size": 500
-                        }
-                    }
-                }
-            }
+  "properties": {
+    "tag": {
+      "type": "string",
+      "fielddata": { <1>
+        "filter": {
+          "frequency": { <2>
+            "min":              0.01, <3>
+            "min_segment_size": 500  <4>
+          }
         }
+      }
     }
+  }
 }
 ----
-<1> A "fielddata" parameter is added to the properties of the "tag" field
-<2> A `frequency` filter is specified, which automatically filters based on term
-frequency
-<3> 0.01 == 1% doc frequency
-<4> 0.4 == 40% doc frequency
+<1> The `fielddata` key allows us to configure how fielddata is handled for this field.
+<2> The `frequency` filter allows us to filter fielddata loading based on term frequencies.
+<3> Only load terms which occur in at least 1% of documents in this segment.
+<4> Ignore any segments which have fewer than 500 documents.
 
-This mapping instructs Elasticsearch to filter the "tag" field when it is first
-loaded into field data.  It works based on document frequency (percentage of
-documents containing the field, which have a particular term).  In the example, 
-terms that are found in less than 1% of the documents will not be loaded at all.
-Similarly, terms that are more frequent than 40% (common words like "the") will 
-also be excluded.
+With this mapping in place, only terms that appear in at least 1% of the
+documents *in that segment* will be loaded into memory. You can also specify a
+`max` term frequency, which could be used to exclude terms that are *too*
+common, such as <<stopwords,stop words>>.
 
-Finally, there is a `min_segment_size`, which skips segments which have fewer than
-500 docs.  This is usually important since small segments don't have enough documents
-to follow Zipf's law.  Filtering small segments might skew results and so we just
-skip them completely.
+Term frequencies, in this case, are calculated per-segment.  This is a
+limitation of the implementation -- fielddata is loaded per-segment, and at
+that point the only term frequencies that are visible as the frequencies for
+that segment.  However, this ``limitation'' has interesting properties: it
+allows newly popular terms to rise to the top quickly.
 
-All three parameters are optional, so mix and match as appropriate for your 
-requirements.
+Let's say that a new genre of song becomes popular one day.  You would like to
+include the tag for this new genre in the most popular list, but if you were
+relying on term frequencies calculated across the whole index, you would have
+to wait for the new tag to become as popular as `rock` and `electronica`.
+Because of the way frequency filtering is implemented, the newly added tag
+will quickly show up as a high-frequency tag within new segments, so will
+quickly float to the top.
 
-Field data filtering can have *massive* impacts on memory usage.  The trade-off is
-fairly obvious: you are essentially ignoring data.  But for many applications,
-the trade-off is reasonable since the data is not being used anyway.  The memory
-savings is often more important than including a large and relatively useless
-long tail of terms.
+The `min_segment_size` parameter tells Elasticsearch to ignore segments below
+a certain size.  If a segment only holds a few documents, the term frequencies
+are too coarse to have any meaning.  Small segments will soon be merged into
+bigger segments, which will then be big enough to take into account.
+
+.Regex filtering
+************************************
+
+Filtering terms by frequency is not the only option. You can also decide to
+load only those terms that match a regular expression.  For instance, you
+could use a `regex` filter on tweets to only load hashtags into memory --
+terms the start with a `#`.  This assumes that you are using an analyzer which
+preserves punctuation, like the `whitespace` analyzer.
+
+************************************
+
+Fielddata filtering can have a *massive* impact on memory usage.  The
+trade-off is fairly obvious: you are essentially ignoring data.  But for many
+applications, the trade-off is reasonable since the data is not being used
+anyway.  The memory savings is often more important than including a large and
+relatively useless long tail of terms.
+

@@ -1,13 +1,14 @@
+[[percentiles]]
 === Calculating Percentiles
 
 The other approximate metric offered by Elasticsearch is the `percentiles` metric.
-Percentiles show the point at which a certain percentage of observed values occur. 
-For example, the 95th percentile is the value which is greater than 95% of the 
+Percentiles show the point at which a certain percentage of observed values occur.
+For example, the 95th percentile is the value which is greater than 95% of the
 data.
 
-Percentiles are often used to find outliers. In (statistically) normal 
-distributions, the 0.13th and 99.87th percentiles represents three standard 
-deviations from the mean. Any data which falls outside three standard deviations 
+Percentiles are often used to find outliers. In (statistically) normal
+distributions, the 0.13th and 99.87th percentiles represents three standard
+deviations from the mean. Any data which falls outside three standard deviations
 is often considered an anomaly because it is so different from the average value.
 
 To be more concrete, imagine that you are running a large website and it is your
@@ -16,7 +17,7 @@ your website latency to determine if you are meeting your goal.
 
 A common metric to use in this scenario is the average latency.  But this is actually
 a poor choice (despite being common), because averages can easily hide outliers.
-A median metric also suffers the same problem.  You could try a maximum, but this 
+A median metric also suffers the same problem.  You could try a maximum, but this
 metric is easily skewed by just a single outlier.
 
 This graph visualizes the problem.  If you rely on simple metrics like mean or median, you might see a graph that looks like this:
@@ -104,7 +105,7 @@ GET /website/logs/_search?search_type=count
 
 By default, the `percentiles` metric will return an array of pre-defined percentiles:
 `[1, 5, 25, 50, 75, 95, 99]`.  These represent common percentiles that people are
-interested in -- the extreme percentiles at either end of the spectrum, and a 
+interested in -- the extreme percentiles at either end of the spectrum, and a
 few in the middle.  In the response, we see that the fastest latency is around 75ms,
 while the slowest is almost 600ms.  In contrast, the average is sitting near
 200ms, which is much less informative:
@@ -154,7 +155,7 @@ GET /website/logs/_search?search_type=count
                         "field" : "latency"
                     }
                 }
-            } 
+            }
         }
     }
 }
@@ -169,7 +170,7 @@ From the response, we can see the EU zone is much slower than the US zone.  On t
 US side, the 50th percentile is very close to the 99th percentile...and both are
 close to the average.
 
-In contrast, the EU zone has a large difference between the 50th and 99th 
+In contrast, the EU zone has a large difference between the 50th and 99th
 percentile.  It is now obvious that the EU zone is dragging down the latency
 statistics, and we know that 50% of the EU zone is seeing 300ms+ latencies.
 
@@ -225,7 +226,7 @@ way relationship depending on what data you need.  For example:
 
 So imagine that our website must maintain an SLA of 210ms response times or less.
 And, just for fun, you're boss has threatened to fire you if response times
-creep over 800ms.  Understandably, you would like to know what percentage of 
+creep over 800ms.  Understandably, you would like to know what percentage of
 requests are actually meeting that SLA (and hopefully at least under 800ms!).
 
 For this, you can apply the `percentile_ranks` metric instead of `percentiles`:
@@ -246,7 +247,7 @@ GET /website/logs/_search?search_type=count
                       "values" : [210, 800] <1>
                     }
                 }
-            } 
+            }
         }
     }
 }
@@ -288,7 +289,7 @@ After running this aggregation, we get two values back:
 
 This tells us three important things:
 
-1. In the EU zone, the percentile rank for 210ms is 31.94%. 
+1. In the EU zone, the percentile rank for 210ms is 31.94%.
 2. In the US zone, the percentile rank for 210ms is 100%
 3. In both EU and US, the percentile rank for 800ms is 100%
 
@@ -297,7 +298,7 @@ time, while the US zone is always meeting the SLA.  But luckily for you, both
 zones are under 800ms so you won't be fired (yet!).
 
 The `percentile_rank` metric provides the same information as `percentile`, but
-presented in a different format which may be more convenient if you have a 
+presented in a different format which may be more convenient if you have a
 specific value(s) that you are interested in.
 
 ==== Understanding the Trade-offs
@@ -307,39 +308,39 @@ The naive implementation would maintain a sorted list of all values...but this
 clearly is not possible when you have billions of values distributed across
 dozens of nodes.
 
-Instead, percentiles uses an algorithm called TDigest (introduced by Ted Dunning 
+Instead, percentiles uses an algorithm called TDigest (introduced by Ted Dunning
 in https://github.com/tdunning/t-digest/blob/master/docs/t-digest-paper/histo.pdf[Computing Accurate Quantiles using T-Digests]). Like HyperLogLog, it isn't
 necessary to understand the full technical details, but it is good to know
 the properties of the algorithm:
 
-- Percentile accuracy is proportional to how "extreme" the percentile is. This 
-means that percentiles such as the 1st or 99th are more accurate than the 50th.  
+- Percentile accuracy is proportional to how "extreme" the percentile is. This
+means that percentiles such as the 1st or 99th are more accurate than the 50th.
 This is just a property of how the data structure works, but
 it happens to be a nice property because most people care about extreme percentiles
 
 - For small sets of values, percentiles are highly accurate.  If the dataset is
 small enough, the percentiles may be 100% exact.
 
-- As the quantity of values in a bucket grows, the algorithm begins to 
-approximate the percentiles. It is effectively trading accuracy for memory 
-savings. The exact level of inaccuracy is difficult to generalize, since it 
+- As the quantity of values in a bucket grows, the algorithm begins to
+approximate the percentiles. It is effectively trading accuracy for memory
+savings. The exact level of inaccuracy is difficult to generalize, since it
 depends on your data distribution and volume of data being aggregated
 
 Similar to `cardinality`, you can control the memory : accuracy ratio by changing
 a parameter: `compression`.
 
 The TDigest algorithm uses a number of "nodes" to approximate percentiles 
--— the more nodes available, the higher the accuracy (and large memory footprint) 
-proportional to the volume of data. The compression parameter limits the maximum 
+-— the more nodes available, the higher the accuracy (and large memory footprint)
+proportional to the volume of data. The compression parameter limits the maximum
 number of nodes to `20 * compression`.
 
 Therefore, by increasing the compression value, you can increase the accuracy of
-your percentiles at the cost of more memory. Larger compression values also 
+your percentiles at the cost of more memory. Larger compression values also
 make the algorithm slower since the underlying tree data structure grows in size, resulting in more expensive operations. The default compression value is `100`.
 
-A "node" uses roughly 32 bytes of memory, so under worst-case scenarios (large 
-amount of data which arrives sorted and in-order) the default settings will 
-produce a TDigest roughly 64KB in size. In practice data tends to be more 
-random and the TDigest will use less memory. 
+A "node" uses roughly 32 bytes of memory, so under worst-case scenarios (large
+amount of data which arrives sorted and in-order) the default settings will
+produce a TDigest roughly 64KB in size. In practice data tends to be more
+random and the TDigest will use less memory.
 
 

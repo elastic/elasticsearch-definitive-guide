@@ -1,72 +1,83 @@
 [[doc-values]]
 === Doc Values
 
-The default data structure for field data is called _paged-bytes_, and it is
-basically what it sounds like: pages of packed bytes.  The representation is
-compressed, but optimized for in-memory access and speed.  It is not serialized
-to disk at all and is "all or nothing".  It either fits in memory, or it
-cannot be loaded.
+In-memory fielddata is limited by the size of your heap. While this is a
+problem that can be solved by scaling horizontally -- you can always add more
+nodes -- you will find that heavy use of aggregations and sorting can exhaust
+your heap space while other resources on the node are under-utilised.
 
-There is an alternative format known as _doc values_.  Doc values are special
-data structures which are built at index-time and written to disk.  They are then
-loaded to memory and accessed in place of the standard paged-bytes implementation.
+While fielddata defaults to loading values into memory on-the-fly, this is not
+the only option. It can also be written to disk at index time in a way that
+provides all of the functionality of in-memory fielddata, but without the
+heap memory usage. This alternative format is called _doc values_.
 
-The main benefit of doc values is lower memory footprint.  With the default
-paged-bytes format, if you attempt to load more field data to memory than available
-heap space...you'll get an OutOfMemoryException.
+Doc values were added to Elasticsearch in version 1.0.0 but, until recently,
+they were much slower than in-memory fielddata.  By benchmarking and profiling
+performance, various bottlenecks have been identified -- in both Elasticsearch
+and Lucene -- and removed.
 
-By contrast, doc values can stream from disk efficiently and do not require
-processing at query-time (unlike paged-bytes, which must be generated).  This
-allows you to work with field data that would normally be too large to fit in
-memory.
+Doc values are now only about 10 - 25% slower than in-memory fielddata, and
+come with two major advantages:
 
-The trade-off is a larger index size and potentially slower field data access.
-Doc values are remarkably efficient, so for many queries you might not even notice
-the slightly slower speed.  If the doc values are small enough to fit in memory,
-the OS will likely have them cached in memory anyway.
+ *  They live on disk instead of in heap memory.  This allows you to work with
+    quantities of fielddata that would normally be too large to fit into
+    memory.  In fact, your heap space (`$ES_HEAP_SIZE`) can now be set to a
+    smaller size,  which improves the speed of garbage collection and,
+    consequently, node stability.
 
-You will, however, notice the speed difference when you start working with massive
-datasets that are too large to fit in heap.  In these cases, doc values have to
-stream from disk and you are limited to the speed of Disk IO.
+ *  Doc values are built at index time, not at search time. While fielddata has to
+    be built on-the-fly at search time by uninverting the inverted index, doc values
+    are pre-built and much faster to initialize.
 
-But, considering that paged-bytes would simply explode, this is often a reasonable
-tradeoff for truly massive data.
+The trade-off is a larger index size and slightly slower fielddata access. Doc
+values are remarkably efficient, so for many queries you might not even notice
+the slightly slower speed.  Combine that with faster garbage collections and
+improved initialization times and you may notice a net gain.
+
+The more filesystem cache space that you have available, the better doc values
+will perform.  If the files holding the doc values are resident in the file
+system cache, then accessing the files is almost equivalent to reading from
+RAM.  And the filesystem cache is managed by the kernel instead of the JVM.
 
 ==== Enabling Doc Values
 
-Doc values can be enabled for numeric fields, geopoints and `not_analyzed` string fields.
-They do not currently work with `analyzed` string fields.  Doc values are
-enabled in the mapping of a particular field, which means that some fields can
-use doc values while the rest use the default paged-bytes.
+Doc values can be enabled for numeric, date, boolean, binary, and geo-point
+fields, and for `not_analyzed` string fields. They do not currently work with
+`analyzed` string fields.  Doc values are enabled per-field in the field
+mapping, which means that you can combine in-memory fielddata with doc values.
 
 [source,js]
 ----
-PUT /fielddata/filtering/_mapping
+PUT /music/_mapping/song
 {
-    "filtering" : {
-        "properties" : {
-            "category": {
-                "type": "string",
-                "index" : "not_analyzed", <1>
-                "fielddata": {
-                    "format" : "doc_values" <2>
-                }
-            }
-        }
+  "properties" : {
+    "tag": {
+      "type":   "string",
+      "index" : "not_analyzed",
+      "fielddata": {
+        "format" : "doc_values" <1>
+      }
     }
+  }
 }
 ----
-<1> Doc values can only be enabled on `not_analyzed` string fields, numerics and
-geopoints
-<2> Doc values are enabled by setting the `"fielddata.format"` parameter to
-`doc_values`
+<1> Setting `fielddata.format` to `doc_values` at field creation time is all
+    that is required to use disk-based fielddata instead of in-memory
+    fielddata.
 
-That's it!  Queries and aggregations will function as normal...they'll just be
-using doc values now.  There is no other configuration necessary.
+That's it!  Queries, aggregations, sorting, and scripts will function as
+normal... they'll just be using doc values now.  There is no other
+configuration necessary.
 
-Work on doc values continues to make them faster and more flexible.  It is possible
-doc values will become the default format in the near future, rather than
-a feature which must be turned on.
+.When to use doc values
+******************************************
+
+Use doc values freely.  The more you use them, the less stress you place on
+the heap.  It is possible that doc values will become the default format in
+the near future.
+
+******************************************
+
 
 
 
