@@ -25,9 +25,9 @@ come with two major advantages:
     smaller size,  which improves the speed of garbage collection and,
     consequently, node stability.
 
- *  Doc values are built at index time, not at search time. While fielddata has to
-    be built on-the-fly at search time by uninverting the inverted index, doc values
-    are pre-built and much faster to initialize.
+ *  Doc values are built at index time, not at search time. While in-memory
+    fielddata has to be built on-the-fly at search time by uninverting the
+    inverted index, doc values are pre-built and much faster to initialize.
 
 The trade-off is a larger index size and slightly slower fielddata access. Doc
 values are remarkably efficient, so for many queries you might not even notice
