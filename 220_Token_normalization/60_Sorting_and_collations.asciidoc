@@ -198,35 +198,39 @@ The UCA takes a string and a collation as inputs and outputs a binary sort
 key. Sorting a collection of strings according to the specified collation then
 becomes a simple comparison of their binary sort keys.
 
-==== Unicode sorting (TODO)
+==== Unicode sorting
 
-[WARNING]
-=================================================
-The `icu_collation` field explained in this section has not yet
-been implemented in Elasticsearch.  Currently, there is an `icu_collation`
-token filter which serves a similar purpose but is considerably less
-efficient.
+[TIP]
 =================================================
 
-The <<icu-plugin,`icu` plugin>> enables a new type of field -- an
-`icu_collation` field -- dedicated to multilingual sorting.  This field
-converts its string value into a binary sort key, using the specified
-collation.
+The approach described below will probably change in a future version of
+Elasticsearch. Check the <<icu-plugin,`icu` plugin>> documentation for the
+latest information.
 
-The only purpose of this sort key is for sorting, not search, so the sort key
-is not added to the inverted index but is instead stored on disk in a data
-structure known as _doc values_.
+=================================================
 
-.Doc values
-*************************************************
+The `icu_collation` token filter defaults to sorting using the DUCET
+collation.  This is already an improvement over the default sort.  To use it,
+all we need to do is to create an analyzer that makes use of the default
+`icu_collation` filter:
 
-Doc values, like <<fielddata-intro>> allows Elasticsearch to lookup the value of
-a field for a particular document. Unlike fielddata, doc values are stored on
-disk rather than being loaded into memory.  This greatly reduces the amount of
-RAM that is required, especially when dealing with string values. The new
-`icu_collation` field should be available in Elasticsearch v1.3.0.
-
-*************************************************
+[source,js]
+--------------------------------------------------
+PUT /my_index
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "ducet_sort": {
+          "tokenizer": "keyword",
+          "filter": [ "icu_collation" ] <1>
+        }
+      }
+    }
+  }
+}
+--------------------------------------------------
+<1> Use the default DUCET collation.
 
 Typically, the field that we want to sort on is also a field that we want to
 search on so we use the same multi-field approach as we used in
@@ -234,36 +238,25 @@ search on so we use the same multi-field approach as we used in
 
 [source,js]
 --------------------------------------------------
-PUT /my_index
+PUT /my_index/_mapping/user
 {
-  "mappings": {
-    "user": {
-      "properties": {
-        "name": {
+  "properties": {
+    "name": {
+      "type": "string",
+      "fields": {
+        "sort": {
           "type": "string",
-          "fields": {
-            "sort": {
-              "type":   "icu_collation", <1>
-              "length": 20 <2>
-            }
-          }
+          "analyzer": "ducet_sort"
         }
       }
     }
   }
 }
 --------------------------------------------------
-<1> The `icu_collation` field defaults to using the DUCET collation.
-<2> Truncate the sort key to the first `20` bytes.
 
-With this mapping, the `name.sort` field will contain a binary sort key
-which will be used only for sorting.  We haven't specified a language, so
-it defaults to using the <<uca,DUCET collation>>.
-
-Names can be very long but, depending on our data, it is quite likely that we
-only need the first 10 or 20 characters of each name in order to be able to
-sort our documents correctly.  The `length` parameter allows us to set the
-maximum number of bytes that will be used for each sort key.
+With this mapping, the `name.sort` field will contain a sort key which will be
+used only for sorting.  We haven't specified a language, so it defaults to
+using the <<uca,DUCET collation>>.
 
 Now, we can reindex our example docs and test out the sorting:
 
@@ -286,9 +279,8 @@ GET /my_index/user/_search?sort=name.sort
 
 The first thing to notice is that the `sort` key returned with each document,
 which in earlier examples looked like `brown` and `böhm`, now looks like
-gobbledygook: TODO.  The reason is that the `icu_collation` field emits binary sort
-keys rather than strings. In order to return binary values in JSON, they have
-to be encoded as Base64 strings.
+gobbledygook: `ᖔ乏昫တ倈⠀\u0001`.  The reason is that the `icu_collation` filter
+emits keys intended only for efficient sorting, not for any other purposes.
 
 **************************************************
 
@@ -297,59 +289,84 @@ The above search returns our docs in this order: `bailey`, `Boffey`, `Böhm`,
 English and German, but it is still incorrect for German phonebooks and
 Swedish. The next step is to customize our mapping for different languages.
 
-==== Specifying a language (TODO)
+==== Specifying a language
 
-[WARNING]
-=================================================
-The `icu_collation` field explained in this section has not yet
-been implemented in Elasticsearch.  Currently, there is an `icu_collation`
-token filter which serves a similar purpose but is considerably less
-efficient.
-=================================================
-
-The `icu_collation` field can be configured to use the collation table for a
+The `icu_collation` filter can be configured to use the collation table for a
 specific language, a country-specific version of a language, or some other
-subset like German phonebooks.  This can be done by specifying a `locale` like:
+subset like German phonebooks.  This can be done by creating a custom version
+of the token filter using the `language`, `country`, and `variant` parameters
+like:
 
-[horizontal]
-`en`::                          English
-`de`::                          German
-`de_AT`::                       Austrian German
-`de_DE@collation=phonebook`::   German phonebooks
+English::
++
+[source,json]
+-------------------------
+{ "language": "en" }
+-------------------------
 
-TODO: Link to list of supported locales?
+German::
++
+[source,json]
+-------------------------
+{ "language": "de" }
+-------------------------
 
-The same field can support multiple sort orders by using a multi-field for
-each language:
+Austrian German::
++
+[source,json]
+-------------------------
+{ "language": "de", "country": "AT" }
+-------------------------
+
+German phonebooks::
++
+[source,json]
+-------------------------
+{ "language": "en", "variant": "@collation=phonebook" }
+-------------------------
+
+.Supported locales
+*******************************
+
+You can read more about the locales supported by ICU here:
+http://userguide.icu-project.org/locale
+
+*******************************
+
+This example shows how to setup the German phonebook sort order:
 
 [source,js]
 --------------------------------------------------
 PUT /my_index
 {
+  "settings": {
+    "number_of_shards": 1,
+    "analysis": {
+      "filter": {
+        "german_phonebook": { <1>
+          "type":     "icu_collation",
+          "language": "de",
+          "country":  "DE",
+          "variant":  "@collation=phonebook"
+        }
+      },
+      "analyzer": {
+        "german_phonebook": { <2>
+          "tokenizer": "keyword",
+          "filter":  [ "german_phonebook" ]
+        }
+      }
+    }
+  },
   "mappings": {
     "user": {
       "properties": {
         "name": {
           "type": "string",
           "fields": {
-            "default": {
-              "type":   "icu_collation",
-              "length": 20
-            },
-            "french": {
-              "type":   "icu_collation",
-              "locale": "fr",
-              "length": 20
-            },
-            "german": {
-              "type":   "icu_collation",
-              "locale": "de_DE@collation=phonebook",
-              "length": 20
-            },
-            "swedish": {
-              "type":   "icu_collation",
-              "locale": "se",
-              "length": 20
+            "sort": { <3>
+              "type":     "string",
+              "analyzer": "german_phonebook"
             }
           }
         }
@@ -358,6 +375,66 @@ PUT /my_index
   }
 }
 --------------------------------------------------
+<1> First we create a version of the `icu_collation` customized for the German phonebook collation.
+<2> Then we wrap that up in a custom analyzer.
+<3> And apply it to our `name.sort` field.
+
+Reindex the data and repeat the same search as we used above:
+
+[source,js]
+--------------------------------------------------
+PUT /my_index/user/_bulk
+{ "index": { "_id": 1 }}
+{ "name": "Boffey" }
+{ "index": { "_id": 2 }}
+{ "name": "BROWN" }
+{ "index": { "_id": 3 }}
+{ "name": "bailey" }
+{ "index": { "_id": 4 }}
+{ "name": "Böhm" }
+
+GET /my_index/user/_search?sort=name.sort
+--------------------------------------------------
+
+This now returns our docs in this order: `bailey`, `Böhm`, `Boffey`,  `BROWN`.
+In the German phonebook collation, `Böhm` is the equivalent of `Boehm`, which
+comes before `Boffey`.
+
+===== Multiple sort orders
+
+The same field can support multiple sort orders by using a multi-field for
+each language:
+
+[source,js]
+--------------------------------------------------
+PUT /my_index/_mapping/_user
+{
+  "properties": {
+    "name": {
+      "type": "string",
+      "fields": {
+        "default": {
+          "type":     "string",
+          "analyzer": "ducet" <1>
+        },
+        "french": {
+          "type":     "string",
+          "analyzer": "french" <1>
+        },
+        "german": {
+          "type":     "string",
+          "analyzer": "german_phonebook" <1>
+        },
+        "swedish": {
+          "type":     "string",
+          "analyzer": "swedish" <1>
+        }
+      }
+    }
+  }
+}
+--------------------------------------------------
+<1> We would need to create the corresponding analyzers for each of these collations.
 
 With this mapping in place, results can be ordered correctly for French,
 German and Swedish users, just by sorting on the `name.french`, `name.german`,
@@ -367,8 +444,9 @@ or `name.swedish` fields.  Unsupported languages can fall back to using the
 
 ==== Customizing collations
 
-The `icu_collation` field takes many more options than just `locale` which can
-be used to tailor the sorting algorithm.  Options are available to:
+The `icu_collation` token filter takes many more options than just `language`,
+`country`, and `variant`,  which can be used to tailor the sorting algorithm.
+Options are available to:
 
 * ignore diacritics
 * order uppercase first, last, or ignore case
