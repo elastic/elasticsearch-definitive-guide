@@ -1,5 +1,5 @@
 
-=== Monitoring individual nodes
+== Monitoring individual nodes
 
 Cluster Health is at one end of the spectrum -- a very high-level overview of
 everything in your cluster.  The _Node Stats_ API is at the other end.  It provides
@@ -43,7 +43,7 @@ host, etc).  These values are useful for debugging discovery problems, where
 nodes won't join the cluster.  Often you'll see that the port being used is wrong,
 or the node is binding to the wrong IP address/interface.
 
-==== Indices section
+=== Indices section
 
 The indices section lists aggregate statistics for all the indices that reside
 on this particular node.
@@ -206,7 +206,7 @@ posting lists, dictionaries and bloom filters.  A very large number of segments
 will increase the amount of overhead lost to these data structures, and the memory
 usage can be a handy metric to gauge that overhead.
 
-==== OS and Process Sections
+=== OS and Process Sections
 
 The OS and Process sections are fairly self-explanatory and won't be covered
 in great detail.  They list basic resource statistics such as CPU and load.  The
@@ -222,7 +222,7 @@ monitoring stack. Some stats include:
 - Swap usage
 - Open file descriptors
 
-==== JVM Section
+=== JVM Section
 
 The JVM section contains some critical information about the JVM process which
 is running Elasticsearch.  Most importantly, it contains garbage collection details,
@@ -390,7 +390,7 @@ Our best advice is to collect collection counts and duration periodically (or us
 and keep an eye out for frequent GCs.  You can also enable slow-GC logging,
 discussed in <<TODO>>
 
-==== Threadpool Section
+=== Threadpool Section
 
 Elasticsearch maintains a number of threadpools internally.  These threadpools
 cooperate to get work done, passing work between each other as necessary. In
@@ -468,7 +468,7 @@ are good to keep an eye on:
 - `search`: all search and query requests
 - `merging`: threadpool dedicated to managing Lucene merges
 
-==== FS and Network sections
+=== FS and Network sections
 
 Continuing down the Node Stats API, you'll see a bunch of statistics about your
 filesystem:  free space, data directory paths, disk IO stats, etc.  If you are
@@ -508,7 +508,7 @@ keep-alive connections are important for performance, since building up and tear
 down sockets is expensive (and wastes file descriptors).  Make sure your clients
 are configured appropriately.
 
-==== Circuit Breaker 
+=== Circuit Breaker 
 
 Finally, we come to the last section: stats about the field data circuit breaker 
 (introduced in <<circuit_breaker>>):

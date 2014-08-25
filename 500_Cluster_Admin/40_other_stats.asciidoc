@@ -1,5 +1,5 @@
 
-=== Cluster Stats
+== Cluster Stats
 
 The _Cluster Stats_ API provides very similar output to the Node Stats.  There
 is one crucial difference: Node Stats shows you statistics per-node, while
@@ -19,7 +19,7 @@ The API may be invoked with:
 GET _cluster/stats
 ----
 
-=== Index Stats
+== Index Stats
 
 So far, we have been looking at _node-centric_ statistics.  How much memory does 
 this node have?  How much CPU is being used?  How many searches is this node
@@ -60,7 +60,7 @@ operating in different environments.
 Index-centric stats are a useful tool to keep in your repertoire, but are not usually
 the first tool to reach for.
 
-=== Pending Tasks
+== Pending Tasks
 
 There are certain tasks that only the master can perform, such as creating a new 
 index or moving shards around the cluster.  Since a cluster can only have one
@@ -154,7 +154,7 @@ cluster state size.
 - Spin up another cluster once a certain threshold has been crossed.
 ****
 
-==== Cat API
+=== Cat API
 
 If you work from the command line often, the _Cat_ APIs will be very helpful
 to you.  Named after the linux `cat` command, these APIs are designed to be
