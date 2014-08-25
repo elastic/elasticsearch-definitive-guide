@@ -12,10 +12,10 @@ cacheable filters.
 
 It supports a number of predefined functions out of the box:
 
-`boost_factor`::
+`weight`::
 
-    Apply a simple `boost` to each document without the boost being
-    normalized: a `boost_factor` of `2` results in `2 * _score`.
+    Apply a simple boost to each document without the boost being
+    normalized: a `weight` of `2` results in `2 * _score`.
 
 `field_value_factor`::
 

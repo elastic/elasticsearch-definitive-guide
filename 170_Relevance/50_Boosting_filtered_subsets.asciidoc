@@ -11,10 +11,10 @@ The examples we have shown thus far have used a single function for all
 documents.  Now we want to divide the results into subsets using filters (one
 filter per ``feature''), and apply a different function to each subset.
 
-The function that we will use in this example is the `boost_factor`, which is
+The function that we will use in this example is the `weight`, which is
 similar to the `boost` parameter accepted by any query.  The difference is
-that the `boost_factor` is not normalized by Lucene into some obscure floating
-point number -- it is used as is.
+that the `weight` is not normalized by Lucene into some obscure floating point
+number -- it is used as is.
 
 The structure of the query has to change somewhat to incorporate multiple
 functions:
@@ -31,15 +31,15 @@ GET /_search
       "functions": [ <2>
         {
           "filter": { "term": { "features": "wifi" }}, <3>
-          "boost_factor": 1
+          "weight": 1
         },
         {
           "filter": { "term": { "features": "garden" }}, <3>
-          "boost_factor": 1
+          "weight": 1
         },
         {
           "filter": { "term": { "features": "pool" }}, <3>
-          "boost_factor": 2 <4>
+          "weight": 2 <4>
         }
       ],
       "score_mode": "sum", <5>
@@ -51,7 +51,7 @@ GET /_search
 <1> This `function_score` query has a `filter` instead of a `query`.
 <2> The `functions` key holds a list of functions which should be applied.
 <3> The function is only applied if the document matches the (optional) `filter`.
-<4> The `pool` feature is more important than the other so it has a higher `boost_factor`.
+<4> The `pool` feature is more important than the others so it has a higher `weight`.
 <5> The `score_mode` specifies how the values from each function should be combined.
 
 There are a number of new features to note in this example:
@@ -71,7 +71,7 @@ using the `match_all` query.
 The `functions` key holds an array of functions to apply.  Each entry in the
 array may also optionally specify a `filter`, in which case the function will
 only be applied to documents which match that filter.  In this example, we
-apply a `boost_factor` of `1` (or `2` in the case of `pool`) to any document
+apply a `weight` of `1` (or `2` in the case of `pool`) to any document
 which matches the filter.
 
 ==== `score_mode`
@@ -91,7 +91,7 @@ values:
                 doesn't have a filter or that has a filter which matches the
                 document.
 
-In this case, we want to add the `boost_factor` results from each matching
+In this case, we want to add the `weight` results from each matching
 filter together to produce the final score, so we have used the `sum` score
 mode.
 

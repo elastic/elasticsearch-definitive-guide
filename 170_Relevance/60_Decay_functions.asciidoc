@@ -74,7 +74,8 @@ to decay, the further a value is from the `origin`.
 
 To return to our example: our user would prefer to rent a holiday home close
 to the centre of London (`{ "lat": 51.50, "lon": 0.12}`) and to pay no more
-than £100 a night.  We could write this query as:
+than £100 a night, but our user considers price to be more important than
+distance.   We could write this query as:
 
 [source,json]
 ----------------------------------
@@ -99,7 +100,8 @@ GET /_search
               "offset": "50",
               "scale":  "20"
             }
-          }
+          },
+          "weight": 2 <4>
         }
       ]
     }
@@ -109,6 +111,7 @@ GET /_search
 <1> The `location` field is mapped as a `geo_point`.
 <2> The `price` field is numeric.
 <3> See below for the reason why `origin` is `50` instead of `100`.
+<4> The `price` clause has twice the ``weight'' of the `location` clause.
 
 The `location` clause is easy to understand:
 
@@ -126,5 +129,14 @@ If we were to set the `origin` to £100, then prices below £100 would receive a
 lower score. Instead, we set both the `origin` and the `offset` to £50.  That
 way, the score only decays for any prices above £100 (`origin + offset`).
 
+.Tuning `function_score` clauses
+********************************************
+
+The `weight` parameter can be used to increase or decrease the contribution of
+individual clauses.  The `weight`, which defaults to `1.0`, is multiplied with
+the score from each clause before the scores are combined with the specified
+`score_mode`.
+
+********************************************
 
 

@@ -1,8 +1,6 @@
 [[random-scoring]]
 === Random scoring
 
-coming[1.4.0]
-
 You may have been wondering what ``consistently random scoring'' is, or why
 you would ever want to use it.  The previous example provides a good use case.
 All results from the previous example would receive a final `_score` of 1, 2,
@@ -35,15 +33,15 @@ GET /_search
       "functions": [
         {
           "filter": { "term": { "features": "wifi" }},
-          "boost_factor": 1
+          "weight": 1
         },
         {
           "filter": { "term": { "features": "garden" }},
-          "boost_factor": 1
+          "weight": 1
         },
         {
           "filter": { "term": { "features": "pool" }},
-          "boost_factor": 2
+          "weight": 2
         },
         {
           "random_score": { <1>
