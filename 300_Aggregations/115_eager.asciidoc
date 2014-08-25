@@ -157,9 +157,9 @@ their global ordinals built eagerly:
 PUT /music/_mapping/_song
 {
   "price_usd": {
-    "type": "integer",
+    "type":       "integer",
+    "doc_values": true,
     "fielddata": {
-      "format":   "doc_values",
       "loading" : "eager_global_ordinals" <1>
     }
   }
