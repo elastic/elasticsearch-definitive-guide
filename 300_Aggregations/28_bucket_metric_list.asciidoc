@@ -17,12 +17,10 @@ exact parameters.
     the filter
     - {ref}search-aggregations-bucket-missing-aggregation.html[Missing]: all documents which _do not_ have
     a particular field
-    - {ref}search-aggregations-bucket-nested-aggregation.html[Nested]: a special bucket for working with
-    nested documents
     - {ref}search-aggregations-bucket-terms-aggregation.html[Terms]: generates a new bucket for each unique term
     - {ref}search-aggregations-bucket-range-aggregation.html[Range]: creates arbitrary ranges which documents
     fall into
-    - {ref}search-aggregations-bucket-daterange-aggregation.html[Date Range]: similar to Range, but is calendar
+    - {ref}search-aggregations-bucket-daterange-aggregation.html[Date Range]: similar to Range, but calendar
     aware
     - {ref}search-aggregations-bucket-iprange-aggregation.html[IPV4 Range]: similar to Range, but can handle "IP logic" like CIDR masks, etc
     - {ref}search-aggregations-bucket-geodistance-aggregation.html[Geo Distance]: similar to Range, but operates on
@@ -30,8 +28,11 @@ exact parameters.
     - {ref}search-aggregations-bucket-histogram-aggregation.html[Histogram]: equal-width, dynamic ranges
     - {ref}search-aggregations-bucket-datehistogram-aggregation.html[Date Histogram]: similar to Histogram, but
     calendar aware
+    - {ref}search-aggregations-bucket-nested-aggregation.html[Nested]: a special bucket for working with
+    nested documents (see <<nested-aggregation>>)
     - {ref}search-aggregations-bucket-geohashgrid-aggregation.html[Geohash Grid]: partitions documents according to
-    what geohash grid they fall into
+    what geohash grid they fall into (see <<geohash-grid-agg>>)
+    - {ref}search-aggregations-metrics-top-hits-aggregation.html[TopHits]: Return the top search results grouped by the value of a field (see <<top-hits>>)
 
 [float]
 === Metrics
