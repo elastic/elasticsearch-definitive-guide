@@ -81,6 +81,7 @@ POST /logstash-2014-10/_optimize?max_num_segments=1 <1>
 WARNING: Be aware that merges triggered by the `optimize` API are not
 throttled at all. They can consume all of the I/O on your nodes, leaving
 nothing for search and potentially making your cluster unresponsive. If you
-plan on optimizing an index, you should use shard allocation (see <<TODO>>) to
-first move the index to a node where it is safe to run.
+plan on optimizing an index, you should use shard allocation (see
+<<migrate-indices>>) to first move the index to a node where it is safe to
+run.
 
