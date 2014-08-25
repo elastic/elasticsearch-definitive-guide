@@ -9,23 +9,23 @@ http://en.wikipedia.org/wiki/Levenshtein_distance[Levenshtein distance], which
 measures the number of single character edits which are required to transform
 one word into the other. He proposed three types of one character edits:
 
-* *substitution* of one character for another: +**F**ox+ -> +**B**ox+
+* *substitution* of one character for another: **f**ox -> **b**ox
 
-* *insertion* of a new character: +sic+ -> +sic**K**+
+* *insertion* of a new character: sic -> sic**k**
 
-* *deletion* of a character:: +b**L**ack+ -> +back+
+* *deletion* of a character:: b**l**ack -> back
 
 http://en.wikipedia.org/wiki/Frederick_J._Damerau[Frederick Damerau]
 later expanded these operations to include:
 
-* *transposition* of two adjacent characters: +**ST**ar+ -> +**TS**ar+
+* *transposition* of two adjacent characters: **st**ar -> **ts**ar
 
 For example, to convert the word `bieber` into `beaver` would require the
 following steps:
 
-* Substitute `v` for `b`: +bie**B**er+ -> +bie**V**er+
-* Substitute `a` for `i`: +b**I**ever+ -> +b**A**ever+
-* Transpose `a` and `e`:  +b**AE**ver+ -> +b**EA**ver+
+* Substitute `v` for `b`: bie**b**er -> bie**v**er
+* Substitute `a` for `i`: b**i**ever -> b**a**ever
+* Transpose `a` and `e`:  b**ae**ver -> b**ea**ver
 
 These 3 steps represent a
 http://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance[Damerau-Levenshtein edit distance]
