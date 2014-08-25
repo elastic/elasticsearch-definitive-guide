@@ -12,10 +12,12 @@ http://www.elasticsearch.org/download/[elasticsearch.org/download].
 
 [source,sh]
 --------------------------------------------------
-curl -L -O http://download.elasticsearch.org/PATH/TO/LATEST/$VERSION.zip
+curl -L -O http://download.elasticsearch.org/PATH/TO/VERSION.zip <1>
 unzip elasticsearch-$VERSION.zip
 cd  elasticsearch-$VERSION
 --------------------------------------------------
+<1> Fill in the URL for the latest version available on
+    http://www.elasticsearch.org/download/[elasticsearch.org/download].
 
 TIP: When installing Elasticsearch in production, you can use the method
 described above, or the Debian or RPM packages provided on the
