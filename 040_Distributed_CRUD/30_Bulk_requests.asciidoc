@@ -17,7 +17,7 @@ image::images/04-05_mget.png["Retrieving multiple documents with mget"]
 Below we list the sequence of steps necessary to retrieve multiple documents
 with a single `mget` request, as depicted in <<img-distrib-mget>>:
 
-1. The client sends an `mget` request to `Node_1`.
+1. The client sends an `mget` request to `Node 1`.
 
 2. `Node 1` builds a multi-get request per shard, and forwards these
    requests in parallel to the nodes hosting each required primary or replica
@@ -34,7 +34,7 @@ Below we list the sequence of steps necessary to execute multiple
 `create`, `index`, `delete` and `update` requests within a single
 `bulk` request, as depicted in <<img-distrib-bulk>>:
 
-1. The client sends a `bulk` request to `Node_1`.
+1. The client sends a `bulk` request to `Node 1`.
 
 2. `Node 1` builds a bulk request per shard, and forwards these requests in
     parallel to the nodes hosting each involved primary shard.

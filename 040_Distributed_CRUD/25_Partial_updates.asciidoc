@@ -9,7 +9,7 @@ image::images/04-04_update.png["Partial updates to a document"]
 Below we list the sequence of steps used to perform a partial update on  a
 document, as depicted in <<img-distrib-update>>:
 
-1. The client sends an update request to `Node_1`.
+1. The client sends an update request to `Node 1`.
 
 2. It forwards the request to `Node 3`, where the primary shard is allocated.
 
