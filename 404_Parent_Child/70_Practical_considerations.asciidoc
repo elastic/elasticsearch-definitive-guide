@@ -55,7 +55,7 @@ PUT /company
       "_parent": {
         "type": "branch",
         "fielddata": {
-          "format": "eager_global_ordinals" <1>
+          "loading": "eager_global_ordinals" <1>
         }
       }
     }

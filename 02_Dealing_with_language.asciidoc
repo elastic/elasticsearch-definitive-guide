@@ -44,10 +44,6 @@ There are several lines of attack:
     -- words that sound the same like ``their'' vs ``there'', ``meat'' vs
     ``meet''  vs ``mete''. See <<fuzzy-matching>>.
 
-*   We can use a _search-as-you-type_ suggester to direct users towards data
-    that we know exists in the index, and a _did-you-mean_ suggester to
-    redirect users who may have mistyped a search term. See <<suggesters>>.
-
 Before we can manipulate individual words, we need to divide text up into
 words, which means that we need to know what constitutes a _word_. We will
 tackle this in <<identifying-words>>.

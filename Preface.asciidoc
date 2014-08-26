@@ -25,10 +25,10 @@ these foundations laid, it will move on to more advanced search techniques
 which you will need to shape the search experience to fit your requirements.
 
 Elasticsearch is not just about full text search. We explain structured
-search, analytics, query percolation, geolocation and autocomplete or _did-
-you-mean_ suggesters. We will also discuss how best to model your data to take
-advantage of the horizontal scalability of Elasticsearch, and how to configure
-and monitor your cluster when moving to production.
+search, analytics, the complexities of dealing with human language,
+geolocation and relationships. We will also discuss how best to model your
+data to take advantage of the horizontal scalability of Elasticsearch, and how
+to configure and monitor your cluster when moving to production.
 
 === Who should read this book
 
@@ -124,32 +124,51 @@ are more standalone and can be referred to as needed.
 
 === Navigating this book
 
-This book is divided into five parts:
+This book is divided into six parts:
 
-*  Chapters 1 through 10 provide an introduction to Elasticsearch. They
+*  Chapters 1 through 11 provide an introduction to Elasticsearch. They
    explain how to get your data in and out of Elasticsearch, how Elasticsearch
    interprets the data in your documents, how basic search works and how to
    manage indices. By the end of this section you will already be able to
-   integrate your application with Elasticsearch. Chapters 2, 4 and 9 are
+   integrate your application with Elasticsearch. Chapters 2, 4, 9 and 11 are
    supplemental chapters which provide more insight into the distributed
    processes at work, but are not required reading.
 
-*  Chapters 11 through 21 offer a deep dive into search -- how to index and
+*  Chapters 12 through 17 offer a deep dive into search -- how to index and
    query your data to allow  you to take advantage of more advanced concepts
-   like word proximity, partial matching, fuzzy matching and language
-   awareness. You will understand how relevance works and how to control it
-   to ensure that the best results are on the first page.
+   like word proximity, and partial matching. You will understand how
+   relevance works and how to control it to ensure that the best results are
+   on the first page.
 
-*  Chapters 22 through 25 tackle subjects such as aggregations or analytics,
-   geolocation, query percolation and scripting.
+*  Chapters 18 through 24 tackle the thorny subject of dealing with human
+   language through effective use of analyzers and queries. We start with
+   an easy approach to language analysis easily, before diving into the complexities
+   of language, alphabets, and sorting. We cover stemming, stopwords, synonyms,
+   and fuzzy matching.
 
-*  Chapters 26 through 28 teach you how to understand the flow of data through
-   your system and how to model your data to work well with the infrastructure
-   provided by Elasticsearch.
+*  Chapters 25 through 35 discuss aggregations and analytics -- ways to
+   summarise and group your data to show overall trends.
 
-*  Finally, chapters 29 through 31 discuss moving to production: the important
+*  Chapters 36 through 39 talk about the two approaches to geolocation
+   supported by Elasticsearch: lat/lon geo-points, and complex geo-shapes.
+
+*  Chapters 40 through 43 talk about how to model your data to work
+   most efficiently with Elasticsearch.  Representing relationships
+   between entities is not as easy in a search egine as it is in
+   a relational database, which has been designed for that purpose.
+   These chapters also explain how to suit your index design to
+   match the flow of data through your system.
+
+*  Finally, chapters 44 through 45 discuss moving to production: the important
    configurations, what to monitor, and how to diagnose and prevent problems.
 
+There are three topics which we do not cover in this book, partly because we
+ran out of space and partly because they are evolving rapidly and anything we
+write will soon be out of date:
+
+* Highlighting of result snippets: see {ref}search-request-highlighting.html[Highlighting].
+* _Did-you-mean_ and _search-as-you-type_ suggesters: see {ref}search-suggesters.html[Suggesters].
+* Percolation -- finding queries which match a document: see {ref}search-percolate.html[Percolators].
 
 === Online Resources
 
@@ -242,7 +261,7 @@ Watch us on YouTube: link:$$http://www.youtube.com/oreillymedia$$[]
 
 === Acknowledgments
 
-Why are spouses always mentioned with a ``last but not least'' disclaimer?
+Why are spouses always relegated to a ``last but not least'' disclaimer?
 There is no doubt in our minds that the two people most deserving of our
 gratitude are Xavi Sánchez Catalán, Clinton's long-suffering husband, and
 Genevieve Flanders, Zach's fiancée. They have looked after us and loved us,
@@ -274,12 +293,12 @@ Finally, we would like to thank our readers, some of whom we only know by
 their GitHub identities, who have taken the time to report problems, provide
 corrections, or suggest improvements:
 
-Adam Canady, Adam Gray, backer, Baptiste Cabarrou, Bart Vandewoestyne, Brian
-Wong, Chris Gilmore, Christian Burgas, Colin Goodheart-Smithe, Daniel
-Wiesmann, David Pilato, Duncan Angus Wilkie, Gavin Foo, geissbock,
-igal-getrailo, Japh, Jeremy Falling, J.R. Heard, Joe Fleming, Joshua Gourneau,
-jschneier, Jun Ohtani, klaplume, Kurt Hurtado, lashae, Lucian Precup, Lukáš
-Vlček, Martijn Dwars, Michael Bonfils, Michael Salmon, Michael Scharf , mitar,
-Nathan Peck, nobozo, Patrick Peschlow, Paul Schwarz, Pieter Coucke, Robert
-Muir, Ruslan Zavacky, sangharsh, Santiago Gaviria, submersibletoaster, Ulf,
-and Will Kahn-Greene.
+Adam Canady, Adam Gray, Alexander Reelsen, backer, Baptiste Cabarrou, Bart
+Vandewoestyne, Brian Wong, Chris Gilmore, Christian Burgas, Colin Goodheart-Smithe,
+Daniel Wiesmann, David Pilato, Duncan Angus Wilkie, Gavin Foo,
+geissbock, igal-getrailo, Japh, Jeremy Falling, J.R. Heard, Joe Fleming,
+Joshua Gourneau, jschneier, Jun Ohtani, klaplume, Kurt Hurtado, lashae, Lucian
+Precup, Lukáš Vlček, Martijn Dwars, Michael Bonfils, Michael Salmon, Michael
+Scharf , mitar, Nathan Peck, nobozo, Patrick Peschlow, Paul Schwarz, Pieter
+Coucke, Robert Muir, Ruslan Zavacky, sangharsh, Santiago Gaviria,
+submersibletoaster, Ulf, and Will Kahn-Greene.
