@@ -66,9 +66,9 @@ PUT /company/employee/1?parent=london
 
 The shard routing of the employee document would be decided by the parent ID
 -- `london` -- but the `london` document was routed to a shard by *its own*
-parent ID -- `uk`.  It is very unlikely that the grandchild would end up on
-the same shard as its parent and grandparent, which would prevent the
-in-memory mapping from functioning.
+parent ID -- `uk`.  It is very likely that the grandchild would end up on
+a different shard from its parent and grandparent, which would prevent the
+same-shard parent-child mapping from functioning.
 
 Instead, we need to add an extra `routing` parameter, set to the ID of the
 grandparent, to ensure that all three generations are indexed on the same

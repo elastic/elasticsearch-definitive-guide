@@ -1,4 +1,4 @@
-
+[[preload-fielddata]]
 === Pre-Loading Fielddata
 
 The default behavior of Elasticsearch is to load in-memory fielddata _lazily_.
@@ -14,6 +14,7 @@ times would all of a sudden be hit by an apparently unresponsive website.
 There are three methods to combat this latency spike.  All are variations on
 the same concept: pre-load the fielddata so that there is no latency spike.
 
+[[eager-fielddata]]
 ==== Eagerly Loading Fielddata
 
 The first tool is called _eager loading_ (as opposed to the default lazy
@@ -58,6 +59,7 @@ visible to search, so the slower refresh time is not important.
 
 ====
 
+[[global-ordinals]]
 ==== Global Ordinals
 
 One of the techniques used to reduce the memory usage of (especially string)
@@ -130,6 +132,7 @@ can result in a significant latency spike for your users.  Once global
 ordinals have been rebuilt, they will be reused until the segments in the index
 change: after a refresh, a flush, or a merge.
 
+[[eager-global-ordinals]]
 ===== Eager global ordinals
 
 Individual fields can be configured to pre-build global ordinals eagerly:
@@ -186,6 +189,7 @@ also reduce CPU usage as you will need to rebuild global ordinals less often.
 
 ====
 
+[[index-warmers]]
 ==== Index warmers
 
 Finally, we come to _index warmers_.  Warmers pre-date eager fielddata loading

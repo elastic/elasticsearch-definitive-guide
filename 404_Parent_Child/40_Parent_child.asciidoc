@@ -19,10 +19,20 @@ advantages that parent-child has over <<nested-objects,`nested` objects>> are:
 
 * Child documents can be returned as the results of a search request.
 
-Elasticsearch maintains an in-memory map of which parents are associated with
+Elasticsearch maintains a map of which parents are associated with
 which children.  It is thanks to this map that query-time joins are fast, but
 it does place a limitation on the parent-child relationship: the parent
 document and all of its children *must* live on the same shard.
+
+.Fielddata vs Doc values
+************************************
+
+At the time of going to press, the parent-child ID map is held in memory as
+part of <<fielddata,fielddata>>.  There are plans afoot to change the default
+setting to use <<doc-values,doc values>> by default instead.
+
+************************************
+
 
 [[parent-child-mapping]]
 === Parent-child mapping
