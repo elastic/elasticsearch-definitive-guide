@@ -1,27 +1,34 @@
 [[deploy]]
-== Deploying Elasticsearch (TODO)
+include::510_Deployment/10_intro.asciidoc[]
 
-This chapter discusses the issues to be aware of when it comes time to deploy
-Elasticsearch into production.
+include::510_Deployment/20_hardware.asciidoc[]
 
-=== Node communication
-.
+include::510_Deployment/30_other.asciidoc[]
 
+-Prereqs
 
-=== How many shards do I need?
-.
+    - Hardware
+        -memory, cpu, etc
+        - disable swap on node and VM host
+        - ssd noop
 
+    - Talking to the cluster
+        - language clients
+        - TransportClient vs NodeClient
+        - Proxies, load balancers, etc
+    - JVM
 
-=== Memory requirements
-.
+- Configs to change before production
+    - elasticsearch.yml
+    - cluster settings api
+        - changing logging dynamically
+    - don't touch these:
+        - GC, threadpools
 
+- index performance tips
+    - Mike's blog
+- security
+    - none lololol
 
-=== Reindexing data
-.
-
-
-=== Backing up your data
-.
-
-
-
+-snapshot/restore
+    - fs must be accessible from all nodes

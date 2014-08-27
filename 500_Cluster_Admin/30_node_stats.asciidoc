@@ -228,6 +228,7 @@ The JVM section contains some critical information about the JVM process which
 is running Elasticsearch.  Most importantly, it contains garbage collection details,
 which have a large impact on the stability of your Elasticsearch cluster.
 
+[[garbage_collector_primer]]
 .Garbage Collection Primer
 **********************************
 Before we describe the stats, it is useful to give a crash course in garbage
