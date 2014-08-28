@@ -93,6 +93,18 @@ objects to the cluster, a NodeClient can be a bit more efficient since it knows
 the cluster layout.  But it ties your application into the cluster, so it may
 pose problems from a firewall perspective, etc.
 
+=== Configuration Management
 
+If you use configuration management already (puppet, chef, ansible, etc) you can
+just skip this tip.
+
+If you don't use configuration management tools yet...you should!  Managing
+a handful of servers by parallel-ssh may work now, but it will become a nightmare
+as you grow your cluster.  It is almost impossible to edit 30 configuration files
+by hand without making a mistake.
+
+Configuration management tools help make your cluster consistent by automating
+the process of config changes.  It may take a little time to setup and learn,
+but it will pay itself off handsomely over time.
 
 

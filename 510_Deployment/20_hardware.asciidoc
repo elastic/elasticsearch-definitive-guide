@@ -1,5 +1,5 @@
-
-=== Hardware Considerations
+[[hardware]]
+=== Hardware
 
 If you've been following the normal development path, you've probably been playing
 with Elasticsearch on your laptop, or a small cluster of machines laying around.
@@ -20,8 +20,8 @@ great effect.
 
 A machine with 64gb of RAM is the ideal sweet-spot, but 32gb and 16gb machines
 are also very common.  Less than 8gb tends to be counterproductive (you end up
-needing many, many small machines) and greater than 64 has problems which we will
-discuss in <<TODO>>
+needing many, many small machines) and greater than 64gb has problems which we will
+discuss in <<heap_sizing>>
 
 ==== CPUs
 

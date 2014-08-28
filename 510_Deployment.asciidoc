@@ -1,9 +1,17 @@
 [[deploy]]
+== Production Deployment
+
 include::510_Deployment/10_intro.asciidoc[]
 
 include::510_Deployment/20_hardware.asciidoc[]
 
 include::510_Deployment/30_other.asciidoc[]
+
+include::510_Deployment/40_config.asciidoc[]
+
+include::510_Deployment/50_heap.asciidoc[]
+
+=== Post-Deployment
 
 -Prereqs
 

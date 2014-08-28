@@ -1,5 +1,5 @@
 
-== Cluster Health
+=== Cluster Health
 
 An Elasticsearch cluster may consist of a single node with a single index.  Or it
 may have a hundred data nodes, three dedicated masters, a few dozen clients nodes
@@ -73,7 +73,7 @@ replicas.  For example, an index with 5 shards and 1 replica will have 5 unassig
 replicas in a single-node cluster.  Unassigned shards will also be present if your
 cluster is red (since primaries are missing)
 
-=== Drilling deeper: finding problematic indices
+==== Drilling deeper: finding problematic indices
 
 Imagine something goes wrong one day, and you notice that your cluster health
 looks like this:
@@ -185,7 +185,7 @@ but due to the verbosity can difficult to work with.  Once you know the index
 that is having problems, other APIs that we discuss in this chapter will tend 
 to be more helpful.
 
-=== Blocking for status changes
+==== Blocking for status changes
 
 The Cluster Health API has another neat trick which is very useful when building
 unit and integration tests, or automated scripts that work with Elasticsearch.
