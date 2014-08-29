@@ -1,0 +1,23 @@
+[[post_deploy]]
+== Post-Deployment
+
+Once you have deployed your cluster in production, there are some tools and
+best practices to keep your cluster running in top shape.  In this short
+section, we'll talk about configuring settings dynamically, how to tweak
+logging levels, indexing performance tips and how to backup your cluster.
+
+include::520_Post_Deployment/10_dynamic_settings.asciidoc[]
+
+include::520_Post_Deployment/20_logging.asciidoc[]
+
+
+
+- index performance tips
+    - Mike's blog
+- security
+    - none lololol
+
+-snapshot/restore
+    - fs must be accessible from all nodes
+
+rolling restarts 

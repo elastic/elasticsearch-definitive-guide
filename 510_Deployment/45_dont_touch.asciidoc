@@ -68,17 +68,17 @@ will happen on the same core.  If you are unlucky, the switch may migrate to a
 different core and require transport on inter-core communication bus.
 
 This context switching eats up cycles simply doing administrative housekeeping
- -- estimates can peg it as high as 30us on modern CPUs.  So unless the thread
- will be blocked for longer than 30us, it is highly likely that that time would
- have been better spent just processing and finishing early.
+-- estimates can peg it as high as 30μs on modern CPUs.  So unless the thread
+will be blocked for longer than 30μs, it is highly likely that that time would
+have been better spent just processing and finishing early.
 
- People routinely set threadpools to silly values.  On 8 core machines, we have
- run across configs with 60, 100 or even 1000 threads.  These settings will simply
- thrash the CPU more than getting real work done.
+People routinely set threadpools to silly values.  On 8 core machines, we have
+run across configs with 60, 100 or even 1000 threads.  These settings will simply
+thrash the CPU more than getting real work done.
 
- So. Next time you want to tweak a threadpool...please don't.  And if you
- _absolutely cannot resist_, please keep your core count in mind and perhaps set
- the count to double.  More than that is just a waste.
+So. Next time you want to tweak a threadpool...please don't.  And if you
+_absolutely cannot resist_, please keep your core count in mind and perhaps set
+the count to double.  More than that is just a waste.
 
 
 

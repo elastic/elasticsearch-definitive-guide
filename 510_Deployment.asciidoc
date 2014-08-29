@@ -9,36 +9,9 @@ include::510_Deployment/30_other.asciidoc[]
 
 include::510_Deployment/40_config.asciidoc[]
 
+include::510_Deployment/45_dont_touch.asciidoc[]
+
 include::510_Deployment/50_heap.asciidoc[]
 
 include::510_Deployment/60_file_descriptors.asciidoc[]
 
-=== Post-Deployment
-
--Prereqs
-
-    - Hardware
-        -memory, cpu, etc
-        - disable swap on node and VM host
-        - ssd noop
-
-    - Talking to the cluster
-        - language clients
-        - TransportClient vs NodeClient
-        - Proxies, load balancers, etc
-    - JVM
-
-- Configs to change before production
-    - elasticsearch.yml
-    - cluster settings api
-        - changing logging dynamically
-    - don't touch these:
-        - GC, threadpools
-
-- index performance tips
-    - Mike's blog
-- security
-    - none lololol
-
--snapshot/restore
-    - fs must be accessible from all nodes
