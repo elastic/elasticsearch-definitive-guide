@@ -15,7 +15,7 @@ share the same directory.
 As long as the second node has the same `cluster.name` as the first node (see
 the `./config/elasticsearch.yml` file), it should automatically discover and
 join the cluster run by the first node. If it doesn't, check the logs to find
-out what went wrong.  It may be that multicast is disable on your network, or
+out what went wrong.  It may be that multicast is disabled on your network, or
 there is a firewall preventing your nodes from communicating.
 
 ***************************************
