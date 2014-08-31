@@ -27,6 +27,7 @@ blog post with:
 POST /website/blog/1/_update
 {
    "doc" : {
+      "lang":"groovy",
       "tags" : [ "testing" ],
       "views": 0
    }
@@ -99,6 +100,7 @@ blog post has had:
 --------------------------------------------------
 POST /website/blog/1/_update
 {
+   "lang":"groovy",
    "script" : "ctx._source.views+=1"
 }
 --------------------------------------------------
@@ -115,6 +117,7 @@ another tag:
 --------------------------------------------------
 POST /website/blog/1/_update
 {
+   "lang":"groovy",
    "script" : "ctx._source.tags+=new_tag",
    "params" : {
       "new_tag" : "search"
@@ -152,6 +155,7 @@ by setting `ctx.op` to `delete`:
 --------------------------------------------------
 POST /website/blog/1/_update
 {
+   "lang":"groovy",
    "script" : "ctx.op = ctx._source.views == count ? 'delete' : 'none'",
     "params" : {
         "count": 1
@@ -174,6 +178,7 @@ document that should be created if it doesn't already exist:
 --------------------------------------------------
 POST /website/pageviews/1/_update
 {
+   "lang":"groovy",
    "script" : "ctx._source.views+=1",
    "upsert": {
        "views": 1
@@ -214,6 +219,7 @@ to `0`.
 --------------------------------------------------
 POST /website/pageviews/1/_update?retry_on_conflict=5 <1>
 {
+   "lang":"groovy",
    "script" : "ctx._source.views+=1",
    "upsert": {
        "views": 0
