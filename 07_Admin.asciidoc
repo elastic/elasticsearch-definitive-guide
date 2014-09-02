@@ -1,0 +1,21 @@
+[[administration]]
+= Administration, Monitoring and Deployment
+
+[partintro]
+--
+The majority of this book has been aimed at building applications using Elasticsearch
+as the backend.  This section is a little different.  Here, you will learn
+how to manage Elasticsearch itself.  Elasticsearch is a very complex piece of
+software, with many moving parts.  There are a large number of APIs designed
+to help you manage your Elasticsearch deployment.
+
+In this chapter, we will cover three main topics:
+
+- Monitoring your cluster's vital statistics, what behaviors are normal and which
+should be cause for alarm, and how to interpret various stats provided by Elasticsearch
+- Deploying your cluster to production, including best-practices and important
+configuration which should (or should not!) be changed
+- Post-deployment logistics, such as how to perform a rolling restart or backup
+your cluster
+--
+

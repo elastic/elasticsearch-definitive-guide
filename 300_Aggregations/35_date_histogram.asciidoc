@@ -172,14 +172,19 @@ to tell  Elasticsearch that we want buckets even if they fall _before_ the
 minimum value or _after_ the maximum value.
 
 The `extended_bounds` parameter does just that.  Once you add those two settings,
-you'll get a response that is easy to plug straight into your graphing libraries.
+you'll get a response that is easy to plug straight into your graphing libraries
+and give you a graph like this:
+
+[[date-histo-ts1]]
+image::images/300_35_ts1.svg["Line chart of cars sold per month"]
 
 === Extended Example
 
 Just like we've seen a dozen times already, buckets can be nested in buckets for
 more sophisticated behavior.  For illustration, we'll build an aggregation
-which shows the average price of the top-selling car each month.
-
+which shows the total sum of prices for all makes, listed by quarter.  Let's also
+calculate the sum of prices per individual make per quarter, so we can see
+which car type is bringing in the most money to our business:
 
 [source,js]
 --------------------------------------------------
@@ -189,7 +194,7 @@ GET /cars/transactions/_search?search_type=count
       "sales": {
          "date_histogram": {
             "field": "sold",
-            "interval": "month",
+            "interval": "quarter", <1>
             "format": "yyyy-MM-dd",
             "min_doc_count" : 0,
             "extended_bounds" : {
@@ -198,16 +203,18 @@ GET /cars/transactions/_search?search_type=count
             }
          },
          "aggs": {
-            "top_selling": {
+            "per_make_sum": {
                "terms": {
-                  "field": "make",
-                  "size": 1
+                  "field": "make"
                },
                "aggs": {
-                  "avg_price": {
-                     "avg": { "field": "price" }
+                  "sum_price": {
+                     "sum": { "field": "price" } <2>
                   }
                }
+            },
+            "total_sum": {
+               "sum": { "field": "price" } <3>
             }
          }
       }
@@ -215,62 +222,52 @@ GET /cars/transactions/_search?search_type=count
 }
 --------------------------------------------------
 // SENSE: 300_Aggregations/35_date_histogram.json
+<1> Note that we changed the interval from `month` to `quarter`
+<2> Calculate the sum per make
+<3> And the total sum of all makes combined together
 
 Which returns a (heavily truncated) response:
 
 [source,js]
 --------------------------------------------------
 {
-...
-   "aggregations": {
-      "sales": {
-         "buckets": [
-            {
-               "key_as_string": "2014-01-01",
-               "key": 1388534400000,
-               "doc_count": 1,
-               "top_selling": {
-                  "buckets": [
-                     {
-                        "key": "bmw",
-                        "doc_count": 1,
-                        "avg_price": {
-                           "value": 80000
-                        }
-                     }
-                  ]
-               }
+....
+"aggregations": {
+   "sales": {
+      "buckets": [
+         {
+            "key_as_string": "2014-01-01",
+            "key": 1388534400000,
+            "doc_count": 2,
+            "total_sum": {
+               "value": 105000
             },
-            {
-               "key_as_string": "2014-02-01",
-               "key": 1391212800000,
-               "doc_count": 1,
-               "top_selling": {
-                  "buckets": [
-                     {
-                        "key": "ford",
-                        "doc_count": 1,
-                        "avg_price": {
-                           "value": 25000
-                        }
+            "per_make_sum": {
+               "buckets": [
+                  {
+                     "key": "bmw",
+                     "doc_count": 1,
+                     "sum_price": {
+                        "value": 80000
                      }
-                  ]
-               }
-            },
-            {
-               "key_as_string": "2014-03-01",
-               "key": 1393632000000,
-               "doc_count": 0,
-               "top_selling": {
-                  "buckets": []<1>
-               }
+                  },
+                  {
+                     "key": "ford",
+                     "doc_count": 1,
+                     "sum_price": {
+                        "value": 25000
+                     }
+                  }
+               ]
             }
+         },
 ...
 }
 --------------------------------------------------
 <1> Empty bucket because no cars were sold in March
 
-As you would expect, we see a list of buckets corresponding to each month,
-including months that had no car sales (e.g. March).  Each month
-then has bucket corresponding to the top selling make, and that
-bucket contains a metric which calculates the average price for that month.
+We can take this response and put it into a graph, showing a line chart for
+total sale price, and a bar chart for each individual make (per quarter):
+
+[[date-histo-ts2]]
+image::images/300_35_ts2.svg["Line chart of cars sold per month"]

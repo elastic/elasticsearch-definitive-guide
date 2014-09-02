@@ -1,21 +1,12 @@
 [[cluster-admin]]
-== Cluster management and monitoring (TODO)
+== Monitoring
 
-This chapter discusses how cluster management and monitoring.
+include::500_Cluster_Admin/10_intro.asciidoc[]
 
-=== Cluster health
-.
+include::500_Cluster_Admin/15_marvel.asciidoc[]
 
+include::500_Cluster_Admin/20_health.asciidoc[]
 
-=== Cluster settings
-.
+include::500_Cluster_Admin/30_node_stats.asciidoc[]
 
-
-=== Nodes stats
-.
-
-
-=== Nodes info
-.
-
-
+include::500_Cluster_Admin/40_other_stats.asciidoc[]

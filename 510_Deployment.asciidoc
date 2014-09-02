@@ -1,27 +1,17 @@
 [[deploy]]
-== Deploying Elasticsearch (TODO)
+== Production Deployment
 
-This chapter discusses the issues to be aware of when it comes time to deploy
-Elasticsearch into production.
+include::510_Deployment/10_intro.asciidoc[]
 
-=== Node communication
-.
+include::510_Deployment/20_hardware.asciidoc[]
 
+include::510_Deployment/30_other.asciidoc[]
 
-=== How many shards do I need?
-.
+include::510_Deployment/40_config.asciidoc[]
 
+include::510_Deployment/45_dont_touch.asciidoc[]
 
-=== Memory requirements
-.
+include::510_Deployment/50_heap.asciidoc[]
 
-
-=== Reindexing data
-.
-
-
-=== Backing up your data
-.
-
-
+include::510_Deployment/60_file_descriptors.asciidoc[]
 

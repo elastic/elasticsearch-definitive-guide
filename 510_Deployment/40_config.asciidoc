@@ -1,0 +1,254 @@
+=== Important Configuration Changes
+Elasticsearch ships with _very good_ defaults, especially when it comes to performance-
+related settings and options.  When in doubt, just leave
+the settings alone.  We have witnessed countless dozens of clusters ruined
+by errant settings because the administrator thought they could turn a knob
+and gain 100x improvement.
+
+[IMPORTANT]
+====
+Please read this entire section!  All configurations presented are equally
+important, and are not listed in any particular "importance" order.  Please read
+through all configuration options and apply them to your cluster.
+====
+
+Other databases may require tuning, but by-and-far, Elasticsearch does not.
+If you are hitting performance problems, the solution is usually better data
+layout or more nodes.  There are very few "magic knobs" in Elasticsearch.
+If there was...we'd have turned it already!
+
+With that said, there are some _logistical_ configurations that should be changed
+for production.  These changes are either to make your life easier, or because
+there is no way to set a good default (e.g. it depends on your cluster layout).
+
+
+==== Assign names
+
+Elasticseach by default starts a cluster named `elasticsearch`.  It is wise
+to rename your production cluster to something else, simply to prevent accidents
+where someone's laptop joins the cluster.  A simple change to `elasticsearch_production`
+can save a lot of heartache.
+
+This can be changed in your `elasticsearch.yml` file:
+
+[source,yaml]
+----
+cluster.name: elasticsearch_production
+----
+
+Similarly, it is wise to change the names of your nodes.  You've probably
+noticed by now, but Elasticsearch will assign a random Marvel Superhero name
+to your nodes at startup.  This is cute in development...less cute when it is
+3am and you are trying to remember which physical machine was "Tagak the Leopard Lord".
+
+More importantly, since these names are generated on startup, each time you
+restart your node it will get a new name.  This can make logs very confusing,
+since the names of all the nodes are constantly changing.
+
+Boring as it might be, we recommend you give each node a name that makes sense
+to you - a plain, descriptive name.  This is also configured in your `elasticsearch.yml`:
+
+[source,yaml]
+----
+node.name: elasticsearch_005_data
+----
+
+
+==== Paths
+
+By default, Elasticsearch will place the plugins, logs and --
+most importantly -- your data in the installation directory.  This can lead to
+unfortunate accidents, where the installation directory is accidentally overwritten
+by a new installation of ES. If you aren't careful, you can erase all of your data.
+
+Don't laugh...we've seen it happen more than a few times.
+
+The best thing to do is relocate your data directory outside the installation
+location.  You can optionally move your plugin and log directories as well.
+
+This can be changed via:
+
+[source,yaml]
+----
+path.data: /path/to/data1,/path/to/data2 <1>
+
+# Path to log files:
+path.logs: /path/to/logs
+
+# Path to where plugins are installed:
+path.plugins: /path/to/plugins
+----
+<1> Notice that you can specify more than one directory for data using comma
+separated lists.  
+
+Data can be saved to multiple directories, and if each of these directories
+are mounted on a different hard drive, this is a simple and effective way to
+setup a "software RAID 0".  Elasticsearch will automatically stripe
+data between the different directories, boosting performance
+
+==== Minimum Master Nodes
+
+This setting, called `minimum_master_nodes` is _extremely_ important to the
+stability of your cluster.  This setting helps prevent "split brains", a situation
+where two masters exist in a single cluster.
+
+When you have a split-brain, your cluster is at danger of losing data.  Because
+the master is considered the "supreme ruler" of the cluster, it decides
+when new indices can be created, how shards are moved, etc.  If you have _two_ 
+masters, data integrity becomes perilous, since you have two different nodes
+that think they are in charge.
+
+This setting tells Elasticsearch to not elect a master unless there are enough
+master-eligible nodes available.  Only then will an election take place.
+
+This setting should always be configured to a quorum (majority) of your master-
+eligible nodes.  A quorum is `(number of master-eligible nodes / 2) + 1`.  
+Some examples:
+
+- If you have ten regular nodes (can hold data, can become master), a quorum is
+`6`
+- If you have three dedicated master nodes and 100 data nodes, the quorum is `2`,
+since you only need to count nodes that are master-eligible
+- If you have two regular nodes...you are in a conundrum.  A quorum would be
+`2`, but this means a loss of one node will make your cluster inoperable.  A
+setting of `1` will allow your cluster to function, but doesn't protect against
+split brain.  It is best to have a minimum of 3 nodes in situations like this.
+
+This setting can be configured in your `elasticsearch.yml` file:
+
+[source,yaml]
+----
+discovery.zen.minimum_master_nodes: 2
+----
+
+But because Elasticsearch clusters are dynamic, you could easily add or remove
+nodes which will change the quorum.  It would be extremely irritating if you had
+to push new configurations to each node and restart your whole cluster just to
+change the setting.
+
+For this reason, `minimum_master_nodes` (and other settings) can be configured
+via a dynamic API call.  You can change the setting while your cluster is online
+using:
+
+[source,js]
+----
+PUT /_cluster/settings
+{
+    "persistent" : {
+        "discovery.zen.minimum_master_nodes" : 2
+    }
+}
+----
+
+This will become a persistent setting that takes precedence over whatever is
+in the static configuration.  You should modify this setting whenever you add or
+remove master-eligible nodes.
+
+==== Recovery settings
+
+There are several settings which affect the behavior of shard recovery when
+your cluster restarts.  First, we need to understand what happens if nothing is 
+configured.
+
+Imagine you have 10 nodes, and each node holds a single shard -- either a primary
+or a replica -- in a 5 primary / 1 replica index.  You take your
+entire cluster offline for maintenance (installing new drives, etc).  When you 
+restart your cluster, it just so happens that five nodes come online before
+the other five.  
+
+Maybe the switch to the other five is being flaky and they didn't
+receive the restart command right away.  Whatever the reason, you have five nodes 
+online.  These five nodes will gossip with eachother, elect a master and form a 
+cluster.  They notice that data is no longer evenly distributed since five
+nodes are missing from the cluster, and immediately start replicating new
+shards between each other.
+
+Finally, your other five nodes turn on and join the cluster.  These nodes see
+that _their_ data is being replicated to other nodes, so they delete their local 
+data (since it is now redundant, and may be out-dated).  Then the cluster starts
+to rebalance even more, since the cluster size just went from five to 10.
+
+During this whole process, your nodes are thrashing the disk and network moving
+data around...for no good reason. For large clusters with terrabytes of data, 
+this useless shuffling of data can take a _really long time_.  If all the nodes 
+had simply waited for the cluster to come online, all the data would have been 
+local and nothing would need to move.
+
+Now that we know the problem, we can configure a few settings to alleviate it.
+First, we need give Elasticsearch a hard limit:
+
+[source,yaml]
+----
+gateway.recover_after_nodes: 8
+----
+
+This will prevent Elasticsearch from starting a recovery until at least 8 nodes
+are present.  The value for this setting is up to personal preference: how
+many nodes do you want present before you consider your cluster functional?
+In this case we are setting it to `8`, which means the cluster is inoperable
+unless there are 8 nodes.
+
+Then we tell Elasticsearch how many nodes _should_ be in the cluster, and how
+long we want to wait for all those nodes:
+
+[source,yaml]
+----
+gateway.expected_nodes: 10
+gateway.recover_after_time: 5m
+----
+
+What this means is that Elasticsearch will:
+
+- Wait for 8 nodes to be present
+- Begin recovering after five minutes, OR after 10 nodes have joined the cluster,
+whichever comes first.
+
+These three settings allow you to avoid the excessive shard swapping that can
+occur on cluster restarts.  It can literally make recover take seconds instead
+of hours.
+
+
+==== Prefer Unicast over Multicast
+
+Elasticsearch is configured to use multicast discovery out of the box.  Multicast
+works by sending UDP pings across your local network to discover nodes.  Other
+Elasticsearch nodes will receive these pings and respond.  A cluster is formed
+shortly after.
+
+Multicast is excellent for development, since you don't need to do anything.  Turn
+a few nodes on and they automatically find each other and form a cluster.
+
+This ease of use is the exact reason you should disable it in production.  The
+last thing you want is for nodes to accidentally join your production network, simply
+because they received an errant multicast ping.  There is nothing wrong with 
+multicast _per-se_.  Multicast simply leads to silly problems, and can be a bit
+more fragile (e.g. a network engineer fiddles with the network without telling 
+you...and all of a sudden nodes can't find each other anymore).
+
+In production, it is recommended to use Unicast instead of Multicast.  This works
+by providing Elasticsearch a list of nodes that it should try to contact.  Once
+the node contacts a member of the unicast list, it will receive a full cluster
+state which lists all nodes in the cluster.  It will then proceed to contact
+the master and join.
+
+This means your unicast list does not need to hold all the nodes in your cluster.
+It just needs enough nodes that a new node can find someone to talk to.  If you
+use dedicated masters, just list your three dedicated masters and call it a day.
+This setting is configured in your `elasticsearch.yml`:
+
+[source,yaml]
+----
+discovery.zen.ping.multicast.enabled: false <1>
+discovery.zen.ping.unicast.hosts: ["host1", "host2:port"]
+----
+<1> Make sure you disable multicast, since it can operate in parallel with unicast
+
+
+
+
+
+
+
+
+
+

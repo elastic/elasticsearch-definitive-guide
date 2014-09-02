@@ -1,0 +1,37 @@
+
+=== Changing settings dynamically
+
+Many settings in Elasticsearch are dynamic, and modifiable through the API.
+Configuration changes that force a node (or cluster) restart are strenuously avoided.
+And while it's possible to make the changes through the static configs, we
+recommend that you use the API instead.
+
+The _Cluster Update_ API operates in two modes:
+
+- Transient: these changes are in effect until the cluster restarts.  Once
+a full cluster restart takes place, these settings are erased
+
+- Persistent: these changes are permanently in place unless explicitly changed.
+They will survive full cluster restarts and override the static configuration files.
+
+Transient vs Persistent settings are supplied in the JSON body:
+
+[source,js]
+----
+PUT /_cluster/settings
+{
+    "persistent" : {
+        "discovery.zen.minimum_master_nodes" : 2 <1>
+    },
+    "transient" : {
+        "indices.store.throttle.max_bytes_per_sec" : "50mb" <2>
+    }
+}
+----
+<1> This persistent setting will survive full cluster restarts
+<2> While this transient setting will be removed after the first full cluster 
+restart
+
+A complete list of settings that are dynamically updateable can be found in the
+http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/cluster-update-settings.html[online reference docs].
+
