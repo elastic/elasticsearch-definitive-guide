@@ -1,0 +1,472 @@
+
+=== Backing up your Cluster
+
+Like any software that stores data, it is important to routinely backup your
+data.  Elasticsearch replicas provide high-availability during runtime; they allow
+you to tolerate sporadic node loss without an interruption of service.
+
+Replicas do not provide protection from catastrophic failure, however.  For that,
+you need a real backup of your cluster...a complete copy in case something goes
+wrong.
+
+To backup your cluster, you can use the _Snapshot_ API.  This will take the current
+state and data in your cluster and save it to a shared repository.  This
+backup process is "smart".  Your first snapshot will be a complete copy of data,
+but all subsequent snapshots will save the _delta_ between the existing
+snapshots and the new data.  Data is incrementally added and deleted as you snapshot
+data over time.  This means subsequent backups will be substantially
+faster since they are transmitting far less data.
+
+To use this functionality, you must first create a repository to save data.
+There are several repository types that you may choose from:
+
+- Shared filesystem, such as a NAS
+- Amazon S3
+- HDFS
+- Azure Cloud
+
+==== Creating the repository
+
+Let's set up a shared filesystem repository:
+
+[source,js]
+----
+PUT _snapshot/my_backup <1>
+{
+    "type": "fs", <2>
+    "settings": {
+        "location": "/mount/backups/my_backup" <3>
+    }
+}
+----
+<1> We provide a name for our repository, in this case it is called `my_backup`
+<2> We specify that the type of the repository should be a shared file system
+<3> And finally, we provide a mounted drive as the destination
+
+INFORMATION: The shared file system path must be accessible from all nodes in your
+cluster!
+
+This will create the repository and required metadata at the mount point.  There
+are also some other options which you may want to configure, depending on the 
+performance profile of your nodes, network and repository location:
+
+- `max_snapshot_bytes_per_sec`: When snapshotting data into the repo, this controls
+the throttling of that process.  The default is `20mb` per second
+- `max_restore_bytes_per_sec`: When restoring data from the repo, this controls
+how much the restore is throttled so that your network is not saturated.  The
+default is `20mb` per second
+
+Let's assume we have a very fast network and are ok with extra traffic, so we 
+can increase the defaults:
+
+[source,js]
+----
+POST _snapshot/my_backup/ <1>
+{
+    "type": "fs",
+    "settings": {
+        "location": "/mount/backups/my_backup",
+        "max_snapshot_bytes_per_sec" : "50mb", <2>
+        "max_restore_bytes_per_sec" : "50mb"
+    }
+}
+----
+<1> Note that we are using a POST instead of PUT.  This will update the settings
+of the existing repository
+<2> Then add our new settings
+
+==== Snapshotting all open indices
+
+A repository can contain multiple snapshots.  Each snapshot is associated with a
+certain set of indices (all indices, some subset, a single index, etc).  When
+creating a snapshot, you specify which indices you are interested in and 
+give the snapshot a unique name.
+
+Let's start with the most basic snapshot command:
+
+[source,js]
+----
+PUT _snapshot/my_backup/snapshot_1
+----
+
+This will backup all open indices into a snapshot named `snapshot_1`, under the
+`my_backup` repository.  This call will return immediately and the snapshot will
+proceed in the background.
+
+.Blocking for completion
+****
+Usually you'll want your snapshots to proceed as a background process, but occasionally
+you may want to wait for completion in your script.  This can be accomplished by
+adding a `wait_for_completion` flag:
+
+[source,js]
+----
+PUT _snapshot/my_backup/snapshot_1?wait_for_completion=true
+----
+
+This will block the call until the snapshot has completed.  Note: large snapshots
+may take a long time to return!
+****
+
+==== Snapshotting particular indices
+
+The default behavior is to back up all open indices.  But say you are using marvel,
+and don't really want to backup all the diagnostic `.marvel` indices.  You 
+just don't have enough space to backup everything.
+
+In that case, you can specify which indices to backup when snapshotting your cluster:
+
+[source,js]
+----
+PUT _snapshot/my_backup/snapshot_2
+{
+    "indices": "index_1,index_2" <1>
+}
+----
+
+This snapshot command will now backup only `index1` and `index2`.
+
+==== Listing information about snapshots
+
+Once you start accumulating snapshots in your repository, you may forget the details
+relating to each...particularly when the snapshots are named based on time
+demarcations (`backup_2014_10_28`, etc).
+
+To obtain information about a single snapshot, simply issue a GET reguest against
+the repo and snapshot name:
+
+[source,js]
+----
+GET _snapshot/my_backup/snapshot_2
+----
+
+This will return a small response with various pieces of information regarding
+the snapshot:
+
+[source,js]
+----
+{
+   "snapshots": [
+      {
+         "snapshot": "snapshot_1",
+         "indices": [
+            ".marvel_2014_28_10",
+            "index1",
+            "index2"
+         ],
+         "state": "SUCCESS",
+         "start_time": "2014-09-02T13:01:43.115Z",
+         "start_time_in_millis": 1409662903115,
+         "end_time": "2014-09-02T13:01:43.439Z",
+         "end_time_in_millis": 1409662903439,
+         "duration_in_millis": 324,
+         "failures": [],
+         "shards": {
+            "total": 10,
+            "failed": 0,
+            "successful": 10
+         }
+      }
+   ]
+}
+----
+
+For a complete listing of all snapshots in a repository, use the `_all` placeholder
+instead of a snapshot name:
+
+[source,js]
+----
+GET _snapshot/my_backup/_all
+----
+
+==== Deleting Snapshots
+
+Finally, we need a command to delete old snapshots that are no longer useful.
+This is simply a DELETE HTTP call to the repo/snapshot name:
+
+[source,js]
+----
+DELETE _snapshot/my_backup/snapshot_2
+----
+
+It is important to use the API to delete snapshots, and not some other mechanism
+(deleting by hand, automated cleanup tools on S3, etc).  Because snapshots are
+incremental, it is possible that many snapshots are relying on "old" data.
+The Delete API understands what data is still in use by more recent snapshots,
+and will only delete unused segments.  
+
+If you do a manual file delete, however, you are at risk of seriously corrupting
+your backups because you are deleting data that is still in use.
+
+=== Restoring
+
+Once you've backed up some data, restoring it is very easy: simply add `_restore` 
+to the ID of the snapshot you wish to restore into your cluster:
+
+[source,js]
+----
+POST _snapshot/my_backup/snapshot_1/_restore
+----
+
+The default behavior is to restore all indices that exist in that snapshot.
+If `snapshot_1` contains five different indices, all five will be restored into
+our cluster.  Like the Snapshot API, it is possible to select which indices
+we want to restore.
+
+There are also additional options for renaming indices.  This allows you to 
+match index names with a pattern, then provide a new name during the restore process.
+This is useful if you want to restore old data to verify it's contents, or perform
+some other processing, without replacing existing data.  Let's restore
+a single index from the snapshot and provide a replacement name:
+
+[source,js]
+----
+POST /_snapshot/my_backup/snapshot_1/_restore 
+{
+    "indices": "index_1", <1>
+    "rename_pattern": "index_(.+)", <2>
+    "rename_replacement": "restored_index_$1" <3>
+}
+----
+<1> Only restore the `index_1` index, ignoring the rest that are present in the
+snapshot
+<2> Find any indices being restored which match the provided pattern...
+<3> ... then rename them with the replacement pattern
+
+This will restore `index_1` into your cluster, but rename it to `restored_index_1`.
+
+.Blocking for completion
+****
+Similar to snapshotting, the restore command will return immediately and the 
+restoration process will happen in the background.  If you would prefer your HTTP
+call to block until the restore is finished, simply add the `wait_for_completion`
+flag:
+
+[source,js]
+----
+POST _snapshot/my_backup/snapshot_1/_restore?wait_for_completion=true
+----
+****
+
+==== Monitoring Snapshot progress
+
+The `wait_for_completion` flag provides a rudimentary form of monitoring, but
+really isn't sufficient when snapshotting or restoring even moderately sized clusters.
+
+There are two additional APIs that will give you more detailed status about the
+state of the snapshotting.  First you can execute a GET to the snapshot ID,
+just like we did earlier get information about a particular snapshot:
+
+[source,js]
+----
+GET _snapshot/my_backup/snapshot_3
+----
+
+If the snapshot is still in-progress when you call this, you'll see information
+about when it was started, how long it has been running, etc.  Note, however,
+that this API uses the same threadpool as the snapshot mechanism.  If you are
+snapshotting very large shards, the time between status updates can be quite large,
+since the API is competing for the same threadpool resources.
+
+A better option is to poll the `_status` API:
+
+[source,js]
+----
+GET _snapshot/my_backup/snapshot_3/_status
+----
+
+The Status API returns immediately and gives a much more verbose output of 
+statistics:
+
+[source,js]
+----
+{
+   "snapshots": [
+      {
+         "snapshot": "snapshot_3",
+         "repository": "my_backup",
+         "state": "IN_PROGRESS", <1>
+         "shards_stats": {
+            "initializing": 0,
+            "started": 1, <2>
+            "finalizing": 0,
+            "done": 4,
+            "failed": 0,
+            "total": 5
+         },
+         "stats": {
+            "number_of_files": 5,
+            "processed_files": 5,
+            "total_size_in_bytes": 1792,
+            "processed_size_in_bytes": 1792,
+            "start_time_in_millis": 1409663054859,
+            "time_in_millis": 64
+         },
+         "indices": {
+            "index_3": {
+               "shards_stats": {
+                  "initializing": 0,
+                  "started": 0,
+                  "finalizing": 0,
+                  "done": 5,
+                  "failed": 0,
+                  "total": 5
+               },
+               "stats": {
+                  "number_of_files": 5,
+                  "processed_files": 5,
+                  "total_size_in_bytes": 1792,
+                  "processed_size_in_bytes": 1792,
+                  "start_time_in_millis": 1409663054859,
+                  "time_in_millis": 64
+               },
+               "shards": {
+                  "0": {
+                     "stage": "DONE",
+                     "stats": {
+                        "number_of_files": 1,
+                        "processed_files": 1,
+                        "total_size_in_bytes": 514,
+                        "processed_size_in_bytes": 514,
+                        "start_time_in_millis": 1409663054862,
+                        "time_in_millis": 22
+                     }
+                  },
+                  ...
+----
+<1> A snapshot that is currently running will show `IN_PROGRESS` as it's status
+<2> This particular snapshot has one shard still transferring (the other 4 have already completed)
+
+The Stats displays the total status of the snapshot, but also drills down into
+per-index and per-shard statistics.  This gives you an incredibly detailed view
+of how the snapshot is progressing.  Shards can be in various states of completion:
+
+- `INITIALIZING`: The shard is checking with the cluster state to see if it can
+be snapshotted.  This is usually very fast
+- `STARTED`: Data is being transferred to the repository
+- `FINALIZING`: Data transfer is complete, the shard is now sending snapshot metadata
+- `DONE`: Snapshot complete!
+- `FAILED`: An error was encountered during the snapshot process, and this shard/index/snapshot
+could not be completed.  Check your logs for more information
+
+==== Monitoring Restore operations
+
+The restoration of data from a repository piggybacks on the existing recovery
+mechanisms already in place in Elasticsearch.  Internally, recovering shards
+from a repository is identical to recovering from another node.
+
+If you wish to monitor the progress of a restore, you can use the Recovery
+API.  This is a general purpose API which shows status of shards moving around
+your cluster.
+
+The API can be invoked for the specific indices that you are recovering:
+
+[source,js]
+----
+GET /_recovery/restored_index_3
+----
+
+Or for all indices in your cluster, which may include other shards moving around,
+unrelated to your restore process:
+
+[source,js]
+----
+GET /_recovery/
+----
+
+The output will look similar to this (and note, it can become very verbose
+depending on the activity of your clsuter!):
+
+[source,js]
+----
+{
+  "restored_index_3" : {
+    "shards" : [ {
+      "id" : 0,
+      "type" : "snapshot", <1>
+      "stage" : "index",
+      "primary" : true,
+      "start_time" : "2014-02-24T12:15:59.716",
+      "stop_time" : 0,
+      "total_time_in_millis" : 175576,
+      "source" : { <2>
+        "repository" : "my_backup",
+        "snapshot" : "snapshot_3",
+        "index" : "restored_index_3"
+      },
+      "target" : {
+        "id" : "ryqJ5lO5S4-lSFbGntkEkg",
+        "hostname" : "my.fqdn",
+        "ip" : "10.0.1.7",
+        "name" : "my_es_node"
+      },
+      "index" : {
+        "files" : {
+          "total" : 73,
+          "reused" : 0,
+          "recovered" : 69,
+          "percent" : "94.5%" <3>
+        },
+        "bytes" : {
+          "total" : 79063092,
+          "reused" : 0,
+          "recovered" : 68891939,
+          "percent" : "87.1%"
+        },
+        "total_time_in_millis" : 0
+      },
+      "translog" : {
+        "recovered" : 0,
+        "total_time_in_millis" : 0
+      },
+      "start" : {
+        "check_index_time" : 0,
+        "total_time_in_millis" : 0
+      }
+    } ]
+  }
+}
+----
+<1> The `type` field will tell you the nature of the recovery -- this shard is being
+recovered from a snapshot
+<2> The `source` hash will describe the particular snapshot and repository that is
+being recovered from
+<3> And the `percent` field will give you an idea about the status of the recovery.
+This particular shard has recovered 94% of the files so far...it is almost complete
+
+The output will list all indices currently undergoing a recovery, and then a
+list of all shards in each of those indices.  Each of these shards will have stats
+about start/stop time, duration, recover percentage, bytes transferred, etc.
+
+==== Canceling Snapshot and Restores
+
+Finally, you may want to cancel a snapshot or restore.  Since these are long running
+processes, a typo or mistake when executing the operation could take a long time to 
+resolve...and use up valuable resources at the same time.
+
+To cancel a snapshot, simply delete the snapshot while it is in-progress:
+
+[source,js]
+----
+DELETE _snapshot/my_backup/snapshot_3
+----
+
+This will halt the snapshot process, then proceed to delete the half-completed
+snapshot from the repository.
+
+To cancel a restore, you need to delete the indices being restored.  Because
+a restore process is really just shard recovery, issuing a Delete Index API
+alters the cluster state, which will in turn halt recovery.  For example:
+
+[source,js]
+----
+DELETE /restored_index_3
+----
+
+If `restored_index_3` was actively being restored, this delete command would
+halt the restoration as well as deleting any data that had already been restored
+into the cluster.
+
+
+
+

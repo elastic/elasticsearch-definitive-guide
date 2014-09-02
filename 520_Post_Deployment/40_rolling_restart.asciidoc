@@ -1,0 +1,66 @@
+
+=== Rolling Restarts
+
+There will come a time when you need to perform a rolling restart of your
+cluster -- keeping the cluster online and operational, but taking nodes offline
+one at a time.
+
+The common reason is either an Elasticsearch version upgrade, or some kind of
+maintenance on the server itself (OS update, hardware, etc).  Whatever the case,
+there is a particular method to perform a rolling restart.
+
+By nature, Elasticsearch wants your data to be fully replicated and evenly balanced.
+If you were to shut down a single node for maintenance, the cluster will
+immediately recognize a loss of a and begin re-balancing.  This can be irritating
+if you know the node maintenance is short term, since the rebalancing of
+very large shards can take some time (think of trying to replicate 1TB...even
+on fast networks this is non-trivial).
+
+What we want to do is tell Elasticsearch to hold off on rebalancing, because
+we have more knowledge about the state of the cluster due to external factors.
+The procedure is as follows:
+
+1. If possible, stop indexing new data.  This is not always possible, but will
+help speed up recovery time
+
+2. Disable shard allocation.  This prevents Elasticsearch from re-balancing 
+missing shards until you tell it otherwise.  If you know the maintenance will be
+short, this is a good idea.  You can disable allocation with:
++
+[source,js]
+----
+PUT /_cluster/settings
+{
+    "transient" : {
+        "cluster.routing.allocation.enable" : "none"
+    }
+}
+----
+
+3. Shutdown a single node, preferably using the _Shutdown API_ on that particular
+machine:
++
+[source,js]
+----
+PUT /_cluster/nodes/_local/_shutdown
+----
+
+4. Perform maintenance/upgrade
+5. Restart node, confirm that it joins the cluster
+6. Repeat 3-5 for the rest of your nodes
+7. Re-enable shard allocation using:
++
+[source,js]
+----
+PUT /_cluster/settings
+{
+    "transient" : {
+        "cluster.routing.allocation.enable" : "all"
+    }
+}
+----
++
+Shard re-balancing may take some time.  At this point you are safe to resume
+indexing (if you had previously stopped), but waiting until the cluster is fully
+balanced before resuming indexing will help speed up the process
+
