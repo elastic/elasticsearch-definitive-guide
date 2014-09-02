@@ -264,7 +264,6 @@ Which returns a (heavily truncated) response:
 ...
 }
 --------------------------------------------------
-<1> Empty bucket because no cars were sold in March
 
 We can take this response and put it into a graph, showing a line chart for
 total sale price, and a bar chart for each individual make (per quarter):
