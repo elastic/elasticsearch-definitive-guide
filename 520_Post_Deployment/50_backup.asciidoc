@@ -198,7 +198,7 @@ and will only delete unused segments.
 If you do a manual file delete, however, you are at risk of seriously corrupting
 your backups because you are deleting data that is still in use.
 
-=== Restoring
+==== Restoring
 
 Once you've backed up some data, restoring it is very easy: simply add `_restore` 
 to the ID of the snapshot you wish to restore into your cluster:
