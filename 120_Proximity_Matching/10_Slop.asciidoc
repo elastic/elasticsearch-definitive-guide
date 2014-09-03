@@ -14,8 +14,10 @@ GET /my_index/my_type/_search
 {
     "query": {
         "match_phrase": {
-            "title": "quick fox",
-            "slop":  1
+            "title": {
+            	"query": "quick fox",
+            	"slop":  1
+            }
         }
     }
 }
