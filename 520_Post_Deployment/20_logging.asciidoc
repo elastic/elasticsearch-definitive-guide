@@ -49,8 +49,8 @@ This is an index-level setting, which means it is applied to individual indices:
 PUT /my_index/_settings
 {
     "index.search.slowlog.threshold.query.warn" : "10s", <1>
-    "index.search.slowlog.threshold.fetch.debug": 500ms", <2>
-    "index.indexing.slowlog.threshold.index.info": 5s" <3>
+    "index.search.slowlog.threshold.fetch.debug": "500ms", <2>
+    "index.indexing.slowlog.threshold.index.info": "5s" <3>
 }
 ---- 
 <1> Emit a WARN log when queries are slower than 10s
@@ -70,7 +70,7 @@ PUT /_cluster/settings
 {
     "transient" : {
         "logger.index.search.slowlog" : "DEBUG", <1>
-        "logger.index.indexing.slowlog" : WARN <2>
+        "logger.index.indexing.slowlog" : "WARN" <2>
     }
 }
 ---- 
