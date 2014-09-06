@@ -1,7 +1,7 @@
 
 === File Descriptors and MMap 
 
-Lucene uses are _very_ large number of files.  At the same time, Elasticsearch
+Lucene uses a _very_ large number of files.  At the same time, Elasticsearch
 uses a large number of sockets to communicate between nodes and HTTP clients.
 All of this requires available file descriptors.
 
