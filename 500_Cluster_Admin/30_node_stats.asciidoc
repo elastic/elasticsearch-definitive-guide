@@ -68,7 +68,7 @@ from segments yet.
 - The `store` portion indicates how much physical storage is consumed by the node.
 This metric includes both primary and replica shards.  If the throttle time is
 large, it may be an indicator that your disk throttling is set too low
-(discussed later in TODO).
+(discussed later in <<segments-and-merging>>).
 
 [source,js]
 ----
