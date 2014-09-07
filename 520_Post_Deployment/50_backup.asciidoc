@@ -43,7 +43,7 @@ PUT _snapshot/my_backup <1>
 <2> We specify that the type of the repository should be a shared file system
 <3> And finally, we provide a mounted drive as the destination
 
-INFORMATION: The shared file system path must be accessible from all nodes in your
+NOTE: The shared file system path must be accessible from all nodes in your
 cluster!
 
 This will create the repository and required metadata at the mount point.  There
