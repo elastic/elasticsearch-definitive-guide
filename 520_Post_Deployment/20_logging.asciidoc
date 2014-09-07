@@ -29,7 +29,7 @@ PUT /_cluster/settings
 While this setting is in effect, Elasticsearch will begin to emit DEBUG-level
 logs for the `discovery` module.
 
-INFORMATION: Avoid TRACE, it is extremely verbose, to the point where the logs
+TIP: Avoid TRACE, it is extremely verbose, to the point where the logs
 are no longer useful.
 
 ==== Slowlog
