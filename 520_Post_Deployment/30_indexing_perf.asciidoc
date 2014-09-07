@@ -1,4 +1,4 @@
-
+[[indexing-performance]]
 === Indexing Performance Tips
 
 If you are in an indexing-heavy environment, such as indexing infrastructure
@@ -81,6 +81,7 @@ here is antithetical with performance.
 - If you are on EC2, beware EBS.  Even the SSD-backed EBS options are often slower
 than local drives.
 
+[[segments-and-merging]]
 ==== Segments and Merging
 
 Segment merging is computationally expensive, and can eat up a lot of Disk IO.
