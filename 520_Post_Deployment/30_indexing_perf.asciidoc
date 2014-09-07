@@ -59,7 +59,7 @@ Start with a bulk size around 5-15mb and slowly increase it until you do not
 see performance gains anymore.  Then start increasing the concurrency of your
 bulk ingestion (multiple threads, etc).
 
-Monitor your nodes with Marvel and/or tools like `iostat`, `top, and `ps` to see
+Monitor your nodes with Marvel and/or tools like `iostat`, `top`, and `ps` to see
 when resources start to bottleneck.  If you start to receive `EsRejectedExecutionException`
 then your cluster is at-capacity with _some_ resource and you need to reduce
 concurrency.
