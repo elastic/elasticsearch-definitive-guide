@@ -42,7 +42,7 @@ machine:
 +
 [source,js]
 ----
-PUT /_cluster/nodes/_local/_shutdown
+POST /_cluster/nodes/_local/_shutdown
 ----
 
 4. Perform maintenance/upgrade
