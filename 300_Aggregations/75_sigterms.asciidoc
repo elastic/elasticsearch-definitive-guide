@@ -1,373 +1,414 @@
 
-=== Significant Terms Syntax
+=== Significant Terms Demo
 
 Because the Significant Terms (SigTerms) aggregation works by analyzing 
 statistics, you need to have a certain threshold of data for it to become effective.
 That means we won't be able to index a small amount of toy data for the demo.
 
-Instead, we have a pre-prepared dataset of around 1.2m documents.  This is
+Instead, we have a pre-prepared dataset of around 80,000 documents.  This is
 saved as a Snapshot (for more information about Snapshot and Restore, see
 <<backing-up-your-cluster>>) in our public demo repository.  You can "restore" 
 this dataset into your cluster using these commands:
 
 TODO -- add information about the public repo
 
-Note: The dataset is around 120mb and may take some time to download.
+NOTE: The dataset is around 50mb and may take some time to download.
 
-Let's take a look at some sample data, to get a feel for what we are working with:
+In this demo, we are going to look at movie ratings by users of MovieLens.  At
+MovieLens, users make movie recommendations so that other users can find new
+movies to watch.  For this demo, we are going to recommend movies using SigTerms
+based on an input movie.
+
+Let's take a look at some sample data, to get a feel for what we are working with.
+There are two indices in this dataset, `mlmovies` and `mlratings`.  Let's look
+at `mlmovies` first:
 
 [source,js]
 ----
-GET /xyzbank/transaction/_search <1>
+GET mlmovies/_search <1>
 
 {
-   "took": 23,
+   "took": 4,
    "timed_out": false,
    "_shards": {...},
    "hits": {
-      "total": 1285378,
+      "total": 10681,
       "max_score": 1,
       "hits": [
          {
-            "_index": "xyzbank",
-            "_type": "transaction",
-            "_id": "6OZ186ogTe6kz7ZQkQ5P7g",
+            "_index": "mlmovies",
+            "_type": "mlmovie",
+            "_id": "2",
             "_score": 1,
             "_source": {
-               "offset": 35832,
-               "bytes": 53,
-               "payee": 1654865987, <2>
-               "payer": 1946731689, <3>
-               "randInt": 689
+               "offset": 2,
+               "bytes": 34,
+               "title": "Jumanji (1995)"
             }
          },
+         ....
 ----
 <1> Execute a search without a query, so that we can see a random sampling of docs
-<2> The party getting paid (e.g. the merchant)
-<3> The party that is paying (e.g. the customer)
 
+Each document in `mlmovies` represents a single movie.  The two important pieces
+of data are the `_id` of the movie and the `title` of the movie.  You can ignore
+`offset` and `bytes`, they are artifacts of the process used to extract this
+data from the original csv files.
 
-These documents represent transactions between customers and merchants.  Each document
-has a payer and payee field, which represent the IDs of various customers/merchants.
-You can ignore `offset`, `bytes` and `randInt`, they are artifacts of the process
-used to generate the data.
+There are 10,681 movies in this dataset.  Now let's look at `mlratings`:
 
-In this demo, you are playing the role of a credit card auditor.  You've been 
-informed that a number of customers have recently been defrauded via stolen
-credit card numbers.  You need to find the merchant (or merchants!) who are
-responsible.
-
-Let's take a simple approach first.
 
 [source,js]
 ----
-GET /xyzbank/transaction/_search?search_type=count
+GET mlratings/_search
+
+{
+   "took": 3,
+   "timed_out": false,
+   "_shards": {...},
+   "hits": {
+      "total": 69796,
+      "max_score": 1,
+      "hits": [
+         {
+            "_index": "mlratings",
+            "_type": "mlrating",
+            "_id": "00IC-2jDQFiQkpD6vhbFYA",
+            "_score": 1,
+            "_source": {
+               "offset": 1,
+               "bytes": 108,
+               "movie": [122,185,231,292,
+                  316,329,355,356,362,364,370,377,420,
+                  466,480,520,539,586,588,589,594,616
+               ],
+               "user": 1
+            }
+         }, 
+         ...
+----
+
+Here we can see the recommendations of individual users.  Each document represents
+a single user, denoted by the `user` ID field.  The `movie` field holds a list
+of movies that this user watched and recommended.
+
+==== Recommending based on Popularity
+
+The first strategy we could take is trying to recommend movies based on popularity.
+Given a particular movie, we find all users that recommended that movie.  Then
+we aggregate all their recommendations and take the top five most popular.
+
+We can express that easily with a `terms` aggregation and some filtering.  Let's
+look at _Talladega Nights_, a comedy about NASCAR racing starring
+Will Ferrel.  Ideally, our recommender should find other comedies in a similar
+style (and more than likely also star Will Ferrel).
+
+First we need to find _Talladega Nights_'s ID:
+
+[source,js]
+----
+GET mlmovies/_search
+{
+  "query": {
+    "match": {
+      "title": "Talladega Nights"
+    }
+  }
+}
+
+    ...
+    "hits": [
+     {
+        "_index": "mlmovies",
+        "_type": "mlmovie",
+        "_id": "46970", <1>
+        "_score": 3.658795,
+        "_source": {
+           "offset": 9575,
+           "bytes": 74,
+           "title": "Talladega Nights: The Ballad of Ricky Bobby (2006)"
+        }
+     },
+    ...
+----
+<1> _Talladega Nights_ is ID `46970`
+
+Armed with the ID, we can now filter the ratings and apply our `terms` aggregation
+to find the most popular movies from people that also like _Talladega Nights_:
+
+[source,js]
+----
+GET mlratings/_search?search_type=count <1>
 {
   "query": {
     "filtered": {
       "filter": {
-        "terms": {
-          "payer": [
-            720968604,1579227144,512961472,75150786,450556979, <1>
-            1257085164,1147825721,91398831,981907205,869569457,
-            1389973594,277221401,996175755,1625580913,143444417,
-            2013476680,1856942381,237287347,1536133807
-          ]
+        "term": {
+          "movie": 46970 <2>
         }
       }
     }
-  }, 
+  },
   "aggs": {
-    "popular_payees": {
+    "most_popular": {
       "terms": {
-        "field": "payee", <2>
+        "field": "movie", <3>
+        "size": 6
+      }
+    }
+  }
+}
+----
+<1> We execute our query on `mlratings` this time, and specify `search_type=count`
+since we are only interested in the aggregation results
+<2> Apply a filter on the ID corresponding to _Talladega Nights_.
+<3> Finally, find the most popular movies using a `terms` bucket
+
+We perform the search on the `mlratings` index, and apply a filter for the ID of
+_Talladega Nights_.  Since aggregations operate on query scope, this will 
+effectively filter the aggregation results to only the users who recommended 
+_Talladega Nights_. Finally, we execute a `terms` aggregation to bucket the most 
+popular movies.  We are requesting the top six results, since it is likely
+that _Talladega Nights_ itself will be returned as a hit (and we don't want
+to recommend the same movie).
+
+The results come back like so:
+
+[source,js]
+----
+{
+...
+   "aggregations": {
+      "most_popular": {
+         "buckets": [
+            {
+               "key": 46970,
+               "key_as_string": "46970",
+               "doc_count": 271
+            },
+            {
+               "key": 2571,
+               "key_as_string": "2571",
+               "doc_count": 197
+            },
+            {
+               "key": 318,
+               "key_as_string": "318",
+               "doc_count": 196
+            },
+            {
+               "key": 296,
+               "key_as_string": "296",
+               "doc_count": 183
+            },
+            {
+               "key": 2959,
+               "key_as_string": "2959",
+               "doc_count": 183
+            },
+            {
+               "key": 260,
+               "key_as_string": "260",
+               "doc_count": 90
+            }
+         ]
+      }
+   }
+...
+----
+
+We need to correlate these back to their original titles, which can be done
+with a simple filtered query:
+
+[source,js]
+----
+GET mlmovies/_search
+{
+  "query": {
+    "filtered": {
+      "filter": {
+        "ids": {
+          "values": [2571,318,296,2959,260]
+        }
+      }
+    }
+  }
+}
+----
+
+And finally, we end up with the following list:
+
+1. Matrix, The
+2. Shawshank Redemption
+3. Pulp Fiction
+4. Fight Club
+5. Star Wars: Episode IV - A New Hope
+
+Ok...well that is certainly a good list!  I like all of those movies.  But that's
+the problem actually: most _everyone_ likes that list.  Those movies are universally
+well liked, which means they are popular on everyone's recommendations.  The
+list is basically a recommendation of popular movies, not recommendations related
+to _Talladega Nights_.
+
+This is easily verified by running the aggregation again, but without the filter 
+on _Talladega Nights_.  This will give a top-5 most popular movie list:
+
+[source,js]
+----
+GET mlratings/_search?search_type=count
+{
+  "aggs": {
+    "most_popular": {
+      "terms": {
+        "field": "movie",
         "size": 5
       }
     }
   }
 }
 ----
-<1> First we filter our dataset to just those customers that experienced problems
-<2> Then we do a simple `terms` aggregation to find the most "popular" merchants
 
-There are 19 customers here that have reported fraudulent activity on their card.
-We first apply a `term` filter so that we can isolate their transactions from
-the rest of the transactions in the dataset.
+Which returns a list that is very similar:
 
-It is possible there are 19 different, independent fraudulent merchants.  But it
-is more likely there was one merchant which the majority of these 19 customers 
-shopped at.  One approach to finding this merchant may be identifying the most
-"popular" merchant shared by everyone in the group.  We do this with a `terms`
-aggregation, and get these results:
+1. Shawshank Redemption
+2. Silence of the Lambs, The
+3. Pulp Fiction
+4. Forrest Gump
+5. Star Wars: Episode IV - A New Hope
 
-[source,js]
-----
-{
-    ...
-    "aggregations": {
-        "popular_payees": {
-            "buckets": [
-                {
-                   "key": 1134790655, <1>
-                   "key_as_string": "1134790655",
-                   "doc_count": 12
-                },
-                {
-                   "key": 1954360162,
-                   "key_as_string": "1954360162",
-                   "doc_count": 12
-                },
-                {
-                   "key": 2569625,
-                   "key_as_string": "2569625",
-                   "doc_count": 9
-                },
-                {
-                   "key": 150677504,
-                   "key_as_string": "150677504",
-                   "doc_count": 5
-                },
-                {
-                   "key": 556339714,
-                   "key_as_string": "556339714",
-                   "doc_count": 5
-                }
-            ]
-        }
-    }
-}
-----
-<1> Merchant `1134790655` was used by 12 of the 19 customers, etc
+Clearly, just checking the most popular movies is not sufficient to build a good,
+discriminating recommender.
 
-Ok, that's a good starting point.  We can see that two merchants, `1134790655`
-and `1954360162`, were both used by 12 of the 19 customers.  That's an encouraging
-start.  
+==== Recommending based on Statistics
 
-But as a sanity check, let's check how "popular" these merchants are in general:
+Now that the scene is set, let's try using SigTerms.  SigTerms will analyze
+the group of people that enjoy _Talladega Nights_ (the "foreground" group) and 
+determine what movies are most popular.  It will then construct a list of
+popular films for everyone (the "background" group) and compare the two.
+
+The statistical anomalies will be the movies that are _over represented_ in the
+foreground compared to the background.  Theoretically, this should be a list
+of comedies, since people who enjoy Will Ferrel comedies will recommend them
+at a higher rate than the background population of people.
+
+Let's give it a shot:
 
 [source,js]
 ----
-GET /xyzbank/transaction/_search?search_type=count
+GET mlratings/_search?search_type=count
 {
   "query": {
     "filtered": {
       "filter": {
-        "terms": {
-          "payee": [
-            1134790655,1954360162,2569625,150677504,556339714 <1>
-          ]
+        "term": {
+          "movie": 46970
         }
       }
     }
-  }, 
+  },
   "aggs": {
-    "payees": { <2>
-      "terms": {
-        "field": "payee"
-      },
-      "aggs": {
-        "distinct_customers": { <3>
-          "cardinality": {
-            "field": "payer"
-          }
-        }
+    "most_sig": {
+      "significant_terms": { <1>
+        "field": "movie",
+        "size": 6
       }
     }
   }
 }
 ----
-<1> The filter limits our aggregations to "popular" merchants
-<2> The `terms` aggregation will show us how many transaction each merchant has
-performed
-<3> And the `cardinality` will tell us how many unique customers have shopped at
-each of those merchants
+<1> The setup is nearly identical -- we just use `significant_terms` instead of
+`terms`
 
-This query will look at all the "popular" merchants, and calculate two important
-criteria:  how many transactions have occurred with that merchant, and how many
-customers made those transactions.  When we run the query, we see some disappointing
-results:
+As you can see, the query is nearly the same.  We filter for users that
+liked _Talladega Nights_; this forms the "foreground" group.  By default,
+SigTerms will use the entire index as the "background", so we don't need to do
+anything special.
+
+The results come back as a list of buckets similar to `terms`, but with some
+extra metadata:
 
 [source,js]
 ----
 ...
-    "aggregations": {
-      "payees": {
+   "aggregations": {
+      "most_sig": {
+         "doc_count": 271, <1>
          "buckets": [
             {
-               "key": 1954360162,
-               "key_as_string": "1954360162",
-               "doc_count": 4930,
-               "distinct_customers": {
-                  "value": 3644
-               }
+               "key": 46970, 
+               "key_as_string": "46970",
+               "doc_count": 271, 
+               "score": 256.549815498155,
+               "bg_count": 271 
             },
             {
-               "key": 1134790655,
-               "key_as_string": "1134790655",
-               "doc_count": 4900,
-               "distinct_customers": {
-                  "value": 4524
-               }
+               "key": 52245, <2>
+               "key_as_string": "52245",
+               "doc_count": 59, <3>
+               "score": 17.66462367106966,
+               "bg_count": 185 <4>
             },
             {
-               "key": 2569625,
-               "key_as_string": "2569625",
-               "doc_count": 19,
-               "distinct_customers": {
-                  "value": 8
-               }
+               "key": 8641,
+               "key_as_string": "8641",
+               "doc_count": 107,
+               "score": 13.884387742677438,
+               "bg_count": 762
             },
             {
-               "key": 556339714,
-               "key_as_string": "556339714",
-               "doc_count": 9,
-               "distinct_customers": {
-                  "value": 3
-               }
+               "key": 58156,
+               "key_as_string": "58156",
+               "doc_count": 17,
+               "score": 9.746428133759462,
+               "bg_count": 28
             },
             {
-               "key": 150677504,
-               "key_as_string": "150677504",
-               "doc_count": 5,
-               "distinct_customers": {
-                  "value": 1
-               }
+               "key": 52973,
+               "key_as_string": "52973",
+               "doc_count": 95,
+               "score": 9.65770100311672,
+               "bg_count": 857
+            },
+            {
+               "key": 35836,
+               "key_as_string": "35836",
+               "doc_count": 128,
+               "score": 9.199001116457955,
+               "bg_count": 1610
             }
          ]
-      }
-   }
-...
+ ...
 ----
+<1> The top-level `doc_count` shows the number of docs in the "foreground" group
+<2> Each bucket lists the key (e.g. movie ID) being aggregated
+<3> A `doc_count` for that bucket.  
+<4> And a background count, which shows the rate at which this value appears in 
+the entire "background"
 
-Our two best candiates -- the most "popular" `1134790655` and `1954360162` --
-appear to be the most popular merchants for _everyone_.  They are probably
-large stores like Amazon that everyone shops at.  We can rule these merchants
-out, since it is unlikely they decided to scam 19 out of their 4000 customers.
-They are merely showing up in our analysis because their _background_ popularity
-is high.
+You can see that the first bucket we get back is _Talladega Nights_.  It is 
+found in all 271 documents, which is not surprising.  Let's look at the next bucket:
+key `52245`.
 
-On the flipside, we can probably rule out `150677504` and `556339714`, since
-they only interacted with 1 and 3 customers respectively.  These are probably
-small shops (think your corner store) that you and few other people shop at.  If
-you go to your corner store every morning, there will be many transactions for _you_,
-but few for everyone else in the world.  It might artificially show up on a 
-most "popular" list for this reason.  The background popularity may be low,
-but the overlap with the fraudulent group is also low.
+This ID corresponds with _Blades of Glory_, a comedy about male figure skating
+and also stars Will Ferrel.  We can see that it was recommended 59 times in the
+the people who also liked _Talladega Nights_.  This means that 21% of the "foreground" 
+group recommended _Blades of Glory_ (`59 / 271 = 0.2177`).
 
-Let's set up a SigTerms query and see what it has to say:
+In contrast, _Blades of Glory_ was only recommended 185 times in the entire dataset,
+which equates to a mere 0.26% (`185 / 69796 = 0.00265`).  _Blades of Glory_ is therefore
+a statistical anomaly...it is uncommonly common in the group of people that
+like _Talladega Nights_.  We just found a good recommendation!
 
-[source,js]
-----
-GET /xyzbank/transaction/_search?search_type=count
-{
-   "query":{
-      "filtered": {
-        "filter": {
-          "terms": {
-            "payer": [
-              720968604,1579227144,512961472,75150786,450556979,
-              1257085164,1147825721,91398831,981907205,869569457,
-              1389973594,277221401,996175755,1625580913,143444417,
-              2013476680,1856942381,237287347,1536133807
-            ]
-          }
-        }
-      }
-   },
-   "aggregations":{
-      "payees":{
-         "significant_terms":{ <1>
-            "field":"payee",
-            "size": 5
-         }
-      }
-   }
-}
-----
-<1> Instead of a `terms` bucket, we use a `significant_terms` instead
+If we look at the entire list, they are all comedies that would fit as good
+recommendations (many of which also star Will Ferrel):
 
-The query setup is almost identical to our "popular" query, but instead of `terms`
-we use a `signficiant_terms` bucket.  This will perform a process very similar to
-what we did manually above:
+1. Blades of Glory
+2. Anchorman: The Legend of Ron Burgundy
+3. Semi-Pro
+4. Knocked Up
+5. 40 Year Old Virgin
 
-1. It will find all unique terms in your _foreground_ -- the documents which are
-found by the query.  In our case, this will be all the documents that match
-the filter for `payer`
-2. The _background_ rate for each of these terms is then calculated.  How often
-are these terms used outside the fraudulent population?
-3. Finally, the background rate is compared against the foreground rate, and ranked
-in descending order.  This finds terms that are more popular in the fraudulent
-group than in the background normal transaction data.
-
-The results look like this:
-
-[source,js]
-----
-...
-    "aggregations": {
-      "payees": {
-         "doc_count": 2497, <1>
-         "buckets": [
-            {
-               "key": 2569625,
-               "key_as_string": "2569625",
-               "doc_count": 9, <2>
-               "score": 1.1096324319660162,
-               "bg_count": 15 <3>
-            },
-            {
-               "key": 131309720,
-               "key_as_string": "131309720",
-               "doc_count": 5,
-               "score": 1.0287723722612108,
-               "bg_count": 5
-            },
-            {
-               "key": 1784307987,
-               "key_as_string": "1784307987",
-               "doc_count": 5,
-               "score": 1.0287723722612108,
-               "bg_count": 5
-            },
-            {
-               "key": 150677504,
-               "key_as_string": "150677504",
-               "doc_count": 5,
-               "score": 1.0287723722612108,
-               "bg_count": 5
-            },
-            {
-               "key": 1053742706,
-               "key_as_string": "1053742706",
-               "doc_count": 5,
-               "score": 1.0287723722612108,
-               "bg_count": 5
-            }
-         ]
-      }
-   }
-   ...
-----
-<1> This represents the number of transactions in our fraudulent group
-<2> The `doc_count` for each merchant represents the popularity of this merchant
-within the fraudulent group
-<3> While the `bg_count` represents the popularity total, across the entire
-dataset
-
-The SigTerms output can be a little confusing at first, so we will walk through
-the various fields and how to interpret it.  
-
-SigTerms first tells us that 2497 transactions were performed by the customers who
-reported fraud.  Next comes a list of buckets representing merchants, ordered in 
-descending order based on how statistically anomalous they are.  
-
-The most anomalous merchant is `2569625`.  Nine of the fraudulent transaction
-were performed at this merchant, giving it a foreground rate of ~0.3% 
-(9/2497 = 0.0036).  This may seem tiny, but consider the "background" rate for
-this merchant:  0.001% (15/1285378 = 0.000011)
-
-
-
-kjsdd.sjfsdkjhfsdjkl
-
-
+This is just one example of the power of Significant Terms.  Once you start using
+SigTerms, you start to find many situations where you don't what the most popular...
+you want the most uncommonly common.  This simple aggregation can uncover some
+surprisingly sophisticated trends in your data.
