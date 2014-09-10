@@ -102,7 +102,7 @@ memory will cache segments and lead to blisteringly fast full-text search
 2. Are you doing a lot of sorting/aggregations?  You'll likely want that memory
 in the heap then.  Instead of one node with 32gb+ of RAM, consider running two or
 more nodes on a single machine.  Still adhere to the 50% rule though.  So if your
-machine has 124mb of RAM, run two nodes each with 32gb.  This means 64gb will be
+machine has 128gb of RAM, run two nodes each with 32gb.  This means 64gb will be
 used for heaps, and 64 will be leftover for Lucene.
 +
 If you choose this option, set `cluster.routing.allocation.same_shard.host: true`
