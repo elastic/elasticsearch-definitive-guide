@@ -167,8 +167,8 @@ that a user views a page, we increment the counter for that page.  But if it
 is a new page, we can't be sure that the counter already exists. If we try to
 update a non-existent document, the update will fail.
 
-In cases like these, we can use the `upsert` parameter to specify the
-document that should be created if it doesn't already exist:
+In cases like these, we can use the `upsert` parameter to specify that the
+document should be created if it doesn't already exist:
 
 [source,js]
 --------------------------------------------------
