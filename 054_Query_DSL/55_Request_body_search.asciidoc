@@ -4,7 +4,7 @@
 Search _lite_ -- <<search-lite,query string search>> --  is useful for _ad
 hoc_ queries from the command line. To harness the full power of search,
 however, you should use the _request body_ `search` API, so called because
-most parameters are passed in the JSON request body instead of in the query
+most parameters are passed in the HTTP request body instead of in the query
 string.
 
 Request body search -- henceforth known just as ``search'' -- not only handles
