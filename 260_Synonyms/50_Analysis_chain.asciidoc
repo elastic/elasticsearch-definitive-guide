@@ -65,7 +65,7 @@ And the case-insentive rules could look like this:
     "pet scan,pet_scan scan => pet_scan"
     "little,small"
 
-The case-insensitive rules would match `CAT scan` but would only match the
+The case-sensitive rules would match `CAT scan` but would only match the
 `CAT` in `CAT Scan`. For this reason, we have the odd looking rule `cat_scan
 scan` in the case-insensitive list to catch bad replacements.
 
