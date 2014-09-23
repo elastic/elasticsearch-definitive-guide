@@ -60,9 +60,10 @@ The operators that it accepts are:
 
 ==== `exists` and `missing` filters
 
-The `exists` and `missing` filters are used to find documents where
-the specified field either has one or more values (`exists`) or doesn't have
-any values (`missing`). It is similar in nature to `IS_NULL` in SQL:
+The `exists` and `missing` filters are used to find documents where the
+specified field either has one or more values (`exists`) or doesn't have any
+values (`missing`). It is similar in nature to `IS_NULL` (`missing`) and `NOT
+IS_NULL` (`exists`)in SQL:
 
 [source,js]
 --------------------------------------------------
