@@ -90,27 +90,28 @@ This process gives us the following (abbreviated) results:
 --------------------------------------------------
 "hits": [
  {
-    "_id":      "3",
-    "_score":   0.53033006, <1>
-    "_source": {
-       "title": "The quick brown fox jumps over the quick dog"
-    }
- },
- {
     "_id":      "1",
-    "_score":   0.5, <2>
+    "_score":   0.5, <1>
     "_source": {
        "title": "The quick brown fox"
     }
  },
  {
+    "_id":      "3",
+    "_score":   0.44194174, <2>
+    "_source": {
+       "title": "The quick brown fox jumps over the quick dog"
+    }
+ },
+ {
     "_id":      "2",
-    "_score":   0.375, <2>
+    "_score":   0.3125, <2>
     "_source": {
        "title": "The quick brown fox jumps over the lazy dog"
     }
  }
 ]
 --------------------------------------------------
-<1> Doc `3` is most relevant because it contains the term `"quick"` twice.
-<2> Doc `1` is more relevant than doc `2` because its `title` field is shorter.
+<1> Doc `1` is most relevant because its `title` field is short, which means 
+    that `quick` represents a large portion of its content.
+<2> Doc `3` is more relevant than doc `2` because `quick` appears twice.
