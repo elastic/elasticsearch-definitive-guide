@@ -20,7 +20,7 @@ In order to make sorting efficient, Elasticsearch loads all of the values for
 the field that you want to sort on into memory. This is referred to as
 _fielddata_.
 
-IMPORTANT: It doesn't just load the values for the documents that matched a
+WARNING: It doesn't just load the values for the documents that matched a
 particular query. It loads the values from *every document in your index*,
 regardless of the document `type`.
 

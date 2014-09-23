@@ -6,7 +6,7 @@ standard for encoding two dimensional shapes in JSON.  Each shape definition
 contains the type of shape --  `point`, `line`, `polygon`, `envelope`, etc. --
 and one or more arrays of longitude/latitude points.
 
-IMPORTANT: In GeoJSON, coordinates are always written as *longitude*  followed
+CAUTION: In GeoJSON, coordinates are always written as *longitude*  followed
 by *latitude*.
 
 For instance, we can index a polygon representing Dam Square in Amsterdam as

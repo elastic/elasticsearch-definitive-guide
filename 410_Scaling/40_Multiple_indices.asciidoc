@@ -7,7 +7,7 @@ copy (a primary or a replica) of all the shards in an index.  If we issue the
 same search request on multiple indices, the exact same thing happens -- there
 are just more shards involved.
 
-IMPORTANT: Searching 1 index of 50 shards is exactly equivalent to searching
+TIP: Searching 1 index of 50 shards is exactly equivalent to searching
 50 indices with 1 shard each: both search requests hit 50 shards.
 
 This can be a useful fact to remember when you need to add capacity on the

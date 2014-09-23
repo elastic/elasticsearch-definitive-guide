@@ -147,7 +147,7 @@ sub-calculations that were required:
 <3> Inverse document frequency
 <4> Field length norm
 
-IMPORTANT: Producing the `explain` output is expensive. It is a debugging tool
+WARNING: Producing the `explain` output is expensive. It is a debugging tool
 only -- don't leave it turned on in production.
 
 The first part is the summary of the calculation. It tells us that it has

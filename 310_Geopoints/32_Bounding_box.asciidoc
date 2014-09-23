@@ -97,7 +97,7 @@ GET /attractions/restaurant/_search
 <1> Setting the `type` parameter to `indexed` (instead of the default
     `memory`) tells Elasticsearch to use the inverted index for this filter.
 
-IMPORTANT: While a `geo_point` field can contain multiple geo-points, the
+CAUTION: While a `geo_point` field can contain multiple geo-points, the
 `lat_lon` optimization can only be used on fields which contain a single
 geo-point.
 

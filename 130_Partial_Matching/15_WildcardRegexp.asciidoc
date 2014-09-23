@@ -59,7 +59,7 @@ While prefix matching can be made more efficient by preparing your data at
 index time, wildcard and regular expression matching can only really be done
 at query time. These queries have their place, but should be used sparingly.
 
-[IMPORTANT]
+[CAUTION]
 =================================================
 
 The `prefix`, `wildcard` and `regexp` queries operate on terms. If you use

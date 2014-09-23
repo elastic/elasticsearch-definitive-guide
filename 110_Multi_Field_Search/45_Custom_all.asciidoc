@@ -42,7 +42,7 @@ With this mapping in place, we can query the `first_name` field for first
 names, the `last_name` field for last name, or the `full_name` field for first
 and last names.
 
-IMPORTANT: Mappings of the `first_name` and `last_name` fields have no bearing
+NOTE: Mappings of the `first_name` and `last_name` fields have no bearing
 on how the `full_name` field is indexed. The `full_name` field copies the
 string values from the other two fields, then indexes them according to the
 mapping of the `full_name` field only.

@@ -71,7 +71,7 @@ it considers each field separately by taking the average length of the field
 into account. It can distinguish between a short `title` field and a `long`
 title field.
 
-IMPORTANT: In <<query-time-boosting>> we said that the `title` field has a
+CAUTION: In <<query-time-boosting>> we said that the `title` field has a
 ``natural'' boost over the `body` field because of its length.  This natural
 boost disappears with BM25 as differences in field length only apply within a
 single field.

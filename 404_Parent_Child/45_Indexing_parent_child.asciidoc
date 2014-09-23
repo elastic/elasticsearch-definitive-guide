@@ -64,7 +64,7 @@ POST /company/employee/_bulk
 { "name": "Adrien Grand", "dob": "1987-05-11", "hobby": "horses" }
 -------------------------
 
-IMPORTANT: If you want to change the `parent` value of a child document, it is
+WARNING: If you want to change the `parent` value of a child document, it is
 not sufficient to just reindex or update the child document -- the new parent
 document may be on a different shard. Instead, you must first delete the old
 child, then index the new child.

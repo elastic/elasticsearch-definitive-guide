@@ -49,7 +49,7 @@ request to a primary or replica of every shard in that index, then gathers the
 results from each shard. Searching within multiple indices works in exactly
 the same way -- there are just more shards involved.
 
-[IMPORTANT]
+[TIP]
 ================================================
 
 Searching one index which has 5 primary shards is *exactly equivalent* to

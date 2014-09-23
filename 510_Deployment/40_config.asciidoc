@@ -5,7 +5,7 @@ the settings alone.  We have witnessed countless dozens of clusters ruined
 by errant settings because the administrator thought they could turn a knob
 and gain 100x improvement.
 
-[IMPORTANT]
+[NOTE]
 ====
 Please read this entire section!  All configurations presented are equally
 important, and are not listed in any particular "importance" order.  Please read
@@ -79,7 +79,7 @@ path.logs: /path/to/logs
 path.plugins: /path/to/plugins
 ----
 <1> Notice that you can specify more than one directory for data using comma
-separated lists.  
+separated lists.
 
 Data can be saved to multiple directories, and if each of these directories
 are mounted on a different hard drive, this is a simple and effective way to
@@ -94,7 +94,7 @@ where two masters exist in a single cluster.
 
 When you have a split-brain, your cluster is at danger of losing data.  Because
 the master is considered the "supreme ruler" of the cluster, it decides
-when new indices can be created, how shards are moved, etc.  If you have _two_ 
+when new indices can be created, how shards are moved, etc.  If you have _two_
 masters, data integrity becomes perilous, since you have two different nodes
 that think they are in charge.
 
@@ -102,7 +102,7 @@ This setting tells Elasticsearch to not elect a master unless there are enough
 master-eligible nodes available.  Only then will an election take place.
 
 This setting should always be configured to a quorum (majority) of your master-
-eligible nodes.  A quorum is `(number of master-eligible nodes / 2) + 1`.  
+eligible nodes.  A quorum is `(number of master-eligible nodes / 2) + 1`.
 Some examples:
 
 - If you have ten regular nodes (can hold data, can become master), a quorum is
@@ -147,31 +147,31 @@ remove master-eligible nodes.
 ==== Recovery settings
 
 There are several settings which affect the behavior of shard recovery when
-your cluster restarts.  First, we need to understand what happens if nothing is 
+your cluster restarts.  First, we need to understand what happens if nothing is
 configured.
 
 Imagine you have 10 nodes, and each node holds a single shard -- either a primary
 or a replica -- in a 5 primary / 1 replica index.  You take your
-entire cluster offline for maintenance (installing new drives, etc).  When you 
+entire cluster offline for maintenance (installing new drives, etc).  When you
 restart your cluster, it just so happens that five nodes come online before
-the other five.  
+the other five.
 
 Maybe the switch to the other five is being flaky and they didn't
-receive the restart command right away.  Whatever the reason, you have five nodes 
-online.  These five nodes will gossip with eachother, elect a master and form a 
+receive the restart command right away.  Whatever the reason, you have five nodes
+online.  These five nodes will gossip with eachother, elect a master and form a
 cluster.  They notice that data is no longer evenly distributed since five
 nodes are missing from the cluster, and immediately start replicating new
 shards between each other.
 
 Finally, your other five nodes turn on and join the cluster.  These nodes see
-that _their_ data is being replicated to other nodes, so they delete their local 
+that _their_ data is being replicated to other nodes, so they delete their local
 data (since it is now redundant, and may be out-dated).  Then the cluster starts
 to rebalance even more, since the cluster size just went from five to 10.
 
 During this whole process, your nodes are thrashing the disk and network moving
-data around...for no good reason. For large clusters with terrabytes of data, 
-this useless shuffling of data can take a _really long time_.  If all the nodes 
-had simply waited for the cluster to come online, all the data would have been 
+data around...for no good reason. For large clusters with terrabytes of data,
+this useless shuffling of data can take a _really long time_.  If all the nodes
+had simply waited for the cluster to come online, all the data would have been
 local and nothing would need to move.
 
 Now that we know the problem, we can configure a few settings to alleviate it.
@@ -220,9 +220,9 @@ a few nodes on and they automatically find each other and form a cluster.
 
 This ease of use is the exact reason you should disable it in production.  The
 last thing you want is for nodes to accidentally join your production network, simply
-because they received an errant multicast ping.  There is nothing wrong with 
+because they received an errant multicast ping.  There is nothing wrong with
 multicast _per-se_.  Multicast simply leads to silly problems, and can be a bit
-more fragile (e.g. a network engineer fiddles with the network without telling 
+more fragile (e.g. a network engineer fiddles with the network without telling
 you...and all of a sudden nodes can't find each other anymore).
 
 In production, it is recommended to use Unicast instead of Multicast.  This works

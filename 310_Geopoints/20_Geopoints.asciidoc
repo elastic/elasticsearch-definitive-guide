@@ -63,7 +63,7 @@ PUT /attractions/restaurant/3
 <2> An object representation with `lat` and `lon` explicitly named.
 <3> An array representation with `[lon,lat]`.
 
-[IMPORTANT]
+[CAUTION]
 ========================
 
 Everybody gets caught at least once: string geo-points are

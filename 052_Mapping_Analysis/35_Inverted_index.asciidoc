@@ -106,7 +106,7 @@ we apply the same normalization rules that we used on the `content` field to
 our query string, it would become a query for `"+quick +fox"`, which would
 match both documents!
 
-IMPORTANT: This is very important. You can only find terms that actually exist in your
+NOTE: This is very important. You can only find terms that actually exist in your
 index, so: *both the indexed text and the query string must be normalized
 into the same form*.
 

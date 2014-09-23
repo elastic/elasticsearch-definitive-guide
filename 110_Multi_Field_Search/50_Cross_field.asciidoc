@@ -81,7 +81,7 @@ the `last_name` fields and uses the minimum of the two as the IDF for both
 fields.  The fact that `smith` is a common last name means that it will be
 treated as a common first name too.
 
-[IMPORTANT]
+[NOTE]
 ==================================================
 For the `cross_fields` query type to work optimally, all fields should have
 the same analyzer.  Fields which share an analyzer are grouped together as

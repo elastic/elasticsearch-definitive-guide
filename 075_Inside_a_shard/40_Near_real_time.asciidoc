@@ -91,7 +91,7 @@ POST /my_logs/_settings
 <1> Disable automatic refreshes.
 <2> Refresh automatically every second.
 
-IMPORTANT: The `refresh_interval` expects a ``duration'' like `1s` (one
+CAUTION: The `refresh_interval` expects a ``duration'' like `1s` (one
 second) or `2m` (two minutes).  An absolute number like `1` means
 **1 millisecond**... a sure way to bring your cluster to its knees.
 

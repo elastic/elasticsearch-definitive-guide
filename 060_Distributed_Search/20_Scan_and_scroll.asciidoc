@@ -69,7 +69,7 @@ documents.  When scanning, the `size` is applied to each shard, so you will
 get back a maximum of `size * number_of_primary_shards` documents in each
 batch.
 
-IMPORTANT: The scroll request also returns  a *new `_scroll_id`*.  Every time
+NOTE: The scroll request also returns  a *new `_scroll_id`*.  Every time
 we make the next scroll request, we must pass the `_scroll_id` returned by the
 *previous* scroll request.
 

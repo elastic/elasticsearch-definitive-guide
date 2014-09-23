@@ -204,7 +204,7 @@ than necessary, this field-level index-time boost is combined with the field
 length norm (see  <<field-norm>>) and stored in the index as a single byte.
 This is the value returned by `norm(t,d)` in the formula above.
 
-[IMPORTANT]
+[WARNING]
 =========================================
 
 We strongly recommend against using field-level index-time boosts for a few
