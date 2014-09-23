@@ -133,7 +133,7 @@ time it can potentially bottleneck is if the cluster state is both very large
 _and_ updated frequently.
 
 For example, if you allow customers to create as many dynamic fields as they wish,
-and have a unique index for each customer every day, you're cluster state will grow
+and have a unique index for each customer every day, your cluster state will grow
 very large.  The cluster state includes (among other things) a list of all indices,
 their types, and the fields for each index.
 
