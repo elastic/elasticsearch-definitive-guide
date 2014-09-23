@@ -195,11 +195,14 @@ Each element in the result represents a single term:
    ]
 }
 --------------------------------------------------
-
 The `token` is the actual term that will be stored in the index. The
 `position` indicates the order in which the terms appeared in the original
 text. The `start_offset` and `end_offset` indicate the character positions
 that the original word occupied in the original string.
+
+TIP: The `type` values like `<ALPHANUM>` vary per analyzer and can be ignored.
+The only place that they are used in Elasticsearch is in the
+{ref}analysis-keep-types-tokenfilter.html[`keep_types` token filter].
 
 The `analyze` API is a really useful tool for understanding what is happening
 inside Elasticsearch indices, and we will talk more about it as we progress.
