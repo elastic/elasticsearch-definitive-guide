@@ -1,6 +1,11 @@
 [[mapping-intro]]
 === Mapping
 
+In order to be able to treat date fields as dates, numberic fields as numbers,
+and string fields as full text or exact value strings, Elasticsearch needs to
+know what type of data each field contains.  This information is contained in
+the _mapping_.
+
 As explained in <<data-in-data-out>>, each document in an index has a _type_.
 Every type has its own _mapping_ or _schema definition_. A mapping
 defines the fields within a type, the datatype for each field,
@@ -98,6 +103,16 @@ Instead of assuming that your mapping is correct, check it!
 
 [[custom-field-mappings]]
 ==== Customizing field mappings
+
+While the basic field datatypes are sufficient for many cases, you will often
+need to customize the mapping for individual fields, especially string fields.
+Custom mappings allow you to:
+
+* distinguish between full text string fields and exact value string fields,
+* use language-specific analyzers,
+* optimize a field for partial matching,
+* specify custom date formats,
+* and much more.
 
 The most important attribute of a field is the `type`. For fields
 other than `string` fields, you will seldom need to map anything other
