@@ -34,8 +34,8 @@ going to disappoint customers by selling them stock that doesn't exist.
 The more frequently that changes are made, or the longer the gap between
 reading data and updating it, the more likely it is that we will lose changes.
 
-There are two approaches to ensuring that changes are not lost when
-making concurrent updates:
+In the database world, there are two commonly used approaches to ensuring that
+changes are not lost when making concurrent updates:
 
 _Pessimistic concurrency control_::
 
