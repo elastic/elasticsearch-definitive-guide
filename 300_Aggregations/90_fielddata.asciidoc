@@ -5,8 +5,9 @@ Aggregations work via a data structure known as _fielddata_ (briefly introduced
 in <<fielddata-intro>>).  Fielddata is often the largest consumer of memory
 in an Elasticsearch cluster, so it is important to understand how it works.
 
+[TIP]
 .Fielddata: memory vs. disk
-**********************************
+==================================================
 
 Fielddata can be loaded on-the-fly into memory, or built at index time and
 stored on disk.  Later, we will talk about on-disk fielddata in
@@ -14,7 +15,7 @@ stored on disk.  Later, we will talk about on-disk fielddata in
 currently the default mode of operation in Elasticsearch. This may well change
 in a future version.
 
-**********************************
+==================================================
 
 Fielddata exists because inverted indices are only efficient for certain operations.
 The inverted index excels at finding documents which contain a term.  It does not
@@ -90,13 +91,14 @@ Once the data has been uninverted, it is trivial to collect the unique tokens fr
 take the union of the two sets.
 
 
-*************************************
+[TIP]
+==================================================
 
 The fielddata cache is per-segment. In other words, when a new segment becomes
 visible to search, the fielddata caches from old segments remain valid. Only
 the data for the new segment needs to be loaded into memory.
 
-*************************************
+==================================================
 
 Thus, search and aggregations are closely intertwined.  Search finds documents
 using the inverted index.  Aggregations collect and aggregate values from
@@ -105,7 +107,8 @@ fielddata, which is itself generated from the inverted index.
 The rest of this chapter will be discussing various functionality that either
 decreases fielddata's memory footprint, or increases execution speed.
 
-*************************************
+[NOTE]
+==================================================
 
 Fielddata is not just used for aggregations.  It is required for any
 operation that needs to look up the value contained in a specific document.
@@ -113,4 +116,4 @@ Besides aggregations, this includes sorting, scripts which access field
 values, parent-child relationships (see <<parent-child>>), and certain types
 of queries or filters, such as the <<geo-distance,`geo_distance`>> filter.
 
-*************************************
+==================================================

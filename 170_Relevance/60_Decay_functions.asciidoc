@@ -129,14 +129,15 @@ If we were to set the `origin` to £100, then prices below £100 would receive a
 lower score. Instead, we set both the `origin` and the `offset` to £50.  That
 way, the score only decays for any prices above £100 (`origin + offset`).
 
+[TIP]
 .Tuning `function_score` clauses
-********************************************
+==================================================
 
 The `weight` parameter can be used to increase or decrease the contribution of
 individual clauses.  The `weight`, which defaults to `1.0`, is multiplied with
 the score from each clause before the scores are combined with the specified
 `score_mode`.
 
-********************************************
+==================================================
 
 

@@ -1,4 +1,4 @@
-[[heap_sizing]]
+[[heap-sizing]]
 === Heap: Sizing and Swapping
 
 The default installation of Elasticsearch is configured with a 1gb heap.  For
@@ -7,7 +7,7 @@ default heap values, your cluster is probably configured incorrectly.
 
 There are two ways to change the heap size in Elasticsearch.  The easiest is to
 set an environment variable called `ES_HEAP_SIZE`.  When the server process
-starts, it will read this environment variable and set the heap accordingly. 
+starts, it will read this environment variable and set the heap accordingly.
 As an example, you can set it via the command line with:
 
 [source,bash]
@@ -57,7 +57,7 @@ There is another reason to not allocate enormous heaps to Elasticsearch. As it t
 out, the JVM uses a trick to compress object pointers when heaps are less than
 ~32gb.
 
-In Java, all objects are allocated on the heap and referenced by a pointer.  
+In Java, all objects are allocated on the heap and referenced by a pointer.
 Ordinary Object Pointers (oops) point at these objects, and are traditionally
 the size of the CPU's native _word_: either 32 bits or 64 bits depending on the
 processor.  The pointer references the exact byte location of the value.
@@ -68,15 +68,15 @@ is more "wasted" space simply because the pointer is larger.  And worse than was
 space, the larger pointers eat up more bandwidth when moving values between
 main memory and various caches (LLC, L1, etc).
 
-Java uses a trick called "https://wikis.oracle.com/display/HotSpotInternals/CompressedOops[compressed oops]" 
-to get around this problem.  Instead of pointing at exact byte locations in 
-memory, the pointers reference _object offsets_.  This means a 32bit pointer can 
-reference 4 billion _objects_, rather than 4 billion bytes.  Ultimately, this 
-means the heap can grow to around 32gb of physical size while still using a 32bit 
+Java uses a trick called "https://wikis.oracle.com/display/HotSpotInternals/CompressedOops[compressed oops]"
+to get around this problem.  Instead of pointing at exact byte locations in
+memory, the pointers reference _object offsets_.  This means a 32bit pointer can
+reference 4 billion _objects_, rather than 4 billion bytes.  Ultimately, this
+means the heap can grow to around 32gb of physical size while still using a 32bit
 pointer.
 
-Once you cross that magical ~30-32gb boundary, the pointers switch back to 
-ordinary object pointers.  The size of each pointer grows, more CPU-memory 
+Once you cross that magical ~30-32gb boundary, the pointers switch back to
+ordinary object pointers.  The size of each pointer grows, more CPU-memory
 bandwidth is used and you effectively "lose" memory.  Infact, it takes until around
 40-50gb of allocated heap before you have the same "effective" memory of a 32gb
 heap using compressed oops.
@@ -116,7 +116,7 @@ It should be obvious, but it bears spelling out clearly: swapping main memory
 to disk will _crush_ server performance.  Think about it...an in-memory operation
 is one that needs to execute quickly.
 
-If memory swaps to disk, a 100 microsecond operation becomes one that take 10 
+If memory swaps to disk, a 100 microsecond operation becomes one that take 10
 milliseconds.  Now repeat that increase in latency for all other 10us operations.
 It isn't difficult to see why swapping is terrible for performance.
 

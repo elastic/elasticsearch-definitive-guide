@@ -40,13 +40,14 @@ PUT /fs/file/1
 <1> The file name.
 <2> The full path to the directory holding the file.
 
-************************
+[NOTE]
+==================================================
 
-We should also index `directory` documents so that we can list all files and
-sub-directories within a directory, but for brevity's sake, we will ignore
-that requirement.
+Really, we should also index `directory` documents so that we can list all
+files and sub-directories within a directory, but for brevity's sake, we will
+ignore that requirement.
 
-************************
+==================================================
 
 We also want to be able to search for files that live anywhere in the
 directory tree below a particular directory, the equivalent of:

@@ -48,7 +48,7 @@ search performance if left unchecked.  By default, Elasticsearch throttles the
 merge process so that search still has enough resources available to perform
 well.
 
-TIP: See the <<TODO>> section for advice about tuning merging for your use
+TIP: See <<segments-and-merging>> for advice about tuning merging for your use
 case.
 
 [[optimize-api]]

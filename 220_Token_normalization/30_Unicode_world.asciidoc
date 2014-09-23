@@ -70,8 +70,9 @@ PUT /my_index
 --------------------------------------------------
 <1> Normalize all tokens into the `nfkc` normalization form.
 
+[TIP]
 .When to normalize
-**************************************************
+==================================================
 
 Besides the `icu_normalizer` token filter mentioned above, there is also an
 `icu_normalizer` *character* filter, which does the same job as the token
@@ -83,7 +84,7 @@ However, if you plan on using a different tokenizer, such as the `ngram`,
 `edge_ngram` or `pattern` tokenizers, then it woud make sense to use the
 `icu_normalizer` character filter in preference to the token filter.
 
-**************************************************
+==================================================
 
 Usually, though, not only will you want to normalize the byte order of tokens,
 but also to lowercase them. This can be done with the `icu_normalizer` using

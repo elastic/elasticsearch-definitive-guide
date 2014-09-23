@@ -34,14 +34,15 @@ GET /my_index/blogpost/_search
 <3> The `comments.name` and `comments.age` clauses operate on the same nested
     document.
 
+[TIP]
 .Recursive nesting
-****************************************
+==================================================
 
 A `nested` field can contain other `nested` fields.  Similarly, a `nested`
 query can contain other `nested` queries -- the nesting hierarchy is applied
 as you would expect.
 
-****************************************
+==================================================
 
 Of course, a `nested` query could potentially match several nested documents.
 Each matching nested document would have its own relevance score, but these

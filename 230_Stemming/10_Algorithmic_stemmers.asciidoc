@@ -18,7 +18,9 @@ http://snowball.tartarus.org/[Snowball language] for creating stemming
 algorithms and a number of the stemmers available in Elasticsearch are
 written in Snowball.
 
-********************************************
+[TIP]
+.`kstem` token filter
+==================================================
 
 The {ref}analysis-kstem-tokenfilter.html[`kstem` token filter] is a stemmer
 for English which combines the algorithmic approach with a built-in
@@ -26,7 +28,7 @@ dictionary. The dictionary contains a list of root words and exceptions in
 order to avoid conflating words incorrectly. `kstem` tends to stem less
 aggressively than the Porter stemmer.
 
-********************************************
+==================================================
 
 ==== Using an algorithmic stemmer
 

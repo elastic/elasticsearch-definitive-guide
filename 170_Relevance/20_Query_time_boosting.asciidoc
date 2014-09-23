@@ -86,7 +86,8 @@ appear in the query DSL.  Instead, any boost values are combined and passsed
 down to the individual terms.  The `t.getBoost()` method returns any `boost`
 value applied to the term itself or to any of the queries higher up the chain.
 
-********************************
+[TIP]
+==================================================
 
 In fact, reading the <<explain,`explain`>> output is a little more complex
 than that. You won't see the `boost` value or `t.getBoost()` mentioned in the
@@ -95,4 +96,4 @@ than that. You won't see the `boost` value or `t.getBoost()` mentioned in the
 the `queryNorm` is the  same for every term, you will see that the `queryNorm`
 for a boosted term is higher than the `queryNorm` for an unboosted term.
 
-********************************
+==================================================

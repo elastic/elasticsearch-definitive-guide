@@ -275,12 +275,13 @@ PUT /my_index/user/_bulk
 GET /my_index/user/_search?sort=name.sort
 --------------------------------------------------
 
+.Binary sort keys
 **************************************************
 
-The first thing to notice is that the `sort` key returned with each document,
-which in earlier examples looked like `brown` and `böhm`, now looks like
-gobbledygook: `ᖔ乏昫တ倈⠀\u0001`.  The reason is that the `icu_collation` filter
-emits keys intended only for efficient sorting, not for any other purposes.
+Note that the `sort` key returned with each document, which in earlier
+examples looked like `brown` and `böhm`, now looks like gobbledygook:
+`ᖔ乏昫တ倈⠀\u0001`.  The reason is that the `icu_collation` filter emits keys
+intended only for efficient sorting, not for any other purposes.
 
 **************************************************
 
@@ -325,13 +326,14 @@ German phonebooks::
 { "language": "en", "variant": "@collation=phonebook" }
 -------------------------
 
+[TIP]
 .Supported locales
-*******************************
+==================================================
 
 You can read more about the locales supported by ICU here:
 http://userguide.icu-project.org/locale
 
-*******************************
+==================================================
 
 This example shows how to setup the German phonebook sort order:
 

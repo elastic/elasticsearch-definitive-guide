@@ -47,7 +47,7 @@ NOTE: The shared file system path must be accessible from all nodes in your
 cluster!
 
 This will create the repository and required metadata at the mount point.  There
-are also some other options which you may want to configure, depending on the 
+are also some other options which you may want to configure, depending on the
 performance profile of your nodes, network and repository location:
 
 - `max_snapshot_bytes_per_sec`: When snapshotting data into the repo, this controls
@@ -56,7 +56,7 @@ the throttling of that process.  The default is `20mb` per second
 how much the restore is throttled so that your network is not saturated.  The
 default is `20mb` per second
 
-Let's assume we have a very fast network and are ok with extra traffic, so we 
+Let's assume we have a very fast network and are ok with extra traffic, so we
 can increase the defaults:
 
 [source,js]
@@ -79,7 +79,7 @@ of the existing repository
 
 A repository can contain multiple snapshots.  Each snapshot is associated with a
 certain set of indices (all indices, some subset, a single index, etc).  When
-creating a snapshot, you specify which indices you are interested in and 
+creating a snapshot, you specify which indices you are interested in and
 give the snapshot a unique name.
 
 Let's start with the most basic snapshot command:
@@ -93,8 +93,10 @@ This will backup all open indices into a snapshot named `snapshot_1`, under the
 `my_backup` repository.  This call will return immediately and the snapshot will
 proceed in the background.
 
+[TIP]
 .Blocking for completion
-****
+==================================================
+
 Usually you'll want your snapshots to proceed as a background process, but occasionally
 you may want to wait for completion in your script.  This can be accomplished by
 adding a `wait_for_completion` flag:
@@ -106,12 +108,13 @@ PUT _snapshot/my_backup/snapshot_1?wait_for_completion=true
 
 This will block the call until the snapshot has completed.  Note: large snapshots
 may take a long time to return!
-****
+
+==================================================
 
 ==== Snapshotting particular indices
 
 The default behavior is to back up all open indices.  But say you are using marvel,
-and don't really want to backup all the diagnostic `.marvel` indices.  You 
+and don't really want to backup all the diagnostic `.marvel` indices.  You
 just don't have enough space to backup everything.
 
 In that case, you can specify which indices to backup when snapshotting your cluster:
@@ -193,7 +196,7 @@ It is important to use the API to delete snapshots, and not some other mechanism
 (deleting by hand, automated cleanup tools on S3, etc).  Because snapshots are
 incremental, it is possible that many snapshots are relying on "old" data.
 The Delete API understands what data is still in use by more recent snapshots,
-and will only delete unused segments.  
+and will only delete unused segments.
 
 If you do a manual file delete, however, you are at risk of seriously corrupting
 your backups because you are deleting data that is still in use.
@@ -226,7 +229,7 @@ A better option is to poll the `_status` API:
 GET _snapshot/my_backup/snapshot_3/_status
 ----
 
-The Status API returns immediately and gives a much more verbose output of 
+The Status API returns immediately and gives a much more verbose output of
 statistics:
 
 [source,js]
@@ -304,7 +307,7 @@ could not be completed.  Check your logs for more information
 ==== Canceling a Snapshot
 
 Finally, you may want to cancel a snapshot or restore.  Since these are long running
-processes, a typo or mistake when executing the operation could take a long time to 
+processes, a typo or mistake when executing the operation could take a long time to
 resolve...and use up valuable resources at the same time.
 
 To cancel a snapshot, simply delete the snapshot while it is in-progress:

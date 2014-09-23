@@ -67,14 +67,15 @@ That's it!  Queries, aggregations, sorting, and scripts will function as
 normal... they'll just be using doc values now.  There is no other
 configuration necessary.
 
+[TIP]
 .When to use doc values
-******************************************
+==================================================
 
 Use doc values freely.  The more you use them, the less stress you place on
 the heap.  It is possible that doc values will become the default format in
 the near future.
 
-******************************************
+==================================================
 
 
 

@@ -8,7 +8,7 @@ an bewildering array of statistics about each node in your cluster.
 Node Stats provides so many stats that, until you are accustomed to the output,
 you may be unsure which metrics are most important to keep an eye on.  We'll
 highlight the most important metrics to monitor (but note: we'd encourage you to
-log all the metrics provided -- or use Marvel -- because you'll never know when 
+log all the metrics provided -- or use Marvel -- because you'll never know when
 you need one stat or another)
 
 The Node Stats API can be executed with the following:
@@ -37,7 +37,7 @@ Starting at the top of the output, we see the cluster name and our first node:
 ...
 ----
 
-The nodes are listed in a hash, with the key being the UUID of the node.  Some 
+The nodes are listed in a hash, with the key being the UUID of the node.  Some
 information about the node's network properties are displayed (transport address,
 host, etc).  These values are useful for debugging discovery problems, where
 nodes won't join the cluster.  Often you'll see that the port being used is wrong,
@@ -62,7 +62,7 @@ on this particular node.
 ----
 
 - `docs` shows how many documents reside on
-this node, as well as the number of deleted docs which haven't been purged 
+this node, as well as the number of deleted docs which haven't been purged
 from segments yet.
 
 - The `store` portion indicates how much physical storage is consumed by the node.
@@ -117,28 +117,27 @@ things like updates.
 Also listed are times for indexing, how many docs are currently being indexed,
 and similar statistics for deletes.
 
-- `get` shows statistics about get-by-ID statistics.  This includes GETs and 
+- `get` shows statistics about get-by-ID statistics.  This includes GETs and
 HEAD requests for a single document
 
 - `search` describes the number of active searches (`open_contexts`), number of
-queries total and how much time has been spent on queries since the node was 
+queries total and how much time has been spent on queries since the node was
 started.  The ratio between `query_total / query_time_in_milis` can be used as a
 rough indicator for how efficient your queries are.  The larger the ratio,
 the more time each query is taking and you should consider tuning or optimization.
 +
 The fetch statistics details the second half of the query process (the "fetch" in
 query-then-fetch).  If more time is spent in fetch than query, this can be an
-indicator of slow disks or very large documents which are being fetched.  Or 
+indicator of slow disks or very large documents which are being fetched.  Or
 potentially search requests with too large of paginations (`size: 10000`, etc).
 
-- `merges` contains information about Lucene segment merges.  It will tell you 
+- `merges` contains information about Lucene segment merges.  It will tell you
 how many merges are currently active, how many docs are involved, the cumulative
 size of segments being merged and how much time has been spent on merges in total.
 +
 Merge statistics can be important if your cluster is write-heavy.  Merging consumes
 a large amount of disk I/O and CPU resources.  If your index is write-heavy and
-you see large merge numbers, be sure to read the section on optimizing for indexing
-(TODO).
+you see large merge numbers, be sure to read <<indexing-performance>>.
 +
 Note: updates and deletes will contribute to large merge numbers too, since they
 cause segment "fragmentation" which needs to be merged out eventually.
@@ -235,13 +234,13 @@ Before we describe the stats, it is useful to give a crash course in garbage
 collection and it's impact on Elasticsearch.  If you are familar with garbage
 collection in the JVM, feel free to skip down.
 
-Java is a _garbage collected_ language, which means that the programmer does 
+Java is a _garbage collected_ language, which means that the programmer does
 not manually manage memory allocation and deallocation.  The programmer simply
 writes code, and the Java Virtual Machine (JVM) manages the process of allocating
 memory as needed, and then later cleaning up that memory when no longer needed.
 
 When memory is allocated to a JVM process, it is allocated in a big chunk called
-the _heap_.  The JVM then breaks the heap into two different groups, referred to as 
+the _heap_.  The JVM then breaks the heap into two different groups, referred to as
 "generations":
 
 - Young (or Eden): the space where newly instantiated objects are allocated. The
@@ -258,7 +257,7 @@ If an object has survived several young-gen GCs, it will be "tenured" into the
 old generation.
 
 A similar process happens in the old generation:  when the space becomes full, a
-garbage collection is started and "dead" objects are removed. 
+garbage collection is started and "dead" objects are removed.
 
 Nothing comes for free, however.  Both the young and old generation garbage collectors
 have phases which "stop the world".  During this time, the JVM literally halts
@@ -290,7 +289,7 @@ to service the normal indexing and query load.
 In short, long GCs are bad and they need to be minimized as much as possible.
 **********************************
 
-Because garbage collection is so critical to ES, you should become intimately 
+Because garbage collection is so critical to ES, you should become intimately
 familiar with this section of the Node Stats API:
 
 [source,js]
@@ -304,70 +303,70 @@ familiar with this section of the Node Stats API:
                "heap_committed_in_bytes": 1038876672,
                "heap_max_in_bytes": 1038876672,
                "non_heap_used_in_bytes": 38680680,
-               "non_heap_committed_in_bytes": 38993920, 
+               "non_heap_committed_in_bytes": 38993920,
 
 ----
 
-- The `jvm` section first lists some general stats about heap memory usage.  You 
+- The `jvm` section first lists some general stats about heap memory usage.  You
 can see how much of the heap is being used, how much is committed (actually allocated
-to the process), and the max size the heap is allowed to grow to.  Ideally, 
+to the process), and the max size the heap is allowed to grow to.  Ideally,
 `heap_committed_in_bytes` should be identical to `heap_max_in_bytes`.  If the
 committed size is smaller, the JVM will have to resize the heap eventually...
 and this is a very expensive process.  If your numbers are not identical, see
-this section <<TODO>> in the next chapter to configure it correctly.
+<<heap-sizing>> for how to configure it correctly.
 +
 The `heap_used_percent` metric is a useful number to keep an eye on.  Elasticsearch
 is configured to initiate GCs when the heap reaches 75% full.  If your node is
 consistently >= 75%, that indicates that your node is experiencing "memory pressure".
 This is a warning sign that slow GCs may be in your near future.
 +
-If the heap usage is consistently >=85%, you are in trouble.  Heaps over 90-95% 
-are in risk of horrible performance with long 10-30s GCs at best, Out-of-memory 
-(OOM) exceptions at worst. 
+If the heap usage is consistently >=85%, you are in trouble.  Heaps over 90-95%
+are in risk of horrible performance with long 10-30s GCs at best, Out-of-memory
+(OOM) exceptions at worst.
 
 [source,js]
 ----
-               "pools": {
-                  "young": {
-                     "used_in_bytes": 138467752,
-                     "max_in_bytes": 279183360,
-                     "peak_used_in_bytes": 279183360,
-                     "peak_max_in_bytes": 279183360
-                  },
-                  "survivor": {
-                     "used_in_bytes": 34865152,
-                     "max_in_bytes": 34865152,
-                     "peak_used_in_bytes": 34865152,
-                     "peak_max_in_bytes": 34865152
-                  },
-                  "old": {
-                     "used_in_bytes": 283919256,
-                     "max_in_bytes": 724828160,
-                     "peak_used_in_bytes": 283919256,
-                     "peak_max_in_bytes": 724828160
-                  }
-               }
-            },
+   "pools": {
+      "young": {
+         "used_in_bytes": 138467752,
+         "max_in_bytes": 279183360,
+         "peak_used_in_bytes": 279183360,
+         "peak_max_in_bytes": 279183360
+      },
+      "survivor": {
+         "used_in_bytes": 34865152,
+         "max_in_bytes": 34865152,
+         "peak_used_in_bytes": 34865152,
+         "peak_max_in_bytes": 34865152
+      },
+      "old": {
+         "used_in_bytes": 283919256,
+         "max_in_bytes": 724828160,
+         "peak_used_in_bytes": 283919256,
+         "peak_max_in_bytes": 724828160
+      }
+   }
+},
 ----
 
 - The `young`, `survivor` and `old` sections will give you a breakdown of memory
-usage of each generation in the GC.  These stats are handy to keep an eye on 
+usage of each generation in the GC.  These stats are handy to keep an eye on
 relative sizes, but are often not overly important when debugging problems.
 
 [source,js]
 ----
-            "gc": {
-               "collectors": {
-                  "young": {
-                     "collection_count": 13,
-                     "collection_time_in_millis": 923
-                  },
-                  "old": {
-                     "collection_count": 0,
-                     "collection_time_in_millis": 0
-                  }
-               }
-            }
+"gc": {
+   "collectors": {
+      "young": {
+         "collection_count": 13,
+         "collection_time_in_millis": 923
+      },
+      "old": {
+         "collection_count": 0,
+         "collection_time_in_millis": 0
+      }
+   }
+}
 ----
 
 - `gc` section shows the garbage collection counts and cumulative time for both
@@ -380,16 +379,17 @@ have a small `collection_time_in_millis`.  These are cumulative counts, so it is
 hard to give an exact number when you should start worrying (e.g. a node with a
 1-year uptime will have a large count even if it is healthy) -- this is one of the
 reasons why tools such as Marvel are so helpful.  GC counts _over time_ are the
-important consideration.  
+important consideration.
 +
 Time spent GC'ing is also important.  For example, a certain amount of garbage
 is generated while indexing documents.  This is normal, and causes a GC every
-now-and-then.  These GCs are almost always fast -- a millisecond or two -- and
-do not impact the node.  This is much different from 10 second GCs.
+now-and-then.  These GCs are almost always fast and have little effect on the
+node -- young generation takes a millisecond or two, and old generation takes
+a few hundred milliseconds.  This is much different from 10 second GCs.
 +
 Our best advice is to collect collection counts and duration periodically (or use Marvel)
 and keep an eye out for frequent GCs.  You can also enable slow-GC logging,
-discussed in <<TODO>>
+discussed in <<logging>>.
 
 ==== Threadpool Section
 
@@ -402,23 +402,23 @@ There are about a dozen threadpools, but they all share the same format:
 
 [source,js]
 ----
-          "index": {
-             "threads": 1,
-             "queue": 0,
-             "active": 0,
-             "rejected": 0,
-             "largest": 1,
-             "completed": 1
-          }
+  "index": {
+     "threads": 1,
+     "queue": 0,
+     "active": 0,
+     "rejected": 0,
+     "largest": 1,
+     "completed": 1
+  }
 ----
 
 Each threadpool lists the number of threads that are configured (`threads`),
 how many of those threads are actively processing some work (`active`) and how
-many work units are sitting in a queue (`queue`).  
+many work units are sitting in a queue (`queue`).
 
 If the queue fills up to its limit, new workunits will begin to be rejected and
 you will see that reflected in the `rejected` statistic.  This is often a sign
-that your cluster is starting to bottleneck on some resources, since a full 
+that your cluster is starting to bottleneck on some resources, since a full
 queue means your node/cluster is processing at maximum speed but unable to keep
 up with the influx of work.
 
@@ -437,7 +437,7 @@ let you know that your cluster is at maximum capacity, which is much better than
 sticking data into an in-memory queue.  Increasing the queue size doesn't increase
 performance, it just hides the problem.  If your cluster can only process 10,000
 doc/s, it doesn't matter if the queue is 100 or 10,000,000...your cluster can
-still only process 10,000 docs/s.  
+still only process 10,000 docs/s.
 
 The queue simply hides the performance problem and carries real risk of data-loss.
 Anything sitting in a queue is by definition not processed yet.  If the node
@@ -465,7 +465,7 @@ are good to keep an eye on:
 
 - `indexing`: threadpool for normal indexing requests
 - `bulk`: bulk requests, which are distinct from the non-bulk indexing requests
-- `get`: GET-by-ID operations 
+- `get`: GET-by-ID operations
 - `search`: all search and query requests
 - `merging`: threadpool dedicated to managing Lucene merges
 
@@ -474,7 +474,7 @@ are good to keep an eye on:
 Continuing down the Node Stats API, you'll see a bunch of statistics about your
 filesystem:  free space, data directory paths, disk IO stats, etc.  If you are
 not monitoring free disk space, you can get those stats here.  The Disk IO stats
-are also handy, but often more specialized command-line tools (`iostat`, etc) 
+are also handy, but often more specialized command-line tools (`iostat`, etc)
 are more useful.
 
 Obviously, Elasticsearch has a difficult time functioning if you run out of disk
@@ -509,9 +509,9 @@ keep-alive connections are important for performance, since building up and tear
 down sockets is expensive (and wastes file descriptors).  Make sure your clients
 are configured appropriately.
 
-==== Circuit Breaker 
+==== Circuit Breaker
 
-Finally, we come to the last section: stats about the field data circuit breaker 
+Finally, we come to the last section: stats about the field data circuit breaker
 (introduced in <<circuit-breaker>>):
 
 [source,js]

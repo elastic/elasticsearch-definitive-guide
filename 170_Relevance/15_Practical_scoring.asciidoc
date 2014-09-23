@@ -84,7 +84,8 @@ The query normalization factor (`queryNorm`) is an attempt to ``normalize'' a
 query so that the results from one query may be compared with the results of
 another.
 
-**************************
+[TIP]
+==================================================
 
 Even though the intent of the query norm is to make results from different
 queries comparable, it doesn't work very well.  Really, the only purpose of
@@ -92,7 +93,7 @@ the relevance `_score` is to sort the results of the current query in the
 correct order. You should not try to compare the relevance scores from
 different queries.
 
-**************************
+==================================================
 
 This factor is calculated at the beginning of the query. The actual
 calculation depends on the queries involved but a typical implementation would

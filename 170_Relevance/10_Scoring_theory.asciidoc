@@ -155,14 +155,15 @@ These three factors -- term frequency, inverse document frequency, and field
 length norm -- are calculated and stored at index time.  Together, they are
 used to calculate the _weight_ of a single term in a particular document.
 
+[TIP]
 .Document vs Field
-***************************
+==================================================
 
 When we refer to documents in the above formulae, we are actually talking about
 a field within a document.  Each field has its own inverted index and thus,
 for TF/IDF purposes, the value of the field is the value of the document.
 
-***************************
+==================================================
 
 When we run a simple `term` query with `explain` set to `true` (see
 <<explain>>), you will see that the only factors involved in calculating the
@@ -221,7 +222,8 @@ A vector is really just a one-dimensional array containing numbers, like:
 In the Vector Space Model, each number in the vector is the _weight_ of a term,
 as calculated with <<tfidf,Term Frequency/Inverse Document Frequency>>.
 
-*****************************************
+[TIP]
+==================================================
 
 While TF/IDF is the default way of calculating term weights for the Vector
 Space Model, it is not the only way.  Other models like Okapi-BM25 exist and
@@ -229,7 +231,7 @@ are available in Elasticsearch.  TF/IDF is the default because it is a
 simple, efficient algorithm which produces high quality search results, and
 has stood the test of time.
 
-*****************************************
+==================================================
 
 Imagine that we have a query for ``happy hippopotamus''.  A common word like
 `happy` will have a low weight, while an uncommon term like `hippopotamus`
@@ -265,7 +267,8 @@ the query is large, so it is of low relevance.  Document 2 is closer to the
 query, meaning that it is reasonably relevant, and document 3 is a perfect
 match.
 
-**********************************************
+[TIP]
+==================================================
 
 In practice, only two-dimensional vectors (queries with two terms) can  be
 plotted easily on a graph. Fortunately, _linear algebra_ -- the branch of
@@ -276,7 +279,7 @@ same principles explained above to queries which consist of many terms.
 You can read more about how to compare two vectors using _Cosine Similarity_
 at http://en.wikipedia.org/wiki/Cosine_similarity.
 
-**********************************************
+==================================================
 
 Now that we have talked about the theoretical basis of scoring, we can move on
 to see how scoring is implemented in Lucene.

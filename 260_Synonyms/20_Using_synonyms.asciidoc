@@ -36,7 +36,8 @@ PUT /my_index
 <2> We will discuss synonym formats in <<synonym-formats>>.
 <3> Then we create a custom analyzer which uses the `my_synonym_filter`.
 
-**************************************
+[TIP]
+==================================================
 
 Synonyms can be specified inline with the `synonyms` parameter, or in a
 synonyms file which must be present on every node in the cluster. The path to
@@ -45,7 +46,7 @@ should be either absolute or relative to the Elasticsearch `config` directory.
 See <<updating-stopwords>> for techniques that can be used to refresh the
 synonyms list.
 
-**************************************
+==================================================
 
 Testing out our analyzer with the `analyze` API shows the following:
 

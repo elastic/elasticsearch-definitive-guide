@@ -81,8 +81,9 @@ document like ``Quick **AND THE** dead'' higher than ``**THE** quick but
 dead''.  This approach greatly reduces the number of documents that need to be
 examined and scored.
 
+[TIP]
 .`and` query
-********************************
+==================================================
 
 Setting the operator parameter to `and` would make *all* low frequency terms
 required, and score documents that contain *all* high frequency terms higher.
@@ -91,7 +92,7 @@ frequency terms.  If you would prefer all low and high frequency terms to be
 required, then you should use a `bool` query instead.   As we saw in
 <<stopwords-and>>, this is already an efficient query.
 
-********************************
+==================================================
 
 ==== Controlling precision
 

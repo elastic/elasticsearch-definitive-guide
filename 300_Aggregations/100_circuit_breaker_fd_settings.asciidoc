@@ -103,6 +103,7 @@ With this setting in place, the least recently used fielddata will be evicted
 to make space for newly loaded data.
 
 [WARNING]
+.Fielddata expiry
 ====
 There is another setting which you may see online:  `indices.fielddata.cache.expire`
 
@@ -175,6 +176,7 @@ If the estimated query size is larger than the limit, the circuit breaker is
 *before* data is loaded, which means that you won't hit an
 OutOfMemoryException.
 
+.Available circuit breakers
 ***************************************
 
 Elasticsearch has a family of circuit breakers, all of which work to ensure
@@ -227,8 +229,9 @@ exception which can be handled by your application.  An exception is better
 than a crash. These exceptions should also encourage you to reassess your
 query: why *does* a single query need more than 60% of the heap?
 
+[TIP]
 .Circuit breaker and Fielddata size
-******************************************
+==================================================
 
 In <<fielddata-size>> we spoke about adding a limit to the size of fielddata,
 to ensure that old unused fielddata can be evicted.  The relationship between
@@ -236,7 +239,8 @@ to ensure that old unused fielddata can be evicted.  The relationship between
 important one.  If the circuit breaker limit is lower than the cache size,
 then no data will ever be evicted.  In order for it to work properly, the
 circuit breaker limit *must* be higher than the cache size.
-******************************************
+
+==================================================
 
 It is important to note that the circuit breaker compares estimated query size
 against the total heap size, *not* against the actual amount of heap memory

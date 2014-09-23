@@ -12,7 +12,8 @@ with `slop`).
 
 And of course, this cost is paid at search time instead of at index time.
 
-**************************************************************************
+[TIP]
+==================================================
 
 Usually the extra cost of phrase queries is not as scarey as these numbers
 suggest. Really, the difference in performance is a testimony to just how fast
@@ -26,7 +27,7 @@ many many identical terms repeated in many positions. Using higher `slop`
 values in this case results in a huge growth in the number of position
 calculations.
 
-**************************************************************************
+==================================================
 
 So what can we do to limit the performance cost of phrase and proximity
 queries? One useful approach is to reduce the total number of documents that

@@ -198,7 +198,8 @@ So, before aggregating across fields, take a second to verify that the fields ar
 `not_analyzed`.  And if you want to aggregate analyzed fields, ensure the analysis
 process is not creating an obscene number of tokens.
 
-***************************************
+[TIP]
+==================================================
 
 At the end of the day, it doesn't matter whether a field is `analyzed` or
 `not_analyzed`.   The more unique values in a field -- the higher the
@@ -206,5 +207,5 @@ cardinality of the field --  the more memory that is required. This is
 especially true for string fields where every unique string must be held in
 memory -- longer strings use more memory.
 
-***************************************
+==================================================
 

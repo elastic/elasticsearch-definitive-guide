@@ -29,7 +29,8 @@ but also each word *and its neighbour* as single terms:
 
 These word pairs (or _bigrams_) are known as _shingles_.
 
-**************************************************************************
+[TIP]
+==================================================
 
 Shingles are not restricted to being pairs of words; you could index word
 triplets (_trigrams_) as well:
@@ -40,7 +41,7 @@ Trigrams give you a higher degree of precision, but greatly increases the
 number of unique terms in the index. Bigrams are sufficient for most use
 cases.
 
-**************************************************************************
+==================================================
 
 Of course, shingles are only useful if the user enters their query in the same
 order as in the original document; a query for `"sue alligator"` would match

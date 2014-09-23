@@ -81,15 +81,16 @@ each result, in the `sort` element:
 You can set the `unit` to return these values in whatever form makes sense for
 your application.
 
+[TIP]
 .Multi-location sorting
-****************************
+==================================================
 
 Geo-distance sorting can also handle multiple geo-points, both in the document
 and in the sort parameters.  Use the `sort_mode` to specify whether it should
 use the `min`, `max`, or `avg` distance between each combination of locations.
 This can be used to return ``friends nearest to my work and home locations''.
 
-****************************
+==================================================
 
 [[scoring-by-distance]]
 ==== Scoring by distance

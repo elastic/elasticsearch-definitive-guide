@@ -1,7 +1,7 @@
 
 === Restoring from a snapshot
 
-Once you've backed up some data, restoring it is very easy: simply add `_restore` 
+Once you've backed up some data, restoring it is very easy: simply add `_restore`
 to the ID of the snapshot you wish to restore into your cluster:
 
 [source,js]
@@ -14,7 +14,7 @@ If `snapshot_1` contains five different indices, all five will be restored into
 our cluster.  Like the Snapshot API, it is possible to select which indices
 we want to restore.
 
-There are also additional options for renaming indices.  This allows you to 
+There are also additional options for renaming indices.  This allows you to
 match index names with a pattern, then provide a new name during the restore process.
 This is useful if you want to restore old data to verify it's contents, or perform
 some other processing, without replacing existing data.  Let's restore
@@ -22,7 +22,7 @@ a single index from the snapshot and provide a replacement name:
 
 [source,js]
 ----
-POST /_snapshot/my_backup/snapshot_1/_restore 
+POST /_snapshot/my_backup/snapshot_1/_restore
 {
     "indices": "index_1", <1>
     "rename_pattern": "index_(.+)", <2>
@@ -36,9 +36,11 @@ snapshot
 
 This will restore `index_1` into your cluster, but rename it to `restored_index_1`.
 
+[TIP]
 .Blocking for completion
-****
-Similar to snapshotting, the restore command will return immediately and the 
+==================================================
+
+Similar to snapshotting, the restore command will return immediately and the
 restoration process will happen in the background.  If you would prefer your HTTP
 call to block until the restore is finished, simply add the `wait_for_completion`
 flag:
@@ -47,7 +49,8 @@ flag:
 ----
 POST _snapshot/my_backup/snapshot_1/_restore?wait_for_completion=true
 ----
-****
+
+==================================================
 
 
 ==== Monitoring Restore operations

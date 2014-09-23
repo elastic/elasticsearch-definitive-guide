@@ -34,7 +34,7 @@ to determine which one had the best "effect".
 measure against
 3. Make sure performance tests run for a long time (30+ minutes) so that you can
 evaluate long-term performance, not short-term spikes or latencies.  Some events
-(such as segment merging, GCs, etc) won't happen right away, so the performance 
+(such as segment merging, GCs, etc) won't happen right away, so the performance
 profile can change over time.
 4. Begin making single changes to the baseline defaults.  Test these rigorously,
 and if performance improvement is acceptable, keep the setting and move on to the
@@ -92,7 +92,7 @@ rate of large segment merges is relatively rare.
 But sometimes merging falls behind the ingestion rate.  If this happens, Elasticsearch
 will automatically throttle indexing requests to a single thread.  This prevents
 a "segment explosion" problem where hundreds of segments are generated before
-they can be merged. Elasticsearch will log INFO level messages stating `now 
+they can be merged. Elasticsearch will log INFO level messages stating `now
 throttling indexing` when it detects merging falling behind indexing.
 
 Elasticsearch defaults here are conservative: you don't want search performance
@@ -142,7 +142,7 @@ the number of threads that can concurrently access the disk per index.  This set
 will allow `max_thread_count + 2` threads to operate on the disk at one time,
 so a setting of `1` will allow 3 threads.
 
-For SSDs, you can ignore this setting.  The default is 
+For SSDs, you can ignore this setting.  The default is
 `Math.min(3, Runtime.getRuntime().availableProcessors() / 2)` which works well
 for SSD.
 
@@ -176,7 +176,7 @@ functionality.  It is optimized to avoid version lookups, since the autogenerate
 ID is unique.
 
 - If you are using your own ID, try to pick an ID that is http://blog.mikemccandless.com/2014/05/choosing-fast-unique-identifier-uuid.html[friendly to Lucene].  Examples include zero-padded
-sequential IDs, UUID-1 and nanotime; these IDs have consistent, "sequential" 
+sequential IDs, UUID-1 and nanotime; these IDs have consistent, "sequential"
 patterns which compress well.  In contrast, IDs such as UUID-4 are essentially
 random, which offer poor compression and slow down Lucene.
 

@@ -25,7 +25,8 @@ only keeps documents which contain *all* of the search terms in the same
 would not match any of our documents because no document contains the word
 `"quick"` immediately followed by `"fox"`.
 
-****
+[TIP]
+==================================================
 
 The `match_phrase` query can also be written as a `match` query with type
 `phrase`:
@@ -41,7 +42,7 @@ The `match_phrase` query can also be written as a `match` query with type
 --------------------------------------------------
 // SENSE: 120_Proximity_Matching/05_Match_phrase_query.json
 
-****
+==================================================
 
 ==== Term positions
 
@@ -103,7 +104,8 @@ For a document to be considered a match for the phrase ``quick brown fox'':
 
 If any of these conditions is not met, the document is not considered a match.
 
-**************************************************
+[TIP]
+==================================================
 
 Internally, the `match_phrase` query use the low-level `span` query family to
 do position-aware matching. Span queries are term-level queries, so they have
@@ -114,4 +116,4 @@ Thankfully, most people never need to use the `span` queries directly as the
 fields, like patent searches, use these low-level queries to perform very
 specific carefully constructed positional searches.
 
-**************************************************
+==================================================

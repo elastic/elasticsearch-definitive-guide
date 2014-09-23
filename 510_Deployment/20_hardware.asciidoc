@@ -4,7 +4,7 @@
 If you've been following the normal development path, you've probably been playing
 with Elasticsearch on your laptop, or a small cluster of machines laying around.
 But when it comes time to deploy Elasticsearch to production, there are a few
-recommendations that you should consider.  Nothing is a hard-and-fast rule; 
+recommendations that you should consider.  Nothing is a hard-and-fast rule;
 Elasticsearch is used for a wide range of tasks and on bewildering array of
 machines.  But they provide good starting points based on our experience with
 production clusters
@@ -21,7 +21,7 @@ great effect.
 A machine with 64gb of RAM is the ideal sweet-spot, but 32gb and 16gb machines
 are also very common.  Less than 8gb tends to be counterproductive (you end up
 needing many, many small machines) and greater than 64gb has problems which we will
-discuss in <<heap_sizing>>
+discuss in <<heap-sizing>>
 
 ==== CPUs
 
@@ -48,11 +48,11 @@ SSDs are the way to go.
 .Check your IO Scheduler
 ****
 If you are using SSDs, make sure your OS I/O Scheduler is configured correctly.
-When you write data to disk, the I/O Scheduler decides when that data is 
+When you write data to disk, the I/O Scheduler decides when that data is
 _actually_ sent to the disk.  The default under most *nix distributions is a
-scheduler called `cfq` (Completely Fair Queuing).  
+scheduler called `cfq` (Completely Fair Queuing).
 
-This scheduler allocates "time slices" to each process, and then optimizes the 
+This scheduler allocates "time slices" to each process, and then optimizes the
 delivery of these various queues to the disk.  It is optimized for spinning media:
 the nature of rotating platters means it is more efficient to write data to disk
 based on physical layout.
@@ -67,13 +67,13 @@ to write throughput just by using the correct scheduler.
 ****
 
 If you use spinning media, try to obtain the fastest disks possible (high
-performance server disks 15k RPM drives).  
+performance server disks 15k RPM drives).
 
 Using RAID 0 is an effective way to increase disk speed, for both spinning disks
 and SSD.  There is no need to use mirroring or parity variants of RAID, since
 high-availability is built into Elasticsearch via replicas.
 
-Finally, avoid network-attached storages (NAS).  People routinely claim their 
+Finally, avoid network-attached storages (NAS).  People routinely claim their
 NAS solution is faster and more reliable than local drives.  Despite these claims,
 we have never seen NAS live up to their hype.  NAS are often slower, display
 larger latencies with a wider deviation in average latency, and are a single
@@ -93,18 +93,18 @@ distances.
 Elasticsearch clusters assume that all nodes are equal...not that half the nodes
 are actually 150ms distant in another datacenter.  Larger latencies tend to
 exacerbate problems in distributed systems and make debugging and resolution
-more difficult.  
+more difficult.
 
 Similar to the NAS argument, everyone claims their pipe between data-centers is
 robust and low latency.  This is true...until it isn't (a network failure will
-happen eventually, you can count on it).  From our experience, the hassle of 
+happen eventually, you can count on it).  From our experience, the hassle of
 managing cross-datacenter clusters is simply not worth the cost.
 
 ==== General Considerations
 
 It is possible nowadays to obtain truly enormous machines.  Hundreds of gigabytes
 of RAM with dozens of CPU cores.  Conversely, it is also possible to spin up
-thousands of small virtual machines in cloud platforms such as EC2.  Which 
+thousands of small virtual machines in cloud platforms such as EC2.  Which
 approach is best?
 
 In general, it is better to prefer "medium" to "large" boxes.  Avoid small machines

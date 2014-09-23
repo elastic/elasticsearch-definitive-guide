@@ -21,14 +21,15 @@ The `prefix` query is a low-level query that works at the term level.  It
 doesn't analyze the query string before searching -- it assumes that you have
 passed it the exact prefix that you want to find.
 
-**************************************************
+[TIP]
+==================================================
 
 By default, the `prefix` query does no relevance scoring.  It just finds
 matching documents and gives them all a score of `1`.  Really it behaves more
 like a filter than a query.  The only practical difference between the
 `prefix` query and the `prefix` filter is that the filter can be cached.
 
-**************************************************
+==================================================
 
 
 Previously we said that ``you can only find terms that exist in the inverted

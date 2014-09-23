@@ -26,13 +26,14 @@ Common words that appear in many documents in the index, like `the`, `and` and
 `is`. These words  have a low weight and contribute little to the relevance
 score.
 
-**********************************************
+[TIP]
+==================================================
 
 Of course, frequency is really a scale rather than just two points labelled
 _low_ and _high_. We just draw a line at some arbitrary point and say that any
 terms below that line are low frequency and above the line are high frequency.
 
-**********************************************
+==================================================
 
 Which terms are low or high frequency depend on the documents themselves.  The
 word `and` may be a low frequency term if all of the documents are in Chinese.

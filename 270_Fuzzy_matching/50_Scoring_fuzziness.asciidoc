@@ -22,12 +22,13 @@ By default, the `match` query gives all fuzzy matches the constant score of 1.
 This is sufficient to add potential matches on to the end of the result list,
 without interfering with the relevance scoring of non-fuzzy queries.
 
+[TIP]
 .Use suggesters, rather than fuzzy queries
-*************************************
+==================================================
 
 Fuzzy queries alone are much less useful than they initially appear.  They are
 better used as part of a ``bigger'' feature, such as the _search-as-you-type_
 {ref}search-suggesters-completion.html[`completion` suggester] or the
 _did-you-mean_ {ref}search-suggesters-phrase.html[`phrase` suggester].
 
-*************************************
+==================================================

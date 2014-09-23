@@ -169,13 +169,14 @@ An interesting property of the `hunspell` stemmer, as can be seen in the
 example above, is that it can remove prefixes as well as as suffixes. Most
 algorithmic stemmers remove suffixes only.
 
-***********************************************
+[TIP]
+==================================================
 
 Hunspell dictionaries can consume a few megabytes of RAM.  Fortunately,
 Elasticsearch only creates a single instance of a dictionary per node.  All
 shards which use the same Hunspell analyzer share the same instance.
 
-***********************************************
+==================================================
 
 [[hunspell-dictionary-format]]
 ==== Hunspell dictionary format

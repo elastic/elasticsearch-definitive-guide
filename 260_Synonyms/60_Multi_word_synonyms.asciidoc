@@ -93,14 +93,15 @@ The explanation from the above is:
 which would match documents containg `u is of america` but wouldn't match any
 document that didn't contain the term `america`.
 
+[TIP]
 .Synonyms and highlighting
-***********************************
+==================================================
 
 Multi-word synonyms affects highlighting in a similar way.  A query for `USA`
 could end up returning a highlighted snippet like: ``The *United* *States*
 *is* *wealthy*''.
 
-***********************************
+==================================================
 
 ==== Use simple contraction for phrase queries
 

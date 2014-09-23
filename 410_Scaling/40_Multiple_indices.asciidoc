@@ -65,7 +65,8 @@ to `tweets_1` and `tweets_2` is perfectly valid.  However, indexing requests can
 only target a single index. For this reason, we have to switch the index alias
 to point only to the new index.
 
-****************************
+[TIP]
+==================================================
 
 A document `GET` request, like an indexing request, can only target one index.
 This makes retrieving a document by ID a bit more complicated in this
@@ -73,7 +74,7 @@ scenario.  Instead, run a search request with the
 {ref}query-dsl-ids-query.html[`ids` query], or do a
 {ref}docs-multi-get.html[`multi-get`] request on `tweets_1` and `tweets_2`.
 
-****************************
+==================================================
 
 Using multiple indices to expand index capacity on the fly is of particular
 benefit when dealing with time-based data such as logs or social event

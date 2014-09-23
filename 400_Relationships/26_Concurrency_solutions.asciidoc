@@ -36,12 +36,13 @@ solutions using Elasticsearch, all of which involve some form of locking:
 * <<document-locking>>
 * <<tree-locking>>
 
-************************************
+[TIP]
+==================================================
 
 The solutions described below could also be implemented by applying the same
 principles using some external system instead of Elasticsearch.
 
-************************************
+==================================================
 
 [[global-lock]]
 ==== Global lock
