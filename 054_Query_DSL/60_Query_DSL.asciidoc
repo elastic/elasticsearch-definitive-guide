@@ -120,7 +120,7 @@ clauses can be nested within each other, allowing the expression
 of very complex logic.
 
 As an example, the following query looks for emails that contain
-`"business opportunity"` and must either be starred, or both be in the Inbox
+`"business opportunity"` and should either be starred, or be both in the Inbox
 and not marked as spam:
 
 [source,js]
