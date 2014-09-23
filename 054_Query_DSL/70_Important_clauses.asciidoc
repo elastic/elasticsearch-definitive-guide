@@ -214,6 +214,6 @@ match *both* conditions will rank even higher:
 --------------------------------------------------
 // SENSE: 054_Query_DSL/70_Bool_query.json
 
-If there are no `must` clauses, then at least one `should` clause has to
-match, but if there is at least one `must` clause, then no `should`
-clauses are required to match.
+TIP: If there are no `must` clauses, then at least one `should` clause has to
+match, but if there is at least one `must` clause, then no `should` clauses
+are required to match.
