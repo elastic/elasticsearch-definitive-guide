@@ -41,7 +41,7 @@ If you are using Java, you may wonder when to use the TransportClient vs the
 NodeClient.  As discussed at the beginning of the book, the TransportClient
 acts as a communication layer between the cluster and your application.  It knows
 the API and can automatically round-robin between nodes, sniff the cluster for you,
-etc.  But it "external" to the cluster, similar to the REST clients.
+etc.  But it is "external" to the cluster, similar to the REST clients.
 
 The NodeClient, on the other hand, is actually a node within the cluster (but
 does not hold data, and cannot become master).  Because it is a node, it knows
@@ -56,7 +56,7 @@ connections to the cluster, a TransportClient is much "lighter" than a NodeClien
 since it is not part of a cluster.
 +
 Similarly, if you need to create thousands of connections, you don't want to
-have thousands of NodeClients join the cluster.  The TC will be a better choice
+have thousands of NodeClients join the cluster.  The TC will be a better choice.
 
 - On the flipside, if you only need a few long-lived, persistent connection
 objects to the cluster, a NodeClient can be a bit more efficient since it knows
