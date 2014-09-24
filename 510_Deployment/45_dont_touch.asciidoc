@@ -10,9 +10,9 @@ Or both.
 
 ==== Garbage Collector
 
-As briefly introduces in <<garbage_collector_primer>>, the JVM uses a garbage
+As briefly introduced in <<garbage_collector_primer>>, the JVM uses a garbage
 collector to free unused memory.  This tip is really an extension of the last tip,
-but deserves it's own section for emphasis:
+but deserves its own section for emphasis:
 
 Do not change the default garbage collector!
 
