@@ -113,10 +113,10 @@ the content of that field is ``about'' the term than if the same term appears
 in a much bigger `body` field. The field length norm is calculated as:
 
 ..........................
-norm(d) = √numTerms <1>
+norm(d) = 1 / √numTerms <1>
 ..........................
-<1> The field length norm (`norm`) is the square root of the number of terms
-    in the document.
+<1> The field length norm (`norm`) is the inverse square root of the number of terms
+    in the field.
 
 While the field length norm is important for full text search, many other
 fields don't need norms. Norms consume approximately one byte per `string` field
