@@ -11,9 +11,9 @@ there is a particular method to perform a rolling restart.
 
 By nature, Elasticsearch wants your data to be fully replicated and evenly balanced.
 If you were to shut down a single node for maintenance, the cluster will
-immediately recognize a loss of a and begin re-balancing.  This can be irritating
+immediately recognize the loss of a node and begin rebalancing.  This can be irritating
 if you know the node maintenance is short term, since the rebalancing of
-very large shards can take some time (think of trying to replicate 1TB...even
+very large shards can take some time (think of trying to replicate 1TB... even
 on fast networks this is non-trivial).
 
 What we want to do is tell Elasticsearch to hold off on rebalancing, because
@@ -23,7 +23,7 @@ The procedure is as follows:
 1. If possible, stop indexing new data.  This is not always possible, but will
 help speed up recovery time
 
-2. Disable shard allocation.  This prevents Elasticsearch from re-balancing 
+2. Disable shard allocation.  This prevents Elasticsearch from re-balancing
 missing shards until you tell it otherwise.  If you know the maintenance will be
 short, this is a good idea.  You can disable allocation with:
 +
