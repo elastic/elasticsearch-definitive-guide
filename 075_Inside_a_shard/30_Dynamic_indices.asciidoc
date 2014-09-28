@@ -73,7 +73,7 @@ are returned.
 
 Document updates work in a similar way: when a document is updated, the old
 version of the document is marked as deleted, and the new version of the
-document is indexed in a new segement. Perhaps both versions of the document
+document is indexed in a new segment. Perhaps both versions of the document
 will match a query, but the older deleted version is removed before the query
 results are returned.
 

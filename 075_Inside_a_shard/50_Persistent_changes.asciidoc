@@ -103,7 +103,7 @@ flushing is all that is required.
 
 That said, it is beneficial to flush your indices before restarting a node or
 {ref}indices-open-close.html[closing an index]. When Elasticsearch tries to
-recover or reopen an index, it has to replays all of the operations in the
+recover or reopen an index, it has to replay all of the operations in the
 translog, so the shorter the log, the faster the recovery.
 
 .How safe is the translog?
