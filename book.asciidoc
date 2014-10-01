@@ -1,10 +1,8 @@
+:bookseries: animal
+
 = Elasticsearch
 
-:ref:  http://www.elasticsearch.org/guide/en/elasticsearch/reference/1.4/
-
 include::Preface.asciidoc[]
-
-// Part 1
 
 include::00_Getting_started.asciidoc[]
 
@@ -30,8 +28,6 @@ include::070_Index_Mgmt.asciidoc[]
 
 include::075_Inside_a_shard.asciidoc[]
 
-// Part 2
-
 include::01_Search_in_depth.asciidoc[]
 
 include::080_Structured_Search.asciidoc[]
@@ -45,9 +41,6 @@ include::120_Proximity_Matching.asciidoc[]
 include::130_Partial_Matching.asciidoc[]
 
 include::170_Relevance.asciidoc[]
-
-
-// Part 3
 
 include::02_Dealing_with_language.asciidoc[]
 
@@ -65,8 +58,6 @@ include::260_Synonyms.asciidoc[]
 
 include::270_Fuzzy_matching.asciidoc[]
 
-// Part 4
-
 include::301_Aggregation_Overview.asciidoc[]
 
 include::302_Example_Walkthrough.asciidoc[]
@@ -79,8 +70,6 @@ include::305_Significant_Terms.asciidoc[]
 
 include::306_Practical_Considerations.asciidoc[]
 
-
-// Part 5
 include::04_Geolocation.asciidoc[]
 
 include::310_Geopoints.asciidoc[]
@@ -90,8 +79,6 @@ include::320_Geohashes.asciidoc[]
 include::330_Geo_aggs.asciidoc[]
 
 include::340_Geoshapes.asciidoc[]
-
-// Part 6
 
 include::06_Modeling_your_data.asciidoc[]
 
@@ -103,12 +90,8 @@ include::404_Parent_Child.asciidoc[]
 
 include::410_Scaling.asciidoc[]
 
-// Part 7
-
 include::07_Admin.asciidoc[]
 
 include::500_Cluster_Admin.asciidoc[]
 
 include::510_Deployment.asciidoc[]
-
-include::520_Post_Deployment.asciidoc[]
