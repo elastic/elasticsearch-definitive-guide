@@ -1,5 +1,4 @@
-// This section feels like you're worrying too much about explaining the syntax, rather than the point of aggs.  By this stage in the book, people should be used to the ES api, so I think we can assume more.  I'd change the emphasis here and state that intention: we want to find out what the most popular colours are.  To do that we'll use a "terms" agg, which counts up every term in the "color" field and returns the 10 most popular.
-// Step two: Add a query, to show that the aggs are calculated live on the results from the user's query.
+
 == Aggregation Test-drive
 
 We could spend the next few pages defining the various aggregations
