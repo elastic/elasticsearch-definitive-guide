@@ -11,8 +11,14 @@ have a few 5GB segments and need to load 10GB of fielddata into memory, this
 process could take tens of seconds.  Users accustomed to sub-second response
 times would all of a sudden be hit by an apparently unresponsive website.
 
-There are three methods to combat this latency spike.  All are variations on
-the same concept: pre-load the fielddata so that there is no latency spike.
+There are three methods to combat this latency spike:
+
+- Eagerly load fielddata
+- Eagerly load global ordinals
+- Pre-populate caches with warmers
+
+All are variations on the same concept: pre-load the fielddata so that there is 
+no latency spike when the user needs to execute a search.
 
 [[eager-fielddata]]
 ==== Eagerly Loading Fielddata
