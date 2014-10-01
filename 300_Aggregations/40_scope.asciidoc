@@ -191,3 +191,8 @@ query scope -- all "ford" cars.  The second `avg` metric is nested under a
 all the documents.  The average returned for that aggregation represents
 the average price of all cars.
 
+If you've made it this far in the book, you'll recognize the mantra: use a filter
+wherever you can.  The same applies to aggregations, and in the next chapter
+we'll show you how to filter an aggregation instead of just limiting the query
+scope.
+
