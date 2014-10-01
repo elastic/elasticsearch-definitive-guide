@@ -70,7 +70,7 @@ case, it makes sense to increase the `refresh_interval` so that refreshes
 happen less often and global ordinals remain valid for longer. This will
 greatly reduce the CPU cost of rebuilding global ordinals every second.
 
-==== Multi-generations
+==== Multi-generations and concluding thoughts
 
 
 The ability to join multiple generations (see <<grandparents>>) sounds very
@@ -80,11 +80,8 @@ attractive until you think of the costs involved:
 * Each generation of parents needs to have their string `_id` fields stored in
   memory, which can consume a lot of RAM.
 
-
-[TIP]
-=========================
-
-Some advice about parent-child relationships:
+As you consider your relationship schemes and if parent-child is right for you, 
+consider this advice about parent-child relationships:
 
 * Use parent-child relationships sparingly, where there are many more children than parents.
 * Avoid using multiple parent-child joins in a single query.
@@ -94,6 +91,4 @@ Some advice about parent-child relationships:
 
 *Above all:* think about the other techniques that we have discussed in this
 chapter before reaching for parent-child.
-
-=========================
 
