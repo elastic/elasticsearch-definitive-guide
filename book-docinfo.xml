@@ -1,46 +1,53 @@
-<legalnotice>
-  <simpara>
-    This work is licensed under a <ulink url="http://creativecommons.org/licenses/by-nc-nd/3.0/">Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License</ulink>.
-  </simpara>
-</legalnotice>
 
-<copyright>
-  <year>2014</year>
-  <holder>Elasticsearch</holder>
-</copyright>
 
-<subtitle>The Definitive Guide</subtitle>
+  <othercredit role="proofreader">
+    <firstname>FIX</firstname>
+    <surname>ME!</surname>
+  </othercredit>
+  <othercredit role="illustrator">
+    <firstname>Rebecca</firstname>
+    <surname>Demarest</surname>
+  </othercredit>
 
-<abstract>
-    <simpara>
-        If you would like to purchase an eBook or printed version of this
-        book once it is complete, you can do so from O'Reilly Media:
-        <ulink url="http://www.oreilly.com/catalog/0636920028505">Buy this book from
-        O'Reilly Media</ulink>
-    </simpara>
-    <simpara>
-        We welcome feedback – if you spot any errors or would like to
-        suggest improvements, please <ulink url="https://github.com/elasticsearch/elasticsearch-definitive-guide/issues">open an issue</ulink> on the GitHub repo.
-    </simpara>
-</abstract>
+  <!-- All rights reserved. -->
 
-<authorgroup>
-    <author>
-        <firstname>Clinton</firstname>
-        <surname>Gormley</surname>
-        <authorblurb>
-            <simpara>
-                Clinton Gormley was the first user of Elasticsearch and wrote the Perl API back in 2010. When Elasticsearch formed a company in 2012, he joined as a developer and the maintainer of the Perl modules. Now Clinton spends a lot of his time designing the user interfaces and speaking and writing about Elasticsearch. He studied medicine at UCT in Cape Town and lives in Barcelona.
-            </simpara>
-        </authorblurb>
-    </author>
-    <author>
-        <firstname>Zachary</firstname>
-        <surname>Tong</surname>
-        <authorblurb>
-            <simpara>
-                Zachary Tong has been working with Elasticsearch since 2011.  During that time, he has written a number of tutorials to help beginners start using Elasticsearch.  Zach is now a developer at Elasticsearch and maintains the PHP client, gives trainings and helps customers manage clusters in production.  He studied biology at Rensselaer Polytechnic Institute and now lives in South Carolina.
-            </simpara>
-        </authorblurb>
-    </author>
-</authorgroup>
+  <publisher>
+    <publishername>O’Reilly Media, Inc.    </publishername>
+    <address format="linespecific">
+      <street>1005 Gravenstein Highway North</street>
+      <city>Sebastopol</city>
+      <state>CA</state>
+      <postcode>95472</postcode>
+    </address>
+  </publisher>
+
+  <legalnotice role="printlocation">
+    <para>Printed in the United States of America.</para>
+  </legalnotice>
+
+  <legalnotice role="printer">
+    <para>[?]</para>
+  </legalnotice>
+
+  <legalnotice role="use">
+    <para>O’Reilly books may be purchased for educational, business, or sales promotional use. Online editions are also available for most 
+          titles (<ulink role="orm:hideurl:ital" url="http://safaribooksonline.com">http://safaribooksonline.com</ulink>). For more information, contact our corporate/institutional sales department:
+          800-998-9938 or <phrase role="keep-together"><email>corporate@oreilly.com</email></phrase>.</para>
+  </legalnotice>
+
+  <legalnotice role="trademarks">
+    <para>Nutshell Handbook, the Nutshell Handbook logo, and the O’Reilly logo
+          are registered trademarks of O’Reilly Media, Inc. !!FILL THIS IN!!
+          and related trade dress are trademarks of O’Reilly Media, Inc.    </para>
+    <para>Many of the designations used by manufacturers and sellers to distinguish
+          their products are claimed as trademarks. Where those designations appear
+          in this book, and O’Reilly Media, Inc. was aware of a trademark claim,
+          the designations have been printed in caps or initial caps.    </para>
+  </legalnotice>
+
+  <legalnotice role="damages">
+    <para>While every precaution has been taken in the preparation of this book,
+        the publisher and authors assume no responsibility for errors or omissions, 
+        or for damages resulting from the use of the information contained herein.</para>
+  </legalnotice>
+<isbn>9781449358549</isbn><edition>1</edition><author><firstname>Clinton</firstname><surname>Gormley</surname><authorblurb><para>Clinton Gormley was the first user of Elasticsearch and wrote the Perl API back in 2010. When Elasticsearch formed a company in 2012, he joined as a developer and the maintainer of the Perl modules. Now Clinton spends a lot of his time designing the user interfaces and speaking and writing about Elasticsearch. He studied medicine at UCT in Cape Town and lives in Barcelona.</para></authorblurb></author><author><firstname>Zachary</firstname><surname>Tong</surname><authorblurb><para>Zachary Tong has been working with Elasticsearch since 2011. During that time, he has written a number of tutorials to help beginners start using Elasticsearch. Zach is now a developer at Elasticsearch and maintains the PHP client, gives trainings and helps customers manage clusters in production. He studied biology at Rensselaer Polytechnic Institute and now lives in South Carolina.</para></authorblurb></author><editor><firstname>Mike</firstname><surname>Loukides</surname></editor><editor><firstname>Brian</firstname><surname>Anderson</surname></editor><copyright><year>2010</year><holder>O’Reilly Media    </holder></copyright><editor role="production"><firstname>Shiny</firstname><surname>Kalapurakkel</surname></editor><editor role="copy"><firstname/><surname/></editor><othercredit role="indexer"><firstname/><surname/></othercredit><othercredit role="coverdesigner"><firstname>Karen</firstname><surname>Montgomery</surname></othercredit><othercredit role="interiordesigner"><firstname>David</firstname><surname>Futato</surname></othercredit><printhistory><formalpara><title>First Edition</title><para>December, 2014</para></formalpara></printhistory><revhistory><revision><date>YYYY-MM-DD</date><revremark>First release</revremark></revision></revhistory>
