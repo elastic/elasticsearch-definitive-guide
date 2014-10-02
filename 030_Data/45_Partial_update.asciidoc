@@ -145,7 +145,7 @@ Fetching the document shows the effect of the last two requests:
 <1> The `search` tag has been appended to the `tags` array.
 <2> The `views` field has been incremented.
 
-We can even choose to delete a document based on it contents,
+We can even choose to delete a document based on its contents,
 by setting `ctx.op` to `delete`:
 
 [source,js]
