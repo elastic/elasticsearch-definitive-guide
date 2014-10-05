@@ -93,7 +93,7 @@ enabled.
 
 The `has_child` filter works in the same way as the `has_child` query, except
 that it doesn't support the `score_mode` parameter. It can only be used in
-``filter context'' -- such as inside a `filtered` query --  and they behaves
+``filter context'' -- such as inside a `filtered` query --  and it behaves
 like any other filter: it includes or excludes, but doesn't score.
 
 While the results of a `has_child` filter are not cached, the usual caching
