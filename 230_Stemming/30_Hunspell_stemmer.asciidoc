@@ -37,7 +37,7 @@ files should be placed in a sub-directory whose name represents the language
 or locale of the dictionaries.  For instance, we could create a Hunspell
 stemmer for American English with the following layout:
 
-[source,txt]
+[source,text]
 ------------------------------------------------
 config/
   └ hunspell/ <1>
@@ -102,7 +102,7 @@ If multiple dictionaries (`.dic` files) are placed in the same
 directory, they will be merged together at load time. This allows you to
 tailor the downloaded dictionaries with your own custom word lists:
 
-[source,txt]
+[source,text]
 ------------------------------------------------
 config/
   └ hunspell/
@@ -188,7 +188,7 @@ to write your own custom dictionaries.  It is quite simple.
 For instance, in the US English dictionary, the `en_US.dic` file contains an entry for
 the word `analyze`, which looks like this:
 
-[source,txt]
+[source,text]
 -----------------------------------
 analyze/ADSG
 -----------------------------------
@@ -197,7 +197,7 @@ The `en_US.aff` file contains the prefix or suffix rules for the `A`, `G`,
 `D`, and `S` flags.  Each flag consists of a number of rules, only one of
 which should match. Each rule has the following format:
 
-[source,txt]
+[source,text]
 -----------------------------------
 [type] [flag] [letters to remove] [letters to add] [condition]
 -----------------------------------
@@ -207,14 +207,14 @@ word ends in a consonant (anything but `a`, `e`, `i`, `o`, or `u`) followed by
 a `y`, it can have the `y` removed and `ied` added (e.g. `ready` ->
 `readied`).
 
-[source,txt]
+[source,text]
 -----------------------------------
 SFX    D      y   ied  [^aeiou]y
 -----------------------------------
 
 The rules for the `A`, `G`, `D` and `S` flags mentioned above are as follows:
 
-[source,txt]
+[source,text]
 -----------------------------------
 SFX D Y 4
 SFX D   0     d          e <1>

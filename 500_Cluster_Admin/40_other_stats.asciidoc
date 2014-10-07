@@ -168,7 +168,7 @@ to glance over your cluster, or find nodes with high memory usage, etc.
 Executing a plain GET against the Cat endpoint will show you all available 
 APIs:
 
-[source,shell]
+[source,bash]
 ----
 GET /_cat
 
@@ -199,7 +199,7 @@ GET /_cat
 Many of these APIs should look familiar to you (and yes, that's a cat at the top 
 :) ).  Let's take a look at the Cat Health API:
 
-[source,shell]
+[source,bash]
 ----
 GET /_cat/health
 
@@ -214,7 +214,7 @@ the headers.
 
 To enable headers, add the `?v` parameter:
 
-[source,shell]
+[source,bash]
 ----
 GET /_cat/health?v
 
@@ -228,7 +228,7 @@ API.
 
 Let's look at Node Stats in the Cat API:
 
-[source,shell]
+[source,bash]
 ----
 GET /_cat/nodes?v
 
@@ -243,7 +243,7 @@ API what is available.
 
 You can do this by adding `?help` to any API:
 
-[source,shell]
+[source,bash]
 ----
 GET /_cat/nodes?help
 
@@ -274,7 +274,7 @@ and the third column offers a brief description about the parameter .  Now that
 we know some column names, we can ask for those explicitly using the `?h`
 parameter:
 
-[source,shell]
+[source,bash]
 ----
 GET /_cat/nodes?v&h=ip,port,heapPercent,heapMax
 
@@ -286,7 +286,7 @@ Because the Cat API tries to behave like *nix utilities, you can pipe the output
 to other tools such as sort, grep, awk, etc.  For example, we can find the largest
 index in our cluster by using:
 
-[source,shell]
+[source,bash]
 ----
 % curl 'localhost:9200/_cat/indices?bytes=b' | sort -rnk8
 
@@ -327,7 +327,7 @@ Unfortunately, you'll notice that the Marvel indices are clogging up the results
 and we don't really care about those indices right now.  Let's pipe the output
 through `grep` and remove anything mentioning marvel:
 
-[source,shell]
+[source,bash]
 ----
 % curl 'localhost:9200/_cat/indices?bytes=b' | sort -rnk8 | grep -v marvel
 
