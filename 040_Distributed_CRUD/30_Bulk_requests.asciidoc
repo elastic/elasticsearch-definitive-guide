@@ -12,7 +12,7 @@ into a single response, which it returns to the client.
 
 [[img-distrib-mget]]
 .Retrieving multiple documents with `mget`
-image::images/04-05_mget.png["Retrieving multiple documents with mget"]
+image::images/elas_0405.png["Retrieving multiple documents with mget"]
 
 Below we list the sequence of steps necessary to retrieve multiple documents
 with a single `mget` request, as depicted in <<img-distrib-mget>>:
@@ -28,7 +28,7 @@ A `routing` parameter can be set for each document in the `docs` array.
 
 [[img-distrib-bulk]]
 .Multiple document changes with `bulk`
-image::images/04-06_bulk.png["Multiple document changes with bulk"]
+image::images/elas_0406.png["Multiple document changes with bulk"]
 
 Below we list the sequence of steps necessary to execute multiple
 `create`, `index`, `delete` and `update` requests within a single

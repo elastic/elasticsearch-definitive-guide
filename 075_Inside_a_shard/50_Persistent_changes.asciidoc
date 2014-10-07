@@ -26,7 +26,7 @@ looks like this:
 +
 [[img-xlog-pre-refresh]]
 .New documents are added to the in-memory buffer and appended to the transaction log
-image::images/075_50_pre_refresh.png["New documents are added to the in-memory buffer and appended to the transaction log"]
+image::images/elas_1106.png["New documents are added to the in-memory buffer and appended to the transaction log"]
 
 2. Once every second, the shard is refreshed:
 +
@@ -39,7 +39,7 @@ image::images/075_50_pre_refresh.png["New documents are added to the in-memory b
 
 [[img-xlog-post-refresh]]
 .After a refresh, the buffer is cleared but the transaction log is not
-image::images/075_50_post_refresh.png["After a refresh, the buffer is cleared but the transaction log is not"]
+image::images/elas_1107.png["After a refresh, the buffer is cleared but the transaction log is not"]
 --
 
 3.  This process continues with more documents being added to the in-memory
@@ -47,7 +47,7 @@ image::images/075_50_post_refresh.png["After a refresh, the buffer is cleared bu
 +
 [[img-xlog-pre-flush]]
 .The transaction log keeps accumulating documents
-image::images/075_50_pre_flush.png["The transaction log keeps accumulating documents"]
+image::images/elas_1108.png["The transaction log keeps accumulating documents"]
 
 
 4. Every so often -- such as when the translog is getting too big -- the index
@@ -62,7 +62,7 @@ image::images/075_50_pre_flush.png["The transaction log keeps accumulating docum
 
 [[img-xlog-post-flush]]
 .After a flush, the segments are fully commited and the transaction log is cleared
-image::images/075_50_post_flush.png["After a flush, the segments are fully commited and the transaction log is cleared"]
+image::images/elas_1109.png["After a flush, the segments are fully commited and the transaction log is cleared"]
 --
 
 The translog provides a persistent record of all operations that have not yet

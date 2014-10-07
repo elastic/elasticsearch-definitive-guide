@@ -23,7 +23,7 @@ only one index.
 
 [[img-two-shard]]
 .An index with two shards can take advantage of a second node
-image::images/410_20_two_shards.png["An index with two shards can take advantage of a second node"]
+image::images/elas_4402.png["An index with two shards can take advantage of a second node"]
 
 This time, when we add a second node, Elasticsearch will automatically move
 one shard from the first node to the second node and, once the relocation has

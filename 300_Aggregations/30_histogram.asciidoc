@@ -104,7 +104,7 @@ means `0-20,000`, the key `20000` means `20,000-40,000`, etc.
 Graphically, you could represent the above data in a histogram like this:
 
 [[barcharts-histo1]]
-image::images/300_30_histo1.svg["Histogram of top makes per price range"]
+image::images/elas_28in01.png["Histogram of top makes per price range"]
 
 Of course, you can build bar charts with any aggregation which emits categories
 and statistics, not just the `histogram` bucket.  Let's build a bar chart of
@@ -145,7 +145,7 @@ std_err = std_deviation / count
 Which will allow us to build a chart like this:
 
 [[barcharts-bar1]]
-image::images/300_30_bar1.svg["Barchart of average price per make, with error bars"]
+image::images/elas_28in02.png["Barchart of average price per make, with error bars"]
 
 
 

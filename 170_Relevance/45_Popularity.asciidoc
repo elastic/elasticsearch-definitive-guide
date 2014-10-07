@@ -59,7 +59,7 @@ votes will reset the score to zero.
 
 [[img-popularity-linear]]
 .Linear popularity based on an original `_score` of `2.0`
-image::images/170_03_linear_popularity.png[Linear popularity based on an original `_score` of `2.0`]
+image::images/elas_1701.png[Linear popularity based on an original `_score` of `2.0`]
 
 
 ==== `modifier`
@@ -80,7 +80,7 @@ curve like this:
 
 [[img-popularity-log]]
 .Logarithmic popularity based on an original `_score` of `2.0`
-image::images/170_04_log_popularity.png[Logarithmic popularity based on an original `_score` of `2.0`]
+image::images/elas_1702.png[Logarithmic popularity based on an original `_score` of `2.0`]
 
 The request with the `modifier` parameter looks like the following:
 
@@ -149,7 +149,7 @@ decreases the effect:
 
 [[img-popularity-factor]]
 .Logarithmic popularity with different factors
-image::images/170_05_log_factor.png[Logarithmic popularity with different factors]
+image::images/elas_1703.png[Logarithmic popularity with different factors]
 
 
 ==== `boost_mode`
@@ -199,7 +199,7 @@ The formula for the above request now looks like this:
 
 [[img-popularity-sum]]
 .Combining popularity with `sum`
-image::images/170_06_log_sum.png["Combining popularity with `sum`"]
+image::images/elas_1704.png["Combining popularity with `sum`"]
 
 
 ==== `max_boost`

@@ -5,7 +5,7 @@ A document can be retrieved from a primary shard or from any of its replicas.
 
 [[img-distrib-read]]
 .Retrieving a single document
-image::images/04-03_get.png["Retrieving a single document"]
+image::images/elas_0403.png["Retrieving a single document"]
 
 Below we list the sequence of steps to retrieve a document from either a
 primary or replica shard, as depicted in <<img-distrib-read>>:

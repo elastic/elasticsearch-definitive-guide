@@ -24,7 +24,7 @@ PUT /blogs/_settings
 
 [[cluster-three-nodes-two-replicas]]
 .Increasing the `number_of_replicas` to 2
-image::images/02-05_replicas.png["A three-node cluster with two replica shards"]
+image::images/elas_0205.png["A three-node cluster with two replica shards"]
 
 As can be seen in <<cluster-three-nodes-two-replicas>>, the `blogs` index now
 has 9 shards: 3 primaries and 6 replicas. This means that we can scale out to

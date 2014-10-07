@@ -241,7 +241,7 @@ vector -- `[2,5]` -- as a line on a graph starting at point (0,0) and
 ending at point (2,5).
 
 [[img-vector-query]]
-image::images/170_01_query.png["The query vector plotted on a graph"]
+image::images/elas_17in01.png["The query vector plotted on a graph"]
 
 Now, imagine we have three documents:
 
@@ -258,7 +258,7 @@ document, and plot them on the same graph:
 * Document 3: `(happy,hippopotamus)` -- `[2,5]`
 
 [[img-vector-docs]]
-image::images/170_02_docs.png["The query and document vectors plotted on a graph"]
+image::images/elas_17in02.png["The query and document vectors plotted on a graph"]
 
 The nice thing about vectors is that they can be compared. By measuring the
 angle between the query vector and the document vector, it is possible to

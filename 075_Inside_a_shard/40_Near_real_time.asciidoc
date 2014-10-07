@@ -21,7 +21,7 @@ the cache it can be opened and read, just like any other file.
 
 [[img-pre-refresh]]
 .A Lucene index with new documents in the in-memory buffer
-image::images/075_40_pre_refresh.png["A Lucene index with new documents in the in-memory buffer"]
+image::images/elas_1104.png["A Lucene index with new documents in the in-memory buffer"]
 
 Lucene allows new segments to be written and opened -- making the documents
 they contain visible to search -- without performing a full commit. This is a
@@ -30,7 +30,7 @@ performance.
 
 [[img-post-refresh]]
 .The buffer contents have been written to a segment, which is searchable, but is not yet commited
-image::images/075_40_post_refresh.png["The buffer contents have been written to a segment, which is searchable, but is not yet commited"]
+image::images/elas_1105.png["The buffer contents have been written to a segment, which is searchable, but is not yet commited"]
 
 
 [[refresh-api]]

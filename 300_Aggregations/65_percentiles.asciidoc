@@ -23,14 +23,14 @@ metric is easily skewed by just a single outlier.
 This graph visualizes the problem.  If you rely on simple metrics like mean or median, you might see a graph that looks like this:
 
 [[percentile-mean-median]]
-image::images/300_65_percentile1.svg["Assessing website latency using mean/median"]
+image::images/elas_33in01.png["Assessing website latency using mean/median"]
 
 Everything looks fine.  There is a slight bump, but nothing to be concerned about.
 But if we load up the 99th percentile (the value which accounts for the slowest 1%
 of latencies), we see an entirely different story:
 
 [[percentile-mean-median-percentile]]
-image::images/300_65_percentile2.svg["Assessing website latency using percentiles"]
+image::images/elas_33in02.png["Assessing website latency using percentiles"]
 
 Woah!  At 9:30 AM, the mean is only 75ms.  As a system administrator, you wouldn't
 look at this value twice.  Everything normal!  But the 99th percentile is telling

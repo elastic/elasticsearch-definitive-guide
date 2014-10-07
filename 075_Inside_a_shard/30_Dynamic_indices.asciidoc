@@ -16,7 +16,7 @@ segments'' plus a _commit point_ -- a file which lists all known segments.
 
 [[img-index-segments]]
 .A Lucene index with a commit point and three segments
-image::images/075_30_index.png["A Lucene index with a commit point and three segments"]
+image::images/elas_1101.png["A Lucene index with a commit point and three segments"]
 
 .Index vs. Shard
 ***************************************
@@ -32,7 +32,7 @@ per-shards results to a global result set, as described in
 
 [[img-memory-buffer]]
 .A Lucene index with new documents in the in-memory buffer, ready to commit
-image::images/075_30_pre_commit.png["A Lucene index with new documents in the in-memory buffer, ready to commit"]
+image::images/elas_1102.png["A Lucene index with new documents in the in-memory buffer, ready to commit"]
 
 The way that per-segment search works is as follows:
 
@@ -51,7 +51,7 @@ The way that per-segment search works is as follows:
 
 [[img-post-commit]]
 .After a commit, a new segment is added to the commit point and the buffer is cleared
-image::images/075_30_post_commit.png["After a commit, a new segment is added to the index and the buffer is cleared"]
+image::images/elas_1103.png["After a commit, a new segment is added to the index and the buffer is cleared"]
 
 When a query is issued, all known segments are queried in turn. Term
 statistics are aggregated across all segments to ensure that the relevance of

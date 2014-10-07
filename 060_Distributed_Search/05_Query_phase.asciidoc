@@ -26,7 +26,7 @@ The query phase process is depicted in <<img-distrib-search>>.
 
 [[img-distrib-search]]
 .Query Phase of distributed search
-image::images/06-01_query.png["Query Phase of distributed search"]
+image::images/elas_0901.png["Query Phase of distributed search"]
 
 1. The client sends a `search` request to `Node 3` which creates an empty
    priority queue of size `from + size`.

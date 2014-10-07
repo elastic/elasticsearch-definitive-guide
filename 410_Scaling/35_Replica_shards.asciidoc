@@ -33,7 +33,7 @@ total of four shards: one for each node.
 
 [[img-four-nodes]]
 .An index with two primary shards and one replica can scale out across four nodes
-image::images/410_35_four_nodes.png["An index with two primary shards and one replica can scale out across four nodes"]
+image::images/elas_4403.png["An index with two primary shards and one replica can scale out across four nodes"]
 
 ==== Balancing load with replicas
 
@@ -57,7 +57,7 @@ lose two nodes and still have a copy of all of our data.
 
 [[img-three-nodes]]
 .Adjust the number of replicas to balance the load between nodes
-image::images/410_35_three_nodes.png["Adjust the number of replicas to balance the load between nodes"]
+image::images/elas_4404.png["Adjust the number of replicas to balance the load between nodes"]
 
 NOTE: The fact that node 3 holds two replicas and no primaries is not
 important.  Replicas and primaries do the same amount of work, they just play

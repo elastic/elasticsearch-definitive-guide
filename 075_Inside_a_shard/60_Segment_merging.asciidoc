@@ -27,7 +27,7 @@ while you are indexing and searching. The process works like this:
 +
 [[img-merge]]
 .Two commited segments and one uncommited segment in the process of being merged into a bigger segment
-image::images/075_60_merge.png["Two commited segments and one uncommited segment in the process of being merged into a bigger segment"]
+image::images/elas_1110.png["Two commited segments and one uncommited segment in the process of being merged into a bigger segment"]
 
 3. When the merge completes:
 +
@@ -40,7 +40,7 @@ image::images/075_60_merge.png["Two commited segments and one uncommited segment
 
 [[img-post-merge]]
 .Once merging has finished, the old segments are deleted
-image::images/075_60_post_merge.png["Once merging has finished, the old segments are deleted"]
+image::images/elas_1111.png["Once merging has finished, the old segments are deleted"]
 --
 
 The merging of big segments can use a lot of I/O and CPU, which can hurt
