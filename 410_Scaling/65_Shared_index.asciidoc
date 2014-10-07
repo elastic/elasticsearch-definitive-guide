@@ -123,7 +123,7 @@ values, and including each `forum_id` in a `terms` filter:
 
 [source,json]
 ------------------------------
-GET /forums/post/_search?routing=baking,cooking,recipes <1>
+GET /forums/post/_search?routing=baking,cooking,recipes
 {
   "query": {
     "filtered": {

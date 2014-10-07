@@ -123,7 +123,7 @@ In that case, you can specify which indices to backup when snapshotting your clu
 ----
 PUT _snapshot/my_backup/snapshot_2
 {
-    "indices": "index_1,index_2" <1>
+    "indices": "index_1,index_2"
 }
 ----
 
