@@ -4,6 +4,36 @@
 
 /*--------Put Your Custom CSS Rules Below--------*/
 
+/* right align */
+
+.alignmeright
+{
+  text-align: right;
+}
+
+/* Font fall backs */
+p
+{
+ font-family: "MinionPro", "Symbola", "Arial Unicode MS", "DejaVu Sans", "Code2000";
+}
+
+
+
+
+div.informaltable tbody tr td p
+{
+  font-family: "MinionPro", "Symbola", "Arial Unicode MS", "DejaVu Sans", "Code2000";
+}
+
+pre.programlisting, pre.screen, pre.literallayout
+{
+    font-family: "UbuntuMono", "Arial Unicode MS", "Code2000";
+}
+code
+{
+  font-family: "UbuntuMono", "Arial Unicode MS", "DejaVu Sans", "Code2000";
+  color: red;
+}
 /*----Uncomment to turn on automatic code wrapping
 
 pre.programlisting, pre.screen, pre.literallayout {
