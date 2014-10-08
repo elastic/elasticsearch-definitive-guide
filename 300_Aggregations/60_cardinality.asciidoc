@@ -162,13 +162,15 @@ DELETE /cars/
 
 PUT /cars/
 {
-  "mappings": {
-    "color": {
-      "type": "string",
-      "fields": {
+  "settings": {
+    "mappings": {
+      "color": {
+        "type": "string",
+        "fields": {
           "hash": {
-              "type": "murmur3" <1>
+            "type": "murmur3"
           }
+        }
       }
     }
   }
