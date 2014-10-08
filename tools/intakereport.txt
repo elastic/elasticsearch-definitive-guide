@@ -1,0 +1,79 @@
+Elasticsearch, 1E / 9781449358549
+RT # 184624
+
+Stylesheet: animal
+Toolchain: Atlas/csspdf
+
+Atlas URL: http://atlas.labs.oreilly.com/books/1230000000825
+
+Incoming format: Asciidoc
+Outgoing format: Asciidoc
+
+Preliminary pagecount: TOTAL 684 with figs
+  
+Is this book in Early Release? Yes
+
+Resources
+=========
+
+** Figs: Illustrations is still working on the figs. 
+   44 total. (8 are informal; 0 are inline.)
+
+   Once the figs are processed on /work, you'll need to add them to the book's repo in Git.
+
+** Intake Report:
+   (Git repo) tools/intakereport.txt
+
+** MS Snapshot:
+    To view the submitted files, you'll need to checkout the git tag named 'manuscript_to_prod' 
+    by running the following command in your checkout:
+    
+    $ git checkout manuscript_to_prod
+    
+    This will temporarily switch the files in your repo to the state they were in when the manuscript_to_prod tag 
+    was created. 
+    To switch the files back to the current state, run:
+    
+    $ git checkout master
+  
+  
+Notes from Tools:
+=================
+
+** Regarding the missing glyphs, I have fixed all the errors but 1. This is a rather unique case where the author uses a character that none of our fonts support in PDF form (but do in epub, mobi). I have created a stylesheets ticket for the issue (https://intranet.oreilly.com/jira/browse/STYL-181). If you do not hear back from stylesheets within the next few weeks, please follow up with TOOLS and we'll figure out where the issue stands. For reference, this issue shows up in 220_Token_normalization/60_Sorting_and_collations.asciidoc, line 283.
+
+** There is a forest of subdirectories in this repo (which the author would like to keep intact), if you are going to search for text on the command line from the root folder (using grep), I suggest using the following command:
+
+$ grep 'whatever you are searching for' * -r  
+
+This will search in any file type, including directories, and will search recursively through each subdirectory. Good luck soldier.
+
+** Syntax highlighting: applied to 829 out of 829 code listings.
+
+** Please let Tools know ASAP if there are any other global problems for which we can help automate a fix.
+
+
+Notes from Dan:
+==================
+
+Ready for intake. Keep in Atlas 1 (asciidoc).
+
+There are many, many warnings about missing glyphs. [See notes --TOOLS]
+
+Please remove inline styles from headings. [DONE --TOOLS]
+
+Please set epigraphs flush right. [DONE --TOOLS]
+
+An informal table in chapter 23, in the section "Simple expansion," is simply expanding into the margin.
+
+I'm recommended we skip copyedit and go right into a robust proofread. The writing is pretty good. I've written a rough schedule with extra time for edit entering 
+after proofreading (and giving the author a chance to review the proofreader's work).
+
+
+==================
+
+Please let me know about any other issues.
+
+Thanks,
+Chris
+
