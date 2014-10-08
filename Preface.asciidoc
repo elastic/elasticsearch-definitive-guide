@@ -120,40 +120,40 @@ are more standalone and can be referred to as needed.
 
 This book is divided into six parts:
 
-*  Chapters 1 through 11 provide an introduction to Elasticsearch. They
+*  Chapters pass:[<xref linkend="getting-started" xrefstyle="select: labelnumber"/>] through pass:[<xref linkend="distributed-cluster" xrefstyle="select: labelnumber"/>] provide an introduction to Elasticsearch. They
    explain how to get your data in and out of Elasticsearch, how Elasticsearch
    interprets the data in your documents, how basic search works and how to
    manage indices. By the end of this section you will already be able to
-   integrate your application with Elasticsearch. Chapters 2, 4, 9 and 11 are
+   integrate your application with Elasticsearch. Chapters pass:[<xref linkend="distributed-cluster" xrefstyle="select: labelnumber"/>], pass:[<xref linkend="distributed-docs" xrefstyle="select: labelnumber"/>], pass:[<xref linkend="distributed-search" xrefstyle="select: labelnumber"/>] and pass:[<xref linkend="inside-a-shard" xrefstyle="select: labelnumber"/>] are
    supplemental chapters which provide more insight into the distributed
    processes at work, but are not required reading.
 
-*  Chapters 12 through 17 offer a deep dive into search -- how to index and
+*  Chapters pass:[<xref linkend="structured-search" xrefstyle="select: labelnumber"/>] through pass:[<xref linkend="controlling-relevance" xrefstyle="select: labelnumber"/>] offer a deep dive into search -- how to index and
    query your data to allow  you to take advantage of more advanced concepts
    like word proximity, and partial matching. You will understand how
    relevance works and how to control it to ensure that the best results are
    on the first page.
 
-*  Chapters 18 through 24 tackle the thorny subject of dealing with human
+*  Chapters pass:[<xref linkend="language-intro" xrefstyle="select: labelnumber"/>] through pass:[<xref linkend="fuzzy-matching" xrefstyle="select: labelnumber"/>] tackle the thorny subject of dealing with human
    language through effective use of analyzers and queries. We start with
    an easy approach to language analysis easily, before diving into the complexities
    of language, alphabets, and sorting. We cover stemming, stopwords, synonyms,
    and fuzzy matching.
 
-*  Chapters 25 through 35 discuss aggregations and analytics -- ways to
+*  Chapters pass:[<xref linkend="_high_level_concepts" xrefstyle="select: labelnumber"/>] through pass:[<xref linkend="_controlling_memory_use_and_latency" xrefstyle="select: labelnumber"/>] discuss aggregations and analytics -- ways to
    summarise and group your data to show overall trends.
 
-*  Chapters 36 through 39 talk about the two approaches to geolocation
+*  Chapters pass:[<xref linkend="_closing_thoughts" xrefstyle="select: labelnumber"/>] through pass:[<xref linkend="geo-aggs" xrefstyle="select: labelnumber"/>] talk about the two approaches to geolocation
    supported by Elasticsearch: lat/lon geo-points, and complex geo-shapes.
 
-*  Chapters 40 through 43 talk about how to model your data to work
+*  Chapters pass:[<xref linkend="geo-shapes" xrefstyle="select: labelnumber"/>] through pass:[<xref linkend="parent-child" xrefstyle="select: labelnumber"/>] talk about how to model your data to work
    most efficiently with Elasticsearch.  Representing relationships
    between entities is not as easy in a search engine as it is in
    a relational database, which has been designed for that purpose.
    These chapters also explain how to suit your index design to
    match the flow of data through your system.
 
-*  Finally, chapters 44 through 45 discuss moving to production: the important
+*  Finally, chapters pass:[<xref linkend="scale" xrefstyle="select: labelnumber"/>] through pass:[<xref linkend="cluster-admin" xrefstyle="select: labelnumber"/>] discuss moving to production: the important
    configurations, what to monitor, and how to diagnose and prevent problems.
 
 There are three topics which we do not cover in this book, partly because we
