@@ -160,7 +160,7 @@ down to the single term `usa`, you can't use the same field to find just the
 word `united` or `states`. You would need to use a separate field with a
 different analysis chain for that purpose.
 
-==== Synonyms and the `query_string` query
+==== Synonyms and the query_string query
 
 We have tried to avoid discussing the `query_string` query because we don't
 recommend using it.  In <<query-string-query>> we said that, because the

@@ -56,7 +56,7 @@ GET /_search
 
 There are a number of new features to note in this example:
 
-==== `filter` vs `query`
+==== filter vs query
 
 The first thing to note is that  we have specified a `filter` instead of a
 `query`. In this example, we do not need full text search -- we just want to
@@ -66,7 +66,7 @@ the filter will have a `_score` of 1.  The `function_score` query accepts
 either a `query` or a `filter`. If neither is specified, it will default to
 using the `match_all` query.
 
-==== `functions`
+==== functions
 
 The `functions` key holds an array of functions to apply.  Each entry in the
 array may also optionally specify a `filter`, in which case the function will
@@ -74,7 +74,7 @@ only be applied to documents which match that filter.  In this example, we
 apply a `weight` of `1` (or `2` in the case of `pool`) to any document
 which matches the filter.
 
-==== `score_mode`
+==== score_mode
 
 Each function returns a result, and we need a way of reducing these multiple
 results to a single value which can be combined with the original `_score`.

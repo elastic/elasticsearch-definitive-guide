@@ -32,7 +32,7 @@ the company by excluding `tree` or `crumble`?  Sometimes, `must_not` can be
 too strict.
 
 [[boosting-query]]
-==== `boosting` query
+==== boosting query
 
 The {ref}query-dsl-boosting-query.html[`boosting` query] solves this problem.
 It allows us to still include results which appear to be about the fruit or

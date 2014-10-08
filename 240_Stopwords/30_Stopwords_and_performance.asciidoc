@@ -18,7 +18,7 @@ meaningless term `the` is included in the resultset.  What we need is a way of
 reducing the number of documents that need to be scored.
 
 [[stopwords-and]]
-==== `and` operator
+==== and operator
 
 The easiest way to reduce the number of documents is simply to use the
 <<match-improving-precision,`and` operator>> with the `match` query, in order
@@ -59,7 +59,7 @@ optimal order -- it starts with the least frequent term.  Because all terms
 are required, only documents that contain the least frequent term can possibly
 match. Using the `and` operator greatly speeds up multi-term queries.
 
-==== `minimum_should_match`
+==== minimum_should_match
 
 In <<match-precision>> we discussed using the `minimum_should_match` operator
 to trim the long tail of less relevant results.  It is useful for this purpose

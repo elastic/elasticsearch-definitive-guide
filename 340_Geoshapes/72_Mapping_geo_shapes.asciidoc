@@ -25,7 +25,7 @@ PUT /attractions
 
 There are two important settings that you should consider changing:
 
-==== `precision`
+==== precision
 
 The `precision` parameter controls the maximum length of the geohashes that
 are generated.  It defaults to a precision of `9`, which equates to a
@@ -41,7 +41,7 @@ You can specify precisions using distances -- e.g. `50m` or `2km` -- but
 ultimately these distances are converted to the same levels as described in
 <<geohashes>>.
 
-==== `distance_error_pct`
+==== distance_error_pct
 
 When indexing a polygon, the big central continuous part can be represented
 cheaply by a short geohash.  It is the edges that matter. Edges require much

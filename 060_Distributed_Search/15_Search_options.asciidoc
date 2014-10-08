@@ -3,7 +3,7 @@
 There are a few optional query-string parameters which can influence the
 search process:
 
-==== `preference`
+==== preference
 
 The `preference` parameter allows you to control which shards or nodes are
 used to handle the search request. It accepts values like: `_primary`,
@@ -34,7 +34,7 @@ like the user's session ID.
 
 ****
 
-==== `timeout`
+==== timeout
 
 By default, the coordinating node waits to receive a response from all shards.
 If one node is having trouble, it could slow down the response to all search
@@ -66,7 +66,7 @@ hardware failure -- this will also be reflected in the `_shards` section of
 the response.
 
 [[search-routing]]
-==== `routing`
+==== routing
 
 In <<routing-value>> we explained how a custom `routing` parameter could be
 provided at index time to ensure that all related documents, such as the
@@ -83,7 +83,7 @@ This technique comes in useful when designing very large search systems and we
 discuss it in detail in <<scale>>.
 
 [[search-type]]
-==== `search_type`
+==== search_type
 
 While `query_then_fetch` is the default search type, other search types can
 be specified for particular purposes, as:

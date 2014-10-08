@@ -52,7 +52,7 @@ the `body` field to rank higher than documents that match on just one field,
 but this isn't the case. Remember: the `dis_max` query simply uses the
 `_score` from the *single* best matching clause.
 
-==== `tie_breaker`
+==== tie_breaker
 
 It is possible, however, to also take the `_score` from the other matching
 clauses into account, by specifying the `tie_breaker` parameter.

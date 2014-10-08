@@ -8,7 +8,7 @@ are settings that you can use to customise these rules to better
 suit your data.
 
 [[date-detection]]
-==== `date_detection`
+==== date_detection
 
 When Elasticsearch encounters a new string field, it checks to see if the
 string contains a recognisable date, like `"2014-01-01"`. If it looks
@@ -64,7 +64,7 @@ with the {ref}/mapping-root-object-type.html#_dynamic_date_formats[`dynamic_date
 ====
 
 [[dynamic-templates]]
-==== `dynamic_templates`
+==== dynamic_templates
 
 With `dynamic_templates`, you can take complete control over the
 mapping that is generated for newly detected fields. You

@@ -34,7 +34,7 @@ image::images/elas_1105.png["The buffer contents have been written to a segment,
 
 
 [[refresh-api]]
-==== `refresh` API
+==== refresh API
 
 In Elasticsearch, this lightweight process of writing and opening a new
 segment is called a _refresh_. By default, every shard is refreshed

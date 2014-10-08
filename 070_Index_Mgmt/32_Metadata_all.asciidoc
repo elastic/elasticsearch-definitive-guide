@@ -1,5 +1,5 @@
 [[all-field]]
-==== Metadata: `_all` field
+==== Metadata: _all field
 
 In <<search-lite>> we introduced the `_all` field: a special field that
 indexes the values from all other fields as one big string. The `query_string`

@@ -62,7 +62,7 @@ votes will reset the score to zero.
 image::images/elas_1701.png[Linear popularity based on an original `_score` of `2.0`]
 
 
-==== `modifier`
+==== modifier
 
 A better way to incorporate popularity is to smooth out the `votes` value
 with some `modifier`.  In other words, we want the first few votes to count a
@@ -111,7 +111,7 @@ The available modifiers are: `none` (the default) , `log`, `log1p`, `log2p`,
 about them in the
 {ref}query-dsl-function-score-query.html#_field_value_factor[`field_value_factor` documentation].
 
-==== `factor`
+==== factor
 
 The strength of the popularity effect can be increased or decreased by
 multiplying the value in the `votes` field by some number, called the
@@ -152,7 +152,7 @@ decreases the effect:
 image::images/elas_1703.png[Logarithmic popularity with different factors]
 
 
-==== `boost_mode`
+==== boost_mode
 
 Perhaps multiplying the full text score by the result of the
 `field_value_factor` function still has too large an effect.  We can control
@@ -202,7 +202,7 @@ The formula for the above request now looks like this:
 image::images/elas_1704.png["Combining popularity with `sum`"]
 
 
-==== `max_boost`
+==== max_boost
 
 Finally, we can cap the maximimum effect that the function can have using the
 `max_boost` parameter:

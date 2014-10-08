@@ -59,7 +59,7 @@ document.  Only set it to `avg`, `min`, `max`, or `sum` if you care about the
 score.
 
 [[min-max-children]]
-==== `min_children` and `max_children`
+==== `min_children` and max_children
 
 The `has_child` query and filter both accept the `min_children` and
 `max_children` parameters, which will only return the parent document if the

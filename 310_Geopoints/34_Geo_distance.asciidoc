@@ -1,5 +1,5 @@
 [[geo-distance]]
-=== `geo_distance` filter
+=== geo_distance filter
 
 The `geo_distance` filter draws a circle around the specified location and
 finds all documents that have a geo-point within that circle:
@@ -94,7 +94,7 @@ less accurate but faster calculations will suit the majority of use cases just
 fine.
 
 [[geo-distance-range]]
-==== `geo_distance_range` filter
+==== geo_distance_range filter
 
 The only difference between the `geo_distance` and `geo_distance_range`
 filters is that the latter has a doughnut shape and excludes documents within

@@ -78,7 +78,7 @@ the document, in real-time.
 
 
 [[flush-api]]
-==== `flush` API
+==== flush API
 
 The action of performing a commit and truncating the translog is known in
 Elasticsearch as a _flush_.  Shards are flushed automatically every 30

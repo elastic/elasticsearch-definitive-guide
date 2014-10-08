@@ -38,7 +38,7 @@ the more the better. If a feature is present it should score `1`, and if it
 isn't, `0`.
 
 [[constant-score-query]]
-==== `constant_score` query
+==== constant_score query
 
 Enter the {ref}query-dsl-constant-score-query.html[`constant_score`] query.
 This query can wrap either a query or a filter, and assigns a score of

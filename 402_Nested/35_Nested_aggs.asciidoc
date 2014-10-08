@@ -73,7 +73,7 @@ The results show that aggregation has happened at the nested document level:
 <1> There are a total of 4 `comments`, 1 in September and 3 in October.
 
 [[reverse-nested-aggregation]]
-==== `reverse_nested` aggregation
+==== reverse_nested aggregation
 
 A `nested` aggregation can only access the fields within the nested document -
 it can't see fields in the root document or in a different nested document.
@@ -155,7 +155,7 @@ The abbreviated results show us the following:
 <3> Two blogposts are associated with those comments.
 <4> The popular tags in those blogposts are: `shares`, `cash` and `equities`.
 
-==== When to use `nested` objects
+==== When to use nested objects
 
 Nested objects are useful when there is one main entity, like our `blogpost`,
 with a limited number of closely related but less important entities, such as

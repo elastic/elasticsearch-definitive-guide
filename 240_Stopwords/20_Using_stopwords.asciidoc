@@ -21,7 +21,7 @@ However, some out-of-the-box analyzers come with the `stop` filter pre-integrate
 
     Defaults to `_none_`, like the `standard` analyzer.
 
-==== Stopwords and the `standard` analyzer
+==== Stopwords and the standard analyzer
 
 To use custom stopwords in conjunction with the `standard` analyzer, all we
 need to do is to create a configured version of the analyzer and pass in the
@@ -161,7 +161,7 @@ PUT /my_index
     directory.
 
 [[stop-token-filter]]
-==== Using the `stop` token filter
+==== Using the stop token filter
 
 The {ref}analysis-stop-tokenfilter.html[`stop` token filter] can be combined
 with a tokenizer and other token filters when you need to create a `custom`

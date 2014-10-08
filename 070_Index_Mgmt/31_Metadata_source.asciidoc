@@ -1,5 +1,5 @@
 [[source-field]]
-==== Metadata: `_source` field
+==== Metadata: _source field
 
 By default, Elasticsearch stores the JSON string representing the
 document body in the `_source` field. Like all stored fields, the `_source`

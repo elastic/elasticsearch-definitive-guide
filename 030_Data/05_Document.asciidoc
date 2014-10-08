@@ -52,7 +52,7 @@ elements are:
 `_type`::   The class of object that the document represents.
 `_id`::     The unique identifier for the document.
 
-==== `_index`
+==== _index
 
 An _index_ is like a ``database'' in a relational database -- it's the place
 we store and index related data.
@@ -68,7 +68,7 @@ but for now we will let Elasticsearch create the index for us.  All we have to
 do is to choose an index name.  This name must be lower case, cannot begin with an
 underscore and cannot contain commas. Let's use `website` as our index name.
 
-==== `_type`
+==== _type
 
 In applications, we use objects to represent ``things'' such as a user, a blog
 post, a comment, or an email. Each object belongs to a _class_ which defines
@@ -93,7 +93,7 @@ automatically.
 A `_type` name can be lower or upper case, but shouldn't begin with an
 underscore, or contain commas.  We shall use `blog` for our type name.
 
-==== `_id`
+==== _id
 
 The _id_ is a string that, when combined with the `_index` and `_type`,
 uniquely identifies a document in Elasticsearch. When creating a new document,

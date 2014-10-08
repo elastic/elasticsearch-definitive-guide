@@ -46,7 +46,7 @@ The response (edited for brevity) looks something like this:
 --------------------------------------------------
 
 
-==== `hits`
+==== hits
 
 The most important section of the response is `hits`, which contains the
 `total` number of documents that matched our query, and a `hits` array
@@ -67,12 +67,12 @@ equally relevant, hence the neutral `_score` of `1` for all results.
 The `max_score` value is the highest `_score` of any document that matches our
 query.
 
-==== `took`
+==== took
 
 The `took` value tells us how many milliseconds the entire search request took
 to execute.
 
-==== `shards`
+==== shards
 
 The `_shards` element tells us the `total` number of shards that were involved
 in the query and, of them, how many were `successful` and how many `failed`.
@@ -82,7 +82,7 @@ of the same shard, there would be no copies of that shard available to respond
 to search requests. In this case, Elasticsearch would report the shard as
 `failed`, but continue to return results from the remaining shards.
 
-==== `timeout`
+==== timeout
 
 The `timed_out` value tells us whether the query timed out or not.  By
 default, search requests do not timeout.  If low response times are more
