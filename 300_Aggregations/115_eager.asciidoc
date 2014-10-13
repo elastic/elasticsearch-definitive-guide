@@ -37,12 +37,18 @@ are pre-loaded:
 
 [source,js]
 ----
-PUT /music/_mapping/_song
+PUT /music
 {
-  "price_usd": {
-    "type": "integer",
-    "fielddata": {
-      "loading" : "eager" <1>
+  "mappings": {
+    "song": {
+      "properties": {
+        "price_usd": {
+          "type": "integer",
+          "fielddata": {
+            "loading": "eager" <1>
+          }
+        }
+      }
     }
   }
 }
@@ -145,12 +151,18 @@ Individual fields can be configured to pre-build global ordinals eagerly:
 
 [source,js]
 ----
-PUT /music/_mapping/_song
+PUT /music
 {
-  "price_usd": {
-    "type": "integer",
-    "fielddata": {
-      "loading" : "eager_global_ordinals" <1>
+  "mappings": {
+    "song": {
+      "properties": {
+        "price_usd": {
+          "type": "integer",
+          "fielddata": {
+            "loading": "eager_global_ordinals" <1>
+          }
+        }
+      }
     }
   }
 }
@@ -163,13 +175,19 @@ their global ordinals built eagerly:
 
 [source,js]
 ----
-PUT /music/_mapping/_song
+PUT /music
 {
-  "price_usd": {
-    "type":       "integer",
-    "doc_values": true,
-    "fielddata": {
-      "loading" : "eager_global_ordinals" <1>
+  "mappings": {
+    "song": {
+      "properties": {
+        "price_usd": {
+          "type": "integer",
+          "doc_values": true,
+          "fielddata": {
+            "loading": "eager_global_ordinals" <1>
+          }
+        }
+      }
     }
   }
 }
