@@ -48,13 +48,17 @@ mapping, which means that you can combine in-memory fielddata with doc values.
 
 [source,js]
 ----
-PUT /music/_mapping/song
+PUT /music
 {
-  "properties" : {
-    "tag": {
-      "type":       "string",
-      "index" :     "not_analyzed",
-      "doc_values": true <1>
+  "mappings": {
+    "song": {
+      "properties": {
+        "tag": {
+          "type": "string",
+          "index": "not_analyzed",
+          "doc_values": true
+        }
+      }
     }
   }
 }
