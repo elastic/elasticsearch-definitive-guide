@@ -20,16 +20,20 @@ avoid loading any of the terms that fall into the less interesting long tail.
 
 [source,js]
 ----
-PUT /music/_mapping/song
+PUT /music
 {
-  "properties": {
-    "tag": {
-      "type": "string",
-      "fielddata": { <1>
-        "filter": {
-          "frequency": { <2>
-            "min":              0.01, <3>
-            "min_segment_size": 500  <4>
+  "mappings": {
+    "song": {
+      "properties": {
+        "tag": {
+          "type": "string",
+          "fielddata": {
+            "filter": {
+              "frequency": {
+                "min": 0.01,
+                "min_segment_size": 500
+              }
+            }
           }
         }
       }
