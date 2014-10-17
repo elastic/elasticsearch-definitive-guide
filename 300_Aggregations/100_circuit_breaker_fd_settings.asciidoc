@@ -182,7 +182,7 @@ OutOfMemoryException.
 Elasticsearch has a family of circuit breakers, all of which work to ensure
 that memory limits are not exceeded:
 
-`indices.breaker.fielddata.limit`::
+`indices.fielddata.breaker.limit`::
 
     The `fielddata` circuit breaker limits the size of fielddata to 60% of the
     heap, by default.
