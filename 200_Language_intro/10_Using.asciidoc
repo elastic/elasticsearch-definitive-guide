@@ -83,7 +83,7 @@ GET /_search
 {
   "query": {
     "multi_match": {
-      "type":     "most_fields" <1>
+      "type":     "most_fields", <1>
       "query":    "not happy foxes",
       "fields": [ "title", "title.english" ]
     }
