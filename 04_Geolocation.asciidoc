@@ -4,7 +4,7 @@
 [partintro]
 --
 Gone are the days when we wander around a city with paper maps. Thanks to
-smartphones, we now know exactly where we are all of the time, and we expect
+smartphones, we now know exactly ((("geolocation")))where we are all of the time, and we expect
 websites to use that information.  I'm not interested in restaurants in
 Greater London -- I want to know about restaurants within 5 minutes walk of my
 current location.
@@ -19,10 +19,10 @@ rating, distance and price. Another example: show me a map of holiday rental
 properties available in August throughout the city, and calculate the average
 price per zone.
 
-Elasticsearch offers two ways of representing geolocations: latitude-longitude
-points using the `geo_point` field type, and complex shapes defined in
+Elasticsearch offers two ways of ((("Elastisearch", "representing geolocations")))representing geolocations: latitude-longitude
+points using the `geo_point` field type,((("geo_point field type"))) and complex shapes defined in
 http://en.wikipedia.org/wiki/GeoJSON[GeoJSON], using the `geo_shape` field
-type.
+type.((("geo_shape field type")))
 
 Geo-points allow you to find points within a certain distance of another
 point, to calculate distances between two points for sorting or relevance
