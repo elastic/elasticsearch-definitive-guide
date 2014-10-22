@@ -12,7 +12,7 @@ ____
 
 Full text search is a battle between _precision_ -- returning as few
 irrelevant documents as possible -- and _recall_ -- returning as many relevant
-documents as possible. While matching only the exact words that the user has
+documents as possible.((("recall", "in full text search")))((("precision", "in full text search")))((("full text search", "battle between precision and recall"))) While matching only the exact words that the user has
 queried would be precise, it is not enough. We would miss out on many
 documents that the user would consider to be relevant. Instead, we need to
 spread the net wider, to also search for words that are not exactly the same
