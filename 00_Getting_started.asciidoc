@@ -37,7 +37,7 @@ If you are picking up this book, it is because you have data, and there is no
 point in having data unless you plan to *do something* with it.
 
 Unfortunately, most databases are astonishingly inept at extracting actionable
-knowledge from your data. Sure, they can filter by timestamp or exact values,
+knowledge from your data.((("databases", "ineptness at extracting actionable data"))) Sure, they can filter by timestamp or exact values,
 but can they perform full-text search, handle synonyms and score documents by
 relevance?  Can they generate analytics and aggregations from the same data?
 Most importantly, can they do this in real-time without big batch processing
