@@ -28,7 +28,7 @@ can be included further down the list.  If there are no documents which match
 exactly, then at least we can show the user potential matches -- they may even
 be what the user originally intended!
 
-There are several lines of attack:
+There are several((("full text search", "finding inexact matches"))) lines of attack:
 
 *   Remove diacritics like +´+, `^` and `¨` so that a search for ``rôle'' will
     also match ``role'', and vice versa. See <<token-normalization>>.
@@ -48,7 +48,7 @@ There are several lines of attack:
     ``meet''  vs ``mete''. See <<fuzzy-matching>>.
 
 Before we can manipulate individual words, we need to divide text up into
-words, which means that we need to know what constitutes a _word_. We will
+words, ((("words", "dividing text into")))which means that we need to know what constitutes a _word_. We will
 tackle this in <<identifying-words>>.
 
 But first, let's take a look at how to get started quickly and easily.
