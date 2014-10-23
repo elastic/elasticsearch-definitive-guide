@@ -269,6 +269,7 @@ Since the `productID` field is not analyzed, and the `term` filter performs no
 analysis, the query finds the exact match and returns document `1` as a hit.
 Success!
 
+[[_internal_filter_operation]]
 ==== Internal Filter Operation
 
 Internally, Elasticsearch is performing several operations when executing a
