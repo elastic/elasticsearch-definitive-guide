@@ -3,7 +3,42 @@
 /*--------Put Your Custom CSS Rules Below--------*/
 /*--- This oneoff overrides the code in https://github.com/oreillymedia/animal_theme/blob/master/pdf/pdf.css---*/
 
+/* right align */
+
+.alignmeright
+{
+  text-align: right;
+}
+
+/* Font fall backs */
+p
+{
+ font-family: "MinionPro", "Symbola", "Arial Unicode MS", "DejaVu Sans", "Code2000";
+}
+
+
+
+
+table tbody tr td p
+{
+  font-family: "MinionPro", "Symbola", "Arial Unicode MS", "DejaVu Sans", "Code2000";
+}
+
+pre[data-type="programlisting"]
+{
+    font-family: "UbuntuMono", "Arial Unicode MS", "Code2000";
+}
+code
+{
+  font-family: "UbuntuMono", "Arial Unicode MS", "DejaVu Sans", "Code2000";
+}
+
+
+
+
+
 /*----Uncomment to turn on automatic code wrapping
+
 
 pre {
   white-space: pre-wrap;
