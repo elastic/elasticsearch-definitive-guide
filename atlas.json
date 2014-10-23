@@ -58,10 +58,10 @@
   ],
   "formats": {
     "pdf": {
-      "version": false,
-      "index": false,
-      "toc": false,
-      "syntaxhighlighting": false,
+      "version": "web",
+      "index": true,
+      "toc": true,
+      "syntaxhighlighting": true,
       "show_comments": false
     },
     "epub": {
@@ -85,6 +85,6 @@
       "consolidated": false
     }
   },
-  "theme": "",
+  "theme": "oreillymedia/animal_theme",
   "title": "elasticsearch"
 }
