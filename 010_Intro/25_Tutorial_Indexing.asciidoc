@@ -37,8 +37,10 @@ before we can index a document we need to decide _where_ to store it.
 In Elasticsearch, a document belongs to a _type_, and those types live inside
 an _index_. You can draw some (rough) parallels to a traditional relational database:
 
-    Relational DB  ⇒ Databases ⇒ Tables ⇒ Rows      ⇒ Columns
-    Elasticsearch  ⇒ Indices   ⇒ Types  ⇒ Documents ⇒ Fields
+----
+Relational DB  ⇒ Databases ⇒ Tables ⇒ Rows      ⇒ Columns
+Elasticsearch  ⇒ Indices   ⇒ Types  ⇒ Documents ⇒ Fields
+----
 
 An Elasticsearch cluster can contain multiple _indices_ (databases), which in
 turn contain multiple _types_ (tables). These types hold multiple _documents_
