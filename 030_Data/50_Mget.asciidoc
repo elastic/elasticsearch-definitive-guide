@@ -13,7 +13,7 @@ more specific fields:
 
 [source,js]
 --------------------------------------------------
-GET /_mget
+POST /_mget
 {
    "docs" : [
       {
