@@ -129,7 +129,7 @@ This means your histogram will be a minimal response.  Often, this is not the
 behavior you actually want.  For many applications, you would like to dump the
 response directly into a graphing library without doing any post-processing.
 
-Essentially, we want buckets even if they have a count of zero. There are two 
+Essentially, we want buckets even if they have a count of zero. There are two
 additional parameters we can set which will provide this behavior:
 
 [source,js]
@@ -272,11 +272,11 @@ image::images/elas_29in02.png["Line chart of cars sold per month"]
 === The sky's the limit
 
 These were obviously simple examples, but the sky really is the limit
-when it comes to charting aggregations. ((("dashboards", "building from aggregations")))((("Kibana, dashboard in"))) For example, here is a dashboard in 
+when it comes to charting aggregations. ((("dashboards", "building from aggregations")))((("Kibana, dashboard in"))) For example, here is a dashboard in
 Kibana built with a variety of aggregations:
 
 [[kibana-img]]
-image::images/elas_29in03.png[]
+image::images/elas_29in03.png["Kibana - a real time analytics dashboard built with aggregations"]
 
 Due to the real-time nature of aggregations, dashboards like this are easy to query,
 manipulate and interact with.  This makes them ideal for non-technical employees
