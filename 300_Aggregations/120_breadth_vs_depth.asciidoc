@@ -58,7 +58,8 @@ for every actor.  Then, nested under each node in the first level, the
 "costars" aggregation will build a second level, with a bucket for every co-
 star. That means that a single movie will generate n^2^ buckets!
 
-TODO: graph of tree structures
+[[depth-first-1]]
+image::images/300_120_depth_first_1.svg["Step 1: build full depth tree"]
 
 To use some real numbers, imagine each movie has 10 actors on average. Each movie
 will then generate 10^2^ == 100 buckets.  If you have 20,000 movies, that's
@@ -68,6 +69,12 @@ Now, remember... our aggregation is simply asking for the top 10 actors and thei
 co-stars, totaling 50 values.  To get the final results, we have to generate
 that tree of 2,000,000 buckets, sort it, and finally prune it such that only the
 top 10 actors are left.
+
+[[depth-first-2]]
+image::images/300_120_depth_first_2.svg["Step 2: sort tree"]
+
+[[depth-first-3]]
+image::images/300_120_depth_first_3.svg["Step 3: prune tree"]
 
 At this point you should be quite distraught.  Twenty thousand documents is paltry,
 and the aggregation is pretty tame.  What if you had 200 million documents, wanted
@@ -94,11 +101,23 @@ point, we have a single layer in the tree, but we already know who the top 10
 actors are! There is no need to keep the other actors since they won't be in
 the top 10 anyway.
 
-TODO: graphs of tree
+[[breadth-first-1]]
+image::images/300_120_breadth_first_1.svg["Step 1: build first level"]
 
-Therefore, breadth-first will prune everything except the top 10.  Once pruned,
-it will execute the next layer of aggregations, etc.  This prevents the
-combinatorial explosion of buckets and drastically reduces memory requirements.
+[[breadth-first-2]]
+image::images/300_120_breadth_first_2.svg["Step 2: sort first level"]
+
+[[breadth-first-3]]
+image::images/300_120_breadth_first_3.svg["Step 2: prune first level"]
+
+Since we already know the top ten actors, we can safely prune away the rest of the
+long tail. After pruning, the next layer is populated based on _it's_ execution mode, 
+and the process repeats until the aggregation is done. This prevents the
+combinatorial explosion of buckets and drastically reduces memory requirements
+for classes of queries that are amenable to breadth-first.
+
+[[breadth-first-4]]
+image::images/300_120_breadth_first_4.svg["Step 4: populate full depth for remaining nodes"]
 
 To use breadth-first, simply enable it via the `collect` parameter:
 
