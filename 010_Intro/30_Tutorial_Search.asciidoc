@@ -181,7 +181,7 @@ We can represent the previous search for all Smith's like so:
 
 [source,js]
 --------------------------------------------------
-GET /megacorp/employee/_search
+POST /megacorp/employee/_search
 {
     "query" : {
         "match" : {
@@ -207,7 +207,7 @@ which allows us to execute structured searches efficiently:
 
 [source,js]
 --------------------------------------------------
-GET /megacorp/employee/_search
+POST /megacorp/employee/_search
 {
     "query" : {
         "filtered" : {
