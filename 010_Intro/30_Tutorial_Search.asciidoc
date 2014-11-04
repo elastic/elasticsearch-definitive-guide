@@ -10,7 +10,7 @@ those three pieces of information, we can return the original JSON document:
 
 [source,js]
 --------------------------------------------------
-GET /megacorp/employee/1
+POST /megacorp/employee/1
 --------------------------------------------------
 // SENSE: 010_Intro/30_Get.json
 
