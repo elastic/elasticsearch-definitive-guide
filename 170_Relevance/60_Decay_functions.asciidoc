@@ -111,7 +111,7 @@ The `location` clause is((("location clause", "gauss (Gaussian) function"))) eas
 
 * We have specified an `origin` that corresponds to the center of London.
 * Any location within `2km` of the `origin` receives the full score of `1.0`.
-* Locations more than `5km` (`offset + scale`) from the center receive a score
+* Locations `5km` (`offset + scale`) from the centre receive a score
 of `0.5`.
 
 [[Understanding-the-price-Clause]]
