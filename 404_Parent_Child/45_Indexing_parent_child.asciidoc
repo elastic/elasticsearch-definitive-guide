@@ -56,11 +56,11 @@ The `parent` ID should also be specified when using the `bulk` API:
 [source,json]
 -------------------------
 POST /company/employee/_bulk
-{ "index": { "_id": 2, "parent": "london" }}
+{ "index": { "_id": 2, "_parent": "london" }}
 { "name": "Mark Thomas", "dob": "1982-05-16", "hobby": "diving" }
-{ "index": { "_id": 3, "parent": "liverpool" }}
+{ "index": { "_id": 3, "_parent": "liverpool" }}
 { "name": "Barry Smith", "dob": "1979-04-01", "hobby": "hiking" }
-{ "index": { "_id": 4, "parent": "paris" }}
+{ "index": { "_id": 4, "_parent": "paris" }}
 { "name": "Adrien Grand", "dob": "1987-05-11", "hobby": "horses" }
 -------------------------
 
