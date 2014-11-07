@@ -27,7 +27,7 @@ GET /company/branch/_search?search_type=count
           "aggs": {
             "hobby": {
               "terms": { <3>
-                "field": "hobby"
+                "field": "employee.hobby"
               }
             }
           }
