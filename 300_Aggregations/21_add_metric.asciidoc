@@ -2,15 +2,15 @@
 === Adding a metric to the mix
 
 The previous example told us how many documents were in each bucket, which is
-useful.  But often, our applications require more sophisticated _metrics_ about
-the documents. For example, what is the average price of cars in each bucket?
+useful.  ((("aggregations", "basic example", "adding a metric")))But often, our applications require more sophisticated _metrics_ about
+the documents.((("metrics", "adding to basic aggregation (example)"))) For example, what is the average price of cars in each bucket?
 
 To get this information, we need to tell Elasticsearch which metrics to calculate,
-and on which fields.  This requires _nesting_ metrics inside of the buckets.
+and on which fields. ((("buckets", "nesting metrics in"))) This requires _nesting_ metrics inside of the buckets.
 Metrics will calculate mathematical statistics based on the values of documents
 within a bucket.
 
-Let's go ahead and add an `average` metric to our car example:
+Let's go ahead and add ((("average metric (aggregation example)")))an `average` metric to our car example:
 
 [source,js]
 --------------------------------------------------
@@ -84,6 +84,6 @@ and what field we want the average to be calculated on (`price`):
 
 // Would love to have a graph under each example showing how the data can be displayed (later, i know)
 Although the response has changed minimally, the data we get out of it has grown
-substantially.  Before, we knew there were four red cars.  Now we know that the
+substantially.((("avg_price metric (example)")))  Before, we knew there were four red cars.  Now we know that the
 average price of red cars is $32,500.  This is something that you can plug directly
 into reports or graphs.
