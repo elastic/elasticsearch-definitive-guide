@@ -40,7 +40,7 @@ index altogether.((("stopwords", "removal from index"))) The algorithm didn't ne
 term frequency because the most frequent terms had already been removed.
 
 In Elasticsearch, the `standard` analyzer  -- the default for `string` fields
--- doesn't remove stopwords because,((("standard analyzer", "stopwords and"))) even though they are words of little
+-- doesn't remove stopwords because, even though they are words of little
 value, they do still have some value.  The result is that, for very long
 documents, the sheer number of occurrences of words like `the` and `and` can
 artificially boost their weight.
@@ -49,7 +49,7 @@ BM25, on the other hand, does have an upper limit.  Terms that appear 5 to 10
 times in a document have a significantly larger impact on relevance than terms
 that appear just once or twice.  However, terms that appear 20 times in a
 document have almost the same impact as terms that appear a thousand times or
-more.((("non-linear term frequency saturation")))((("term frequency saturation for TF/IDF and BM25")))
+more.
 
 This is known as _non-linear term frequency saturation_.
 
@@ -61,7 +61,7 @@ image::images/elas_1706.png[Term frequency saturation for TF/IDF and BM25]
 ===== Field length normalization
 
 In <<field-norm>> we said that Lucene considers shorter fields to have
-more weight than longer ((("field length norm")))((("normalization", "field lengh norm")))((("BM25", "field length normalization")))fields -- the frequency of a term in a field is offset
+more weight than longer fields -- the frequency of a term in a field is offset
 by the length of the field.  However, the Practical Scoring Functions treats
 all fields in the same way.  It will treat all `title` fields (because they
 are short) as more important than all `body` fields (because they are long).
@@ -80,7 +80,7 @@ single field.
 ===== Tuning BM25
 
 One of the nice features of BM25 is that, unlike TF/IDF, it has two parameters
-that allow it to((("BM25", "tuning"))) be tuned:
+that allow it to be tuned:
 
 [horizontal]
 __`k1`__::
