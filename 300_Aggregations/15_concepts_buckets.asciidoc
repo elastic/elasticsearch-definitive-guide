@@ -1,7 +1,7 @@
 
 == High-level concepts
 
-Like the query DSL, aggregations have a _composable_ syntax: independent units
+Like the query DSL, ((("aggregations", "high-level concepts")))aggregations have a _composable_ syntax: independent units
 of functionality can be mixed and matched to provide the custom behavior that 
 you need. This means that there are only a few basic concepts to learn, but 
 nearly limitless combinations of those basic components.
@@ -27,7 +27,7 @@ Buckets are conceptually similar to grouping in SQL, while metrics are similar
 to `COUNT()`, `SUM()`, `MAX()`, etc.
 
 
-Let's dig into both of these concepts and see what they entail.
+Let's dig into both of these concepts((("aggregations", "high-level concepts", "buckets")))((("buckets"))) and see what they entail.
 
 === Buckets
 
@@ -53,7 +53,7 @@ on the same principle: partitioning documents based on a criteria.
 
 === Metrics
 
-Buckets allow us to partition documents into useful subsets, but ultimately what
+Buckets allow us to partition documents into useful subsets,((("aggregations", "high-level concepts", "metrics")))((("metrics"))) but ultimately what
 we want is some kind of _metric_ calculated on those documents in each bucket.  
 Bucketing is the means to an end - it provides a way to group documents in a way 
 that you can calculate interesting metrics.
@@ -65,7 +65,7 @@ or the 95th percentile for query latency.
 
 === Combining the two
 
-An aggregation is a combination of buckets and metrics.  An aggregation may have
+An aggregation is a combination of buckets and metrics.((("aggregations", "high-level concepts", "combining buckets and metrics")))((("buckets", "combining with metrics")))((("metrics", "combining with buckets")))  An aggregation may have
 a single bucket, or a single metric, or one of each.  It may even have multiple
 buckets nested inside of other buckets.
 

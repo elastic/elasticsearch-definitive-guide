@@ -1,6 +1,6 @@
 === Scale horizontally
 
-What about scaling as the demand for our application grows? If we start a
+What about scaling as the demand for our application grows?((("scaling horizontally")))((("clusters", "three-node cluster")))((("primary shards", "in three-node cluster"))) If we start a
 third node, our cluster reorganizes itself to look like
 <<cluster-three-nodes>>.
 

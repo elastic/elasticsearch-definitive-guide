@@ -1,11 +1,11 @@
 === Search options
 
-There are a few optional query-string parameters which can influence the
+There are a few ((("search options")))optional query-string parameters which can influence the
 search process:
 
 ==== preference
 
-The `preference` parameter allows you to control which shards or nodes are
+The `preference` parameter allows((("preference parameter")))((("search options", "preference"))) you to control which shards or nodes are
 used to handle the search request. It accepts values like: `_primary`,
 `_primary_first`, `_local`, `_only_node:xyz`, `_prefer_node:xyz` and
 `_shards:2,3`, which are explained in detail on the
@@ -13,7 +13,7 @@ used to handle the search request. It accepts values like: `_primary`,
 documentation  page.
 
 However, the most generally useful value is some arbitrary string, to avoid
-the _bouncing results_ problem.
+the _bouncing results_ problem.((("bouncing results problem")))
 
 [[bouncing-results]]
 .Bouncing results
@@ -36,11 +36,11 @@ like the user's session ID.
 
 ==== timeout
 
-By default, the coordinating node waits to receive a response from all shards.
+By default, the coordinating node waits((("search options", "timeout"))) to receive a response from all shards.
 If one node is having trouble, it could slow down the response to all search
 requests.
 
-The `timeout` parameter tells the coordinating node how long it should wait
+The `timeout` parameter tells((("timeout parameter"))) the coordinating node how long it should wait
 before giving up and just returning the results that it already has. It can be
 better to return some results than none at all.
 
@@ -68,7 +68,7 @@ the response.
 [[search-routing]]
 ==== routing
 
-In <<routing-value>> we explained how a custom `routing` parameter could be
+In <<routing-value>> we explained how a custom `routing` parameter((("search options", "routing")))((("routing parameter"))) could be
 provided at index time to ensure that all related documents, such as the
 documents belonging to a single user, are stored on a single shard.  At search
 time, instead of searching on all of the shards of an index, you can specify
@@ -85,7 +85,7 @@ discuss it in detail in <<scale>>.
 [[search-type]]
 ==== search_type
 
-While `query_then_fetch` is the default search type, other search types can
+While `query_then_fetch` is the default((("query_then_fetch search type")))((("search options", "search_type")))((("search_type"))) search type, other search types can
 be specified for particular purposes, as:
 
 [source,js]
@@ -95,13 +95,13 @@ GET /_search?search_type=count
 
 `count`::
 
-The `count` search type only has a `query` phase.  It can be used when you
+The `count` search type only has a `query` phase.((("count search type")))  It can be used when you
 don't need search results, just a document count or
 <<aggregations,aggregations>> on documents matching the query.
 
 `query_and_fetch`::
 
-The `query_and_fetch` search type combine the query and fetch phases into a
+The `query_and_fetch` search type ((("query_and_fetch serch type")))combine the query and fetch phases into a
 single step.  This is an internal optimization that is used when a search
 request targets a single shard only, such as when a
 <<search-routing,`routing`>> value has been specified. While you can choose
@@ -109,13 +109,13 @@ to use this search type manually, it is almost never useful to do so.
 
 `dfs_query_then_fetch` and `dfs_query_and_fetch`::
 
-The `dfs` search types have a pre-query phase which fetches the term
+The `dfs` search types((("dfs search types"))) have a pre-query phase which fetches the term
 frequencies from all involved shards in order to calculate global term
 frequencies. We discuss this further in <<relevance-is-broken>>.
 
 `scan`::
 
-The `scan` search type is used in conjunction with the `scroll` API to
+The `scan` search type is((("scan search type"))) used in conjunction with the `scroll` API ((("scroll API")))to
 retrieve large numbers of results efficiently. It does this by disabling
 sorting.  We discuss _scan-and-scroll_ in the next section.
 

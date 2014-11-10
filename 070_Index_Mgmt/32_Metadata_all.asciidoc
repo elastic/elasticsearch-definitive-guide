@@ -2,7 +2,7 @@
 ==== Metadata: _all field
 
 In <<search-lite>> we introduced the `_all` field: a special field that
-indexes the values from all other fields as one big string. The `query_string`
+indexes the ((("metadata, document", "_all field", secondary-sortas="all field")))((("all field")))values from all other fields as one big string. The `query_string`
 query clause (and searches performed as `?q=john`) defaults to searching in
 the `_all` field if no other field is specified.
 
@@ -39,7 +39,7 @@ between field lengths disappears in the `_all` field.
 
 ****
 
-If you decide that you no longer need the `_all` field, you can disable it
+If you decide that you no longer ((("all field", "disabling")))need the `_all` field, you can disable it
 with this mapping:
 
 [source,js]
@@ -54,7 +54,7 @@ PUT /my_index/_mapping/my_type
 
 
 Inclusion in the `_all` field can be controlled on a field-by-field basis
-using the `include_in_all` setting, which defaults to `true`.  Setting
+using the `include_in_all` setting, ((("include_in_all setting")))which defaults to `true`. ((("all field", "controlling inclusion in"))) Setting
 `include_in_all` on an object (or on the root object) changes the
 default for all fields within that object.
 
@@ -82,7 +82,7 @@ PUT /my_index/my_type/_mapping
 --------------------------------------------------
 
 
-Remember that the `_all` field is just an analyzed `string` field.  It
+Remember that the `_all` field is just((("all field", "configuring analyzer for")))((("analyzers", "configuring for all field"))) an analyzed `string` field.  It
 uses the default analyzer to analyze its values, regardless of which
 analyzer has been set on the fields where the values originate.  And
 like any `string` field, you can configure which analyzer the `_all`

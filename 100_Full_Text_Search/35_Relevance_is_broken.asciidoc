@@ -6,7 +6,7 @@ Before we move on to discussing more complex queries in
 <<match-test-data,created our test index>> with just one primary shard.
 
 Every now and again a new user opens an issue claiming that sorting by
-relevance is broken and offering a short reproduction: they index a few
+relevance((("relevance", "differences in IDF producing incorrect results"))) is broken and offering a short reproduction: they index a few
 documents, run a simple query and find apparently less relevant results
 appearing above more relevant results.
 
@@ -16,15 +16,15 @@ It may happen that shard 1 contains 3 of the `"foo"` documents and shard
 2 contains the other 3.  In other words, our documents are well distributed.
 
 In <<relevance-intro>> we described the default similarity algorithm used in
-Elasticsearch, called _Term Frequency / Inverse Document Frequency_ or TF/IDF.
+Elasticsearch, ((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm")))called _Term Frequency / Inverse Document Frequency_ or TF/IDF.
 Term frequency counts how many times a term appears within the field we are
 querying in the current document.  The more times it appears, the more
-relevant is this document. The _inverse document frequency_ takes into account
+relevant is this document. The _inverse document frequency_ takes((("inverse document frequency")))((("IDF", see="inverse document frequency"))) into account
 how often a term appears as a percentage of *all the documents in the index*.
 The more frequently the term appears, the less weight it has.
 
 However, for performance reasons, Elasticsearch doesn't calculate the IDF
-across all documents in the index. Instead, each shard calculates a local IDF
+across all documents in the index.((("shards", "local inverse document frequency (IDF)"))) Instead, each shard calculates a local IDF
 for the documents contained *in that shard*.
 
 Because our documents are well distributed, the IDF for both shards will be
@@ -45,7 +45,7 @@ introducing the <<match-query,`match` query>>. If you only have one shard then
 the local IDF *is* the global IDF.
 
 The second workaround is to add `?search_type=dfs_query_then_fetch` to your
-search requests. The `dfs` stands for _Distributed Frequency Search_ and it
+search requests. The `dfs` stands((("search_type", "dfs_query_then_fetch")))((("dfs_query_then_fetch search type")))((("DFS (Distributed Frequency Search)"))) for _Distributed Frequency Search_ and it
 tells Elasticsearch to first retrieve the local IDF from each shard in order
 to calculate the global IDF across the whole index.
 

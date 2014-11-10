@@ -1,7 +1,7 @@
 [[multi-field-search]]
 == Multi-field search
 
-Queries are seldom simple one-clause `match` queries.  We frequently need to
+Queries are seldom simple one-clause `match` queries. ((("multi-field search"))) We frequently need to
 search for the same or different query strings in one or more fields, which
 means that we need to be able to combine multiple query clauses and their
 relevance scores in a way that makes sense.

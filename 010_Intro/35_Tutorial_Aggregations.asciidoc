@@ -1,8 +1,8 @@
 === Analytics
 
 Finally, we come to our last business requirement: allow managers to run
-analytics over the employee directory.  Elasticsearch has functionality called
-_aggregations_, which allows you to generate sophisticated analytics over your
+analytics over the employee directory.((("analytics")))  Elasticsearch has functionality called
+_aggregations_, which ((("aggregations")))allows you to generate sophisticated analytics over your
 data. It is similar to `GROUP BY` in SQL, but much more powerful.
 
 For example, let's find the most popular interests enjoyed by our employees:
@@ -93,7 +93,7 @@ The `all_interests` aggregation has changed to include only documents matching o
   }
 --------------------------------------------------
 
-Aggregations allow hierarchical rollups too.  For example, let's find the
+Aggregations allow hierarchical rollups too.((("aggregations", "hierarchical rollups in")))  For example, let's find the
 average age of employees who share a particular interest:
 
 [source,js]

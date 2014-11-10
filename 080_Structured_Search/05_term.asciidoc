@@ -1,6 +1,6 @@
 === Finding exact values
 
-When working with exact values, you will be working with filters. Filters are
+When working with exact values,((("structured search", "finding exact values")))((("exact values", "finding"))) you will be working with filters. Filters are
 important because they are very, very fast.  Filters do not calculate
 relevance (avoiding the entire scoring phase) and are easily cached. We'll
 talk about the performance benefits of filters later in <<filter-caching>>,
@@ -9,7 +9,7 @@ can.
 
 ==== Term Filter with Numbers
 
-We are going to explore the `term` filter first because you will use it often.
+We are going to explore the `term` filter ((("term filter", "with numbers")))((("structured search", "finding exact values", "using term filter with numbers")))first because you will use it often.
 This filter is capable of handling numbers, booleans, dates and text.
 
 Let's look at an example using numbers first by indexing some products.  These
@@ -56,7 +56,7 @@ that we wish to find:
 
 The `term` filter isn't very useful on its own though.  As discussed in
 <<query-dsl-intro>>, the `search` API expects a `query`, not a `filter`. To
-use our `term` filter, we need to wrap it with a
+use our `term` filter, ((("filtered query")))we need to wrap it with a
 <<filtered-query,`filtered` query>>:
 
 [source,js]
@@ -80,7 +80,7 @@ GET /my_store/products/_search
 // SENSE: 080_Structured_Search/05_Term_number.json
 
 <1> The `filtered` query accepts both a `query` and a `filter`
-<2> A `match_all` is used to return all matching documents.  This is the default
+<2> A `match_all` is used to return all matching documents.((("match_all query clause")))  This is the default
 behavior, so in future examples we will simply omit the `query` section
 <3> The `term` filter that we saw previously.  Notice how it is placed inside
 the `filter` clause.
@@ -110,7 +110,7 @@ of 20):
 
 ==== Term Filter with Text
 
-As mentioned at the top of this section, the `term` filter can match strings
+As mentioned at the top of ((("structured search", "finding exact values", "using term filter with text")))((("term filter", "with text")))this section, the `term` filter can match strings
 just as easily as numbers.  Instead of price, let's try to find products that
 have a certain UPC identification code. To do this with SQL, we might use a
 query like this:
@@ -144,7 +144,7 @@ GET /my_store/products/_search
 
 Except there is a little hiccup... we don't get any results back!  Why is
 that? The problem isn't actually with the the `term` query, it is with the way
-the data has been indexed.  If we use the Analyze API (<<analyze-api>>), we
+the data has been indexed. ((("analyze API", "using to analyze UPC tokenization"))) If we use the Analyze API (<<analyze-api>>), we
 can see that our UPC has been tokenized into smaller tokens:
 
 [source,js]
@@ -198,7 +198,7 @@ Obviously, this is not what we want to happen when dealing with identification
 codes, or any kind of precise enumeration.
 
 To prevent this from happening, we need to tell Elasticsearch that this field
-contains an exact value by  setting it to be `not_analyzed`. We saw this
+contains an exact value by  setting it to be `not_analyzed`.((("not_analyzed string fields"))) We saw this
 originally in <<custom-field-mappings>>.  To do this, we need to first delete
 our old index (because it has the incorrect mapping) and create a new one with
 the correct mappings:
@@ -272,7 +272,7 @@ Success!
 [[_internal_filter_operation]]
 ==== Internal Filter Operation
 
-Internally, Elasticsearch is performing several operations when executing a
+Internally, Elasticsearch is((("structured search", "finding exact values", "intrnal filter operations")))((("filters", "internal filter operation"))) performing several operations when executing a
 filter:
 
 1. *Find Matching Docs*

@@ -1,9 +1,9 @@
 [[language-pitfalls]]
 === Pitfalls of mixing languages
 
-If you only have to deal with a single language, count yourself lucky.
+If you only have to deal with a single language,((("languages", "mixing, pitfalls of"))) count yourself lucky.
 Finding the right strategy for handling documents written in several languages
-can be challenging.
+can be challenging.((("indexing", "mixed languages, pitfalls of")))
 
 ==== At index time
 
@@ -21,7 +21,7 @@ separate.  Mixing languages in the same inverted index can be problematic:
 ===== Incorrect stemming
 
 The stemming rules for German are different from those for English, French,
-Swedish and so on. Applying the same stemming rules to different languages
+Swedish and so on.((("stemming words", "incorrect stemming in multilingual documents"))) Applying the same stemming rules to different languages
 will result in some words being stemmed correctly, some  incorrectly and some
 not being stemmed at all.
 
@@ -51,7 +51,7 @@ text.
 ===== Incorrect inverse document frequencies
 
 In <<relevance-intro>>, we explained that the more frequently a term appears
-in a collection of documents, the less weight that term has.  For accurate
+in a collection of documents, the less weight that term has.((("inverse document frequency", "incorrect, in multilingual documents")))  For accurate
 relevance calculations, you need accurate term frequency statistics.
 
 A short snippet of German appearing in predominantly English text would give
@@ -61,7 +61,7 @@ snippets now have much less weight.
 
 ==== At query time
 
-It is not sufficient just to think about your documents though.  You also need
+It is not sufficient just to think about your documents though.((("queries", "mixed languages and")))  You also need
 to think about how your users will query those documents.  Often you will be able
 to identify the main language of the user either from the language of the
 interface they have chosen to use (e.g. `mysite.de` vs. `mysite.fr`), or from the

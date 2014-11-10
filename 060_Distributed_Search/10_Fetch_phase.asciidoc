@@ -1,6 +1,6 @@
 === Fetch Phase
 
-The query phase identifies which documents satisfy the search request, but we
+The query phase identifies which documents satisfy((("distributed search execution", "fetch phase")))((("fetch phase of distributed search"))) the search request, but we
 still need to retrieve the documents themselves. This is the job of the fetch
 phase.
 
@@ -37,7 +37,7 @@ single response which it returns to the client.
 ****
 
 The query-then-fetch process supports pagination with the `from` and `size`
-parameters, but *within limits*.  Remember that each shard must build a priority
+parameters, but *within limits*. ((("size parameter")))((("from parameter")))((("pagination", "supported by query-then-fetch process")))((("deep paging, problems with"))) Remember that each shard must build a priority
 queue of length `from + size`, all of which need to be passed back to
 the coordinating node. And the coordinating node needs to sort through
 `number_of_shards * (from + size)` documents in order to find the correct

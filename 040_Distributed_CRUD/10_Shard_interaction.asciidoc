@@ -1,6 +1,6 @@
 === How primary and replica shards interact
 
-For explanation purposes, let's imagine that we have a cluster
+For explanation purposes, let's((("shards", "interaction of primary and replica shards")))((("primary shards", "interaction with replica shards")))((("replica shards", "interaction with primary shards"))) imagine that we have a cluster
 consisting of 3 nodes. It contains one index called `blogs` which has
 two primary shards. Each primary shard has two replicas. Copies of
 the same shard are never allocated to the same node, so our cluster
@@ -10,7 +10,7 @@ looks something like <<img-distrib>>.
 .A cluster with three nodes and one index
 image::images/elas_0401.png["A cluster with three nodes and one index"]
 
-We can send our requests to any node in the cluster. Every node is fully
+We can send our requests to any node in the cluster.((("nodes", "sending requests to"))) Every node is fully
 capable of serving any request.  Every node knows the location of every
 document in the cluster and so can forward requests directly to the required
 node. In the examples below, we will send all of our requests to `Node 1`,

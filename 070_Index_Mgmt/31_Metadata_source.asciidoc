@@ -1,7 +1,7 @@
 [[source-field]]
 ==== Metadata: _source field
 
-By default, Elasticsearch stores the JSON string representing the
+By default, Elasticsearch ((("metadata, document", "_source field", secondary-sortas="source field")))((("source field")))stores the JSON string representing the
 document body in the `_source` field. Like all stored fields, the `_source`
 field is compressed before being written to disk.
 
@@ -24,7 +24,7 @@ This is almost always desired functionality because it means that:
 
 That said, storing the `_source` field does use disk space.  If none of the
 above reasons is important to you, you can disable the `_source` field with
-the following mapping:
+the following((("source field", "disabling"))) mapping:
 
 [source,js]
 --------------------------------------------------
@@ -59,7 +59,7 @@ returned instead of the full `_source`.
 .Stored fields
 ****
 
-Besides indexing the values of a field, you can also choose to `store` the
+Besides indexing the values of a field, you ((("stored fields")))((("fields", "stored")))can also choose to `store` the
 original field value for later retrieval. Users with a Lucene background use
 stored fields to choose which fields they would like to be able to return in
 their search results. In fact the `_source` field is a stored field.

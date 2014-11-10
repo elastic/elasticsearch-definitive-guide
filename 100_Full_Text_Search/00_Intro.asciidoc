@@ -2,10 +2,10 @@
 == Full text search
 
 Now that we have covered the simple case of searching for structured data,
-it is time to explore _full text search_ -- how to search within full
+it is time to ((("full text search")))explore _full text search_ -- how to search within full
 text fields in order to find the most relevant documents.
 
-The two most important aspects of full text search are:
+The two most important aspects of ((("relevance")))full text search are:
 
 Relevance::
 
@@ -20,14 +20,14 @@ Analysis::
     (see <<analysis-intro>>) in order to (a) create an inverted index and
     (b) query the inverted index.
 
-As soon as we talk about either relevance or analysis, we are in the territory
+As soon as we talk ((("analysis")))about either relevance or analysis, we are in the territory
 of queries, rather than filters.
 
 [[term-vs-full-text]]
 === Term-based vs. Full-text
 
 While all queries perform some sort of relevance calculation, not all queries
-have an analysis phase. Besides specialized queries like the `bool` or
+have an analysis phase.((("full text search", "term-based versus")))((("term-based queries"))) Besides specialized queries like the `bool` or
 `function_score` queries which don't operate on text at all, textual queries can
 be broken down into two families:
 
@@ -36,7 +36,7 @@ Term-based queries::
 --
 
 Queries like the `term` or `fuzzy` queries are low-level queries which have no
-analysis phase. They operate on a single term. A `term` query for the term
+analysis phase.((("fuzzy queries"))) They operate on a single term. A `term` query for the term
 `"Foo"` looks for that *exact term* in the inverted index and calculates the
 TF/IDF relevance `_score` for each document that contains the term.
 
@@ -60,10 +60,10 @@ which understand the mapping of a field:
 *  If you use them to query a `date` or `integer` field, they will treat the
    query string as a date or integer respectively.
 
-*  If you query an exact value (`not_analyzed`) string field, they will treat
+*  If you query an exact value (`not_analyzed`) string field,((("not_analyzed string fields", "match or query-string queries on"))) they will treat
    the whole query string as a single term.
 
-* But if you query a full-text (`analyzed`) field, they will first pass the
+* But if you query a full-text (`analyzed`) field,((("analyzed fields", "match or query-string queries on"))) they will first pass the
   query string through the appropriate analyzer to produce the list of terms
   to be queried.
 
@@ -82,10 +82,10 @@ internally).
 **************************************************
 
 If you do find yourself wanting to use a query on an exact value
-`not_analyzed` field, think about whether you really want a query or a filter.
+`not_analyzed` field, ((("exact values", "not_analyzed fields, querying")))think about whether you really want a query or a filter.
 
 Single-term queries usually represent binary `yes`|`no` questions and are
-almost always better expressed as a filter, so that they can benefit from
+almost always better expressed as a ((("filters", "single-term queries better expressed as")))filter, so that they can benefit from
 <<filter-caching,filter caching>>:
 
 [source,js]

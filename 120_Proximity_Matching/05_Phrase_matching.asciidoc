@@ -2,7 +2,7 @@
 === Phrase matching
 
 In the same way that the `match` query is the ``go-to'' query for standard
-full text search, the `match_phrase` query is the one you should reach for
+full text search, the `match_phrase` query((("proximity matching", "phrase matching")))((("phrase matching")))((("match_phrase query"))) is the one you should reach for
 when you want to find words that are near to each other:
 
 [source,js]
@@ -46,7 +46,7 @@ The `match_phrase` query can also be written as a `match` query with type
 
 ==== Term positions
 
-When a string is analyzed, the analyzer returns not only a list of terms, but
+When a string is analyzed, the analyzer returns not((("phrase matching", "term positions")))((("match_phrase query", "position of terms")))((("position-aware matching"))) only a list of terms, but
 also the _position_ or order of each term in the original string:
 
 [source,js]
@@ -94,7 +94,7 @@ all of the words in exactly the order specified, with no words inbetween.
 
 ==== What is a phrase
 
-For a document to be considered a match for the phrase ``quick brown fox'':
+For a document to be considered a((("match_phrase query", "documents matching a phrase"))) match for the phrase ``quick brown fox'':
 
 * `quick`, `brown` and `fox` must all appear in the field
 
@@ -108,7 +108,7 @@ If any of these conditions is not met, the document is not considered a match.
 ==================================================
 
 Internally, the `match_phrase` query use the low-level `span` query family to
-do position-aware matching. Span queries are term-level queries, so they have
+do position-aware matching. ((("match_phrase query", "use of span queries for position-aware matching")))((("span queries")))Span queries are term-level queries, so they have
 no analysis phase -- they search for the exact term specified.
 
 Thankfully, most people never need to use the `span` queries directly as the

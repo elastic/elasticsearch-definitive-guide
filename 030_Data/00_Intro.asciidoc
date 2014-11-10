@@ -22,18 +22,18 @@ stored our data in columns and rows in a relational database, the equivalent
 of using a spreadsheet.  All the flexibility gained from using objects is lost
 due to the inflexibility of our storage medium.
 
-But what if we could store our objects as objects?  Instead of modeling our
+But what if we could store our objects as objects?((("objects", "storing as objects")))  Instead of modeling our
 application around the limitations of spreadsheets, we can instead focus on
 actually *using* the data. The flexibility of objects is returned to us.
 
-An _object_ is a language-specific, in-memory data structure. To send it across
+An _object_ is a language-specific, in-memory data structure.((("objects", "defined"))) To send it across
 the network, or store it, we need to be able to represent it in some standard
 format. http://en.wikipedia.org/wiki/Json[JSON (JavaScript Object Notation)]
-is a way of representing objects in human-readable text.  It has become the
+is a way of representing objects in human-readable text.((("objects", "represented by JSON")))((("JSON", "representing objects in human-readable text")))((("JavaScript Object Notation", see="JSON")))  It has become the
 _de facto_ standard for exchanging data in the NoSQL world. When an object has
-been serialized into JSON it is known as a _JSON document_.
+been serialized into JSON it is known as a _JSON document_.((("JSON documents")))
 
-Elasticsearch is a distributed _document_ store. It can store and retrieve
+Elasticsearch is a distributed _document_ store.((("document store, Elasticsearch as"))) It can store and retrieve
 complex data structures -- serialized as JSON documents -- in _real-time_. In
 other words, as soon as a document has been stored in Elasticsearch, it can be
 retrieved from any node in the cluster.

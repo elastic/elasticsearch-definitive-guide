@@ -1,12 +1,12 @@
 === Retrieving multiple documents
 
-As fast as Elasticsearch is, it can be faster still. Combining multiple
+As fast as Elasticsearch is, it can be faster still.((("documents", "retrieving multiple"))) Combining multiple
 requests into one avoids the network overhead of processing each request
 individually. If you know that you need to retrieve multiple documents from
 Elasticsearch, it is faster to retrieve them all in a single request using the
-_multi-get_ or `mget` API, instead of document-by-document.
+_multi-get_ or `mget` API, ((("mget (multi-get) API")))instead of document-by-document.
 
-The `mget` API expects a `docs` array, each element of which specifies the
+The `mget` API expects a `docs` array, each ((("docs array", "in request")))element of which specifies the
 `_index`, `_type` and `_id` metadata of the document you wish to retrieve. You
 can also specify a `_source` parameter if you just want to retrieve one or
 more specific fields:
@@ -32,7 +32,7 @@ GET /_mget
 --------------------------------------------------
 // SENSE: 030_Data/50_Mget.json
 
-The response body also contains a `docs` array which contains a response
+The response body also contains a `docs` array((("docs array", "in response body"))) which contains a response
 per document, in the same order as specified in the request. Each of these
 responses is the same response body that we would expect from an individual
 <<get-doc,`get` request>>:
@@ -134,4 +134,4 @@ NOTE: The HTTP status code for the above request is `200`, even though one
 document wasn't found. In fact, it would still be `200` if *none* of the
 requested documents were found.  The reason for that is that the `mget`
 request itself completed successfully. To determine the success or failure of
-the individual documents, you need to check the `found` flag.
+the individual documents, you need to check ((("found flag")))the `found` flag.

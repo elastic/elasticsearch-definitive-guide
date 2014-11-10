@@ -3,11 +3,11 @@
 
 In order to be able to treat date fields as dates, numberic fields as numbers,
 and string fields as full text or exact value strings, Elasticsearch needs to
-know what type of data each field contains.  This information is contained in
+know what type of data each field contains. ((("mapping (types)"))) This information is contained in
 the _mapping_.
 
-As explained in <<data-in-data-out>>, each document in an index has a _type_.
-Every type has its own _mapping_ or _schema definition_. A mapping
+As explained in <<data-in-data-out>>, each document in an index ((("types", "mapping for")))has a _type_.
+Every type has its own _mapping_ or _schema definition_.((("schema definition, types"))) A mapping
 defines the fields within a type, the datatype for each field,
 and how the field should be handled by Elasticsearch. A mapping is also used
 to configure metadata associated with the type.
@@ -18,7 +18,7 @@ to look at just enough to get you started.
 [[core-fields]]
 ==== Core simple field types
 
-Elasticsearch supports the following simple field types:
+Elasticsearch supports the ((("types", "core simple field types")))following simple field types:
 
 [horizontal]
 String:         ::  `string`
@@ -28,7 +28,7 @@ Boolean:        ::  `boolean`
 Date:           ::  `date`
 
 When you index a document which contains a new field -- one previously not
-seen -- Elasticsearch will use <<dynamic-mapping,_dynamic mapping_>> to try
+seen -- Elasticsearch ((("types", "mapping for", "dynamic mapping of new types")))((("JSON", "datatypes", "simple core types")))((("dynamic mapping")))((("boolean type")))((("long type")))((("double type")))((("date type")))((("strings")))will use <<dynamic-mapping,_dynamic mapping_>> to try
 to guess the field type from the basic datatypes available in JSON,
 using the following rules:
 
@@ -53,7 +53,7 @@ the string into a long, and throw an exception if it can't.
 
 ==== Viewing the mapping
 
-We can view the mapping that Elasticsearch has for one or more types in one or
+We can view the mapping that Elasticsearch has((("mapping (types)", "viewing"))) for one or more types in one or
 more indices using the `/_mapping` endpoint. At the <<mapping-analysis,start
 of this chapter>> we already retrieved the mapping for type `tweet` in index
 `gb`:
@@ -63,7 +63,7 @@ of this chapter>> we already retrieved the mapping for type `tweet` in index
 GET /gb/_mapping/tweet
 --------------------------------------------------
 
-This shows us the mapping for the fields (called _properties_) that
+This shows us the mapping for the ((("properties")))fields (called _properties_) that
 Elasticsearch generated dynamically from the documents that we indexed:
 
 [source,js]
@@ -95,7 +95,7 @@ Elasticsearch generated dynamically from the documents that we indexed:
 
 [TIP]
 ==================================================
-Incorrect mappings, such as having an `age` field mapped as type `string`
+Incorrect mappings, such as ((("mapping (types)", "incorrect mapping")))having an `age` field mapped as type `string`
 instead of `integer`, can produce confusing results to your queries.
 
 Instead of assuming that your mapping is correct, check it!
@@ -104,7 +104,7 @@ Instead of assuming that your mapping is correct, check it!
 [[custom-field-mappings]]
 ==== Customizing field mappings
 
-While the basic field datatypes are sufficient for many cases, you will often
+While the basic field datatypes are ((("mapping (types)", "customizing field mappings")))sufficient for many cases, you will often
 need to customize the mapping for individual fields, especially string fields.
 Custom mappings allow you to:
 
@@ -129,16 +129,16 @@ than `type`:
 
 
 Fields of type `"string"` are, by default, considered to contain full text.
-That is, their value will be passed through an analyzer before being indexed
+That is, their value will be passed through((("analyzers", "string values passed through"))) an analyzer before being indexed
 and a full text query on the field will pass the query string through an
 analyzer before searching.
 
-The two most important mapping attributes for `string` fields are
+The two most important mapping((("strings", "mapping attributes, index and analyzer"))) attributes for `string` fields are
 `index` and `analyzer`.
 
 ===== `index`
 
-The `index` attribute controls how the string will be indexed. It
+The `index` attribute controls((("index attribute, strings"))) how the string will be indexed. It
 can contain one of three values:
 
 [horizontal]
@@ -176,10 +176,10 @@ as their values are never analyzed.
 
 ===== `analyzer`
 
-For `analyzed` string fields, use the `analyzer` attribute to
+For `analyzed` string fields, use ((("analyzer attribute, strings", "using to specify analyzer")))the `analyzer` attribute to
 specify which analyzer to apply both at search time and at index time. By
-default, Elasticsearch uses the `standard` analyzer, but you can change this
-by specifying one of the built-in analyzers, such as
+default, Elasticsearch uses the `standard` analyzer,((("standard analyzer", "specifying another analyzer for strings"))) but you can change this
+by specifying one of the built-in analyzers, such((("english analyzer"))) as
 `whitespace`, `simple`, or `english`:
 
 [source,js]
@@ -199,7 +199,7 @@ as well.
 [[updating-a-mapping]]
 ==== Updating a mapping
 
-You can specify the mapping for a type when you first create an index.
+You can specify the mapping for a type when you first ((("types", "mapping for", "updating")))((("mapping (types)", "updating")))create an index.
 Alternatively, you can add the mapping for a new type (or update the mapping
 for an existing type) later, using the `/_mapping` endpoint.
 
@@ -276,7 +276,7 @@ change them anyway.  Our new field has been merged into the existing mapping.
 
 ==== Testing the mapping
 
-You can use the `analyze` API to test the mapping for string fields by
+You can use the `analyze` API to((("mapping (types)", "testing"))) test the mapping for string fields by
 name. Compare the output of these two requests:
 
 [source,js]

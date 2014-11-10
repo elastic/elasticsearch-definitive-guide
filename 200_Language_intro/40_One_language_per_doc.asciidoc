@@ -1,7 +1,7 @@
 [[one-lang-docs]]
 === One language per document
 
-A single predominant language per document requires a relatively simple setup.
+A single predominant language per document ((("languages", "one language per document")))((("indexes", "documents in different languages")))requires a relatively simple setup.
 Documents from different languages can be stored in separate indices -- `blogs-en`,
 `blogs-fr`, etc. -- which use the same type and the same fields for each index,
 just with different analyzers:
@@ -48,7 +48,7 @@ don't suffer from the term frequency and stemming problems described in
 
 The documents of a single language can be queried independently, or queries
 can target multiple languages by querying multiple indices.  We can even
-specify a preference for particular languages with the `indices_boost` parameter:
+specify a preference((("indices_boost parameter", "specifying preference for a specific language"))) for particular languages with the `indices_boost` parameter:
 
 [source,js]
 --------------------------------------------------
@@ -90,7 +90,7 @@ words are effectively synonyms, which we will discuss in <<synonyms>>.
 .Don't use types for languages
 *************************************************
 
-You may be tempted to use a separate type for each language, instead of a
+You may be tempted to use a separate type for each language,((("types", "not using for languages")))((("languages", "not using types for"))) instead of a
 separate index. For best results, you should avoid using types for this
 purpose.  As explained in <<mapping>>, fields from different types but with
 the same field name are indexed into the *same inverted index*.  This means

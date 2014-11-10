@@ -1,7 +1,7 @@
 [[version-control]]
 === Dealing with conflicts
 
-When updating a document using the `index` API, we read the original document,
+When updating a document using ((("conflicts", "dealing with")))the `index` API, we read the original document,
 make our changes, then reindex the *whole document* in one go. The most recent
 indexing request wins -- whichever document was indexed last is the one stored
 in Elasticsearch. If somebody else had changed the document in the meantime,
@@ -35,7 +35,7 @@ The more frequently that changes are made, or the longer the gap between
 reading data and updating it, the more likely it is that we will lose changes.
 
 In the database world, there are two commonly used approaches to ensuring that
-changes are not lost when making concurrent updates:
+changes are not lost when making ((("pessimistic concurrency control")))((("concurrency control")))concurrent updates:
 
 _Pessimistic concurrency control_::
 
@@ -47,7 +47,7 @@ the data in that row.
 
 _Optimistic concurrency control_::
 
-used by Elasticsearch, assumes that conflicts are unlikely to happen and
+used by Elasticsearch, ((("optimistic concurrency control")))assumes that conflicts are unlikely to happen and
 doesn't block operations from being attempted. However, if the underlying data
 has been modified between reading and writing, the update will fail. It is
 then up to the application to decide how it should resolve the conflict. For
@@ -57,7 +57,7 @@ report the situation to the user.
 [[optimistic-concurrency-control]]
 === Optimistic concurrency control
 
-Elasticsearch is distributed.  When documents are created, updated or deleted,
+Elasticsearch is distributed.  When documents((("concurrency control", "optimistic"))) are created, updated or deleted,
 the new version of the document has to be replicated to other nodes in the
 cluster.  Elasticsearch is also asynchronous and  concurrent, meaning that
 these replication requests are sent in parallel, and may arrive at their
@@ -70,7 +70,7 @@ document is changed. Elasticsearch uses this `_version` number to ensure that
 changes are applied in the correct order. If an older version of a document
 arrives after a new version, it can simply be ignored.
 
-We can take advantage of the `_version` number to ensure that conflicting
+We can take advantage of the `_version` number to ensure ((("version number (documents)", "using to avoid conflicts")))that conflicting
 changes made by our application do not result in data loss. We do this by
 specifying the `version` number of the document that we wish to change.  If that
 version is no longer current, our request fails.
@@ -178,7 +178,7 @@ code where it makes sense.
 ==== Using versions from an external system
 
 A common setup is to use some other database as the primary datastore and
-Elasticsearch to make the data searchable, which means that all changes to the
+Elasticsearch to make the data searchable,((("version number (documents)", "using an external version number")))((("external version numbers"))) which means that all changes to the
 primary database need to be copied across to Elasticsearch as they happen.  If
 multiple processes are responsible for this data synchronization, then you may
 run into concurrency problems similar to those described above.
@@ -186,7 +186,7 @@ run into concurrency problems similar to those described above.
 If your main database already has version numbers -- or some value like a
 `timestamp` which can be used as a version number -- then  you can reuse these
 same version numbers in Elasticsearch by adding `version_type=external` to the
-query string. Version numbers must be integers greater than zero and less than
+query string.((("query strings", "version_type=external"))) Version numbers must be integers greater than zero and less than
 about `9.2e+18` -- a positive `long` value in Java.
 
 The way external version numbers are handled is a bit different to the

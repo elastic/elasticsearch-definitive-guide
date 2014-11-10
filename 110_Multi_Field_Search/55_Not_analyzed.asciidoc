@@ -1,7 +1,7 @@
 === Exact value fields
 
 The final topic that we should touch on before leaving multi-field queries is
-that of exact value `not_analyzed` fields.  It is not useful to mix
+that of exact value `not_analyzed` fields. ((("not_analyzed fields", "exact value, in multi-field queries")))((("multithreaded programming", "avoiding use of not_analyzed fields in")))((("multi-field search", "exact value fields")))((("exact values", "exact value not_analyzed fields in multi-field search")))((("analyzed fields", "avoiding mixing with not analyzed fields in multi_match queries"))) It is not useful to mix
 `not_analyzed` fields with `analyzed` fields in `multi_match` queries.
 
 The reason for this can be demonstrated easily by looking at a query

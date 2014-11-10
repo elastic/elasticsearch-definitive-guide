@@ -7,12 +7,12 @@ by combining character filters, tokenizers and token filters in a
 configuration which suits your particular data.
 
 In <<analysis-intro>> we said that _analyzer_ is a wrapper which combines
-three functions into a single package, which are executed in sequence:
+three functions into a single package,((("analyzers", "functions executed in sequence"))) which are executed in sequence:
 
 Character filters::
 +
 --
-Character filters are used to ``tidy up'' a string before it is tokenized.
+Character filters((("character filters"))) are used to ``tidy up'' a string before it is tokenized.
 For instance, if our text is in HTML format, it will contain HTML tags like
 `<p>` or `<div>` that we don't want to be indexed. We can use the
 {ref}/analysis-htmlstrip-charfilter.html[`html_strip` character filter]
@@ -25,18 +25,18 @@ An analyzer may have zero or more character filters.
 Tokenizers::
 +
 --
-An analyzer *must* have a single tokenizer.  The tokenizer breaks the
+An analyzer *must* have a single tokenizer.((("tokenizers", "in analyzers")))  The tokenizer breaks the
 string up into individual terms or tokens. The
 {ref}/analysis-standard-tokenizer.html[`standard` tokenizer],
-which is used in the `standard` analyzer, breaks up a string into
+which is used((("standard tokenizer"))) in the `standard` analyzer, breaks up a string into
 invidual terms on word boundaries, and removes most punctuation, but
 other tokenizers exist which have different behaviour.
 
 For instance, the
 {ref}/analysis-keyword-tokenizer.html[`keyword` tokenizer]
-outputs exactly the same string as it received, without any tokenization. The
+outputs exactly((("keyword tokenizer"))) the same string as it received, without any tokenization. The
 {ref}/analysis-whitespace-tokenizer.html[`whitespace` tokenizer]
-splits text on whitespace only. The
+splits text((("whitespace tokenizer"))) on whitespace only. The
 {ref}/analysis-pattern-tokenizer.html[`pattern` tokenizer] can
 be used to split text on a matching regular expression.
 --
@@ -45,18 +45,18 @@ Token filters::
 +
 --
 After tokenization, the resulting _token stream_ is passed through any
-specified token filters, in the order in which they are specified.
+specified token filters,((("token filters"))) in the order in which they are specified.
 
 Token filters may change, add or remove tokens.  We have already mentioned the
 {ref}/analysis-lowercase-tokenfilter.html[`lowercase`] and
 {ref}/analysis-stop-tokenfilter.html[`stop` token filters],
 but there are many more available in Elasticsearch.
 {ref}/analysis-stemmer-tokenfilter.html[Stemming token filters]
-``stem'' words to their root form. The
+``stem'' words to ((("stemming token filters")))their root form. The
 {ref}/analysis-asciifolding-tokenfilter.html[`ascii_folding` filter]
-removes diacritics, converting a term like `"très"` into `"tres"`. The
+removes diacritics,((("ascii_folding filter"))) converting a term like `"très"` into `"tres"`. The
 {ref}/analysis-ngram-tokenfilter.html[`ngram`] and
-{ref}/analysis-edgengram-tokenfilter.html[`edge_ngram` token filters] can produce
+{ref}/analysis-edgengram-tokenfilter.html[`edge_ngram` token filters] can produce((("edge_engram token filter")))((("ngram and edge_ngram token filters")))
 tokens suitable for partial matching or autocomplete.
 --
 
@@ -66,7 +66,7 @@ analyzer.
 
 ==== Creating a custom analyzer
 
-In the same way as we configured the `es_std` analyzer above, we can configure
+In the same way as((("index settings", "analysis", "creating custom analyzers")))((("analyzers", "custom, creating"))) we configured the `es_std` analyzer above, we can configure
 character filters, tokenizers and token filters in their respective sections
 under `analysis`:
 
@@ -136,7 +136,7 @@ custom filters that we have configured above:
 --------------------------------------------------
 
 
-To put it all together, the whole `create-index` request looks like this:
+To put it all together, the whole `create-index` request((("create-index request"))) looks like this:
 
 [source,js]
 --------------------------------------------------
@@ -166,7 +166,7 @@ PUT /my_index
 // SENSE: 070_Index_Mgmt/20_Custom_analyzer.json
 
 
-After creating the index, use the `analyze` API to test the new analyzer:
+After creating the index, use the `analyze` API to((("analyzers", "testing using analyze API"))) test the new analyzer:
 
 [source,js]
 --------------------------------------------------
@@ -190,7 +190,7 @@ The abbreviated results below show that our analyzer is working correctly:
 }
 --------------------------------------------------
 
-The analyzer is not much use unless we tell Elasticsearch where to use it. We
+The analyzer is not much use unless we tell ((("analyzers", "custom, telling Elasticsearch where to use it")))((("mapping (types)", "applying custom analyzer to a string field")))Elasticsearch where to use it. We
 can apply it to a `string` field with a mapping such as:
 
 [source,js]

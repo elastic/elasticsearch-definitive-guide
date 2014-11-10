@@ -1,7 +1,7 @@
 [[one-lang-fields]]
 === One language per field
 
-For documents that represent entities like products, movies, or legal notices, it is common
+For documents that represent entities like products, movies, or legal notices, it is common((("fields", "one language per field")))((("languages", "one language per field")))
 for the same text to be translated into several languages.  While each translation
 could be represented in a single document in an index per language, another
 reasonable approach is to keep all translations in the same document:
@@ -67,7 +67,7 @@ analyzers with the {ref}indices-update-settings.html[`update-settings` API],
 then reopen the index, but closing the index means that it will require some
 downtime.
 
-The documents of a single language can be queried independently, or queries
+The documents of a((("boosting", "query-time", "boosting a field"))) single language can be queried independently, or queries
 can target multiple languages by querying multiple fields.  We can even
 specify a preference for particular languages by boosting that field:
 

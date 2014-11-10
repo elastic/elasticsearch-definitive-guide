@@ -1,7 +1,7 @@
 [[case-folding]]
 === Unicode case-folding
 
-Humans are nothing if not inventive, and human language reflects that.
+Humans are nothing if not inventive,((("tokens", "normalizing", "Unicode case folding")))((("Unicode", "case folding"))) and human language reflects that.
 Changing the case of a word seems like such a simple task, until you have to
 deal with multiple languages.
 
@@ -11,14 +11,14 @@ Greek letter `ς` (sigma, when used at the end of a word).  Converting it to
 upper case results in `Σ` which, converted back to lower case, gives you `σ`.
 
 The whole point of lower casing terms is to make them *more* likely to match,
-not less!  In Unicode, this job is done by _case folding_ rather than by lower
+not less!  In Unicode, this job is done by _case folding_ rather((("case folding"))) than by lower
 casing.  Case folding is the act of converting words into a  (usually lower
 case) form which does not necessarily result in the correct spelling, but does
 allow case-insensitive comparisons.
 
 For instance, the letter `ß`, which is already lower case, is _folded_ to
 `ss`. Similarly, the lower case `ς` is folded to `σ`, to make `σ`, `ς` and `Σ`
-comparable, no matter where the letter appears in a word.
+comparable, no matter where the letter appears in a word.((("nfkc_cf normalization form")))((("icu_normalizer token filter", "nfkc_cf normalization form")))
 
 The default normalization form which the `icu_normalizer` token filter uses
 is `nfkc_cf` which, like the `nfkc` form:
@@ -32,7 +32,7 @@ But also:
 * _case-folds_ characters into a form suitable for case comparison
 
 In other words, `nfkc_cf` is the equivalent of the `lowercase` token filter,
-but suitable for use with all languages. The ``on-steroids'' equivalent of the
+but suitable for use with all languages.((("lowercase token filter", "nfkc_cf normalization form and"))) The ``on-steroids'' equivalent of the
 `standard` analyzer would be the following:
 
 [source,js]

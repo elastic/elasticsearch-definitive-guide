@@ -1,7 +1,7 @@
 [[distrib-multi-doc]]
 === Multi-document patterns
 
-The patterns for the `mget` and `bulk` APIs are similar to those for
+The patterns for the `mget` and `bulk` APIs((("mget (multi-get) API", "retrieving multiple documents, process of")))((("documents", "retrieving multiple with mget"))) are similar to those for
 individual documents. The difference is that the requesting node knows in
 which shard each document lives. It breaks up the multi-document request into
 a multi-document request _per shard_, and forwards these in parallel to each
@@ -24,13 +24,13 @@ with a single `mget` request, as depicted in <<img-distrib-mget>>:
    shard. Once all replies have been received, `Node 1` builds the response
    and returns it to the client.
 
-A `routing` parameter can be set for each document in the `docs` array.
+A `routing` parameter can ((("routing parameter")))be set for each document in the `docs` array.
 
 [[img-distrib-bulk]]
 .Multiple document changes with `bulk`
 image::images/elas_0406.png["Multiple document changes with bulk"]
 
-Below we list the sequence of steps necessary to execute multiple
+Below we list the sequence of steps((("bulk API", "multiple document changes with")))((("documents", "multiple changes with bulk"))) necessary to execute multiple
 `create`, `index`, `delete` and `update` requests within a single
 `bulk` request, as depicted in <<img-distrib-bulk>>:
 
@@ -46,7 +46,7 @@ Below we list the sequence of steps necessary to execute multiple
    the requesting node, which collates the responses and returns them to the
    client.
 
-The `bulk` API also accepts the `replication` and `consistency` parameters
+The `bulk` API also accepts((("replication request parmeter", "in bulk requests")))((("consistency request parameter", "in bulk requests"))) the `replication` and `consistency` parameters
 at the top-level for the whole `bulk` request, and the `routing` parameter
 in the metadata for each request.
 

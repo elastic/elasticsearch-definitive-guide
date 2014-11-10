@@ -1,6 +1,6 @@
 === Distributed nature
 
-At the beginning of this chapter, we said that Elasticsearch can scale out to
+At the beginning of this chapter, we said that Elasticsearch((("distributed nature of Elasticsearch"))) can scale out to
 hundreds (or even thousands) of servers and handle petabytes of data. While
 our tutorial gave examples of how to use Elasticsearch, it didn't touch on the
 mechanics at all. Elasticsearch is distributed by nature, and it is designed
@@ -16,7 +16,7 @@ exactly the same way.
 Elasticsearch tries hard to hide the complexity of distributed systems. Some of
 the operations happening automatically under the hood include:
 
- * Partitioning your documents into different containers or _shards_, which
+ * Partitioning your documents into different containers((("documents", "partitioning into shards")))((("shards"))) or _shards_, which
    can be stored on a single node or on  multiple nodes.
 
  * Balancing these shards across the nodes in your cluster to spread the

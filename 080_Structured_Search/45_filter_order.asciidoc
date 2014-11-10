@@ -1,6 +1,6 @@
 === Filter order
 
-The order of filters in a `bool` clause is important for performance. More
+The order of filters in a `bool` clause is important for performance.((("structured search", "filter order")))((("filters", "order of"))) More
 specific filters should be placed before less specific filters in order to
 exclude as many documents as possible as early as possible.
 
@@ -8,7 +8,7 @@ If Clause A could match 10 million documents, and Clause B could only match
 100 documents, then Clause B should be placed before Clause A.
 
 Cached filters are very fast, so they should be placed before filters which
-are not cacheable.  Imagine that we have an index that contains one month's
+are not cacheable.((("caching", "cached filters, order of")))  Imagine that we have an index that contains one month's
 worth of log events. However, we're mostly interested only in log events from
 the previous hour:
 
@@ -30,7 +30,7 @@ GET /logs/2014-01/_search
 }
 --------------------------------------------------
 
-This filter is not cached because it uses the `now` function, the value of
+This filter is not cached because it uses the `now` function,((("now function", "filters using, caching and"))) the value of
 which changes every millisecond. That means that we have to examine one
 month's worth of log events every time we run this query!
 

@@ -1,6 +1,6 @@
 === Cross-fields entity search
 
-Now we come to a common pattern: cross-fields entity search.  With entities
+Now we come to a common pattern: cross-fields entity search. ((("cross-fields entity search")))((("multi-field search", "cross-fields entity search"))) With entities
 like `person`, `product`, or `address` the identifying information is spread
 across several fields.  We may have a `person` indexed as:
 
@@ -57,7 +57,7 @@ field that matches, which sounds like it is a job for the `bool` query:
 --------------------------------------------------
 
 Repeating the query string for every field soon becomes tedious. We can use
-the `multi_match` query instead, and set the `type` to `most_fields` to tell it to
+the `multi_match` query instead, ((("most fields queries", "problems for entity search")))((("multi_match queries", "most_fields type")))and set the `type` to `most_fields` to tell it to
 combine the scores of all matching fields:
 
 [source,js]

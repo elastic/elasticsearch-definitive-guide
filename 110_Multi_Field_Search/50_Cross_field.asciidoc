@@ -1,16 +1,16 @@
 === Cross-fields queries
 
 The custom `_all` approach is a very good solution, as long as you thought
-about setting it up before you indexed your documents. However, Elasticsearch
+about setting it up before you indexed your((("multi-field search", "cross-fields queries")))((("cross-fields queries"))) documents. However, Elasticsearch
 also provides a search time solution to the problem: the `multi_match` query
-with type `cross_fields`.
+with type `cross_fields`.((("multi_match queries", "cross_fields type")))
 
 The `cross_fields` type takes a term-centric approach, quite different to the
 field-centric approach taken by `best_fields` and `most_fields`. It treats all
 of the fields as one big field, and looks for *each term* in *any field*.
 
 To illustrate the difference between field-centric and term-centric queries,
-look at the `explanation` for this field-centric `most_fields` query:
+look at ((("field-centric queries", "differences between term-centric queries and")))((("most fields queries", "explanation for field-centric approach")))the `explanation` for this field-centric `most_fields` query:
 
 [source,js]
 --------------------------------------------------
@@ -71,7 +71,7 @@ GET /_validate/query?explain
 <1> Use `cross_fields` term-centric matching.
 
 It solves the term frequency problem by _blending_ inverse document
-frequencies across fields.
+frequencies across fields.((("cross-fields queries", "blending inverse document frequencies across fields")))((("inverse document frequency", "blending across fields in cross-fields queries")))
 
     +blended("peter", fields: [first_name, last_name])
     +blended("smith", fields: [first_name, last_name])
@@ -84,7 +84,7 @@ treated as a common first name too.
 [NOTE]
 ==================================================
 For the `cross_fields` query type to work optimally, all fields should have
-the same analyzer.  Fields which share an analyzer are grouped together as
+the same analyzer.((("analyzers", "in cross-fields queries")))((("cross-fields queries", "analyzers in")))  Fields which share an analyzer are grouped together as
 blended fields.
 
 If you include fields with a different analysis chain, they will be  added to
@@ -105,7 +105,7 @@ This is particularly important when using the `minimum_should_match` and
 ==== Per-field boosting
 
 One of the advantages of using the `cross_fields` query over
-<<custom-all,custom `_all` fields>> is that you can boost individual
+<<custom-all,custom `_all` fields>> is that you ((("cross-fields queries", "per-field boosting")))((("boosting", "per-field boosting in cross-fields queries")))can boost individual
 fields at query time.
 
 For fields of equal value like `first_name` and `last_name` this generally

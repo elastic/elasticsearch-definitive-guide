@@ -2,19 +2,19 @@
 === Unicode character folding
 
 In the same way as the `lowercase` token filter is a good starting point for
-many languages but falls short when exposed to the entire tower of Babel, so
+many languages((("Unicode", "character folding")))((("tokens", "normalizing", "Unicode character folding"))) but falls short when exposed to the entire tower of Babel, so
 the <<asciifolding-token-filter,`asciifolding` token filter>> requires a more
-effective Unicode _character folding_ counterpart for dealing with the many
-languages of the world.
+effective Unicode _character folding_ counterpart((("character folding"))) for dealing with the many
+languages of the world.((("asciifolding token filter")))
 
 The `icu_folding` token filter (provided by the <<icu-plugin,`icu` plugin>>)
-does the same job as the `asciifolding` filter, but extends the transformation
+does the same job as the `asciifolding` filter, ((("icu_folding token filter")))but extends the transformation
 to scripts which are not ASCII-based, such as Greek, Hebrew, Han, conversion
 of numbers in other scripts into their Latin equivalents, plus various other
 numeric, symbolic and punctuation transformations.
 
 The `icu_folding` token filter applies Unicode normalization and case folding
-form `nfkc_cf` automatically, so the `icu_normalizer` is not required:
+form `nfkc_cf` automatically,((("nfkc_cf normalization form"))) so the `icu_normalizer` is not required:
 
 [source,js]
 --------------------------------------------------
@@ -44,7 +44,7 @@ http://icu-project.org/apiref/icu4j/com/ibm/icu/text/UnicodeSet.html[_UnicodeSet
 characters may be folded.  For instance, to exclude the Swedish letters `å`,
 `ä`, `ö`, ++Å++, `Ä` and `Ö` from folding, you would specify a character class
 representing all Unicode characters, except for those letters: `[^åäöÅÄÖ]`
-(`^` means ``everything except'').
+(`^` means ``everything except'').((("swedish_folding filter")))((("swedish analyzer")))
 
 [source,js]
 --------------------------------------------------

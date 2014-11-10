@@ -2,7 +2,7 @@
 === Pluggable similarity algorithms
 
 Before we move on from relevance and scoring, we will finish this chapter with
-a more advanced subject: pluggable similarity algorithms. While Elasticsearch
+a more advanced subject: pluggable similarity algorithms.((("similarity algorithms", "pluggable")))((("relevance", "controlling", "using pluggable similarity algorithms"))) While Elasticsearch
 uses the <<practical-scoring-function>> as its default similarity algorithm,
 it supports a number of other algorithms out of the box, which are listed
 in the {ref}index-modules-similarity.html[Similarity Modules] documentation.
@@ -12,9 +12,9 @@ in the {ref}index-modules-similarity.html[Similarity Modules] documentation.
 
 The most interesting competitor to TF/IDF and the Vector Space Model is called
 http://en.wikipedia.org/wiki/Okapi_BM25[_Okapi BM25_], which is considered to
-be a _state-of-the-art_ ranking function. BM25 originates from the
+be a _state-of-the-art_ ranking function.((("BM25")))((("Okapi BM25", see="BM25"))) BM25 originates from the
 http://en.wikipedia.org/wiki/Probabilistic_relevance_model[Probabilistic relevance model],
-rather than the Vector Space Model, yet the algorithm has a lot in common with
+rather than the Vector Space Model, yet((("probabalistic relevance model"))) the algorithm has a lot in common with
 Lucene's Practical Scoring Function.
 
 Both make use of term frequency, inverse document frequency, and field length
@@ -26,17 +26,17 @@ on the practical advantages that BM25 offers.
 ===== Term frequency saturation
 
 Both TF/IDF and BM25 use <<idf,inverse document frequency>> to distinguish
-between common (low value) words and uncommon (high value) words.  Both also
+between common (low value) words and uncommon (high value) words.((("inverse document frequency", "use by TF/IDF and BM25")))  Both also
 recognise (see <<tf>>) that the more often a word appears in a document, the
 more likely is it that the document is relevant for that word.
 
-However, common words occur commonly.  The fact that a common word appears
+However, common words occur commonly. ((("BM25", "term frequency saturation"))) The fact that a common word appears
 many times in one document is offset by the fact that the word appears many
 times in *all* documents.
 
 However, TF/IDF was designed in an era where it was standard practice to
 remove the *most* common words (or _stopwords_, see <<stopwords>>) from the
-index altogether. The algorithm didn't need to worry about an upper limit for
+index altogether.((("stopwords", "removal from index"))) The algorithm didn't need to worry about an upper limit for
 term frequency because the most frequent terms had already been removed.
 
 In Elasticsearch, the `standard` analyzer  -- the default for `string` fields

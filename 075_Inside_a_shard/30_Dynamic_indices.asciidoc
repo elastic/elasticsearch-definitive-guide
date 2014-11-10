@@ -1,7 +1,7 @@
 [[dynamic-indices]]
 === Dynamically updatable indices
 
-The next problem that needed to be solved was: how to make an inverted index
+The next problem that needed to be ((("indexes", "dynamically updatable")))solved was: how to make an inverted index
 updatable without losing the benefits of immutability?  The answer turned out
 to be: use more than one index.
 
@@ -10,9 +10,9 @@ to reflect more recent changes. Each inverted index can be queried in turn --
 starting with the oldest -- and the results combined.
 
 Lucene, the Java libraries on which Elasticsearch is based, introduced  the
-concept of _per-segment search_.  A _segment_ is an inverted index in its own
+concept of _per-segment search_. ((("per-segment search")))((("segments")))((("indexes", "in Lucene"))) A _segment_ is an inverted index in its own
 right,  but now the word _index_ in Lucene came to mean a ``collection of
-segments'' plus a _commit point_ -- a file which lists all known segments.
+segments'' plus a _commit point_ -- a file((("commit point"))) which lists all known segments.
 
 [[img-index-segments]]
 .A Lucene index with a commit point and three segments
@@ -22,7 +22,7 @@ image::images/elas_1101.png["A Lucene index with a commit point and three segmen
 ***************************************
 
 To add to the confusion, a _Lucene index_ is what we call a _shard_ in
-Elasticsearch, while an _index_ in Elasticsearch is a collection of shards.
+Elasticsearch, while an _index_ in Elasticsearch((("indexes", "in Elasticsearch")))((("shards", "indexes versus"))) is a collection of shards.
 When Elasticsearch searches an ``index'', it sends the query out to a copy of
 every shard (Lucene index) that belongs to the index, then reduces the
 per-shards results to a global result set, as described in

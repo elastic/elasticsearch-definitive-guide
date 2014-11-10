@@ -2,9 +2,9 @@
 === common_grams token filter
 
 The `common_grams` token filter is designed to make phrase queries with
-stopwords more efficient. It is similar to the `shingles` token filter, (see
+stopwords more efficient. ((("stopwords", "phrase queries and", "common_grams token filter")))((("common_grams token filter")))((("phrase matching", "stopwords and", "common_grams token filter")))It is similar to the `shingles` token ((("shingles", "shingles token filter")))filter, (see
 <<shingles>>) which creates _bigrams_ out of every pair of adjacent words. It
-is most easily explained by example.
+is most easily explained by example.((("bigrams")))
 
 The `common_grams` token filter produces different out depending on whether
 `query_mode` is set to `false` (for indexing) or to `true` (for searching), so
@@ -77,7 +77,7 @@ PUT /my_index/_mapping/my_type
 
 ==== At index time
 
-If we were to analyze the phrase ``The quick and brown fox'' with shingles, it
+If we were to ((("common_grams token filter", "at index time")))analyze the phrase ``The quick and brown fox'' with shingles, it
 would produce these terms:
 
 [source,text]
@@ -105,7 +105,7 @@ the same position as the unigram -- `the_quick`, `quick_and`, `and_brown`.
 
 ==== Unigram queries
 
-Because the index contains unigrams, the field can be queried using the same
+Because the index contains unigrams,((("unigrams", "unigram phrase queries")))((("common_grams token filter", "unigram queries"))) the field can be queried using the same
 techniques that we have used for any other field, for example:
 
 [source,json]
@@ -133,7 +133,7 @@ field.
 
 ==== Bigram phrase queries
 
-However, when we come to do phrase queries, we can use the specialized
+However, when we come to do phrase queries,((("common_grams token filter", "bigram phrase queries")))((("bigrams", "bigram phrase queries"))) we can use the specialized
 `search_grams` analyzer to make the process much more efficient:
 
 [source,json]
@@ -177,7 +177,7 @@ less common than the single term `the`.  This has two advantages:
 
 ==== Two word phrases
 
-There is one further optimization.  By far the majority of phrase queries
+There is one further optimization. ((("common_grams token filter", "two word phrases"))) By far the majority of phrase queries
 consist of only two words.  If one of those words happens to be a common word,
 such as:
 

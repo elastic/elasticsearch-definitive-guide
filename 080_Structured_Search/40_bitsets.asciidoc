@@ -2,7 +2,7 @@
 === All about caching
 
 Earlier in this chapter (<<_internal_filter_operation>>) we briefly discussed
-how filters are calculated.  At their heart is a bitset representing which
+how filters are calculated.((("structured search", "caching of filter results")))((("caching", "bitsets representing documents matching filters")))((("bitsets, caching of")))((("filters", "bitsets representing documents matching, caching of")))  At their heart is a bitset representing which
 documents match the filter.
 
 Elasticsearch aggressively caches these bitsets for later use.  Once cached,
@@ -18,7 +18,7 @@ worry about cache expiry.
 ==== Independent filter caching
 
 Each filter is calculated and cached independently, regardless of where it is
-used. If two different queries use the same filter, the same filter bitset
+used.((("filters", "independent caching of"))) If two different queries use the same filter, the same filter bitset
 will be reused.  Likewise, if a single query uses the same filter in multiple
 places, only one bitset is calculated and then reused.
 
@@ -65,7 +65,7 @@ performance benefits.
 ==== Controlling caching
 
 Most ``leaf'' filters -- those dealing directly with fields like the `term`
-filter -- are cached, while compound filters, like the `bool` filter, are not.
+filter -- are cached, while((("leaf filters", "caching of")))((("caching", "of leaf filters, controlling")))((("filters", "controlling caching of"))) compound filters, like the `bool` filter, are not.
 
 ****
 Leaf filters have to consult the inverted index on disk, so it makes sense to
@@ -79,19 +79,19 @@ doesn't make sense to do so:
 
 Script filters::
 
-The results from {ref}/query-dsl-script-filter.html[`script` filters] cannot
+The results((("script filters", "no caching of results"))) from {ref}/query-dsl-script-filter.html[`script` filters] cannot
 be cached because the meaning of the script is opaque to Elasticsearch.
 
 Geo filters::
 
-The geolocation filters, which we will talk more about in <<geoloc>>, are
+The geolocation filters, which((("geolocation filters", "no caching of results"))) we will talk more about in <<geoloc>>, are
 usually used to filter results based on the geolocation of a specific user.
 Since every user has their own unique geolocation, it is unlikely that geo
 filters will be reused, so it makes no sense to cache them.
 
 Date ranges::
 
-Date ranges which use the `now` function, eg `"now-1h"`, result in values
+Date ranges which ((("date ranges", "using now function, no caching of")))((("now function", "date ranges using")))use the `now` function, eg `"now-1h"`, result in values
 accurate to the millisecond. Every time the filter is run, `now` returns a new
 time. Older filters will never be reused so caching is disabled by default.
 However, when using `now` with rounding, eg `now/d` rounds to the nearest day,
@@ -100,7 +100,7 @@ then caching is enabled by default.
 Sometimes the default caching strategy is not correct. Perhaps you have a
 complicated `bool` expression which is reused several times in the same query.
 Or you have a filter on a `date` field that will never be reused.  The default
-caching strategy can be overridden on almost any filter by setting the
+caching strategy ((("cache flag")))((("filters", "overriding default caching strategy on")))can be overridden on almost any filter by setting the
 `_cache` flag:
 
 [source,js]

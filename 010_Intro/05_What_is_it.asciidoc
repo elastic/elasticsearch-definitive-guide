@@ -3,7 +3,7 @@
 
 Elasticsearch is an open-source search engine built on top of
 https://lucene.apache.org/core/[Apache Lucene(TM)] , a full-text search engine
-library.  Lucene is arguably the most advanced, performant and fully-featured
+library.((("Apache Lucene")))((("Lucene")))  Lucene is arguably the most advanced, performant and fully-featured
 search engine library in existence today -- both open source and proprietary.
 
 But, Lucene is just a library. To leverage its power you need to work in Java
@@ -11,12 +11,12 @@ and to integrate Lucene directly with your application. Worse, you will likely
 require a degree in Information Retrieval to understand how it works.  Lucene
 is *very* complex.
 
-Elasticsearch is also written in Java and uses Lucene internally for all of
+Elasticsearch is also written in Java((("Java"))) and uses Lucene internally for all of
 its indexing and search, but it aims to make full text search easy by hiding
 the complexities of Lucene behind a simple, coherent, RESTful API.
 
 However, Elasticsearch is much more than just Lucene and much more than
-``just'' full text search. It is also:
+``just'' full text search.((("Elasticsearch", "capabilities"))) It is also:
 
 * A distributed real-time document store where *every field* is indexed and
   searchable.
@@ -31,9 +31,9 @@ your favorite programming language, or even from the command line.
 It is easy to get started with Elasticsearch. It ships with sensible defaults
 and hides complicated search theory away from beginners. It _just works_,
 right out of the box. With minimal understanding, you can soon become
-productive.
+productive.((("Elasticsearch", "installing")))
 
-Elasticsearch can be downloaded, used and modified free of charge. It is
+Elasticsearch can be((("Apache 2 license"))) downloaded, used and modified free of charge. It is
 available under the http://www.apache.org/licenses/LICENSE-2.0.html[Apache 2 license],
 one of the most flexible open source licenses available.
 

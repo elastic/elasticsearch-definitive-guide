@@ -1,7 +1,7 @@
 [[stemming]]
 == Reducing words to their root form
 
-Most languages of the world are *inflected*, meaning that words can change
+Most languages of the world are *inflected*, meaning ((("languages", "inflection in")))((("words", "stemming", see="stemming words")))((("stemming words")))that words can change
 their form to express differences in:
 
 [horizontal]
@@ -13,9 +13,9 @@ _case_::        I, me, my
 _aspect_::      ate, eaten
 _mood_::        so *be* it, *were* it so
 
-While inflection aids expressivity, it interferes with retrievability as a
+While inflection aids expressivity, it interferes((("inflection"))) with retrievability as a
 single root _word sense_ or meaning may be represented by many different
-sequences of letters. English is a weakly inflected language -- you could
+sequences of letters.((("English", "inflection in"))) English is a weakly inflected language -- you could
 ignore inflections and still get reasonable search results -- but some other
 languages are highly inflected and need extra work in order to achieve
 high quality search results.
@@ -32,7 +32,7 @@ the same terms are produced at index time and at search time, search will just
 work.
 
 If stemming were easy, there would be only one implementation. Unfortunately,
-stemming is an inexact science which suffers from two issues: _understemming_
+stemming is an inexact science which ((("stemming words", "understemming and overstemming")))suffers from two issues: _understemming_
 and _overstemming_.
 
 Understemming is the failure to reduce words with the same meaning to the same
@@ -48,12 +48,12 @@ shouldn't be.
 .Lemmatisation
 **********************************************
 
-A _lemma_ is the canonical or dictionary form of a set of related words -- the
+A _lemma_ is the canonical or dictionary form ((("lemma")))of a set of related words -- the
 lemma of `paying`, `paid` and `pays` is `pay`.  Usually the lemma resembles
 the words it is related to but sometimes it doesn't -- the lemma of `is`,
 `was`, `am` and `being` is `be`.
 
-Lemmatisation, like stemming, tries to group related words, but it goes one
+Lemmatisation, like stemming, tries to group related words,((("lemmatisation"))) but it goes one
 step further than stemming in that it tries to group words by their _word
 sense_ or meaning.  The same word may represent two different meanings --
 ``wake'' can mean ``to wake up'' or ``a funeral''.  While lemmatisation would

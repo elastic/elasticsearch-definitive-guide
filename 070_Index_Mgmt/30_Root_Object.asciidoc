@@ -1,7 +1,7 @@
 [[root-object]]
 === The root object
 
-The uppermost level of a mapping is known as the _root object_. It may
+The uppermost level of a mapping is known ((("mapping (types)", "root object")))((("root object")))as the _root object_. It may
 contain:
 
 * a _properties_ section which lists the mapping for each field that a
@@ -20,7 +20,7 @@ contain:
 ==== Properties
 
 We have already discussed the three most important settings for document
-fields or properties in <<core-fields>> and <<complex-core-fields>>:
+fields or ((("root object", "properties")))((("properties", "important settings")))properties in <<core-fields>> and <<complex-core-fields>>:
 
 [horizontal]
 `type`::        The datatype that the field contains, such as `string` or

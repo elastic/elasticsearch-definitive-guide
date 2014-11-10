@@ -2,7 +2,7 @@
 === Not quite not
 
 A search on the Internet for ``Apple'' is likely to return results about the
-company, the fruit, and various recipes.  We could try to narrow it down to
+company, the fruit, ((("relevance", "controlling", "must_not clause in bool query")))((("bool query", "must_not clause")))and various recipes.  We could try to narrow it down to
 just the company by excluding words like `pie`, `tart`, `crumble`, and `tree`,
 using a `must_not` clause in a `bool` query:
 
@@ -34,7 +34,7 @@ too strict.
 [[boosting-query]]
 ==== boosting query
 
-The {ref}query-dsl-boosting-query.html[`boosting` query] solves this problem.
+The {ref}query-dsl-boosting-query.html[`boosting` query] solves((("boosting query")))((("relevance", "controlling", "boosting query"))) this problem.
 It allows us to still include results which appear to be about the fruit or
 the pastries, but to downgrade them -- to rank them lower than they would
 otherwise be:
@@ -61,10 +61,10 @@ GET /_search
 }
 -------------------------------
 
-It accepts a `positive` query and a `negative` query.  Only documents which
+It accepts a `positive` query and a `negative` query.((("positive query and negative query (in boosting query)")))  Only documents which
 match the `positive` query will be included in the results list, but documents
 which also match the `negative` query will be downgraded by multiplying the
-original `_score` of the document with the `negative_boost`.
+original `_score` of((("negative_boost"))) the document with the `negative_boost`.
 
 For this to work, the `negative_boost` must be less than `1.0`.  In our above
 example, any documents which contain any of the negative terms will have their

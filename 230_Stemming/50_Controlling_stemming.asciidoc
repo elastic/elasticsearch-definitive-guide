@@ -1,7 +1,7 @@
 [[controlling-stemming]]
 === Controlling stemming
 
-Out of the box stemming solutions are never perfect.  Algorithmic stemmers,
+Out of the box stemming solutions are never perfect.((("stemming words", "controlling stemming")))  Algorithmic stemmers,
 especially, will blithely apply their rules to any words they encounter
 perhaps conflating words that you would prefer to keep separate.  Maybe, for
 your use case, it is important to keep `skies` and `skiing` as distinct words
@@ -9,18 +9,18 @@ rather than stemming them both down to `ski` (as would happen with the
 `english` analyzer).
 
 The {ref}analysis-keyword-marker-tokenfilter.html[`keyword_marker`] and
-{ref}analysis-stemmer-override-tokenfilter.html[`stemmer_override`] token filters
+{ref}analysis-stemmer-override-tokenfilter.html[`stemmer_override`] token filters((("stemmer_override token filter")))((("keyword_marker token filter")))
 allow us to customize the stemming process.
 
 [[preventing-stemming]]
 ==== Preventing stemming
 
 The <<stem-exclusion,`stem_exclusion`>> parameter for language analyzers (see
-<<configuring-language-analyzers>>) allowed us to specify a list of words that
+<<configuring-language-analyzers>>) allowed ((("stemming words", "controlling stemming", "preventing stemming")))us to specify a list of words that
 should not be stemmed.  Internally, these language analyzers use the
 {ref}analysis-keyword-marker-tokenfilter.html[`keyword_marker` token filter]
 to mark the listed words as _keywords_, which prevents subsequent stemming
-token filters from touching those words.
+token filters from touching those words.((("keyword_marker token filter", "preventing stemming of certain words")))
 
 For instance, we can create a simple custom analyzer which uses the
 {ref}analysis-porterstem-tokenfilter.html[`porter_stem`] token filter,
@@ -69,10 +69,10 @@ sky skies skiing skis <1>
 [TIP]
 ==========================================
 
-While the language analyzers only allow us to specify an array of words in the
+While the language analyzers only allow ((("language analyzers", "stem_exclusion parameter")))us to specify an array of words in the
 `stem_exclusion` parameter, the `keyword_marker` token filter also accepts a
 `keywords_path` parameter which allows us to store all of our keywords in a
-file. The file should contain one word per line, and must be present on every
+file. ((("keyword_marker token filter", "keyword_path parameter")))The file should contain one word per line, and must be present on every
 node in the cluster. See <<updating-stopwords>> for tips on how to update this
 file.
 
@@ -82,9 +82,9 @@ file.
 ==== Customizing stemming
 
 In the example above, we prevented `skies` from being stemmed, but perhaps we
-would prefer it to be stemmed to `sky` instead.  The
+would prefer it to be stemmed to `sky` instead.((("stemming words", "controlling stemming", "customizing stemming")))  The
 {ref}analysis-stemmer-override-tokenfilter.html[`stemmer_override`] token
-filter allows us to specify our own custom stemming rules. At the same time,
+filter allows us ((("stemmer_override token filter")))to specify our own custom stemming rules. At the same time,
 we can handle some irregular forms like stemming `mice` to `mouse` and `feet`
 to `foot`:
 

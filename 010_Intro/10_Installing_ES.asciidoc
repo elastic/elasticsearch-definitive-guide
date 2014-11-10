@@ -1,10 +1,10 @@
 === Installing Elasticsearch
 
 The easiest way to understand what Elasticsearch can do for you is to
-play with it, so let's get started!
+play with it, so let's get started!((("Elasticsearch", "installing")))
 
 The only requirement for installing Elasticsearch is a recent version of Java.
-Preferably, you should install the latest version of the official Java
+Preferably, you should install the latest version of the((("Java", "installing"))) official Java
 from http://www.java.com[www.java.com].
 
 You can download the latest version of Elasticsearch from
@@ -29,7 +29,7 @@ https://github.com/elasticsearch/cookbook-elasticsearch[Chef cookbook].
 [[marvel]]
 ==== Installing Marvel
 
-http://www.elasticsearch.com/products/marvel[Marvel] is a management and monitoring
+http://www.elasticsearch.com/products/marvel[Marvel] is a management((("Marvel", "defined"))) and monitoring
 tool for Elasticsearch which is free for development use. It comes with an
 interactive console called Sense which makes it very easy to talk to
 Elasticsearch directly from your browser.
@@ -40,7 +40,7 @@ You do not have to install Marvel, but it will make this book much more
 interactive by allowing you to  experiment with the code samples on your local
 Elasticsearch cluster.
 
-Marvel is available as a plugin. To download and install it, run this command
+Marvel is available as a plugin.((("Marvel", "downloading and installing"))) To download and install it, run this command
 in the Elasticsearch directory:
 
 [source,sh]
@@ -59,7 +59,7 @@ echo 'marvel.agent.enabled: false' >> ./config/elasticsearch.yml
 [[running-elasticsearch]]
 === Running Elasticsearch
 
-Elasticsearch is now ready to run. You can start it up in the foreground
+Elasticsearch is now ready to run. ((("Elasticsearch", "running")))You can start it up in the foreground
 with:
 
 [source,sh]
@@ -98,7 +98,7 @@ start experimenting with it.
 .Clusters and nodes
 ****
 
-A _node_ is a running instance of Elasticsearch. A _cluster_ is a group of
+A _node_ is a running instance of Elasticsearch.((("nodes", "defined"))) A _cluster_ is ((("clusters", "defined")))a group of
 nodes with the same `cluster.name` that are working together to share data
 and to provide failover and scale, although a single node can form a cluster
 all by itself.
@@ -106,7 +106,7 @@ all by itself.
 ****
 
 You should change the default `cluster.name` to something appropriate to you,
-like your own name, to stop your nodes from trying to join another cluster on
+like your own name, to stop ((("clusters", "changing default name")))your nodes from trying to join another cluster on
 the same network with the same name!
 
 You can do this by editing the `elasticsearch.yml` file in the `config/`
@@ -122,10 +122,10 @@ curl -XPOST 'http://localhost:9200/_shutdown'
 
 ==== Viewing Marvel and Sense
 
-If you installed the <<marvel,Marvel>> management and monitoring tool you can
+If you installed the <<marvel,Marvel>> management ((("Marvel", "viewing")))and monitoring tool you can
 view it in a web browser by visiting:
 http://localhost:9200/_plugin/marvel/.
 
-You can reach the *Sense* developer console either by clicking on the ``Marvel
+You can reach the *Sense* developer((("Sense", "viewing developer console"))) console either by clicking on the ``Marvel
 dashboards'' dropdown in Marvel, or by visiting:
 http://localhost:9200/_plugin/marvel/sense/.

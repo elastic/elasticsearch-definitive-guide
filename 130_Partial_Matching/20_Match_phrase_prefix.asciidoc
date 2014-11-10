@@ -1,9 +1,9 @@
 === Query time search-as-you-type
 
 Leaving postcodes behind, let's take a look at how prefix matching can help
-with full text queries.  Users have become accustomed to seeing search results
+with full text queries. ((("partial matching", "query time search-as-you-type"))) Users have become accustomed to seeing search results
 before they have finished typing their query, so called _instant search_, or
-_search-as-you-type_.  Not only do users receive their search results in less
+_search-as-you-type_. ((("search-as-you-type")))((("instant search"))) Not only do users receive their search results in less
 time, but we can guide them towards results which actually exist in our index.
 
 For instance, if a user types in `johnnie walker bl`, we would like to show
@@ -18,7 +18,7 @@ full text field.
 In <<phrase-matching>> we introduced the `match_phrase` query, which matches
 all of the specified words in the same positions relative to each other.  For
 query time search-as-you-type, we can use a specialization of this query,
-called the `match_phrase_prefix` query.
+called ((("prefixes", "match_phrase_prefix query")))((("match_phrase_prefix query")))the `match_phrase_prefix` query.
 
 [source,js]
 --------------------------------------------------
@@ -44,7 +44,7 @@ produce this explanation:
     "johnnie walker bl*"
 
 Like the `match_phrase` query, it accepts a `slop` parameter (see <<slop>>) to
-make the word order and relative positions somewhat less rigid:
+make the word order and relative positions ((("slop parameter", "match_prhase_prefix query")))((("match_phrase_prefix query", "slop parameter")))somewhat less rigid:
 
 [source,js]
 --------------------------------------------------
@@ -68,11 +68,11 @@ as a prefix.
 
 Earlier, in <<prefix-query>> we warned about the perils of the prefix -- how
 `prefix` queries can be very resource intensive.  The same is true in this
-case.  A prefix of `a` could match hundreds of thousands of terms. Not only
+case.((("match_phrase_prefix query", "caution with")))  A prefix of `a` could match hundreds of thousands of terms. Not only
 would matching on this many terms be resource intensive, it would also not be
 useful to the user.
 
-We can limit the impact of the prefix expansion by setting `max_expansions` to
+We can limit the impact ((("match_phrase_prefix query", "max_expansions")))((("max_expansions parameter")))of the prefix expansion by setting `max_expansions` to
 a reasonable number, such as 50.
 
 [source,js]

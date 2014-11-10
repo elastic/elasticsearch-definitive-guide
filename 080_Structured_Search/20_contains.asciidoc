@@ -1,7 +1,7 @@
 ==== Contains, but does not equal
 
 It is important to understand that `term` and `terms` are "contains" operations,
-not "equals".  What does that mean?
+not "equals".((("structured search", "contains, but does not equal")))((("terms filter", "contains, but does not equal")))((("term filter", "contains, but does not equal")))  What does that mean?
 
 If you have a term filter for `{ "term" : { "tags" : "search" } }`, it will match
 _both_ of the following documents:
@@ -45,7 +45,7 @@ _must equal exactly_.
 
 ==== Equals exactly
 If you do want that behavior -- entire field equality -- the best way to
-accomplish it involves indexing a secondary field.  In this field, you index the
+accomplish it involves indexing a secondary field. ((("structured search", "equals exactly"))) In this field, you index the
 number of values that your field contains.  Using our two previous documents,
 we now include a field that maintains the number of tags:
 

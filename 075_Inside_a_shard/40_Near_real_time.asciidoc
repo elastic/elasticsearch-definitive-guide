@@ -1,11 +1,11 @@
 [[near-real-time]]
 === Near real-time search
 
-With the development of per-segment search, the delay between indexing a
+With the development of per-segment search, the ((("searching", "near real-time search")))delay between indexing a
 document and making it visible to search dropped dramatically.  New documents
 could be made searchable within minutes, but that still isn't fast enough.
 
-The bottleneck is the disk.  Commiting a new segment to disk requires an
+The bottleneck is the disk. ((("committing segments to disk")))((("fsync")))((("segments", "committing to disk"))) Commiting a new segment to disk requires an
 http://en.wikipedia.org/wiki/Fsync[`fsync`] to ensure that the segment is
 physically written to disk and that data will not be lost if there is a power
 failure. But an `fsync` is costly -- it cannot be performed every time a
@@ -14,7 +14,7 @@ document is indexed without a big performance hit.
 What was needed was a more lightweight way to make new documents visible to
 search, which meant removing `fsync` from the equation.
 
-Sitting between Elasticsearch and the disk is the file-system cache.  A new
+Sitting between Elasticsearch and the disk is the file-system cache.((("filesystem cache")))  A new
 segment is written to the file-system cache first -- which is cheap -- and
 only later is it flushed to disk -- which is expensive.  But once a file is in
 the cache it can be opened and read, just like any other file.
@@ -37,7 +37,7 @@ image::images/elas_1105.png["The buffer contents have been written to a segment,
 ==== refresh API
 
 In Elasticsearch, this lightweight process of writing and opening a new
-segment is called a _refresh_. By default, every shard is refreshed
+segment is called a _refresh_.((("shards", "refreshes")))((("refresh API"))) By default, every shard is refreshed
 automatically once every second. This is why we say that Elasticsearch has
 _**near** real-time_ search: document changes are not visible to search
 immediately, but will become visible within one second.
@@ -63,7 +63,7 @@ real-time nature of Elasticsearch and make allowances for it.
 Not all use cases require a refresh every second.  Perhaps you are using
 Elasticsearch to index millions of log files, and you would prefer to optimize
 for index speed rather than near real-time search.  You can reduce the
-frequency of refreshes on a per-index basis by setting the `refresh_interval`:
+frequency of refreshes on a per-index basis by ((("refresh_interval setting")))setting the `refresh_interval`:
 
 [source,json]
 -----------------------------

@@ -1,9 +1,9 @@
 === wildcard and regexp queries
 
-The `wildcard` query is a low-level term-based query similar in nature to the
+The `wildcard` query is a low-level term-based query ((("wildcard query")))((("partial matching", "wildcard and regexp queries")))similar in nature to the
 `prefix` query, but it allows you to specify a pattern instead of just a prefix.
 It uses the standard shell wildcards where `?` matches any character, and `*`
-matches zero or more characters.
+matches zero or more characters.((("postcodes (UK), partial matching with", "wildcard queries")))
 
 This query would match the documents containing `W1F 7HW` and `W2F 8HW`:
 
@@ -26,7 +26,7 @@ GET /my_index/address/_search
 Imagine now that you wanted to match all postcodes just in the `W` area.  A
 prefix match would also include postcodes starting with `WC`, and you would
 have a similar problem with a wildcard match.  We only want to match postcodes
-that begin with a `W`, followed by a number.  The `regexp` query allows you to
+that begin with a `W`, followed by a number.((("postcodes (UK), partial matching with", "regexp query")))((("regexp query")))  The `regexp` query allows you to
 write these more complicated patterns:
 
 [source,js]
@@ -64,7 +64,7 @@ at query time. These queries have their place, but should be used sparingly.
 
 The `prefix`, `wildcard` and `regexp` queries operate on terms. If you use
 them to query an `analyzed` field then they will examine each term in the
-field, not the field as a whole.
+field, not the field as a whole.((("prefix query", "on analyzed fields")))((("wildcard query", "on analyzed fields")))((("regexp query", "on analyzed fields")))((("analyzed fields", "prefix, wildcard, and regexp queries on")))
 
 For instance, let's say that our `title` field contains ``Quick brown box''
 which produces the terms: `quick`, `brown` and `fox`.

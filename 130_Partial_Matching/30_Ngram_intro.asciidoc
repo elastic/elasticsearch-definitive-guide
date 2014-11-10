@@ -4,11 +4,11 @@ As we have said before: ``you can only find terms that exist in the inverted
 index''. While the `prefix`, `wildcard` and `regexp` queries demonstrated that
 that is not strictly true, it *is* true that doing a single term lookup is
 much faster than iterating through the terms list to find matching terms on
-the fly. Preparing your data for partial matching ahead of time will increase
+the fly.((("partial matching", "index time optimizations", "n-grams"))) Preparing your data for partial matching ahead of time will increase
 your search performance.
 
 Preparing your data at index time means choosing the right analysis chain, and
-the tool that we use for partial matching is the _n-gram_. An n-gram can be
+the tool that we use for partial matching is the _n-gram_.((("n-grams"))) An n-gram can be
 best thought of as a ``moving window on a word''. The _n_ stands for a length.
 If we were to n-gram the word `quick`, the results would depend on the length
 we have chosen:
@@ -22,7 +22,7 @@ Length 5 (five-gram)::  [ `quick` ]
 
 Plain n-grams are useful for matching ``somewhere within a word'', a technique
 that we will use in <<ngrams-compound-words>>. However, for search-as-you-type,
-we use a specialised form of n-grams called _edge n-grams_.  Edge
+we use a specialised form of n-grams called _edge n-grams_. ((("edge n-grams"))) Edge
 n-grams are anchored to the beginning of the word. Edge n-gramming the word
 `quick` would result in:
 

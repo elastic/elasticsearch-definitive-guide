@@ -2,14 +2,14 @@
 === You have an accent
 
 English only uses diacritics (like `´`, `^` and `¨`) for imported words --
-like `rôle`, ++déjà++ and `däis` -- but usually they are optional.  Other
+like `rôle`, ++déjà++ and `däis` -- but usually they are optional. ((("diacritics")))((("tokens", "normalizing", "diacritics"))) Other
 languages require diacritics in order to be correct.  Of course, just because
 words are spelled correctly in your index doesn't mean that the user will
 search for the correct spelling.
 
 It is often useful to strip diacritics from words, allowing `rôle` to match
 `role` and vice versa. With Western languages, this can be done with the
-`asciifolding` character filter.  Actually, it does more than just strip
+`asciifolding` character filter.((("asciifolding character filter")))  Actually, it does more than just strip
 diacritics.  It tries to convert many Unicode characters into a simpler ASCII
 representation, including:
 
@@ -48,7 +48,7 @@ My œsophagus caused a débâcle <1>
 ==== Retaining meaning
 
 Of course, when you strip diacritical marks from a word, you lose meaning.
-For instance, consider these three Spanish words:
+For instance, consider((("diacritics", "stripping, meaning loss from"))) these three ((("Spanis", "stripping diacritics, meaning loss from")))Spanish words:
 
 [horizontal]
 `esta`::    Feminine form of the adjective ``this'' as in ``esta silla'' (this
@@ -74,7 +74,7 @@ their diacritics removed and words that shouldn't.  And it is quite likely
 that your users won't know either.
 
 Instead, we index the text twice: once in the original form and once with
-diacritics removed:
+diacritics ((("indexing", "text with diacritics removed")))removed:
 
 [source,js]
 --------------------------------------------------
@@ -97,7 +97,7 @@ PUT /my_index/_mapping/my_type
 <1> The `title` field uses the `standard` analyzer and will contain
     the original word with diacritics in place.
 <2> The `title.folded` field uses the `folding` analyzer, which strips
-    the diacritical marks.
+    the diacritical marks.((("folding analyzer")))
 
 You can test out the field mappings using the `analyze` API on the sentence
 ``Esta está loca'' (This woman is crazy):
@@ -180,7 +180,7 @@ used to increase matches at the expense of meaning.
 =================================================
 
 The `asciifolding` filter does have an option called `preserve_original` which
-allows you to index the original token and the folded token in the same
+allows you to index the((("asciifolding character filter", "preserve_original option"))) original token and the folded token in the same
 position in the same field.  With this option enabled, you would end up with
 something like:
 

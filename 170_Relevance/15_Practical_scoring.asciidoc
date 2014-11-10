@@ -1,9 +1,9 @@
 [[practical-scoring-function]]
 === Lucene's Practical Scoring Function
 
-For multi-term queries, Lucene takes the <<boolean-model,Boolean Model>>,
+For multi-term queries, Lucene takes((("Boolean Model"))) the <<boolean-model,Boolean Model>>,
 <<tfidf,TF/IDF>>, and the <<vector-space-model,Vector Space Model>> and
-combines  them in a single efficient package which collects matching
+combines ((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm")))((("Vector Space Model"))) them in a single efficient package which collects matching
 documents and scores them as it goes.
 
 A multi-term query like:
@@ -43,7 +43,7 @@ both.
 
 As soon as a document matches a query, Lucene calculates its score for that
 query, combining the scores of each matching term.  The formula used for
-scoring is called the _Practical Scoring Function_. It looks intimidating, but
+scoring is called the _Practical Scoring Function_.((("Practical Scoring Function"))) It looks intimidating, but
 don't be put off -- most of the components you already know. It introduces a
 few new elements which we discuss below.
 
@@ -80,7 +80,7 @@ index-time field-level boosting out of the way.
 [[query-norm]]
 ==== Query normalization factor
 
-The query normalization factor (`queryNorm`) is an attempt to ``normalize'' a
+The query normalization factor (`queryNorm`) is ((("query normalization factor")))((("normalization", "query normalization factor")))an attempt to ``normalize'' a
 query so that the results from one query may be compared with the results of
 another.
 
@@ -112,7 +112,7 @@ have no way of changing it. For all intents and purposes, it can be ignored.
 [[coord]]
 ==== Query coordination
 
-The coordination factor (`coord`) is used to reward documents which contain a
+The coordination factor (`coord`) is used to((("coordination factor (coord)")))((("query coordination"))) reward documents which contain a
 higher percentage of the query terms -- the more query terms that appear in
 the document, the greater the chances that the document is a good match for
 the query.
@@ -188,20 +188,20 @@ GET /_search
 
 In fact, when you use synonyms (see <<synonyms>>), this is exactly what
 happens internally -- the rewritten query disables coordination for the
-synonyms.   Most use cases for disabling coordination are handled
+synonyms. ((("synonyms", "query coordination and")))  Most use cases for disabling coordination are handled
 automatically -- you don't need to worry about it.
 
 
 [[index-boost]]
 ==== Index time field-level boosting
 
-We will talk about _boosting_ a field -- making it more important than other
+We will talk about _boosting_ a field -- making it ((("boosting", "index time field-level boosting")))more important than other
 fields -- at query time in <<query-time-boosting>> below.  It is also possible
 to apply a boost to a field at index time.  Actually, this boost is applied to
 every term in the field, rather than to the field itself.
 
 In order to store this boost value in the index without using up more space
-than necessary, this field-level index-time boost is combined with the field
+than necessary, this field-level index-time boost is combined with the ((("field length norm")))field
 length norm (see  <<field-norm>>) and stored in the index as a single byte.
 This is the value returned by `norm(t,d)` in the formula above.
 

@@ -2,7 +2,7 @@
 === Cluster health
 
 There are many statistics that can be monitored in an Elasticsearch cluster
-but the single most important one is the _cluster health_, which reports a
+but the single most important((("cluster health"))) one is the _cluster health_, which reports a
 `status` of either `green`, `yellow` or `red`:
 
 [source,js]
@@ -30,7 +30,7 @@ which, on an empty cluster with no indices, will return something like:
 --------------------------------------------------
 <1> The `status` field is the one we're most interested in.
 
-The `status` field provides an overall indication of how the cluster is
+The `status` field provides ((("status field")))an overall indication of how the cluster is
 functioning. The meaning of the three colors are provided here for reference:
 
 [horizontal]

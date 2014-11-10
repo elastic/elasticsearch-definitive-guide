@@ -1,7 +1,7 @@
 [[ignoring-tfidf]]
 === Ignoring TF/IDF
 
-Sometimes we just don't care about TF/IDF.  All we want to know is that some
+Sometimes we just don't care about TF/IDF.((("relevance", "controlling", "ignoring  TF/IDF")))((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm", "ignoring")))  All we want to know is that some
 word appears in some field. Perhaps we are searching for a holiday home and we
 want to find houses that have as many of these features as possible:
 
@@ -41,7 +41,7 @@ isn't, `0`.
 ==== constant_score query
 
 Enter the {ref}query-dsl-constant-score-query.html[`constant_score`] query.
-This query can wrap either a query or a filter, and assigns a score of
+This ((("constant_score query")))query can wrap either a query or a filter, and assigns a score of
 `1` to any documents which match, regardless of TF/IDF:
 
 [source,json]
@@ -108,7 +108,7 @@ We could improve our holiday home documents by adding a `not_analyzed`
 ------------------------------
 
 By default, a `not_analyzed` field has <<field-norm,field length norms>>
-disabled and has `index_options` set to `docs`, disabling
+disabled ((("not_analyzed fields", "field length norms and index_options")))and has `index_options` set to `docs`, disabling
 <<tf,term frequencies>>, but the problem remains: the
 <<idf,inverse document frequency>> of each term is still taken into account.
 

@@ -2,8 +2,8 @@
 == Full body search
 
 Search _lite_ -- <<search-lite,query string search>> --  is useful for _ad
-hoc_ queries from the command line. To harness the full power of search,
-however, you should use the _request body_ `search` API, so called because
+hoc_ queries from the command line. ((("searching", "request body search", id="ix_reqbodysearch")))To harness the full power of search,
+however, you should use the _request body_ `search` API,((("request body search"))) so called because
 most parameters are passed in the HTTP request body instead of in the query
 string.
 
@@ -15,7 +15,7 @@ best results quickly.
 
 === Empty search
 
-Let's start with the simplest form of the `search` API, the empty search,
+Let's start with the simplest form of ((("request body search", "empty search")))((("empty search")))the `search` API, the empty search,
 which returns all documents in all indices.
 
 [source,js]
@@ -35,7 +35,7 @@ GET /index_2014*/type1,type2/_search
 {}
 --------------------------------------------------
 
-And you can use the `from` and `size` parameters for pagination:
+And you can use the `from` and `size` parameters((("pagination")))((("size parameter")))((("from parameter"))) for pagination:
 
 [source,js]
 --------------------------------------------------
@@ -51,7 +51,7 @@ GET /_search
 *************************************************
 
 The HTTP libraries of certain languages (notably Javascript) don't allow `GET`
-requests to have a request body.  In fact, some users are suprised that `GET`
+requests to have a request body. ((("searching", "using GET and POST HTTP methods for search requests")))((("HTTP methods", "GET and POST, use for search requests")))((("GET method", "no body for GET requests"))) In fact, some users are suprised that `GET`
 requests are ever allowed to have a body.
 
 The truth is that http://tools.ietf.org/html/rfc7231#page-24[RFC 7231] -- the
@@ -62,7 +62,7 @@ it, and some -- especially caching proxies -- don't.
 The authors of Elasticsearch prefer using `GET` for a search request because
 they feel that it describes the action -- retrieving information -- better
 than the `POST` verb.  However, because `GET` with a request body is not
-universally supported, the `search` API also accepts `POST` requests:
+universally supported, the `search` API also((("POST method", "use for search requests"))) accepts `POST` requests:
 
 [source,js]
 --------------------------------------------------
@@ -82,4 +82,5 @@ we're going to focus just on the query.
 
 Instead of the cryptic query-string approach, request body search allows us
 to write queries using the _Query Domain Specific Language_, or Query DSL.
+((("searching", "request body search", startref ="ix_reqbodysearch")))
 

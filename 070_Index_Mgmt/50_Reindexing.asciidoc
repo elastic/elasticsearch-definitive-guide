@@ -2,7 +2,7 @@
 === Reindexing your data
 
 While you can add new types to an index, or add new fields to a type, you
-can't add new analyzers or make changes to existing fields.  If you were to do
+can't add new analyzers or make changes to existing fields.((("reindexing")))((("indexing", "reindexing your data")))  If you were to do
 so, the data that has already been indexed would be incorrect and your
 searches would no longer work as expected.
 
@@ -15,7 +15,7 @@ whole document available to you in Elasticsearch itself. You don't have to
 rebuild your index from the database, which is usually much slower.
 
 To reindex all of the documents from the old index efficiently,  use
-<<scan-scroll,_scan & scroll_>> to retrieve batches of documents from the old index,
+<<scan-scroll,_scan & scroll_>> to retrieve batches((("scan-and-scroll", "using in reindexing documents"))) of documents from the old index,
 and the <<bulk,`bulk` API>> to push them into the new index.
 
 .Reindexing in batches

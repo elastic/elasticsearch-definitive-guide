@@ -1,7 +1,7 @@
 [[stemming-in-situ]]
 === Stemming in situ
 
-For the sake of completeness, we will finish this chapter by explaining how to
+For the sake of completeness, we will ((("stemming words", "stemming in situ")))finish this chapter by explaining how to
 index stemmed words into the same field as unstemmed words. As an example,
 analyzing the sentence ``The quick foxes jumped'' would produce the following
 terms:
@@ -20,7 +20,7 @@ WARNING: Read <<stemming-in-situ-good-idea>> before using this approach.
 
 To achieve stemming _in situ_ we will use the
 {ref}analysis-keyword-repeat-tokenfilter.html[`keyword_repeat`]
-token filter which, like the `keyword_marker` token filter (see
+token filter((("keyword_repeat token filter"))) which, like the `keyword_marker` token filter (see
 <<preventing-stemming>>) marks each term as a keyword to prevent the subsequent
 stemmer from touching it.  However, it also repeats the term in the same
 position, and this repeated term *is* stemmed.
@@ -39,7 +39,7 @@ Pos 4: (jumped,jump)
 
 To prevent the useless repetition of terms which are the same in their stemmed
 and unstemmed forms, we add the
-{ref}analysis-unique-tokenfilter.html[`unique`] token filter into the mix:
+{ref}analysis-unique-tokenfilter.html[`unique`] token filter((("unique token filter"))) into the mix:
 
 [source,json]
 ------------------------------------
@@ -78,7 +78,7 @@ PUT /my_index
 [[stemming-in-situ-good-idea]]
 ==== Is stemming in situ a good idea
 
-People like the idea of stemming _in situ_: ``Why use an unstemmed field
+People like the ((("stemming words", "stemming in situ", "good idea, or not")))idea of stemming _in situ_: ``Why use an unstemmed field
 **and** a stemmed field if I can just use one combined field?'' But is it a
 good idea? The answer is almost always ``no''.  There are two problems:
 
@@ -89,15 +89,15 @@ conflated to the same stem word: `organs` and `organization` both stem to
 
 In <<using-language-analyzers>> we demonstrated how to combine a query on a
 stemmed field (to increase recall) with a query on an unstemmed field (to
-improve relevance).  When the stemmed and unstemmed fields are separate, the
+improve relevance).((("language analyzers", "combining query on stemmed and unstemmed field")))  When the stemmed and unstemmed fields are separate, the
 contribution of each field can be tuned by boosting one field over another
 (see <<prioritising-clauses>>).  If, instead, the stemmed and unstemmed forms
 appear in the same field, then there is no way to tune your search results.
 
-The second issue has to do with how the relevance score is calculated.  In
+The second issue has to do with how the ((("relevance scores", "stemming in situ and")))relevance score is calculated.  In
 <<relevance-intro>> we explained that part of the calculation depends on the
 _Inverse document frequency_ -- how often a word appears in all the documents
-in our index.  Using _in situ_ stemming for a document which contains  the text
+in our index.((("inverse document frequency", "stemming in situ and")))  Using _in situ_ stemming for a document which contains  the text
 `jump jumped jumps would result in these terms:
 
 [source,text]

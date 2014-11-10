@@ -1,8 +1,8 @@
 [[changing-similarities]]
 === Changing similarities
 
-The similarity algorithm can be set on a per-field basis.  It's just a matter
-of specifying the chosen algorithm in the field's mapping:
+The similarity algorithm can be set on a per-field basis.((("relevance", "controlling", "changing similarities")))((("similarity algorithms", "changing on a per-field basis")))  It's just a matter
+of specifying the chosen algorithm ((("mapping (types)", "specifying similarity algorithm")))in the field's mapping:
 
 [source,json]
 ------------------------------
@@ -32,7 +32,7 @@ existing field.  You would need to reindex your data in order to do that.
 
 ==== Configuring BM25
 
-Configuring a similarity is much like configuring an analyzer. Custom
+Configuring a similarity is much ((("similarity algorithms", "configuring custom similarities")))((("BM25", "configuring")))like configuring an analyzer. Custom
 similarities can be specified when creating an index. For instance:
 
 [source,json]

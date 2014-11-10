@@ -1,24 +1,24 @@
 === Talking to Elasticsearch
 
-How you talk to Elasticsearch depends on whether you are using Java or not.
+How you talk to Elasticsearch depends on((("Elasticsearch", "talking to"))) whether you are using Java or not.
 
 ==== Java API
 
-If you are using Java, then Elasticsearch comes with two built-in clients
+If you are using ((("Java", "clients for Elasticsearch")))Java, then Elasticsearch comes with two built-in clients
 which you can use in your code:
 
 Node client::
-    The node client joins a local cluster as a _non-data node_. In other
+    The node client ((("node client")))joins a local cluster as a _non-data node_. In other
     words, it doesn't hold any data itself, but it knows what data lives
     on which node in the cluster, and can forward requests directly
     to the correct node.
 
 Transport client::
-    The lighter weight transport client can be used to send requests to
+    The lighter weight ((("transport client")))transport client can be used to send requests to
     a remote cluster. It doesn't join the cluster itself, but simply
     forwards requests to a node in the cluster.
 
-Both Java clients talk to the cluster over *port 9300*, using the native
+Both Java clients talk to the cluster over *port 9300*, using((("port 9300 for Java clients"))) the native
 Elasticsearch _transport_ protocol.  The nodes in the cluster also communicate
 with each other over port 9300. If this port is not open, then your nodes will
 not be able to form a cluster.
@@ -34,21 +34,21 @@ of the http://www.elasticsearch.org/guide/[Guide].
 
 ==== RESTful API with JSON over HTTP
 
-All other languages can communicate with Elasticsearch over *port 9200* using
-a RESTful API, accessible with your favorite web client. In fact, as you have
+All other languages can communicate with Elasticsearch((("port 9200 for non-Java clients"))) over *port 9200* using
+a ((("RESTful API", "communicating with Elasticseach")))RESTful API, accessible with your favorite web client. In fact, as you have
 seen above, you can even talk to Elasticsearch from the command line using the
-`curl` command.
+`curl` command.((("curl command", "talking to Elasticsearch with")))
 
 **************************************************
 
-Elasticsearch provides official clients for several languages -- Groovy,
+Elasticsearch provides official clients((("clients", "other than Java"))) for several languages -- Groovy,
 Javascript, .NET, PHP, Perl, Python, and Ruby --  and there are numerous
 community-provided clients and integrations, all of which can be found in the
 http://www.elasticsearch.org/guide/[Guide].
 
 **************************************************
 
-A request to Elasticsearch consists of the same parts as any HTTP request. For
+A request to Elasticsearch consists of the same parts as any HTTP request.((("HTTP requests")))((("requests to Elasticsearch"))) For
 instance, to count the number of documents in the cluster, we could use:
 
 [source,js]
@@ -123,6 +123,6 @@ GET /_count
 --------------------------------------------------
 // SENSE: 010_Intro/15_Count.json
 
-In fact, this is the same format that is used by the Sense console that we
+In fact, this is the same format that is used by the ((("Sense", "curl requests in")))Sense console that we
 installed with <<marvel,Marvel>>. You can open and run this code example in
 Sense by clicking the ``View in Sense'' link above.

@@ -2,12 +2,12 @@
 === icu_tokenizer
 
 The `icu_tokenizer` uses the same Unicode Text Segmentation algorithm as the
-`standard` tokenizer, but adds better support for some Asian languages by
+`standard` tokenizer,((("words", "identifying", "using icu_tokenizer")))((("Unicode Text Segmentation algorithm")))((("icu_tokenizer"))) but adds better support for some Asian languages by
 using a dictionary-based approach to identify words in Thai, Lao, Chinese,
 Japanese, and Korean, and using custom rules to break Myanmar and Khmer text
 into syllables.
 
-For instance, compare the tokens produced by the `standard` and
+For instance, compare the tokens ((("standard tokenizer", "icu_tokenizer versus")))produced by the `standard` and
 `icu_tokenizers` respectively when tokenizing ``Hello. I am from Bangkok.'' in
 Thai:
 

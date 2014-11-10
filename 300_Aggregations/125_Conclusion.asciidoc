@@ -3,7 +3,7 @@
 
 This section covered a lot of ground, and a lot of deeply technical issues.
 Aggregations bring a power and flexibility to Elasticsearch that is hard to 
-overstate. The ability to nest buckets and metrics, to quickly approximate
+overstate.((("aggregations", "power of"))) The ability to nest buckets and metrics, to quickly approximate
 cardinality and percentiles, to find statistical anomalies in your data, all 
 while operating on near-real-time data and in parallel to full-text search...
 these are game-changers to many organizations.
@@ -16,7 +16,7 @@ But with great power comes great responsibility, and for Elasticsearch that ofte
 means proper memory stewardship. Memory is often the limiting factor in 
 Elasticsearch deployments, particularly those that heavily utilize aggregations.  
 Because aggregation data is loaded to fielddata -- and this is an in-memory data 
-structure -- managing efficient memory usage is very important.
+structure -- managing ((("aggregations", "managing efficient memory usage")))efficient memory usage is very important.
 
 The management of this memory can take several different forms depending on your
 particular use-case:

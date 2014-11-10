@@ -1,10 +1,10 @@
 === Add an index
 
 To add data to Elasticsearch, we need an _index_ -- a place to store related
-data.  In reality, an index is just a ``logical namespace'' which points to
+data.((("indexes")))((("clusters", "adding an index")))  In reality, an index is just a ``logical namespace'' which points to
 one or more physical _shards_.
 
-A _shard_ is a low-level ``worker unit'' which holds just a slice of all the
+A _shard_ is a low-level ``worker unit'' which holds((("shards", "defined"))) just a slice of all the
 data in the index. In <<inside-a-shard>>, we will explain in detail how a
 shard works, but for now it is enough to know that a shard is a single
 instance of Lucene, and is a complete search engine in its own right. Our
@@ -17,7 +17,7 @@ allocated to nodes in your cluster. As your cluster grows or shrinks,
 Elasticsearch will automatically migrate shards between nodes so that the
 cluster remains balanced.
 
-A shard can be either a _primary_ shard or a _replica_ shard. Each document in
+A shard can be either a _primary_ shard or a _replica_ shard.((("primary shards")))((("replica shards")))((("shards", "primary"))) Each document in
 your index belongs to a single primary shard, so the number of primary shards
 that you have determines the maximum amount of data that your index can hold.
 
@@ -31,15 +31,15 @@ expected response times.
 
 ****
 
-A replica shard is just a copy of a primary shard. Replicas are used to provide
+A replica shard is just a copy of a primary shard.((("shards", "replica"))) Replicas are used to provide
 redundant copies of your data to protect against hardware failure, and to
 serve read requests like searching or retrieving a document.
 
 The number of primary shards in an index is fixed at the time that an index is
 created, but the number of replica shards can be changed at any time.
 
-Let's create an index called `blogs` in our empty one-node cluster. By
-default, indices are assigned 5 primary shards, but for the purpose of this
+Let's create an index called `blogs` in our empty one-node cluster.((("indexes", "creating"))) By
+default, indices are assigned 5 primary shards,((("primary shards", "assigned to indexes")))((("replica shards", "assigned to indexes"))) but for the purpose of this
 demonstration, we'll assign just 3 primary shards and 1 replica (one replica
 of every primary shard):
 
@@ -61,7 +61,7 @@ image::images/elas_0202.png["A single-node cluster with an index"]
 
 Our cluster now looks like <<cluster-one-node>> -- all 3 primary shards have
 been allocated to `Node 1`. If we were to check the
-<<cluster-health,`cluster-health`>> now, we would see this:
+<<cluster-health,`cluster-health`>> now, ((("cluster health", "checking after adding an index")))we would see this:
 
 [source,js]
 --------------------------------------------------

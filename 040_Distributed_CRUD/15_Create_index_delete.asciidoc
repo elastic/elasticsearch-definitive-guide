@@ -1,7 +1,7 @@
 [[distrib-write]]
 === Creating, indexing and deleting a document
 
-Create, index and delete requests are _write_ operations, which must be
+Create, index and delete((("documents", "creating, indexing, and deleting"))) requests are _write_ operations,((("write operations"))) which must be
 successfully completed on the primary shard before they can be copied to any
 associated replica shards.
 
@@ -9,7 +9,7 @@ associated replica shards.
 .Creating, indexing or deleting a single document
 image::images/elas_0402.png["Creating, indexing or deleting a single document"]
 
-Below we list the sequence of steps necessary to successfully create, index or
+Below we list the sequence ((("primary shards", "creating, indexing, and deleting a document")))((("replica shards", "creating, indexing, and deleting a document")))of steps necessary to successfully create, index or
 delete a document on both the primary and any replica shards, as depicted in
 <<img-distrib-write>>:
 
@@ -36,10 +36,10 @@ are explained here for the sake of completeness.
 `replication`::
 +
 --
-The default value for replication is `sync`. This causes the primary shard to
+The default value for ((("replication request parmeter", "sync and async values")))replication is `sync`. This causes the primary shard to
 wait for successful responses from the replica shards before returning.
 
-If you set `replication` to `async`, then it will return success to the client
+If you set `replication` to `async`, then((("async value, replication parameter"))) it will return success to the client
 as soon as the request has been executed on the primary shard. It will still
 forward the request to the replicas, but you will not know if the replicas
 succeeded or not.
@@ -55,7 +55,7 @@ completion.
 `consistency`::
 +
 --
-By default, the primary shard requires a _quorum_ or majority of shard copies
+By default, the primary shard((("consistency request parameter")))((("quorum of shard copies"))) requires a _quorum_ or majority of shard copies
 (where a shard copy can be a primary or a replica shard) to be available
 before even attempting a write operation.  This is to prevent writing data to the
 ``wrong side'' of a network partition.  A quorum is defined as:
@@ -83,7 +83,7 @@ documents.
 
 What happens if insufficient shard copies are available? Elasticsearch waits,
 in the hope that more shards will appear.  By default it will wait up to one
-minute. If you need to, you can use the `timeout` parameter to make it abort
+minute. If you need to, you can use the `timeout` parameter((("timeout parameter"))) to make it abort
 sooner: `100` is 100 milliseconds, `30s` is 30 seconds.
 
 [NOTE]

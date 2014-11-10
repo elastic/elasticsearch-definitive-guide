@@ -1,7 +1,7 @@
 [[fuzzy-query]]
 === Fuzzy query
 
-The {ref}query-dsl-fuzzy-query.html[`fuzzy` query] is the fuzzy equivalent of
+The {ref}query-dsl-fuzzy-query.html[`fuzzy` query] is ((("typoes and misspellings", "fuzzy query")))((("fuzzy queries")))the fuzzy equivalent of
 the `term` query. You will seldom use it directly yourself, but understanding
 how it works will help you to use fuzziness in the higher level `match` query.
 
@@ -58,7 +58,7 @@ GET /my_index/my_type/_search
 ==== Improving performance
 
 The `fuzzy` query works by taking the original term and building a
-_Levenshtein Automaton_  -- like a big graph representing all of the strings
+_Levenshtein Automaton_  -- like a((("fuzzy queries", "improving performance")))((("Levenshtein automation"))) big graph representing all of the strings
 that are within the specified edit distance of the original string.
 
 It then steps uses the automaton to step efficiently through all of the terms
@@ -73,14 +73,14 @@ performance impact:
 
 `prefix_length`::
 
-The number of initial characters which will not be ``fuzzified''.  Most
+The number of initial characters((("prefix_length parameter"))) which will not be ``fuzzified''.  Most
 spelling errors occur towards the end of the word, not towards the beginning.
 By using a `prefix_length` of `3`, for example, you can signficantly reduce
 the number of matching terms.
 
 `max_expansions`::
 
-If a fuzzy query expands to 3 or 4 fuzzy options, the new options may be
+If a fuzzy query expands to 3 or 4 fuzzy options,((("max_expansions parameter"))) the new options may be
 meaningful.  If it produces a thousand options then they are essentially
 meaningless.  Use `max_expansions` to limit the total number of options that
 will be produced. The fuzzy query will just collect matching terms until it

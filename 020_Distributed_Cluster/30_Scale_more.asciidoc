@@ -2,7 +2,7 @@
 
 But what if we want to scale our search to more than 6 nodes?
 
-The number of primary shards is fixed at the moment an index is created.
+The number of primary shards is fixed at the moment an((("indexes", "fixed number of primary shards")))((("primary shards", "fixed number in an index"))) index is created.
 Effectively, that number defines the maximum amount of data that can be
 *stored* in the index.  (The actual number depends on your data, your hardware
 and your use case). However, read requests -- searches or document retrieval

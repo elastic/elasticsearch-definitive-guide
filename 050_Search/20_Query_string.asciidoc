@@ -2,7 +2,7 @@
 === Search _Lite_
 
 There are two forms of the `search` API: a ``lite'' _query string_ version
-that expects all its parameters to be passed in the query string, and the full
+that expects all its((("searching", "query string searches")))((("query string", "searching with"))) parameters to be passed in the query string, and the full
 _request body_ version that expects a JSON request body and uses a
 rich search language called the query DSL.
 
@@ -60,7 +60,7 @@ How has Elasticsearch managed to find results in three different fields?
 
 When you index a document, Elasticsearch takes the string values of all of
 its fields and concatenates them into one big string which it indexes as
-the special `_all` field. For example, when we index this document:
+the special `_all` field.((("all field"))) For example, when we index this document:
 
 [source,js]
 --------------------------------------------------

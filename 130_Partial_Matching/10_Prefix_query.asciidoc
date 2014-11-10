@@ -1,7 +1,7 @@
 [[prefix-query]]
 === prefix query
 
-To find all postcodes beginning with `W1` we could use a simple `prefix`
+To find all postcodes beginning with `W1` we could use a ((("prefix query")))((("postcodes (UK), partial matching with", "prefix query")))simple `prefix`
 query:
 
 [source,js]
@@ -37,7 +37,7 @@ index'' but we haven't done anything special to index these postcodes -- each
 postcode is simply indexed as the exact value specified in each document.  So
 how does the `prefix` query work?
 
-Remember that the inverted index consists of a sorted list of unique terms (in
+Remember that the inverted index consists((("inverted index", "for postcodes"))) of a sorted list of unique terms (in
 this case, postcodes).  For each term, it lists the IDs of the documents
 containing that term in the _postings list_.  The inverted index for our
 example documents would look something like this:
@@ -68,7 +68,7 @@ look for the prefix `W` instead of `W1`, perhaps we would match 10 million
 terms instead of just one million.
 
 CAUTION: The `prefix` query or filter are useful for _ad hoc_ prefix matching, but
-should be used with care.  They can be used freely on fields with a small
+should be used with care. ((("prefix query", "caution with"))) They can be used freely on fields with a small
 number of terms, but they scale poorly and can put your cluster under a lot of
 strain.  Try to limit their impact on your cluster by using a long prefix --
 this reduces the number of terms that need to be visited.

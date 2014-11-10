@@ -1,7 +1,7 @@
 [[index-doc]]
 === Indexing a document
 
-Documents are _indexed_ -- stored and made searchable -- using the `index`
+Documents are _indexed_ -- stored and made ((("documents", "indexing")))((("indexes", "indexing a document")))searchable -- using the `index`
 API. But first, we need to decide where the document  lives.  As we just
 discussed, a document's `_index`, `_type` and `_id` uniquely identify the
 document.  We can either provide our own `_id` value or let the `index` API
@@ -10,7 +10,7 @@ generate one for us.
 
 ==== Using our own ID
 
-If your document has a natural identifier (e.g. a `user_account` field
+If your document has a natural ((("id", "providing for a document")))identifier (e.g. a `user_account` field
 or some other value that identifies the document), then you should provide
 your own `_id`, using this form of the `index` API:
 
@@ -53,7 +53,7 @@ Elasticsearch responds with:
 
 The response indicates that the indexing request has been successfully created
 and includes the `_index`, `_type` and `_id` metadata, and a new element:
-`_version`.
+`_version`.((("version number (documents)")))
 
 Every document in Elasticsearch has a version number. Every time a change is
 made to a document (including deleting it), the `_version` number is
@@ -64,7 +64,7 @@ made by another part.
 ==== Auto-generating IDs
 
 If our data doesn't have a natural ID, we can let Elasticsearch autogenerate
-one for us.  The structure of the request changes: instead of using the `PUT`
+one for us.  ((("id", "autogenerating")))The structure of the request changes: instead of using ((("HTP methods", "POST")))the `PUT`
 verb -- ``store this document at this URL'' -- we use the `POST` verb --
 ``store this document *under* this URL''.
 
@@ -96,7 +96,7 @@ field has been generated for us:
 --------------------------------------------------
 
 Auto-generated IDs are 22 character long, URL-safe, Base64-encoded string
-_universally unique identifiers_, or http://en.wikipedia.org/wiki/Uuid[UUIDs].
+_universally unique identifiers_, or((("UUIDs (universally unique identifiers)"))) http://en.wikipedia.org/wiki/Uuid[UUIDs].
 
 
 

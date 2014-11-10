@@ -2,7 +2,7 @@
 == Getting started with languages
 
 Elasticsearch ships with a collection of language analyzers which provide
-good, basic, out-of-the-box support for a number of the world's most common
+good, basic, out-of-the-box ((("language analyzers")))((("languages", "getting started with")))support for a number of the world's most common
 languages:
 
 Arabic, Armenian, Basque, Brazilian, Bulgarian, Catalan, Chinese,
@@ -11,7 +11,7 @@ Hindi, Hungarian, Indonesian, Irish, Italian, Japanese, Korean, Kurdish,
 Norwegian, Persian, Portuguese, Romanian, Russian, Spanish, Swedish, 
 Turkish, and Thai.
 
-These analyzers typically perform four roles:
+These analyzers typically((("language analyzers", "roles performed by"))) perform four roles:
 
 * Tokenize text into individual words:
 +
@@ -30,18 +30,18 @@ These analyzers typically perform four roles:
 `foxes` -> `fox`
 
 Each analyzer may also apply other transformations specific to its language in
-order to make words from that language more searchable:
+order to make words from that((("language analyzers", "other transformations specific to the language"))) language more searchable:
 
-* the `english` analyzer removes the possessive `'s`:
+* the `english` analyzer ((("english analyzer")))removes the possessive `'s`:
 +
 `John's` -> `john`
 
-* the `french` analyzer removes _elisions_ like `l'` and `qu'` and
+* the `french` analyzer ((("french analyzer")))removes _elisions_ like `l'` and `qu'` and
   _diactrics_ like `¨` or `^`:
 +
 `l'église` -> `eglis`
 
-* the `german` analyzer normalizes terms, replacing `ä` and `ae` with `a`, or
+* the `german` analyzer normalizes((("german analyzer"))) terms, replacing `ä` and `ae` with `a`, or
   `ß` with `ss`, among others:
 +
 `äußerst` -> `ausserst`

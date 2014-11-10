@@ -1,16 +1,16 @@
 [[scan-scroll]]
 === Scan and scroll
 
-The `scan` search type and the `scroll` API are used together to retrieve
+The `scan` search type and the `scroll` API((("scroll API", "scan and scroll"))) are used together to retrieve
 large numbers of documents from Elasticsearch efficiently, without paying the
 penalty of deep pagination.
 
 `scroll`::
 +
 --
-A _scrolled search_ allows us to do an initial search and to keep pulling
+A _scrolled search_ allows us to((("scrolled search"))) do an initial search and to keep pulling
 batches of results from Elasticsearch until there are no more results left.
-It's a bit like a _cursor_ in a traditional database.
+It's a bit like a _cursor_ in ((("cursors")))a traditional database.
 
 A scrolled search takes a snapshot in time -- it doesn't see any changes that
 are made to the index after the initial search request has been made. It does
@@ -23,11 +23,11 @@ on what the index looked like at the time it started.
 
 The costly part of deep pagination is the global sorting of results, but if we
 disable sorting then we can return all documents quite cheaply. To do this, we
-use the `scan` search type. Scan instructs Elasticsearch to do no sorting, but
+use the `scan` search type.((("scan search type"))) Scan instructs Elasticsearch to do no sorting, but
 to just return the next batch of results from every shard which still has
 results to return.
 
-To use _scan-and-scroll_, we execute a search request setting `search_type` to
+To use _scan-and-scroll_, we execute a search((("scan-and-scroll"))) request setting `search_type` to((("search_type", "scan and scroll")))
 `scan`, and passing a `scroll` parameter telling Elasticsearch how long it
 should keep the scroll open:
 
@@ -42,7 +42,7 @@ GET /old_index/_search?search_type=scan&scroll=1m <1>
 <1> Keep the scroll open for 1 minute.
 
 The response to this request doesn't include any hits, but does include a
-`_scroll_id`, which is a long Base 64 encoded string. Now we can pass the
+`_scroll_id`, which is a long Base 64 encoded((("scroll_id"))) string. Now we can pass the
 `_scroll_id` to the `_search/scroll` endpoint to retrieve the first batch of
 results:
 
@@ -65,7 +65,7 @@ the query.
 
 The response to this scroll request includes the first batch of results.
 Although we specified a `size` of 1,000, we actually get back many more
-documents.  When scanning, the `size` is applied to each shard, so you will
+documents.((("size parameter", "in scanning")))  When scanning, the `size` is applied to each shard, so you will
 get back a maximum of `size * number_of_primary_shards` documents in each
 batch.
 
@@ -77,4 +77,5 @@ When no more hits are returned, we have processed all matching documents.
 
 TIP: Some of the http://www.elasticsearch.org/guide[official Elasticsearch clients]
 provide _scan-and-scroll_ helpers which provide an easy wrapper around this
-functionality.
+functionality.((("clients", "providing scan-and-scroll helpers")))
+
