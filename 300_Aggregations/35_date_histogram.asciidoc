@@ -123,7 +123,7 @@ which represent months, a count of docs in each month, and our pretty "key_as_st
 
 Notice something odd about that last response?
 
-Yep, that's right.((("buckets", "empty, returning")))  We are missing a few months!  By default, the `date_histogram`
+Yep, that's right.((("aggregations", "returning empty buckets")))((("buckets", "empty, returning")))  We are missing a few months!  By default, the `date_histogram`
 (and `histogram` too) only returns buckets which have a non-zero
 document count.
 
