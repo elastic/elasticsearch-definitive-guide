@@ -78,3 +78,4 @@ When no more hits are returned, we have processed all matching documents.
 TIP: Some of the http://www.elasticsearch.org/guide[official Elasticsearch clients]
 provide _scan-and-scroll_ helpers which provide an easy wrapper around this
 functionality.((("clients", "providing scan-and-scroll helpers")))
+
