@@ -2,7 +2,7 @@
 == Looking at time
 
 If search is the most popular activity in Elasticsearch, building date
-histograms must be the second most popular.  Why would you want to use a date
+histograms must be the second most popular.((("histograms", "building date histograms")))((("aggregations", "building date histograms from")))  Why would you want to use a date
 histogram?
 
 Imagine your data has a timestamp.  It doesn't matter what the data is -- Apache
