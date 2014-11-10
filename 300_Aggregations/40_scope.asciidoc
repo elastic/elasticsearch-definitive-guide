@@ -3,7 +3,7 @@
 == Scoping Aggregations
 
 With all of the aggregation examples given so far, you may have noticed that we
-omitted a `query` from the search request.  The entire request was
+omitted a `query` from the search request. ((("queries", "in aggregations")))((("aggregations", "scoping"))) The entire request was
 simply an aggregation.
 
 Aggregations can be run at the same time as search requests, but you need to
@@ -51,7 +51,7 @@ GET /cars/transactions/_search?search_type=count
 // SENSE: 300_Aggregations/40_scope.json
 
 The aggregation always operates in the scope of the query, so an isolated
-aggregation really operates in the scope of a `match_all` query...that is to say,
+aggregation really operates in the scope of ((("match_all query", "isolated aggregations in scope of")))a `match_all` query...that is to say,
 all documents.
 
 Once armed with the knowledge of scoping, we can start to customize 
