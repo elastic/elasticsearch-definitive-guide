@@ -2,7 +2,7 @@
 === Buckets inside of buckets
 
 The true power of aggregations becomes apparent once you start playing with
-different nesting schemes.  In the previous examples, we saw how you could nest
+different nesting schemes.((("aggregations", "buckets", "nested in other buckets")))((("buckets", "nested in other buckets")))  In the previous examples, we saw how you could nest
 a metric inside a bucket, which is already quite powerful.
 
 But the real exciting analytics come from nesting buckets inside _other buckets_.
