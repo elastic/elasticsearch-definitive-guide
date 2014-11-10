@@ -5,7 +5,7 @@ If search is the most popular activity in Elasticsearch, building date
 histograms must be the second most popular.((("date histograms, building")))((("histograms", "building date histograms")))((("aggregations", "building date histograms from")))  Why would you want to use a date
 histogram?
 
-Imagine your data has a timestamp.  It doesn't matter what the data is -- Apache
+Imagine your data has a timestamp.((("time, analytics over", id="ix_timeanalyze")))  It doesn't matter what the data is -- Apache
 log events, stock buy/sell transaction dates, baseball game times
 -- anything with a timestamp can benefit from the date histogram.  When you have
 a timestamp, you often want to build metrics which are expressed _over time_.
@@ -286,4 +286,4 @@ and analysts who need to analyze the data but cannot build a Hadoop job.
 
 To build powerful dashboards like Kibana, however, you'll likely need to some of
 the more advanced concepts such as scoping, filtering and sorting aggregations.
-
+((("time, analytics over", startref ="ix_timeanalyze")))
