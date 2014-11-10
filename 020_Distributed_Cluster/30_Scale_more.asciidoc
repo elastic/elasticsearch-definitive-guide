@@ -6,7 +6,7 @@ The number of primary shards is fixed at the moment an((("indexes", "fixed numbe
 Effectively, that number defines the maximum amount of data that can be
 *stored* in the index.  (The actual number depends on your data, your hardware
 and your use case). However, read requests -- searches or document retrieval
--- can be handled by a primary *or* a replica shard,((("replica shards", "changing number to handle demand"))) so the more copies of
+-- can be handled by a primary *or* a replica shard, so the more copies of
 data that you have, the more search throughput we can handle.
 
 The number of replica shards can be changed dynamically on a live cluster,
