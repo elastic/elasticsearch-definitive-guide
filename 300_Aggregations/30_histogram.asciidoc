@@ -2,11 +2,11 @@
 == Building Bar Charts
 
 One of the exciting aspects of aggregations are how easily they are converted
-into charts and graphs.  For the rest of the chapter, we are going to focus
+into charts and graphs.((("bar charts", "building from aggregations")))((("aggregations", "building bar charts from")))  For the rest of the chapter, we are going to focus
 on various analytics that we can wring out of our toy dataset.  We will also
 demonstrate the different types of charts aggregations can power.
 
-The `histogram` bucket is particularly useful.  Histograms are essentially
+The `histogram` bucket is particularly useful.((("buckets", "histogram")))((("histogram bucket")))  Histograms are essentially
 bar charts, and if you've ever built a report or analytics dashboard, you
 undoubtedly had a few bar charts in it.
 
@@ -18,7 +18,7 @@ every $20,000.  Documents are then sorted into buckets.
 
 For our dashboard, we want a bar chart of car sale prices, but we
 also want to know the top selling make per price range.  This is easily accomplished
-using a `terms` bucket nested inside the `histogram`:
+using a `terms` bucket ((("terms bucket", "nested in a histogram bucket")))((("buckets", "nested in other buckets", "terms bucket nested in histogram bucket")))nested inside the `histogram`:
 
 [source,js]
 --------------------------------------------------
