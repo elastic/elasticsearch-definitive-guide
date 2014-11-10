@@ -39,7 +39,7 @@ GET /cars/transactions/_search?search_type=count
 <2> Then we include a `min` metric
 <3> And a `max` metric
 
-Which gives us the following output (again, truncated):
+Which gives ((("min and max metrics (aggregation example)")))us the following output (again, truncated):
 
 [source,js]
 --------------------------------------------------
