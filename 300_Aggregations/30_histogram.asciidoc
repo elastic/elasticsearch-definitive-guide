@@ -110,7 +110,7 @@ Of course, you can build bar charts with any aggregation which emits categories
 and statistics, not just the `histogram` bucket.  Let's build a bar chart of
 popular makes, their average price, and then calculate the standard error
 to add error bars on our chart.  This will make use of the `terms` bucket
-and an `extended_stats` metric:
+and an `extended_stats` ((("extended_stats metric")))metric:
 
 [source,js]
 ----
