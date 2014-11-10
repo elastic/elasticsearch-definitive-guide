@@ -1,7 +1,7 @@
 [[multi-fields]]
 === String sorting and multi-fields
 
-Analyzed string fields are also multi-value fields, but sorting on them seldom
+Analyzed string fields are also multi-value fields,((("strings", "sorting on string fields")))((("analyzed string fields", "sorting and"))) but sorting on them seldom
 gives you the results you want. If you analyze a string like `"fine old art"`,
 it results in three terms. We probably want to sort alphabetically on the
 first term, then the second term, etc, but Elasticsearch doesn't have this
@@ -12,7 +12,7 @@ that will result in sorting on either `art` or `old`, neither of which was the
 intent.
 
 In order to sort on a string field, that field should contain one term only:
-the whole `not_analyzed` string.  But of course we still need the field to be
+the whole `not_analyzed` string.((("not_analyzed string fields", "sorting on")))  But of course we still need the field to be
 `analyzed` in order to be able to query it as full text.
 
 The naive approach to indexing the same string in two ways would be to include
@@ -22,7 +22,7 @@ and one which is `not_analyzed` for sorting.
 But  storing the same string twice in the `_source` field is waste of space.
 What we really want to do is to pass in a *single field* but to *index it in
 two different ways*. All of the ``core'' field types -- strings, numbers,
-booleans, dates -- accept a `fields` parameter which allows you to transform a
+booleans, dates -- accept a `fields` parameter ((("mapping (types)", "transforming simple mapping to multi-field mapping")))((("types", "core simple field types", "accepting fields parameter")))((("fields parameter")))((("multi-field mapping")))which allows you to transform a
 simple mapping like:
 
 [source,js]

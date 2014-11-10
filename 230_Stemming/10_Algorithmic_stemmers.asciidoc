@@ -1,7 +1,7 @@
 [[algorithmic-stemmers]]
 === Algorithmic stemmers
 
-Most of the stemmers available in Elasticsearch are algorithmic in that they
+Most of the stemmers available in Elasticsearch are algorithmic((("stemming words", "algorithmic stemmers"))) in that they
 apply a series of rules to a word in order to reduce it to its root form, such
 as stripping the final `s` or `es` from plurals.   They don't have to know
 anything about individual words in order to stem them.
@@ -11,11 +11,11 @@ the box, are fast, use little memory, and work well for regular words.  The
 downside is that they don't cope well with irregular words like `be`, `are`,
 and `am`, or `mice` and `mouse`.
 
-One of the earliest stemming algorithms is the Porter stemmer for English,
+One of the earliest stemming algorithms((("English", "stemmers for")))((("Porter stemmer for English"))) is the Porter stemmer for English,
 which is still the recommended English stemmer today.  Martin Porter
 subsequently went on to create the
 http://snowball.tartarus.org/[Snowball language] for creating stemming
-algorithms and a number of the stemmers available in Elasticsearch are
+algorithms and a number((("Snowball langauge (stemmers)"))) of the stemmers available in Elasticsearch are
 written in Snowball.
 
 [TIP]
@@ -23,7 +23,7 @@ written in Snowball.
 ==================================================
 
 The {ref}analysis-kstem-tokenfilter.html[`kstem` token filter] is a stemmer
-for English which combines the algorithmic approach with a built-in
+for English which((("kstem token filter"))) combines the algorithmic approach with a built-in
 dictionary. The dictionary contains a list of root words and exceptions in
 order to avoid conflating words incorrectly. `kstem` tends to stem less
 aggressively than the Porter stemmer.
@@ -32,7 +32,7 @@ aggressively than the Porter stemmer.
 
 ==== Using an algorithmic stemmer
 
-While you can use the
+While you ((("stemming words", "algorithmic stemmers", "using")))can use the
 {ref}analysis-porterstem-tokenfilter.html[`porter_stem`] or
 {ref}analysis-kstem-tokenfilter.html[`kstem`] token filter directly, or
 create a language-specific Snowball stemmer with the
@@ -42,7 +42,7 @@ the {ref}analysis-stemmer-tokenfilter.html[`stemmer` token filter], which
 accepts the `language` parameter.
 
 For instance, perhaps you find the default stemmer used by the `english`
-analyzer to be too aggressive and you want to make it less aggressive.
+analyzer to be too aggressive and ((("english analyzer", "default stemmer, examining")))you want to make it less aggressive.
 The first step is to lookup the configuration for the `english` analyzer
 in the {ref}analysis-lang-analyzer.html#english-analyzer[language analyzers]
 documentation, which shows the following:
@@ -87,15 +87,15 @@ documentation, which shows the following:
 }
 --------------------------------------------------
 <1> The `keyword_marker` token filter lists words which should not be
-    stemmed.  This defaults to the empty list.
+    stemmed.((("keyword_marker token filter")))  This defaults to the empty list.
 
 <2> The `english` analyzer uses two stemmers: the `possessive_english`
-    and the `english` stemmer. The possessive stemmer removes `'s`
+    and the `english` stemmer. The ((("english stemmer")))((("possessive_english stemmer")))possessive stemmer removes `'s`
     from any words before passing them on to the `english_stop`,
     `english_keywords` and `english_stemmer`.
 
 Having reviewed the current configuration, we can use it as the basis for
-a new analyzer, with the following changes:
+a new analyzer, with((("english analyzer", "customiing the stemmer"))) the following changes:
 
 *   Change the `english_stemmer` from `english` (which maps to the
     {ref}analysis-porterstem-tokenfilter.html[`porter_stem`] token filter)
@@ -103,7 +103,7 @@ a new analyzer, with the following changes:
     {ref}analysis-kstem-tokenfilter.html[`kstem`] token filter).
 
 *   Add the <<asciifolding-token-filter,`asciifolding`>> token filter to
-    remove any diacritics from foreign words.
+    remove any diacritics from foreign words.((("asciifolding token filter")))
 
 *   Remove the `keyword_marker` token filter as we don't need it.
     (We will discuss this in more detail in <<controlling-stemming>>.)

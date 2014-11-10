@@ -1,8 +1,8 @@
 [[delete-doc]]
 === Deleting a document
 
-The syntax for deleting a document follows the same pattern that we have seen
-already, but uses the `DELETE` method :
+The syntax for deleting a document((("documents", "deleting"))) follows the same pattern that we have seen
+already, but ((("deleting documents")))((("HTTP methods", "DELETE")))uses the `DELETE` method :
 
 [source,js]
 --------------------------------------------------
@@ -26,7 +26,7 @@ number has been incremented.
 }
 --------------------------------------------------
 
-If the document isn't found, we get a `404 Not Found` response code, and
+If the document isn't((("version number (documents)", "incremented for document not found"))) found, we get a `404 Not Found` response code, and
 a body like:
 
 [source,js]

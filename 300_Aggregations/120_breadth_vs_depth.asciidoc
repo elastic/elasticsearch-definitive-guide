@@ -2,7 +2,7 @@
 === Preventing Combinatorial Explosions
 
 The `terms` bucket dynamically builds buckets based on your data... it doesn't
-know up front how many buckets will be generated.  While this is fine with a
+know up front how many buckets will be generated. ((("combinatorial explosions, preventing")))((("aggregations", "preventing combinatorial explosions"))) While this is fine with a
 single aggregation, think about what can happen when one aggregation contains
 another aggregation, contains another aggregation, etc. The combination of
 unique values in each of these aggregations can lead to an explosion in the
@@ -80,13 +80,13 @@ combinatorial explosions.
 ==== Depth-first vs Breadth-first
 
 Elasticsearch allows you to change the _collection mode_ of an aggregation, for
-exactly this situation.  The strategy we outlined above -- building the tree fully
-and then pruning -- is called _depth-first_ and it is the default.  Depth-first
+exactly this situation. ((("collection mode"))) ((("aggregations", "preventing combinatorial explosions", "depth-first versus breadth-first")))The strategy we outlined above -- building the tree fully
+and then pruning -- is called _depth-first_ and it is the default. ((("depth-first collection strategy"))) Depth-first
 works well for the majority of aggregations, but can fall apart in situations
 like above.
 
 For these special cases, you should use an alternative collection strategy called
-_breadth-first_.  This strategy works a little differently.  It executes the first
+_breadth-first_.  ((("beadth-first collection strategy")))This strategy works a little differently.  It executes the first
 layer of aggregations, _then_ performs a pruning phase before continuing.
 
 In our example, the "actors" aggregation would be executed first.  At this
@@ -100,7 +100,7 @@ Therefore, breadth-first will prune everything except the top 10.  Once pruned,
 it will execute the next layer of aggregations, etc.  This prevents the
 combinatorial explosion of buckets and drastically reduces memory requirements.
 
-To use breadth-first, simply enable it via the `collect` parameter:
+To use breadth-first, simply ((("collect parameter", "enabling breadth-first")))enable it via the `collect` parameter:
 
 [source,js]
 ----

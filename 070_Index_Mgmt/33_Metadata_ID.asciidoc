@@ -1,6 +1,6 @@
 ==== Metadata: Document identity
 
-There are four metadata fields associated with document identity:
+There are four metadata fields ((("metadata, document", "identity")))associated with document identity:
 
 [horizontal]
 `_id`::    The string ID of the document.
@@ -8,8 +8,8 @@ There are four metadata fields associated with document identity:
 `_index`:: The index where the document lives.
 `_uid`::   The `_type` and `_id` concatenated together as `"type#id"`
 
-By default, the `_uid` field is stored (can be retrieved) and
-indexed (searchable).  The `_type` field is indexed but not stored,
+By default, the `_uid` field is((("id field"))) stored (can be retrieved) and
+indexed (searchable).  The `_type` field((("type field")))((("index field")))((("uid field"))) is indexed but not stored,
 and the `_id` and `_index` fields are neither indexed nor stored, meaning
 they don't really exist.
 
@@ -19,7 +19,7 @@ can change the `index` and `store` settings for these fields, you almost
 never need to do so.
 
 The `_id` field does have one setting that you may want to use: the `path`
-setting tells Elasticsearch that it should extract the value for the
+setting tells((("id field", "path setting")))((("path setting, id field"))) Elasticsearch that it should extract the value for the
 `_id` from a field within the document itself.
 
 [source,js]
@@ -56,7 +56,7 @@ POST /my_index/my_type
 // SENSE: 070_Index_Mgmt/33_ID_path.json
 
 
-the `_id` value will be extracted from the `doc_id` field in the document
+the `_id` value will be ((("doc_id field")))extracted from the `doc_id` field in the document
 body:
 
 [source,js]

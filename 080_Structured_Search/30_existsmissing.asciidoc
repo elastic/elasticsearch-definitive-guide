@@ -1,7 +1,7 @@
 === Dealing with null values
 
 Think back to our earlier example where documents have a field named `tags`.
-This is a multi-valued field.  A document may have one tag, many tags, or
+This is a multi-valued field.((("structured search", "dealing with null values")))((("null values")))  A document may have one tag, many tags, or
 potentially no tags at all. If a field has no values, how is it stored in an
 inverted index?
 
@@ -20,7 +20,7 @@ can't!  An inverted index is simply a list of tokens and the documents that
 contain them.  If a field doesn't exist... it doesn't hold any tokens, which
 means it won't be represented in an inverted index data structure.
 
-Ultimately, this means that a `null`, `""` (an empty string), `[]` (an empty
+Ultimately, this((("strings", "empty")))((("arrays", "empty"))) means that a `null`, `""` (an empty string), `[]` (an empty
 array), and `[null]` are all equivalent... they simply don't exist in the
 inverted index!
 
@@ -30,7 +30,7 @@ a few tools to work with null or missing values.
 
 ==== Exists Filter
 
-The first tool in your arsenal is the `exists` filter.  This filter will return
+The first tool in your arsenal is the `exists` filter.((("null values", "working with, using exists filter")))((("exists filter")))  This filter will return
 documents that have any value in the specified field. Let's use the tagging example
 and index some example documents:
 
@@ -127,7 +127,7 @@ were documents `3` and `4`.
 
 ==== Missing Filter
 
-The `missing` filter is essentially the inverse of the `exists`: it returns
+The `missing` filter is essentially((("null values", "working with, using missing filter")))((("missing filter"))) the inverse of the `exists`: it returns
 documents where there is _no_ value for a particular field, much like this
 SQL:
 
@@ -186,7 +186,7 @@ a ``placeholder'' value of our choosing.
 
 When specifying the mapping for a string, numeric, boolean or date field, you
 can also set a `null_value` which will be used whenever an explicit `null`
-value is encountered.  A field without a value will still be excluded from the
+value is encountered. ((("null_value setting"))) A field without a value will still be excluded from the
 inverted index.
 
 When choosing a suitable `null_value` ensure that:
@@ -201,7 +201,7 @@ When choosing a suitable `null_value` ensure that:
 
 ==== Exists/Missing on Objects
 
-The `exists` and `missing` filters also work on inner objects, not just core
+The `exists` and `missing` filters ((("objects", "using exists/missing filters on")))((("exists filter", "using on objects")))((("missing filter", "using on objects")))also work on inner objects, not just core
 types.  With the following document:
 
 [source,js]

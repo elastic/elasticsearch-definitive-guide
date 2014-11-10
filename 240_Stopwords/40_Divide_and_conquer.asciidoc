@@ -2,13 +2,13 @@
 === Divide and conquer
 
 The terms in a query string can be divided into more important (low frequency)
-and less important (high frequency) terms. Documents that match only the less
+and less important (high frequency) terms.((("stopwods", "low and high frequency terms"))) Documents that match only the less
 important terms are probably of very little interest.  Really, we want
 documents that match as many of the more important terms as possible.
 
-The `match` query accepts a `cutoff_frequency` parameter, which allows it to
+The `match` query accepts ((("cutoff_frequency parameter")))((("match query", "cutoff_frequency parameter")))a `cutoff_frequency` parameter, which allows it to
 divide the terms in the query string into a low frequency and high frequency
-group. The low frequency group (more important terms) form the bulk of the
+group.((("term frequency", "cutoff_frequency parameter in match query"))) The low frequency group (more important terms) form the bulk of the
 query, while the high frequency group (less important terms) is used only for
 scoring, not for matching. By treating these two groups differently, we can
 gain a real boost of speed on previously slow queries.
@@ -17,7 +17,7 @@ gain a real boost of speed on previously slow queries.
 *********************************************
 
 One of the benefits of `cutoff_frequency` is that you get _domain specific_
-stopwords for free. For instance, a website about movies may use the words
+stopwords for free.((("domain specific stopwords"))) For instance, a website about movies may use the words
 ``movie'', ``color'', ``black'' and ``white'' so often that they could be
 considered almost meaningless.  With the `stop` token filter, these domain
 specific terms would have to be added to the stopwords list manually. However,
@@ -97,7 +97,7 @@ required, then you should use a `bool` query instead.   As we saw in
 ==== Controlling precision
 
 The `minimum_should_match` parameter can be combined with `cutoff_frequency`
-but it only applies to the low frequency terms.  This query:
+but it only applies to the low frequency terms.((("stopwords", "low and high frequency terms", "controlling precision")))((("minimum_should_match parameter", "controlling precision")))  This query:
 
 [source,json]
 ---------------------------------
@@ -143,7 +143,7 @@ would be rewritten as:
 
 ==== Only high frequency terms
 
-An `or` query for high frequency terms only -- ``To be or not to be'' -- is
+An `or` query for high frequency((("stopwords", "low and high frequency terms", "only high frequency terms"))) terms only -- ``To be or not to be'' -- is
 the worst case for performance. It is pointless to score *all* of the
 documents that contain only one of these terms in order to return just the top
 ten matches. We are really only interested in documents where they all occur
@@ -169,9 +169,9 @@ rewritten to make all high frequency terms required:
 ==== More control with common terms
 
 While the high/low frequency functionality in the `match` query is useful,
-sometimes you want more control over how the high and low frequency groups
+sometimes you want more control((("stopwords", "low and high frequency terms", "more control over common terms"))) over how the high and low frequency groups
 should be handled.  The `match` query just exposes a subset of the
-functionality available in the `common` terms query.
+functionality available in the `common` terms query.((("common terms query")))
 
 For instance, we could make all low frequency terms required, and only score
 documents that have 75% of all high frequency terms with a query like this:

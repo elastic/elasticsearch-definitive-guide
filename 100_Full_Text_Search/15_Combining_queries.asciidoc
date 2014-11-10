@@ -1,7 +1,7 @@
 [[bool-query]]
 === Combining queries
 
-In <<combining-filters>> we discussed how to use the `bool` filter to combine
+In <<combining-filters>> we discussed how to((("full text search", "combining queries"))) use the `bool` filter to combine
 multiple filter clauses with `and`, `or` and `not` logic.  In query land, the
 `bool` query does a similar job but with one important difference.
 
@@ -9,7 +9,7 @@ Filters make a binary decision: should this document be included in the
 results list or not? Queries, however, are more subtle. They not only decide
 whether to include a document or not, but also how *relevant* that document is.
 
-Like the filter equivalent, the `bool` query accepts multiple query clauses
+Like the filter equivalent, the `bool` query accepts((("bool query"))) multiple query clauses
 under the `must`, `must_not` and `should` parameters.  For instance:
 
 [source,js]
@@ -35,7 +35,7 @@ contains the term `"quick"`, except for those that also contain `"lazy"`. So
 far this is pretty similar to how the `bool` filter works.
 
 The difference comes in with the two `should` clauses, which say: _a document
-is *not required* to contain either `"brown"` or `"dog"`, but if it does, then
+is *not required* to contain ((("should clause", "in bool queries")))either `"brown"` or `"dog"`, but if it does, then
 it should be considered **more relevant**_:
 
 [source,js]
@@ -64,17 +64,17 @@ it should be considered **more relevant**_:
 
 ==== Score calculation
 
-The `bool` query calculates the relevance `_score` for each document by adding
+The `bool` query calculates((("relevance scores", "calculation in bool queries")))((("bool query", "score calculation"))) the relevance `_score` for each document by adding
 together the `_score` from all of the matching `must` and `should` clauses,
 then dividing by the total number of `must` and `should` clauses.
 
-The `must_not` clauses do not affect the score -- their only purpose is to
+The `must_not` clauses do not affect ((("must_not clause", "in bool queries")))the score -- their only purpose is to
 exclude documents that might otherwise have been included.
 
 ==== Controlling precision
 
 All of the `must` clauses must match and all of the `must_not` clause must not
-match, but how many `should` clauses should match?
+match, but how many `should` clauses((("bool query", "controlling precision")))((("full text search", "combining queries", "controlling precision")))((("precision", "controlling for bool query"))) should match?
 
 By default, none of the `should` clauses are required to match, with one
 exception: if there are no `must` clauses, then at least one `should` clause
@@ -82,7 +82,7 @@ must match.
 
 Just as we can control the <<match-precision,precision of the `match` query>>,
 we can control how many `should` clauses need to match using the
-`minimum_should_match` parameter, either as an absolute number or as a
+`minimum_should_match` parameter,((("minimum_should_match parameter", "in bool queries"))) either as an absolute number or as a
 percentage:
 
 [source,js]

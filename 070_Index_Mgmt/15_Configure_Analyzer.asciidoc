@@ -1,16 +1,16 @@
 [[configuring-analyzers]]
 === Configuring analyzers
 
-The third important index setting is the `analysis` section, which is used
+The third important index setting is the `analysis` section,((("index settings", "analysis"))) which is used
 to configure existing analyzers or to create new custom analyzers
 specific to your index.
 
-In <<analysis-intro>> we introduced some of the built in analyzers,
+In <<analysis-intro>> we introduced some of the built in ((("analyzers", "built-in")))analyzers,
 which are used to convert full text strings into an inverted index,
 suitable for searching.
 
 The `standard` analyzer, which is the default analyzer
-used for full text fields, is a good choice for most Western languages.
+used for full text fields,((("standard analyzer", "components of"))) is a good choice for most Western languages.((("tokenization", "in standard analyzer")))((("standard token filter")))((("stop token filter")))((("standard tokenizer")))((("lowercase token filter")))
 It consists of:
 
 * the `standard` tokenizer, which splits the input text on word boundaries
@@ -23,11 +23,11 @@ It consists of:
 
 By default the stopwords filter is disabled.  You can enable it by creating a
 custom analyzer based on the `standard` analyzer and setting the `stopwords`
-parameter. Either provide a list of stopwords or tell it to use a predefined
+parameter.((("stopwords parameter"))) Either provide a list of stopwords or tell it to use a predefined
 stopwords list from a particular language.
 
 In the following example, we create a new analyzer called the `es_std`
-analyzer, which uses the predefined list of Spanish stopwords:
+analyzer, which uses the predefined list of ((("Spanish stopwords, analyzer using")))Spanish stopwords:
 
 [source,js]
 --------------------------------------------------

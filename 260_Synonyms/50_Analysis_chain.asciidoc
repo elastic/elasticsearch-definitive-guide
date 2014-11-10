@@ -1,10 +1,10 @@
 [[synonyms-analysis-chain]]
 === Synonyms and the analysis chain
 
-The example we showed in <<synonym-formats>>,  used `u s a` as a synonym. Why
+The example we ((("synonyms", "and the analysis chain")))showed in <<synonym-formats>>,  used `u s a` as a synonym. Why
 did we use that instead of `U.S.A.`?  The reason is that the `synonym` token
 filter only sees the terms that the previous token filter or tokenizer has
-emitted.
+emitted.((("analysis", "synonyms and the analysis chain")))
 
 Imagine that we have an analyzer which consists of the `standard` tokenizer,
 with the `lowercase` token filter followed by a `synonym` token filter. The
@@ -24,7 +24,7 @@ removed and the letters have been lowercased.
 
 This is an important point to consider.  What if we want to combine synonyms
 with stemming, so that `jumps`, `jumped`, `jump`, `leaps`, `leaped`, and
-`leap` are all indexed as the single term `jump`?  We could place the synonyms
+`leap` are all indexed as the single term `jump`?  We ((("stemming words", "combining synonyms with")))could place the synonyms
 filter before the stemmer and list all inflections:
 
     "jumps,jumped,leap,leaps,leaped => jump"
@@ -37,7 +37,7 @@ stemmer, and to list just the root words that would be emitted by the stemmer:
 ==== Case-sensitive synonyms
 
 Normally, synonym filters are placed after the `lowercase` token filter and so
-all synonyms are written in lowercase, but sometimes that can lead to odd
+all synonyms are ((("synonyms", "and the analysis chain", "case-sensitive synonyms")))((("case-sensitive synonyms")))written in lowercase, but sometimes that can lead to odd
 conflations. For instance, a `CAT` scan and a `cat` are quite difference, as
 are `PET` (Positron Emmision Tomography) and a `pet`. For that matter, the
 surname `Little` is distinct from the adjective `little` (although if a

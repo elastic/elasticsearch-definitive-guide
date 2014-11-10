@@ -1,8 +1,8 @@
 [[get-doc]]
 === Retrieving a document
 
-To get the document out of Elasticsearch, we use the same `_index`,
-`_type` and `_id`, but the HTTP verb changes to `GET`:
+To get the document ((("documents", "retrieving")))out of Elasticsearch, we use the same `_index`,
+`_type` and `_id`, but the HTTP verb ((("HTTP methods", "GET")))changes to `GET`:
 
 [source,sh]
 --------------------------------------------------
@@ -11,7 +11,7 @@ GET /website/blog/123?pretty
 
 // SENSE: 030_Data/15_Get_document.json
 
-The response includes the by now familiar metadata elements, plus the `_source`
+The response includes the by now familiar metadata elements, plus ((("source field")))the `_source`
 field, which contains the original JSON document that we sent to Elasticsearch
 when we indexed it.
 
@@ -35,19 +35,19 @@ when we indexed it.
 .`pretty`
 ****
 
-Adding `pretty` to the query string parameters for any request, as in the
-example above, causes Elasticsearch to _pretty-print_ the JSON response to
+Adding `pretty` to the query string parameters for any request,((("query strings", "adding pretty"))) as in the
+example above, causes Elasticsearch to _pretty-print_ the((("pretty-printing JSON response"))) JSON response to
 make it more readable. The `_source` field, however, isn't pretty-printed --
 instead we get back exactly the same JSON string that we passed in.
 
 ****
 
 The response to the GET request includes `{"found": true}`. This confirms that
-the document was found.  If we were to request a document that doesn't exist,
+the document was found.  ((("documents", "requesting non-existant document")))If we were to request a document that doesn't exist,
 we would still get a JSON response, but `found` would be set to `false`.
 
 Also, the HTTP response code would be `'404 Not Found'` instead of `'200 OK'`.
-We can see this by passing the `-i` argument to `curl`, which causes it to
+We can see this by passing the `-i` argument to `curl`, which((("curl command", "-i argument"))) causes it to
 display the response headers:
 
 [source,sh]
@@ -75,9 +75,9 @@ Content-Length: 83
 
 ==== Retrieving part of a document
 
-By default, a `GET` request will return the whole document, as stored in the
+By default, a `GET` request((("documents", "retrieving part of"))) will return the whole document, as stored in the
 `_source` field. But perhaps all you are interested in is the `title` field.
-Individual fields can be requested using the `_source` parameter. Multiple
+Individual fields can be ((("fields", "returning individual document fields")))((("source field", "specifying fields to be returned in")))requested using the `_source` parameter. Multiple
 fields can be specified in a comma-separated list:
 
 [source,sh]

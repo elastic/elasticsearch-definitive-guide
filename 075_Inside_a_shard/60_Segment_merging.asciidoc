@@ -1,17 +1,17 @@
 [[merge-process]]
 === Segment merging
 
-With the automatic refresh process creating a new segment every second, it
+With the automatic refresh process creating a new segment((("segments", "merging"))) every second, it
 doesn't take long for the number of segments to explode. Having too many
 segments is a problem. Each segment consumes file handles, memory, and CPU
 cycles.  More importantly, every search request has to check every segment in
 turn -- the more segments there are, the slower search will be.
 
-Elasticsearch solves this problem by merging segments in the background. Small
+Elasticsearch solves this problem by merging segments in the background.((("merging segments"))) Small
 segments are merged into bigger segments which, in turn, are merged into even
 bigger segments.
 
-This is the moment when those old deleted documents are purged from the file
+This is the moment when those old deleted documents((("deleted documents", "purging of"))) are purged from the file
 system.  Deleted documents (or old versions of updated documents) are not
 copied over to the new bigger segment.
 
@@ -54,7 +54,7 @@ case.
 [[optimize-api]]
 ==== optimize API
 
-The `optimize` API is best described as the _forced merge_ API. It forces a
+The `optimize` API is best ((("merging segments", "optimize API and")))((("optimize API")))described as the _forced merge_ API. It forces a
 shard to be merged down to the number of segments specified in the
 `max_num_segments` parameter. The intention is to reduce the number of
 segments (usually to 1) in order to speed up search performance.

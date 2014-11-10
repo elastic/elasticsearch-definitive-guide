@@ -2,7 +2,7 @@
 == Searching – the basic tools
 
 So far, we have learned how to use Elasticsearch as a simple NoSQL-style
-distributed document store -- we can throw JSON documents at Elasticsearch and
+distributed document store -- we can ((("searching")))throw JSON documents at Elasticsearch and
 retrieve each one by ID. But the real power of Elasticsearch lies in its
 ability to make sense out of chaos -- to turn Big Data into Big Information.
 
@@ -17,7 +17,7 @@ consider doing with a traditional database.
 
 A _search_ can be:
 
-* a structured query on concrete fields like `gender` or `age`, sorted by
+* a structured query on concrete fields((("fields", "searching on")))((("searching", "types of searches"))) like `gender` or `age`, sorted by
   a field like `join_date`, similar to the type of query that you could construct 
   in SQL
 
@@ -26,7 +26,7 @@ A _search_ can be:
 
 * or a combination of the two
 
-While many searches will just work out of the box, to use Elasticsearch to
+While many searches will just work out of((("full-text search"))) the box, to use Elasticsearch to
 its full potential you need to understand three subjects:
 
 [horizontal]

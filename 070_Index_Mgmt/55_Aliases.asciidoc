@@ -2,12 +2,12 @@
 === Index aliases and zero downtime
 
 The problem with the reindexing process described above is that you need
-to update your application to use the new index name.  Index _aliases_
+to update your application to use the new index name.((("index aliases")))  Index _aliases_
 to the rescue!
 
 An index _alias_ is like a shortcut or symbolic link, which can point to
 one or more indices, and can be used in any API that expects an index name.
-Aliases give us an enormous amount of flexibility. They allow us:
+Aliases((("aliases", "index"))) give us an enormous amount of flexibility. They allow us:
 
  * to switch transparently between one index and another on a running cluster
  * to group multiple indices, eg `last_three_months`
@@ -70,7 +70,7 @@ Both of these return:
 
 Later, we decide that we want to change the mappings for a field in our index.
 Of course, we can't change the existing mapping, so we have to reindex
-our data.  To start, we create `my_index_v2` with the new mappings:
+our data.((("reindexing", "using index aliases")))  To start, we create `my_index_v2` with the new mappings:
 
 [source,js]
 --------------------------------------------------

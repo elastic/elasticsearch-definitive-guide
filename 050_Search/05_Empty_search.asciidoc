@@ -1,7 +1,7 @@
 [[empty-search]]
 === The empty search
 
-The most basic form of the search API is the _empty search_ which doesn't
+The most basic form of the((("searching", "empty search")))((("empty search"))) search API is the _empty search_ which doesn't
 specify any query, but simply returns all documents in all indices in the
 cluster:
 
@@ -48,7 +48,7 @@ The response (edited for brevity) looks something like this:
 
 ==== hits
 
-The most important section of the response is `hits`, which contains the
+The most important section of the response is `hits`, which((("searching", "empty search", "hits")))((("hits"))) contains the
 `total` number of documents that matched our query, and a `hits` array
 containing the first 10 of those matching documents -- the results.
 
@@ -58,24 +58,24 @@ immediately available to us directly from the search results. This is unlike
 other search engines which return just the document ID, requiring you to fetch
 the document itself in a separate step.
 
-Each element also has a `_score`.  This is the _relevance score_, which is a
+Each element also ((("score", "for empty search")))((("relevance scores")))has a `_score`.  This is the _relevance score_, which is a
 measure of how well the document matches the query.  By default, results are
 returned with the most relevant documents first; that is, in descending order
 of `_score`. In this case, we didn't specify any query so all documents are
 equally relevant, hence the neutral `_score` of `1` for all results.
 
 The `max_score` value is the highest `_score` of any document that matches our
-query.
+query.((("max_score value")))
 
 ==== took
 
-The `took` value tells us how many milliseconds the entire search request took
+The `took` value((("took value", "time taken for empty search"))) tells us how many milliseconds the entire search request took
 to execute.
 
 ==== shards
 
-The `_shards` element tells us the `total` number of shards that were involved
-in the query and, of them, how many were `successful` and how many `failed`.
+The `_shards` element((("shards", "number involved in an empty search"))) tells us the `total` number of shards that were involved
+in the query and,((("failed shards (in a search)")))((("successful shards", "in a search"))) of them, how many were `successful` and how many `failed`.
 We wouldn't normally expect shards to fail, but it can happen. If we were to
 suffer a major disaster in which we lost both the primary and the replica copy
 of the same shard, there would be no copies of that shard available to respond
@@ -84,8 +84,8 @@ to search requests. In this case, Elasticsearch would report the shard as
 
 ==== timeout
 
-The `timed_out` value tells us whether the query timed out or not.  By
-default, search requests do not timeout.  If low response times are more
+The `timed_out` value tells((("timed_out value in search results"))) us whether the query timed out or not.  By
+default, search requests do not timeout.((("timeout parameter", "specifying in a request")))  If low response times are more
 important to you than complete results, you can specify a `timeout` as `10`
 or `"10ms"` (10 milliseconds), or `"1s"` (1 second):
 
@@ -102,7 +102,7 @@ shards which responded before the request timed out.
 [WARNING]
 ================================================
 
-It should be noted that this `timeout` does not halt the execution of the
+It should be noted that this `timeout` does not((("timeout parameter", "not halting query execution"))) halt the execution of the
 query, it merely tells the coordinating node to return the results collected
 _so far_ and to close the connection.  In the background, other shards may
 still be processing the query even though results have been sent.

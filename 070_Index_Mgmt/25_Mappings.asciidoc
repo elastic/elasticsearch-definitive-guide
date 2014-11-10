@@ -1,10 +1,10 @@
 [[mapping]]
 === Types and Mappings
 
-A _type_ in Elasticsearch represents a class of similar documents. A type
+A _type_ in Elasticsearch represents a class of similar documents.((("types", "defined"))) A type
 consists of a _name_ -- such as `user` or `blogpost` -- and a _mapping_. The
-mapping, like a database schema, describes the fields or _properties_ that
-documents of that type may have, the datatype of each field -- `string`,
+mapping, ((("mapping (types)")))like a database schema, describes the fields or _properties_ that
+documents of that type may have, ((("fields", "datatypes")))the datatype of each field -- `string`,
 `integer`, `date` etc -- and how those fields should be indexed and stored by
 Lucene.
 
@@ -15,7 +15,7 @@ on top of Lucene.
 
 ==== How Lucene sees documents
 
-A document in Lucene consists of a simple list of field-value pairs. A field
+A document in Lucene consists of a simple list of field-value pairs.((("documents", "in Lucene"))) A field
 must have at least one value, but any field can contain multiple values.
 Similarly, a single string value may be converted into multiple values by the
 analysis process.  Lucene doesn't care if the values are strings or numbers or
@@ -27,16 +27,16 @@ also be _stored_ unchanged so that they can be retrieved later.
 
 ==== How types are implemented
 
-Elasticsearch types are implemented on top of this simple foundation. An index
+Elasticsearch types are ((("types", "implementation in Elasticsearch")))implemented on top of this simple foundation. An index
 may have several types, each with their own mapping, and documents of any of
 these types may be stored in the same index.
 
 Because Lucene has no concept of document types, the type name of each
-document is stored with the document in a metadata field called `_type`. When
+document is stored with the document in a metadata field called `_type`.((("type field"))) When
 we search for documents of a particular type, Elasticsearch simply uses a
 filter on the `_type` field to restrict results to documents of that type.
 
-Lucene also has no concept of mappings. Mappings are the layer
+Lucene also has no concept of mappings.((("mapping (types)"))) Mappings are the layer
 that Elasticsearch uses to _map_ complex JSON documents into the
 simple flat documents that Lucene expects to receive.
 
@@ -57,7 +57,7 @@ index called `name`.
 ==== Avoiding type gotchas
 
 The fact that documents of different types can be added to the same index
-introduces some unexpected complications.
+introduces some unexpected((("types", "gotchas, avoiding"))) complications.
 
 Imagine that we have two types in our index: `blog_en` for blog posts in
 English, and `blog_es` for blog posts in Spanish.  Both types have a

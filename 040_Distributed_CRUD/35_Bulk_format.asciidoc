@@ -1,7 +1,7 @@
 [[bulk-format]]
 ==== Why the funny format?
 
-When we learned about Bulk requests earlier in <<bulk>>, you may have asked
+When we learned about Bulk requests ((("bulk API", "format of requests")))earlier in <<bulk>>, you may have asked
 yourself: ``Why does the `bulk` API require the funny format with the newline
 characters, instead of just sending the requests wrapped in a JSON array, like
 the `mget` API?''
@@ -10,7 +10,7 @@ To answer this, we need to explain a little background:
 
 Each document referenced in a bulk request may belong to a different primary
 shard, each of which may be allocated to any of the nodes in the cluster. This
-means that every _action_ inside a `bulk` request needs to be forwarded to the
+means that ((("action, in bulk requests")))every _action_ inside a `bulk` request needs to be forwarded to the
 correct shard on the correct node.
 
 If the individual requests were wrapped up in a JSON array, that would mean

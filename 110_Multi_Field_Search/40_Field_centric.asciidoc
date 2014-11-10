@@ -1,12 +1,12 @@
 [[field-centric]]
 === Field centric queries
 
-All three of the above problems stem from the fact that `most_fields` is
+All three of the above problems stem from the fact ((("field-centric queries")))((("multi-field search", "field-centric queries, problems with")))((("most fields queries", "problems with field-centric queries")))that `most_fields` is
 _field-centric_ rather than _term-centric_ -- it looks for the  most matching
 *fields*, when really what we're interested is the most matching *terms*.
 
 ****
-The `best_fields` type is also field centric and suffers from similar problems.
+The `best_fields` type is also field centric((("best fields queries", "problems with field-centric queries"))) and suffers from similar problems.
 ****
 
 First we'll look at why these problems exist, then how we can combat them.
@@ -47,7 +47,7 @@ field.
 
 ==== Problem 2: Trimming the long tail
 
-In <<match-precision>> we talked about using the `"and"` operator or the
+In <<match-precision>> we talked about((("and operator", "most fields and best fields queries and")))((("minimum_should_match parameter", "most fields and best fields queries"))) using the `"and"` operator or the
 `minimum_should_match` parameter to trim the long tail of almost irrelevant
 results. Perhaps we could try this:
 
@@ -84,7 +84,7 @@ would match this query.
 ==== Problem 3: Term frequencies
 
 In <<relevance-intro>>, we explained that the default similarity algorithm
-used to calculate the relevance score for each term is TF/IDF:
+used to calculate the relevance score ((("term frequency", "problems with field-centric queries")))for each term is TF/IDF:
 
 Term Frequency::
 
@@ -96,7 +96,7 @@ Inverse Document Frequency::
     The more often a term appears in a field in all documents in the index,
     the less relevant is that term.
 
-When searching against multiple fields, TF/IDF can introduce some surprising
+When searching against multiple fields, TF/IDF can((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm", "surprising results when searching against multiple fields"))) introduce some surprising
 results.
 
 Consider our example of searching for ``Peter Smith'' using the `first_name`

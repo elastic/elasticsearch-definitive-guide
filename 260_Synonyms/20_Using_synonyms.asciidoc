@@ -1,7 +1,7 @@
 [[using-synonyms]]
 === Using synonyms
 
-Synonyms can replace existing tokens or be added to the token stream using the
+Synonyms can replace existing tokens or((("synonyms", "using"))) be added to the token stream using the((("synonym token filter")))
 {ref}analysis-synonym-tokenfilter.html[`synonym` token filter]:
 
 [source,json]
@@ -40,7 +40,7 @@ PUT /my_index
 ==================================================
 
 Synonyms can be specified inline with the `synonyms` parameter, or in a
-synonyms file which must be present on every node in the cluster. The path to
+synonyms file which must((("synonyms", "specifying inline or in a separate file"))) be present on every node in the cluster. The path to
 the synonyms file should be specified with the `synonyms_path` parameter, and
 should be either absolute or relative to the Elasticsearch `config` directory.
 See <<updating-stopwords>> for techniques that can be used to refresh the
@@ -76,7 +76,7 @@ each term has been preserved.
 ======================================
 
 Using the same `synonym` token filter at both index time and search time is
-redundant.  If, at index time, we replace `English` with the two terms
+redundant.((("synonym token filter", "using at index time versus search time")))  If, at index time, we replace `English` with the two terms
 `english` and `british`, then at search time we only need to search for one of
 those terms.  Alternatively, if we don't use synonyms at index time then, at
 search time, we would need to convert a query for `English` into a query for

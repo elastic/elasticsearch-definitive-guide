@@ -1,7 +1,7 @@
 === Ranges
 
 When dealing with numbers in this chapter, we have so far only searched for
-exact numbers.  In practice,  filtering on ranges is often more useful.  For
+exact numbers. ((("structured search", "ranges"))) In practice,  filtering on ranges is often more useful.  For
 example, find all products with a price greater than $20 and less than $40.
 
 In SQL terms, a range can be expressed as:
@@ -13,7 +13,7 @@ FROM   products
 WHERE  price BETWEEN 20 AND 40
 --------------------------------------------------
 
-Elasticsearch has a range filter, which, unsurprisingly, allows you to
+Elasticsearch has a range filter, ((("range filters", "using on numbers")))which, unsurprisingly, allows you to
 filter ranges:
 
 [source,js]
@@ -57,7 +57,7 @@ GET /my_store/products/_search
 --------------------------------------------------
 // SENSE: 080_Structured_Search/25_Range_filter.json
 
-If you need an unbounded range (e.g. just >20), just omit one of the
+If you need ((("unbounded ranges")))an unbounded range (e.g. just >20), just omit one of the
 boundaries:
 
 [source,js]
@@ -72,7 +72,7 @@ boundaries:
 
 ==== Ranges on dates
 
-The range filter can be used on date fields too:
+The range filter can be used on date ((("dates", "range filter used on")))((("range filters", "using on dates")))fields too:
 
 [source,js]
 --------------------------------------------------
@@ -84,7 +84,7 @@ The range filter can be used on date fields too:
 }
 --------------------------------------------------
 
-When used on date fields, the range filter supports _date math_ operations.
+When used on date fields, the range filter ((("date math operations")))supports _date math_ operations.
 For example, if we want to find all documents that have a timestamp sometime
 in the last hour:
 
@@ -122,7 +122,7 @@ the {ref}/mapping-date-format.html[date format reference documentation].
 
 ==== Ranges on strings
 
-The range filter can also operate on string fields.  String ranges are
+The range filter can also operate on string fields.((("range filters", "using on strings")))((("strings", "using range filter on")))((("lexicographical order, string ranges")))  String ranges are
 calculated _lexicographically_  or alphabetically.  For example, these values
 are sorted in lexicographic order:
 
@@ -149,7 +149,7 @@ range filter syntax:
 .Be careful of cardinality
 ****
 Numeric and date fields are indexed in such a way that ranges are very efficient
-to calculate.  This is not the case for string fields, however.  To perform
+to calculate.((("cardinality, string ranges and")))  This is not the case for string fields, however.  To perform
 a range on a string field, Elasticsearch is effectively performing a term
 filter for every term that falls in the range.  This is much slower than
 a date or numeric range.

@@ -1,11 +1,11 @@
 === Controlling analysis
 
-Queries can only find terms that actually exist in the inverted index, so it
+Queries can only find terms that actually ((("full text search", "controlling analysis")))((("analysis", "controlling")))exist in the inverted index, so it
 is important to ensure that the same analysis process is applied both to the
 document at index time, and to the query string at search time so that the
 terms in the query match the terms in the inverted index.
 
-While we say ``document'', really analyzers are determined per-field. Each
+While we say ``document'', really analyzers are determined per-field.((("analyzers", "determined per-field"))) Each
 field can have a different analyzer, either by configuring a specific analyzer
 for that field or by falling back on the type, index or node defaults.  At
 index time, a field's value is analyzed using the configured or default
@@ -53,8 +53,8 @@ This means that, were we to run a low-level `term` query for the exact term
 not.
 
 High-level queries like the `match` query understand field mappings and can
-apply the correct analyzer for each field being queried. We can see this
-in action with the `validate query` API:
+apply the correct analyzer for each field being queried.((("match query", "applying appropriate analyzer to each field"))) We can see this
+in action with ((("validate query API")))the `validate query` API:
 
 
 [source,js]
@@ -82,12 +82,12 @@ that it looks for each term in the correct format for that field.
 
 ==== Default analyzers
 
-While we can specify an analyzer at field level, how do we determine which
+While we can specify an analyzer at field level,((("full text search", "controlling analysis", "default analyzers")))((("analyzers", "default"))) how do we determine which
 analyzer is used for a field if none is specified at field level?
 
 Analyzers can be specified at several levels.  Elasticsearch works through
 each level until it finds an analyzer which it can use.  At index time, the
-process is as follows:
+process ((("indexing", "applying analyzers")))is as follows:
 
 * the `analyzer` defined in the field mapping, else
 * *the analyzer defined in the `_analyzer` field of the document, else*
@@ -96,7 +96,7 @@ process is as follows:
 * the analyzer named `default` at node level, which defaults to
 * the `standard` analyzer
 
-At search time, the sequence is slightly different:
+At search time, the ((("searching", "applying analyzers")))sequence is slightly different:
 
 * *the `analyzer` defined in the query itself, else*
 * the `analyzer` defined in the field mapping, else
@@ -117,14 +117,14 @@ in a single index because of the pitfalls highlighted in <<languages>>.
 **************************************************
 
 Occasionally, it makes sense to use a different analyzer at index and search
-time. For instance, at index time we may want to index synonyms, eg for every
+time.((("analyzers", "using different analyzers at index and search time"))) For instance, at index time we may want to index synonyms, eg for every
 occurrence of `quick` we also index `fast`, `rapid` and `speedy`. But at
 search time, we don't need to search for all of these synonyms.  Instead we
 can just look up the single word that the user has entered, be it `quick`,
 `fast`, `rapid` or `speedy`.
 
-To enable this distinction, Elasticsearch also supports the `index_analyzer`
-and `search_analyzer` parameters, and analyzers named `default_index` and
+To enable this distinction, Elasticsearch also supports ((("index_analyzer parameter")))((("search_analyzer parameter")))the `index_analyzer`
+and `search_analyzer` parameters, and((("default_search parameter"))) ((("default_index analyzer")))analyzers named `default_index` and
 `default_search`.
 
 Taking these extra parameters into account, the *full* sequence at index time
@@ -157,7 +157,7 @@ And at search time:
 ==== Configuring analyzers in practice
 
 The sheer number of places where you can specify an analyzer is quite
-overwhelming.  In practice, though, it is pretty simple:
+overwhelming.((("full text search", "controlling analysis", "configuring analyzers in practice")))((("analyzers", "configuring in practice")))  In practice, though, it is pretty simple:
 
 ===== Use index settings, not config files
 

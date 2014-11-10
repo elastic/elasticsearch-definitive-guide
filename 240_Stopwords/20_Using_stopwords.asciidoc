@@ -1,10 +1,10 @@
 [[using-stopwords]]
 === Using stopwords
 
-The removal of stopwords is handled by the
+The removal of stopwords is ((("stopwords", "removal of")))handled by the
 {ref}analysis-stop-tokenfilter.html[`stop` token filter] which can be used
-when creating a `custom` analyzer (see <<stop-token-filter>> below).
-However, some out-of-the-box analyzers come with the `stop` filter pre-integrated:
+when ((("stop token filter")))creating a `custom` analyzer (see <<stop-token-filter>> below).
+However, some out-of-the-box analyzers((("analyzers", "stop filter pre-integrated")))((("pattern analyzer", "stopwords and")))((("standard analyzer", "stop filter")))((("language analyzers", "stop filter pre-integrated"))) come with the `stop` filter pre-integrated:
 
 {ref}analysis-lang-analyzer.html[Language analyzers]::
 
@@ -23,7 +23,7 @@ However, some out-of-the-box analyzers come with the `stop` filter pre-integrate
 
 ==== Stopwords and the standard analyzer
 
-To use custom stopwords in conjunction with the `standard` analyzer, all we
+To use custom stopwords in conjunction with ((("standard analyzer", "stopwords and")))((("stopwords", "using with standard analyzer")))the `standard` analyzer, all we
 need to do is to create a configured version of the analyzer and pass in the
 list of `stopwords` that we require:
 
@@ -53,7 +53,7 @@ any of the language analyzers.
 [[maintaining-positions]]
 ==== Maintaining positions
 
-The output from the `analyze` API is quite interesting:
+The output from the `analyze` API((("stopwords", "maintaining position of terms and"))) is quite interesting:
 
 [source,json]
 ---------------------------------
@@ -85,7 +85,7 @@ The quick and the dead
 <1> Note the `position` of each token.
 
 The stopwords have been filtered out, as expected, but the interesting part is
-that the `position` of the two remaining terms is unchanged: `quick` is the
+that the `position` of the((("phrase matching", "position of terms", "stopwords and"))) two remaining terms is unchanged: `quick` is the
 second word in the original sentence, and `dead` is the fifth. This is
 important for phrase queries -- if the positions of each term had been
 adjusted, then a phrase query for `"quick dead"` would have matched the above
@@ -94,7 +94,7 @@ example incorrectly.
 [[specifying-stopwords]]
 ==== Specifying stopwords
 
-Stopwords can be passed inline, as we did in the previous example, by
+Stopwords can be passed inline, as we did in ((("stopwords", "specifying")))the previous example, by
 specifying an array:
 
 [source,json]
@@ -110,12 +110,12 @@ The default stopword list for a particular language can be specified using the
 "stopwords": "_english_"
 ---------------------------------
 
-TIP: The predefined language-specific stopword lists available in
+TIP: The predefined language-specific stopword((("languages", "predefined stopword lists for"))) lists available in
 Elasticsearch can be found in the
 {ref}analysis-stop-tokenfilter.html[`stop` token filter] documentation.
 
-Stopwords can be disabled by specifying the special list: `_none_`.  For
-instance, to use the `english` analyzer without stopwords, you can do the
+Stopwords can be disabled by ((("stopwords", "disabling")))specifying the special list: `_none_`.  For
+instance, to use the `english` analyzer((("english analyzer", "using without stopwords"))) without stopwords, you can do the
 following:
 
 [source,json]
@@ -139,7 +139,7 @@ PUT /my_index
 
 Finally, stopwords can also be listed in a file with one word per line.  The
 file must be present on all nodes in the cluster, and the path can be
-specified with the `stopwords_path` parameter:
+specified((("stopwords_path parameter"))) with the `stopwords_path` parameter:
 
 [source,json]
 ---------------------------------
@@ -164,8 +164,8 @@ PUT /my_index
 ==== Using the stop token filter
 
 The {ref}analysis-stop-tokenfilter.html[`stop` token filter] can be combined
-with a tokenizer and other token filters when you need to create a `custom`
-analyzer.  For instance, let's say that we wanted to create a Spanish analyzer
+with a tokenizer((("stopwords", "using stop token filter")))((("stop token filter", "using in custom analyzer"))) and other token filters when you need to create a `custom`
+analyzer.  For instance, let's say that we wanted to ((("Spanish analyzer", "custom, creating")))((("light_spanish stemmer")))create a Spanish analyzer
 with:
 
 * a custom stopwords list.
@@ -210,7 +210,7 @@ PUT /my_index
 <2> See <<algorithmic-stemmers>>.
 <3> The order of token filters is important, as explained below.
 
-We have placed the `spanish_stop` filter after the `asciifolding` filter. This
+We have placed the `spanish_stop` filter after the `asciifolding` filter.((("asciifolding token filter", "in custom Spanish analyzer"))) This
 means that `esta`, `ésta` and ++está++ will first have their diacritics
 removed to become just `esta`, which will then be removed as a stopword. If,
 instead, we wanted to remove `esta` and `ésta`, but not ++está++,  then we
@@ -221,7 +221,7 @@ filter, and specify both words in the stopwords list.
 ==== Updating stopwords
 
 There are a few techniques which can be used to update the list of stopwords
-used by an analyzer. Analyzers are instantiated at index creation time, when a
+used by an analyzer.((("analyzers", "stopwords list, updating")))((("stopwords", "updating list used by analyzers"))) Analyzers are instantiated at index creation time, when a
 node is restarted, or when a closed index is reopened.
 
 If you specify stopwords inline with the `stopwords` parameter, then your
@@ -230,7 +230,7 @@ only option is to close the index, update the analyzer configuration with the
 the index.
 
 Updating stopwords is easier if you specify them in a file with the
-`stopwords_path` parameter.  You can just update the file (on every node in
+`stopwords_path` parameter.((("stopwords_path parameter")))  You can just update the file (on every node in
 the cluster) then force the analyzers to be recreated by either:
 
 * closing and reopening the index

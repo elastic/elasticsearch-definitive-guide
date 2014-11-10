@@ -1,11 +1,11 @@
 === Boosting query clauses
 
-Of course, the `bool` query isn't restricted to combining simple one-word
+Of course, the `bool` query isn't restricted ((("full text search", "boosting query clauses")))to combining simple one-word
 `match` queries -- it can combine any other query, including other `bool`
-queries.  It is commonly used to fine-tune the relevance `_score` for each
+queries.((("relevance scores", "controlling weight of query clauses")))  It is commonly used to fine-tune the relevance `_score` for each
 document by combining the scores from several distinct queries.
 
-Imagine that we want to search for documents about "full text search"  but we
+Imagine that we want to search for documents((("bool query", "boosting weight of query clauses")))((("weight", "controlling for query clauses"))) about "full text search"  but we
 want to give more _weight_ to documents which also mention "Elasticsearch" or
 "Lucene". By ``more weight'' we mean that documents which mention
 "Elasticsearch" or "Lucene" will receive a higher relevance `_score` than
@@ -48,7 +48,7 @@ so good.
 But what if we want to give more weight to the docs which contain "Lucene" and
 even more weight to the docs containing "Elasticsearch"?
 
-We can control the relative weight of any query clause by specifying a `boost`
+We can control ((("boost parameter")))the relative weight of any query clause by specifying a `boost`
 value, which defaults to `1`. A `boost` value greater than `1` increases the
 relative weight of that clause.  So we could  rewrite the above query as
 follows:
@@ -95,19 +95,19 @@ GET /_search
 [[boost-normalization]]
 **************************************************
 
-The `boost` parameter is used to increase the relative weight of a clause
+The `boost` parameter is used to increase((("boost parameter", "score normalied after boost applied"))) the relative weight of a clause
 (with a `boost` greater than `1`) or decrease the relative weight (with a
 `boost` between `0` and `1`), but the increase or decrease is not linear. In
 other words, a `boost` of `2` does not result in double the `_score`.
 
-Instead, the new `_score` is _normalized_ after the boost is applied. Each
+Instead, the new `_score` is _normalized_ after((("normalization", "score normalied after boost applied"))) the boost is applied. Each
 type of query has its own normalization algorithm and the details are beyond
 the scope of this book. Suffice to say that a higher `boost` value results in
 a higher `_score`.
 
 If you are implementing your own scoring model not based on TF/IDF and you
 need more control over the boosting process, you can use the
-<<function-score-query,`function_score` query>> to manipulate a document's
+<<function-score-query,`function_score` query>> to((("function_score query"))) manipulate a document's
 boost without the normalization step.
 
 **************************************************

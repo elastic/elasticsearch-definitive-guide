@@ -3,7 +3,7 @@
 
 As useful as phrase and proximity queries can be, they still have a downside.
 They are overly strict: all terms must be present for a phrase query to match,
-even when using `slop`.
+even when using `slop`.((("proximity matching", "finding associated words", range="startofrange", id="ix_proxmatchassoc")))
 
 The flexibility in word ordering that you gain with `slop` also comes at a
 price, because you lose the association between word pairs.  While you can
@@ -19,7 +19,7 @@ If, instead of indexing each word independently, we were to index pairs of
 words then we could retain more of the context in which the words were used.
 
 For the sentence `"Sue ate the alligator"`, we would not only index each word
-(or _unigram_) as a term:
+(or _unigram_) as((("unigrams"))) a term:
 
     ["sue", "ate", "the", "alligator"]
 
@@ -27,13 +27,13 @@ but also each word *and its neighbour* as single terms:
 
     ["sue ate", "ate the", "the alligator"]
 
-These word pairs (or _bigrams_) are known as _shingles_.
+These word ((("bigrams")))pairs (or _bigrams_) are ((("shingles")))known as _shingles_.
 
 [TIP]
 ==================================================
 
 Shingles are not restricted to being pairs of words; you could index word
-triplets (_trigrams_) as well:
+triplets (_trigrams_) as ((("trigrams")))well:
 
     ["sue ate the", "ate the alligator"]
 
@@ -54,7 +54,7 @@ but we can use matching bigrams as a signal to increase the relevance score.
 
 ==== Producing shingles
 
-Shingles need to be created at index time as part of the analysis process. We
+Shingles need to be created at index time as part of the analysis process.((("shingles", "producing at index time"))) We
 could index both unigrams and bigrams into a single field, but it is cleaner
 to keep unigrams and bigrams in separate fields which can be queried
 independently.  The unigram field would form the basis of our search, with the
@@ -123,7 +123,7 @@ Now we can proceed to setting up a field to use the new analyzer.
 ==== Multi-fields
 
 We said that it is cleaner to index unigrams and bigrams separately, so we
-will create the `title` field as a multi-field (see <<multi-fields>>):
+will create the `title` field ((("multi-fields")))as a multi-field (see <<multi-fields>>):
 
 [source,js]
 --------------------------------------------------
@@ -164,7 +164,7 @@ POST /my_index/my_type/_bulk
 
 ==== Searching for shingles
 
-To understand the benefit that the `shingles` field adds, let's first look at
+To understand the benefit ((("shingles", "searching for")))that the `shingles` field adds, let's first look at
 the results from a simple `match` query for ``The hungry alligator ate Sue'':
 
 [source,js]
@@ -279,7 +279,7 @@ most relevant document first.
 
 ==== Performance
 
-Not only are shingles more flexible than phrase queries, they perform better
+Not only are shingles more flexible than phrase queries,((("shingles", "better performance than phrase queries"))) they perform better
 as well.  Instead of paying the price of a phrase query every time you search,
 queries for shingles are just as efficient as a simple `match` query.
 
@@ -293,3 +293,4 @@ it possible to achieve a lot with your existing data, without requiring any
 setup.  But once you understand your requirements better it is worth putting
 in the extra effort to model your data at index time.  A little bit of
 preparation will help you to achieve better results with better performance.
+((("proximity matching", "finding associated words", range="endofrange", startref ="ix_proxmatchassoc")))

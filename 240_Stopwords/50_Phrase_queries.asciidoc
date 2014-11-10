@@ -1,7 +1,7 @@
 [[stopwords-phrases]]
 === Stopwords and phrase queries
 
-About 5% of all queries are phrase queries (see <<phrase-matching>>), but they
+About 5% of all queries are ((("stopwords", "phrase queries and")))((("phrase matching", "stopwords and")))phrase queries (see <<phrase-matching>>), but they
 often account for the majority of slow queries. Phrase queries can perform
 poorly, especially if the phrase includes very common words -- a phrase like
 ``To be or not to be'' could be considered pathological. The reason for this
@@ -9,7 +9,7 @@ has to do with the amount of data that is necessary to support proximity
 matching.
 
 In <<pros-cons-stopwords>> we said that removing stopwords saves only a small
-amount of space in the inverted index.  That was only partially true.  A
+amount of space in the inverted index.((("indexes", "typical, data contained in")))  That was only partially true.  A
 typical index may contain, amongst other data, some or all of:
 
 Terms dictionary::
@@ -47,7 +47,7 @@ quadruple index size.
 
 ==== Positions data
 
-Positions are enabled on `analyzed` string fields by default, so that phrase
+Positions are enabled on `analyzed` string fields by default,((("stopwords", "phrase queries and", "positions data")))((("phrase matching", "stopwords and", "positions data"))) so that phrase
 queries will work out of the box. The more often that a term appears, the more
 space that is needed to store its position data. Very common words, by
 definition, appear very commonly and their positions data can run to megabytes
@@ -64,7 +64,7 @@ This is clearly a problem that needs solving.
 [[index-options]]
 ==== Index options
 
-The first question you should ask yourself is: ``**Do you need phrase or
+The first question you should ((("stopwords", "phrase queries and", "index options")))((("phrase matching", "stopwords and", "index options")))ask yourself is: ``**Do you need phrase or
 proximity queries?**''
 
 Often, the answer is no.  For many use cases, such as logging, you need to
@@ -73,8 +73,8 @@ by the postings list -- but not *where* it appears. Or perhaps you need to use
 phrase queries on one or two fields, but you can disable positions data on all
 of the other analyzed `string` fields.
 
-The `index_options` parameter allows you to control what information is stored
-in the index for each field.  Valid values are:
+The `index_options` parameter ((("index_options parameter")))allows you to control what information is stored
+in the index for each field.((("fields", "index options")))  Valid values are:
 
 `docs`::
 
@@ -102,7 +102,7 @@ in the index for each field.  Valid values are:
     but is disabled by default.
 
 You can set `index_options` on fields added at index creation time, or when
-adding new fields using the `put-mapping` API. This setting can't be changed
+adding new fields using((("put-mapping API"))) the `put-mapping` API. This setting can't be changed
 on existing fields:
 
 [source,json]
@@ -131,7 +131,7 @@ PUT /my_index
 ==== Stopwords
 
 Removing stopwords is one way of reducing the size of the positions data quite
-dramatically.   An index with stopwords removed can still be used for phrase
+dramatically.((("stopwords", "phrase queries and", "removing stopwords")))   An index with stopwords removed can still be used for phrase
 queries because the original positions of the remaining terms is maintained,
 as we saw in <<maintaining-positions>>. But of course, excluding terms from
 the index reduces searchability. We wouldn't be able to differentiate between

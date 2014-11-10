@@ -1,15 +1,15 @@
 [[analysis-intro]]
 === Analysis and analyzers
 
-_Analysis_ is the process of:
+_Analysis_ is the ((("analysis", "defined")))process of:
 
 *  first, tokenizing a block of text into
    individual _terms_ suitable for use in an inverted index,
 *  then normalizing these terms into a standard form to improve their
    ``searchability'' or _recall_.
 
-This job is performed by _analyzers_. An _analyzer_ is really just a wrapper
-which combines three functions into a single package:
+This job is ((("analyzers")))performed by _analyzers_. An _analyzer_ is really just a wrapper
+which combines three functions into a((("character filters"))) single package:
 
 Character filters::
 
@@ -31,14 +31,14 @@ Token filters::
    `"a"`, `"and"`, `"the"` etc) or add terms (eg synonyms like `"jump"` and
    `"leap"`)
 
-Elasticsearch provides many character filters, tokenizers and token filters
+Elasticsearch provides many character filters, ((("token filters")))((("tokenizers")))tokenizers and token filters
 out of the box. These can be combined to create custom analyzers suitable
 for different purposes. We will discuss these in detail in <<custom-analyzers>>.
 
 ==== Built-in analyzers
 
 However, Elasticsearch also ships with a number of pre-packaged analyzers that
-you can use directly. We list the most important ones below and, to demonstrate
+you can use directly.((("analyzers", "built-in"))) We list the most important ones below and, to demonstrate
 the difference in behaviour, we show what terms each would produce
 from this string:
 
@@ -47,9 +47,9 @@ from this string:
 
 Standard analyzer::
 
-The standard analyzer is the default analyzer that Elasticsearch uses. It is
+The standard analyzer ((("standard analyzer")))is the default analyzer that Elasticsearch uses. It is
 the best general choice for analyzing text which may be in any language. It
-splits the text on _word boundaries_, as defined by the
+splits the text on _word boundaries_, as((("word boundaries"))) defined by the
 http://www.unicode.org/reports/tr29/[Unicode Consortium], and removes most
 punctuation. Finally, it lowercases all terms. It would produce:
 +
@@ -57,25 +57,25 @@ punctuation. Finally, it lowercases all terms. It would produce:
 
 Simple analyzer::
 
-The simple analyzer splits the text on anything that isn't a letter,
+The simple analyzer splits ((("simple analyzer")))the text on anything that isn't a letter,
 and lowercases the terms. It would produce:
 +
     set, the, shape, to, semi, transparent, by, calling, set, trans
 
 Whitespace analyzer::
 
-The whitespace analyzer splits the text on whitespace. It doesn't
+The whitespace analyzer splits ((("whitespace analyzer")))the text on whitespace. It doesn't
 lowercase. It would produce:
 +
     Set, the, shape, to, semi-transparent, by, calling, set_trans(5)
 
 Language analyzers::
 
-Language-specific analyzers are available for many languages. They are able to
+Language-specific analyzers ((("language analyzers")))are available for many languages. They are able to
 take the peculiarities of the specified language into account. For instance,
-the `english` analyzer comes with a set of English stopwords -- common words
+the `english` analyzer comes with a set of English ((("stopwords")))stopwords -- common words
 like `and` or `the` which don't have much impact on relevance -- which it
-removes, and it is able to _stem_ English words because it understands the
+removes, and it is able to _stem_ English ((("stemming words")))words because it understands the
 rules of English grammar.
 +
 The `english` analyzer would produce the following:
@@ -94,13 +94,13 @@ process*, to ensure that we are searching for terms in the same form as those
 that exist in the index.
 
 Full text queries, which we will discuss later, understand how each field is
-defined, and so they can do the right thing:
+defined, and so they can do((("full text", "querying fields representing"))) the right thing:
 
  * When you query a *full text* field, the query will apply the same analyzer
    to the query string to produce the correct list of terms to search for.
 
  * When you query an *exact value* field, the query will not analyze the
-   query string, but instead search for the exact value that you have
+   query string, ((("exact values", "querying fields representing")))but instead search for the exact value that you have
    specified.
 
 Now you can understand why the queries that we demonstrated at the
@@ -151,7 +151,7 @@ GET /_search?q=date:2014         # 0  results !
 [[analyze-api]]
 ==== Testing analyzers
 
-Especially when you are new to Elasticsearch, it is sometimes difficult to
+Especially when you are new ((("analyzers", "testing")))to Elasticsearch, it is sometimes difficult to
 understand what is actually being tokenized and stored into your index.  To
 better understand what is going on, you can use the `analyze` API to see how
 text is analyzed. Specify which analyzer to use in the query string
@@ -200,7 +200,7 @@ The `token` is the actual term that will be stored in the index. The
 text. The `start_offset` and `end_offset` indicate the character positions
 that the original word occupied in the original string.
 
-TIP: The `type` values like `<ALPHANUM>` vary per analyzer and can be ignored.
+TIP: The `type` values like `<ALPHANUM>` vary ((("types", "type values returned by analyzers")))per analyzer and can be ignored.
 The only place that they are used in Elasticsearch is in the
 {ref}analysis-keep-types-tokenfilter.html[`keep_types` token filter].
 
@@ -209,9 +209,9 @@ inside Elasticsearch indices, and we will talk more about it as we progress.
 
 ==== Specifying analyzers
 
-When Elasticsearch detects a new string field in your documents, it
+When Elasticsearch detects a new string field((("analyzers", "specifying"))) in your documents, it
 automatically configures it as a full text `string` field and analyzes it with
-the `standard` analyzer.
+the `standard` analyzer.((("standard analyzer")))
 
 You don't always want this. Perhaps you want to apply a different analyzer
 which suits the language your data is in. And sometimes you want a

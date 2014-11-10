@@ -1,7 +1,7 @@
 [[combining-filters]]
 === Combining filters
 
-The previous two examples showed a single filter in use. In practice you
+The previous two examples showed a single filter in use.((("structured search", "combining filters")))((("filters", "combining"))) In practice you
 will probably need to filter on multiple values or fields.  For example, how
 would you express this SQL in Elasticsearch?
 
@@ -13,7 +13,7 @@ WHERE  (price = 20 OR productID = "XHDK-A-1293-#fJ3")
   AND  (price != 30)
 --------------------------------------------------
 
-In these situations, you will need the `bool` filter.  This is a _compound
+In these situations, you will need the `bool` filter.((("filters", "combining", "in bool filter")))((("bool filter")))  This is a _compound
 filter_ that accepts other filters as arguments, combining them in various
 boolean combinations.
 
@@ -38,7 +38,7 @@ The `bool` filter is composed of three sections:
 `must_not`:: All of these clauses *must_not* match. The equivalent of `NOT`.
 `should`::   At least one of these clauses must match. The equivalent of `OR`.
 
-And that's it! When you need multiple filters, simply place them into the
+And that's it!((("should clause", "in bool filters")))((("must_not clause", "in bool filters")))((("must clause", "in bool filters"))) When you need multiple filters, simply place them into the
 different sections of the `bool` filter.
 
 ****
@@ -48,7 +48,7 @@ array of filters.
 ****
 
 To replicate the SQL example above, we will take the two `term` filters that
-we used previously and place them inside the `should` clause of a `bool`
+we used((("term filter", "placing inside bool filter")))((("bool filter", "with two term filters in should clause and must_not clause"))) previously and place them inside the `should` clause of a `bool`
 filter, and add another clause to deal with the `NOT` condition:
 
 [source,js]
@@ -110,7 +110,7 @@ in the `bool` filter:
 ==== Nesting boolean filters
 
 Even though `bool` is a compound filter and accepts "children" filters, it is
-important to understand that `bool` is just a filter itself.  This means you
+important to understand that `bool` is just a filter itself.((("filters", "combining", "nesting bool filters")))((("bool filter", "nesting in another bool filter")))  This means you
 can nest `bool` filters inside of other `bool` filters, giving you the
 ability to make arbitrarily complex boolean logic.
 

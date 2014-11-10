@@ -3,7 +3,7 @@
 
 The documentation for the
 {ref}analysis-stemmer-tokenfilter.html[`stemmer`] token filter
-lists multiple stemmers for some languages.  For English we have:
+lists multiple stemmers for some languages.((("stemming words", "choosing a stemmer")))((("English", "stemmers for")))  For English we have:
 
 [horizontal]
 `english`::
@@ -39,7 +39,7 @@ it means that none of the solutions solves the problem adequately. This
 certainly applies to stemming -- each stemmer uses a different approach which
 overstems and understems words to a different degree.
 
-The `stemmer` documentation page highlights the ``recommended'' stemmer for
+The `stemmer` documentation page ((("languages", "stemmers for")))highlights the ``recommended'' stemmer for
 each language in bold, usually because it offers a reasonable compromise
 between performance and quality. That said, the recommended stemmer may not be
 appropriate for all use cases. There is no single right answer to the question
@@ -50,7 +50,7 @@ performance, quality and degree:
 [[stemmer-performance]]
 ==== Stemmer performance
 
-Algorithmic stemmers are typically four or five times faster than Hunspell
+Algorithmic stemmers are typically four or ((("stemming words", "choosing a stemmer", "stemmer performance")))((("Hunspell stemmer", "performance")))five times faster than Hunspell
 stemmers. ``Hand crafted'' algorithmic stemmers are usually, but not always,
 faster than their Snowball equivalents.  For instance, the `porter_stem` token
 filter is significantly faster than the Snowball implementation of the Porter
@@ -63,7 +63,7 @@ hand, consist of a small amount of code and consume very little memory.
 [[stemmer-quality]]
 ==== Stemmer quality
 
-All languages, except Esperanto, are irregular. While more formal words tend
+All languages, except Esperanto, are irregular.((("stemming words", "choosing a stemmer", "stemmer quality"))) While more formal words tend
 to follow a regular pattern, the most commonly used words often have their
 irregular rules. Some stemming algorithms have been developed over years of
 research and produce reasonably high quality results. Others have been
@@ -92,7 +92,7 @@ any stemmer.)
 [[stemmer-degree]]
 ==== Stemmer degree
 
-Different stemmers overstem and understem to a different degree.  The `light_`
+Different stemmers overstem and understem((("stemming words", "choosing as stemmer", "stemmer degree"))) to a different degree.  The `light_`
 stemmers stem less aggressively than the standard stemmers, and the `minimal_`
 stemmers less aggressively still.  Hunspell stems aggressively.
 

@@ -1,6 +1,6 @@
 === Best fields
 
-Imagine that we have a website which allows users to search blog posts, such
+Imagine that we have a website which allows ((("multi-field search", "best fields queries")))((("best fields queries")))users to search blog posts, such
 as these two documents:
 
 [source,js]
@@ -68,7 +68,7 @@ And we find that this query actually gives Document 1 the higher score:
 }
 --------------------------------------------------
 
-To understand why, think about how the `bool` query calculates its score:
+To understand why, think about how the `bool` query ((("bool query", "relevance score calculation")))((("relevance scores", "calculation in bool queries")))calculates its score:
 
 * First, it runs both of the queries in the `should` clause
 * then it adds their scores together,
@@ -93,7 +93,7 @@ looking for, rather than the same word repeated in different fields.
 ==== dis_max query
 
 Instead of the `bool` query, we can use the  `dis_max` or _Disjunction Max
-Query_.  Disjunction means ``or'' (while conjunction means ``and'') so the
+Query_.  Disjunction means ``or'((("dis_max (disjunction max) query")))' (while conjunction means ``and'') so the
 Disjunction Max Query simply means: _return documents that match any of these
 queries, and return the score of the best matching query_:
 

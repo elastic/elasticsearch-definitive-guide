@@ -2,7 +2,7 @@
 === Boosting by popularity
 
 Imagine that we have a website hosting blogposts where users can upvote the
-blogposts that they like. We would like more popular posts to appear higher in the
+blogposts that they like.((("relevance", "controlling", "boosting by popularity")))((("popularity, boosting by")))((("boosting", "by popularity"))) We would like more popular posts to appear higher in the
 results list, but still have the full text score as the main relevance driver.
 We can do this easily by storing the number of votes with each blogspost:
 
@@ -16,7 +16,7 @@ PUT /blogposts/post/1
 }
 -------------------------------
 
-At search time, we can use the `function_score` query with the
+At search time, we can use the `function_score` query ((("function_score query", "field_value_factor function")))((("field_value_factor function")))with the
 `field_value_factor` function to combine the number of votes with the full
 text relevance score:
 
@@ -65,7 +65,7 @@ image::images/elas_1701.png[Linear popularity based on an original `_score` of `
 ==== modifier
 
 A better way to incorporate popularity is to smooth out the `votes` value
-with some `modifier`.  In other words, we want the first few votes to count a
+with some `modifier`.  ((("modifier parameter")))((("field_value_factor function", "modifier parameter")))In other words, we want the first few votes to count a
 lot, but for each subsequent vote to count less.  The difference between 0
 votes and 1 vote should be much bigger than the difference between 10 votes
 and 11 votes.
@@ -114,7 +114,7 @@ about them in the
 ==== factor
 
 The strength of the popularity effect can be increased or decreased by
-multiplying the value in the `votes` field by some number, called the
+multiplying the value((("factor")))((("field_value_factor function", "factor parameter"))) in the `votes` field by some number, called the
 `factor`:
 
 [source,json]
@@ -155,7 +155,7 @@ image::images/elas_1703.png[Logarithmic popularity with different factors]
 ==== boost_mode
 
 Perhaps multiplying the full text score by the result of the
-`field_value_factor` function still has too large an effect.  We can control
+`field_value_factor` function ((("function_score query", "boost_mode parameter")))((("boost_mode parameter")))still has too large an effect.  We can control
 how the result of a function is combined with the `_score` from the query
 using the `boost_mode` parameter, which accepts the following values:
 
@@ -204,7 +204,7 @@ image::images/elas_1704.png["Combining popularity with `sum`"]
 
 ==== max_boost
 
-Finally, we can cap the maximimum effect that the function can have using the
+Finally, we can cap the maximimum effect((("function_score query", "max_boost parameter")))((("max_boost parameter"))) that the function can have using the
 `max_boost` parameter:
 
 [source,json]

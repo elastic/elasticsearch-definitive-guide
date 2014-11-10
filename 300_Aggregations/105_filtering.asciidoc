@@ -2,7 +2,7 @@
 === Fielddata Filtering
 
 Imagine that you are running a website that allows users to listen to their
-favourite songs.  To make it easier for them to manage their music library,
+favourite songs.((("fielddata", "filtering")))((("aggregations", "fielddata filtering")))  To make it easier for them to manage their music library,
 users can tag songs with whatever tags make sense to them.  You will end up
 with a lot of tracks tagged with `rock`, `hiphop`, `electronica`, etc., but
 also with some tracks tagged with `my_16th_birthday_favourite_anthem`.
@@ -38,7 +38,7 @@ PUT /music/_mapping/song
 }
 ----
 <1> The `fielddata` key allows us to configure how fielddata is handled for this field.
-<2> The `frequency` filter allows us to filter fielddata loading based on term frequencies.
+<2> The `frequency` filter allows us to filter fielddata loading based on term frequencies.((("term frequency", "fielddata filtering based on")))
 <3> Only load terms which occur in at least 1% of documents in this segment.
 <4> Ignore any segments which have fewer than 500 documents.
 
@@ -62,7 +62,7 @@ will quickly show up as a high-frequency tag within new segments, so will
 quickly float to the top.
 
 The `min_segment_size` parameter tells Elasticsearch to ignore segments below
-a certain size.  If a segment only holds a few documents, the term frequencies
+a certain size.((("min_segment_size parameter")))  If a segment only holds a few documents, the term frequencies
 are too coarse to have any meaning.  Small segments will soon be merged into
 bigger segments, which will then be big enough to take into account.
 
@@ -71,7 +71,7 @@ bigger segments, which will then be big enough to take into account.
 
 Filtering terms by frequency is not the only option. You can also decide to
 load only those terms that match a regular expression.  For instance, you
-could use a `regex` filter on tweets to only load hashtags into memory --
+could use a `regex` filter ((("regex filtering")))on tweets to only load hashtags into memory --
 terms the start with a `#`.  This assumes that you are using an analyzer which
 preserves punctuation, like the `whitespace` analyzer.
 

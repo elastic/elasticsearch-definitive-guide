@@ -3,12 +3,12 @@
 Data in Elasticsearch can be broadly divided into two types:
 _exact values_ and _full text_.
 
-Exact values are exactly what they sound like.  Examples would be a date or a
+Exact values are exactly what they sound like.((("exact values")))  Examples would be a date or a
 user ID, but can also include exact strings like a username or an email
 address. The exact value `"Foo"` is not the same as the exact value `"foo"`.
 The exact value `2014` is not the same as the exact value `2014-09-15`.
 
-Full text, on the other hand, refers to textual data -- usually written in
+Full text, on the other hand, refers ((("full text")))to textual data -- usually written in
 some human language -- like the text of a tweet or the body of an email.
 
 ****

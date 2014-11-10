@@ -1,7 +1,7 @@
 === Multi-value fields
 
 A curious thing can happen when you try to use phrase matching on multi-value
-fields.  Imagine that you index this document:
+fields. ((("proximity matching", "on multi-value fields")))((("match_phrase query", "on multi-value fields"))) Imagine that you index this document:
 
 [source,js]
 --------------------------------------------------
@@ -47,7 +47,7 @@ looks for `abraham` directly followed by `lincoln`, and these two terms do
 indeed exist and they are right next to each other, so the query matches.
 
 Fortunately, there is a simple workaround for cases like these, called the
-`position_offset_gap`, which we need to configure in the field mapping:
+`position_offset_gap`, which((("mapping (types)", "position_offset_gap")))((("position_offset_gap"))) we need to configure in the field mapping:
 
 [source,js]
 --------------------------------------------------

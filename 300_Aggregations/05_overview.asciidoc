@@ -3,7 +3,7 @@
 
 [partintro]
 --
-Up until this point, this book has been dedicated to search.  With search, 
+Up until this point, this book has been dedicated to search.((("searching", "search versus aggregations")))((("aggregations")))  With search, 
 we have a query and we wish to find a subset of documents which
 match the query.  We are looking for the proverbial needle(s) in the
 haystack.
@@ -34,7 +34,7 @@ you can visualize your data in realtime, allowing you to respond immediately.
 
 // Perhaps mention "not precalculated, out of date, and irrelevant"?
 // Perhaps "aggs are calculated in the context of the user's search, so you're not showing them that you have 10 4 star hotels on your site, but that you have 10 4 star hotels that *match their criteria*".
-Finally, aggregations operate alongside search requests. This means you can
+Finally, aggregations operate alongside search requests.((("aggregations", "operating alongside search requests"))) This means you can
 both search/filter documents _and_ perform analytics at the same time, on the
 same data, in a single request.  And because aggregations are calculated in the
 context of a user's search, you're not just displaying a count of four-star hotels...

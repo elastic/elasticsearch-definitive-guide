@@ -2,7 +2,7 @@
 === Ngrams for compound words
 
 Finally, let's take a look at how n-grams can be used to search languages with
-compound words.  German is famous for combining several small words into one
+compound words. ((("languages", "using many compound words, indexing of")))((("n-grams", "using with compound words")))((("partial matching", "using n-grams for compound words")))((("German", "compound words in"))) German is famous for combining several small words into one
 massive compound word in order to capture precise or complex meanings. For
 example:
 
@@ -39,7 +39,7 @@ document.
 Given that an n-gram is a moving window on a word, an n-gram of any length
 will cover all of the word.  We want to choose a length which is long enough
 to be meaningful, but not so long that we produce far too many unique terms.
-A _trigram_ (length 3) is probably a good starting point:
+A _trigram_ (length 3) is ((("trigrams")))probably a good starting point:
 
 [source,js]
 --------------------------------------------------

@@ -1,14 +1,14 @@
 [[making-text-searchable]]
 === Making text searchable
 
-The first challenge that had to be solved was how to make text searchable.
+The first challenge that had to be solved was how to((("text", "making it searchable"))) make text searchable.
 Traditional databases store a single value per field, but this is insufficient
 for full text search.  Every word in a text field needs to be searchable,
 which means that the database needs to be able to index multiple values --
 ``words'' in this case -- in a single field.
 
 The data structure that best supports the _multiple-values-per-field_
-requirement is the _inverted index_, which we introduced in
+requirement is the _inverted index_, which((("inverted index"))) we introduced in
 <<inverted-index>>. The inverted index contains a sorted list of all of the
 unique values or _terms_ that occur in any document and, for each term, a list
 of all the documents that contain it.
@@ -50,7 +50,7 @@ was ready, it replaced the old index and recent changes became searchable.
 ==== Immutability
 
 The inverted index that is written to disk is _immutable_ -- it doesn't
-change. Ever.  This immutability has important benefits:
+change.((("inverted index", "immutability"))) Ever.  This immutability has important benefits:
 
 * There is no need for locking. If you never have to update the index, you
   never have to worry about multiple processes trying to make changes at

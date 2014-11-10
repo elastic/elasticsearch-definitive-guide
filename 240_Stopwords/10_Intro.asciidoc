@@ -1,7 +1,7 @@
 [[stopwords]]
 == Stopwords: performance vs precision
 
-Back in the early days of information retrieval,  disk space and memory were
+Back in the early days of information retrieval,((("stopwords", "performance versus precision")))  disk space and memory were
 limited to a tiny fraction of what we are accustomed to today. It was
 essential to make your index as small as possible.  Every kilobyte saved meant
 a significant improvement in performance. Stemming (see <<stemming>>) was
@@ -13,12 +13,12 @@ Another way to reduce index size is simply to *index fewer words*.  For search
 purposes, some words are more important than others. A significant reduction
 in index size can be achieved by only indexing the more important terms.
 
-So which terms can be left out?  We can divide terms roughly into two groups:
+So which terms can be left out? ((("term frequency", "high and low"))) We can divide terms roughly into two groups:
 
 Low frequency terms::
 
 Words that appear in relatively few documents in the corpus.  Because of their
-rarity, they have a high value or _weight_.
+rarity,((("weight", "low frequency terms"))) they have a high value or _weight_.
 
 High frequency terms::
 
@@ -42,7 +42,7 @@ high frequency term with little value as a search term for that particular
 corpus.
 
 That said, for any language there are a number of words which occur very
-commonly and which seldom add value to a search.  The default English
+commonly and which seldom add value to a search.((("English", "stopwords")))  The default English
 stopwords used in Elasticsearch are:
 
     a, an, and, are, as, at, be, but, by, for, if, in, into, is, it,
@@ -56,7 +56,7 @@ negative impact on retrieval. But is it a good idea to do so?
 [float]
 === Pros and cons of stopwords
 
-We have more disk space, more RAM, and better compression algorithms than
+We have more disk space, more RAM, and ((("stopwords", "pros and cons of")))better compression algorithms than
 existed back in the day. Excluding the above 33 common words from the index
 will only save about 4MB per million documents.  Using stopwords for the sake
 of reducing index size is no longer a valid reason. (Although, there is one

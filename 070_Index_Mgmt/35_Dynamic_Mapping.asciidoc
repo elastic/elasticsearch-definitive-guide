@@ -1,7 +1,7 @@
 [[dynamic-mapping]]
 === Dynamic mapping
 
-When Elasticsearch encounters a previously unknown field in a document, it
+When Elasticsearch encounters a previously ((("mapping (types)", "dynamic")))((("dynamic mapping")))unknown field in a document, it
 uses <<mapping-intro,_dynamic mapping_>> to determine the datatype for the
 field and automatically adds the new field to the type mapping.
 
@@ -12,7 +12,7 @@ to ignore them.  Or -- especially if you are using Elasticsearch as a
 primary datastore -- perhaps you want unknown fields to throw an exception
 to alert you to the problem.
 
-Fortunately, you can control this behaviour with the `dynamic` setting,
+Fortunately, you can control this behaviour((("dynamic setting"))) with the `dynamic` setting,
 which accepts the following options:
 
 [horizontal]

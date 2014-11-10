@@ -7,7 +7,7 @@ the most important queries and filters.
 
 ==== term filter
 
-The `term` filter is used to filter by exact values, be they numbers, dates,
+The `term` filter is used to filter by((("filters", "important")))((("term filter"))) exact values, be they numbers, dates,
 booleans, or `not_analyzed` exact value string fields:
 
 [source,js]
@@ -21,7 +21,7 @@ booleans, or `not_analyzed` exact value string fields:
 
 ==== terms filter
 
-The `terms` filter is the same as the `term` filter, but allows you
+The `terms` filter is((("terms filter"))) the same as the `term` filter, but allows you
 to specify multiple values to match. If the field contains any of
 the specified values, then the document matches:
 
@@ -33,7 +33,7 @@ the specified values, then the document matches:
 
 ==== range filter
 
-The `range` filter allows you to find numbers or dates which fall into
+The `range` filter allows you to find((("range filters"))) numbers or dates which fall into
 the specified range:
 
 [source,js]
@@ -60,7 +60,7 @@ The operators that it accepts are:
 
 ==== exists and missing filters
 
-The `exists` and `missing` filters are used to find documents where the
+The `exists` and `missing` filters are ((("exists filter")))((("missing filter")))used to find documents where the
 specified field either has one or more values (`exists`) or doesn't have any
 values (`missing`). It is similar in nature to `IS_NULL` (`missing`) and `NOT
 IS_NULL` (`exists`)in SQL:
@@ -80,7 +80,7 @@ present, and to apply a different condition if it is missing.
 
 ==== bool filter
 
-The `bool` filter is used to combine multiple filter clauses using
+The `bool` filter is used ((("bool filter")))((("must clause", "in bool filters")))((("must_not clause", "in bool filters")))((("should clause", "in bool filters")))to combine multiple filter clauses using
 Boolean logic.  It accepts three parameters:
 
 [horizontal]
@@ -109,7 +109,7 @@ of filter clauses:
 
 ==== match_all query
 
-The `match_all` query simply matches all documents. It is the default
+The `match_all` query simply((("match_all query")))((("queries", "important"))) matches all documents. It is the default
 query which is used if no query has been specified.
 
 [source,js]
@@ -125,7 +125,7 @@ equally relevant, so they all receive a neutral `_score` of `1`.
 
 ==== match query
 
-The `match` query should be the standard query that you reach for whenever
+The `match` query should be the standard((("match query"))) query that you reach for whenever
 you want to query for a full text or exact value in almost any field.
 
 If you run a `match` query against a full text field, it will analyze
@@ -162,7 +162,7 @@ it is not prone to throwing syntax errors.
 
 ==== multi_match query
 
-The `multi_match` query allows to run the same `match` query on multiple
+The `multi_match` query allows((("multi_match query"))) to run the same `match` query on multiple
 fields:
 
 [source,js]
@@ -178,11 +178,11 @@ fields:
 
 ==== bool query
 
-The `bool` query, like the `bool` filter, is used to combine multiple
+The `bool` query, like the `bool` filter,((("bool query"))) is used to combine multiple
 query clauses. However, there are some differences. Remember that while
 filters give binary `yes|no` answers, queries calculate a relevance score
 instead. The `bool` query combines the `_score` from each `must` or
-`should` clause which matches.
+`should` clause which matches.((("should clause", "in bool queries")))((("must_not clause", "in bool queries")))((("must clause", "in bool queries")))
 
 [horizontal]
 `must`::        Clauses which *must* match for the document to be included.

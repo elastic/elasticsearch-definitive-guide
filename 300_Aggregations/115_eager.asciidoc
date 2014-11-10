@@ -1,7 +1,7 @@
 [[preload-fielddata]]
 === Pre-Loading Fielddata
 
-The default behavior of Elasticsearch is to load in-memory fielddata _lazily_.
+The default behavior of Elasticsearch is to ((("fielddata", "pre-loading")))load in-memory fielddata _lazily_.
 The first time Elasticsearch encounters a query which needs fielddata for a
 particular field, it will load that entire field into memory for each segment
 in the index.
@@ -23,7 +23,7 @@ no latency spike when the user needs to execute a search.
 [[eager-fielddata]]
 ==== Eagerly Loading Fielddata
 
-The first tool is called _eager loading_ (as opposed to the default lazy
+The first tool is called _eager loading_ (as opposed ((("eager loading", "of fielddata")))to the default lazy
 loading). As new segments are created (by refreshing, flushing or merging),
 fields with eager loading enabled will have their per-segment fielddata
 pre-loaded *before* the segment becomes visible to search.
@@ -69,7 +69,7 @@ visible to search, so the slower refresh time is not important.
 ==== Global Ordinals
 
 One of the techniques used to reduce the memory usage of (especially string)
-fielddata is called _ordinals_:
+fielddata is ((("ordinals")))called _ordinals_:
 
 Imagine that we have a billion documents, each of which has a `status` field.
 There are only three statuses: `status_pending`, `status_published`,
@@ -109,7 +109,7 @@ run the aggregation on each segment, return the string values from each
 segment, and then reduce them into an overall result.  While this would work,
 it would be slow and CPU intensive.
 
-Instead, we use a structure called _global ordinals_.  Global ordinals are a
+Instead, we use a structure called _global ordinals_. ((("global ordinals"))) Global ordinals are a
 small in-memory data structure built on top of fielddata.  Unique values are
 identified *across all segments* and stored in an ordinals list like the one
 we have already described.
@@ -121,7 +121,7 @@ sorting) by a factor of three or four.
 
 ===== Building global ordinals
 
-Of course, nothing in life is free.  Global ordinals cross all segments in an
+Of course, nothing in life is free. ((("global ordinals", "building"))) Global ordinals cross all segments in an
 index, so if a new segment is added or an old segment is deleted, the global
 ordinals need to be rebuilt.  Rebuilding requires reading every unique term in
 every segment.  The higher the cardinality -- the more unique terms that exist
@@ -141,7 +141,7 @@ change: after a refresh, a flush, or a merge.
 [[eager-global-ordinals]]
 ===== Eager global ordinals
 
-Individual fields can be configured to pre-build global ordinals eagerly:
+Individual fields((("eager loading", "of global ordinals")))((("global ordinals", "eager"))) can be configured to pre-build global ordinals eagerly:
 
 [source,js]
 ----
@@ -198,7 +198,7 @@ also reduce CPU usage as you will need to rebuild global ordinals less often.
 [[index-warmers]]
 ==== Index warmers
 
-Finally, we come to _index warmers_.  Warmers pre-date eager fielddata loading
+Finally, we come to _index warmers_.  Warmers((("index warmers"))) pre-date eager fielddata loading
 and eager global ordinals, but they still serve a purpose. An index warmer
 allows you to specify a query and aggregations that should be run before a new
 segment is made visible to search. The idea is to prepopulate or ``warm''
@@ -244,7 +244,7 @@ the `_warmer` endpoint and a unique ID (`warmer_1`).
 <2> The three most popular music genres have their filter caches pre-built.
 <3> The fielddata and global ordinals for the `price` field will be preloaded.
 
-Warmers are registered against a specific index.  Each warmer is given a
+Warmers are registered against a specific index.((("warmers", see="index warmers")))  Each warmer is given a
 unique ID because you can have multiple warmers per index.
 
 Then you just specify a query, any query.  It can include queries, filters,

@@ -2,7 +2,7 @@
 === function_score query
 
 The {ref}query-dsl-function-score-query.html[`function_score` query] is the
-ultimate tool for taking control of the scoring process.  It allows you to
+ultimate tool for taking control of the scoring process.((("function_score query")))((("relevance", "controlling", "function_score query")))  It allows you to
 apply a function to each document which matches the main query in order to
 alter or completely replace the original query `_score`.
 

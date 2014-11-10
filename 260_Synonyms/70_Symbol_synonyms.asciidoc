@@ -2,12 +2,12 @@
 === Symbol synonyms
 
 The final part of this chapter is devoted to _symbol synonyms_, which are
-unlike the synonyms we have discussed up until now.  Symbol synonyms are
+unlike the synonyms((("symbol synonyms")))((("synonyms", "symbol"))) we have discussed up until now.  Symbol synonyms are
 string aliases used to represent symbols that would otherwise be removed
 during tokenization.
 
 While most punctuation is seldom important for full text search, character
-combinations like emoticons may be very signficant, even changing the meaning
+combinations like emoticons((("emoticons"))) may be very signficant, even changing the meaning
 of the the text.  Compare:
 
 * I am thrilled to be at work on Sunday.
@@ -18,7 +18,7 @@ sentence, conflating two sentences that have quite different intent.
 
 We can use the
 {ref}analysis-mapping-charfilter.html#analysis-mapping-charfilter[`mapping` character filter]
-to replace emoticons with symbol synonyms like `emoticon_happy` and
+to replace emoticons((("mapping character filter", "replacing emoticons with symbol synonyms")))((("emoticons", "replacing with symbol synonyms"))) with symbol synonyms like `emoticon_happy` and
 `emoticon_sad` before the text is passed to the tokenizer:
 
 [source,json]
@@ -61,6 +61,6 @@ be very helpful when doing sentiment analysis.  Of course, we could equally
 have used real words, like `happy` and `sad`.
 
 TIP: The `mapping` character filter is useful for simple replacements of exact
-character sequences. For more flexible pattern matching, you can use regular
+character sequences. ((("mapping character filter", "replacements of exact character sequences")))For more flexible pattern matching, you can use regular
 expressions with the
 {ref}analysis-pattern-replace-charfilter.html[`pattern_replace` character filter].

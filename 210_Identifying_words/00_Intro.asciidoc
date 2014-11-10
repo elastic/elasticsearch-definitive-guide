@@ -2,7 +2,7 @@
 == Identifying words
 
 A word in English is relatively simple to spot: words are separated by
-whitespace or (some) punctuation. Even in English, though, there can be
+whitespace or (some) punctuation.((("languages", "identifyig words")))((("words", "identifying"))) Even in English, though, there can be
 controversy: is ``you're'' one word or two? What about ``o'clock'',
 ``co-operate'', ``half-baked'' or ``eyewitness''?
 
@@ -13,7 +13,7 @@ to be able to return ``Weißkopfseeadler'' as a result for the query ``Adler''
 constituent parts.
 
 Asian languages are even more complex: some have no whitespace between words,
-sentences or even paragraphs. Some words can be represented by a single
+sentences or even paragraphs.((("Asian languages", "identifying words"))) Some words can be represented by a single
 character, but the same single character, when placed next to other
 characters, can form just one part of a longer word with a quite different
 meaning.

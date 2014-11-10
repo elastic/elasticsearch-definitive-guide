@@ -2,11 +2,11 @@
 === Most fields
 
 Full text search is a battle between _recall_ -- returning all of the
-documents that are relevant -- and _precision_ -- not returning irrelevant
+documents that are ((("most fields queries")))((("multi-field search", "most fields queries")))relevant -- and _precision_ -- not returning irrelevant
 documents.  The goal is to present the user with the most relevant documents
 on the first page of results.
 
-In order to improve recall, we cast the net wide -- not only do we include
+In order to improve recall, we cast((("recall", "improving in full text searches"))) the net wide -- not only do we include
 documents that match the user's search terms exactly, we also include
 documents that we believe to be pertinent to the query.  If a user searches
 for ``quick brown fox'', a document which contains ``fast foxes'' may well be
@@ -19,7 +19,7 @@ we have 100 documents which contain the words ``quick brown fox'', then the
 push it further down the list.  After including many potential matches, we
 need to ensure that the best ones rise to the top.
 
-A common technique for fine-tuning full text relevance is to index the same
+A common technique for fine-tuning full text relevance((("relevance", "fine-tuning full text relevance"))) is to index the same
 text in multiple ways, each of which provides a different relevance _signal_.
 
 The main field would contain terms in their broadest-matching form to match as
@@ -55,7 +55,7 @@ unstemmed fields to illustrate this technique.
 
 ==== Multi-field mapping
 
-The first thing to do is to setup our field to be indexed twice: once in a
+The first thing to do is to setup our ((("most fields queries", "multi-field mapping")))((("mapping (types)", "multi-field mapping")))field to be indexed twice: once in a
 stemmed form and once in an unstemmed form.  To do this we will use 
 _multi-fields_ which we introduced in <<multi-fields>>.
 

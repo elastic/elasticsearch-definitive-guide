@@ -2,16 +2,16 @@
 === Boosting filtered subsets
 
 Let's return to the problem that we were dealing with in <<ignoring-tfidf>>,
-where we wanted to score holiday homes by the number of features that each
+where we wanted to score((("boosting", "filtered subsets")))((("relevance", "controlling", "boosting filtered subsets"))) holiday homes by the number of features that each
 home possesses.  We ended that section by wishing for a way to use cached
 filters to affect the score, and with the `function_score` query we can do
-just that.
+just that.((("function_score query", "boosting filtered subsets")))
 
 The examples we have shown thus far have used a single function for all
 documents.  Now we want to divide the results into subsets using filters (one
 filter per ``feature''), and apply a different function to each subset.
 
-The function that we will use in this example is the `weight`, which is
+The function that we will use in this example is ((("weight function")))the `weight`, which is
 similar to the `boost` parameter accepted by any query.  The difference is
 that the `weight` is not normalized by Lucene into some obscure floating point
 number -- it is used as is.
@@ -58,7 +58,7 @@ There are a number of new features to note in this example:
 
 ==== filter vs query
 
-The first thing to note is that  we have specified a `filter` instead of a
+The first thing to note is that  we have specified a `filter` instead ((("filters", "in function_score query")))of a
 `query`. In this example, we do not need full text search -- we just want to
 return all documents that have `Barcelona` in the `city` field, logic which is
 better expressed as a filter instead of a query.  All documents returned by
@@ -68,7 +68,7 @@ using the `match_all` query.
 
 ==== functions
 
-The `functions` key holds an array of functions to apply.  Each entry in the
+The `functions` key holds an array of functions to apply.((("function_score query", "functions key")))  Each entry in the
 array may also optionally specify a `filter`, in which case the function will
 only be applied to documents which match that filter.  In this example, we
 apply a `weight` of `1` (or `2` in the case of `pool`) to any document
@@ -78,7 +78,7 @@ which matches the filter.
 
 Each function returns a result, and we need a way of reducing these multiple
 results to a single value which can be combined with the original `_score`.
-This is the role of the `score_mode` parameter, which accepts the following
+This is the role ((("function_score query", "score_mode parameter")))((("score_mode parameter")))of the `score_mode` parameter, which accepts the following
 values:
 
 [horizontal]

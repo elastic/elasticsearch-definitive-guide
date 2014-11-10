@@ -1,7 +1,7 @@
 === Coping with failure
 
 We've said that Elasticsearch can cope when nodes fail, so let's go
-ahead and try it out. If we kill the first node our cluster looks like
+ahead and try it out. ((("shards", "horizontal scaling and safety of data")))((("failure", "coping with")))((("master node", "killing and replacing")))((("nodes", "failure of")))((("clusters", "coping with failure of nodes")))If we kill the first node our cluster looks like
 <<cluster-post-kill>>.
 
 [[cluster-post-kill]]
@@ -13,7 +13,7 @@ order to function correctly, so the first thing that happened was that the
 nodes elected a new master: `Node 2`.
 
 Primary shards `1` and `2` were lost when we killed `Node 1` and our index
-cannot function properly if it is missing primary shards. If we had checked
+cannot function properly if it is missing primary shards.((("primary shards", "node failure and"))) If we had checked
 the cluster health at this point, we would have seen status `red`: not all
 primary shards are active!
 

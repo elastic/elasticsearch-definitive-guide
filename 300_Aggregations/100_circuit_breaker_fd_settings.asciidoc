@@ -2,8 +2,8 @@
 === Limiting Memory Usage
 
 In order for aggregations (or any operation that requires access to field
-values) to be fast, access to fielddata must be fast, which is why it is
-loaded into memory.  But loading too much data into memory will cause slow
+values) to be fast, ((("aggregations", "limiting memory usage")))access to fielddata must be fast, which is why it is
+loaded into memory. ((("fielddata")))((("memory usage, limiting"))) But loading too much data into memory will cause slow
 garbage collections as the JVM tries to find extra space in the heap, or
 possibly even an OutOfMemory exception.
 
@@ -16,7 +16,7 @@ will probably need access to other documents in the next query.  It is cheaper
 to load all values once, and to *keep them in memory*, than to have to scan
 the inverted index on every request.
 
-The JVM heap is a limited resource which should be used wisely. A number of
+The JVM heap ((("JVM heap")))is a limited resource which should be used wisely. A number of
 mechanisms exist to limit the impact of fielddata on heap usage. These limits
 are important because abuse of the heap will cause node instability (thanks to
 slow garbage collections) or even node death (with an OutOfMemory exception).
@@ -24,7 +24,7 @@ slow garbage collections) or even node death (with an OutOfMemory exception).
 .Choosing a heap size
 ******************************************
 
-There are two rules to apply when setting the Elasticsearch heap size, with
+There are two rules to apply when setting ((("heap size, setting")))the Elasticsearch heap size, with
 the `$ES_HEAP_SIZE` environment variable:
 
 * *No more than 50% of available RAM*
@@ -50,7 +50,7 @@ This limit has a direct impact on much memory can be devoted to fielddata.
 ==== Fielddata size
 
 The `indices.fielddata.cache.size` controls how much heap space is allocated
-to fielddata.  When you run a query that requires access to new field values,
+to fielddata.((("fielddata", "size")))((("aggregations", "limiting memory usage", "fielddata size")))  When you run a query that requires access to new field values,
 it will load the values into memory and then try to add them to fielddata. If
 the resulting fielddata size  would exceed the specified `size`, then other
 values would be evicted in order to make space.
@@ -100,7 +100,7 @@ indices.fielddata.cache.size:  40% <1>
     value like `5gb`.
 
 With this setting in place, the least recently used fielddata will be evicted
-to make space for newly loaded data.
+to make space for newly loaded data.((("fielddata", "expiry")))
 
 [WARNING]
 .Fielddata expiry
@@ -127,7 +127,7 @@ It is not. Never use it!
 [[monitoring-fielddata]]
 ==== Monitoring fielddata
 
-It is important to keep a close watch on how much memory is being used by
+It is important to keep a close watch on how much memory((("fielddata", "monitoring")))((("aggregations", "limiting memory usage", "moitoring fielddata"))) is being used by
 fielddata, and whether any data is being evicted.  High eviction counts can
 indicate a serious resource issue and a reason for poor performance.
 
@@ -161,12 +161,12 @@ By setting `?fields=*` the memory usage is broken down for each field.
 ==== Circuit Breaker
 
 An astute reader might have noticed a problem with the fielddata size settings.
-fielddata size is checked _after_ the data is loaded.  What happens if a query
+fielddata size is checked _after_ the data is loaded.((("aggregations", "limiting memory usage", "fielddata circuit breaker")))  What happens if a query
 arrives which tries to load more into fielddata than available memory?  The
-answer is ugly: you would get an OutOfMemoryException.
+answer is ugly: you would get an OutOfMemoryException.((("OutOfMemoryException")))((("circuit breakers")))
 
 Elasticsearch includes a _fielddata circuit breaker_ which is designed to deal
-with this situation.  The circuit breaker estimates the memory requirements of
+with this situation.((("fielddata circuit breaker")))  The circuit breaker estimates the memory requirements of
 a query by introspecting the fields involved (their type, cardinality, size,
 etc). It then checks to see whether loading the required fielddata would push
 the total fielddata size over the configured percentage of the heap.

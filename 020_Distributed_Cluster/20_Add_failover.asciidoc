@@ -1,13 +1,13 @@
 === Add failover
 
 Running a single node means that you have a single point of failure -- there
-is no redundancy. Fortunately all we need to do to protect ourselves from data
+is no redundancy.((("failover", "adding"))) Fortunately all we need to do to protect ourselves from data
 loss is to start another node.
 
 .Starting a second node
 ***************************************
 
-To test out what happens when you add a second node, you can start a new node
+To test out what happens when you add a second((("nodes", "starting a second node"))) node, you can start a new node
 in exactly the same way as you started the first one (see
 <<running-elasticsearch>>), and from the same directory -- multiple nodes can
 share the same directory.
@@ -26,7 +26,7 @@ If we start a second node, our cluster would look like <<cluster-two-nodes>>.
 .A two-node cluster -- all primary and replica shards are allocated
 image::images/elas_0203.png["A two-node cluster"]
 
-The second node has joined the cluster and three _replica shards_ have been
+The((("clusters", "two-node cluster"))) second node has joined the cluster and three _replica shards_ have ((("replica shards", "allocated to second node")))been
 allocated to it -- one for each primary shard.  That means that we can lose
 either node and all of our data will be intact.
 
@@ -34,7 +34,7 @@ Any newly indexed document will first be stored on a primary shard, then
 copied in parallel to the associated replica shard(s). This ensures that our
 document can be retrieved from a primary shard or from any of its replicas.
 
-The `cluster-health` now shows a status of `green`, which means that all 6
+The `cluster-health` now ((("cluster health", "checking after adding second node")))shows a status of `green`, which means that all 6
 shards (all 3 primary shards and all 3 replica shards) are active:
 
 [source,js]

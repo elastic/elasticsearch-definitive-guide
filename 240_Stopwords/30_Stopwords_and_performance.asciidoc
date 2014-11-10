@@ -2,7 +2,7 @@
 === Stopwords and performance
 
 The biggest disadvantage of keeping stopwords is that of performance. When
-Elasticsearch performs a full text search, it has to calculate the relevance
+Elasticsearch performs a ((("stopwords", "performance and")))full text search, it has to calculate the relevance
 `_score` on all matching documents in order to return the top 10 matches.
 
 While most words typically occur in much fewer than 0.1% of all documents, a
@@ -22,7 +22,7 @@ reducing the number of documents that need to be scored.
 
 The easiest way to reduce the number of documents is simply to use the
 <<match-improving-precision,`and` operator>> with the `match` query, in order
-to make all words required.
+to make all ((("stopwords", "performance and", "using and operator")))((("and operator", "using with match query")))words required.
 
 A `match` query like:
 
@@ -62,7 +62,7 @@ match. Using the `and` operator greatly speeds up multi-term queries.
 ==== minimum_should_match
 
 In <<match-precision>> we discussed using the `minimum_should_match` operator
-to trim the long tail of less relevant results.  It is useful for this purpose
+to trim the long tail of less relevant results.((("stopwords", "performance and", "using minimum_should_match operator")))((("minimum_should_match parameter")))  It is useful for this purpose
 alone but, as a nice side effect, it offers a similar performance benefit to
 the `and` operator:
 

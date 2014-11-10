@@ -1,13 +1,13 @@
 [[query-scoring]]
 === Manipulating relevance with query structure
 
-The Elasticsearch Query DSL is immensely flexible.  You can move individual
+The Elasticsearch Query DSL is immensely flexible.((("relevance", "controlling", "manipulating relevance with query structure")))((("queries", "manipulating relevance with query structure")))  You can move individual
 query clauses up and down the query hierarchy to make a clause more or less
 important.  For instance, imagine the following query:
 
     quick OR brown OR red OR fox
 
-We could write this as a `bool` query with all terms at the same level:
+We could write this as a `bool` query with ((("bool query", "manipulating relevance with query structure")))all terms at the same level:
 
 [source,json]
 ------------------------------

@@ -1,12 +1,12 @@
 [[pagination]]
 === Pagination
 
-Our <<empty-search,empty search above>> told us that there are 14 documents in the
+Our <<empty-search,empty search above>> told us that there are 14 documents in the((("pagination")))
 cluster which match our (empty) query.  But there were only 10 documents in
 the `hits` array.  How can we see the other documents?
 
 In the same way as SQL uses the `LIMIT` keyword to return a single ``page'' of
-results, Elasticsearch accepts the `from` and `size` parameters:
+results, Elasticsearch accepts ((("from parameter")))((("size parameter")))the `from` and `size` parameters:
 
 [horizontal]
 `size`:: How many results should be returned, defaults to `10`
@@ -32,7 +32,7 @@ to be sorted centrally to ensure that the overall order is correct.
 .Deep paging in distributed systems
 ****
 
-To understand why deep paging is problematic, let's imagine that we are
+To understand why ((("deep paging, problems with")))deep paging is problematic, let's imagine that we are
 searching within a single index with 5 primary shards.  When we request the
 first page of results (results 1 to 10), each shard produces its own top 10
 results and returns them to the _requesting node_, which then sorts all 50

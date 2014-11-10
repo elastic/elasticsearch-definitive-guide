@@ -2,7 +2,7 @@
 === Mixed language fields
 
 Usually documents that mix multiple languages in a single field come from
-sources beyond your control, such as pages scraped from the web:
+sources beyond your control, such as((("languages", "mixed language fields")))((("fields", "mixed language"))) pages scraped from the web:
 
 [source,js]
 --------------------------------------------------
@@ -22,14 +22,14 @@ there are three choices available to you:
 
 ==== Split into separate fields
 
-The Compact Language Detector mentioned in <<identifying-language>> can tell
+The Compact Language Detector ((("languages", "mixed language fields", "splitting into separate fields")))((("Compact Language Detector")))mentioned in <<identifying-language>> can tell
 you which parts of the document are in which language.  You can split the
 text up based on language and use the same approach as was used in
 <<one-lang-fields>>.
 
 ==== Analyze multiple times
 
-If you primarily deal with a limited number of languages, then you could use
+If you primarily deal with a limited number of languages, ((("languages", "mixed language fields", "analyzing multiple times")))((("analyzers", "for mixed language fields")))((("multi-fields", "analying mixed language fields")))then you could use
 multi-fields to analyze the text once per language:
 
 [source,js]
@@ -71,7 +71,7 @@ PUT /movies
 
 ==== Use n-grams
 
-You could just index all words as n-grams, using the same approach as
+You could just index all words as n-grams, using the ((("n-grams", "for mixed language fields")))((("languages", "mixed language fields", "n-grams, indexing words as")))same approach as
 described in <<ngrams-compound-words>>.  Most inflections involve adding a
 suffix (or in some languages, a prefix) to a word, so by breaking each word
 down into n-grams, you have a good chance of matching words that are similar,

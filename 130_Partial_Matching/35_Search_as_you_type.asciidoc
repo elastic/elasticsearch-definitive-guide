@@ -1,12 +1,12 @@
 === Index time search-as-you-type
 
-The first step to setting up index time search-as-you-type is to define our
+The first step to setting up index time search-as-you-type is to((("search-as-you-type", "index time")))((("partial matching", "index time search-as-you-type"))) define our
 analysis chain, which we discussed  in <<configuring-analyzers>>, but we will
 go over the steps again here.
 
 ==== Preparing the index
 
-The first step is to configure a custom `edge_ngram` token filter, which we
+The first step is to configure a ((("partial matching", "index time search-as-you-type", "preparing the index")))custom `edge_ngram` token filter,((("edge_ngram token filter"))) which we
 will call the `autocomplete_filter`:
 
 [source,js]
@@ -26,7 +26,7 @@ This configuration says that, for any term that this token filter receives,
 it should produce an n-gram anchored to the start of the word of minimum
 length 1 and maximum length 20.
 
-Then we need to use this token filter in a custom analyzer, which we will call
+Then we need to use this token filter in a custom analyzer,((("analyzers", "autocomplete custom analyzer"))) which we will call
 the `autocomplete` analyzer:
 
 [source,js]
@@ -112,7 +112,7 @@ terms:
 * `brown`
 
 In order to use the analyzer, we need to apply it to a field, which we can do
-with the `update-mapping` API:
+with((("update-mapping API", "applying custom autocomplete analyzer to a field"))) the `update-mapping` API:
 
 [source,js]
 --------------------------------------------------
@@ -144,7 +144,7 @@ POST /my_index/my_type/_bulk
 
 ==== Querying the field
 
-If you test out a query for ``brown fo'' using a simple `match` query:
+If you test out a query for ``brown fo'' using ((("partial matching", "index time search-as-you-type", "querying the field")))a simple `match` query:
 
 [source,js]
 --------------------------------------------------
@@ -213,7 +213,7 @@ do. This is one of the few occasions when it makes sense to break this rule.
 
 We want to ensure that our inverted index contains edge n-grams of every word
 but we only want to match on the full words that the user has entered, ie
-`brown` and `fo`.  We can do this by using the `autocomplete` analyzer at
+`brown` and `fo`. ((("analyzers", "changing search analyzer from index analyzer"))) We can do this by using the `autocomplete` analyzer at
 index time and the `standard` analyzer at search time.  One way to change the
 search analyzer is just to specify it in in the query:
 
@@ -236,7 +236,7 @@ GET /my_index/my_type/_search
 
 <1> This overrides the `analyzer` setting on the `name` field.
 
-Alternatively, we can specify the `index_analyzer` and `search_analyzer` in
+Alternatively, we can specify ((("search_analyzer parameter")))((("index_analyzer parameter")))the `index_analyzer` and `search_analyzer` in
 the mapping for the `name` field itself. Because we only want to change the
 `search_analyzer`, we can update the existing mapping without having to
 reindex our data:
@@ -288,9 +288,9 @@ when you are trying to provide instant feedback.  Sometimes the fastest way of
 searching is not to search at all.
 
 The {ref}/search-suggesters-completion.html[completion suggester] in
-Elasticsearch takes a completely different approach.  You feed it with a list
+Elasticsearch((("completion suggester"))) takes a completely different approach.  You feed it with a list
 of all possible completions and it builds them into a _Finite State
-Transducer_, an optimized data structure which resembles a big graph.  To
+Transducer_, an((("Finite State Transducer"))) optimized data structure which resembles a big graph.  To
 search for suggestions, Elasticsearch starts at the beginning of the graph and
 moves character-by-character along the matching path. Once it has run out of
 user input, it looks at all possible endings of the  current path to produce a
@@ -309,10 +309,10 @@ ways.
 
 ==== Edge n-grams and postcodes
 
-The edge n-gram approach can also be used for structured data, such as the
+The edge n-gram approach can((("postcodes (UK), partial matching with", "using edge n-grams")))((("edge n-grams", "and postcodes"))) also be used for structured data, such as the
 postcodes example from <<prefix-query,earlier in this chapter>>.  Of course,
 the `postcode` field would need to be `analyzed` instead of `not_analyzed` but
-you could use the `keyword` tokenizer to treat the postcodes as if they were
+you could use the `keyword` tokenizer((("keyword tokenizer", "using for values treated as not_analyzed")))((("not_analyzed fields", "using keyword tokenizer with"))) to treat the postcodes as if they were
 `not_analyzed`.
 
 [TIP]

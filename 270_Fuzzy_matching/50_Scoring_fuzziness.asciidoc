@@ -2,7 +2,7 @@
 === Scoring fuzziness
 
 Users love fuzzy queries -- they assume that it will somehow magically find
-the right combination of proper spellings.  Unfortunately, the truth is
+the right combination of proper spellings.((("fuzzy queries", "scoring fuzziness")))((("typoes and misspellings", "scoring fuzziness")))((("relevance scores", "fuzziness and")))  Unfortunately, the truth is
 somewhat more prosaic.
 
 Imagine that we have 1,000 documents containing ``Schwarzenegger'', and just
@@ -11,7 +11,7 @@ of <<tfidf,Term frequency/Inverse document frequency>>, the misspelling is
 much more relevant than the correct spelling, because it appears in far fewer
 documents!
 
-In other words, if we were to treat fuzzy matches like any other match, we
+In other words, if we were to treat fuzzy matches((("match query", "fuzzy match query"))) like any other match, we
 would favour misspellings over correct spellings, which would make for grumpy
 users.
 

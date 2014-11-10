@@ -1,11 +1,11 @@
 [[slop]]
 === Mixing it up
 
-Requiring exact phrase matches may be too strict a constraint. Perhaps we *do*
+Requiring exact phrase matches ((("proximity matching", "slop parameter")))may be too strict a constraint. Perhaps we *do*
 want documents which contain ``quick brown fox'' to be considered a match for
 the query ``quick fox'', even though the positions aren't exactly equivalent.
 
-We can introduce a degree of flexibility into phrase matching by using the
+We can introduce a degree ((("slop parameter")))of flexibility into phrase matching by using the
 `slop` parameter:
 
 [source,js]
@@ -24,7 +24,7 @@ GET /my_index/my_type/_search
 --------------------------------------------------
 // SENSE: 120_Proximity_Matching/10_Slop.json
 
-The `slop` parameter tells the `match_phrase` query how far apart terms are
+The `slop` parameter tells the `match_phrase` query how((("match_phrase query", "slop parameter"))) far apart terms are
 allowed to be while still considering the document a match. By ``how far
 apart'' we mean: _how many times do you need to move a term in order to make
 the query and document match_?

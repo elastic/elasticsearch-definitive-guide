@@ -1,7 +1,7 @@
 [[partial-updates]]
 === Partial updates to documents
 
-In <<update-doc>>, we said that the way to update a document is to retrieve
+In <<update-doc>>, we said that ((("updating documents", "partial updates")))((("documents", "partial updates")))the way to update a document is to retrieve
 it, change it, then reindex the whole document. This is true. However, using
 the `update` API, we can make partial updates like incrementing a counter in a
 single request.
@@ -74,13 +74,13 @@ Retrieving the document shows the updated `_source` field:
 .Scripting with Groovy
 ****
 
-For those moments when the API just isn't enough, Elasticsearch allows you to
-write your own custom logic in a script. Scripting is supported in many APIs
+For those ((("documents", "partial updates", "using scripts")))((("updating documents", "partial updates", "using scripts")))moments when the API just isn't enough, Elasticsearch allows you to
+write your own custom logic in a script.((("scripts", "using to make partial updates"))) Scripting is supported in many APIs
 like search, sorting, aggregations, and document updates. Scripts can be
 passed in as part of the  request, retrieved from the special `.scripts`
 index, or loaded from disk.
 
-The default scripting language is a http://groovy.codehaus.org/[Groovy], a
+The default scripting language ((("Groovy")))is a http://groovy.codehaus.org/[Groovy], a
 fast and expressive scripting language, similar in syntax to Javascript.  It
 runs in a _sandbox_ to prevent malicious users from breaking out of
 Elasticsearch and attacking the server.
@@ -91,7 +91,7 @@ You can read more about scripting in the
 ****
 
 Scripts can be used in the `update` API to change the contents of the `_source`
-field, which is referred to inside an update script as `ctx._source`. For
+field, which ((("source field", "updating using scripts")))is referred to inside an update script as `ctx._source`. For
 instance, we could use a script to increment the number of `views` that our
 blog post has had:
 
@@ -162,12 +162,12 @@ POST /website/blog/1/_update
 
 ==== Updating a document which may not yet exist
 
-Imagine that we need to store a pageview counter in Elasticsearch. Every time
+Imagine that we need to store a((("updating documents", "that don&#x27;t already exist"))) pageview counter in Elasticsearch. Every time
 that a user views a page, we increment the counter for that page.  But if it
 is a new page, we can't be sure that the counter already exists. If we try to
 update a non-existent document, the update will fail.
 
-In cases like these, we can use the `upsert` parameter to specify the
+In cases like these, we can use((("upsert parameter"))) the `upsert` parameter to specify the
 document that should be created if it doesn't already exist:
 
 [source,js]
@@ -189,7 +189,7 @@ incrementing the `views` counter.
 
 ==== Updates and conflicts
 
-In the introduction to this section, we said that the smaller the window between
+In the introduction to this section, we said((("updating documents", "conflicts and")))((("conflicts", "updates and"))) that the smaller the window between
 the _retrieve_ and _reindex_ steps, the smaller the opportunity for
 conflicting changes. But it doesn't eliminate the possibility completely. It
 is still possible that a request from another process could change the
@@ -206,7 +206,7 @@ changed.  For instance, if two processes are both incrementing the page
 view counter, it doesn't matter in which order it happens -- if a conflict
 occurs, the only thing we need to do is to reattempt the update.
 
-This can be done automatically by setting the `retry_on_conflict` parameter to
+This can be done automatically by((("query strings", "retry_on_conflict parameter")))((("retry_on_conflict parameter"))) setting the `retry_on_conflict` parameter to
 the number of times that `update` should retry before failing -- it defaults
 to `0`.
 

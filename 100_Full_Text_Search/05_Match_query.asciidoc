@@ -2,7 +2,7 @@
 === The match query
 
 The `match` query is the ``go-to'' query -- the first query that you should
-reach for whenever you need to query any field. It is a high-level _full-text
+reach for whenever you need to query any field.((("match query")))((("full text search", "match query"))) It is a high-level _full-text
 query_ meaning that it knows how to deal with both full-text fields and exact-
 value fields.
 
@@ -12,7 +12,7 @@ let's take a look at how full text search works with a simple example.
 [[match-test-data]]
 ==== Index some data
 
-First, we'll create a new index and index some documents using the
+First, we'll create a new index and index some((("full text search", "match query", "indexing data"))) documents using the
 <<bulk,`bulk` API>>:
 
 [source,js]
@@ -40,7 +40,7 @@ POST /my_index/my_type/_bulk
 
 ==== A single word query
 
-Our first example explains what happens when we use the `match` query to
+Our first example explains what((("full text search", "match query", "single word query")))((("match query", "single word query"))) happens when we use the `match` query to
 search within a full-text field for a single word:
 
 [source,js]
@@ -56,7 +56,7 @@ GET /my_index/my_type/_search
 --------------------------------------------------
 // SENSE: 100_Full_Text_Search/05_Match_query.json
 
-Elasticsearch executes the above `match` query as follows:
+Elasticsearch executes the above `match` query((("analysis", "in single term match query"))) as follows:
 
 1. *Check the field type*
 +
@@ -78,7 +78,7 @@ list of documents that contain that term, in this case documents `1`, `2`, and
 4. *Score each doc*
 +
 The `term` query calculates the relevance `_score` for each matching document,
-by combining the term frequency (how often `"quick"` appears in the `title`
+by combining the((("relevance scores", "calculating for single term match query results"))) term frequency (how often `"quick"` appears in the `title`
 field of each document), with the inverse document frequency (how often
 `"quick"` appears in the `title` field in *all* documents in the index), and the
 length of each field (shorter fields are considered more relevant).

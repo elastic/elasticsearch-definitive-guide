@@ -3,7 +3,7 @@
 
 Finally, if none of the `function_score`&#39;s built in functions suffice, you can
 implement the logic that you need with a script, using the `script_score`
-function.
+function.((("function_score query", "using script_score function")))((("script_score function")))((("relevance", "controlling", "scoring with scripts")))
 
 For an example, let's say that we want to factor our profit margin into the
 relevance calculation.  In our business, the profit margin depends on three
@@ -46,7 +46,7 @@ return profit / target
 
 The default scripting language in Elasticsearch is
 http://groovy.codehaus.org/[Groovy] which, for the most part, looks a lot like
-Javascript. The above algorithm as a Groovy script would look like this:
+Javascript.((("Groovy", "script factoring profit margins into relevance calculations"))) The above algorithm as a Groovy script would look like this:
 
 [source,groovy]
 -------------------------
@@ -103,7 +103,7 @@ a profit.
 .Scripting and performance
 ========================================
 
-The `script_score` function provides enormous flexibility.  Within a script
+The `script_score` function provides enormous flexibility.((("scripting", "performance and")))  Within a script
 you have access to the fields of the document, to the current `_score` and
 even to the term frequencies, inverse document frequencies and field length
 norms. (See {ref}modules-advanced-scripting.html[Text scoring in scripts]).
@@ -113,10 +113,10 @@ scripts are not quite fast enough, you have three options:
 
 * Try to precalculate as much information as possible and include it in each
   document.
-* Groovy is fast, but not quite as fast as Java.  You could reimplement your
+* Groovy is fast, but not quite as fast as Java.((("Java", "scripting in")))  You could reimplement your
   script as a native Java script. (See
   {ref}modules-scripting.html#native-java-scripts[Native Java Scripts]).
-* Use the `rescore` functionality described in <<rescore-api>> to only apply
+* Use the `rescore` functionality((("rescoring"))) described in <<rescore-api>> to only apply
   your script to the best scoring documents.
 
 ========================================

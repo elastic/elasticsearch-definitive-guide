@@ -2,7 +2,7 @@
 === Customising dynamic mapping
 
 If you know that you are going to be adding new fields on the fly, then
-you probably want to leave dynamic mapping enabled.  At times, though,
+you probably want to leave dynamic mapping enabled.((("dynamic mapping", "custom")))((("mapping (types)", "dynamic", "custom")))  At times, though,
 the dynamic mapping ``rules'' can be a bit blunt.  Fortunately, there
 are settings that you can use to customise these rules to better
 suit your data.
@@ -11,7 +11,7 @@ suit your data.
 ==== date_detection
 
 When Elasticsearch encounters a new string field, it checks to see if the
-string contains a recognisable date, like `"2014-01-01"`. If it looks
+string contains a recognisable date, like `"2014-01-01"`.((("date_detection setting")))((("dynamic mapping", "custom", "date_detection setting"))) If it looks
 like a date, then the field is added as type `date`. Otherwise it is
 added as type `string`.
 
@@ -39,7 +39,7 @@ a date field and so this ``malformed date'' will cause an exception to be
 thrown.
 
 Date detection can be turned off by setting `date_detection` to `false`
-on the root object:
+on the ((("root object", "date_detection setting")))root object:
 
 [source,js]
 --------------------------------------------------
@@ -66,12 +66,12 @@ with the {ref}/mapping-root-object-type.html#_dynamic_date_formats[`dynamic_date
 [[dynamic-templates]]
 ==== dynamic_templates
 
-With `dynamic_templates`, you can take complete control over the
+With `dynamic_templates`, you can take complete control ((("dynamic_templates setting")))((("dynamic mapping", "custom", "dynamic_templates setting")))over the
 mapping that is generated for newly detected fields. You
 can even apply a different mapping depending on the field name
 or datatype.
 
-Each template has a name, which you can use to describe what the template
+Each template has a name, which ((("templates", "dynamic_templates setting")))you can use to describe what the template
 does, a `mapping` to specify the mapping that should be applied, and
 at least one parameter (such as `match`) to define which fields the template
 should apply to.
@@ -116,12 +116,12 @@ PUT /my_index
 <1> Match string fields whose name ends in `_es`.
 <2> Match all other string fields.
 
-The `match_mapping_type`  allows you to apply the template only
+The `match_mapping_type`  allows ((("match_mapping_type setting")))you to apply the template only
 to fields of the specified type, as detected by the standard dynamic
 mapping rules, eg `string`, `long` etc.
 
 The `match` parameter matches just the field name and the `path_match`
-parameter matches the full path to a field in an object, so
+parameter((("path_map parameter"))) matches the full path to a field in an object, so
 the pattern `"address.*.name"` would match a field like this:
 
 [source,js]
@@ -136,7 +136,7 @@ the pattern `"address.*.name"` would match a field like this:
 --------------------------------------------------
 
 
-The `unmatch` and `path_unmatch` patterns can be used to exclude fields
+The `unmatch` and `path_unmatch` patterns((("unmatch pattern")))((("path_unmap pattern"))) can be used to exclude fields
 that would otherwise match.
 
 More configuration options can be found in the

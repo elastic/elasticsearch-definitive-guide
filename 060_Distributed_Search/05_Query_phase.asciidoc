@@ -1,8 +1,8 @@
 === Query Phase
 
-During the initial _query phase_,  the query is broadcast to a shard copy (a
+During the initial _query phase_,  the((("distributed search execution", "query phase")))((("query phase of distributed search"))) query is broadcast to a shard copy (a
 primary or replica shard) of every shard in the index. Each shard executes
-the search locally and builds a _priority queue_ of matching documents.
+the search locally and ((("priority queue")))builds a _priority queue_ of matching documents.
 
 .Priority queue
 ****
@@ -41,13 +41,13 @@ image::images/elas_0901.png["Query Phase of distributed search"]
    results.
 
 When a search request is sent to a node, that node becomes the coordinating
-node. It is the job of this node to broadcast the search request to all
+node.((("nodes", "coordinating node for search requests"))) It is the job of this node to broadcast the search request to all
 involved shards, and to gather their responses into a globally sorted result
 set which it can return to the client.
 
 The first step is to broadcast the request to a shard copy of every node in
 the index. Just like <<distrib-read,document `GET` requests>>, search requests
-can be handled by a primary shard or by any of its replicas. This is how more
+can be handled by a primary shard or by any of its replicas.((("shards", "handling serch requests"))) This is how more
 replicas (when combined with more hardware) can increase search throughput.
 A coordinating node will round robin through all shard copies on subsequent
 requests in order to spread the load.
@@ -65,7 +65,7 @@ phase ends.
 .Multi-index search
 ****
 
-An index can consist of one or more primary shards, so a search request
+An index can consist of one or more primary shards,((("indexes", "multi-index search"))) so a search request
 against a single index needs to be able to combine the results from multiple
 shards. A search against *multiple* or *all* indices works in exactly the same
 way --  there are just more shards involved.

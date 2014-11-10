@@ -1,8 +1,8 @@
 === Postcodes and structured data
 
-We will use UK postcodes to illustrate how to use partial matching with
-structured data. UK postcodes have a well defined structure. For instance the
-postcode `W1V 3DG` can be broken down into:
+We will use UK postcodes to illustrate how((("partial matching", "postcodes and structured data"))) to use partial matching with
+structured data.((("structured data", "partial matching with postcodes"))) UK postcodes have a well defined structure. For instance the
+postcode `W1V 3DG` can((("postcodes (UK), partial mapping with"))) be broken down into:
 
 * `W1V` -- The outer part, identifies the postal area and district, consists of:
 
@@ -36,7 +36,7 @@ PUT /my_index
 --------------------------------------------------
 // SENSE: 130_Partial_Matching/10_Prefix_query.json
 
-And index some postcodes:
+And index some ((("indexing", "postcodes")))postcodes:
 
 [source,js]
 --------------------------------------------------

@@ -1,7 +1,7 @@
 [[routing-value]]
 === Routing a document to a shard
 
-When you index a document, it is stored on a single primary shard. How does
+When you index a document, it is stored on a single primary shard.((("shards", "routing a document to")))((("routing a document to a shard"))) How does
 Elasticsearch know which shard a document belongs to?  When we create a new
 document, how does it know whether it should store that document on shard 1 or
 shard 2?
@@ -18,7 +18,7 @@ number of primary shards in the index to return the _remainder_. The remainder
 will always be in the range `0` to `number_of_primary_shards - 1`, and gives
 us the number of the shard where a particular document lives.
 
-This explains why the number of primary shards can only be set when an index
+This explains why the number of primary shards((("primary shards", "fixed number of, routing and"))) can only be set when an index
 is created and never changed:  if the number of primary shards ever changed in
 the future, all previous routing values would be invalid and documents would
 never be found.
@@ -34,7 +34,7 @@ in <<scale>>.
 
 
 All document APIs (`get`, `index`, `delete`, `bulk`, `update` and `mget`)
-accept a `routing` parameter that can be used to customize the document-to-
+accept a `routing` parameter ((("routing parameter")))that can be used to customize the document-to-
 shard mapping. A custom routing value could be used to ensure that all related
 documents -- for instance all the documents belonging to the same user -- are
 stored on the same shard. We discuss in detail why you may want to do this in

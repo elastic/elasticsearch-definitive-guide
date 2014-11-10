@@ -3,14 +3,14 @@
 
 Tokenizers produce the best results when the input text is clean, ``valid''
 text, where ``valid'' means that it follows the punctuation rules that the
-Unicode algorithm expects.  Quite often, though, the text we need to process
+Unicode algorithm expects.((("text", "tidying up text input for tokenizers")))((("words", "identifying", "tidying up text input")))  Quite often, though, the text we need to process
 is anything but clean. Cleaning it up before tokenization improves the quality
 of the output.
 
 ==== Tokenizing HTML
 
 Passing HTML through the `standard` tokenizer or the `icu_tokenizer` produces
-poor results.  These tokenizers just don't know what to do with the HTML tags.
+poor results.((("HTML", "tokenizing")))  These tokenizers just don't know what to do with the HTML tags.
 For example:
 
 [source,js]
@@ -19,14 +19,14 @@ GET /_analyzer?tokenizer=standard
 <p>Some d&eacute;j&agrave; vu <a href="http://somedomain.com>">website</a>
 --------------------------------------------------
 
-The `standard` tokenizer confuses HTML tags and entities, and emits the
+The `standard` tokenizer((("standard tokenizer", "tokenizing HTML"))) confuses HTML tags and entities, and emits the
 following tokens: `p`, `Some`, `d`, `eacute`, `j`, `agrave`, `vu`, `a`,
 `href`, `http`, `somedomain.com`, `website`, `a`.  Clearly not what was
 intended!
 
-_Character filters_ can be added to an analyzer to preprocess the text
+_Character filters_ can be added to an analyzer to ((("character filters")))preprocess the text
 *before* it is passed to the tokenizer.  In this case, we can use the
-`html_strip` character filter to remove HTML tags and to decode HTML entities
+`html_strip` character filter((("analyzers", "adding character filters to")))((("html_strip character filter"))) to remove HTML tags and to decode HTML entities
 like `&eacute;` into the corresponding Unicode characters.
 
 Character filters can be tested out via the `analyze` API by specifying them
@@ -72,10 +72,10 @@ This emits the tokens that we expect: `Some`, ++déjà++, `vu`, `website`
 
 The `standard` tokenizer and `icu_tokenizer` both understand that an
 apostrophe *within* a word should be treated as part of the word, while single
-quotes which *surround* a word should not. Tokenizing the text `You're my
+quotes which *surround* a word should not.((("standard tokenizer", "handling of punctuation")))((("icu_tokenizer", "handling of punctuation")))((("punctuation", "tokenizers&#x27; handling of"))) Tokenizing the text `You're my
 'favourite'.` would correctly emit the tokens: `You're`, `my`, `favourite`.
 
-Unfortunately, Unicode lists a number of characters which are sometimes used
+Unfortunately,((("apostrophes"))) Unicode lists a number of characters which are sometimes used
 as apostrophes:
 
 [horizontal]
@@ -95,7 +95,7 @@ apostrophe-like characters:
 `U+0092`:: Right single quotation mark in ISO-8859-1 -- should not be used in Unicode.
 
 Both tokenizers treat these three characters as word boundaries -- a place to
-break up text into tokens. Unfortunately, some publishers use `U+201B` as a
+break up text into tokens.((("quotation marks"))) Unfortunately, some publishers use `U+201B` as a
 stylised way to write names like `M‛coy`, and the second two characters may well
 be produced by your word processor, depending on its age.
 
@@ -105,7 +105,7 @@ with an apostrophe -- `You're` -- which means that a query for one variant
 will not find the other.
 
 Fortunately, it is possible to sort out this mess with the `mapping` character
-filter, which allows us to replace all instances of one character with
+filter,((("character filters", "mapping character filter")))((("mapping character filter"))) which allows us to replace all instances of one character with
 another.  In this case, we will replace all apostrophe variants with the
 simple `U+0027` apostrophe:
 

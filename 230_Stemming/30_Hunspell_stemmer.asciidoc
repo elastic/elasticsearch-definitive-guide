@@ -1,13 +1,13 @@
 [[hunspell]]
 === Hunspell stemmer
 
-Elasticsearch provides dictionary-based stemming via the
+Elasticsearch provides ((("dictionary stemmers", "Hunspell stemmer")))((("stemming words", "dictionary stemmers", "Hunspell stemmer")))dictionary-based stemming via the
 {ref}analysis-hunspell-tokenfilter.html[`hunspell` token filter].
 Hunspell (http://hunspell.sourceforge.net/[hunspell.sourceforge.net]) is the
 spell checker used by Open and Libre Office, Chrome, Firefox, Thunderbird and many
 other open and closed source projects.
 
-Hunspell dictionaries can be obtained from:
+Hunspell dictionaries((("Hunspell stemmer", "obtaining a Hunspell dictionary"))) can be obtained from:
 
 * http://extensions.openoffice.org/[extensions.openoffice.org] -- download and
   unzip the `.oxt` extension file
@@ -31,7 +31,7 @@ A Hunspell dictionary consists of two files with the same base name -- such as
 
 ==== Installing a dictionary
 
-The Hunspell token filter looks for dictionaries within a dedicated Hunspell
+The Hunspell token ((("Hunspell stemmer", "installing a dictionary")))filter looks for dictionaries within a dedicated Hunspell
 directory, which defaults to  `./config/hunspell/`. The `.dic` and `.aff`
 files should be placed in a sub-directory whose name represents the language
 or locale of the dictionaries.  For instance, we could create a Hunspell
@@ -55,7 +55,7 @@ config/
 
 ==== Per-language settings
 
-The `settings.yml` file contains settings which apply to all of the
+The `settings.yml` file contains settings((("Hunspell stemmer", "per-language settings"))) which apply to all of the
 dictionaries within the language directory, such as:
 
 [source,yaml]
@@ -75,7 +75,7 @@ The meaning of these settings is as follows:
 Hunspell dictionaries are case-sensitive by default: the surname `Booker` is a
 different word from the noun `booker`, and so should be stemmed differently.  It
 may seem like a good idea to use the `hunspell` stemmer in case-sensitive
-mode, but that can complicate things:
+mode,((("Hunspell stemmer", "using in case insensitive mode"))) but that can complicate things:
 
 * A word at the beginning of a sentence will be capitalised, and thus appear
   to be a proper noun.
@@ -90,16 +90,16 @@ As a general rule, it is a good idea to set `ignore_case` to `true`.
 
 `strict_affix_parsing`::
 
-The quality of dictionaries varies greatly. Some of the dictionaries that are
+The quality of dictionaries varies greatly.((("Hunspell stemmer", "strict_affix_parsing"))) Some of the dictionaries that are
 available online have malformed rules in the `.aff` file.  By default, Lucene
 will throw an exception if it can't parse an affix rule. If you need to deal
 with a broken affix file, you can set `strict_affix_parsing` to `false` to tell
-Lucene to just ignore the broken rules.
+Lucene to just ignore the broken rules.((("strict_affix_parsing")))
 
 .Custom dictionaries
 ***********************************************
 If multiple dictionaries (`.dic` files) are placed in the same
-directory, they will be merged together at load time. This allows you to
+directory, ((("Hunspell stemmer", "custom dictionaries")))they will be merged together at load time. This allows you to
 tailor the downloaded dictionaries with your own custom word lists:
 
 [source,text]
@@ -124,7 +124,7 @@ The format of the `.dic` and `.aff` files is discussed in
 ==== Creating a Hunspell token filter
 
 Once your dictionaries are installed on all nodes, you can define a `hunspell`
-token filter which uses them:
+token filter((("Hunspell stemmer", "creating a hunspell token filter"))) which uses them:
 
 [source,json]
 ------------------------------------------------
@@ -181,7 +181,7 @@ shards which use the same Hunspell analyzer share the same instance.
 [[hunspell-dictionary-format]]
 ==== Hunspell dictionary format
 
-While it is not necessary to understand the format of a Hunspell dictionary in
+While it is not necessary to understand the((("Hunspell stemmer", "Hunspell dictionary format"))) format of a Hunspell dictionary in
 order to use the `hunspell` tokenizer, understanding the format will help you
 to write your own custom dictionaries.  It is quite simple.
 

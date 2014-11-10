@@ -2,7 +2,7 @@
 === The closer, the better
 
 There are many variables that could influence the user's choice of holiday
-home.  Maybe they would like to be close to the centre of town, but perhaps
+home.((("relevance", "controlling", "using decay functions")))  Maybe they would like to be close to the centre of town, but perhaps
 they would be willing to settle for a place which is a bit further from the
 centre if the price is low enough.  Perhaps the reverse is true: they would be
 willing to pay more for the best location.
@@ -12,12 +12,12 @@ kilometre from the center, or any holiday homes that cost more than £100 a
 night, we might exclude results that the user would consider to be a good
 compromise.
 
-The `function_score` query gives us the ability to trade off one sliding scale
+The `function_score` query gives ((("function_score query", "decay functions")))((("decay functions")))us the ability to trade off one sliding scale
 (like location) against another sliding scale (like price), with a group of
 functions known as the _decay functions_.
 
 There are three decay functions, called `linear`, `exp` and `gauss`, which
-operate on numeric fields, date fields or lat-lon geo-points.  All three take
+operate on numeric fields, date fields or lat-lon geo-points.((("linear function")))((("exp (exponential) function")))((("gauss (Gaussian) function")))  All three take
 the same parameters:
 
 [horizontal]
@@ -75,7 +75,7 @@ to decay, the further a value is from the `origin`.
 To return to our example: our user would prefer to rent a holiday home close
 to the centre of London (`{ "lat": 51.50, "lon": 0.12}`) and to pay no more
 than £100 a night, but our user considers price to be more important than
-distance.   We could write this query as:
+distance. ((("gauss (Gaussian) function", "in function_score query")))  We could write this query as:
 
 [source,json]
 ----------------------------------
@@ -113,14 +113,14 @@ GET /_search
 <3> See below for the reason why `origin` is `50` instead of `100`.
 <4> The `price` clause has twice the ``weight'' of the `location` clause.
 
-The `location` clause is easy to understand:
+The `location` clause is((("location clause", "gauss (Gaussian) function"))) easy to understand:
 
 * We have specified an `origin` which corresponds to the centre of London.
 * Any location within `2km` of the `origin` receives the full score of `1.0`.
 * Locations more than `5km` (`offset + scale`) from the centre receive a score
 of `0.5`.
 
-The `price` clause is a little trickier.  The user's preferred price is
+The `price` clause is a little trickier.((("price clause (gauss function)")))  The user's preferred price is
 anything up to £100, but this example sets the origin to £50.  Prices can't be
 negative, but the lower they are the better.  Really, any price between £0 and
 £100 should be considered optimal.
@@ -134,7 +134,7 @@ way, the score only decays for any prices above £100 (`origin + offset`).
 ==================================================
 
 The `weight` parameter can be used to increase or decrease the contribution of
-individual clauses.  The `weight`, which defaults to `1.0`, is multiplied with
+individual clauses. ((("weight parameter", "in function_score query"))) The `weight`, which defaults to `1.0`, is multiplied with
 the score from each clause before the scores are combined with the specified
 `score_mode`.
 

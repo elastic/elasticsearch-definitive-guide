@@ -2,7 +2,7 @@
 === Multi-word queries
 
 If we could only search for one word at a time, full text search would be
-pretty inflexible. Fortunately, the `match` query makes multi-word queries
+pretty inflexible. Fortunately, the `match` query((("full text search", "multi-word queries")))((("match query", "multi-word query"))) makes multi-word queries
 just as simple:
 
 [source,js]
@@ -77,12 +77,12 @@ query.  The more terms that match, the more relevant the document.
 ==== Improving precision
 
 Matching any document which contains *any* of the query terms may result in  a
-long tail of seemingly irrelevant results.  It's a shotgun approach to search.
+long tail of seemingly irrelevant results. ((("full text search", "multi-word queries", "improving precision")))((("precision", "improving for full text search multi-word queries"))) It's a shotgun approach to search.
 Perhaps we only want to show documents which contain *all* of the query terms.
 In other words, instead of `"brown OR dog"` we only want to return documents
 that match `"brown AND dog"`.
 
-The `match` query accepts an `operator` parameter which defaults to `"or"`.
+The `match` query accepts an `operator` parameter((("match query", "operator parameter")))((("or operator", "in match queries")))((("and operator", "in match queries"))) which defaults to `"or"`.
 You can change it to `"and"` to require that all specified terms must match:
 
 [source,js]
@@ -109,7 +109,7 @@ This query would exclude document 1 which only contains one of the two terms.
 [[match-precision]]
 ==== Controlling precision
 
-The choice between *all* and *any* is a bit too black-or-white. What if the
+The choice between *all* and *any* is a bit((("full text search", "multi-word queries", "controlling precision"))) too black-or-white. What if the
 user specified five query terms and a document contains only four of them?
 Setting `"operator"` to `"and"` would exclude this document.
 
@@ -118,7 +118,7 @@ cases, you want to include documents which may be relevant but exclude those
 that are unlikely to be relevant.  In other words, we need something
 in-between.
 
-The `match` query supports the `minimum_should_match` parameter which allows
+The `match` query supports((("match query", "minimum_should_match parameter")))((("minimum_should_match parameter"))) the `minimum_should_match` parameter which allows
 you to specify how many terms must match for a document to be considered
 relevant.  While you can specify an absolute number of terms, it usually makes
 sense to specify a percentage instead as you have no control over how many

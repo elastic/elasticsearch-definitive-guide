@@ -1,10 +1,10 @@
 [[multi-query-strings]]
 === Multiple query strings
 
-The simplest multi-field query to deal with is the one where we can *map
+The simplest multi-field query to deal with is the ((("multi-field search", "multiple query strings")))one where we can *map
 search terms to specific fields*. If we know that ``War and Peace'' is the
 title, and ``Leo Tolstoy'' is the author, it is easy to write each of these
-conditions as a `match` clause and to combine them with a <<bool-query,`bool`
+conditions as a `match` clause ((("match clause", "mapping search terms to specific fields")))((("bool query", "mapping search terms to specific fields in match clause")))and to combine them with a <<bool-query,`bool`
 query>>:
 
 [source,js]
@@ -29,7 +29,7 @@ each document. Documents that match both clauses will score higher than
 documents which match just one clause.
 
 Of course, you're not restricted to using just `match` clauses: the `bool`
-query can wrap any other query type, including other `bool` queries.  We could
+query can wrap any other query type, ((("bool query", "nested bool query in")))including other `bool` queries.  We could
 add a clause to specify that we prefer to see versions of the book that have
 been translated by specific translators:
 
@@ -60,7 +60,7 @@ Why did we put the translator clauses inside a separate `bool` query?  All four
 `match` queries are `should` clauses, so why didn't we just put the translator
 clauses at the same level as the title and author clauses?
 
-The answer lies in how the score is calculated.  The `bool` query runs each
+The answer lies in how the score is calculated.((("relevance scores", "calculation in bool queries")))  The `bool` query runs each
 `match` query, adds their scores together, then multiplies by the number of
 matching clauses, and divides by the total number of clauses. Each clause at
 the same level has the same weight. In the above query, the `bool` query
@@ -72,12 +72,12 @@ would have reduced the contribution of the title and author clauses to ¼ each.
 ==== Prioritising clauses
 
 It is likely that an even ⅓ split between clauses is not what we need for
-the above query.  Probably we're more interested in the title and author
+the above query. ((("multi-field search", "multiple query strings", "prioritizing query clauses")))((("bool query", "prioritizing clauses"))) Probably we're more interested in the title and author
 clauses then we are in the translator clauses. We need to tune the query to
 make the title and author clauses relatively more important.
 
 The simplest weapon in our tuning arsenal is the `boost` parameter. To
-increase the weight of the `title` and `author` fields, give them a `boost`
+increase the weight of the `title` and `author` fields, give ((("boost parameter", "using to prioritize query clauses")))((("weight", "using boost parameter to prioritize query clauses")))them a `boost`
 value higher than `1`:
 
 [source,js]

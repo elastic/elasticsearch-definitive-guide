@@ -13,7 +13,7 @@ So, sit back and enjoy a whirlwind tour of what Elasticsearch is capable of.
 
 ==== Let's build an employee directory.
 
-We happen to work for **Megacorp**, and as part of HR's new _"We love our
+We happen((("employee directory, building (example)"))) to work for **Megacorp**, and as part of HR's new _"We love our
 drones!"_ initiative, we have been tasked with creating an employee directory.
 The directory is supposed to foster employer empathy and
 real-time synergistic-dynamic-collaboration, so it has a few different
@@ -29,12 +29,12 @@ business requirements:
 
 === Indexing employee documents
 
-The first order of business is storing employee data.  This will take the form
+The first order of business is storing employee data.((("documents", "indexing")))((("indexing")))  This will take the form
 of an ``employee document'', where a single document represents a single
 employee.  The act of storing data in Elasticsearch is called _indexing_, but
 before we can index a document we need to decide _where_ to store it.
 
-In Elasticsearch, a document belongs to a _type_, and those types live inside
+In Elasticsearch, a document belongs to a _type_, and those((("types"))) types live inside
 an _index_. You can draw some (rough) parallels to a traditional relational database:
 
 ----
@@ -42,15 +42,15 @@ Relational DB  ⇒ Databases ⇒ Tables ⇒ Rows      ⇒ Columns
 Elasticsearch  ⇒ Indices   ⇒ Types  ⇒ Documents ⇒ Fields
 ----
 
-An Elasticsearch cluster can contain multiple _indices_ (databases), which in
-turn contain multiple _types_ (tables). These types hold multiple _documents_
-(rows), and each document has multiple _fields_ (columns).
+An Elasticsearch cluster can((("clusters", "indices (databases) in")))((("databases", "in clusters"))) contain multiple _indices_ (databases), which in
+turn contain multiple _types_ (tables).((("tables"))) These types hold multiple _documents_
+(rows), and ((("rows")))each document has((("fields")))((("columns"))) multiple _fields_ (columns).
 
 .Index vs Index vs Index
 **************************************************
 
 You may already have noticed that the word ``index'' is overloaded with
-several different meanings in the context of Elasticsearch. A little
+several different meanings in the context of Elasticsearch.((("index, meanings in Elasticsearch"))) A little
 clarification is necessary:
 
 Index (noun)::
@@ -68,9 +68,9 @@ replace the old.
 
 Inverted index::
 
-Relational databases add an _index_, such as a B-Tree index, to specific
+Relational databases add an _index_, such as a B-Tree index,((("relational databases", "indexes"))) to specific
 columns in order to improve the speed of data retrieval.  Elasticsearch and
-Lucene use a structure called an _inverted index_ for exactly the same
+Lucene use a structure called((("inverted indexes"))) an _inverted index_ for exactly the same
 purpose.
 +
 By default, every field in a document is _indexed_ (has an inverted index)
@@ -83,7 +83,7 @@ So for our employee directory, we are going to do the following:
 
 *  Index a _document_ per employee, which contains all the details of a single
    employee.
-*  Each document will be of _type_ `employee`.
+*  Each document will be((("types", "in employee directory (example)"))) of _type_ `employee`.
 * That type will live in the `megacorp` _index_.
 * That index will reside within our Elasticsearch cluster.
 

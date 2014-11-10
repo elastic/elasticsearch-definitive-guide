@@ -2,7 +2,7 @@
 === Pluggable similarity algorithms
 
 Before we move on from relevance and scoring, we will finish this chapter with
-a more advanced subject: pluggable similarity algorithms. While Elasticsearch
+a more advanced subject: pluggable similarity algorithms.((("similarity algorithms", "pluggable")))((("relevance", "controlling", "using pluggable similarity algorithms"))) While Elasticsearch
 uses the <<practical-scoring-function>> as its default similarity algorithm,
 it supports a number of other algorithms out of the box, which are listed
 in the {ref}index-modules-similarity.html[Similarity Modules] documentation.
@@ -12,9 +12,9 @@ in the {ref}index-modules-similarity.html[Similarity Modules] documentation.
 
 The most interesting competitor to TF/IDF and the Vector Space Model is called
 http://en.wikipedia.org/wiki/Okapi_BM25[_Okapi BM25_], which is considered to
-be a _state-of-the-art_ ranking function. BM25 originates from the
+be a _state-of-the-art_ ranking function.((("BM25")))((("Okapi BM25", see="BM25"))) BM25 originates from the
 http://en.wikipedia.org/wiki/Probabilistic_relevance_model[Probabilistic relevance model],
-rather than the Vector Space Model, yet the algorithm has a lot in common with
+rather than the Vector Space Model, yet((("probabalistic relevance model"))) the algorithm has a lot in common with
 Lucene's Practical Scoring Function.
 
 Both make use of term frequency, inverse document frequency, and field length
@@ -26,21 +26,21 @@ on the practical advantages that BM25 offers.
 ===== Term frequency saturation
 
 Both TF/IDF and BM25 use <<idf,inverse document frequency>> to distinguish
-between common (low value) words and uncommon (high value) words.  Both also
+between common (low value) words and uncommon (high value) words.((("inverse document frequency", "use by TF/IDF and BM25")))  Both also
 recognise (see <<tf>>) that the more often a word appears in a document, the
 more likely is it that the document is relevant for that word.
 
-However, common words occur commonly.  The fact that a common word appears
+However, common words occur commonly. ((("BM25", "term frequency saturation"))) The fact that a common word appears
 many times in one document is offset by the fact that the word appears many
 times in *all* documents.
 
 However, TF/IDF was designed in an era where it was standard practice to
 remove the *most* common words (or _stopwords_, see <<stopwords>>) from the
-index altogether. The algorithm didn't need to worry about an upper limit for
+index altogether.((("stopwords", "removal from index"))) The algorithm didn't need to worry about an upper limit for
 term frequency because the most frequent terms had already been removed.
 
 In Elasticsearch, the `standard` analyzer  -- the default for `string` fields
--- doesn't remove stopwords because, even though they are words of little
+-- doesn't remove stopwords because,((("standard analyzer", "stopwords and"))) even though they are words of little
 value, they do still have some value.  The result is that, for very long
 documents, the sheer number of occurrences of words like `the` and `and` can
 artificially boost their weight.
@@ -49,7 +49,7 @@ BM25, on the other hand, does have an upper limit.  Terms that appear 5 to 10
 times in a document have a significantly larger impact on relevance than terms
 that appear just once or twice.  However, terms that appear 20 times in a
 document have almost the same impact as terms that appear a thousand times or
-more.
+more.((("non-linear term frequency saturation")))((("term frequency saturation for TF/IDF and BM25")))
 
 This is known as _non-linear term frequency saturation_.
 
@@ -61,7 +61,7 @@ image::images/elas_1706.png[Term frequency saturation for TF/IDF and BM25]
 ===== Field length normalization
 
 In <<field-norm>> we said that Lucene considers shorter fields to have
-more weight than longer fields -- the frequency of a term in a field is offset
+more weight than longer ((("field length norm")))((("normalization", "field lengh norm")))((("BM25", "field length normalization")))fields -- the frequency of a term in a field is offset
 by the length of the field.  However, the Practical Scoring Functions treats
 all fields in the same way.  It will treat all `title` fields (because they
 are short) as more important than all `body` fields (because they are long).
@@ -80,7 +80,7 @@ single field.
 ===== Tuning BM25
 
 One of the nice features of BM25 is that, unlike TF/IDF, it has two parameters
-that allow it to be tuned:
+that allow it to((("BM25", "tuning"))) be tuned:
 
 [horizontal]
 __`k1`__::

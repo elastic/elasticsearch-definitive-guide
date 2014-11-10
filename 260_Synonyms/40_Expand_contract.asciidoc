@@ -1,7 +1,7 @@
 [[synonyms-expand-or-contract]]
 === Expand or contract
 
-In <<synonym-formats>> we have seen that it is possible to replace synonyms by
+In <<synonym-formats>> we have seen that it is((("synonyms", "expanding or contracting"))) possible to replace synonyms by
 _simple expansion_, _simple contraction_ or _generic expansion_.  We will look
 at the tradeoffs of each of these techniques below.
 
@@ -12,7 +12,7 @@ synonyms add another layer of complexity and are discussed later in
 [[synonyms-expansion]]
 ==== Simple expansion
 
-With simple expansions, any of the listed synonyms is expanded into *all* of
+With simple expansions,((("synonyms", "expanding or contracting", "simple expansion")))((("simple expansion (synonyms)"))) any of the listed synonyms is expanded into *all* of
 the listed synonyms:
 
     "jump,hop,leap"
@@ -49,7 +49,7 @@ flexibility:
 [[synonyms-contraction]]
 ==== Simple contraction
 
-Simple contraction maps a group of synonyms on the left-hand side to a single
+Simple contraction maps a group of ((("synonyms", "expanding or contracting", "simple contraction")))((("simple contraction (synonyms)")))synonyms on the left-hand side to a single
 value on the right-hand side:
 
     "leap,hop => jump"
@@ -96,7 +96,7 @@ the performance benefit of querying only a single term.
 [[synonyms-genres]]
 ==== Genre expansion
 
-Genre expansion is quite different from simple contraction or expansion.
+Genre expansion is quite different from simple((("synonyms", "expanding or contracting", "genre expansion")))((("genre expansion (synonyms)"))) contraction or expansion.
 Instead of treating all synonyms as equal, genre expansion widens the meaning
 of a term to be more generic. Take these rules for example:
 
