@@ -136,7 +136,7 @@ GET /cars/transactions/_search?search_type=count
 
 This will return a list of makes (sorted by popularity) and a variety of statistics
 about each.  In particular, we are interested in `stats.avg`, `stats.count`,
-and `stats.std_deviation`.  Using this information, we can calculate the standard error:
+and `stats.std_deviation`.  Using((("standard error, calculating"))) this information, we can calculate the standard error:
 
 ................................
 std_err = std_deviation / count
