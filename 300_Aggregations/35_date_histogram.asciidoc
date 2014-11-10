@@ -15,18 +15,18 @@ a timestamp, you often want to build metrics which are expressed _over time_.
 - What was the average latency of our website every hour in the last week?
 
 While regular histograms are often represented as bar charts, date histograms
-tend to be converted into line graphs representing time series.  Many
+tend to be converted into line graphs representing time series.((("analytics", "over time")))  Many
 companies use Elasticsearch _solely_ for analytics over time-
 series data.  The `date_histogram` bucket is their bread and butter.
 
-The `date_histogram` bucket works very similar to the regular `histogram`.  Rather
+The `date_histogram` bucket works((("buckets", "date_histogram"))) very similar to the regular `histogram`.  Rather
 than building buckets based on a numeric field representing numeric ranges,
 it builds buckets based on a time ranges.  Each bucket is therefore defined as a
 certain calendar size (e.g. `1 month` or `2.5 days`, etc).
 
 .Can a regular histogram work with dates?
 ****
-Technically, yes.  A regular `histogram` bucket will work with dates.  However,
+Technically, yes.((("histogram bucket", "dates and")))  A regular `histogram` bucket will work with dates.  However,
 it is not calendar-aware.  With the `date_histogram`, you can specify intervals
 such as `1 month`, which knows that February is shorter than December.  The
 `date_histogram` also has the advantage of being able to work with timezones,
@@ -37,7 +37,7 @@ intervals in terms of milliseconds.  And the aggregation doesn't know about
 calendar intervals, which makes it largely useless for dates.
 ****
 
-Our first example will build a simple line chart to answer the question:
+Our first example ((("line charts, building from aggregations")))will build a simple line chart to answer the question:
 how many cars were sold each month?
 
 [source,js]
@@ -123,7 +123,7 @@ which represent months, a count of docs in each month, and our pretty "key_as_st
 
 Notice something odd about that last response?
 
-Yep, that's right.  We are missing a few months!  By default, the `date_histogram`
+Yep, that's right.((("buckets", "empty, returning")))  We are missing a few months!  By default, the `date_histogram`
 (and `histogram` too) only returns buckets which have a non-zero
 document count.
 
