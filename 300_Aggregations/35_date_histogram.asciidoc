@@ -159,10 +159,10 @@ GET /cars/transactions/_search?search_type=count
 <2> This parameter forces the entire year to be returned
 
 The two additional parameters will force the response to return all months in the
-year, regardless of their doc count.  The `min_doc_count` is very understandable:
+year, regardless of their doc count.((("min_doc_count parameter")))  The `min_doc_count` is very understandable:
 it forces buckets to be returned even if they are empty.
 
-The `extended_bounds` parameter requires a little explanation.  The `min_doc_count`
+The `extended_bounds` parameter requires a little explanation.((("extended_bounds parameter")))  The `min_doc_count`
 parameter forces empty buckets to be returned, but by default Elasticsearch will
 only return buckets that are between the minimum and maximum value in your data.
 
@@ -181,7 +181,7 @@ image::images/elas_29in01.png["Line chart of cars sold per month"]
 === Extended Example
 
 Just like we've seen a dozen times already, buckets can be nested in buckets for
-more sophisticated behavior.  For illustration, we'll build an aggregation
+more sophisticated behavior.((("buckets", "nested in other buckets", "extended example")))((("aggregations", "extended example")))  For illustration, we'll build an aggregation
 which shows the total sum of prices for all makes, listed by quarter.  Let's also
 calculate the sum of prices per individual make per quarter, so we can see
 which car type is bringing in the most money to our business:
@@ -265,7 +265,7 @@ Which returns a (heavily truncated) response:
 }
 --------------------------------------------------
 
-We can take this response and put it into a graph, showing a line chart for
+We can take this response and put it into a graph, ((("line charts, building from aggregations")))((("bar charts", "building from aggregations")))showing a line chart for
 total sale price, and a bar chart for each individual make (per quarter):
 
 [[date-histo-ts2]]
