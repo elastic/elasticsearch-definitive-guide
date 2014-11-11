@@ -173,10 +173,10 @@ you have the option for both.((("analyzed fields", "aggregations and")))
 ==== High Cardinality Memory Implications
 
 There is another reason to avoid aggregating analyzed fields -- high cardinality
-fields consume a large amount of memory when loaded into fielddata.  The
+fields consume a large amount of memory when loaded into fielddata.((("memory usage", "high-cardinality fields")))((("cardinality", "high-cardinality fields, memory use issues")))  The
 analysis process often (although not always) generates a large number of tokens,
 many of  which are unique.  This increases the overall cardinality of the field
-and contributes to more memory pressure.
+and contributes to more memory pressure.((("analysis", "high-cardinality fields, memory use issues")))
 
 Some types of analysis are *extremely* unfriendly with regards to memory.
 Consider an ngram analysis process.  The term "New York" might be ngram'ed into
