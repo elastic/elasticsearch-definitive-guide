@@ -2,7 +2,7 @@
 === Grandparents and grandchildren
 
 The parent-child relationship can extend across more than one generation --
-grandchildren can have grandparents -- but it requires an extra step to ensure
+grandchildren can ((("parent-child relationship", "grandparents and grandchildren")))((("grandparents and grandchildren")))have grandparents -- but it requires an extra step to ensure
 that documents from all generations are indexed on the same shard.
 
 Let's change our previous example to make the `country` type a parent of the
