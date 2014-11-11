@@ -15,7 +15,7 @@ do it depending on the bucket.
 === Intrinsic sorts
 
 These sort modes are "intrinsic" to the bucket...they operate on data that bucket((("sorting", "of multi-value buckets", "intrinsic sorts")))
-generates such as `doc_count`.  They share the same syntax but differ slightly
+generates such as `doc_count`.((("buckets", "multi-value, sorting", "intrinsic sorts")))  They share the same syntax but differ slightly
 depending on the bucket being used.
 
 Let's perform a `terms` aggregation but sort by `doc_count` ascending:
