@@ -2,7 +2,7 @@
 === Querying with indexed shapes
 
 With shapes that are often used in queries, it can be more convenient to store
-them in the index and to refer to them by name in the query.  Take our example
+them in the index and to refer to them by name in the query.((("indexed shapes, querying with")))((("geo-shapes", "querying with indexed shapes")))  Take our example
 of central Amsterdam in the previous example.  We could store it as a document
 of type `neighbourhood`.
 
