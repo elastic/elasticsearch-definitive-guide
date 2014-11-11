@@ -38,7 +38,7 @@ half the time this alone restores stability and performance.
 === TransportClient vs NodeClient
 
 If you are using Java, you may wonder when to use the TransportClient vs the
-NodeClient.((("NodeClient versus TransportClient")))((("TransportClient versus NodeClient")))  As discussed at the beginning of the book, the TransportClient
+NodeClient.((("clients")))((("NodeClient versus TransportClient")))((("TransportClient versus NodeClient")))  As discussed at the beginning of the book, the TransportClient
 acts as a communication layer between the cluster and your application.  It knows
 the API and can automatically round-robin between nodes, sniff the cluster for you,
 etc.  But it is "external" to the cluster, similar to the REST clients.
@@ -66,7 +66,7 @@ pose problems from a firewall perspective, etc.
 === Configuration Management
 
 If you use configuration management already (puppet, chef, ansible, etc) you can
-just skip this tip.
+just skip this tip.((("deployment", "configuration management")))((("configuration management")))
 
 If you don't use configuration management tools yet...you should!  Managing
 a handful of servers by parallel-ssh may work now, but it will become a nightmare
