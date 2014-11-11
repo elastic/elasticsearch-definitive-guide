@@ -2,7 +2,7 @@
 === Sorting by nested fields
 
 It is possible to sort by the value of a nested field, even though the value
-exists in a separate nested document.  In order to make the result more
+exists in a separate nested document. ((("nested fields, sorting by")))((("sorting", "by nested fields"))) In order to make the result more
 interesting, we will add another record:
 
 [source,json]
