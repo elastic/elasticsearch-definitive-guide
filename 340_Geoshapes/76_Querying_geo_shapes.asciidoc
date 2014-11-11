@@ -35,7 +35,7 @@ GET /attractions/landmark/_search
     Amsterdam.
 
 By default, the query (or filter -- they do the same job) looks for indexed
-shapes which intersect with the query shape.  The `relation` parameter can be
+shapes which intersect with the query shape. ((("relation parameter (geo-shapes)", "disjoint or within"))) The `relation` parameter can be
 set to `disjoint` to find indexed shapes which don't intersect with the query
 shape, or `within` to find indexed shapes that are completely contained by the
 query shape.
