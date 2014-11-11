@@ -2,9 +2,9 @@
 === Scale is not infinite
 
 Throughout this chapter we have spoken about many of the ways that
-Elasticsearch can scale. Most scaling problems can be solved by adding more
+Elasticsearch can scale. ((("scaling", "scale is not infinite")))Most scaling problems can be solved by adding more
 nodes. But there is one resource which is finite and should be treated with
-respect: the _cluster state_.
+respect: the _cluster state_.((("cluster state")))
 
 The cluster state is a data structure which holds cluster-level information,
 such as:
@@ -22,7 +22,7 @@ You can view the current cluster state with this request:
 GET /_cluster/state
 ------------------------------
 
-The cluster state exists on every node in the cluster, including client nodes.
+The cluster state exists on every node in the cluster,((("nodes", "cluster state"))) including client nodes.
 This is how any node can forward a request directly to the node that holds the
 requested data -- every node knows where every document lives.
 
