@@ -1,7 +1,7 @@
 [[geo-shape-caching]]
 === Geo-shape filters and caching
 
-The `geo_shape` query and filter perform the same function.  The query simply
+The `geo_shape` query and filter perform the same function.((("caching", "geo-shape filters and")))((("filters", "geo_shape")))((("geo-shapes", "geo_shape filters, caching and")))  The query simply
 acts as a filter -- any matching documents receive a relevance `_score` of
 `1`. Query results cannot be cached, but filter results can be.
 
