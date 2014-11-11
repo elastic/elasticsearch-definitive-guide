@@ -41,7 +41,7 @@ geo-points to be loaded into memory.((("geo-bounding-box filter", "optimization"
 whether the `lat` and `lon` values fall within the specified ranges, it can
 use the inverted index to do a ((("range filters")))glorified `range` filter.
 
-In order to use this optimization, the `geo_point` field must be mapped to
+In order to use this optimization, the `geo_point` field ((("latitude/longitude pairs", "geo-point fields mapped to index lat/lon values separately")))must be mapped to
 index the `lat` and `lon` values separately:
 
 [source,json]
