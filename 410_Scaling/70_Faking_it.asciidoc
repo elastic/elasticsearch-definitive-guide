@@ -1,7 +1,7 @@
 [[faking-it]]
 === Faking index-per-user with aliases
 
-To keep things simple and clean, we would like our application to believe that
+To keep things simple and clean, we would((("scaling", "faking index-per-user with aliases")))((("aliases, index")))((("index aliases"))) like our application to believe that
 we have a dedicated index per user -- or per forum in our example -- even if
 the reality is that we are using one big <<shared-index,shared index>>. To do
 that, we need some way to hide the `routing` value and the filter on
