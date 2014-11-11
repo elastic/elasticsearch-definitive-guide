@@ -2,7 +2,7 @@
 === Clusters are living, breathing creatures
 
 Once you get a cluster into production, you'll find that it takes on a life of its
-own.  Elasticsearch works hard to make clusters self-sufficient and "just work".
+own.  ((("clusters", "maintaining")))((("post-deployment", "clusters, rolling restarts and upgrades")))Elasticsearch works hard to make clusters self-sufficient and "just work".
 But a cluster still requires routine care and feeding, such as routine backups 
 and upgrades.
 
