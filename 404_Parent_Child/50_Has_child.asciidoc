@@ -62,7 +62,7 @@ score.((("parent-child relationship", "finding parents by their children", "min_
 ==== `min_children` and max_children
 
 The `has_child` query and filter both accept the `min_children` and
-`max_children` parameters,((("min_children parameter")))((("max_children parameter"))) which will only return the parent document if the
+`max_children` parameters,((("min_children parameter")))((("max_children parameter")))((("has_child query"))) which will only return the parent document if the
 number of matching children is within the specified range.
 
 This query will only match branches that have at least two employees:
@@ -91,7 +91,7 @@ enabled.
 .`has_child` filter
 **************************
 
-The `has_child` filter works in the same way as the `has_child` query, except
+The `has_child` filter works((("has_child filter"))) in the same way as the `has_child` query, except
 that it doesn't support the `score_mode` parameter. It can only be used in
 ``filter context'' -- such as inside a `filtered` query --  and they behaves
 like any other filter: it includes or excludes, but doesn't score.
