@@ -36,7 +36,7 @@ the geo-distance calculation on those points that fall within the bounding
 box.
 
 TIP: Do your users really require an accurate circular filter to be applied to
-their results? Using a rectangular <<geo-bounding-box,bounding box>> is much
+their results?((("geo-bounding-box filter", "using instead of geo_distance"))) Using a rectangular <<geo-bounding-box,bounding box>> is much
 more efficient than geo-distance and will usually serve their purposes just as
 well.
 
