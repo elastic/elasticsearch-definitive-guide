@@ -94,11 +94,11 @@ of movies that this user watched and recommended.
 
 ==== Recommending based on Popularity
 
-The first strategy we could take is trying to recommend movies based on popularity.
+The first strategy we could take is trying to recommend movies based on popularity.((("popularity", "movie recommendations based on")))
 Given a particular movie, we find all users that recommended that movie.  Then
 we aggregate all their recommendations and take the top five most popular.
 
-We can express that easily with a `terms` aggregation and some filtering.  Let's
+We can express that easily with a `terms` aggregation ((("terms aggregation", "movie recommendations (example)")))and some filtering.  Let's
 look at _Talladega Nights_, a comedy about NASCAR racing starring
 Will Ferrel.  Ideally, our recommender should find other comedies in a similar
 style (and more than likely also star Will Ferrel).
