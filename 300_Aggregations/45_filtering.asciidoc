@@ -159,7 +159,7 @@ instantly transform to show _only_ "green" as an option...not what the user want
 .Performance consideration
 ====
 _Only_ use a `post_filter` if you need to differentially filter search results 
-and aggregations. Sometimes people will use `post_filter` for regular searches.
+and aggregations. ((("post filter", "performance and")))Sometimes people will use `post_filter` for regular searches.
 
 Don't do this!  The nature of the `post_filter` means it runs _after_ the query,
 so any performance benefit of filtering (caches, etc) is lost completely.
