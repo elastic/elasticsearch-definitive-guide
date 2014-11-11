@@ -103,7 +103,7 @@ So far, we have a way to filter both the search results and aggregations (a
 (`filter` bucket).
 
 You may be thinking to yourself "hmm...is there a way to filter _just_ the search
-results but not the aggregation?".  The answer is to use a `post_filter`.
+results but not the aggregation?".((("filtering", "search results, not the aggregation")))((("post filter")))  The answer is to use a `post_filter`.
 
 This is a top-level search request element which accepts a filter.  The filter is
 applied _after_ the query has executed (hence the "post" moniker...it runs
