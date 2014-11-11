@@ -17,7 +17,7 @@ corpus of documents which grows slowly. Searches look for the most relevant
 documents, regardless of when they were created.
 
 Logging -- and other time-based data streams such as social-network activity
--- are very different in nature.  The number of documents in the index grows
+-- are very different in nature. ((("social-network activity"))) The number of documents in the index grows
 rapidly, often accelerating with time.  Documents are almost never updated,
 and searches mostly target the most recent documents.  As documents age, they
 lose value.
@@ -52,7 +52,7 @@ But this approach is *very inefficient*.  Remember that when you delete a
 document, it is only marked as deleted (see <<deletes-and-updates>>). It won't
 be physically deleted until the segment containing it is merged away.
 
-Instead, use an _index per-timeframe_. You could start out with an index per
+Instead, use an _index per-timeframe_. ((("index per-timeframe")))You could start out with an index per
 year -- `logs_2014` -- or per month -- `logs_2014-10`.  Perhaps, when your
 website gets really busy, you need to switch to an index per day --
 `logs_2014-10-24`.  Purging old data is easy -- just delete old indices.
@@ -65,7 +65,7 @@ one primary shard per week initially.  Later, maybe you need 5 primary shards
 per day.  It doesn't matter -- you can adjust to new circumstances at any
 time.
 
-Aliases can help to make switching indices more transparent.  For indexing,
+Aliases can help to make switching indices more transparent.((("aliases, index")))  For indexing,
 you can point `logs_current` to the index currently accepting new log events,
 and for searching, update `last_3_months` to point to all indices for the
 previous three months:
