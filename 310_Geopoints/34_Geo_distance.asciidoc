@@ -43,25 +43,25 @@ well.
 ==== Faster geo-distance calculations
 
 The distance between two points can be calculated using different algorithms,
-which trade performance for accuracy.
+which trade performance for accuracy.((("distance, calculating")))((("geo_distance filter", "faster geo_distance calculations")))
 
 `arc`::
 
 The slowest but most accurate is the `arc` calculation, which treats the world
-as a sphere.  Accuracy is still limited because the world isn't really a sphere.
+as a sphere.((("arc distance calculation")))  Accuracy is still limited because the world isn't really a sphere.
 
 `plane`::
 
-The `plane` calculation, which treats the world as if it were flat, is faster
+The `plane` calculation, which((("plane distance calculation"))) treats the world as if it were flat, is faster
 but less accurate. It is most accurate at the equator and becomes less
 accurate towards the poles.
 
 `sloppy_arc`::
 
-So called because it uses the `SloppyMath` Lucene class to trade accuracy for speed,
+So called because it uses the `SloppyMath` Lucene class to trade accuracy for speed,((("sloppy_arc distance calculation")))
 the `sloppy_arc` calculation uses the
 http://en.wikipedia.org/wiki/Haversine_formula[Haversine formula] to calculate
-distance. It is four to five times as fast as `arc`, and distances are 99.9% accurate.
+distance.((("Haversine formula (for distance)"))) It is four to five times as fast as `arc`, and distances are 99.9% accurate.
 This is the default calculation.
 
 You can specify a different calculation as follows:
@@ -97,7 +97,7 @@ fine.
 ==== geo_distance_range filter
 
 The only difference between the `geo_distance` and `geo_distance_range`
-filters is that the latter has a doughnut shape and excludes documents within
+filters((("geo_distance_range filter")))((("filtering", "by geo-points", "geo_distance_range filter"))) is that the latter has a doughnut shape and excludes documents within
 the central hole.
 
 Instead of specifying a single `distance` from the centre, you specify a
