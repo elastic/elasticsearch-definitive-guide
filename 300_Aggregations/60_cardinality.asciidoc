@@ -82,7 +82,7 @@ hashing your input and using the bits from the hash to make probabilistic estima
 on the cardinality.
 
 You don't need to understand the technical details (although if you're interested,
-the paper is a great read!), but you should be aware of the *properties* of the
+the paper is a great read!), but you ((("memory usage", "cardinality metric")))should be aware of the *properties* of the
 algorithm:
 
 - Configurable precision, which decides controls memory usage (more precise
