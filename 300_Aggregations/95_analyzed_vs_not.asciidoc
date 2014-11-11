@@ -179,7 +179,7 @@ many of  which are unique.  This increases the overall cardinality of the field
 and contributes to more memory pressure.((("analysis", "high-cardinality fields, memory use issues")))
 
 Some types of analysis are *extremely* unfriendly with regards to memory.
-Consider an ngram analysis process.  The term "New York" might be ngram'ed into
+Consider an ngram analysis process.((("n-grams", "memory use issues associated with")))  The term "New York" might be ngram'ed into
 the following tokens:
 
 - `ne`
