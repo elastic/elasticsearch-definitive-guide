@@ -18,7 +18,7 @@ in a future version.
 ==================================================
 
 Fielddata exists because inverted indices are only efficient for certain operations.
-The inverted index excels at finding documents which contain a term.  It does not
+The inverted index excels((("inverted index", "fielddata versus"))) at finding documents which contain a term.  It does not
 perform well in the opposite direction: determining which terms exist in a single
 document. Aggregations need this secondary access pattern.
 
@@ -69,7 +69,7 @@ columns to see which documents contain "brown".  We can very quickly see that
 `Doc_1` and `Doc_2` contain the token "brown".
 
 Then, for the aggregation portion, we need to find all the unique terms in
-`Doc_1`  and `Doc_2`.  Trying to do this with the inverted index would be a
+`Doc_1`  and `Doc_2`.((("aggregations", "fielddata", "using instead of inverted index")))  Trying to do this with the inverted index would be a
 very expensive process: we would have to iterate overy every term in the index
 and collect tokens from `Doc_1`  and `Doc_2` columns.  This would be very slow
 and scale poorly: as the number of terms and  documents grows, so would the
