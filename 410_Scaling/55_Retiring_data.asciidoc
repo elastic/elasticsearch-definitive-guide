@@ -23,7 +23,7 @@ do to help data age gracefully, before we decide to delete it completely.
 ==== Migrate old indices
 
 With logging data there is likely to be one ``hot'' index -- the index for
-today.((("indexes", "old, migrating")))  All new documents will be added to that index, and almost all queries
+today.((("indexes", "migrating old indexes")))  All new documents will be added to that index, and almost all queries
 will target that index.  It should use your best hardware.
 
 How does Elasticsearch know which servers are your best servers? You tell it,
@@ -97,7 +97,7 @@ catastrophic failure.  You may((("snapshot-restore API"))) want to backup the da
 ==== Closing old indices
 
 As indices get even older, they reach a point where they are almost never
-accessed.  We could delete them at this stage, but perhaps you want to keep
+accessed.((("indexes", "closing old indexes")))  We could delete them at this stage, but perhaps you want to keep
 them around just in case somebody asks for them in six months time.
 
 These indices can be closed -- they will still exist in the cluster, but they
@@ -121,7 +121,7 @@ POST /logs_2014-01-*/_open <3>
 [[archive-indices]]
 ==== Archiving old indices
 
-Finally, very old indices can be archived off to some long term storage like a
+Finally, very old indices ((("indexes", "archiving old indexes")))can be archived off to some long term storage like a
 shared disk or Amazon's S3 using the
 {ref}modules-snapshots.html[`snapshot-restore` API], just in case you may need
 to access them in the future.  Once a backup exists, the index can be deleted
