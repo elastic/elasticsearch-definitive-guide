@@ -15,9 +15,9 @@ To be more concrete, imagine that you are running a large website and it is your
 job to guarantee fast response times to visitors.  You must therefore monitor
 your website latency to determine if you are meeting your goal.
 
-A common metric to use in this scenario is the average latency.  But this is actually
+A common metric to use in this scenario is the average latency. ((("metrics", "for website latency monitoring"))) But this is actually
 a poor choice (despite being common), because averages can easily hide outliers.
-A median metric also suffers the same problem.  You could try a maximum, but this
+A median metric also suffers the same problem.((("mean/median metric")))  You could try a maximum, but this
 metric is easily skewed by just a single outlier.
 
 This graph visualizes the problem.  If you rely on simple metrics like mean or median, you might see a graph that looks like this:
@@ -25,7 +25,7 @@ This graph visualizes the problem.  If you rely on simple metrics like mean or m
 [[percentile-mean-median]]
 image::images/elas_33in01.png["Assessing website latency using mean/median"]
 
-Everything looks fine.  There is a slight bump, but nothing to be concerned about.
+Everything looks fine.  ((("perscentiles", "assessing website latency with")))There is a slight bump, but nothing to be concerned about.
 But if we load up the 99th percentile (the value which accounts for the slowest 1%
 of latencies), we see an entirely different story:
 
