@@ -2,11 +2,11 @@
 === Changing settings dynamically
 
 Many settings in Elasticsearch are dynamic, and modifiable through the API.
-Configuration changes that force a node (or cluster) restart are strenuously avoided.
+Configuration changes that force a node (or cluster) restart are strenuously avoided.((("post-deployment", "changing settings dynamically")))
 And while it's possible to make the changes through the static configs, we
 recommend that you use the API instead.
 
-The _Cluster Update_ API operates in two modes:
+The _Cluster Update_ API operates((("Cluster Update API"))) in two modes:
 
 - Transient: these changes are in effect until the cluster restarts.  Once
 a full cluster restart takes place, these settings are erased
