@@ -22,7 +22,7 @@ completely transparent way, without your application ever knowing that
 anything has changed.
 
 In <<index-aliases>>, we spoke about using an index alias to point to the
-current version of your index. ((("aliases, index"))) For instance, instead of naming your index
+current version of your index. ((("index aliases")))((("aliases, index"))) For instance, instead of naming your index
 `tweets`, name it `tweets_v1`.  Your application would still talk to `tweets`,
 but in reality that would be an alias which points to `tweets_v1`. This allows
 you to switch the alias to point to a newer version of the index on the fly.
