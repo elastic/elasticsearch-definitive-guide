@@ -15,7 +15,7 @@ the <<scan-scroll,`scroll`>> and <<bulk,`bulk`>> APIs would take less than a
 second.
 
 However, let's consider a more complex scenario where changes are common, far
-reaching, and, most importantly, concurrent.
+reaching, and, most importantly, concurrent.((("files", "searching for files in a particular directory")))
 
 In this example we are going to emulate a file system with directory trees in
 Elasticsearch, much like a filesystem on Linux: the root of the directory is
@@ -60,7 +60,7 @@ In order to support this, we need to index the path hierarchy:
 * `/clinton/projects`
 * `/clinton/projects/elasticsearch`
 
-This hierarchy can be generated automatically from the `path` field using the
+This hierarchy can be generated ((("path_hierarchy tokenizer")))automatically from the `path` field using the
 {ref}analysis-pathhierarchy-tokenizer.html[`path_hierarchy` tokenizer]:
 
 [source,json]
@@ -163,7 +163,7 @@ GET /fs/file/_search
 
 ==== Renaming files and directories
 
-So far so good.  Renaming a file is easy -- a simple `update` or `index`
+So far so good.((("optimistic concurrency control")))((("files", "renaming files and directories")))  Renaming a file is easy -- a simple `update` or `index`
 request is all that is required.  You can even use
 <<optimistic-concurrency-control,optimistic concurrency control>> to
 ensure that your change doesn't conflict with the changes from another user:
