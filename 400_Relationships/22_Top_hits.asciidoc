@@ -2,7 +2,7 @@
 === Field collapsing
 
 A common requirement is the need to present search results grouped by some
-field. We might want to return the most relevant blogposts *grouped* by the
+field. ((("field collapsing")))((("relationships", "field collapsing")))We might want to return the most relevant blogposts *grouped* by the
 user's name.  Grouping by name implies the need for a `terms` aggregation.  To
 be able to group on the user's *whole* name, the name field should be
 available in its original `not_analyzed` form, as explained in
@@ -135,7 +135,7 @@ The abbreviated response is shown below:
     the top results for that user.
 <4> The user buckets are sorted by the user's most relevant blogpost.
 
-Using the `top_hits` aggregation is the equivalent of running a query to
+Using the `top_hits` aggregation is the((("top_hits aggregation"))) equivalent of running a query to
 return the names of the users with the most relevant blogposts, then running
 the same query for each user, to get their best blogposts. But it is much more
 efficient.
