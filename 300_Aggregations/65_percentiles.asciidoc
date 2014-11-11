@@ -25,7 +25,7 @@ This graph visualizes the problem.  If you rely on simple metrics like mean or m
 [[percentile-mean-median]]
 image::images/elas_33in01.png["Assessing website latency using mean/median"]
 
-Everything looks fine.  ((("perscentiles", "assessing website latency with")))There is a slight bump, but nothing to be concerned about.
+Everything looks fine.  ((("percentiles", "assessing website latency with")))There is a slight bump, but nothing to be concerned about.
 But if we load up the 99th percentile (the value which accounts for the slowest 1%
 of latencies), we see an entirely different story:
 
