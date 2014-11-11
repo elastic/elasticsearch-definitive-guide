@@ -1,14 +1,14 @@
 [[parent-child]]
 == Parent-child relationship
 
-The _parent-child_ relationship is similar in nature to the
+The _parent-child_ relationship is ((("relationships", "parent-child")))((("parent-child relationship")))similar in nature to the
 <<nested-objects,nested model>> -- both allow you to associate one entity
-with another. The difference is that, with nested objects, all entities live
+with another. ((("nested objects", "parent-child relationships versus")))The difference is that, with nested objects, all entities live
 within the same document while, with parent-child, the parent and children
 are completely separate documents.
 
 The parent-child functionality allows you to associate one document type with
-another, in a _one-to-many_ relationship -- one parent to many children.   The
+another, in a _one-to-many_ relationship -- one parent to many children.((("one-to-many relationships")))   The
 advantages that parent-child has over <<nested-objects,`nested` objects>> are:
 
 * The parent document can be updated without reindexing the children.
@@ -39,7 +39,7 @@ setting to use <<doc-values,doc values>> by default instead.
 === Parent-child mapping
 
 All that is needed in order to establish the parent-child relationship, is to
-specify which document type should be the parent of a child type.  This must
+specify which document type should be the parent of a child type.((("mapping (types)", "parent-child")))((("parent-child relationship", "parent-child mapping")))  This must
 be done at index creation time, or with the `update-mapping` API before the
 child type has been created.
 
