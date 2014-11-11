@@ -15,7 +15,7 @@ To be more concrete, imagine that you are running a large website and it is your
 job to guarantee fast response times to visitors.  You must therefore monitor
 your website latency to determine if you are meeting your goal.
 
-A common metric to use in this scenario is the average latency. ((("metrics", "for website latency monitoring"))) But this is actually
+A common metric to use in this scenario is the average latency. ((("metrics", "for website latency monitoring")))((("average metric"))) But this is actually
 a poor choice (despite being common), because averages can easily hide outliers.
 A median metric also suffers the same problem.((("mean/median metric")))  You could try a maximum, but this
 metric is easily skewed by just a single outlier.
@@ -108,7 +108,7 @@ By default, the `percentiles` metric will return an array of pre-defined percent
 interested in -- the extreme percentiles at either end of the spectrum, and a
 few in the middle.  In the response, we see that the fastest latency is around 75ms,
 while the slowest is almost 600ms.  In contrast, the average is sitting near
-200ms, which is much less informative:
+200ms, which ((("average metric", "for website latency")))is much less informative:
 
 [source,js]
 ----
