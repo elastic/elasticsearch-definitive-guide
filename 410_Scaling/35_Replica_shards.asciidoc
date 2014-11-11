@@ -37,7 +37,7 @@ image::images/elas_4403.png["An index with two primary shards and one replica ca
 
 ==== Balancing load with replicas
 
-Search performance depends on the response times of the slowest node, so it is a good idea to try to balance out the load across all nodes. If we had
+Search performance depends on the response times of the slowest node, so it is a good idea to try to balance out the load across all nodes.((("replica shards", "balancing load with")))((("load balancing with replica shards"))) If we had
 added just one extra node instead of two, we would end up with two nodes having one shard each, and one node doing double the work with two shards.
 
 We can even things out by adjusting the number of replicas.  By allocating two
