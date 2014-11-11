@@ -31,8 +31,8 @@ between entities that live on different hardware is so expensive that it is
 just not practical. This places a limit on the amount of data that can be
 stored on a single server.
 
-Elasticsearch, like most NoSQL databases, treats the world as though it were
-flat. An index is a flat collection of independent documents. A single
+Elasticsearch, like((("NoSQL databases"))) most NoSQL databases, treats the world as though it were
+flat. An index is a flat collection of independent documents.((("indexes"))) A single
 document should contain all of the information that is required to decide
 whether it matches a search request or not.
 
@@ -49,7 +49,7 @@ This FlatWorld has its advantages:
    document is independent of the others.
 
 But relationships matter.  Somehow, we need to bridge the gap between
-FlatWorld and the real world. There are four common techniques used to manage
+FlatWorld and the real world.((("relationships", "techniques for managing relational data in Elasticsearch"))) There are four common techniques used to manage
 relational data in Elasticsearch, which we will be discussing:
 
 * <<application-joins,Application-side joins>>.
