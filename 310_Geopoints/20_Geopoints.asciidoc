@@ -33,7 +33,7 @@ PUT /attractions
 === Lat/Lon formats
 
 With the `location` field defined as a `geo_point`, we can proceed to index
-documents containing latitude/longitude pairs,((("geo-points", "location fields defined as, lat/lon formats")))((("location field", "defined as geo-point")))((("latitude/longitude pairs", "lat/lon formats for location fields defined as geo-points"))) which can be formatted as
+documents containing latitude/longitude pairs,((("geo-points", "location fields defined as, lat/lon formats")))((("location field", "defined as geo-point")))((("latitude/longitude pairs", "lat/lon formats for location fields defined as geo-points")))((("arrays", "lat/lon representation for geo-point location fields")))((("strings", "lat/lon representation for geo-point location fields")))((("objects", "lat/lon representation for geo-point location fields"))) which can be formatted as
 strings, arrays, or objects:
 
 [source,json]
