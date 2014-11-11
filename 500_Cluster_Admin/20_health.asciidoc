@@ -1,7 +1,7 @@
 
 === Cluster Health
 
-An Elasticsearch cluster may consist of a single node with a single index.  Or it
+An Elasticsearch cluster may consist of a single node with a single index.  Or it((("cluster health")))((("clusters", "administration", "Cluster Health API")))
 may have a hundred data nodes, three dedicated masters, a few dozen clients nodes
 ...all operating on a thousand indices (and tends of thousands of shards).
 
