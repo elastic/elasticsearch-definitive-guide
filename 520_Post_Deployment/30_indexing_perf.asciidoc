@@ -1,7 +1,7 @@
 [[indexing-performance]]
 === Indexing Performance Tips
 
-If you are in an indexing-heavy environment, such as indexing infrastructure
+If you are in an indexing-heavy environment,((("indexing", "performance tips")))((("post-deployment", "indexing performance tips"))) such as indexing infrastructure
 logs, you may be willing to sacrifice some search performance for faster indexing
 rates.  In these scenarios, searches tend to be relatively rare and performed
 by people internal to your organization.  They are willing to wait several
@@ -25,7 +25,7 @@ older versions due to the presence of bugs or performance defects.
 ==== Test performance scientifically
 
 Performance testing is always difficult, so try to be as scientific as possible
-in your approach.  Randomly fiddling with knobs and turning on ingestion is not
+in your approach.((("performance testing")))((("post-deployment", "performance testing")))  Randomly fiddling with knobs and turning on ingestion is not
 a good way to tune performance.  If there are too many "causes" then it is impossible
 to determine which one had the best "effect".
 
