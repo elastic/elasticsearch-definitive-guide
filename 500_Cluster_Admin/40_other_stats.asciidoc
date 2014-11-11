@@ -1,7 +1,7 @@
 
 === Cluster Stats
 
-The _Cluster Stats_ API provides very similar output to the Node Stats.  There
+The _Cluster Stats_ API provides very similar output to the Node Stats.((("clusters", "administration", "Cluster Stats API")))  There
 is one crucial difference: Node Stats shows you statistics per-node, while
 Cluster Stats will show you the sum total of all nodes in a single metric.
 
