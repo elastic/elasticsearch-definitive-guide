@@ -2,7 +2,7 @@
 === Finding parents by their children
 
 The `has_child` query and filter can be used to find parent documents based on
-the contents of their children.  For instance, we could find all branches that
+the contents of their children.((("parent-child relationship", "finding parents by their children")))  For instance, we could find all branches that
 have employees born after 1980 with a query like this:
 
 [source,json]
@@ -25,7 +25,7 @@ GET /company/branch/_search
 -------------------------
 
 Like the <<nested-query,`nested` query>>, the `has_child` query could
-potentially match several child documents, each with a different relevance
+potentially match several child documents,((("has_child query"))) each with a different relevance
 score. How these scores are reduced to a single score for the parent document
 depends on the `score_mode` parameter. The default setting is `none` which
 ignores the child scores and assigns a score of `1.0` to the parents, but it
