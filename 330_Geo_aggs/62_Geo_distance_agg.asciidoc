@@ -65,10 +65,10 @@ GET /attractions/restaurant/_search
     the greater New York area.
 <3> The `geo_distance` agg counts the number of results within
     1km of the user, and between 1km and 2km from the user.
-<4> Finally, the `post_filter` reduces((("post filter", "geo_distance aggregation"))) the search results to just
+<4> Finally, the `post_filter` reduces the search results to just
     those restaurants within 1km of the user.
 
-The response from the above request is as follows:
+The response from ((("post filter", "geo_distance aggregation")))the above request is as follows:
 
 [source,json]
 ----------------------------
