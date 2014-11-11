@@ -2,7 +2,7 @@
 === Monitoring individual nodes
 
 Cluster Health is at one end of the spectrum -- a very high-level overview of
-everything in your cluster.  The _Node Stats_ API is at the other end.  It provides
+everything in your cluster. ((("clusters", "administration", "monitoring individual nodes")))((("nodes", "monitoring individual nodes"))) The _Node Stats_ API is at the other end. ((("Node Stats API"))) It provides
 an bewildering array of statistics about each node in your cluster.
 
 Node Stats provides so many stats that, until you are accustomed to the output,
