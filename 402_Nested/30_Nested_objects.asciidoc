@@ -57,7 +57,7 @@ GET /_search
 <1> Alice is 31, not 28!
 
 The reason for this cross-object matching, as discussed in <<object-arrays>>,
-is that our beautifully structured JSON document is flattened into a simple
+is that our beautifully structured JSON document((("documents")))((("JSON documents"))) is flattened into a simple
 key-value format in the index which looks like this:
 
 [source,json]
