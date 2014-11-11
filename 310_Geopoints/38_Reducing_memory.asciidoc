@@ -2,11 +2,11 @@
 === Reducing memory usage
 
 Each `lat/lon` pair requires 16 bytes of memory, memory which is in short
-supply. It needs this much memory in order to provide very accurate results.
+supply.((("latitude/longitude pairs", "reducing memory usage by lat/lon pairs")))((("memory usage", "reducing for geo-points")))((("geo-points", "reducing memory usage"))) It needs this much memory in order to provide very accurate results.
 But as we have commented before, such exacting precision is seldom required.
 
 You can reduce the amount of memory that is used by switching to a
-`compressed` fielddata format and by specifying how precise you need your geo-
+`compressed` fielddata format and by((("fielddata", "compressed, using for geo-points"))) specifying how precise you need your geo-
 points to be.  Even reducing precision to `1mm` reduces memory usage by a
 third. A more realistic setting of `3m` reduces usage by 62%, and `1km` saves
 a massive 75%!
@@ -30,7 +30,7 @@ POST /attractions/_mapping/restaurant
 
 Alternatively, you can avoid using memory for geo-points altogether, either by
 using the technique described in <<optimize-bounding-box>>, or by storing
-geo-points as <<doc-values,doc values>>.
+geo-points ((("doc values", "storing geo-points as")))as <<doc-values,doc values>>.
 
 [source,json]
 ----------------------------
