@@ -2,14 +2,14 @@
 === Backing up your Cluster
 
 Like any software that stores data, it is important to routinely backup your
-data.  Elasticsearch replicas provide high-availability during runtime; they allow
+data. ((("clusters", "backing up")))((("post-deployment", "backing up your cluster")))((("backing up your cluster"))) Elasticsearch replicas provide high-availability during runtime; they allow
 you to tolerate sporadic node loss without an interruption of service.
 
 Replicas do not provide protection from catastrophic failure, however.  For that,
 you need a real backup of your cluster...a complete copy in case something goes
 wrong.
 
-To backup your cluster, you can use the _Snapshot_ API.  This will take the current
+To backup your cluster, you can use the _Snapshot_ API.((("snapshot-restore API")))  This will take the current
 state and data in your cluster and save it to a shared repository.  This
 backup process is "smart".  Your first snapshot will be a complete copy of data,
 but all subsequent snapshots will save the _delta_ between the existing
@@ -27,7 +27,7 @@ There are several repository types that you may choose from:
 
 ==== Creating the repository
 
-Let's set up a shared filesystem repository:
+Let's set up a shared ((("post-deployment", "creating the repository")))((("filesystem repository")))filesystem repository:
 
 [source,js]
 ----
