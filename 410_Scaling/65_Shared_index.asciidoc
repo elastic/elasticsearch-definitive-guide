@@ -1,7 +1,7 @@
 [[shared-index]]
 === Shared index
 
-We can use a large shared index for the many smaller forums by indexing
+We can use a large shared index for the many smaller ((("scaling", "shared index")))((("indexes", "shared")))forums by indexing
 the forum identifier in a field and using it as a filter:
 
 [source,json]
@@ -62,13 +62,13 @@ GET /forums/post/_search
 ------------------------------
 <1> The `term` filter is cached by default.
 
-This approach works, but we can do better.  The posts from a single forum
+This approach works, but we can do better. ((("shards", "routing a document to"))) The posts from a single forum
 would fit easily onto one shard but currently they are scattered across all 10
 shards in the index. This means that every search request has to be forwarded
 to a primary or replica of all 10 shards. What would be ideal is to ensure
 that all the posts from a single forum are stored on the same shard.
 
-In <<routing-value>>, we explained that a document is allocated to a
+In <<routing-value>>, we explained((("routing a document to a shard"))) that a document is allocated to a
 particular shard using this formula:
 
     shard = hash(routing) % number_of_primary_shards
