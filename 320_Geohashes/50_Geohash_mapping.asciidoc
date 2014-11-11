@@ -1,11 +1,11 @@
 [[geohash-mapping]]
 === Mapping geohashes
 
-The first step is to decide just how much precision you need.  While you could
+The first step is to decide just how much precision you need.((("geohashes", "mapping")))((("mapping (types)", "geohashes")))  While you could
 index all geo-points with the default full 12 levels of precision, do you
 really need to be accurate to within a few centimeters? You can save yourself
 a lot of space in the index by reducing your precision requirements to
-something more realistic, such as `1km`.
+something more realistic, such as `1km`.((("geohash_precision parameter")))((("geohash_prefix parameter")))
 
 [source,json]
 ----------------------------
