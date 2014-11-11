@@ -1,7 +1,7 @@
 [[hardware]]
 === Hardware
 
-If you've been following the normal development path, you've probably been playing
+If you've been following the normal development path, you've probably been playing((("deployment", "hardware")))((("hardware")))
 with Elasticsearch on your laptop, or a small cluster of machines laying around.
 But when it comes time to deploy Elasticsearch to production, there are a few
 recommendations that you should consider.  Nothing is a hard-and-fast rule;
@@ -11,7 +11,7 @@ production clusters
 
 ==== Memory
 
-If there is one resource that you will run out of first, it will likely be memory.
+If there is one resource that you will run out of first, it will likely be memory.((("hardware", "memory")))((("memory")))
 Sorting and aggregations can both be memory hungry, so enough heap space to
 accommodate these are important.  Even when the heap is comparatively small,
 extra memory can be given to the OS file system cache.  Because many data structures
