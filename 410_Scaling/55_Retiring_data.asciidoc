@@ -1,11 +1,11 @@
 [[retiring-data]]
 === Retiring data
 
-As time-based data ages, so it becomes less relevant.  It's possible that we
+As time-based data ages, so it becomes less relevant.((("scaling", "retiring data")))  It's possible that we
 will want to see what happened last week, last month, or even last year, but
 for the most part, we're only interested in the here and now.
 
-The nice thing about an index per-timeframe is that it makes it very easy to
+The nice thing about an index per-timeframe ((("index per-timeframe", "deleting old data and")))((("indexes", "deleting")))is that it makes it very easy to
 delete old data -- just delete the indices that are no longer relevant:
 
 [source,json]
@@ -23,7 +23,7 @@ do to help data age gracefully, before we decide to delete it completely.
 ==== Migrate old indices
 
 With logging data there is likely to be one ``hot'' index -- the index for
-today.  All new documents will be added to that index, and almost all queries
+today.((("indexes", "old, migrating")))  All new documents will be added to that index, and almost all queries
 will target that index.  It should use your best hardware.
 
 How does Elasticsearch know which servers are your best servers? You tell it,
@@ -63,7 +63,7 @@ POST /logs_2014-09-30/_settings
 [[optimize-indices]]
 ==== Optimize indices
 
-Yesterday's index is very unlikely to change.  Log events are static -- what
+Yesterday's index is very unlikely to change.((("indexes", "optimizing")))  Log events are static -- what
 happened in the past stays in the past.  If we merge each shard down to just a
 single segment, it'll use up fewer resources and will be quicker to query. We
 can do this with the <<optimize-api>>.
