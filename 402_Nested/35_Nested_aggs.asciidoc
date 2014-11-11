@@ -1,7 +1,7 @@
 [[nested-aggregation]]
 === Nested aggregations
 
-In the same way as we need to use the special `nested` query to gain access to
+In the same way as we need to use the special `nested` query ((("aggregations", "nested")))((("nested aggregation")))to gain access to
 nested objects at search time, the dedicated `nested` aggregation allows us to
 aggregate fields in nested objects.
 
