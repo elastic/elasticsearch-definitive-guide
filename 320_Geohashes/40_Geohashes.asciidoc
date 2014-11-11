@@ -49,5 +49,5 @@ along with  the approximate dimensions of each geohash cell:
 |=============================================
 
 The {ref}query-dsl-geohash-cell-filter.html[`geohash_cell` filter] can use
-these geohash prefixes to find locations near a specified `lat/lon` point.
+these geohash prefixes((("geohash_cell filter")))((("filters", "geohash_cell"))) to find locations near a specified `lat/lon` point.
 
