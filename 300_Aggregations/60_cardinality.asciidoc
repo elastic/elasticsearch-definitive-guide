@@ -127,13 +127,13 @@ counting millions of unique values.
 
 ==== Optimizing for speed
 If you want a distinct count, you _usually_ want to query your entire data-set
-(or nearly all of it).  Any operation on all your data needs to execute quickly,
+(or nearly all of it). ((("distinct counts", "optimizing for speed"))) Any operation on all your data needs to execute quickly,
 for obvious reasons. HyperLogLog is very fast already -- it simply
-hashes your data and does some bit-twiddling.
+hashes your data and does some bit-twiddling.((("HLL algorithm")))
 
 But if speed is very important to you, we can optimize it a little bit further.
 Since HLL simply needs the hash of the field, we can pre-compute that hash at
-index time.  When the query executes, we can skip the hash computation and load
+index time.((("hashes, pre-computing for cardinality metric")))  When the query executes, we can skip the hash computation and load
 the value directly out of fielddata.
 
 [NOTE]
