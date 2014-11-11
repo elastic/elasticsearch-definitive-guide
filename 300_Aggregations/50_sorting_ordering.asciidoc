@@ -126,11 +126,11 @@ You can define a path to a deeper, nested metric using angle brackets (`>`), lik
 so: `my_bucket>another_bucket>metric`
 
 The caveat is that each nested bucket in the path must be a "single value" bucket.
-A `filter` bucket produces a single bucket:  all documents which match the
+A `filter` bucket produces((("filter bucket"))) a single bucket:  all documents which match the
 filtering criteria.  Multi-valued buckets (such as `terms`) generate many
 dynamic buckets, which makes it impossible to specify a deterministic path.
 
-Currently there are only two single-value buckets: `filter` and `global`.  As 
+Currently there are only two single-value buckets: `filter` and `global`.((("global bucket")))  As 
 a quick example, let's build a histogram of car prices, but order the buckets
 by the variance in price of red and green (but not blue) cars in each price range.
 
