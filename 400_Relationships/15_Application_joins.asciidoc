@@ -1,8 +1,8 @@
 [[application-joins]]
 === Application-side joins
 
-We can (partly) emulate a relational database by implementing joins in our
-application. For instance, let's say we are indexing users and their
+We can (partly) emulate a relational((("relationships", "application-side joins")))((("application-side joins"))) database by implementing joins in our
+application. ((("joins", "application-side")))For instance, let's say we are indexing users and their
 blogposts.  In the relational world, we would do something like this:
 
 [source,json]
