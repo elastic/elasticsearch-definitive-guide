@@ -36,7 +36,7 @@ Geo-filters are expensive -- they should be used on as few documents as
 possible. First remove as many documents as you can with cheaper filters, like
 `term` or `range` filters, and apply the geo filters last.
 
-The <<bool-filter,`bool` filter>> will do this for you automatically. First it
+The <<bool-filter,`bool` filter>> will do this for you automatically.((("bool filter", "applying cheaper filters before geo-filters"))) First it
 applies any bitset-based filters (see <<filter-caching>>) to exclude as many
 documents as it can as cheaply as possible.  Then it applies the more
 expensive geo or script filters to each remaining document in turn.
