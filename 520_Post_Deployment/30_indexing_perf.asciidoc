@@ -157,7 +157,7 @@ to less disk IO overhead and better indexing rates.
 Finally, there are some other considerations to keep in mind:
 
 - If you don't need near-realtime accuracy on your search results, consider
-dropping the `index.refresh_interval` of((("indexes", "refresh_interval")))((("refresh_interval setting")))((("post-deployment", "other considerations"))) each index to `30s`.  If you are doing
+dropping the `index.refresh_interval` of((("indexing", "performance tips", "other considerations")))((("refresh_interval setting"))) each index to `30s`.  If you are doing
 a large import, you can disable refreshes by setting this value to `-1` for the
 duration of the import.  Don't forget to re-enable it when you are done!
 
