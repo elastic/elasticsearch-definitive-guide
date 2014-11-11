@@ -1,7 +1,7 @@
 
 == Approximate Aggregations
 
-Life is easy if all of your data fits on a single machine.  Classic algorithms
+Life is easy if all of your data fits on a single machine.((("aggregations", "approximate")))  Classic algorithms
 taught in CS201 will be sufficient for all your needs.  But if all your data fits
 on a single machine, there would be no need for distributed software
 like Elasticsearch at all.  But once you start distributing data, algorithm
@@ -41,7 +41,7 @@ and give you exact answers...but it may take a week to give you that answer
 exact, results
 
 Elasticsearch currently supports two approximate algorithms (`cardinality` and 
-`percentiles`).  These will give you accurate results but not 100% exact.
+`percentiles`). ((("approximate algorithms")))((("cardinality")))((("percentiles"))) These will give you accurate results but not 100% exact.
 In exchange for a little bit of estimation error, these algorithms give you
 fast execution and a very small memory footprint.
 
