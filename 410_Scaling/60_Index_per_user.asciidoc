@@ -17,7 +17,7 @@ own documents.
 Some users have more documents than others and some users will have heavier
 search loads than others, so the ability to specify how many primary shards
 and replica shards each index should have fits well with the index-per-user
-model. Similarly, busier indices can be allocated to stronger boxes with shard
+model.((("index-per-user model")))((("primary shards", "number per-index"))) Similarly, busier indices can be allocated to stronger boxes with shard
 allocation filtering. (See <<migrate-indices>>.)
 
 TIP: Don't just use the default number of primary shards for every index.
