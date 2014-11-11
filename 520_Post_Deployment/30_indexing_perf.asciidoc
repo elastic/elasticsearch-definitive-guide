@@ -70,7 +70,7 @@ will need to store all the bulks in memory while processing.
 
 ==== Storage
 
-- Use SSDs.  As mentioned elsewhere, they are superior to spinning media
+- Use SSDs.  As mentioned elsewhere, ((("storage")))((("post-deployment", "storage")))they are superior to spinning media
 - Use RAID 0.  Striped RAID will increase disk IO, at the obvious expense of
 potential failure if a drive dies.  Don't use "mirrored" or "parity" RAIDS since
 replicas provide that functionality
@@ -84,7 +84,7 @@ than local drives.
 [[segments-and-merging]]
 ==== Segments and Merging
 
-Segment merging is computationally expensive, and can eat up a lot of Disk IO.
+Segment merging is computationally expensive,((("post-deployment", "segments and merging")))((("merging segments")))((("segments", "merging"))) and can eat up a lot of Disk IO.
 Merges are scheduled to operate in the background because they can take a long
 time to finish, especially large segments.  This is normally fine, because the
 rate of large segment merges is relatively rare.
@@ -157,7 +157,7 @@ to less disk IO overhead and better indexing rates.
 Finally, there are some other considerations to keep in mind:
 
 - If you don't need near-realtime accuracy on your search results, consider
-dropping the `index.refresh_interval` of each index to `30s`.  If you are doing
+dropping the `index.refresh_interval` of((("post-deployment", "other considerations"))) each index to `30s`.  If you are doing
 a large import, you can disable refreshes by setting this value to `-1` for the
 duration of the import.  Don't forget to re-enable it when you are done!
 
