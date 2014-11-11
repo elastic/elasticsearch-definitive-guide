@@ -29,7 +29,7 @@ is sufficient for the majority of cases.
 
 In exceptional cases, you may find that you need to support a large number of
 users, all with similar needs.  An example might be hosting a search engine
-for thousands of email forums.  Some forums may have a huge amount of traffic,
+for thousands of email forums. ((("forums, resource allocation for"))) Some forums may have a huge amount of traffic,
 but the majority of forums are quite small.  Dedicating an index with a single
 shard to a small forum is overkill -- a single shard could hold the data for
 many forums.
