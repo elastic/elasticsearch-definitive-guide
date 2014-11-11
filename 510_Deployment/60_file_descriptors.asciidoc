@@ -1,9 +1,9 @@
 
 === File Descriptors and MMap 
 
-Lucene uses a _very_ large number of files.  At the same time, Elasticsearch
+Lucene uses a _very_ large number of files. ((("deployment", "file descriptors and MMap"))) At the same time, Elasticsearch
 uses a large number of sockets to communicate between nodes and HTTP clients.
-All of this requires available file descriptors.
+All of this requires available file descriptors.((("file descriptors")))
 
 Sadly, many modern linux distributions ship with a paltry 1024 file descriptors
 allowed per process.  This is _far_ too low for even a small Elasticsearch
@@ -45,7 +45,7 @@ GET /_nodes/process
 <1> The `max_file_descriptors` field will inform you how many available descriptors
 the Elasticsearch process can access
 
-Elasticsearch also uses a mix of NioFS and MMapFS for the various files.  Ensure
+Elasticsearch also uses a mix of NioFS and MMapFS ((("MMapFS")))for the various files.  Ensure
 that the maximum map count so that there is ample virtual memory available for 
 mmapped files.  This can be set temporarily with:
 
