@@ -94,7 +94,7 @@ take the union of the two sets.
 [TIP]
 ==================================================
 
-The fielddata cache is per-segment. In other words, when a new segment becomes
+The fielddata cache is per-segment.((("segments", "fielddata cache")))((("caching", "fielddata"))) In other words, when a new segment becomes
 visible to search, the fielddata caches from old segments remain valid. Only
 the data for the new segment needs to be loaded into memory.
 
@@ -110,7 +110,7 @@ decreases fielddata's memory footprint, or increases execution speed.
 [NOTE]
 ==================================================
 
-Fielddata is not just used for aggregations.  It is required for any
+Fielddata is not just used for aggregations.((("fielddata", "uses other than aggregations")))  It is required for any
 operation that needs to look up the value contained in a specific document.
 Besides aggregations, this includes sorting, scripts which access field
 values, parent-child relationships (see <<parent-child>>), and certain types
