@@ -2,7 +2,7 @@
 == Geohashes
 
 http://en.wikipedia.org/wiki/Geohash[Geohashes] are a way of encoding
-`lat/lon` points as strings.((("geohashes")))((("latitude/longitude pairs", "encoding lat/lon points as strings with geohashes")))((("strings", "lat/lon points encoded as, using geohashes")))  The original intention was to have a
+`lat/lon` points as strings.((("geohashes")))((("latitude/longitude pairs", "encoding lat/lon points as strings with geohashes")))((("strings", "geohash")))  The original intention was to have a
 URL-friendly way of specifying geolocations, but geohashes have turned out to
 be a useful way of indexing geo-points and geo- shapes in databases.
 
