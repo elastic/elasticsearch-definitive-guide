@@ -53,7 +53,7 @@ gobble up whatever is leftover.
 
 [[compressed_oops]]
 ==== Don't cross 32gb!
-There is another reason to not allocate enormous heaps to Elasticsearch. As it turns
+There is another reason to not allocate enormous heaps to Elasticsearch. As it turns((("32gb Heap boundary")))
 out, the JVM uses a trick to compress object pointers when heaps are less than
 ~32gb.
 
@@ -68,9 +68,9 @@ is more "wasted" space simply because the pointer is larger.  And worse than was
 space, the larger pointers eat up more bandwidth when moving values between
 main memory and various caches (LLC, L1, etc).
 
-Java uses a trick called "https://wikis.oracle.com/display/HotSpotInternals/CompressedOops[compressed oops]"
+Java uses a trick called "https://wikis.oracle.com/display/HotSpotInternals/CompressedOops[compressed oops]"((("compressed oops")))
 to get around this problem.  Instead of pointing at exact byte locations in
-memory, the pointers reference _object offsets_.  This means a 32bit pointer can
+memory, the pointers reference _object offsets_.((("object offsets")))  This means a 32bit pointer can
 reference 4 billion _objects_, rather than 4 billion bytes.  Ultimately, this
 means the heap can grow to around 32gb of physical size while still using a 32bit
 pointer.
@@ -112,7 +112,7 @@ to the same physical machine (since this would remove the benefits of replica HA
 
 ==== Swapping is the death of performance
 
-It should be obvious, but it bears spelling out clearly: swapping main memory
+It should be obvious,((("memory", "swapping as the death of performance")))((("swapping, the death of performance"))) but it bears spelling out clearly: swapping main memory
 to disk will _crush_ server performance.  Think about it...an in-memory operation
 is one that needs to execute quickly.
 
