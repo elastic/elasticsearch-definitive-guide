@@ -2,7 +2,7 @@
 == Sorting multi-value buckets
 
 Multi-value buckets -- like the `terms`, `histogram` and `date_histogram` -- 
-dynamically produce many buckets.  How does Elasticsearch decide what order
+dynamically produce many buckets.((("buckets", "multi-value, sorting")))  How does Elasticsearch decide what order
 these buckets are presented to the user?
 
 By default, buckets are ordered by `doc_count` in descending order.  This is a
