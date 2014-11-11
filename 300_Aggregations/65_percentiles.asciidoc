@@ -1,7 +1,7 @@
 [[percentiles]]
 === Calculating Percentiles
 
-The other approximate metric offered by Elasticsearch is the `percentiles` metric.
+The other approximate metric offered by Elasticsearch is the `percentiles` metric.((("percentiles")))((("aggregations", "approximate", "percentiles")))((("approximate algorithms", "percentiles")))
 Percentiles show the point at which a certain percentage of observed values occur.
 For example, the 95th percentile is the value which is greater than 95% of the
 data.
