@@ -144,7 +144,7 @@ about start/stop time, duration, recover percentage, bytes transferred, etc.
 
 ==== Canceling a Restore
 
-To cancel a restore, you need to delete the indices being restored.  Because
+To cancel a restore, you need to delete the indices being restored.((("restoring from a snapshot", "canceling a restore")))  Because
 a restore process is really just shard recovery, issuing a Delete Index API
 alters the cluster state, which will in turn halt recovery.  For example:
 
