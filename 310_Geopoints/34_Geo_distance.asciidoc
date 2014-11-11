@@ -97,7 +97,7 @@ fine.
 ==== geo_distance_range filter
 
 The only difference between the `geo_distance` and `geo_distance_range`
-filters((("geo_distance_range filter")))((("filtering", "by geo-points", "geo_distance_range filter"))) is that the latter has a doughnut shape and excludes documents within
+filters((("geo_distance_range filter")))((("filtering", "by geo-points", "geo_distance_range filter")))((("ranges", "geo_distance_range filter"))) is that the latter has a doughnut shape and excludes documents within
 the central hole.
 
 Instead of specifying a single `distance` from the centre, you specify a
