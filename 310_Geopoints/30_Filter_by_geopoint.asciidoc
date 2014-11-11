@@ -1,7 +1,7 @@
 [[filter-by-geopoint]]
 === Filtering by geo-point
 
-Four geo-filters filters can be used to include or exclude documents by
+Four geo-filters filters ((("geo-points", "filtering by")))((("filtering", "by geo-points")))can be used to include or exclude documents by
 geo-location:
 
 <<geo-bounding-box,`geo_bounding_box`>>::
