@@ -21,7 +21,7 @@ GET _cluster/stats
 
 === Index Stats
 
-So far, we have been looking at _node-centric_ statistics.((("indexes", "index statistics in Cluster Stats")))  How much memory does 
+So far, we have been looking at _node-centric_ statistics.((("indexes", "index statistics")))((("clusters", "administration", "index stats")))  How much memory does 
 this node have?  How much CPU is being used?  How many searches is this node
 servicing?  Etc. etc.
 
@@ -62,7 +62,7 @@ the first tool to reach for.
 
 === Pending Tasks
 
-There are certain tasks that only the master can perform, such as creating a new 
+There are certain tasks that only the master can perform, such as creating a new ((("clusters", "administration", "Pending Tasks API")))
 index or moving shards around the cluster.  Since a cluster can only have one
 master, only one node can ever process cluster-level metadata changes.  In 
 99.9999% of the time, this is never a problem.  The queue of metadata changes
@@ -72,7 +72,7 @@ In some _very rare_ clusters, the number of metadata changes occurs faster than
 the master can process them.  This leads to a build up of pending actions which
 are queued.
 
-The _Pending Tasks_ API will show you what (if any) cluster-level metadata changes
+The _Pending Tasks_ API ((("Pending Tasks API")))will show you what (if any) cluster-level metadata changes
 are pending in the queue:
 
 [source,js]
