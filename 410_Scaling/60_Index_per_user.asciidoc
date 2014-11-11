@@ -2,14 +2,14 @@
 === User-based data
 
 Often, users start using Elasticsearch because they need to add full text
-search or analytics to an existing application.  They create a single index
+search or analytics to an existing application.((("scaling", "user-based data")))((("user-based data")))  They create a single index
 which holds all of their documents.  Gradually, others in the company realise
 how much benefit Elasticsearch brings, and they want to add their data to
 Elasticsearch as well.
 
 Fortunately, Elasticsearch supports
 http://en.wikipedia.org/wiki/Multitenancy[multitenancy] so each new user can
-have their own index in the same cluster.  Occasionally, somebody will want to
+have their own index in the same cluster.((("mulltitenancy")))  Occasionally, somebody will want to
 search across the documents for all users, which they can do by searching
 across all indices, but most of the time, users are only interested in their
 own documents.
