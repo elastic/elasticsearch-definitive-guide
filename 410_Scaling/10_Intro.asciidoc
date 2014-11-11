@@ -1,7 +1,7 @@
 [[scale]]
 == Designing for scale
 
-Elasticsearch is used by some companies to index and search petabytes of data
+Elasticsearch is used by some companies to index ((("scaling", "designing for scale")))and search petabytes of data
 every day, but most of us start out with something a little more humble in
 size. Even if we aspire to be the next Facebook, it is unlikely that our bank
 balance matches our aspirations.  We need to build for what we have today, but
