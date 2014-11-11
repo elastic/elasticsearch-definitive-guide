@@ -38,7 +38,7 @@ near the edge of a geohash cell, then the filter may well exclude any
 restaurants in the adjacent cell.
 
 To fix that, we can tell the filter to include the neigbouring cells, by
-setting `neighbors` to `true`:
+setting `neighbors` to((("neighbors setting (geohash_cell)"))) `true`:
 
 [source,json]
 ----------------------------
@@ -75,7 +75,7 @@ of about 1.2km x 0.6km.  You may find it more understandable to specify an
 actual length like `5` or `6`.
 
 The other advantage that this filter has over a `geo_bounding_box` filter is
-that it supports multiple locations per field.  The `lat_lon` option that we
+that it supports multiple locations per field.((("latitude/longitude pairs", "multiple lat/lon points per field, geohash_cell")))  The `lat_lon` option that we
 discussed in <<optimize-bounding-box>> is very efficient, but only when there
 is a single `lat/lon` point per field.
 
