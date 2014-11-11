@@ -47,7 +47,7 @@ SSDs are the way to go.
 
 .Check your IO Scheduler
 ****
-If you are using SSDs, make sure your OS I/O Scheduler is configured correctly.
+If you are using SSDs, make sure your OS I/O Scheduler is((("I/O scheduler"))) configured correctly.
 When you write data to disk, the I/O Scheduler decides when that data is
 _actually_ sent to the disk.  The default under most *nix distributions is a
 scheduler called `cfq` (Completely Fair Queuing).
@@ -81,7 +81,7 @@ point of failure.
 
 ==== Network
 
-A fast and reliable network is obviously important to performance in a distributed
+A fast and reliable network is obviously important to performance in a distributed((("hardware", "network")))((("network")))
 system.  Low latency helps assure that nodes can communicate easily, while
 high bandwidth helps shard movement and recovery.  Modern datacenter networking
 (1gigE, 10gigE) is sufficient for the vast majority of clusters.
@@ -102,7 +102,7 @@ managing cross-datacenter clusters is simply not worth the cost.
 
 ==== General Considerations
 
-It is possible nowadays to obtain truly enormous machines.  Hundreds of gigabytes
+It is possible nowadays to obtain truly enormous machines.((("hardware", "general considerations")))  Hundreds of gigabytes
 of RAM with dozens of CPU cores.  Conversely, it is also possible to spin up
 thousands of small virtual machines in cloud platforms such as EC2.  Which
 approach is best?
