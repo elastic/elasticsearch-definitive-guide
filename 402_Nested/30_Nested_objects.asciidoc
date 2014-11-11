@@ -3,7 +3,7 @@
 
 Given the fact that creating, deleting and updating a single document in
 Elasticsearch is atomic, it makes sense to store closely related entities
-within the same document.  For instance, we could store an order and all of
+within the same document.((("nested objects")))((("objects", "nested")))  For instance, we could store an order and all of
 its order lines in one document, or we could store a blogpost and all of its
 comments together, by passing an array of `comments`:
 
