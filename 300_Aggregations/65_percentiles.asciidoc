@@ -304,11 +304,11 @@ specific value(s) that you are interested in.
 ==== Understanding the Trade-offs
 
 Like cardinality, calculating percentiles requires an approximate algorithm.
-The naive implementation would maintain a sorted list of all values...but this
+The naive((("percentiles", "understanding the tradeoffs")))((("approximate algorithms", "percentiles", "understanding the tradeoffs"))) implementation would maintain a sorted list of all values...but this
 clearly is not possible when you have billions of values distributed across
 dozens of nodes.
 
-Instead, percentiles uses an algorithm called TDigest (introduced by Ted Dunning
+Instead, percentiles uses an algorithm called((("TDigest algorithm"))) TDigest (introduced by Ted Dunning
 in https://github.com/tdunning/t-digest/blob/master/docs/t-digest-paper/histo.pdf[Computing Accurate Quantiles using T-Digests]). Like HyperLogLog, it isn't
 necessary to understand the full technical details, but it is good to know
 the properties of the algorithm:
