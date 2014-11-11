@@ -1,7 +1,7 @@
 [[querying-geo-shapes]]
 === Querying geo-shapes
 
-The unusual thing about the {ref}query-dsl-geo-shape-query.html[`geo_shape`
+The unusual thing ((("geo-shapes", "querying")))about the {ref}query-dsl-geo-shape-query.html[`geo_shape`
 query] and {ref}query-dsl-geo-shape-filter.html[`geo_shape` filter] is that
 they allow us to query using shapes, rather than just points.
 
