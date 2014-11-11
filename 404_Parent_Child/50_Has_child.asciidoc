@@ -56,13 +56,13 @@ GET /company/branch/_search
 TIP: The default `score_mode` of `none` is significantly faster than the other
 modes because Elasticsearch doesn't need to calculate the score for each child
 document.  Only set it to `avg`, `min`, `max`, or `sum` if you care about the
-score.
+score.((("parent-child relationship", "finding parents by their children", "min_children and max_children")))
 
 [[min-max-children]]
 ==== `min_children` and max_children
 
 The `has_child` query and filter both accept the `min_children` and
-`max_children` parameters, which will only return the parent document if the
+`max_children` parameters,((("min_children parameter")))((("max_children parameter"))) which will only return the parent document if the
 number of matching children is within the specified range.
 
 This query will only match branches that have at least two employees:
