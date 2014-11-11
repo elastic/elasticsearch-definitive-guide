@@ -49,7 +49,7 @@ Works only with `histogram` and `date_histogram`
 
 === Sorting by a metric
 
-Often, you'll find yourself wanting to sort based on a metric's calculated value.
+Often, you'll find yourself wanting to sort based on a metric's calculated value.((("buckets", "multi-value, sorting", "by a metric")))((("metrics", "sorting multi-value buckets by")))((("sorting", "of multi-value buckets", "sorting by a metric")))
 For our car sales analytics dashboard, we may want to build a bar chart of
 sales by car color, but order the bars by the average price ascending.
 
