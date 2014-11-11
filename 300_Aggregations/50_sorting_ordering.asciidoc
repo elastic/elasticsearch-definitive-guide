@@ -39,7 +39,7 @@ GET /cars/transactions/_search?search_type=count
 // SENSE: 300_Aggregations/50_sorting_ordering.json
 <1> Using the `_count` keyword, we can sort by `doc_count` ascending
 
-We introduce a "order" object into the aggregation, which allows us to sort on
+We introduce a "order" object((("order parameter (aggregations)"))) into the aggregation, which allows us to sort on
 one of several values:
 
 - `_count`: Sort by document count.  Works with `terms`, `histogram`, `date_histogram`
@@ -86,7 +86,7 @@ the name of the metric.  Some metrics, however, emit multiple values.  The
 `extended_stats` metric is a good example: it provides half a dozen individual 
 metrics.
 
-If you want to sort on a multi-value metric, you just need to use the
+If you want to sort on a multi-value metric,((("metrics", "sorting multi-value buckets by", "multi-value metric"))) you just need to use the
 dot-path to the metric of interest:
 
 [source,js]
