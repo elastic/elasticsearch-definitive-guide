@@ -119,7 +119,7 @@ with the least variance in price will appear before those that have more varianc
 === Sorting based on "deep" metrics
 
 In the prior examples, the metric was a direct child of the bucket.  An average
-price was calculated for each term.((("buckets", "multi-value, sorting", "on deep metrics")))((("metrics", "sorting multi-value buckets by", "deep metrics")))  It is possible to sort on "deeper" metrics,
+price was calculated for each term.((("buckets", "multi-value, sorting", "on deep metrics")))((("metrics", "sorting multi-value buckets by", "deeper, nested metrics")))  It is possible to sort on "deeper" metrics,
 which are grandchildren or great-grandchildren of the bucket...with some limitations.
 
 You can define a path to a deeper, nested metric using angle brackets (`>`), like
