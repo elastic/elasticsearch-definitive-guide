@@ -2,7 +2,7 @@
 === Multiple indices
 
 Finally, remember that there is no rule that limits your application to using
-only a single index.  When we issue a search request, it is forwarded to a
+only a single index.((("scaling", "using multiple indexes")))((("indexes", "multiple")))  When we issue a search request, it is forwarded to a
 copy (a primary or a replica) of all the shards in an index.  If we issue the
 same search request on multiple indices, the exact same thing happens -- there
 are just more shards involved.
@@ -22,7 +22,7 @@ completely transparent way, without your application ever knowing that
 anything has changed.
 
 In <<index-aliases>>, we spoke about using an index alias to point to the
-current version of your index.  For instance, instead of naming your index
+current version of your index. ((("aliases, index"))) For instance, instead of naming your index
 `tweets`, name it `tweets_v1`.  Your application would still talk to `tweets`,
 but in reality that would be an alias which points to `tweets_v1`. This allows
 you to switch the alias to point to a newer version of the index on the fly.
