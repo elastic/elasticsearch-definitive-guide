@@ -2,7 +2,7 @@
 === Fielddata
 
 Aggregations work via a data structure known as _fielddata_ (briefly introduced
-in <<fielddata-intro>>).  Fielddata is often the largest consumer of memory
+in <<fielddata-intro>>).  ((("fielddata")))((("memory usage", "fielddata")))Fielddata is often the largest consumer of memory
 in an Elasticsearch cluster, so it is important to understand how it works.
 
 [TIP]
@@ -10,7 +10,7 @@ in an Elasticsearch cluster, so it is important to understand how it works.
 ==================================================
 
 Fielddata can be loaded on-the-fly into memory, or built at index time and
-stored on disk.  Later, we will talk about on-disk fielddata in
+stored on disk.((("fielddata", "loaded into memory vs. on disk")))  Later, we will talk about on-disk fielddata in
 <<doc-values>>. For now we will focus on in-memory fielddata as it is
 currently the default mode of operation in Elasticsearch. This may well change
 in a future version.
