@@ -142,7 +142,7 @@ returns success.  If it is different, the `assert false` throws an exception
 and we know that the lock has failed.
 
 Once all locks have been successfully created, the rename operation can begin.
-Afterwards, we must release all of the locks, which we can do with a
+Afterwards, we must release((("delete-by-query request"))) all of the locks, which we can do with a
 `delete-by-query` request:
 
 [source,json]
