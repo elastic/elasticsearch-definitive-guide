@@ -2,7 +2,7 @@
 === Restoring from a snapshot
 
 Once you've backed up some data, restoring it is very easy: simply add `_restore`
-to the ID of the snapshot you wish to restore into your cluster:
+to the ID of((("post-deployment", "restoring from a snapshot")))((("restoring from a snapshot"))) the snapshot you wish to restore into your cluster:
 
 [source,js]
 ----
@@ -11,7 +11,7 @@ POST _snapshot/my_backup/snapshot_1/_restore
 
 The default behavior is to restore all indices that exist in that snapshot.
 If `snapshot_1` contains five different indices, all five will be restored into
-our cluster.  Like the Snapshot API, it is possible to select which indices
+our cluster. ((("indexes", "restoring from a snapshot"))) Like the Snapshot API, it is possible to select which indices
 we want to restore.
 
 There are also additional options for renaming indices.  This allows you to
@@ -56,7 +56,7 @@ POST _snapshot/my_backup/snapshot_1/_restore?wait_for_completion=true
 ==== Monitoring Restore operations
 
 The restoration of data from a repository piggybacks on the existing recovery
-mechanisms already in place in Elasticsearch.  Internally, recovering shards
+mechanisms already in place in Elasticsearch.((("restoring from a snapshot", "monitoring restore operations")))  Internally, recovering shards
 from a repository is identical to recovering from another node.
 
 If you wish to monitor the progress of a restore, you can use the Recovery
