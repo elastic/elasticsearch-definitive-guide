@@ -2,7 +2,7 @@
 === Capacity planning
 
 If 1 shard is too few and 1,000 shards are too many, how do I know how many
-shards I need?
+shards I need?((("shards", "determining number you need")))((("capacity planning")))((("scaling", "capacity planning")))
 
 This is a question that is impossible to answer in the general case. There are
 just too many variables:  the hardware that you use, the size and complexity
