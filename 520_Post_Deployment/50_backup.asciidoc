@@ -77,7 +77,7 @@ of the existing repository
 
 ==== Snapshotting all open indices
 
-A repository can contain multiple snapshots.  Each snapshot is associated with a
+A repository can contain multiple snapshots.((("indexes", "open, snapshots on")))((("backing up your cluster", "snapshots on all open indexes")))  Each snapshot is associated with a
 certain set of indices (all indices, some subset, a single index, etc).  When
 creating a snapshot, you specify which indices you are interested in and
 give the snapshot a unique name.
@@ -113,7 +113,7 @@ may take a long time to return!
 
 ==== Snapshotting particular indices
 
-The default behavior is to back up all open indices.  But say you are using marvel,
+The default behavior is to back up all open indices.((("indexes", "snapshotting particular")))((("backing up your cluster", "snapshotting particular indexes")))  But say you are using marvel,
 and don't really want to backup all the diagnostic `.marvel` indices.  You
 just don't have enough space to backup everything.
 
@@ -131,7 +131,7 @@ This snapshot command will now backup only `index1` and `index2`.
 
 ==== Listing information about snapshots
 
-Once you start accumulating snapshots in your repository, you may forget the details
+Once you start accumulating snapshots in your repository, you may forget the details((("backing up your cluster", "listing information about snapshots")))
 relating to each...particularly when the snapshots are named based on time
 demarcations (`backup_2014_10_28`, etc).
 
