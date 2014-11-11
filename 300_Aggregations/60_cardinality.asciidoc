@@ -127,7 +127,7 @@ counting millions of unique values.
 
 ==== Optimizing for speed
 If you want a distinct count, you _usually_ want to query your entire data-set
-(or nearly all of it). ((("distinct counts", "optimizing for speed"))) Any operation on all your data needs to execute quickly,
+(or nearly all of it). ((("cardinality", "optimizing for speed")))((("distinct counts", "optimizing for speed"))) Any operation on all your data needs to execute quickly,
 for obvious reasons. HyperLogLog is very fast already -- it simply
 hashes your data and does some bit-twiddling.((("HLL algorithm")))
 
