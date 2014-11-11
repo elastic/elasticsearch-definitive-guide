@@ -52,7 +52,7 @@ We can't use simple scoping here, since there are two different criteria.  The
 search results must match "ford", but the aggregation results must match "ford"
 AND "sold > now - 1M".
 
-To solve this problem, we can use a special bucket called `filter`.  You specify
+To solve this problem, we can use a special bucket called `filter`.((("filter bucket")))((("buckets", "filter")))  You specify
 a filter, and when documents match the filter's criteria, they are added to the
 bucket.
 
