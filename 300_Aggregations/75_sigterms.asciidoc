@@ -283,7 +283,7 @@ discriminating recommender.
 
 Now that the scene is set, let's try using SigTerms.  SigTerms will analyze
 the group of people that enjoy _Talladega Nights_ (the "foreground" group) and 
-determine what movies are most popular.  It will then construct a list of
+determine what movies are most popular. ((("statistics, movie recommendations based on (example)"))) It will then construct a list of
 popular films for everyone (the "background" group) and compare the two.
 
 The statistical anomalies will be the movies that are _over represented_ in the
@@ -325,7 +325,7 @@ SigTerms will use the entire index as the "background", so we don't need to do
 anything special.
 
 The results come back as a list of buckets similar to `terms`, but with some
-extra metadata:
+extra ((("buckets", "returned by SigTerms aggregation")))metadata:
 
 [source,js]
 ----
