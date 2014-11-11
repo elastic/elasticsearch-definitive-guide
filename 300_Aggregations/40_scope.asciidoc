@@ -144,12 +144,12 @@ update in real-time.  Try that with Hadoop!
 
 You'll often want your aggregation to be scoped to your query.  But sometimes
 you'll want to search for some subset of data, but aggregate across _all_ of
-your data.
+your data.((("aggregations", "scoping", "global bucket")))((("scope", "scoping aggregations", "using a global bucket")))
 
 For example, say you want to know the average price for Ford cars compared to the
 average price of _all_ cars. We can use a regular aggregation (scoped to the query) 
 to get the first piece of information.  The second piece of information can be 
-obtained by using a `global` bucket.
+obtained by using((("buckets", "global")))((("global bucket"))) a `global` bucket.
 
 The global bucket will contain _all_ of your documents, regardless of the query 
 scope; it bypasses the scope completely.  Because it is a bucket, you can nest
