@@ -2,7 +2,7 @@
 === Java Virtual Machine
 
 You should always run the most recent version of the Java Virtual Machine (JVM),
-unless otherwise stated on the Elasticsearch website.  Elasticsearch, and in
+unless otherwise stated on the Elasticsearch website.((("deployment", "Java Virtual Machine (JVM)")))((("JVM (Java Virtual Machine)")))((("Java Virtual Machine (JVM)")))  Elasticsearch, and in
 particular Lucene, is a very demanding piece of software.  The unit and integration
 tests from Lucene often expose bugs in the JVM itself.  These bugs range from
 mild annoyances to serious segfaults, so it is best to use the latest version
