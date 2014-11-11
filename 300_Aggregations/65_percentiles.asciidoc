@@ -216,7 +216,7 @@ statistics, and we know that 50% of the EU zone is seeing 300ms+ latencies.
 
 ==== Percentile Ranks
 
-There is another, closely related metric called `percentile_rank`.  The
+There is another, closely ((("approximate algorithms", "percentiles", "percentile ranks")))((("percentiles", "percentile ranks")))related metric called `percentile_rank`.  The
 `percentiles` metric tells you the value at which X% is less than.  The `percentile_ranks`
 tells you what percentile a specific value belongs too.  It is basically a two-
 way relationship depending on what data you need.  For example:
