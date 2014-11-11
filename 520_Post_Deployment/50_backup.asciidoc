@@ -184,7 +184,7 @@ GET _snapshot/my_backup/_all
 
 ==== Deleting Snapshots
 
-Finally, we need a command to delete old snapshots that are no longer useful.
+Finally, we need a command to delete old snapshots that ((("backing up your cluster", "deleting old snapshots")))are no longer useful.
 This is simply a DELETE HTTP call to the repo/snapshot name:
 
 [source,js]
@@ -306,7 +306,7 @@ could not be completed.  Check your logs for more information
 
 ==== Canceling a Snapshot
 
-Finally, you may want to cancel a snapshot or restore.  Since these are long running
+Finally, you may want to cancel a snapshot or restore.((("backing up your cluster", "canceling a snapshot")))  Since these are long running
 processes, a typo or mistake when executing the operation could take a long time to
 resolve...and use up valuable resources at the same time.
 
