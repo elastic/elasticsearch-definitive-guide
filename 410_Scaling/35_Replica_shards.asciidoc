@@ -2,7 +2,7 @@
 === Replica shards
 
 Up until now we have spoken only about primary shards, but we have another
-tool in our belt: replica shards.  The main purpose of replicas is for
+tool in our belt: replica shards.((("scaling", "replica shards")))((("shards", "replica")))((("replica shards")))  The main purpose of replicas is for
 failover, as discussed in <<distributed-cluster>>: if the node holding a
 primary shard dies, then a replica is promoted to the role of primary.
 
