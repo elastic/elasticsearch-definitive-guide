@@ -168,7 +168,7 @@ In practice, this kind of problem is very easy to spot.  Your aggregations
 will simply return strange buckets and you'll remember the analysis issue.
 It is a generalization, but there are not many instances where you want to use
 an analyzed  field in an aggregation.  When in doubt, add a multi-field so that
-you have the option for both.
+you have the option for both.((("analyzed fields", "aggregations and")))
 
 ==== High Cardinality Memory Implications
 
