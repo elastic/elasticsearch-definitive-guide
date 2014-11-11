@@ -13,7 +13,7 @@ surpise to you -- to manage((("relational databases", "managing relationships"))
 
 *   Entities are _normalized_. The data for a unique entity is stored only
     once, and related entities store just its primary key. Changing the data of
-    an entity only has to happen in one place.
+    an entity only has to happen in one place.((("joins", "in relational databases")))
 
 *   Entities can be joined at query time, allowing for cross-entity search.
 
