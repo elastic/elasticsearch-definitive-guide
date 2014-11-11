@@ -1,7 +1,7 @@
 [[geo-caching]]
 === Caching geo-filters
 
-The results of geo-filters are not cached by default, for two reasons:
+The results of geo-filters are not cached by default,((("caching", "of geo-filters")))((("filters", "caching geo-filters")))((("geo-filters, caching"))) for two reasons:
 
 1.  Geo-filters are usually used to find entities that are near to a user's
     current location. The problem is that users move, and that no two users
@@ -20,10 +20,10 @@ York is not interested in restaurants in San Francisco.  We can treat New York
 as a ``hot spot'' and draw a big bounding box around the city and neighbouring
 areas.
 
-This `geo_bounding_box` filter can be cached and reused whenever we have a
+This `geo_bounding_box` filter can be cached and((("geo_bounding_box filter", "caching and reusing"))) reused whenever we have a
 user within the city limits of New York.  It will exclude all restaurants
 from the rest of the country. We can then use an uncached more specific
-`geo_bounding_box` or `geo_distance` filter to narrow the remaining results
+`geo_bounding_box` or `geo_distance` filter((("geo_distance filter"))) to narrow the remaining results
 down to those which are close to the user.
 
 [source,json]
