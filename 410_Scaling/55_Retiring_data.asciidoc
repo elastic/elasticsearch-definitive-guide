@@ -73,7 +73,7 @@ the `strong` boxes, as the optimization process could swamp the I/O on those
 nodes and impact the indexing of today's logs.  But the `medium` boxes aren't
 doing very much at all, so we are safe to optimize.
 
-Yesterday's index may have replica shards. If we issue an optimize request, it
+Yesterday's index may have replica shards.((("replica shards", "index optimization and"))) If we issue an optimize request, it
 will optimize the primary shard and the replica shards, which is a waste.
 Instead, we can remove the replicas temporarily, optimize, then restore the
 replicas:
@@ -90,7 +90,7 @@ POST /logs_2014-09-30/_settings
 -------------------------
 
 Of course, without replicas, we run the risk of losing data if a disk suffers
-catastrophic failure.  You may want to backup the data first, with the
+catastrophic failure.  You may((("snapshot-restore API"))) want to backup the data first, with the
 {ref}modules-snapshots.html[`snapshot-restore` API].
 
 [[close-indices]]
