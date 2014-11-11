@@ -3,7 +3,7 @@
 
 In order for aggregations (or any operation that requires access to field
 values) to be fast, ((("aggregations", "limiting memory usage")))access to fielddata must be fast, which is why it is
-loaded into memory. ((("fielddata")))((("memory usage, limiting"))) But loading too much data into memory will cause slow
+loaded into memory. ((("fielddata")))((("memory usage", "limiting for aggregations", id="ix_memagg"))) But loading too much data into memory will cause slow
 garbage collections as the JVM tries to find extra space in the heap, or
 possibly even an OutOfMemory exception.
 
@@ -248,7 +248,7 @@ used.  This is done for a variety of technical reasons (e.g. the heap may look
 "full" but is actually just garbage waiting to be collected, which is hard to
 estimate properly). But as the end-user, this means the setting needs to be
 conservative, since it is comparing against total heap, not ``free'' heap.
-
+((("memory usage", "limiting for aggregations", startref ="ix_memagg")))
 
 
 
