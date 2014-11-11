@@ -2,10 +2,10 @@
 === The unit of scale
 
 In <<dynamic-indices>> we explained that a shard is a _Lucene index_ and that
-an Elasticsearch index is a collection of shards. Your application talks to an
+an Elasticsearch index is a collection of shards.((("scaling", "shard as unit of scale"))) Your application talks to an
 index, and Elasticsearch routes your requests to the appropriate shards.
 
-A shard is the _unit of scale_.  The smallest index you can have is one with a
+A shard is the _unit of scale_. ((("shards", "as unit of scale"))) The smallest index you can have is one with a
 single shard.  This may be more than sufficient for your needs -- a single
 shard can hold a lot of data -- but it limits your ability to scale.
 
