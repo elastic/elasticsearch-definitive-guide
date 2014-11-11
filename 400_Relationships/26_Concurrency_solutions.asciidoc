@@ -18,11 +18,11 @@ One of two things will happen. Either:
     the other user.
 
 The problem is that Elasticsearch does not support
-http://en.wikipedia.org/wiki/ACID_transactions[ACID transactions].  Changes to
+http://en.wikipedia.org/wiki/ACID_transactions[ACID transactions].((("ACID transactions", "not supported in Elasticsearch")))  Changes to
 individual documents are ACIDic, but not changes involving multiple documents.
 
 If your main data store is a relational database, and Elasticsearch is simply
-being used as a search engine or as a way to improve performance, then make
+being used as a search engine((("relational databases", "Elasticsearch used with"))) or as a way to improve performance, then make
 your changes in the database first and replicate those changes to
 Elasticsearch once they have succeeded. This way you benefit from the ACID
 transactions available in the database and all changes to Elasticsearch happen
@@ -48,7 +48,7 @@ principles using some external system instead of Elasticsearch.
 ==== Global lock
 
 We can avoid concurrency issues completely by only allowing one process to
-make changes at any time.  Most changes will only involve a few files and will
+make changes at any time.((("locking", "global lock")))((("global lock")))  Most changes will only involve a few files and will
 complete very quickly.  A rename of a top-level directory may block all other
 changes for longer, but these are likely to be much less frequent.
 
@@ -81,7 +81,7 @@ parallelism by making our locking more fine-grained.
 ==== Document locking
 
 Instead of locking the whole file system, we could lock individual documents
-using the same technique as above.  A process could use a
+using the same technique as above.((("locking", "document locking")))((("document locking")))  A process could use a
 <<scan-scroll,scan-and-scroll>> request to retrieve the IDs of all documents
 that would be affected by the change, and would need to create a lock file for
 each of them:
@@ -170,7 +170,7 @@ locking with much less work.
 ==== Tree locking
 
 Rather than locking every involved document, as in the previous option, we
-could lock just part of the directory tree.  We will need exclusive access
+could lock just part of the directory tree.((("locking", "tree locking")))  We will need exclusive access
 to the file or directory which we want to rename, which can be achieved with an
 ``exclusive lock'' document:
 
