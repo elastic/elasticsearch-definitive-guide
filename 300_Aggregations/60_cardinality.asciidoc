@@ -2,7 +2,7 @@
 === Finding Distinct Counts
 
 The first approximate aggregation provided by Elasticsearch is the `cardinality`
-metric.((("cardinality", "finding distinct counts")))((("aggregations", "approximate", "cardinality")))((("distinct counts")))  This provides the cardinality of a field, also called "distinct" or
+metric.((("cardinality", "finding distinct counts")))((("aggregations", "approximate", "cardinality")))((("approximate algorithms", "cardinality")))((("distinct counts")))  This provides the cardinality of a field, also called "distinct" or
 "unique" count. ((("unique counts"))) You may be familiar with the SQL version:
 
 [source, sql]
@@ -77,7 +77,7 @@ GET /cars/transactions/_search?search_type=count
 
 ==== Understanding the Tradeoffs
 As mentioned at the top of this chapter, the `cardinality` metric is an approximate
-algorithm.  It is based on the http://static.googleusercontent.com/media/research.google.com/fr//pubs/archive/40671.pdf[HyperLogLog++] (HLL) algorithm.  HLL works by
+algorithm. ((("cardinality", "understanding the tradeoffs"))) It is based on the http://static.googleusercontent.com/media/research.google.com/fr//pubs/archive/40671.pdf[HyperLogLog++] (HLL) algorithm.((("HLL algorithm")))  HLL works by
 hashing your input and using the bits from the hash to make probabilistic estimations
 on the cardinality.
 
