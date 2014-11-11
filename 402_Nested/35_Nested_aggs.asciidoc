@@ -75,7 +75,7 @@ The results show that aggregation has happened at the nested document level:
 [[reverse-nested-aggregation]]
 ==== reverse_nested aggregation
 
-A `nested` aggregation can only access the fields within the nested document -
+A `nested` aggregation can only access((("aggregations", "nested", "reverse_nested aggregation")))((("reverse_nested aggregation"))) the fields within the nested document -
 it can't see fields in the root document or in a different nested document.
 However, we can ``step out'' of the nested scope back into the parent with a
 `reverse_nested` aggregation.
