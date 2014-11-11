@@ -91,7 +91,7 @@ algorithm:
 - Fixed memory usage. No matter if there are thousands or billions of unique
 values, memory usage only depends on the configured precision.
 
-To configure the precision, you must specify the `precision_threshold` parameter.((("precision", "configuring on cardinality metric")))
+To configure the precision, you must specify the `precision_threshold` parameter.((("precision_threshold parameter (cardinality metric)")))
 This threshold defines the point under which cardinalities are expected to be very
 close to accurate.  So for example:
 
