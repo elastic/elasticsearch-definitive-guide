@@ -2,9 +2,9 @@
 [[aggregations-and-analysis]]
 === Aggregations and Analysis
 
-Some aggregations, such as the `terms` bucket, operate on string fields.  And
+Some aggregations, such as the `terms` bucket, operate((("analysis", "aggregations and")))((("aggregations", "and analysis"))) on string fields.  And
 string fields may be either `analyzed` or `not_analyzed`, which begs the question:
-how does analysis affect aggregations?
+how does analysis affect aggregations?((("strings", "analyzed or not_analyzed string fields")))((("not_analyzed fields")))((("analyzed fields")))
 
 The answer is "a lot", but it is best shown through an example.  First, index
 some documents representing some different states in the US:
