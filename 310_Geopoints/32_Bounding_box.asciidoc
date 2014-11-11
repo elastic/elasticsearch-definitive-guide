@@ -37,7 +37,7 @@ GET /attractions/restaurant/_search
 ==== Optimizing bounding boxes
 
 The `geo_bounding_box` is the one geo-filter which doesn't require all
-geo-points to be loaded into memory.((("geo-bounding-box filter", "optimization")))  Because all it has to do is to check
+geo-points to be loaded into memory.((("geo_bounding_box filter", "optimization")))  Because all it has to do is to check
 whether the `lat` and `lon` values fall within the specified ranges, it can
 use the inverted index to do a ((("range filters")))glorified `range` filter.
 
