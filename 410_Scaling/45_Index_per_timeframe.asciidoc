@@ -1,14 +1,14 @@
 [[time-based]]
 === Time-based data
 
-One of the most common use cases for Elasticsearch is for logging,((("time-based data")))((("scaling", "time-based data and"))) so common
-in fact that Elasticsearch provides an integrated logging platform called the
+One of the most common use cases for Elasticsearch is for logging,((("logging, use of Elasticsearch for")))((("time-based data")))((("scaling", "time-based data and"))) so common
+in fact that Elasticsearch provides an integrated((("ELK stack"))) logging platform called the
 ELK stack --  Elasticsearch, Logstash, and Kibana -- to make the process easy.
 
 http://www.elasticsearch.org/overview/logstash[Logstash] collects, parses, and
-enriches logs before indexing them into Elasticsearch.  Elasticsearch acts as
+enriches logs before indexing them into Elasticsearch.((("Logstash")))  Elasticsearch acts as
 a centralised logging server, and
-http://www.elasticsearch.org/overview/kibana[Kibana] is a graphic frontend
+http://www.elasticsearch.org/overview/kibana[Kibana] is a((("Kibana"))) graphic frontend
 which makes it easy to query and visualise what is happening across your
 network in near real-time.
 
