@@ -1,7 +1,7 @@
 [[mapping-geo-shapes]]
 === Mapping geo-shapes
 
-Like fields of type `geo_point`, geo-shapes have to be mapped explicitly
+Like fields of type `geo_point`, geo-shapes((("mapping (types)", "geo-shapes")))((("geo-shapes", "mapping"))) have to be mapped explicitly
 before they can be used:
 
 [source,json]
@@ -27,7 +27,7 @@ There are two important settings that you should consider changing:
 
 ==== precision
 
-The `precision` parameter controls the maximum length of the geohashes that
+The `precision` parameter ((("geo-shapes", "precision")))((("precision parameter", "geo-shapes")))controls the maximum length of the geohashes that
 are generated.  It defaults to a precision of `9`, which equates to a
 <<geohashes,geohash>> with dimensions of about 5m x 5m. That is probably far
 more precise than you actually need.
@@ -44,7 +44,7 @@ ultimately these distances are converted to the same levels as described in
 ==== distance_error_pct
 
 When indexing a polygon, the big central continuous part can be represented
-cheaply by a short geohash.  It is the edges that matter. Edges require much
+cheaply by a short geohash.((("distance_error_pct (geo-shapes)")))((("geo-shapes", "distance_error_pct parameter")))  It is the edges that matter. Edges require much
 smaller geohashes to represent them with any accuracy.
 
 If you're indexing a small landmark, you want the edges to be quite accurate.
