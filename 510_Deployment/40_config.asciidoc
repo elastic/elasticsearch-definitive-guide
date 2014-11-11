@@ -24,7 +24,7 @@ there is no way to set a good default (e.g. it depends on your cluster layout).
 
 ==== Assign names
 
-Elasticseach by default starts a cluster named `elasticsearch`.  It is wise
+Elasticseach by default starts a cluster named `elasticsearch`. ((("configuration changes, important", "assigning names"))) It is wise
 to rename your production cluster to something else, simply to prevent accidents
 where someone's laptop joins the cluster.  A simple change to `elasticsearch_production`
 can save a lot of heartache.
@@ -56,7 +56,7 @@ node.name: elasticsearch_005_data
 
 ==== Paths
 
-By default, Elasticsearch will place the plugins, logs and --
+By default, Elasticsearch will place the plugins,((("configuration changes, important", "paths")))((("paths"))) logs and --
 most importantly -- your data in the installation directory.  This can lead to
 unfortunate accidents, where the installation directory is accidentally overwritten
 by a new installation of ES. If you aren't careful, you can erase all of your data.
@@ -89,7 +89,7 @@ data between the different directories, boosting performance
 ==== Minimum Master Nodes
 
 This setting, called `minimum_master_nodes` is _extremely_ important to the
-stability of your cluster.  This setting helps prevent "split brains", a situation
+stability of your cluster.((("configuration changes, important", "minimum_master_nodes setting")))((("minimum_master_nodes setting")))  This setting helps prevent "split brains", a situation
 where two masters exist in a single cluster.
 
 When you have a split-brain, your cluster is at danger of losing data.  Because
@@ -102,7 +102,7 @@ This setting tells Elasticsearch to not elect a master unless there are enough
 master-eligible nodes available.  Only then will an election take place.
 
 This setting should always be configured to a quorum (majority) of your master-
-eligible nodes.  A quorum is `(number of master-eligible nodes / 2) + 1`.
+eligible nodes.((("quorum")))  A quorum is `(number of master-eligible nodes / 2) + 1`.
 Some examples:
 
 - If you have ten regular nodes (can hold data, can become master), a quorum is
@@ -147,7 +147,7 @@ remove master-eligible nodes.
 ==== Recovery settings
 
 There are several settings which affect the behavior of shard recovery when
-your cluster restarts.  First, we need to understand what happens if nothing is
+your cluster restarts.((("recovery settings")))((("configuration changes, important", "recovery settings")))  First, we need to understand what happens if nothing is
 configured.
 
 Imagine you have 10 nodes, and each node holds a single shard -- either a primary
@@ -210,7 +210,7 @@ of hours.
 
 ==== Prefer Unicast over Multicast
 
-Elasticsearch is configured to use multicast discovery out of the box.  Multicast
+Elasticsearch is configured to use multicast discovery out of the box.  Multicast((("configuration changes, important", "preferring unicast over multicast")))((("unicast, preferring over multicast")))((("multicast versus unicast")))
 works by sending UDP pings across your local network to discover nodes.  Other
 Elasticsearch nodes will receive these pings and respond.  A cluster is formed
 shortly after.
