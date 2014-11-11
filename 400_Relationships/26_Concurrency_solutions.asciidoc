@@ -2,7 +2,7 @@
 === Solving concurrency issues
 
 The problem comes when we want to allow more than one person to rename files
-or directories *at the same time*.  Imagine that you rename the `/clinton`
+or directories *at the same time*. ((("concurrency", "solving concurrency issues")))((("relationships", "solving concurrency issues"))) Imagine that you rename the `/clinton`
 directory, which contains hundreds of thousands of files.  Meanwhile, another
 user renames the single file `/clinton/projects/elasticsearch/README.txt`.
 Their change, although it started after yours, will probably finish more
