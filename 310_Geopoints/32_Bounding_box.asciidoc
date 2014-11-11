@@ -2,7 +2,7 @@
 === geo_bounding_box filter
 
 This is by far the most performant geo-filter because its calculation is very
-simple. ((("geo-bounding-box filter")))((("filtering", "by geo-points", "geo-bounding-box filter"))) You provide it with the `top`, `bottom`, `left`, and `right`
+simple. ((("geo_bounding_box filter")))((("filtering", "by geo-points", "geo_bounding_box filter"))) You provide it with the `top`, `bottom`, `left`, and `right`
 coordinates of a rectangle and all it does is compare the latitude with the
 left and right coordinates, and the longitude with the top and bottom
 coordinates.
