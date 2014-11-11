@@ -2,14 +2,14 @@
 === Practical considerations
 
 Parent-child joins can be a useful technique for managing relationships when
-index-time performance is more important than search-time performance, but it
+index-time performance((("parent-child relationship", "performance and"))) is more important than search-time performance, but it
 comes at a significant cost.  Parent-child queries can be 5 to 10 times slower
 than the equivalent nested query!
 
 ==== Memory use
 
 At the time of going to press, the parent-child ID map is still held in
-memory.  There are plans to change the map to use doc values instead, which
+memory.((("parent-child relationship", "memory usage")))((("memory usage", "parent-child ID map")))  There are plans to change the map to use doc values instead, which
 will be a big memory saving. Until that happens, you need to be aware of the
 following:
 
@@ -18,7 +18,7 @@ every child document requires 8 bytes (a long value) of memory.  Actually,
 it's a bit less thanks to compression, but this gives you a rough idea.
 
 You can check how much memory is being used by the parent-child cache by
-consulting the `indices-stats` API (for a summary at the index level) or the
+consulting ((("indices-stats API")))the `indices-stats` API (for a summary at the index level) or the
 `node-stats` API (for a summary at the node level):
 
 [source,json]
@@ -29,7 +29,7 @@ GET /_nodes/stats/indices/id_cache?human <1>
 
 ==== Global ordinals and latency
 
-Parent-child uses <<global-ordinals,global ordinals>> to speed up joins.
+Parent-child uses <<global-ordinals,global ordinals>> to speed((("global ordinals")))((("parent-child relationship", "global ordinals and latency"))) up joins.
 Regardless of whether the parent-child map uses an in-memory cache or on-disk
 doc values, global ordinals still need to be rebuilt after any change to the
 index.
@@ -41,7 +41,7 @@ each parent, rather than many parents and few children.
 Global ordinals, by default, are built lazily: the first parent-child query or
 aggregation after a refresh will trigger building of global ordinals.  This
 can introduce a significant latency spike for your users.  You can use
-<<eager-global-ordinals,`eager_global_ordinals`>> to shift the cost of
+<<eager-global-ordinals,`eager_global_ordinals`>> to((("eager global ordinals"))) shift the cost of
 building global ordinals from query time to refresh time, by mapping the
 `_parent` field as follows:
 
@@ -66,7 +66,7 @@ PUT /company
     becomes visible to search.
 
 With many parents, global ordinals can take several seconds to build.  In this
-case, it makes sense to increase the `refresh_interval` so that refreshes
+case, it makes sense to increase the `refresh_interval` so((("refresh_interval setting"))) that refreshes
 happen less often and global ordinals remain valid for longer. This will
 greatly reduce the CPU cost of rebuilding global ordinals every second.
 
@@ -74,14 +74,14 @@ greatly reduce the CPU cost of rebuilding global ordinals every second.
 
 
 The ability to join multiple generations (see <<grandparents>>) sounds very
-attractive until you think of the costs involved:
+attractive until ((("grandparents and grandchildren")))((("parent-child relationship", "multi-generations")))you think of the costs involved:
 
 * The more joins you have, the worse performance will be.
 * Each generation of parents needs to have their string `_id` fields stored in
   memory, which can consume a lot of RAM.
 
 As you consider your relationship schemes and if parent-child is right for you, 
-consider this advice about parent-child relationships:
+consider this advice ((("parent-child relationship", "guidelines for using")))about parent-child relationships:
 
 * Use parent-child relationships sparingly, where there are many more children than parents.
 * Avoid using multiple parent-child joins in a single query.
