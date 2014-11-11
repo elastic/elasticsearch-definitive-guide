@@ -50,7 +50,7 @@ cars:
 --------------------------------------------------
 
 We can make our example more useful:  how many colors were sold each month?  For
-that metric, we just nest the `cardinality` metric under a `date_histogram`:
+that metric, we just nest the `cardinality` metric under ((("date histograms, building", "cardinality metric nested under")))a `date_histogram`:
 
 [source,js]
 --------------------------------------------------
