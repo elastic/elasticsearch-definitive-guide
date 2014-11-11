@@ -1,7 +1,7 @@
 [[overallocation]]
 === Shard overallocation
 
-A shard lives on a single node, but a node can hold multiple shards. Imagine
+A shard lives on a single node,((("scaling", "shard overallocation")))((("shards", "overallocation of"))) but a node can hold multiple shards. Imagine
 that we had created our index with two primary shards instead of one:
 
 [source,json]
@@ -44,7 +44,7 @@ having to think about it at all!
 ****************************
 
 Users often ask why Elasticsearch doesn't support _shard-splitting_ -- the
-ability to split each shard into two or more pieces.  The reason is that
+ability to split each shard into two or more pieces. ((("shard splitting"))) The reason is that
 shard-splitting is a bad idea:
 
 * Splitting a shard is almost equivalent to reindexing your data. It's a much
