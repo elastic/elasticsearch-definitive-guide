@@ -26,7 +26,7 @@ discuss in <<heap-sizing>>
 ==== CPUs
 
 Most Elasticsearch deployments tend to be rather light on CPU requirements.  As
-such, the exact processor setup matters less than the other resources.  You should
+such,((("CPUs (central processing units)")))((("hardware", "CPUs"))) the exact processor setup matters less than the other resources.  You should
 choose a modern processor with multiple cores.  Common clusters utilize 2-8
 core machines.
 
@@ -36,7 +36,7 @@ clock-speed.
 
 ==== Disks
 
-Disks are important for all clusters, and doubly so for indexing-heavy clusters
+Disks are important for all clusters,((("disks")))((("hardware", "disks"))) and doubly so for indexing-heavy clusters
 (such as those that ingest log data).  Disks are the slowest subsystem in a server,
 which means that write-heavy clusters can easily saturate their disks which in
 turn becomes the bottleneck of the cluster.
