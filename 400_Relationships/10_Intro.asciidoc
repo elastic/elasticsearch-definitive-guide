@@ -9,7 +9,7 @@ Relational databases are specifically designed -- and this will not come as a
 surpise to you -- to manage((("relational databases", "managing relationships"))) relationships:
 
 *   Each entity (or _row_, in the relational world) can be uniquely identified
-    by a _primary key_.
+    by a _primary key_.((("primary key")))
 
 *   Entities are _normalized_. The data for a unique entity is stored only
     once, and related entities store just its primary key. Changing the data of
