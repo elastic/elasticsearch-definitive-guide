@@ -2,7 +2,7 @@
 === geo_bound aggregation
 
 In our <<geohash-grid-agg,previous example>>, we filtered our results using a
-bounding box that covered the greater New York area.  However, our results
+bounding box that covered the greater New York area.((("aggregations", "geo_bounds")))((("geo_bounds aggregation")))  However, our results
 were all located in downton Manhattan.  When displaying a map for our user, it
 makes sense to zoom in to the area of the map that contains the data -- there
 is no point in showing lots of empty space.
@@ -70,7 +70,7 @@ The response now includes a bounding box which we can use to zoom our map:
 ----------------------------
 
 In fact, we could even use the `geo_bounds` aggregation inside each geohash
-cell, in case the geo-points inside a cell are clustered in just a part of the
+cell,((("geohash cells", "geo_bounds aggregation in"))) in case the geo-points inside a cell are clustered in just a part of the
 cell:
 
 [source,json]
@@ -114,7 +114,7 @@ GET /attractions/restaurant/_search?search_type=count
 ----------------------------
 <1> The `cell_bounds` sub-aggregation is calculated for every geohash cell.
 
-Now the points in each cell have a bounding box:
+Now the ((("cell_bounds aggregation")))points in each cell have a bounding box:
 
 [source,json]
 ----------------------------
