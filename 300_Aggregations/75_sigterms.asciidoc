@@ -133,7 +133,7 @@ GET mlmovies/_search
 ----
 <1> _Talladega Nights_ is ID `46970`
 
-Armed with the ID, we can now filter the ratings and apply our `terms` aggregation
+Armed with the ID, we can now filter the ratings and ((("filtering", "in aggregations")))apply our `terms` aggregation
 to find the most popular movies from people that also like _Talladega Nights_:
 
 [source,js]
@@ -167,7 +167,7 @@ since we are only interested in the aggregation results
 We perform the search on the `mlratings` index, and apply a filter for the ID of
 _Talladega Nights_.  Since aggregations operate on query scope, this will 
 effectively filter the aggregation results to only the users who recommended 
-_Talladega Nights_. Finally, we execute a `terms` aggregation to bucket the most 
+_Talladega Nights_. Finally, we execute ((("terms aggregation", "movie recommendations (example)")))a `terms` aggregation to bucket the most 
 popular movies.  We are requesting the top six results, since it is likely
 that _Talladega Nights_ itself will be returned as a hit (and we don't want
 to recommend the same movie).
