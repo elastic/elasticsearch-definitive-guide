@@ -1,13 +1,13 @@
 [[one-big-user]]
 === One big user
 
-Big popular forums start out as small forums.  One day we will find that one
+Big popular forums start out as small forums.((("forums, resource allocation for", "one big user")))  One day we will find that one
 shard in our shared index is doing a lot more work than the other shards,
 because it holds the documents for a forum which has become very popular. That
 forum now needs its own index.
 
 The index aliases that we're using to fake an index-per-user give us a clean
-migration path for the big forum.
+migration path for the big forum.((("indexes", "shared", "migrating data to dedicated index")))
 
 The first step is to create a new index dedicated to the forum, and with the
 appropriate number of shards to allow for expected growth:
