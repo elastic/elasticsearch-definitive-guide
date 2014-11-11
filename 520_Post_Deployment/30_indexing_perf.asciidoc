@@ -42,7 +42,7 @@ next one.
 
 ==== Using and Sizing Bulk requests
 
-Should be fairly obvious, but use bulk indexing requests for optimal performance.
+Should be fairly obvious, but use bulk indexing requests for optimal performance.((("post-deployment", "bulk requests, using and sizing")))((("bulk API", "using and sizing bulk requests")))
 Bulk sizing is dependent on your data, analysis and cluster configuration, but
 a good starting point is 5-15mb per bulk.  Note that this is physical size.
 Document count is not a good metric for bulk size.  For example, if you are
