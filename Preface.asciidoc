@@ -7,24 +7,24 @@ technology has focused on how to store and structure warehouses full of data.
 That's all well and good--until you actually need to make decisions in
 real time informed by that data.
 
-Elasticsearch is a distributed scalable real-time search and analytics engine.
-It enables you to search, analyze and explore your data, often in ways that
+Elasticsearch is a distributed, scalable, real-time search and analytics engine.
+It enables you to search, analyze, and explore your data, often in ways that
 you did not anticipate at the start of a project.  It exists because raw data
 sitting on a hard drive is just not useful.
 
-Whether you need full text search, real-time analytics of structured data, or
-a combination of the two, this book will introduce you to the fundamental
+Whether you need full-text search, real-time analytics of structured data, or
+a combination of the two, this book introduces you to the fundamental
 concepts required to start working with Elasticsearch at a basic level. With
-these foundations laid, it will move on to more advanced search techniques
+these foundations laid, it will move on to more advanced search techniques,
 which you will need to shape the search experience to fit your requirements.
 
-Elasticsearch is not just about full text search. We explain structured
+Elasticsearch is not just about full-text search. We explain structured
 search, analytics, the complexities of dealing with human language,
-geolocation and relationships. We will also discuss how best to model your
+geolocation, and relationships. We will also discuss how best to model your
 data to take advantage of the horizontal scalability of Elasticsearch, and how
 to configure and monitor your cluster when moving to production.
 
-=== Who should read this book
+=== Who Should Read This Book
 
 This book is for anybody who wants to put their data to work.  It doesn't
 matter whether you are starting a new project and have the flexibility to
@@ -39,51 +39,50 @@ principles, helping novices to gain a sure footing in the complex world of
 search.
 
 The reader with a search background will also benefit from this book.
-Elasticsearch is a new technology which has some familiar concepts.  The more
+Elasticsearch is a new technology that has some familiar concepts.  The more
 experienced user will gain an understanding of how those concepts have been
-implemented and how they interact in the context of Elasticsearch. Even in the
-early chapters, there are nuggets of information that will be useful to the
+implemented and how they interact in the context of Elasticsearch. Even  the
+early chapters contain nuggets of information that will be useful to the
 more advanced user.
 
 Finally, maybe you are in DevOps. While the other departments are stuffing
 data into Elasticsearch as fast as they can, you're the one charged with
 stopping their servers from bursting into flames. Elasticsearch scales
 effortlessly, as long as your users play within the rules. You need to know
-how to setup a stable cluster before going into production, then be able to
+how to set up a stable cluster before going into production, and then be able to
 recognize the warning signs at three in the morning in order to prevent
-catastrophe. The earlier chapters may be of less interest to you but the last
-part of the book is essential reading -- all you need to know to avoid
+catastrophe. The earlier chapters may be of less interest to you, but the last
+part of the book is essential reading--all you need to know to avoid
 meltdown.
 
 
-=== Why we wrote this book
+=== Why We Wrote This Book
 
 We wrote this book because Elasticsearch needs a narrative.  The existing
-reference documentation is excellent... as long as you know what you are
-looking for. It assumes that you are intimately familiar with information
-retrieval concepts, distributed systems, the query DSL and a host of other
+reference documentation is excellent--as long as you know what you are
+looking for. It assumes that you are intimately familiar with information-retrieval concepts, distributed systems, the query DSL, and a host of other
 topics.
 
 This book makes no such assumptions.  It has been written so that a complete
-beginner -- to both search and distributed systems -- can pick it up and start
+beginner--to both search and distributed systems--can pick it up and start
 building a prototype within a few chapters.
 
-We have taken a problem based approach: this is the problem, how do I solve
+We have taken a problem-based approach: this is the problem, how do I solve
 it, and what are the trade-offs of the alternative solutions? We start with the
-basics and each chapter builds on the preceding ones, providing practical
+basics, and each chapter builds on the preceding ones, providing practical
 examples and explaining the theory where necessary.
 
-The existing reference documentation explains *how* to use features.  We want
-this book to explain *why* and *when* to use various features.
+The existing reference documentation explains _how_ to use features.  We want
+this book to explain _why_ and _when_ to use various features.
 
-=== Elasticsearch version
+=== Elasticsearch Version
 
 The explanations and code examples in this book target the latest version of
-Elasticsearch available at the time of going to print -- version 1.4.0 -- but
+Elasticsearch available at the time of going to print--version 1.4.0--but
 Elasticsearch is a rapidly evolving project.  The online version of this book
 will be updated as Elasticsearch changes.
 
-You can find the latest version of this book online at:
+You can find the latest version of this book online:
 
 * http://www.elasticsearch.org/guide/
 
@@ -92,58 +91,56 @@ repository:
 
 * https://github.com/elasticsearch/elasticsearch-definitive-guide/
 
-=== How to read this book
+=== How to Read This Book
 
 Elasticsearch tries very hard to make the complex simple, and to a large
-degree it succeeds in this. That said, search and distributed systems *are*
-complex and sooner or later you have to get to grips with some of the
+degree it succeeds in this. That said, search and distributed systems _are_
+complex, and sooner or later you have to get to grips with some of the
 complexity in order to take full advantage of Elasticsearch.
 
 Complexity, however, is not the same as magic.  We tend to view complex
 systems as magical black boxes that respond to incantations, but there are
 usually simple processes at work within. Understanding these processes helps
-to disspell the magic -- instead of hoping that the black box will do what you
+to disspell the magic--instead of hoping that the black box will do what you
 want, understanding gives you certainty and clarity.
 
-This is a definitive guide: not only do we help you to get started with
-Elasticsearch, we tackle the deeper more interesting topics too. These include
-chapters such as <<distributed-cluster>>, <<distributed-docs>>,
+This is a definitive guide: we help you not only to get started with
+Elasticsearch, but also to tackle the deeper more, interesting topics. These include <<distributed-cluster>>, <<distributed-docs>>,
 <<distributed-search>>, and <<inside-a-shard>>, which are not essential
 reading but do give you a solid understanding of the internals.
 
 The first part of the book should be read in order as each chapter builds on
-the previous chapter (although you can skim over the chapters mentioned
-above).  Later chapters like <<proximity-matching>> and <<partial-matching>>
+the previous one (although you can skim over the chapters just mentioned).  Later chapters such as <<proximity-matching>> and <<partial-matching>>
 are more standalone and can be referred to as needed.
 
-=== Navigating this book
+=== Navigating This Book
 
-This book is divided into six parts:
+This book is divided into seven parts:
 
 *  Chapters pass:[<xref linkend="getting-started" xrefstyle="select: labelnumber"/>] through pass:[<xref linkend="distributed-cluster" xrefstyle="select: labelnumber"/>] provide an introduction to Elasticsearch. They
    explain how to get your data in and out of Elasticsearch, how Elasticsearch
-   interprets the data in your documents, how basic search works and how to
-   manage indices. By the end of this section you will already be able to
-   integrate your application with Elasticsearch. Chapters pass:[<xref linkend="distributed-cluster" xrefstyle="select: labelnumber"/>], pass:[<xref linkend="distributed-docs" xrefstyle="select: labelnumber"/>], pass:[<xref linkend="distributed-search" xrefstyle="select: labelnumber"/>] and pass:[<xref linkend="inside-a-shard" xrefstyle="select: labelnumber"/>] are
-   supplemental chapters which provide more insight into the distributed
+   interprets the data in your documents, how basic search works, and how to
+   manage indices. By the end of this section, you will already be able to
+   integrate your application with Elasticsearch. Chapters pass:[<xref linkend="distributed-cluster" xrefstyle="select: labelnumber"/>], pass:[<xref linkend="distributed-docs" xrefstyle="select: labelnumber"/>], pass:[<xref linkend="distributed-search" xrefstyle="select: labelnumber"/>], and pass:[<xref linkend="inside-a-shard" xrefstyle="select: labelnumber"/>] are
+   supplemental chapters that provide more insight into the distributed
    processes at work, but are not required reading.
 
-*  Chapters pass:[<xref linkend="structured-search" xrefstyle="select: labelnumber"/>] through pass:[<xref linkend="controlling-relevance" xrefstyle="select: labelnumber"/>] offer a deep dive into search -- how to index and
+*  Chapters pass:[<xref linkend="structured-search" xrefstyle="select: labelnumber"/>] through pass:[<xref linkend="controlling-relevance" xrefstyle="select: labelnumber"/>] offer a deep dive into search--how to index and
    query your data to allow  you to take advantage of more advanced concepts
-   like word proximity, and partial matching. You will understand how
+   such as word proximity, and partial matching. You will understand how
    relevance works and how to control it to ensure that the best results are
    on the first page.
 
 *  Chapters pass:[<xref linkend="language-intro" xrefstyle="select: labelnumber"/>] through pass:[<xref linkend="fuzzy-matching" xrefstyle="select: labelnumber"/>] tackle the thorny subject of dealing with human
    language through effective use of analyzers and queries. We start with
-   an easy approach to language analysis easily, before diving into the complexities
+   an easy approach to language analysis before diving into the complexities
    of language, alphabets, and sorting. We cover stemming, stopwords, synonyms,
    and fuzzy matching.
 
-*  Chapters pass:[<xref linkend="_high_level_concepts" xrefstyle="select: labelnumber"/>] through pass:[<xref linkend="_controlling_memory_use_and_latency" xrefstyle="select: labelnumber"/>] discuss aggregations and analytics -- ways to
-   summarise and group your data to show overall trends.
+*  Chapters pass:[<xref linkend="_high_level_concepts" xrefstyle="select: labelnumber"/>] through pass:[<xref linkend="_controlling_memory_use_and_latency" xrefstyle="select: labelnumber"/>] discuss aggregations and analytics--ways to
+   summarize and group your data to show overall trends.
 
-*  Chapters pass:[<xref linkend="_closing_thoughts" xrefstyle="select: labelnumber"/>] through pass:[<xref linkend="geo-aggs" xrefstyle="select: labelnumber"/>] talk about the two approaches to geolocation
+*  Chapters pass:[<xref linkend="_closing_thoughts" xrefstyle="select: labelnumber"/>] through pass:[<xref linkend="geo-aggs" xrefstyle="select: labelnumber"/>] present the two approaches to geolocation
    supported by Elasticsearch: lat/lon geo-points, and complex geo-shapes.
 
 *  Chapters pass:[<xref linkend="geo-shapes" xrefstyle="select: labelnumber"/>] through pass:[<xref linkend="parent-child" xrefstyle="select: labelnumber"/>] talk about how to model your data to work
@@ -156,9 +153,8 @@ This book is divided into six parts:
 *  Finally, chapters pass:[<xref linkend="scale" xrefstyle="select: labelnumber"/>] through pass:[<xref linkend="cluster-admin" xrefstyle="select: labelnumber"/>] discuss moving to production: the important
    configurations, what to monitor, and how to diagnose and prevent problems.
 
-There are three topics which we do not cover in this book, partly because we
-ran out of space and partly because they are evolving rapidly and anything we
-write will soon be out of date:
+There are three topics that we do not cover in this book, because they are evolving rapidly and anything we
+write will soon be out-of-date:
 
 * Highlighting of result snippets: see {ref}search-request-highlighting.html[Highlighting].
 * _Did-you-mean_ and _search-as-you-type_ suggesters: see {ref}search-suggesters.html[Suggesters].
@@ -175,14 +171,19 @@ http://www.elasticsearch.org/guide/
 
 The following typographical conventions are used in this book:
 
-_Italic_:: Indicates new terms or concepts.
+_Italic_:: Indicates emphasis, and new terms or concepts.
 
 +Constant width+:: Used for program listings, as well as within paragraphs to refer to program elements such as variable or function names, databases, data types, environment variables, statements, and keywords.
 
 
 [TIP]
 ====
-This icon signifies a tip, suggestion, or general note.
+This icon signifies a tip, suggestion.
+====
+
+[NOTE]
+====
+This icon signifies a general note.
 ====
 
 [WARNING]
@@ -202,7 +203,7 @@ Supplemental material (code examples, exercises, etc.) is available for download
 
 This book is here to help you get your job done. In general, if example code is offered with this book, you may use it in your programs and documentation. You do not need to contact us for permission unless you’re reproducing a significant portion of the code. For example, writing a program that uses several chunks of code from this book does not require permission. Selling or distributing a CD-ROM of examples from O’Reilly books does require permission. Answering a question by citing this book and quoting example code does not require permission. Incorporating a significant amount of example code from this book into your product’s documentation does require permission.
 
-We appreciate, but do not require, attribution. An attribution usually includes the title, author, publisher, and ISBN. For example: “_Elasticsearch - The Definitive Guide_ by Clinton Gormley and Zachary Tony (O’Reilly). Copyright 2014 Elasticsearch BV, 978-0-596-xxxx-x.”
+We appreciate, but do not require, attribution. An attribution usually includes the title, author, publisher, and ISBN. For example: “_Elasticsearch: The Definitive Guide_ by Clinton Gormley and Zachary Tony (O’Reilly). Copyright 2014 Elasticsearch BV, 978-0-596-xxxx-x.”
 
 If you feel your use of code examples falls outside fair use or the permission given above, feel free to contact us at pass:[<email>permissions@oreilly.com</email>].
 
@@ -255,16 +256,16 @@ Watch us on YouTube: link:$$http://www.youtube.com/oreillymedia$$[]
 
 === Acknowledgments
 
-Why are spouses always relegated to a ``last but not least'' disclaimer?
+Why are spouses always relegated to a _last but not least_ disclaimer?
 There is no doubt in our minds that the two people most deserving of our
 gratitude are Xavi Sánchez Catalán, Clinton's long-suffering husband, and
 Genevieve Flanders, Zach's fiancée. They have looked after us and loved us,
 picked up the slack, put up with our absence and our endless moaning about how
-long the book is taking, and, most importantly, they are still here.
+long the book was taking, and, most importantly, they are still here.
 
 Thank you to Shay Banon for creating Elasticsearch in the first place, and to
 Elasticsearch the company for supporting our work on the book.  Our colleagues
-at Elasticsearch deserve a big thank you as well. They have helped us to pick
+at Elasticsearch deserve a big thank you as well. They have helped us pick
 through the innards of Elasticsearch to really understand how it works, and
 they have been responsible for adding improvements and fixing inconsistencies
 that were brought to light by writing about them.
@@ -273,17 +274,17 @@ Two colleagues in particular deserve special mention:
 
 *   Robert Muir patiently shared his deep knowledge of search in general and
     Lucene in particular. Several chapters are the direct result of joining
-    his pearls of wisdom up into paragraphs.
+    his pearls of wisdom into paragraphs.
 
 *   Adrien Grand dived deep into the code to answer question after question,
-    and sense checked our explanations.
+    and checked our explanations to ensure they make sense.
 
 Thank you to O'Reilly for undertaking this project and working with us to make
 this book available online for free, to our editor Brian Anderson for cajoling
 us along gently, and to our kind and gentle reviewers Benjamin Devèze, Ivan
-Brusic and Leo Lapworth.  Your reassurances kept us hopeful.
+Brusic, and Leo Lapworth.  Your reassurances kept us hopeful.
 
-Finally, we would like to thank our readers, some of whom we only know by
+Finally, we would like to thank our readers, some of whom we know only by
 their GitHub identities, who have taken the time to report problems, provide
 corrections, or suggest improvements:
 
