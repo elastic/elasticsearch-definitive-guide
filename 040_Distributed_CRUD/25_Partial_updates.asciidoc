@@ -1,13 +1,13 @@
-=== Partial updates to a document
+=== Partial Updates to a Document
 
-The `update` API  combines the read and((("updating documents", "partial updates")))((("documents", "partial updates"))) write patterns explained above.
+The `update` API , as shown in <<img-distrib-update>>, combines the read and((("updating documents", "partial updates")))((("documents", "partial updates"))) write patterns explained previously.
 
 [[img-distrib-update]]
 .Partial updates to a document
 image::images/elas_0404.png["Partial updates to a document"]
 
-Below we list the sequence of steps used to perform a partial update on  a
-document, as depicted in <<img-distrib-update>>:
+Here is the sequence of steps used to perform a partial update on  a
+document:
 
 1. The client sends an update request to `Node 1`.
 
@@ -24,16 +24,16 @@ document, as depicted in <<img-distrib-update>>:
    `Node 3` reports success to the requesting node,  which reports success to
    the client.
 
-The `update` API also accepts the `routing`, `replication`, `consistency` and
+The `update` API also accepts the `routing`, `replication`, `consistency`, and
 `timeout` parameters that are explained in <<distrib-write>>.
 
-.Document based replication
+.Document-Based Replication
 ****
 
 When a primary shard forwards changes to its replica shards,((("primary shards", "forwarding changes to replica shards"))) it doesn't
 forward the update request. Instead it forwards the new version of the full
 document. Remember that these changes are forwarded to the replica shards
-asynchronously and there is no guarantee that they will arrive in the same
+asynchronously, and there is no guarantee that they will arrive in the same
 order that they were sent. If Elasticsearch forwarded just the change, it is
 possible that changes would be applied in the wrong order, resulting in a
 corrupt document.
