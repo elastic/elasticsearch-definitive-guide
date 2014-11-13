@@ -1,7 +1,7 @@
 [[update-doc]]
-=== Updating a whole document
+=== Updating a Whole Document
 
-Documents in Elasticsearch are immutable -- we cannot change them.((("documents", "updating whole document")))((("updating documents", "whole document"))) Instead, if
+Documents in Elasticsearch are _immutable_; we cannot change them.((("documents", "updating whole document")))((("updating documents", "whole document"))) Instead, if
 we need to update an existing document, we _reindex_ or replace it, which we
 can do using the same `index` API that we have already discussed in
 <<index-doc>>.
