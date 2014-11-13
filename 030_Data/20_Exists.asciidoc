@@ -1,8 +1,8 @@
 [[doc-exists]]
-=== Checking whether a document exists
+=== Checking Whether a Document Exists
 
-If all you want to do is to check whether a document exists -- you're not
-interested in the content at all -- then use the `HEAD` method instead
+If all you want to do is to check whether a document exists--you're not
+interested in the content at all--then use the `HEAD` method instead
 of the `GET` method. `HEAD` requests don't return a body, just HTTP headers:
 
 [source,js]
