@@ -1,13 +1,12 @@
-==== Then scale some more
+==== Then Scale Some More
 
-But what if we want to scale our search to more than 6 nodes?
+But what if we want to scale our search to more than six nodes?
 
 The number of primary shards is fixed at the moment an((("indexes", "fixed number of primary shards")))((("primary shards", "fixed number in an index"))) index is created.
 Effectively, that number defines the maximum amount of data that can be
-*stored* in the index.  (The actual number depends on your data, your hardware
-and your use case). However, read requests -- searches or document retrieval
--- can be handled by a primary *or* a replica shard, so the more copies of
-data that you have, the more search throughput we can handle.
+_stored_ in the index.  (The actual number depends on your data, your hardware
+and your use case.) However, read requests--searches or document retrieval--can be handled by a primary _or_ a replica shard, so the more copies of
+data that you have, the more search throughput you can handle.
 
 The number of replica shards can be changed dynamically on a live cluster,
 allowing us to scale up or down as demand requires. Let's increase the number
@@ -22,14 +21,15 @@ PUT /blogs/_settings
 --------------------------------------------------
 // SENSE: 020_Distributed_Cluster/30_Replicas.json
 
+As can be seen in <<cluster-three-nodes-two-replicas>>, the `blogs` index now
+has nine shards: three primaries and six replicas. This means that we can scale out to
+a total of nine nodes, again with one shard per node.  This would allow us to
+_triple_ search performance compared to our original three-node cluster.
+
 [[cluster-three-nodes-two-replicas]]
 .Increasing the `number_of_replicas` to 2
 image::images/elas_0205.png["A three-node cluster with two replica shards"]
 
-As can be seen in <<cluster-three-nodes-two-replicas>>, the `blogs` index now
-has 9 shards: 3 primaries and 6 replicas. This means that we can scale out to
-a total of 9 nodes, again with one shard per node.  This would allow us to
-*triple* search performance compared to our original three node cluster.
 
 [NOTE]
 ===================================================
