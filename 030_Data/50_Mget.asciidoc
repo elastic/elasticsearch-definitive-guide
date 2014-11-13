@@ -1,13 +1,13 @@
-=== Retrieving multiple documents
+=== Retrieving Multiple Documents
 
 As fast as Elasticsearch is, it can be faster still.((("documents", "retrieving multiple"))) Combining multiple
 requests into one avoids the network overhead of processing each request
 individually. If you know that you need to retrieve multiple documents from
-Elasticsearch, it is faster to retrieve them all in a single request using the
-_multi-get_ or `mget` API, ((("mget (multi-get) API")))instead of document-by-document.
+Elasticsearch, it is faster to retrieve them all in a single request by using the
+_multi-get_, or `mget`, API, ((("mget (multi-get) API")))instead of document by document.
 
 The `mget` API expects a `docs` array, each ((("docs array", "in request")))element of which specifies the
-`_index`, `_type` and `_id` metadata of the document you wish to retrieve. You
+`_index`, `_type`, and `_id` metadata of the document you wish to retrieve. You
 can also specify a `_source` parameter if you just want to retrieve one or
 more specific fields:
 
@@ -32,7 +32,7 @@ GET /_mget
 --------------------------------------------------
 // SENSE: 030_Data/50_Mget.json
 
-The response body also contains a `docs` array((("docs array", "in response body"))) which contains a response
+The response body also contains a `docs` array((("docs array", "in response body"))) that contains a response
 per document, in the same order as specified in the request. Each of these
 responses is the same response body that we would expect from an individual
 <<get-doc,`get` request>>:
@@ -68,7 +68,7 @@ responses is the same response body that we would expect from an individual
 // SENSE: 030_Data/50_Mget.json
 
 If the documents you wish to retrieve are all in the same `_index` (and maybe
-even of the same `_type`) then you can specify a default `/_index` or a
+even of the same `_type`), you can specify a default `/_index` or a
 default `/_index/_type` in the URL.
 
 You can still override these values in the individual requests:
@@ -85,7 +85,7 @@ GET /website/blog/_mget
 --------------------------------------------------
 // SENSE: 030_Data/50_Mget.json
 
-In fact, if all the documents have the same `_index` and `_type`, then you
+In fact, if all the documents have the same `_index` and `_type`, you
 can just pass an array of `ids` instead of the full `docs` array:
 
 [source,js]
@@ -98,7 +98,7 @@ GET /website/blog/_mget
 
 Note that the second document that we requested doesn't exist. We specified
 type `blog`, but the document with ID `1` is of type `pageviews`. This
-non-existence is reported in the response body:
+nonexistence is reported in the response body:
 
 [source,js]
 --------------------------------------------------
@@ -130,8 +130,8 @@ non-existence is reported in the response body:
 The fact that the second document wasn't found didn't affect the retrieval of
 the first document. Each doc is retrieved and reported on individually.
 
-NOTE: The HTTP status code for the above request is `200`, even though one
-document wasn't found. In fact, it would still be `200` if *none* of the
-requested documents were found.  The reason for that is that the `mget`
+NOTE: The HTTP status code for the preceding request is `200`, even though one
+document wasn't found. In fact, it would still be `200` if _none_ of the
+requested documents were found--because the `mget`
 request itself completed successfully. To determine the success or failure of
 the individual documents, you need to check ((("found flag")))the `found` flag.
