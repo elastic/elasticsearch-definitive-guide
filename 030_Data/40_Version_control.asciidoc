@@ -1,9 +1,9 @@
 [[version-control]]
-=== Dealing with conflicts
+=== Dealing with Conflicts
 
-When updating a document using ((("conflicts", "dealing with")))the `index` API, we read the original document,
-make our changes, then reindex the *whole document* in one go. The most recent
-indexing request wins -- whichever document was indexed last is the one stored
+When updating a document with ((("conflicts", "dealing with")))the `index` API, we read the original document,
+make our changes, and then reindex the _whole document_ in one go. The most recent
+indexing request wins: whichever document was indexed last is the one stored
 in Elasticsearch. If somebody else had changed the document in the meantime,
 their changes would be lost.
 
@@ -13,41 +13,41 @@ searchable. Perhaps there is little chance of two people changing the same
 document at the same time. Or perhaps it doesn't really matter to our business
 if we lose changes occasionally.
 
-But sometimes losing a change is *very important*.  Imagine that we're using
+But sometimes losing a change is _very important_.  Imagine that we're using
 Elasticsearch to store the number of widgets that we have in stock in our
 online store. Every time that we sell a widget, we decrement the stock count
 in Elasticsearch.
 
 One day, management decides to have a sale. Suddenly, we are selling several
 widgets every second. Imagine two web processes, running in parallel, both
-processing the sale of one widget each:
+processing the sale of one widget each, as shown in <<img-data-lww>>:
 
 [[img-data-lww]]
 .Consequence of no concurrency control
 image::images/elas_0301.png["Consequence of no concurrency control",width="50%",align="center"]
 
 The change that `web_1` made to the `stock_count` has been lost because
-`web_2` is unaware that its copy of the `stock_count` is out of date. The
+`web_2` is unaware that its copy of the `stock_count` is out-of-date. The
 result is that we think we have more widgets than we actually do, and we're
 going to disappoint customers by selling them stock that doesn't exist.
 
 The more frequently that changes are made, or the longer the gap between
 reading data and updating it, the more likely it is that we will lose changes.
 
-In the database world, there are two commonly used approaches to ensuring that
+In the database world, two approaches are commonly used to ensure that
 changes are not lost when making ((("pessimistic concurrency control")))((("concurrency control")))concurrent updates:
 
 _Pessimistic concurrency control_::
 
-widely used by relational databases, assumes that conflicting changes are
+Widely used by relational databases, this approach assumes that conflicting changes are
 likely to happen and so blocks access to a resource in order to prevent
-conflicts. A typical example of this is locking a row before reading its data,
-ensuring that only the thread which placed the lock is able to make changes to
+conflicts. A typical example is locking a row before reading its data,
+ensuring that only the thread that placed the lock is able to make changes to
 the data in that row.
 
 _Optimistic concurrency control_::
 
-used by Elasticsearch, ((("optimistic concurrency control")))assumes that conflicts are unlikely to happen and
+Used by Elasticsearch, ((("optimistic concurrency control"))) this approach assumes that conflicts are unlikely to happen and
 doesn't block operations from being attempted. However, if the underlying data
 has been modified between reading and writing, the update will fail. It is
 then up to the application to decide how it should resolve the conflict. For
@@ -55,17 +55,17 @@ instance, it could reattempt the update, using the fresh data, or it could
 report the situation to the user.
 
 [[optimistic-concurrency-control]]
-=== Optimistic concurrency control
+=== Optimistic Concurrency Control
 
-Elasticsearch is distributed.  When documents((("concurrency control", "optimistic"))) are created, updated or deleted,
+Elasticsearch is distributed.  When documents((("concurrency control", "optimistic"))) are created, updated, or deleted,
 the new version of the document has to be replicated to other nodes in the
 cluster.  Elasticsearch is also asynchronous and  concurrent, meaning that
 these replication requests are sent in parallel, and may arrive at their
-destination *out of sequence*. It needs a way of ensuring that an older
+destination _out of sequence_. Elasticsearch needs a way of ensuring that an older
 version of a document never overwrites a newer version.
 
-When we discussed `index`, `get` and `delete` requests above, we pointed out
-that every document has a `_version` number which is incremented whenever a
+When we discussed `index`, `get`, and `delete` requests previously, we pointed out
+that every document has a `_version` number that is incremented whenever a
 document is changed. Elasticsearch uses this `_version` number to ensure that
 changes are applied in the correct order. If an older version of a document
 arrives after a new version, it can simply be ignored.
@@ -89,7 +89,7 @@ PUT /website/blog/1/_create
 
 The response body tells us that this newly created document has `_version`
 number `1`.  Now imagine that we want to edit the document: we load its data
-into a web form, make our changes, then save the new version.
+into a web form, make our changes, and then save the new version.
 
 First we retrieve the document:
 
@@ -165,32 +165,31 @@ code, and a body like the following:
 This tells us that the current `_version` number of the document in
 Elasticsearch is `2`, but that we specified that we were updating version `1`.
 
-What we do now depends upon our application requirements.  We could tell the
-user that somebody else has already made changes to the document, and that
-they should review the changes before trying to save them again.
-Alternatively, as in the case of the widget `stock_count` above, we could
+What we do now depends on our application requirements.  We could tell the
+user that somebody else has already made changes to the document, and to review the changes before trying to save them again.
+Alternatively, as in the case of the widget `stock_count` previously, we could
 retrieve the latest document and try to reapply the change.
 
-All APIs which update or delete a document accept a `version` parameter, which
+All APIs that update or delete a document accept a `version` parameter, which
 allows you to apply optimistic concurrency control to just the parts of your
 code where it makes sense.
 
-==== Using versions from an external system
+==== Using Versions from an External System
 
-A common setup is to use some other database as the primary datastore and
+A common setup is to use some other database as the primary data store and
 Elasticsearch to make the data searchable,((("version number (documents)", "using an external version number")))((("external version numbers"))) which means that all changes to the
 primary database need to be copied across to Elasticsearch as they happen.  If
-multiple processes are responsible for this data synchronization, then you may
-run into concurrency problems similar to those described above.
+multiple processes are responsible for this data synchronization, you may
+run into concurrency problems similar to those described previously.
 
-If your main database already has version numbers -- or some value like a
-`timestamp` which can be used as a version number -- then  you can reuse these
+If your main database already has version numbers--or a value such as
+`timestamp` that can be used as a version number--then  you can reuse these
 same version numbers in Elasticsearch by adding `version_type=external` to the
 query string.((("query strings", "version_type=external"))) Version numbers must be integers greater than zero and less than
-about `9.2e+18` -- a positive `long` value in Java.
+about `9.2e+18`--a positive `long` value in Java.
 
-The way external version numbers are handled is a bit different to the
-internal version numbers  we discussed above.  Instead of checking that the
+The way external version numbers are handled is a bit different from the
+internal version numbers  we discussed previously.  Instead of checking that the
 current `_version` is _the same_ as the one specified in the request,
 Elasticsearch checks that the current `_version` is _less than_ the specified
 version. If the request succeeds, the external version number is stored as the
