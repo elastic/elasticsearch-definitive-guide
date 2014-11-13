@@ -35,18 +35,17 @@ original JSON document ((("source field")))as the `_source` field:
 }
 --------------------------------------------------
 
-****
-
+[TIP]
+====
 In the same way that we changed ((("HTTP methods")))the HTTP verb from `PUT` to `GET` in order to
 retrieve the document, we could use the `DELETE` verb to delete the  document,
-and the `HEAD` verb to check whether or not the document exists. To replace an
+and the `HEAD` verb to check whether the document exists. To replace an
 existing document with an updated version, we just `PUT` it again.
-
-****
+====
 
 === Search Lite
 
-A `GET` is fairly simple -- you get back the document that you ask for.((("GET method")))((("searches", "simple search")))  Let's
+A `GET` is fairly simple--you get back the document that you ask for.((("GET method")))((("searches", "simple search")))  Let's
 try something a little more advanced, like a simple search!
 
 The first search we will try is the simplest search possible.  We will search
@@ -117,14 +116,14 @@ a search will return the top 10 results.
 }
 --------------------------------------------------
 
-NOTE: The response not only tells us which documents matched, but it also
-includes the whole document itself: all of the information that we need to
+NOTE: The response not only tells us which documents matched, but also
+includes the whole document itself: all the information that we need in order to
 display the search results to the user.
 
 Next, let's try searching for employees who have ``Smith'' in their last name.
-To do this, we'll use a ``lightweight'' search method which is easy to use
-from the command line. This method is often referred to as ((("query strings")))a _query string_
-search, since we pass the search as a URL query string parameter:
+To do this, we'll use a _lightweight_ search method that is easy to use
+from the command line. This method is often referred to as ((("query strings")))a _query-string_
+search, since we pass the search as a URL query-string parameter:
 
 [source,js]
 --------------------------------------------------
@@ -133,7 +132,7 @@ GET /megacorp/employee/_search?q=last_name:Smith
 // SENSE: 010_Intro/30_Simple_search.json
 
 We use the same `_search` endpoint in the path, and we add the query itself in
-the `q=` parameter. The results that come back show all Smith's:
+the `q=` parameter. The results that come back show all Smiths:
 
 [source,js]
 --------------------------------------------------
@@ -170,13 +169,13 @@ the `q=` parameter. The results that come back show all Smith's:
 
 === Search with Query DSL
 
-Query-string search is handy for _ad hoc_ searches((("ad hoc searches"))) from the command line, but
+Query-string search is handy for ad hoc searches((("ad hoc searches"))) from the command line, but
 it has its limitations (see <<search-lite>>). Elasticsearch provides a rich,
-flexible, query language called the _Query DSL_, which((("Query DSL"))) allows us to build
+flexible, query language called the _query DSL_, which((("Query DSL"))) allows us to build
 much more complicated, robust queries.
 
-The DSL (_Domain Specific Language_) is((("DSL (Domain Specific Language)"))) specified using a JSON request body.
-We can represent the previous search for all Smith's like so:
+The _domain-specific language_ (DSL) is((("DSL (Domain Specific Language)"))) specified using a JSON request body.
+We can represent the previous search for all Smiths like so:
 
 
 [source,js]
@@ -193,15 +192,15 @@ GET /megacorp/employee/_search
 // SENSE: 010_Intro/30_Simple_search.json
 
 This will return the same results as the previous query.  You can see that a
-number of things have changed.  For one, we are no longer using _query string_
+number of things have changed.  For one, we are no longer using _query-string_
 parameters, but instead a request body.  This request body is built with JSON,
 and uses a `match` query (one of several types of queries, which we will learn
 about later).
 
-=== More complicated searches
+=== More Complicated Searches
 
 Let's make the search a little more complicated.((("searches", "more complicated")))((("filters")))  We still want to find all
-employees with a last name of ``Smith'', but  we only want employees who are
+employees with a last name of Smith, but  we want only employees who are
 older than 30.  Our query will change a little to accommodate a _filter_,
 which allows us to execute structured searches efficiently:
 
@@ -228,13 +227,12 @@ GET /megacorp/employee/_search
 // SENSE: 010_Intro/30_Query_DSL.json
 
 <1> This portion of the query is a `range` _filter_, which((("range filters"))) will find all ages
-    older than 30 -- `gt` stands for ``greater than''.
+    older than 30 -- `gt` stands for _greater than_.
 <2> This portion of the query is the((("match queries"))) same `match` _query_ that we used before.
 
-Don't worry about the syntax too much for now, we will cover it in great
-detail later on.  Just recognize that we've added a _filter_ which performs a
-range search, and reused the same `match` query as before.  Now our results
-only show one employee who happens to be 32 and is named ``Jane Smith'':
+Don't worry about the syntax too much for now; we will cover it in great
+detail later.  Just recognize that we've added a _filter_ that performs a
+range search, and reused the same `match` query as before.  Now our results show only one employee who happens to be 32 and is named Jane Smith:
 
 [source,js]
 --------------------------------------------------
@@ -259,13 +257,13 @@ only show one employee who happens to be 32 and is named ``Jane Smith'':
 }
 --------------------------------------------------
 
-=== Full-text search
+=== Full-Text Search
 
-The searches so far have been simple:  single names, filtering by age. Let's
-try a more advanced, full-text search -- a ((("full-text search")))task which traditional databases
+The searches so far have been simple:  single names, filtered by age. Let's
+try a more advanced, full-text search--a ((("full-text search")))task that traditional databases
 would really struggle with.
 
-We are going to search for all employees who enjoy ``rock climbing'':
+We are going to search for all employees who enjoy rock climbing:
 
 [source,js]
 --------------------------------------------------
@@ -281,7 +279,7 @@ GET /megacorp/employee/_search
 // SENSE: 010_Intro/30_Query_DSL.json
 
 You can see that we use the same `match` query as before to search the `about`
-field for ``rock climbing''. We get back two matching documents:
+field for ``rock climbing.'' We get back two matching documents:
 
 [source,js]
 --------------------------------------------------
@@ -317,30 +315,29 @@ field for ``rock climbing''. We get back two matching documents:
    }
 }
 --------------------------------------------------
-<1> The relevance scores.
+<1> The relevance scores
 
 By default, Elasticsearch sorts((("relevance scores"))) matching results by their relevance score,
-that is: by how well each document matched the query.  The first and highest
-scoring result is obvious: John Smith's `about` field clearly says ``rock
+that is, by how well each document matches the query.  The first and highest-scoring result is obvious: John Smith's `about` field clearly says ``rock
 climbing'' in it.
 
-But why did Jane Smith, come back as a result?  The reason her document was
+But why did Jane Smith come back as a result?  The reason her document was
 returned is because the word ``rock'' was mentioned in her `about` field.
-Because only ``rock'' was mentioned, and not ``climbing'', her `_score` is
+Because only ``rock'' was mentioned, and not ``climbing,'' her `_score` is
 lower than John's.
 
-This is a good example of how Elasticsearch can search *within* full text
+This is a good example of how Elasticsearch can search _within_ full-text
 fields and return the most relevant results first. This ((("relevance", "importance to Elasticsearch")))concept of _relevance_
 is important to Elasticsearch, and is a concept that is completely foreign to
-traditional relational databases where a record either matches or it doesn't.
+traditional relational databases, in which a record either matches or it doesn't.
 
-=== Phrase search
+=== Phrase Search
 
 Finding individual words in a field is all well and good, but sometimes you
 want to match exact sequences of words or _phrases_.((("prhase search"))) For instance, we could
-perform a query that will only match  employees that contain both  ``rock''
-_and_ ``climbing'' _and_ where the words are next to each other in the phrase
-``rock climbing''.
+perform a query that will match only employee records that contain both  ``rock''
+_and_ ``climbing'' _and_ that display the words are next to each other in the phrase
+``rock climbing.''
 
 To do this, we use a slight variation of the `match` query called the
 `match_phrase` query:
@@ -358,7 +355,7 @@ GET /megacorp/employee/_search
 --------------------------------------------------
 // SENSE: 010_Intro/30_Query_DSL.json
 
-Which, to no surprise, returns only John Smith's document:
+This, to no surprise, returns only John Smith's document:
 
 [source,js]
 --------------------------------------------------
@@ -385,11 +382,11 @@ Which, to no surprise, returns only John Smith's document:
 --------------------------------------------------
 
 [[highlighting-intro]]
-=== Highlighting our searches
+=== Highlighting Our Searches
 
 Many applications like to _highlight_ snippets((("searches", "highlighting search results")))((("highlighting searches"))) of text from each search result
-so that the user can see *why* the document matched their query.  Retrieving
-highlighted fragments is very easy in Elasticsearch.
+so the user can see _why_ the document matched the query.  Retrieving
+highlighted fragments is easy in Elasticsearch.
 
 Let's rerun our previous query, but add a new `highlight` parameter:
 
@@ -445,7 +442,7 @@ HTML tags:
 }
 --------------------------------------------------
 
-<1> The highlighted fragment from the original text.
+<1> The highlighted fragment from the original text
 
 You can read more about the highlighting of search snippets in the
 {ref}search-request-highlighting.html[highlighting reference documentation].
