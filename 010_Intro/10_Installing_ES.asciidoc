@@ -30,17 +30,17 @@ https://github.com/elasticsearch/cookbook-elasticsearch[Chef cookbook].
 ==== Installing Marvel
 
 http://www.elasticsearch.com/products/marvel[Marvel] is a management((("Marvel", "defined"))) and monitoring
-tool for Elasticsearch which is free for development use. It comes with an
-interactive console called Sense which makes it very easy to talk to
+tool for Elasticsearch, which is free for development use. It comes with an
+interactive console called Sense, which makes it easy to talk to
 Elasticsearch directly from your browser.
 
-Many of the code examples in this book include a ``View in Sense'' link. When
+Many of the code examples in the online version of this book include a View in Sense link. When
 clicked, it will open up a working example of the code in the Sense console.
 You do not have to install Marvel, but it will make this book much more
 interactive by allowing you to  experiment with the code samples on your local
 Elasticsearch cluster.
 
-Marvel is available as a plugin.((("Marvel", "downloading and installing"))) To download and install it, run this command
+Marvel is available as a plug-in.((("Marvel", "downloading and installing"))) To download and install it, run this command
 in the Elasticsearch directory:
 
 [source,sh]
@@ -60,7 +60,7 @@ echo 'marvel.agent.enabled: false' >> ./config/elasticsearch.yml
 === Running Elasticsearch
 
 Elasticsearch is now ready to run. ((("Elasticsearch", "running")))You can start it up in the foreground
-with:
+with this:
 
 [source,sh]
 --------------------------------------------------
@@ -68,7 +68,7 @@ with:
 --------------------------------------------------
 Add `-d` if you want to run it in the background as a daemon.
 
-Test it out by opening another terminal window and running:
+Test it out by opening another terminal window and running the following:
 
 [source,sh]
 --------------------------------------------------
