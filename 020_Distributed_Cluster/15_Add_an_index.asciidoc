@@ -1,11 +1,11 @@
-=== Add an index
+=== Add an Index
 
-To add data to Elasticsearch, we need an _index_ -- a place to store related
-data.((("indexes")))((("clusters", "adding an index")))  In reality, an index is just a ``logical namespace'' which points to
+To add data to Elasticsearch, we need an _index_--a place to store related
+data.((("indexes")))((("clusters", "adding an index")))  In reality, an index is just a _logical namespace_ that points to
 one or more physical _shards_.
 
-A _shard_ is a low-level ``worker unit'' which holds((("shards", "defined"))) just a slice of all the
-data in the index. In <<inside-a-shard>>, we will explain in detail how a
+A _shard_ is a low-level _worker unit_ that holds((("shards", "defined"))) just a slice of all the
+data in the index. In <<inside-a-shard>>, we explain in detail how a
 shard works, but for now it is enough to know that a shard is a single
 instance of Lucene, and is a complete search engine in its own right. Our
 documents are stored and indexed in shards, but our applications don't talk to
@@ -21,15 +21,11 @@ A shard can be either a _primary_ shard or a _replica_ shard.((("primary shards"
 your index belongs to a single primary shard, so the number of primary shards
 that you have determines the maximum amount of data that your index can hold.
 
-****
-
-While there is no theoretical limit to the amount of data that a primary shard
+NOTE: While there is no theoretical limit to the amount of data that a primary shard
 can hold, there is a practical limit.  What constitutes the maximum shard size
 depends entirely on your use case: the hardware you have, the size and
 complexity of your documents, how you index and query your documents, and your
 expected response times.
-
-****
 
 A replica shard is just a copy of a primary shard.((("shards", "replica"))) Replicas are used to provide
 redundant copies of your data to protect against hardware failure, and to
@@ -39,8 +35,8 @@ The number of primary shards in an index is fixed at the time that an index is
 created, but the number of replica shards can be changed at any time.
 
 Let's create an index called `blogs` in our empty one-node cluster.((("indexes", "creating"))) By
-default, indices are assigned 5 primary shards,((("primary shards", "assigned to indexes")))((("replica shards", "assigned to indexes"))) but for the purpose of this
-demonstration, we'll assign just 3 primary shards and 1 replica (one replica
+default, indices are assigned five primary shards,((("primary shards", "assigned to indexes")))((("replica shards", "assigned to indexes"))) but for the purpose of this
+demonstration, we'll assign just three primary shards and one replica (one replica
 of every primary shard):
 
 [source,js]
@@ -55,12 +51,13 @@ PUT /blogs
 --------------------------------------------------
 // SENSE: 020_Distributed_Cluster/15_Add_index.json
 
+Our cluster now looks like <<cluster-one-node>>. All three primary shards have been allocated to `Node 1`.
+
 [[cluster-one-node]]
 .A single-node cluster with an index
 image::images/elas_0202.png["A single-node cluster with an index"]
 
-Our cluster now looks like <<cluster-one-node>> -- all 3 primary shards have
-been allocated to `Node 1`. If we were to check the
+If we were to check the
 <<cluster-health,`cluster-health`>> now, ((("cluster health", "checking after adding an index")))we would see this:
 
 [source,js]
@@ -82,13 +79,13 @@ been allocated to `Node 1`. If we were to check the
 <1> Cluster `status` is `yellow`.
 <2> Our three replica shards have not been allocated to a node.
 
-A cluster health of `yellow` means that all *primary* shards are up and
-running -- the cluster is capable of serving any request successfully -- but
-not  all *replica* shards are active.  In fact all three of our replica shards
-are currently `unassigned` -- they haven't been allocated to a node. It
+A cluster health of `yellow` means that all _primary_ shards are up and
+running (the cluster is capable of serving any request successfully) but
+not  all _replica_ shards are active.  In fact, all three of our replica shards
+are currently `unassigned`--they haven't been allocated to a node. It
 doesn't make sense to store copies of the same data on the same node. If we
 were to lose that node, we would lose all copies of our data.
 
-Currently our cluster is fully functional but at risk of data loss in case of
+Currently, our cluster is fully functional but at risk of data loss in case of
 hardware failure.
 
