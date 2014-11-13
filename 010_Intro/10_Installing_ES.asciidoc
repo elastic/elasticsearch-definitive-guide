@@ -105,8 +105,8 @@ like your own name, to stop ((("clusters", "changing default name")))your nodes 
 the same network with the same name!
 
 You can do this by editing the `elasticsearch.yml` file in the `config/`
-directory, then restarting Elasticsearch.  When Elasticsearch is running in
-the foreground, you can stop it by pressing `Ctrl-C`, otherwise you can shut
+directory and then restarting Elasticsearch.  When Elasticsearch is running in
+the foreground, you can stop it by pressing Ctrl-C; otherwise, you can shut
 it down with the `shutdown` API:
 
 [source,sh]
@@ -117,10 +117,10 @@ curl -XPOST 'http://localhost:9200/_shutdown'
 
 ==== Viewing Marvel and Sense
 
-If you installed the <<marvel,Marvel>> management ((("Marvel", "viewing")))and monitoring tool you can
-view it in a web browser by visiting:
+If you installed the <<marvel,Marvel>> management ((("Marvel", "viewing")))and monitoring tool, you can
+view it in a web browser by visiting
 http://localhost:9200/_plugin/marvel/.
 
-You can reach the *Sense* developer((("Sense", "viewing developer console"))) console either by clicking on the ``Marvel
-dashboards'' dropdown in Marvel, or by visiting:
+You can reach the _Sense_ developer((("Sense", "viewing developer console"))) console either by clicking the ``Marvel
+dashboards'' drop-down in Marvel, or by visiting
 http://localhost:9200/_plugin/marvel/sense/.
