@@ -1,5 +1,5 @@
 [[delete-doc]]
-=== Deleting a document
+=== Deleting a Document
 
 The syntax for deleting a document((("documents", "deleting"))) follows the same pattern that we have seen
 already, but ((("deleting documents")))((("HTTP methods", "DELETE")))uses the `DELETE` method :
@@ -13,7 +13,7 @@ DELETE /website/blog/123
 
 If the document is found, Elasticsearch will return an HTTP response code
 of `200 OK` and a response body like the following. Note that the `_version`
-number has been incremented.
+number has been incremented:
 
 [source,js]
 --------------------------------------------------
@@ -26,8 +26,8 @@ number has been incremented.
 }
 --------------------------------------------------
 
-If the document isn't((("version number (documents)", "incremented for document not found"))) found, we get a `404 Not Found` response code, and
-a body like:
+If the document isn't((("version number (documents)", "incremented for document not found"))) found, we get a `404 Not Found` response code and
+a body like this:
 
 [source,js]
 --------------------------------------------------
@@ -40,17 +40,13 @@ a body like:
 }
 --------------------------------------------------
 
-Even though the document doesn't exist -- `"found"` is `false` --  the
+Even though the document doesn't exist (`found` is `false`), the
 `_version` number has still been incremented. This is part of the internal
-book-keeping which ensures that changes are applied in the correct order
+bookkeeping, which ensures that changes are applied in the correct order
 across multiple nodes.
 
-****
-
-As already mentioned in <<update-doc>>, deleting a document doesn't
-immediately remove the document from disk -- it just marks it as deleted.
+NOTE: As already mentioned in <<update-doc>>, deleting a document doesn't
+immediately remove the document from disk; it just marks it as deleted.
 Elasticsearch will clean up deleted documents in the background as you
 continue to index more data.
-
-****
 
