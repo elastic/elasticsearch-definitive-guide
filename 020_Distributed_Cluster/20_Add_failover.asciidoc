@@ -1,41 +1,39 @@
-=== Add failover
+=== Add Failover
 
-Running a single node means that you have a single point of failure -- there
-is no redundancy.((("failover", "adding"))) Fortunately all we need to do to protect ourselves from data
+Running a single node means that you have a single point of failure--there
+is no redundancy.((("failover", "adding"))) Fortunately, all we need to do to protect ourselves from data
 loss is to start another node.
 
-.Starting a second node
+.Starting a Second Node
 ***************************************
 
-To test out what happens when you add a second((("nodes", "starting a second node"))) node, you can start a new node
+To test what happens when you add a second((("nodes", "starting a second node"))) node, you can start a new node
 in exactly the same way as you started the first one (see
-<<running-elasticsearch>>), and from the same directory -- multiple nodes can
+<<running-elasticsearch>>), and from the same directory. Multiple nodes can
 share the same directory.
 
 As long as the second node has the same `cluster.name` as the first node (see
 the `./config/elasticsearch.yml` file), it should automatically discover and
 join the cluster run by the first node. If it doesn't, check the logs to find
 out what went wrong.  It may be that multicast is disabled on your network, or
-there is a firewall preventing your nodes from communicating.
+that a firewall is preventing your nodes from communicating.
 
 ***************************************
 
 If we start a second node, our cluster would look like <<cluster-two-nodes>>.
 
 [[cluster-two-nodes]]
-.A two-node cluster -- all primary and replica shards are allocated
+.A two-node cluster--all primary and replica shards are allocated
 image::images/elas_0203.png["A two-node cluster"]
 
-The((("clusters", "two-node cluster"))) second node has joined the cluster and three _replica shards_ have ((("replica shards", "allocated to second node")))been
-allocated to it -- one for each primary shard.  That means that we can lose
-either node and all of our data will be intact.
+The((("clusters", "two-node cluster"))) second node has joined the cluster, and three _replica shards_ have ((("replica shards", "allocated to second node")))been
+allocated to it--one for each primary shard.  That means that we can lose
+either node, and all of our data will be intact.
 
-Any newly indexed document will first be stored on a primary shard, then
-copied in parallel to the associated replica shard(s). This ensures that our
-document can be retrieved from a primary shard or from any of its replicas.
+Any newly indexed document will first be stored on a primary shard, and then copied in parallel to the associated replica shard(s). This ensures that our document can be retrieved from a primary shard or from any of its replicas.
 
-The `cluster-health` now ((("cluster health", "checking after adding second node")))shows a status of `green`, which means that all 6
-shards (all 3 primary shards and all 3 replica shards) are active:
+The `cluster-health` now ((("cluster health", "checking after adding second node")))shows a status of `green`, which means that all six
+shards (all three primary shards and all three replica shards) are active:
 
 [source,js]
 --------------------------------------------------
@@ -54,4 +52,4 @@ shards (all 3 primary shards and all 3 replica shards) are active:
 --------------------------------------------------
 <1> Cluster `status` is `green`.
 
-Our cluster is not only fully functional but also _always available_.
+Our cluster is not only fully functional, but also _always available_.
