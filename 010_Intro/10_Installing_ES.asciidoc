@@ -5,10 +5,10 @@ play with it, so let's get started!((("Elasticsearch", "installing")))
 
 The only requirement for installing Elasticsearch is a recent version of Java.
 Preferably, you should install the latest version of the((("Java", "installing"))) official Java
-from http://www.java.com[www.java.com].
+from http://www.java.com[_www.java.com_].
 
 You can download the latest version of Elasticsearch from
-http://www.elasticsearch.org/download/[elasticsearch.org/download].
+http://www.elasticsearch.org/download/[_elasticsearch.org/download_].
 
 [source,sh]
 --------------------------------------------------
@@ -17,10 +17,10 @@ unzip elasticsearch-$VERSION.zip
 cd  elasticsearch-$VERSION
 --------------------------------------------------
 <1> Fill in the URL for the latest version available on
-    http://www.elasticsearch.org/download/[elasticsearch.org/download].
+    http://www.elasticsearch.org/download/[_elasticsearch.org/download_].
 
 TIP: When installing Elasticsearch in production, you can use the method
-described above, or the Debian or RPM packages provided on the
+described previously, or the Debian or RPM packages provided on the
 http://www.elasticsearch.org/downloads[downloads page]. You can also use
 the officially supported
 https://github.com/elasticsearch/puppet-elasticsearch[Puppet module] or
