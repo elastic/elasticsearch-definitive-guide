@@ -142,13 +142,13 @@ The `index` attribute controls((("index attribute, strings"))) how the string wi
 can contain one of three values:
 
 [horizontal]
-1. *`analyzed`*::    First analyze the string and then index it.  In other words,
+1. `analyzed`            First analyze the string and then index it.  In other words,
                     index this field as full text.
 
-2. *`not_analyzed`*::  Index this field, so it is searchable, but index the
+2. `not_analyzed`        Index this field, so it is searchable, but index the
                     value exactly as specified. Do not analyze it.
 
-3. *`no`*::       Don't index this field at all. This field
+3. `no`                  Don't index this field at all. This field
                     will not be searchable.
 
 The default value of `index` for a `string` field is `analyzed`.  If we
