@@ -1,61 +1,61 @@
 [[mapping-intro]]
 === Mapping
 
-In order to be able to treat date fields as dates, numberic fields as numbers,
-and string fields as full text or exact value strings, Elasticsearch needs to
+In order to be able to treat date fields as dates, numeric fields as numbers,
+and string fields as full-text or exact-value strings, Elasticsearch needs to
 know what type of data each field contains. ((("mapping (types)"))) This information is contained in
-the _mapping_.
+the mapping.
 
 As explained in <<data-in-data-out>>, each document in an index ((("types", "mapping for")))has a _type_.
-Every type has its own _mapping_ or _schema definition_.((("schema definition, types"))) A mapping
+Every type has its own _mapping_, or _schema definition_.((("schema definition, types"))) A mapping
 defines the fields within a type, the datatype for each field,
 and how the field should be handled by Elasticsearch. A mapping is also used
 to configure metadata associated with the type.
 
-We discuss mappings in detail in <<mapping>>. In this section we're going
+We discuss mappings in detail in <<mapping>>. In this section, we're going
 to look at just enough to get you started.
 
 [[core-fields]]
-==== Core simple field types
+==== Core Simple Field Types
 
 Elasticsearch supports the ((("types", "core simple field types")))following simple field types:
 
 [horizontal]
-String:         ::  `string`
-Whole number:   ::  `byte`, `short`, `integer`, `long`
-Floating point: ::  `float`, `double`
-Boolean:        ::  `boolean`
-Date:           ::  `date`
+* String: `string`
+* Whole number: `byte`, `short`, `integer`, `long`
+* Floating-point: `float`, `double`
+* Boolean: `boolean`
+* Date: `date`
 
-When you index a document which contains a new field -- one previously not
-seen -- Elasticsearch ((("types", "mapping for", "dynamic mapping of new types")))((("JSON", "datatypes", "simple core types")))((("dynamic mapping")))((("boolean type")))((("long type")))((("double type")))((("date type")))((("strings")))will use <<dynamic-mapping,_dynamic mapping_>> to try
+When you index a document that contains a new field--one previously not
+seen--Elasticsearch ((("types", "mapping for", "dynamic mapping of new types")))((("JSON", "datatypes", "simple core types")))((("dynamic mapping")))((("boolean type")))((("long type")))((("double type")))((("date type")))((("strings")))will use <<dynamic-mapping,_dynamic mapping_>> to try
 to guess the field type from the basic datatypes available in JSON,
 using the following rules:
 
 [horizontal]
-*JSON type:*                       ::          *Field type:*
+*JSON type*                       ::          *Field type*
 
-Boolean: `true` or `false`         ::          `"boolean"`
+Boolean: `true` or `false`         ::          `boolean`
 
-Whole number: `123`                ::          `"long"`
+Whole number: `123`                ::          `long`
 
-Floating point: `123.45`           ::          `"double"`
+Floating point: `123.45`           ::          `double`
 
-String, valid date: `"2014-09-15"` ::          `"date"`
+String, valid date: `2014-09-15` ::          `date`
 
-String: `"foo bar"`                ::          `"string"`
+String: `foo bar`                ::          `string`
 
 
-NOTE: This means that, if you index a number in quotes -- `"123"` it will be
-mapped as type `"string"`, not type `"long"`. However, if the field is
-already mapped as type `"long"`, then Elasticsearch will try to convert
+NOTE: This means that if you index a number in quotes (`"123"`), it will be
+mapped as type `string`, not type `long`. However, if the field is
+already mapped as type `long`, then Elasticsearch will try to convert
 the string into a long, and throw an exception if it can't.
 
-==== Viewing the mapping
+==== Viewing the Mapping
 
 We can view the mapping that Elasticsearch has((("mapping (types)", "viewing"))) for one or more types in one or
-more indices using the `/_mapping` endpoint. At the <<mapping-analysis,start
-of this chapter>> we already retrieved the mapping for type `tweet` in index
+more indices by using the `/_mapping` endpoint. At the <<mapping-analysis,start
+of this chapter>>, we already retrieved the mapping for type `tweet` in index
 `gb`:
 
 [source,js]
@@ -102,17 +102,17 @@ Instead of assuming that your mapping is correct, check it!
 ==================================================
 
 [[custom-field-mappings]]
-==== Customizing field mappings
+==== Customizing Field Mappings
 
 While the basic field datatypes are ((("mapping (types)", "customizing field mappings")))sufficient for many cases, you will often
 need to customize the mapping for individual fields, especially string fields.
-Custom mappings allow you to:
+Custom mappings allow you to do the following:
 
-* distinguish between full text string fields and exact value string fields,
-* use language-specific analyzers,
-* optimize a field for partial matching,
-* specify custom date formats,
-* and much more.
+* Distinguish between full-text string fields and exact value string fields
+* Use language-specific analyzers
+* Optimize a field for partial matching
+* Specify custom date formats
+* And much more
 
 The most important attribute of a field is the `type`. For fields
 other than `string` fields, you will seldom need to map anything other
@@ -128,31 +128,31 @@ than `type`:
 --------------------------------------------------
 
 
-Fields of type `"string"` are, by default, considered to contain full text.
-That is, their value will be passed through((("analyzers", "string values passed through"))) an analyzer before being indexed
-and a full text query on the field will pass the query string through an
+Fields of type `string` are, by default, considered to contain full text.
+That is, their value will be passed through((("analyzers", "string values passed through"))) an analyzer before being indexed,
+and a full-text query on the field will pass the query string through an
 analyzer before searching.
 
 The two most important mapping((("strings", "mapping attributes, index and analyzer"))) attributes for `string` fields are
 `index` and `analyzer`.
 
-===== `index`
+===== index
 
 The `index` attribute controls((("index attribute, strings"))) how the string will be indexed. It
 can contain one of three values:
 
 [horizontal]
-`analyzed`::        First analyze the string, then index it.  In other words,
+1. `analyzed`::        First analyze the string and then index it.  In other words,
                     index this field as full text.
 
-`not_analyzed`::    Index this field, so it is searchable, but index the
+2. `not_analyzed`::    Index this field, so it is searchable, but index the
                     value exactly as specified. Do not analyze it.
 
-`no`::              Don't index this field at all. This field
+3. `no`::              Don't index this field at all. This field
                     will not be searchable.
 
 The default value of `index` for a `string` field is `analyzed`.  If we
-want to map the field as an exact value, then we need to set it to
+want to map the field as an exact value, we need to set it to
 `not_analyzed`:
 
 [source,js]
@@ -166,15 +166,12 @@ want to map the field as an exact value, then we need to set it to
 --------------------------------------------------
 
 
-****
-
-The other simple types -- `long`, `double`, `date` etc -- also accept the
+NOTE: The other simple types (such as `long`, `double`, `date` etc) also accept the
 `index` parameter, but the only relevant values are `no` and `not_analyzed`,
 as their values are never analyzed.
 
-****
 
-===== `analyzer`
+===== analyzer
 
 For `analyzed` string fields, use ((("analyzer attribute, strings", "using to specify analyzer")))the `analyzer` attribute to
 specify which analyzer to apply both at search time and at index time. By
@@ -193,11 +190,11 @@ by specifying one of the built-in analyzers, such((("english analyzer"))) as
 --------------------------------------------------
 
 
-In <<custom-analyzers>> we will show you how to define and use custom analyzers
+In <<custom-analyzers>>, we show you how to define and use custom analyzers
 as well.
 
 [[updating-a-mapping]]
-==== Updating a mapping
+==== Updating a Mapping
 
 You can specify the mapping for a type when you first ((("types", "mapping for", "updating")))((("mapping (types)", "updating")))create an index.
 Alternatively, you can add the mapping for a new type (or update the mapping
@@ -205,10 +202,9 @@ for an existing type) later, using the `/_mapping` endpoint.
 
 [NOTE]
 ================================================
-While you can *add* to an existing mapping, you can't *change* it.  If a field
-already exists in the mapping, then it probably means that data from that
-field has already been indexed.  If you were to change the field mapping, then
-the already indexed data would be wrong and would not be properly searchable.
+Although you can _add_ to an existing mapping, you can't _change_ it.  If a field
+already exists in the mapping, the data from that
+field probably has already been indexed.  If you were to change the field mapping, the already indexed data would be wrong and would not be properly searchable.
 ================================================
 
 We can update a mapping to add a new field, but we can't change an existing
@@ -274,7 +270,7 @@ PUT /gb/_mapping/tweet
 Note that we didn't need to list all of the existing fields again, as we can't
 change them anyway.  Our new field has been merged into the existing mapping.
 
-==== Testing the mapping
+==== Testing the Mapping
 
 You can use the `analyze` API to((("mapping (types)", "testing"))) test the mapping for string fields by
 name. Compare the output of these two requests:
@@ -290,6 +286,6 @@ Black-cats <1>
 // SENSE: 052_Mapping_Analysis/45_Mapping.json
 <1> The text we want to analyze is passed in the body.
 
-The `tweet` field produces the two terms `"black"` and `"cat"`, while the
-`tag` field produces the single term `"Black-cats"`. In other words, our
+The `tweet` field produces the two terms `black` and `cat`, while the
+`tag` field produces the single term `Black-cats`. In other words, our
 mapping is working correctly.
