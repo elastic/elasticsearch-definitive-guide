@@ -15,26 +15,19 @@ and probably one or more specific types. We can do this by specifying the
 index and type in the URL, as follows:
 
 [horizontal]
-. `/_search`::     
-    Search all types in all indices
+. `/_search`::     Search all types in all indices
 
-. `/gb/_search`:: 
-   Search all types in the `gb` index
+. `/gb/_search`:: Search all types in the `gb` index
 
-. `/gb,us/_search`:: 
-   Search all types in the `gb` and `us` indices
+. `/gb,us/_search`:: Search all types in the `gb` and `us` indices
 
-. `/g*,u*/_search`:: 
-   Search all types in any indices beginning with `g` or beginning with `u`
+. `/g*,u*/_search`:: Search all types in any indices beginning with `g` or beginning with `u`
 
-. `/gb/user/_search`:: 
-   Search type `user` in the `gb` index
+. `/gb/user/_search`:: Search type `user` in the `gb` index
 
-. `/gb,us/user,tweet/_search`:: 
-   Search types `user` and `tweet` in the `gb` and `us` indices
+. `/gb,us/user,tweet/_search`:: Search types `user` and `tweet` in the `gb` and `us` indices
 
-. `/_all/user,tweet/_search`:: 
-   Search types `user` and `tweet` in all indices
+. `/_all/user,tweet/_search`:: Search types `user` and `tweet` in all indices
 
 
 When you search within a single index, Elasticsearch forwards the search
