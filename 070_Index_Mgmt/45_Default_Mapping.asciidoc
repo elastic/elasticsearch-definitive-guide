@@ -1,11 +1,11 @@
 [[default-mapping]]
-=== Default mapping
+=== Default Mapping
 
 Often, all types in an index share similar fields and settings. ((("mapping (types)", "default")))((("default mapping"))) It can be
 more convenient to specify these common settings in the `_default_` mapping,
 instead of having to repeat yourself every time you create a new type. The
 `_default_` mapping acts as a template for new types.  All types created
-*after* the `_default_` mapping will include all of these default settings,
+_after_ the `_default_` mapping will include all of these default settings,
 unless explicitly overridden in the type mapping itself.
 
 For instance, we can disable the `_all` field for all types,((("all field", "disabling for all types using defaul mapping"))) using the
