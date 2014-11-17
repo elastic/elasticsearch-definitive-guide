@@ -1,21 +1,21 @@
 [[custom-dynamic-mapping]]
-=== Customising dynamic mapping
+=== Customizing Dynamic Mapping
 
-If you know that you are going to be adding new fields on the fly, then
+If you know that you are going to be adding new fields on the fly,
 you probably want to leave dynamic mapping enabled.((("dynamic mapping", "custom")))((("mapping (types)", "dynamic", "custom")))  At times, though,
 the dynamic mapping ``rules'' can be a bit blunt.  Fortunately, there
-are settings that you can use to customise these rules to better
+are settings that you can use to customize these rules to better
 suit your data.
 
 [[date-detection]]
 ==== date_detection
 
 When Elasticsearch encounters a new string field, it checks to see if the
-string contains a recognisable date, like `"2014-01-01"`.((("date_detection setting")))((("dynamic mapping", "custom", "date_detection setting"))) If it looks
-like a date, then the field is added as type `date`. Otherwise it is
+string contains a recognizable date, like `2014-01-01`.((("date_detection setting")))((("dynamic mapping", "custom", "date_detection setting"))) If it looks
+like a date, the field is added as type `date`. Otherwise, it is
 added as type `string`.
 
-Sometimes this behaviour can lead to problems.  Imagine that you index
+Sometimes this behavior can lead to problems.  Imagine that you index
 a document like this:
 
 [source,js]
@@ -59,7 +59,7 @@ a `date` field, you have to add it manually.
 
 [NOTE]
 ====
-Elasticsearch's idea of what strings look like dates can be altered
+Elasticsearch's idea of which strings look like dates can be altered
 with the {ref}/mapping-root-object-type.html#_dynamic_date_formats[`dynamic_date_formats` setting].
 ====
 
@@ -76,14 +76,14 @@ does, a `mapping` to specify the mapping that should be applied, and
 at least one parameter (such as `match`) to define which fields the template
 should apply to.
 
-Templates are checked in order -- the first template that matches is
+Templates are checked in order; the first template that matches is
 applied. For instance, we could specify two templates for `string` fields:
 
-* `es`: field names ending in `_es` should use the `spanish` analyzer
-* `en`: all others should use the `english` analyzer
+* `es`: Field names ending in `_es` should use the `spanish` analyzer.
+* `en`: All others should use the `english` analyzer.
 
 We put the `es` template first, because it is more specific than the
-catch-all `en` template, which matches all string fields:
+catchall `en` template, which matches all string fields:
 
 [source,js]
 --------------------------------------------------
@@ -118,11 +118,11 @@ PUT /my_index
 
 The `match_mapping_type`  allows ((("match_mapping_type setting")))you to apply the template only
 to fields of the specified type, as detected by the standard dynamic
-mapping rules, eg `string`, `long` etc.
+mapping rules, (for example `string` or `long`).
 
-The `match` parameter matches just the field name and the `path_match`
+The `match` parameter matches just the field name, and the `path_match`
 parameter((("path_map parameter"))) matches the full path to a field in an object, so
-the pattern `"address.*.name"` would match a field like this:
+the pattern `address.*.name` would match a field like this:
 
 [source,js]
 --------------------------------------------------
