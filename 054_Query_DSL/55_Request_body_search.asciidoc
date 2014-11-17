@@ -1,22 +1,22 @@
 [[full-body-search]]
-== Full body search
+== Full-Body Search
 
-Search _lite_ -- <<search-lite,query string search>> --  is useful for _ad
-hoc_ queries from the command line. ((("searching", "request body search", id="ix_reqbodysearch")))To harness the full power of search,
+Search _lite_-- a <<search-lite,query-string search>>-- is useful for ad
+hoc queries from the command line. ((("searching", "request body search", id="ix_reqbodysearch")))To harness the full power of search,
 however, you should use the _request body_ `search` API,((("request body search"))) so called because
 most parameters are passed in the HTTP request body instead of in the query
 string.
 
-Request body search -- henceforth known just as ``search'' -- not only handles
+Request body search--henceforth known as _search_--not only handles
 the query itself, but also allows you to return highlighted snippets from your
 results, aggregate analytics across all results or subsets of results, and
-return _did-you-mean?_ suggestions, which will help guide your users to the
+return _did-you-mean_ suggestions, which will help guide your users to the
 best results quickly.
 
-=== Empty search
+=== Empty Search
 
 Let's start with the simplest form of ((("request body search", "empty search")))((("empty search")))the `search` API, the empty search,
-which returns all documents in all indices.
+which returns all documents in all indices:
 
 [source,js]
 --------------------------------------------------
@@ -26,8 +26,8 @@ GET /_search
 // SENSE: 054_Query_DSL/60_Empty_query.json
 <1> This is an empty request body.
 
-Just as with query-string search, you can search on one, many or `_all`
-indices, and one, many or all types:
+Just as with a query-string search, you can search on one, many, or `_all`
+indices, and one, many, or all types:
 
 [source,js]
 --------------------------------------------------
@@ -47,20 +47,20 @@ GET /_search
 --------------------------------------------------
 
 
-.A `GET` request with a body?
+.A GET Request with a Body?
 *************************************************
 
-The HTTP libraries of certain languages (notably Javascript) don't allow `GET`
+The HTTP libraries of certain languages (notably JavaScript) don't allow `GET`
 requests to have a request body. ((("searching", "using GET and POST HTTP methods for search requests")))((("HTTP methods", "GET and POST, use for search requests")))((("GET method", "no body for GET requests"))) In fact, some users are suprised that `GET`
 requests are ever allowed to have a body.
 
-The truth is that http://tools.ietf.org/html/rfc7231#page-24[RFC 7231] -- the
-RFC which deals with HTTP semantics and content -- does not define what should
+The truth is that http://tools.ietf.org/html/rfc7231#page-24[RFC 7231]--the
+RFC that deals with HTTP semantics and content --does not define what should
 happen to a `GET` request with a body!  As a result, some HTTP servers allow
-it, and some -- especially caching proxies -- don't.
+it, and some--especially caching proxies--don't.
 
 The authors of Elasticsearch prefer using `GET` for a search request because
-they feel that it describes the action -- retrieving information -- better
+they feel that it describes the action--retrieving information--better
 than the `POST` verb.  However, because `GET` with a request body is not
 universally supported, the `search` API also((("POST method", "use for search requests"))) accepts `POST` requests:
 
@@ -73,14 +73,14 @@ POST /_search
 }
 --------------------------------------------------
 
-The same rule applies to any other `GET` API which requires a request body.
+The same rule applies to any other `GET` API that requires a request body.
 
 *************************************************
 
-We will talk about aggregations in depth in <<aggregations>>, but for now,
+We present aggregations in depth in <<aggregations>>, but for now,
 we're going to focus just on the query.
 
-Instead of the cryptic query-string approach, request body search allows us
-to write queries using the _Query Domain Specific Language_, or Query DSL.
+Instead of the cryptic query-string approach, a request body search allows us
+to write queries by using the _query domain-specific language_, or query DSL.
 ((("searching", "request body search", startref ="ix_reqbodysearch")))
 
