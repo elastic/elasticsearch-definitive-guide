@@ -1,24 +1,22 @@
 [[relevance-intro]]
-=== What is relevance?
+=== What Is Relevance?
 
 We've mentioned that, by default, results are returned in descending order of
 relevance.((("relevance", "defined"))) But what is relevance? How is it calculated?
 
-The relevance score of each document is represented by a positive floating
-point number called the `_score` -- the higher the `_score`, the more relevant
+The relevance score of each document is represented by a positive floating-point number called the `_score`. The higher the `_score`, the more relevant
 the document.
 
 A query clause generates a `_score` for each document.  How that score is
-calculated depends on the type of query clause -- different query clauses are
+calculated depends on the type of query clause. Different query clauses are
 used for different purposes: a `fuzzy` query might determine the `_score` by
 calculating how similar the spelling of the found word is to the original
-search term, a `terms` query would incorporate the percentage of terms that
-were found, but what we usually mean by _relevance_ is the algorithm that we
-use to calculate how similar the contents of a full text field are to a full
-text query string.
+search term; a `terms` query would incorporate the percentage of terms that
+were found. However, what we usually mean by _relevance_ is the algorithm that we
+use to calculate how similar the contents of a full-text field are to a full-text query string.
 
-The standard _similarity algorithm_ used in Elasticsearch is((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm")))((("similarity algorithm", "Term Frequency/Inverse Document Frequency  (TF/IDF)"))) known as  _Term
-Frequency/Inverse Document Frequency_, or _TF/IDF_, which takes the following
+The standard _similarity algorithm_ used in Elasticsearch is((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm")))((("similarity algorithm", "Term Frequency/Inverse Document Frequency  (TF/IDF)"))) known as  _term
+frequency/inverse document frequency_, or _TF/IDF_, which takes the following
 factors into account:
 
 Term frequency::
@@ -29,11 +27,11 @@ Term frequency::
 
 Inverse document frequency::
 
-  How often does each term appear in the index? The more often, the *less*
+  How often does each term appear in the index? The more often, the _less_
   relevant. Terms that appear in many documents have a lower _weight_ than
-  more uncommon terms.
+  more-uncommon terms.
 
-Field length norm::
+Field-length norm::
 
   How long is the field? The longer it is, the less likely it is that words in
   the field will be relevant. A term appearing in a short `title` field
@@ -43,8 +41,8 @@ Individual queries may combine the TF/IDF score with other factors
 such as the term proximity in phrase queries, or term similarity in
 fuzzy queries.
 
-Relevance is not just about full text search though. It can equally be applied
-to `yes|no` clauses, where the more clauses that match, the higher the
+Relevance is not just about full-text search, though. It can equally be applied
+to yes/no clauses, where the more clauses that match, the higher the
 `_score`.
 
 When multiple query clauses are combined using a compound query((("compound query clauses", "relevance score for results"))) like the
@@ -52,10 +50,10 @@ When multiple query clauses are combined using a compound query((("compound quer
 calculate the overall `_score` for the document.
 
 TIP: We have a whole chapter dedicated to relevance calculations and how to
-bend them to your will in <<controlling-relevance>>.
+bend them to your will: <<controlling-relevance>>.
 
 [[explain]]
-==== Understanding the score
+==== Understanding the Score
 
 When debugging a complex query,((("score", "calculation of")))((("relevance scores", "understanding"))) it can be difficult to understand
 exactly how a `_score` has been calculated.  Elasticsearch
@@ -74,12 +72,11 @@ GET /_search?explain <1>
 <1> The `explain` parameter adds an explanation of how the `_score` was
     calculated to every result.
 
-****
-Adding `explain` produces a lot of output for every hit which can look
+
+NOTE: Adding `explain` produces a lot of output for every hit, which can look
 overwhelming, but it is worth taking the time to understand what it all means.
-Don't worry if it doesn't all make sense now -- you can refer to this section
+Don't worry if it doesn't all make sense now; you can refer to this section
 when you need it.  We'll work through the output for one `hit` bit by bit.
-****
 
 First, we have the metadata that is returned on normal search requests:
 
@@ -93,7 +90,7 @@ First, we have the metadata that is returned on normal search requests:
     "_source" :     { ... trimmed ... },
 --------------------------------------------------
 
-It adds information about which shard on which node the document came from,
+It adds information about the shard and the node that the document came from,
 which is useful to know because term and document frequencies are calculated
 per shard, rather than per index:
 
@@ -104,9 +101,9 @@ per shard, rather than per index:
 --------------------------------------------------
 
 Then it provides the `_explanation`. Each ((("explanation of relevance score calculation")))((("description", "of relevance score calculations")))entry contains a  `description`
-which tells you what type of calculation is being performed, a `value`
-which gives you the result of the calculation, and the `details` of any
-sub-calculations that were required:
+that tells you what type of calculation is being performed, a `value`
+that gives you the result of the calculation, and the `details` of any
+subcalculations that were required:
 
 [source,js]
 --------------------------------------------------
@@ -145,14 +142,13 @@ sub-calculations that were required:
 <1> Summary of the score calculation for `honeymoon`
 <2> Term frequency
 <3> Inverse document frequency
-<4> Field length norm
+<4> Field-length norm
 
 WARNING: Producing the `explain` output is expensive.((("explain parameter", "overhead of using"))) It is a debugging tool
-only -- don't leave it turned on in production.
+only. Don't leave it turned on in production.
 
 The first part is the summary of the calculation. It tells us that it has
-calculated the _weight_ -- term ((("weight", "calculation of")))((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm", "weight calculation for a term")))frequency/inverse document frequency or TF/IDF
--- of the term `"honeymoon"` in the field `tweet`, for document `0`.  (This is
+calculated the _weight_--the ((("weight", "calculation of")))((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm", "weight calculation for a term")))TF/IDF--of the term `honeymoon` in the field `tweet`, for document `0`.  (This is
 an internal document ID and, for our purposes, can be ignored.)
 
 It then provides details of how the weight was calculated:
@@ -167,14 +163,14 @@ Inverse document frequency::
     How many times did the term `honeymoon` appear in the `tweet` field
     of all documents in the index?
 
-Field length norm::
+Field-length norm::
 
-    How long is the `tweet` field in this document -- the longer the field,
+    How long is the `tweet` field in this document? The longer the field,
     the smaller this number.
 
-Explanations for more complicated queries can appear to be very complex, but
+Explanations for more-complicated queries can appear to be very complex, but
 really they just contain more of the same calculations that appear in the
-example above. This information can be invaluable for debugging why search
+preceding example. This information can be invaluable for debugging why search
 results appear in the order that they do.
 
 [TIP]
@@ -185,13 +181,13 @@ when it is formatted as YAML.((("explain parameter", "formatting output in YAML"
 
 
 [[explain-api]]
-==== Understanding why a document matched
+==== Understanding Why a Document Matched
 
 While the `explain` option adds an explanation for every result, you can use
 the `explain` API to understand why one particular document matched or, more
-importantly, why it *didn't* match.((("relevance", "understanding why a document matched")))((("explain API", "understanding why a document matched")))
+important, why it _didn't_ match.((("relevance", "understanding why a document matched")))((("explain API", "understanding why a document matched")))
 
-The path for the request is `/index/type/id/_explain`, as in:
+The path for the request is `/index/type/id/_explain`, as in the following:
 
 [source,js]
 --------------------------------------------------
@@ -207,8 +203,8 @@ GET /us/tweet/12/_explain
 --------------------------------------------------
 // SENSE: 056_Sorting/90_Explain_API.json
 
-Along with the full explanation((("description", "of why a document didn&#x27;t match"))) that we saw above, we also now have a
-`description` element, which tells us:
+Along with the full explanation((("description", "of why a document didn&#x27;t match"))) that we saw previously, we also now have a
+`description` element, which tells us this:
 
 
 [source,js]
