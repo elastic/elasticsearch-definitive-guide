@@ -1,12 +1,6 @@
-=== Creating an index
+=== Creating an Index
 
-Up until now, we have created a new index((("indexes", "creating"))) by simply indexing a document into
-it.  The index is created with the default settings, and new fields are added
-to the type mapping using dynamic mapping.
-
-Now we need more control over the process: we want to ensure that the index
-has been created with the appropriate number of primary shards, and that
-analyzers and mappings are set up *before* we index any data.
+Until now, we have created a new index((("indexes", "creating"))) by simply indexing a document into it. The index is created with the default settings, and new fields are added to the type mapping by using dynamic mapping. Now we need more control over the process: we want to ensure that the index has been created with the appropriate number of primary shards, and that analyzers and mappings are set up _before_ we index any data.
 
 To do this, we have to create the index manually, passing in any settings or
 type mappings in the request body, as follows:
@@ -25,7 +19,7 @@ PUT /my_index
 --------------------------------------------------
 
 
-In fact, if you want to you ((("indexes", "preventing automatic creation of")))can prevent the automatic creation of indices by
+In fact, if you want to, you ((("indexes", "preventing automatic creation of")))can prevent the automatic creation of indices by
 adding the following setting to the `config/elasticsearch.yml` file on each
 node:
 
@@ -35,17 +29,14 @@ action.auto_create_index: false
 --------------------------------------------------
 
 
-****
-
-Later, we will discuss how you can use <<index-templates>> to pre-configure
+NOTE: Later, we discuss how you can use <<index-templates>> to preconfigure
 automatically created indices. This is particularly useful when indexing log
 data: you log into an index whose name includes the date and, as midnight
 rolls over, a new properly configured index automatically springs into
 existence.
 
-****
 
-=== Deleting an index
+=== Deleting an Index
 
 To delete an index, use ((("HTTP methods", "DELETE")))((("DELETE method", "deleting indexes")))((("indexes", "deleting")))the following request:
 
@@ -55,7 +46,7 @@ DELETE /my_index
 --------------------------------------------------
 
 
-You can delete multiple indices with:
+You can delete multiple indices with this:
 
 [source,js]
 --------------------------------------------------
@@ -64,7 +55,7 @@ DELETE /index_*
 --------------------------------------------------
 
 
-You can even delete *ALL* indices with:
+You can even delete _all_ indices with this:
 
 [source,js]
 --------------------------------------------------
