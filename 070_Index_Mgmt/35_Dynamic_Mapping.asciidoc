@@ -1,22 +1,22 @@
 [[dynamic-mapping]]
-=== Dynamic mapping
+=== Dynamic Mapping
 
 When Elasticsearch encounters a previously ((("mapping (types)", "dynamic")))((("dynamic mapping")))unknown field in a document, it
 uses <<mapping-intro,_dynamic mapping_>> to determine the datatype for the
 field and automatically adds the new field to the type mapping.
 
-Sometimes this is the desired behaviour and sometimes it isn't. Perhaps
-you don't know what fields will be added to your documents later on,
+Sometimes this is the desired behavior and sometimes it isn't. Perhaps
+you don't know what fields will be added to your documents later,
 but you want them to be indexed automatically.  Perhaps you just want
-to ignore them.  Or -- especially if you are using Elasticsearch as a
-primary datastore -- perhaps you want unknown fields to throw an exception
+to ignore them.  Or--especially if you are using Elasticsearch as a
+primary data store--perhaps you want unknown fields to throw an exception
 to alert you to the problem.
 
-Fortunately, you can control this behaviour((("dynamic setting"))) with the `dynamic` setting,
+Fortunately, you can control this behavior((("dynamic setting"))) with the `dynamic` setting,
 which accepts the following options:
 
 [horizontal]
-`true`::    Add new fields dynamically -- the default
+`true`::    Add new fields dynamically--the default
 `false`::   Ignore new fields
 `strict`::  Throw an exception if an unknown field is encountered
 
@@ -75,6 +75,6 @@ PUT /my_index/my_type/1
 
 
 NOTE: Setting `dynamic` to `false` doesn't alter the contents of the `_source`
-field at all -- the `_source` will still contain the whole JSON document that
+field at all. The `_source` will still contain the whole JSON document that
 you indexed.  However, any unknown fields will not be added to the mapping and
 will not be searchable.
