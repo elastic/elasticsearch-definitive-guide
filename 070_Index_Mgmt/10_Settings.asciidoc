@@ -1,14 +1,14 @@
 === Index Settings
 
 There are many many knobs((("index settings"))) that you can twiddle to
-customize index behaviour, which you can read about in the
+customize index behavior, which you can read about in the
 {ref}/index-modules.html[Index Modules reference documentation],
 but...
 
 TIP: Elasticsearch comes with good defaults. Don't twiddle these knobs until
 you understand what they do and why you should change them.
 
-Two of the most important((("shards", "number_of_shards index setting")))((("number_of_shards setting")))((("index settings", "number_of_shards"))) settings are:
+Two of the most important((("shards", "number_of_shards index setting")))((("number_of_shards setting")))((("index settings", "number_of_shards"))) settings are as follows:
 
 `number_of_shards`::
 
@@ -22,8 +22,7 @@ Two of the most important((("shards", "number_of_shards index setting")))((("num
     should have, which defaults to `1`.  This setting can be changed
     at any time on a live index.
 
-For instance, we could create a small index -- just((("index settings", "number_of_replicas")))((("replica shards", "number_of_replicas index setting"))) one primary shard --
-and no replica shards with the following request:
+For instance, we could create a small index--just((("index settings", "number_of_replicas")))((("replica shards", "number_of_replicas index setting"))) one primary shard--and no replica shards with the following request:
 
 [source,js]
 --------------------------------------------------
