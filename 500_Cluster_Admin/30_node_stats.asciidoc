@@ -124,8 +124,8 @@ and similar statistics for deletes.
 
 - `search` describes the number of active searches (`open_contexts`), number of
 queries total, and the amount of time spent on queries since the node was
-started.  The ratio between `query_total / query_time_in_milis` can be used as a
-rough indicator of the efficeincy of your queries.  The larger the ratio,
+started.  The ratio between `query_time_in_millis / query_total` can be used as a
+rough indicator for how efficient your queries are.  The larger the ratio,
 the more time each query is taking, and you should consider tuning or optimization.
 +
 The fetch statistics detail the second half of the query process (the _fetch_ in
@@ -465,17 +465,17 @@ are good to keep an eye on:
 
 `indexing`::
     Threadpool for normal indexing requests
-    
+
 `bulk`::
     Bulk requests, which are distinct from the nonbulk indexing requests
-    
+
 `get`::
     Get-by-ID operations
-    
+
 `search`::
     All search and query requests
-    
-`merging`:: 
+
+`merging`::
     Threadpool dedicated to managing Lucene merges
 
 ==== FS and Network Sections
