@@ -122,7 +122,7 @@ HEAD requests for a single document
 
 - `search` describes the number of active searches (`open_contexts`), number of
 queries total and how much time has been spent on queries since the node was
-started.  The ratio between `query_total / query_time_in_milis` can be used as a
+started.  The ratio between `query_time_in_millis / query_total` can be used as a
 rough indicator for how efficient your queries are.  The larger the ratio,
 the more time each query is taking and you should consider tuning or optimization.
 +
