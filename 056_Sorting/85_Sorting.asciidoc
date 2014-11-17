@@ -1,17 +1,17 @@
 [[sorting]]
-== Sorting and relevance
+== Sorting and Relevance
 
-By default, results are returned sorted by _relevance_ -- with the most
-relevant docs first.((("sorting", "by relevance")))((("relevance", "sorting results by"))) Later in this chapter we will explain what we mean by
+By default, results are returned sorted by _relevance_--with the most
+relevant docs first.((("sorting", "by relevance")))((("relevance", "sorting results by"))) Later in this chapter, we explain what we mean by
 _relevance_ and how it is calculated, but let's start by looking at the `sort`
 parameter and how to use it.
 
 === Sorting
 
 In order to sort by relevance, we need to represent relevance as a value. In
-Elasticsearch  the _relevance score_ is represented by the floating point
+Elasticsearch,  the _relevance score_ is represented by the floating-point
 number returned in the search results as the `_score`, ((("relevance scores", "returned in search results score")))((("score", "relevance score of search results")))so the default sort
-order is: `_score` descending.
+order is `_score` descending.
 
 Sometimes, though, you don't have a meaningful relevance score. For instance,
 the following query just returns all tweets whose `user_id` field has the
@@ -37,7 +37,7 @@ Filters have no bearing on `_score`, and the((("match_all query", "score as neut
 query just sets the `_score` to a neutral value of `1` for all documents. In
 other words, all documents are considered to be equally relevant.
 
-==== Sorting by field values
+==== Sorting by Field Values
 
 In this case, it probably makes sense to sort tweets by recency, with the most
 recent tweets first.((("sorting", "by field values")))((("fields", "sorting search results by field values")))((("sort parameter")))  We can do this with the `sort` parameter:
@@ -77,26 +77,24 @@ You will notice two differences in the results:
     ...
 }
 --------------------------------------------------
-<1> The `_score` is not calculated because it is not being used for sorting.
+<1> The `_score` is not calculated, because it is not being used for sorting.
 <2> The value of the `date` field, expressed as milliseconds since the epoch,
     is returned in the `sort` values.
 
 The first is that we have ((("date field", "sorting search results by")))a new element in each result called `sort`, which
 contains the value(s) that was used for sorting.  In this case, we sorted on
-`date` which internally is((("milliseconds-since-the-epoch (date)"))) indexed as _milliseconds-since-the-epoch_. The long
+`date`, which internally is((("milliseconds-since-the-epoch (date)"))) indexed as _milliseconds since the epoch_. The long
 number `1411516800000` is equivalent to the date string `2014-09-24 00:00:00
 UTC`.
 
 The second is that the `_score` and `max_score` are both `null`. ((("score", "not calculating"))) Calculating
-the `_score` can be quite expensive and usually its only purpose is for
-sorting -- we're not sorting by relevance, so it doesn't make sense to keep
+the `_score` can be quite expensive, and usually its only purpose is for
+sorting; we're not sorting by relevance, so it doesn't make sense to keep
 track of the `_score`.  If you want the `_score` to be calculated regardless,
-then you can set((("track_scores parameter"))) the `track_scores` parameter to `true`.
+you can set((("track_scores parameter"))) the `track_scores` parameter to `true`.
 
-.Default ordering
-****
 
-As a shortcut, you can ((("sorting", "specifying just the field name to sort on")))specify just the name of the field to sort on:
+TIP: As a shortcut, you can ((("sorting", "specifying just the field name to sort on")))specify just the name of the field to sort on:
 
 [source,js]
 --------------------------------------------------
@@ -106,9 +104,8 @@ As a shortcut, you can ((("sorting", "specifying just the field name to sort on"
 Fields will be sorted in ((("sorting", "default ordering")))ascending order by default, and
 the `_score` value in descending order.
 
-****
 
-==== Multi-level sorting
+==== Multilevel Sorting
 
 Perhaps we want to combine the `_score` from a((("sorting", "multi-level")))((("multi-level sorting"))) query with the `date`, and
 show all matching results sorted first by date, then by relevance:
@@ -135,30 +132,29 @@ Order is important.  Results are sorted by the first criterion first. Only
 results whose first `sort` value is identical will then be sorted by the
 second criterion, and so on.
 
-Multi-level sorting doesn't have to involve the `_score` -- you could sort
-using several different fields,((("fields", "sorting by multiple fields"))) on geo-distance or on a custom value
+Multilevel sorting doesn't have to involve the `_score`. You could sort
+by using several different fields,((("fields", "sorting by multiple fields"))) on geo-distance or on a custom value
 calculated in a script.
 
-.Sorting and query string search
-****
-Query string search((("sorting", "in query string searches")))((("sort parameter", "using in query strings")))((("query strings", "sorting search results for"))) also supports custom sorting, using the `sort` parameter
+
+NOTE: Query-string search((("sorting", "in query string searches")))((("sort parameter", "using in query strings")))((("query strings", "sorting search results for"))) also supports custom sorting, using the `sort` parameter
 in the query string:
 
 [source,js]
 --------------------------------------------------
 GET /_search?sort=date:desc&sort=_score&q=search
 --------------------------------------------------
-****
 
-==== Sorting on multi-value fields
 
-When sorting on field with more than one value,((("sorting", "on multi-value fields")))((("fields", "multi-value", "sorting on"))) remember that the values do
-not have any intrinsic order -- a multi-value field is just a bag of values.
+==== Sorting on Multivalue Fields
+
+When sorting on fields with more than one value,((("sorting", "on multi-value fields")))((("fields", "multi-value", "sorting on"))) remember that the values do
+not have any intrinsic order; a multivalue field is just a bag of values.
 Which one do you choose to sort on?
 
-For numbers and dates, you can reduce a multi-value field to a single value
-using the `min`, `max`, `avg` or `sum` _sort modes_. ((("sum sort mode")))((("avg sort mode")))((("max sort mode")))((("min sort mode")))((("sort modes")))((("dates field", "sorting on earliest value")))For instance, you
-could sort on the earliest date in each `dates` field using:
+For numbers and dates, you can reduce a multivalue field to a single value
+by using the `min`, `max`, `avg`, or `sum` _sort modes_. ((("sum sort mode")))((("avg sort mode")))((("max sort mode")))((("min sort mode")))((("sort modes")))((("dates field", "sorting on earliest value")))For instance, you
+could sort on the earliest date in each `dates` field by using the following:
 
 [source,js]
 --------------------------------------------------
