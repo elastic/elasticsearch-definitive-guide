@@ -1,14 +1,14 @@
-=== Most important queries and filters
+=== Most Important Queries and Filters
 
-While Elasticsearch comes with many different queries and filters, there are
-just a few which you will use frequently. We will discuss them in much greater
-detail in <<search-in-depth>> but below we give you a quick introduction to
+While Elasticsearch comes with many queries and filters, you will use
+just a few frequently. We discuss them in much greater
+detail in <<search-in-depth>> but next we give you a quick introduction to
 the most important queries and filters.
 
-==== term filter
+==== term Filter
 
 The `term` filter is used to filter by((("filters", "important")))((("term filter"))) exact values, be they numbers, dates,
-booleans, or `not_analyzed` exact value string fields:
+Booleans, or `not_analyzed` exact-value string fields:
 
 [source,js]
 --------------------------------------------------
@@ -19,11 +19,11 @@ booleans, or `not_analyzed` exact value string fields:
 --------------------------------------------------
 // SENSE: 054_Query_DSL/70_Term_filter.json
 
-==== terms filter
+==== terms Filter
 
 The `terms` filter is((("terms filter"))) the same as the `term` filter, but allows you
 to specify multiple values to match. If the field contains any of
-the specified values, then the document matches:
+the specified values, the document matches:
 
 [source,js]
 --------------------------------------------------
@@ -31,10 +31,10 @@ the specified values, then the document matches:
 --------------------------------------------------
 // SENSE: 054_Query_DSL/70_Terms_filter.json
 
-==== range filter
+==== range Filter
 
-The `range` filter allows you to find((("range filters"))) numbers or dates which fall into
-the specified range:
+The `range` filter allows you to find((("range filters"))) numbers or dates that fall into
+a specified range:
 
 [source,js]
 --------------------------------------------------
@@ -49,13 +49,13 @@ the specified range:
 --------------------------------------------------
 // SENSE: 054_Query_DSL/70_Range_filter.json
 
-The operators that it accepts are:
+The operators that it accepts are as follows:
 
 [horizontal]
-`gt` ::     greater than
-`gte`::     greater than or equal to
-`lt` ::     less than
-`lte`::     less than or equal to
+1. `gt` ::     Greater than
+2. `gte`::     Greater than or equal to
+3. `lt` ::     Less than
+4. `lte`::     Less than or equal to
 
 
 ==== exists and missing filters
