@@ -1,13 +1,13 @@
 [[multi-fields]]
-=== String sorting and multi-fields
+=== String Sorting and Multifields
 
-Analyzed string fields are also multi-value fields,((("strings", "sorting on string fields")))((("analyzed string fields", "sorting and"))) but sorting on them seldom
-gives you the results you want. If you analyze a string like `"fine old art"`,
+Analyzed string fields are also multivalue fields,((("strings", "sorting on string fields")))((("analyzed string fields", "sorting and"))) but sorting on them seldom
+gives you the results you want. If you analyze a string like `fine old art`,
 it results in three terms. We probably want to sort alphabetically on the
-first term, then the second term, etc, but Elasticsearch doesn't have this
+first term, then the second term, and so forth, but Elasticsearch doesn't have this
 information at its disposal at sort time.
 
-You could use the `min` and `max` sort modes (it uses `min` by default) but
+You could use the `min` and `max` sort modes (it uses `min` by default), but
 that will result in sorting on either `art` or `old`, neither of which was the
 intent.
 
@@ -16,14 +16,13 @@ the whole `not_analyzed` string.((("not_analyzed string fields", "sorting on")))
 `analyzed` in order to be able to query it as full text.
 
 The naive approach to indexing the same string in two ways would be to include
-two separate fields in the document: one which is  `analyzed` for searching,
-and one which is `not_analyzed` for sorting.
+two separate fields in the document: one that is  `analyzed` for searching,
+and one that is `not_analyzed` for sorting.
 
 But  storing the same string twice in the `_source` field is waste of space.
-What we really want to do is to pass in a *single field* but to *index it in
-two different ways*. All of the ``core'' field types -- strings, numbers,
-booleans, dates -- accept a `fields` parameter ((("mapping (types)", "transforming simple mapping to multi-field mapping")))((("types", "core simple field types", "accepting fields parameter")))((("fields parameter")))((("multi-field mapping")))which allows you to transform a
-simple mapping like:
+What we really want to do is to pass in a _single field_ but to _index it in two different ways_. All of the _core_ field types (strings, numbers,
+Booleans, dates) accept a `fields` parameter ((("mapping (types)", "transforming simple mapping to multi-field mapping")))((("types", "core simple field types", "accepting fields parameter")))((("fields parameter")))((("multi-field mapping")))that allows you to transform a
+simple mapping like
 
 [source,js]
 --------------------------------------------------
@@ -33,7 +32,7 @@ simple mapping like:
 }
 --------------------------------------------------
 
-into a _multi-field_ mapping like this:
+into a _multifield_ mapping like this:
 
 [source,js]
 --------------------------------------------------
@@ -50,9 +49,9 @@ into a _multi-field_ mapping like this:
 --------------------------------------------------
 // SENSE: 056_Sorting/88_Multifield.json
 
-<1> The main `tweet` field is just the same as before: an `analyzed` full text
+<1> The main `tweet` field is just the same as before: an `analyzed` full-text
     field.
-<2> The new `tweet.raw` sub-field is `not_analyzed`.
+<2> The new `tweet.raw` subfield is `not_analyzed`.
 
 Now, or at least as soon as we have reindexed our data, we can use the `tweet`
 field for search and the `tweet.raw` field for sorting:
@@ -71,6 +70,6 @@ GET /_search
 --------------------------------------------------
 // SENSE: 056_Sorting/88_Multifield.json
 
-WARNING: Sorting on a full text `analyzed` field can use a lot of memory.  See
-<<fielddata-intro>> for more.
+WARNING: Sorting on a full-text `analyzed` field can use a lot of memory.  See
+<<fielddata-intro>> for more information.
 
