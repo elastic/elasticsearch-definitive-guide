@@ -1,12 +1,12 @@
 [[custom-analyzers]]
-=== Custom analyzers
+=== Custom Analyzers
 
 While Elasticsearch comes with a number of analyzers available out of the box,
 the real power comes from the ability to create your own custom analyzers
-by combining character filters, tokenizers and token filters in a
-configuration which suits your particular data.
+by combining character filters, tokenizers, and token filters in a
+configuration that suits your particular data.
 
-In <<analysis-intro>> we said that _analyzer_ is a wrapper which combines
+In <<analysis-intro>>, we said that an _analyzer_ is a wrapper that combines
 three functions into a single package,((("analyzers", "functions executed in sequence"))) which are executed in sequence:
 
 Character filters::
@@ -17,7 +17,7 @@ For instance, if our text is in HTML format, it will contain HTML tags like
 `<p>` or `<div>` that we don't want to be indexed. We can use the
 {ref}/analysis-htmlstrip-charfilter.html[`html_strip` character filter]
 to remove all HTML tags and to convert HTML entities like `&Aacute;` into the
-corresponding Unicode character: `Á`.
+corresponding Unicode character `Á`.
 
 An analyzer may have zero or more character filters.
 --
@@ -25,12 +25,12 @@ An analyzer may have zero or more character filters.
 Tokenizers::
 +
 --
-An analyzer *must* have a single tokenizer.((("tokenizers", "in analyzers")))  The tokenizer breaks the
-string up into individual terms or tokens. The
+An analyzer _must_ have a single tokenizer.((("tokenizers", "in analyzers")))  The tokenizer breaks up the
+string into individual terms or tokens. The
 {ref}/analysis-standard-tokenizer.html[`standard` tokenizer],
 which is used((("standard tokenizer"))) in the `standard` analyzer, breaks up a string into
 invidual terms on word boundaries, and removes most punctuation, but
-other tokenizers exist which have different behaviour.
+other tokenizers exist that have different behavior.
 
 For instance, the
 {ref}/analysis-keyword-tokenizer.html[`keyword` tokenizer]
@@ -47,7 +47,7 @@ Token filters::
 After tokenization, the resulting _token stream_ is passed through any
 specified token filters,((("token filters"))) in the order in which they are specified.
 
-Token filters may change, add or remove tokens.  We have already mentioned the
+Token filters may change, add, or remove tokens.  We have already mentioned the
 {ref}/analysis-lowercase-tokenfilter.html[`lowercase`] and
 {ref}/analysis-stop-tokenfilter.html[`stop` token filters],
 but there are many more available in Elasticsearch.
@@ -60,14 +60,14 @@ removes diacritics,((("ascii_folding filter"))) converting a term like `"très"`
 tokens suitable for partial matching or autocomplete.
 --
 
-In <<search-in-depth>>, we will discuss examples of where and how to use these
+In <<search-in-depth>>, we discuss examples of where and how to use these
 tokenizers and filters.  But first, we need to explain how to create a custom
 analyzer.
 
-==== Creating a custom analyzer
+==== Creating a Custom Analyzer
 
-In the same way as((("index settings", "analysis", "creating custom analyzers")))((("analyzers", "custom, creating"))) we configured the `es_std` analyzer above, we can configure
-character filters, tokenizers and token filters in their respective sections
+In the same way as((("index settings", "analysis", "creating custom analyzers")))((("analyzers", "custom, creating"))) we configured the `es_std` analyzer previously, we can configure
+character filters, tokenizers, and token filters in their respective sections
 under `analysis`:
 
 [source,js]
@@ -86,9 +86,9 @@ PUT /my_index
 --------------------------------------------------
 
 
-As an example, let's set up a custom analyzer which will:
+As an example, let's set up a custom analyzer that will do the following:
 
-1. Strip out HTML using the `html_strip` character filter.
+1. Strip out HTML by using the `html_strip` character filter.
 
 2. Replace `&` characters with `" and "`, using a custom `mapping`
    character filter:
@@ -121,7 +121,7 @@ As an example, let's set up a custom analyzer which will:
 --------------------------------------------------
 
 Our analyzer definition combines the predefined tokenizer and filters with the
-custom filters that we have configured above:
+custom filters that we have configured previously:
 
 [source,js]
 --------------------------------------------------
@@ -176,7 +176,7 @@ The quick & brown fox
 // SENSE: 070_Index_Mgmt/20_Custom_analyzer.json
 
 
-The abbreviated results below show that our analyzer is working correctly:
+The following abbreviated results show that our analyzer is working correctly:
 
 [source,js]
 --------------------------------------------------
@@ -191,7 +191,7 @@ The abbreviated results below show that our analyzer is working correctly:
 --------------------------------------------------
 
 The analyzer is not much use unless we tell ((("analyzers", "custom, telling Elasticsearch where to use it")))((("mapping (types)", "applying custom analyzer to a string field")))Elasticsearch where to use it. We
-can apply it to a `string` field with a mapping such as:
+can apply it to a `string` field with a mapping such as the following:
 
 [source,js]
 --------------------------------------------------
