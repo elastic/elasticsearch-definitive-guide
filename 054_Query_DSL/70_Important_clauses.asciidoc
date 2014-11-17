@@ -52,15 +52,15 @@ a specified range:
 The operators that it accepts are as follows:
 
 [horizontal]
-1. `gt` ::     Greater than
-2. `gte`::     Greater than or equal to
-3. `lt` ::     Less than
-4. `lte`::     Less than or equal to
+`gt` ::     Greater than
+`gte`::     Greater than or equal to
+`lt` ::     Less than
+`lte`::     Less than or equal to
 
 
-==== exists and missing filters
+==== exists and missing Filters
 
-The `exists` and `missing` filters are ((("exists filter")))((("missing filter")))used to find documents where the
+The `exists` and `missing` filters are ((("exists filter")))((("missing filter")))used to find documents in which the
 specified field either has one or more values (`exists`) or doesn't have any
 values (`missing`). It is similar in nature to `IS_NULL` (`missing`) and `NOT
 IS_NULL` (`exists`)in SQL:
@@ -78,15 +78,15 @@ IS_NULL` (`exists`)in SQL:
 These filters are frequently used to apply a condition only if a field is
 present, and to apply a different condition if it is missing.
 
-==== bool filter
+==== bool Filter
 
 The `bool` filter is used ((("bool filter")))((("must clause", "in bool filters")))((("must_not clause", "in bool filters")))((("should clause", "in bool filters")))to combine multiple filter clauses using
 Boolean logic.  It accepts three parameters:
 
 [horizontal]
-`must`      :: These clauses *must* match, like `and`
-`must_not`  :: These clauses *must not* match, like `not`
-`should`    :: At least one of these clauses must match, like `or`
+`must`      :: These clauses _must_ match, like `and`.
+`must_not`  :: These clauses _must not_ match, like `not`.
+`should`    :: At least one of these clauses must match, like `or`.
 
 Each of these parameters can accept a single filter clause or an array
 of filter clauses:
@@ -107,10 +107,10 @@ of filter clauses:
 // SENSE: 054_Query_DSL/70_Bool_filter.json
 
 
-==== match_all query
+==== match_all Query
 
 The `match_all` query simply((("match_all query")))((("queries", "important"))) matches all documents. It is the default
-query which is used if no query has been specified.
+query that is used if no query has been specified:
 
 [source,js]
 --------------------------------------------------
@@ -119,17 +119,17 @@ query which is used if no query has been specified.
 // SENSE: 054_Query_DSL/70_Match_all_query.json
 
 
-This query is frequently used in combination with a filter, for instance to
+This query is frequently used in combination with a filter--for instance, to
 retrieve all emails in the inbox folder. All documents are considered to be
 equally relevant, so they all receive a neutral `_score` of `1`.
 
-==== match query
+==== match Query
 
 The `match` query should be the standard((("match query"))) query that you reach for whenever
-you want to query for a full text or exact value in almost any field.
+you want to query for a full-text or exact value in almost any field.
 
-If you run a `match` query against a full text field, it will analyze
-the query string using the correct analyzer for that field before executing
+If you run a `match` query against a full-text field, it will analyze
+the query string by using the correct analyzer for that field before executing
 the search:
 
 [source,js]
@@ -139,7 +139,7 @@ the search:
 // SENSE: 054_Query_DSL/70_Match_query.json
 
 If you use it on a field containing an exact value, such as a number, a date,
-a boolean, or a `not_analyzed` string field, then it will search for that
+a Boolean, or a `not_analyzed` string field, then it will search for that
 exact value:
 
 [source,js]
@@ -151,16 +151,16 @@ exact value:
 --------------------------------------------------
 // SENSE: 054_Query_DSL/70_Match_query.json
 
-TIP: For exact value searches, you probably want to use a filter instead of a
+TIP: For exact-value searches, you probably want to use a filter instead of a
 query, as a filter will be cached.
 
-Unlike the query string search that we showed in <<search-lite>>, the `match`
-query does not use a query syntax like `"+user_id:2 +tweet:search"`. It just
+Unlike the query-string search that we showed in <<search-lite>>, the `match`
+query does not use a query syntax like `+user_id:2 +tweet:search`. It just
 looks for the words that are specified. This means that it is safe to expose
-to your users via a search field -- you control what fields they can query and
+to your users via a search field; you control what fields they can query, and
 it is not prone to throwing syntax errors.
 
-==== multi_match query
+==== multi_match Query
 
 The `multi_match` query allows((("multi_match query"))) to run the same `match` query on multiple
 fields:
@@ -176,28 +176,28 @@ fields:
 --------------------------------------------------
 // SENSE: 054_Query_DSL/70_Multi_match_query.json
 
-==== bool query
+==== bool Query
 
 The `bool` query, like the `bool` filter,((("bool query"))) is used to combine multiple
 query clauses. However, there are some differences. Remember that while
-filters give binary `yes|no` answers, queries calculate a relevance score
+filters give binary yes/no answers, queries calculate a relevance score
 instead. The `bool` query combines the `_score` from each `must` or
-`should` clause which matches.((("should clause", "in bool queries")))((("must_not clause", "in bool queries")))((("must clause", "in bool queries")))
+`should` clause that matches.((("should clause", "in bool queries")))((("must_not clause", "in bool queries")))((("must clause", "in bool queries"))) This query accepts the following parameters:
 
 [horizontal]
-`must`::        Clauses which *must* match for the document to be included.
+`must`::        Clauses that _must_ match for the document to be included.
 
-`must_not`::    Clauses which *must not* match for the document to be included.
+`must_not`::    Clauses that _must not_ match for the document to be included.
 
-`should`::      If these clauses match, then they increase the `_score`,
-                otherwise they have no effect. They are simply used to refine
+`should`::      If these clauses match, they increase the `_score`;
+                otherwise, they have no effect. They are simply used to refine
                 the relevance score for each document.
 
 The following query finds documents whose `title` field matches
-the query string `"how to make millions"` and which are not marked
-as `spam`.  If any documents are `"starred"` or are from 2014 onwards,
-then they will rank higher than they would have otherwise. Documents which
-match *both* conditions will rank even higher:
+the query string `how to make millions` and that are not marked
+as `spam`.  If any documents are `starred` or are from 2014 onward,
+they will rank higher than they would have otherwise. Documents that
+match _both_ conditions will rank even higher:
 
 [source,js]
 --------------------------------------------------
@@ -214,6 +214,6 @@ match *both* conditions will rank even higher:
 --------------------------------------------------
 // SENSE: 054_Query_DSL/70_Bool_query.json
 
-TIP: If there are no `must` clauses, then at least one `should` clause has to
-match, but if there is at least one `must` clause, then no `should` clauses
+TIP: If there are no `must` clauses, at least one `should` clause has to
+match. However, if there is at least one `must` clause, no `should` clauses
 are required to match.
