@@ -1,8 +1,8 @@
-=== Validating queries
+=== Validating Queries
 
 Queries can become quite complex and, especially when combined with
 different analyzers and field mappings, can become a bit difficult to follow.
-The `validate` API can be used to check whether a query is valid or not.
+The `validate-query` API can be used to check whether a query is valid.
 
 [source,js]
 --------------------------------------------------
@@ -18,7 +18,7 @@ GET /gb/tweet/_validate/query
 // SENSE: 054_Query_DSL/80_Validate_query.json
 
 
-The response to the above `validate` request tells us that the query is
+The response to the preceding `validate` request tells us that the query is
 invalid:
 
 [source,js]
@@ -34,7 +34,7 @@ invalid:
 --------------------------------------------------
 
 
-==== Understanding errors
+==== Understanding Errors
 
 To find out why it is invalid, add the `explain` parameter to the query
 string:
@@ -72,7 +72,7 @@ of the field (`tweet`):
 --------------------------------------------------
 
 
-==== Understanding queries
+==== Understanding Queries
 
 Using the `explain` parameter has the added advantage of returning
 a human-readable description of the (valid) query, which can be useful for
@@ -92,7 +92,7 @@ GET /_validate/query?explain
 // SENSE: 054_Query_DSL/80_Understanding_queries.json
 
 An `explanation` is returned for each index that we query, because each
-index can have different mapping and analyzers:
+index can have different mappings and analyzers:
 
 [source,js]
 --------------------------------------------------
@@ -112,11 +112,11 @@ index can have different mapping and analyzers:
 --------------------------------------------------
 
 
-From the `explanation` you can see how the `match` query for the query string
-`"really powerful"` has been rewritten as two single-term queries against
+From the `explanation`, you can see how the `match` query for the query string
+`really powerful` has been rewritten as two single-term queries against
 the `tweet` field, one for each term.
 
-Also, for the `us` index, the two terms are `"really"` and `"powerful"`, while
-for the `gb` index, the terms are `"realli"` and `"power"`. The reason
+Also, for the `us` index, the two terms are `really` and `powerful`, while
+for the `gb` index, the terms are `realli` and `power`. The reason
 for this is that we changed the `tweet` field in the `gb` index to use the
 `english` analyzer.
