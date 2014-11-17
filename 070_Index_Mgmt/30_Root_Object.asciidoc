@@ -1,21 +1,21 @@
 [[root-object]]
-=== The root object
+=== The Root Object
 
 The uppermost level of a mapping is known ((("mapping (types)", "root object")))((("root object")))as the _root object_. It may
-contain:
+contain the following:
 
-* a _properties_ section which lists the mapping for each field that a
-  document may contain.
+* A _properties_ section, which lists the mapping for each field that a
+  document may contain
 
-* various metadata fields, all of which start with an underscore, such
-  as `_type`, `_id` and `_source`.
+* Various metadata fields, all of which start with an underscore, such
+  as `_type`, `_id`, and `_source`
 
-* settings which control how the dynamic detection of new fields
-  is handled, such as `analyzer`, `dynamic_date_formats` and
+* Settings, which control how the dynamic detection of new fields
+  is handled, such as `analyzer`, `dynamic_date_formats`, and
   `dynamic_templates`
 
-* other settings which can be applied both to the root object and to fields
-  of type `object`, such as `enabled`, `dynamic`, and `include_in_all`.
+* Other settings, which can be applied both to the root object and to fields
+  of type `object`, such as `enabled`, `dynamic`, and `include_in_all`
 
 ==== Properties
 
@@ -24,16 +24,16 @@ fields or ((("root object", "properties")))((("properties", "important settings"
 
 [horizontal]
 `type`::        The datatype that the field contains, such as `string` or
-                `date`.
+                `date`
 
 `index`::       Whether a field should be searchable as full text (`analyzed`),
-                searchable as an exact value (`not_analyzed`) or not searchable
-                at all (`no`).
+                searchable as an exact value (`not_analyzed`), or not searchable
+                at all (`no`)
 
-`analyzer`::    Which `analyzer` to use for a full text field, both at index
-                time and at search time.
+`analyzer`::    Which `analyzer` to use for a full-text field, both at index
+                time and at search time
 
-We will discuss other field types such as `ip`, `geo_point` and `geo_shape` in
+We will discuss other field types such as `ip`, `geo_point`, and `geo_shape` in
 the appropriate sections later in the book.
 
 include::31_Metadata_source.asciidoc[]
