@@ -1,7 +1,7 @@
 [[translog]]
 === Making Changes Persistent
 
-Without an `fsync` to flush data in the file-system cache to disk, we cannot
+Without an `fsync` to flush data in the filesystem cache to disk, we cannot
 be sure that the data will still ((("persistent changes, making")))((("changes, persisting")))be there after a power failure, or even after
 exiting the application normally.  For Elasticsearch to be reliable, it needs
 to ensure that changes are persisted to disk.
