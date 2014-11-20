@@ -57,7 +57,7 @@ GET /my_store/products/_search
 --------------------------------------------------
 // SENSE: 080_Structured_Search/25_Range_filter.json
 
-If you need ((("unbounded ranges")))an unbounded range (e.g. just >20), just omit one of the
+If you need ((("unbounded ranges")))an unbounded range (for example, just >20), omit one of the
 boundaries:
 
 [source,js]
@@ -70,9 +70,9 @@ boundaries:
 --------------------------------------------------
 // SENSE: 080_Structured_Search/25_Range_filter.json
 
-==== Ranges on dates
+==== Ranges on Dates
 
-The range filter can be used on date ((("dates", "range filter used on")))((("range filters", "using on dates")))fields too:
+The `range` filter can be used on date ((("dates", "range filter used on")))((("range filters", "using on dates")))fields too:
 
 [source,js]
 --------------------------------------------------
@@ -84,7 +84,7 @@ The range filter can be used on date ((("dates", "range filter used on")))((("ra
 }
 --------------------------------------------------
 
-When used on date fields, the range filter ((("date math operations")))supports _date math_ operations.
+When used on date fields, the `range` filter ((("date math operations")))supports _date math_ operations.
 For example, if we want to find all documents that have a timestamp sometime
 in the last hour:
 
@@ -98,11 +98,11 @@ in the last hour:
 --------------------------------------------------
 
 This filter will now constantly find all documents with a timestamp greater
-than the current time minus 1 hour, making the filter a ``sliding window''
+than the current time minus 1 hour, making the filter a _sliding window_
 across your documents.
 
 Date math can also be applied to actual dates, rather than a placeholder like
-now. Just add a double pipe || after the date and follow it with a date
+now. Just add a double pipe (`||`) after the date and follow it with a date
 math expression:
 
 [source,js]
@@ -114,11 +114,11 @@ math expression:
     }
 }
 --------------------------------------------------
-<1> Less than January 1 2014 plus one month.
+<1> Less than January 1, 2014 plus one month
 
-Date math is "calendar aware", so it knows how many days are in each month,
+Date math is _calendar aware_, so it knows the number of days in each month,
 days in a year, etc.  More details about working with dates can be found in
-the {ref}/mapping-date-format.html[date format reference documentation].
+the link:/mapping-date-format.html[date format reference documentation].
 
 ==== Ranges on strings
 
