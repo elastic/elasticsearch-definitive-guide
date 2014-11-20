@@ -105,10 +105,10 @@ of `20`):
 ]
 --------------------------------------------------
 <1> Filters do not perform scoring or relevance. The score comes from the
-    `match_all` query which treats all docs as equal, so all results receive
+    `match_all` query, which treats all docs as equal, so all results receive
     a neutral score of `1`.
 
-==== Term Filter with Text
+==== term Filter with Text
 
 As mentioned at the top of ((("structured search", "finding exact values", "using term filter with text")))((("term filter", "with text")))this section, the `term` filter can match strings
 just as easily as numbers.  Instead of price, let's try to find products that
@@ -123,7 +123,7 @@ WHERE  productID = "XHDK-A-1293-#fJ3"
 --------------------------------------------------
 
 Translated into the query DSL, we can try a similar query with the `term`
-filter like so:
+filter, like so:
 
 [source,js]
 --------------------------------------------------
@@ -142,9 +142,9 @@ GET /my_store/products/_search
 --------------------------------------------------
 // SENSE: 080_Structured_Search/05_Term_text.json
 
-Except there is a little hiccup... we don't get any results back!  Why is
-that? The problem isn't actually with the the `term` query, it is with the way
-the data has been indexed. ((("analyze API", "using to analyze UPC tokenization"))) If we use the Analyze API (<<analyze-api>>), we
+Except there is a little hiccup: we don't get any results back!  Why is
+that? The problem isn't with the the `term` query; it is with the way
+the data has been indexed. ((("analyze API", "using to analyze UPC tokenization"))) If we use the `analyze` API (<<analyze-api>>), we
 can see that our UPC has been tokenized into smaller tokens:
 
 [source,js]
@@ -184,15 +184,15 @@ XHDK-A-1293-#fJ3
 --------------------------------------------------
 // SENSE: 080_Structured_Search/05_Term_text.json
 
-There are a couple of important points here:
+There are a few important points here:
 
 * We have four distinct tokens instead of a single token representing the UPC.
 * All letters have been lowercased.
-* We lost the hyphen and the hash (#) sign.
+* We lost the hyphen and the hash (`#`) sign.
 
 So when our `term` filter looks for the exact value `XHDK-A-1293-#fJ3`, it
-doesn't find anything because that token does not exist in our inverted index.
-Instead, there are the four tokens listed above.
+doesn't find anything, because that token does not exist in our inverted index.
+Instead, there are the four tokens listed previously.
 
 Obviously, this is not what we want to happen when dealing with identification
 codes, or any kind of precise enumeration.
