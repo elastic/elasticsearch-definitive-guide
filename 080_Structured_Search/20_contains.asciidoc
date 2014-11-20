@@ -1,7 +1,7 @@
-==== Contains, but does not equal
+==== Contains, but Does Not Equal
 
-It is important to understand that `term` and `terms` are "contains" operations,
-not "equals".((("structured search", "contains, but does not equal")))((("terms filter", "contains, but does not equal")))((("term filter", "contains, but does not equal")))  What does that mean?
+It is important to understand that `term` and `terms` are _contains_ operations,
+not _equals_.((("structured search", "contains, but does not equal")))((("terms filter", "contains, but does not equal")))((("term filter", "contains, but does not equal")))  What does that mean?
 
 If you have a term filter for `{ "term" : { "tags" : "search" } }`, it will match
 _both_ of the following documents:
@@ -12,10 +12,10 @@ _both_ of the following documents:
 { "tags" : ["search", "open_source"] } <1>
 --------------------------------------------------
 
-<1> This document is returned, even though it has terms other than `"search"`
+<1> This document is returned, even though it has terms other than `search`.
 
 Recall how the `term` filter works: it checks the inverted index for all
-documents which contain a term, then constructs a bitset.  In our simple
+documents that contain a term, and then constructs a bitset.  In our simple
 example, we have the following inverted index:
 
 [width="50%",frame="topbot"]
@@ -27,13 +27,13 @@ example, we have the following inverted index:
 
 When a `term` filter is executed for the token `search`, it goes straight to the
 corresponding entry in the inverted index and extracts the associated doc IDs.
-As you can see, both doc `1` and `2` contain the token in the inverted index,
-therefore they are both returned as a result.
+As you can see, both document 1 and document 2 contain the token in the inverted index.
+Therefore, they are both returned as a result.
 
-****
-The nature of an inverted index also means that entire field equality is rather
-difficult to calculate.  How would you determine if a particular document
-contains *only* your request term?  You would have to find the term in
+
+NOTE: The nature of an inverted index also means that entire field equality is rather
+difficult to calculate.  How would you determine whether a particular document
+contains _only_ your request term?  You would have to find the term in
 the inverted index, extract the document IDs, then scan *every row in the
 inverted index* looking for those IDs to see if a doc has any other terms.
 
@@ -41,7 +41,6 @@ As you might imagine, that would be tremendously inefficient and expensive.
 For that reason, `term` and `terms` are _must contain_ operations, not
 _must equal exactly_.
 
-****
 
 ==== Equals exactly
 If you do want that behavior -- entire field equality -- the best way to
