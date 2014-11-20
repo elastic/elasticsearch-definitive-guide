@@ -1,12 +1,12 @@
-=== Dealing with null values
+=== Dealing with Null Values
 
-Think back to our earlier example where documents have a field named `tags`.
-This is a multi-valued field.((("structured search", "dealing with null values")))((("null values")))  A document may have one tag, many tags, or
+Think back to our earlier example, where documents have a field named `tags`.
+This is a multivalue field.((("structured search", "dealing with null values")))((("null values")))  A document may have one tag, many tags, or
 potentially no tags at all. If a field has no values, how is it stored in an
 inverted index?
 
-That's a trick question, because the answer is: it isn't stored at all. Let's
-look at that inverted index from the last section:
+That's a trick question, because the answer is, it isn't stored at all. Let's
+look at that inverted index from the previous section:
 
 [width="50%",frame="topbot"]
 |==========================
