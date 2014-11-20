@@ -67,7 +67,7 @@ filter--are cached, while((("leaf filters", "caching of")))((("caching", "of lea
 
 
 NOTE: Leaf filters have to consult the inverted index on disk, so it makes sense to
-cache them. Compound filters on the other hand use fast bit logic to combine
+cache them. Compound filters, on the other hand, use fast bit logic to combine
 the bitsets resulting from their inner clauses, so it is efficient to
 recalculate them every time.
 
@@ -77,8 +77,8 @@ doesn't make sense to do so:
 
 Script filters::
 
-The results((("script filters", "no caching of results"))) from {ref}/query-dsl-script-filter.html[`script` filters] cannot
-be cached because the meaning of the script is opaque to Elasticsearch.
+The results((("script filters", "no caching of results"))) from http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/filter-caching.html#_controlling_caching[`script` filters] cannot
+be cached because the meaning of the script is opaque to Elasticsearch. See http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/filter-caching.html#_controlling_caching for more information on `script` filters.
 
 Geo filters::
 
