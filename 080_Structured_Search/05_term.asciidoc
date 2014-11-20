@@ -1,4 +1,4 @@
-=== Finding exact values
+=== Finding Exact Values
 
 When working with exact values,((("structured search", "finding exact values")))((("exact values", "finding"))) you will be working with filters. Filters are
 important because they are very, very fast.  Filters do not calculate
@@ -7,10 +7,10 @@ talk about the performance benefits of filters later in <<filter-caching>>,
 but for now, just keep in mind that you should use filters as often as you
 can.
 
-==== Term Filter with Numbers
+==== term Filter with Numbers
 
 We are going to explore the `term` filter ((("term filter", "with numbers")))((("structured search", "finding exact values", "using term filter with numbers")))first because you will use it often.
-This filter is capable of handling numbers, booleans, dates and text.
+This filter is capable of handling numbers, Booleans, dates, and text.
 
 Let's look at an example using numbers first by indexing some products.  These
 documents have a `price` and a `productID`:
@@ -42,7 +42,7 @@ WHERE  price = 20
 
 In the Elasticsearch query DSL, we use a `term` filter to accomplish the same
 thing.  The `term` filter will look for the exact value that we specify.  By
-itself, a `term` filter is very simple. It accepts a field name and the value
+itself, a `term` filter is simple. It accepts a field name and the value
 that we wish to find:
 
 [source,js]
@@ -54,7 +54,7 @@ that we wish to find:
 }
 --------------------------------------------------
 
-The `term` filter isn't very useful on its own though.  As discussed in
+The `term` filter isn't very useful on its own, though.  As discussed in
 <<query-dsl-intro>>, the `search` API expects a `query`, not a `filter`. To
 use our `term` filter, ((("filtered query")))we need to wrap it with a
 <<filtered-query,`filtered` query>>:
@@ -79,15 +79,15 @@ GET /my_store/products/_search
 --------------------------------------------------
 // SENSE: 080_Structured_Search/05_Term_number.json
 
-<1> The `filtered` query accepts both a `query` and a `filter`
+<1> The `filtered` query accepts both a `query` and a `filter`.
 <2> A `match_all` is used to return all matching documents.((("match_all query clause")))  This is the default
-behavior, so in future examples we will simply omit the `query` section
+behavior, so in future examples we will simply omit the `query` section.
 <3> The `term` filter that we saw previously.  Notice how it is placed inside
 the `filter` clause.
 
 Once executed, the search results from this query are exactly what you would
-expect: only document `2` is returned as a hit (because only `2` had a price
-of 20):
+expect: only document 2 is returned as a hit (because only `2` had a price
+of `20`):
 
 [source,json]
 --------------------------------------------------
