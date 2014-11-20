@@ -80,23 +80,22 @@ Script filters::
 The results((("script filters", "no caching of results"))) from http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/filter-caching.html#_controlling_caching[`script` filters] cannot
 be cached because the meaning of the script is opaque to Elasticsearch.
 
-Geo filters::
+Geo-filters::
 
-The geolocation filters, which((("geolocation filters", "no caching of results"))) we will talk more about in <<geoloc>>, are
+The geolocation filters, which((("geolocation filters", "no caching of results"))) we cover in more detail in <<geoloc>>, are
 usually used to filter results based on the geolocation of a specific user.
-Since every user has their own unique geolocation, it is unlikely that geo
-filters will be reused, so it makes no sense to cache them.
+Since each user has a unique geolocation, it is unlikely that geo-filters will be reused, so it makes no sense to cache them.
 
 Date ranges::
 
-Date ranges which ((("date ranges", "using now function, no caching of")))((("now function", "date ranges using")))use the `now` function, eg `"now-1h"`, result in values
+Date ranges that ((("date ranges", "using now function, no caching of")))((("now function", "date ranges using")))use the `now` function (for example `"now-1h"`), result in values
 accurate to the millisecond. Every time the filter is run, `now` returns a new
-time. Older filters will never be reused so caching is disabled by default.
-However, when using `now` with rounding, eg `now/d` rounds to the nearest day,
-then caching is enabled by default.
+time. Older filters will never be reused, so caching is disabled by default.
+However, when using `now` with rounding (for example, `now/d` rounds to the nearest day),
+caching is enabled by default.
 
 Sometimes the default caching strategy is not correct. Perhaps you have a
-complicated `bool` expression which is reused several times in the same query.
+complicated `bool` expression that is reused several times in the same query.
 Or you have a filter on a `date` field that will never be reused.  The default
 caching strategy ((("cache flag")))((("filters", "overriding default caching strategy on")))can be overridden on almost any filter by setting the
 `_cache` flag:
@@ -115,5 +114,5 @@ caching strategy ((("cache flag")))((("filters", "overriding default caching str
 <1> It is unlikely that we will reuse this exact timestamp.
 <2> Disable caching of this filter.
 
-In later chapters we will provide examples of when it can make sense to
+Later chapters provide examples of when it can make sense to
 override the default caching strategy.
