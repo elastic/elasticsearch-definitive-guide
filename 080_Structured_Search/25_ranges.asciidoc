@@ -4,7 +4,7 @@ When dealing with numbers in this chapter, we have so far searched for only
 exact numbers. ((("structured search", "ranges"))) In practice,  filtering on ranges is often more useful.  For
 example, you might want to find all products with a price greater than $20 and less than $40.
 
-In SQL terms, a range can be expressed as:
+In SQL terms, a range can be expressed as follows:
 
 [source,sql]
 --------------------------------------------------
@@ -13,7 +13,7 @@ FROM   products
 WHERE  price BETWEEN 20 AND 40
 --------------------------------------------------
 
-Elasticsearch has a range filter, ((("range filters", "using on numbers")))which, unsurprisingly, allows you to
+Elasticsearch has a `range` filter, ((("range filters", "using on numbers")))which, unsurprisingly, allows you to
 filter ranges:
 
 [source,js]
@@ -26,17 +26,17 @@ filter ranges:
 }
 --------------------------------------------------
 
-The range filter supports both inclusive and exclusive ranges, through
+The `range` filter supports both inclusive and exclusive ranges, through
 combinations of the following options:
 
 [horizontal]
-gt::  `>` greater than
-lt::  `<` less than
-gte:: `>=` greater than or equal to
-lte:: `<=` less than or equal to
+* `gt`: `>` greater than
+* `lt`: `<` less than
+* `gte`: `>=` greater than or equal to
+* `lte`: `<=` less than or equal to
 
 
-.Example range filter
+.Here is an example range filter:
 [source,js]
 --------------------------------------------------
 GET /my_store/products/_search
