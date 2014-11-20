@@ -1,8 +1,8 @@
 [[match-multi-word]]
-=== Multi-word queries
+=== Multiword Queries
 
-If we could only search for one word at a time, full text search would be
-pretty inflexible. Fortunately, the `match` query((("full text search", "multi-word queries")))((("match query", "multi-word query"))) makes multi-word queries
+If we could search for only one word at a time, full-text search would be
+pretty inflexible. Fortunately, the `match` query((("full text search", "multi-word queries")))((("match query", "multi-word query"))) makes multiword queries
 just as simple:
 
 [source,js]
@@ -18,7 +18,7 @@ GET /my_index/my_type/_search
 --------------------------------------------------
 // SENSE: 100_Full_Text_Search/05_Match_query.json
 
-The above query returns all four documents in the results list:
+The preceding query returns all four documents in the results list:
 
 [source,js]
 --------------------------------------------------
