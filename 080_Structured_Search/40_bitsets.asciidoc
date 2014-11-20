@@ -1,31 +1,29 @@
 [[filter-caching]]
-=== All about caching
+=== All About Caching
 
-Earlier in this chapter (<<_internal_filter_operation>>) we briefly discussed
+Earlier in this chapter (<<_internal_filter_operation>>), we briefly discussed
 how filters are calculated.((("structured search", "caching of filter results")))((("caching", "bitsets representing documents matching filters")))((("bitsets, caching of")))((("filters", "bitsets representing documents matching, caching of")))  At their heart is a bitset representing which
-documents match the filter.
-
-Elasticsearch aggressively caches these bitsets for later use.  Once cached,
-these bitsets can be reused *wherever* the same filter is used, without having
+documents match the filter. Elasticsearch aggressively caches these bitsets for later use.  Once cached,
+these bitsets can be reused _wherever_ the same filter is used, without having
 to reevaluate the entire filter again.
 
-These cached bitsets are ``smart'' -- they are updated incrementally. As you
+These cached bitsets are ``smart'': they are updated incrementally. As you
 index new documents, only those new documents need to be added to the existing
 bitsets, rather than having to recompute the entire cached filter over and
-over. Filters are real-time like the rest of the system -- you don't need to
+over. Filters are real-time like the rest of the system; you don't need to
 worry about cache expiry.
 
-==== Independent filter caching
+==== Independent Filter Caching
 
 Each filter is calculated and cached independently, regardless of where it is
 used.((("filters", "independent caching of"))) If two different queries use the same filter, the same filter bitset
 will be reused.  Likewise, if a single query uses the same filter in multiple
 places, only one bitset is calculated and then reused.
 
-Let's look at this example query which looks for emails that are either:
+Let's look at this example query, which looks for emails that are either of the following:
 
-* in the inbox and have not been read
-* or are *not* in the inbox but have been marked as important
+* In the inbox and have not been read
+* _Not_ in the inbox but have been marked as important
 
 [source,js]
 --------------------------------------------------
@@ -59,20 +57,20 @@ the cached bitset.
 
 This ties in nicely with the composability of the query DSL.  It is easy to
 move filters around, or reuse the same filter in multiple places within the
-same query.  This isn't just convenient to the developer -- it has direct
+same query.  This isn't just convenient to the developer--it has direct
 performance benefits.
 
-==== Controlling caching
+==== Controlling Caching
 
-Most ``leaf'' filters -- those dealing directly with fields like the `term`
-filter -- are cached, while((("leaf filters", "caching of")))((("caching", "of leaf filters, controlling")))((("filters", "controlling caching of"))) compound filters, like the `bool` filter, are not.
+Most _leaf filters_--those dealing directly with fields like the `term`
+filter--are cached, while((("leaf filters", "caching of")))((("caching", "of leaf filters, controlling")))((("filters", "controlling caching of"))) compound filters, like the `bool` filter, are not.
 
-****
-Leaf filters have to consult the inverted index on disk, so it makes sense to
+
+NOTE: Leaf filters have to consult the inverted index on disk, so it makes sense to
 cache them. Compound filters on the other hand use fast bit logic to combine
 the bitsets resulting from their inner clauses, so it is efficient to
 recalculate them every time.
-****
+
 
 Certain leaf filters, however, are not cached by default, because it
 doesn't make sense to do so:
