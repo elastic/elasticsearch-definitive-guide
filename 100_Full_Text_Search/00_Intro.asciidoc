@@ -54,10 +54,10 @@ Full-text queries::
 --
 
 Queries like the `match` or `query_string` queries are high-level queries
-which understand the mapping of a field:
+that understand the mapping of a field:
 
 *  If you use them to query a `date` or `integer` field, they will treat the
-   query string as a date or integer respectively.
+   query string as a date or integer, respectively.
 
 *  If you query an exact value (`not_analyzed`) string field,((("not_analyzed string fields", "match or query-string queries on"))) they will treat
    the whole query string as a single term.
@@ -67,7 +67,7 @@ which understand the mapping of a field:
   to be queried.
 
 Once the query has assembled a list of terms, it executes the appropriate
-low-level query for each of these terms, then combines  their results to
+low-level query for each of these terms, and then combines  their results to
 produce the final relevance score for each document.
 
 We will discuss this process in more detail in the following chapters.
@@ -78,12 +78,11 @@ query full text, not individual terms, and this is easier to do with the
 high-level full-text queries (which end up using term-based queries
 internally).
 
-**************************************************
 
-If you do find yourself wanting to use a query on an exact value
+NOTE: If you do find yourself wanting to use a query on an exact value
 `not_analyzed` field, ((("exact values", "not_analyzed fields, querying")))think about whether you really want a query or a filter.
 
-Single-term queries usually represent binary `yes`|`no` questions and are
+Single-term queries usually represent binary yes/no questions and are
 almost always better expressed as a ((("filters", "single-term queries better expressed as")))filter, so that they can benefit from
 <<filter-caching,filter caching>>:
 
@@ -100,6 +99,4 @@ GET /_search
     }
 }
 --------------------------------------------------
-
-**************************************************
 
