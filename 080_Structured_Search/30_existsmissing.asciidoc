@@ -182,20 +182,20 @@ Sometimes you need to be able to distinguish between a field that doesn't have
 a value, and a field that has been explicitly set to `null`. With the default
 behavior that we saw previously, this is impossible; the data is lost. Luckily,
 there is an option that we can set that replaces explicit  `null` values with
-a ``placeholder'' value of our choosing.
+a _placeholder_ value of our choosing.
 
-When specifying the mapping for a string, numeric, boolean or date field, you
-can also set a `null_value` which will be used whenever an explicit `null`
+When specifying the mapping for a string, numeric, Boolean, or date field, you
+can also set a `null_value` that will be used whenever an explicit `null`
 value is encountered. ((("null_value setting"))) A field without a value will still be excluded from the
 inverted index.
 
-When choosing a suitable `null_value` ensure that:
+When choosing a suitable `null_value`, ensure the following:
 
-*  it matches the field's type.  You can't use a string `null_value` in a
-   field of type `date`
+*  It matches the field's type.  You can't use a string `null_value` in a
+   field of type `date`.
 
-*  it is different from the normal values that the field may contain, to
-   avoid confusing real values with `null` values
+*  It is different from the normal values that the field may contain, to
+   avoid confusing real values with `null` values.
 
 ****
 
