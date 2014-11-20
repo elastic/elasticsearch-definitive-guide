@@ -199,10 +199,10 @@ When choosing a suitable `null_value`, ensure the following:
 
 ****
 
-==== Exists/Missing on Objects
+==== exists/missing on Objects
 
 The `exists` and `missing` filters ((("objects", "using exists/missing filters on")))((("exists filter", "using on objects")))((("missing filter", "using on objects")))also work on inner objects, not just core
-types.  With the following document:
+types.  With the following document
 
 [source,js]
 --------------------------------------------------
@@ -215,7 +215,7 @@ types.  With the following document:
 --------------------------------------------------
 
 you can check for the existence of `name.first` and `name.last` but also just
-`name`. However, in <<mapping>> we said that an object like the above is
+`name`. However, in <<mapping>>, we said that an object like the preceding one is
 flattened internally into a simple field-value structure, much like this:
 
 [source,js]
@@ -229,7 +229,7 @@ flattened internally into a simple field-value structure, much like this:
 So how can we use an `exists` or `missing` filter on the `name` field, which
 doesn't really exist in the inverted index?
 
-The reason that it works is that a filter like:
+The reason that it works is that a filter like
 
 [source,js]
 --------------------------------------------------
@@ -238,7 +238,7 @@ The reason that it works is that a filter like:
 }
 --------------------------------------------------
 
-is really executed as:
+is really executed as
 
 [source,js]
 --------------------------------------------------
@@ -252,7 +252,7 @@ is really executed as:
 }
 --------------------------------------------------
 
-That also means that if `first` and `last` were both empty, then the `name`
+That also means that if `first` and `last` were both empty, the `name`
 namespace would not exist.
 
 
