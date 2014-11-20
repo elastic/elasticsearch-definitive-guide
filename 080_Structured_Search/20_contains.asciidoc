@@ -34,8 +34,8 @@ Therefore, they are both returned as a result.
 NOTE: The nature of an inverted index also means that entire field equality is rather
 difficult to calculate.  How would you determine whether a particular document
 contains _only_ your request term?  You would have to find the term in
-the inverted index, extract the document IDs, then scan *every row in the
-inverted index* looking for those IDs to see if a doc has any other terms.
+the inverted index, extract the document IDs, and then scan _every row in the
+inverted index_, looking for those IDs to see whether a doc has any other terms.
 
 As you might imagine, that would be tremendously inefficient and expensive.
 For that reason, `term` and `terms` are _must contain_ operations, not
