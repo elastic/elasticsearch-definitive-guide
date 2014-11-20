@@ -42,8 +42,8 @@ For that reason, `term` and `terms` are _must contain_ operations, not
 _must equal exactly_.
 
 
-==== Equals exactly
-If you do want that behavior -- entire field equality -- the best way to
+==== Equals Exactly
+If you do want that behavior--entire field equality -- the best way to
 accomplish it involves indexing a secondary field. ((("structured search", "equals exactly"))) In this field, you index the
 number of values that your field contains.  Using our two previous documents,
 we now include a field that maintains the number of tags:
@@ -78,9 +78,9 @@ GET /my_index/my_type/_search
 --------------------------------------------------
 // SENSE: 080_Structured_Search/20_Exact.json
 
-<1> Find all documents that have the term `"search"`.
-<2> But make sure the document only has one tag.
+<1> Find all documents that have the term `search`.
+<2> But make sure the document has only one tag.
 
-This query will now match only the document that has a single tag which is
-`search`, rather than any document which contains `search`.
+This query will now match only the document that has a single tag that is
+`search`, rather than any document that contains `search`.
 
