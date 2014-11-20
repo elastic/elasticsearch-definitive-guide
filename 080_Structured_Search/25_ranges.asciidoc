@@ -1,8 +1,8 @@
 === Ranges
 
-When dealing with numbers in this chapter, we have so far only searched for
+When dealing with numbers in this chapter, we have so far searched for only
 exact numbers. ((("structured search", "ranges"))) In practice,  filtering on ranges is often more useful.  For
-example, find all products with a price greater than $20 and less than $40.
+example, you might want to find all products with a price greater than $20 and less than $40.
 
 In SQL terms, a range can be expressed as:
 
