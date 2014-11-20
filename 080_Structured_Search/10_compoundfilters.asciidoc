@@ -1,7 +1,7 @@
 [[combining-filters]]
-=== Combining filters
+=== Combining Filters
 
-The previous two examples showed a single filter in use.((("structured search", "combining filters")))((("filters", "combining"))) In practice you
+The previous two examples showed a single filter in use.((("structured search", "combining filters")))((("filters", "combining"))) In practice, you
 will probably need to filter on multiple values or fields.  For example, how
 would you express this SQL in Elasticsearch?
 
@@ -15,7 +15,7 @@ WHERE  (price = 20 OR productID = "XHDK-A-1293-#fJ3")
 
 In these situations, you will need the `bool` filter.((("filters", "combining", "in bool filter")))((("bool filter")))  This is a _compound
 filter_ that accepts other filters as arguments, combining them in various
-boolean combinations.
+Boolean combinations.
 
 [[bool-filter]]
 ==== Bool Filter
@@ -34,20 +34,20 @@ The `bool` filter is composed of three sections:
 --------------------------------------------------
 
 [horizontal]
-`must`::     All of these clauses *must* match. The equivalent of `AND`.
-`must_not`:: All of these clauses *must_not* match. The equivalent of `NOT`.
+`must`::     All of these clauses _must_ match. The equivalent of `AND`.
+`must_not`:: All of these clauses _must not_ match. The equivalent of `NOT`.
 `should`::   At least one of these clauses must match. The equivalent of `OR`.
 
 And that's it!((("should clause", "in bool filters")))((("must_not clause", "in bool filters")))((("must clause", "in bool filters"))) When you need multiple filters, simply place them into the
 different sections of the `bool` filter.
 
-****
-Each section of the `bool` filter is optional (e.g. you can have a `must`
+
+NOTE: Each section of the `bool` filter is optional (for example, you can have a `must`
 clause and nothing else), and each section can contain a single filter or an
 array of filters.
-****
 
-To replicate the SQL example above, we will take the two `term` filters that
+
+To replicate the preceding SQL example, we will take the two `term` filters that
 we used((("term filter", "placing inside bool filter")))((("bool filter", "with two term filters in should clause and must_not clause"))) previously and place them inside the `should` clause of a `bool`
 filter, and add another clause to deal with the `NOT` condition:
 
@@ -77,7 +77,7 @@ GET /my_store/products/_search
 <1> Note that we still need to use a `filtered` query to wrap everything.
 <2> These two `term` filters are _children_ of the `bool` filter, and since they
     are placed inside the `should` clause, at least one of them needs to match.
-<3> If a product has a price of `30` it is automatically excluded because it
+<3> If a product has a price of `30`, it is automatically excluded because it
     matches a `must_not` clause.
 
 Our search results return two hits, each document satisfying a different clause
@@ -107,12 +107,12 @@ in the `bool` filter:
 <1> Matches the `term` filter for `productID = "XHDK-A-1293-#fJ3"`
 <2> Matches the `term` filter for `price = 20`
 
-==== Nesting boolean filters
+==== Nesting Boolean Filters
 
-Even though `bool` is a compound filter and accepts "children" filters, it is
+Even though `bool` is a compound filter and accepts children filters, it is
 important to understand that `bool` is just a filter itself.((("filters", "combining", "nesting bool filters")))((("bool filter", "nesting in another bool filter")))  This means you
-can nest `bool` filters inside of other `bool` filters, giving you the
-ability to make arbitrarily complex boolean logic.
+can nest `bool` filters inside other `bool` filters, giving you the
+ability to make arbitrarily complex Boolean logic.
 
 Given this SQL statement:
 
