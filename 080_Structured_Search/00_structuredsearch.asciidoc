@@ -1,25 +1,24 @@
 [[structured-search]]
-== Structured search
+== Structured Search
 
-Structured search is about interrogating ((("structured search")))data that has inherent structure.
-Dates, times and numbers are all structured -- they have a precise  format
+_Structured search_ is about interrogating ((("structured search")))data that has inherent structure.
+Dates, times, and numbers are all structured: they have a precise  format
 that you can perform logical operations on.  Common operations include
 comparing ranges of numbers or dates, or determining which of two values is
 larger.
 
 Text can be structured too.  A box of crayons has a discrete set of colors:
 `red`, `green`, `blue`.  A blog post may be tagged with keywords
-`distributed` and `search`.  Products in an e-commerce store have Universal
-Product Codes (UPCs) or some other identifier which requires strict and
+`distributed` and `search`.  Products in an ecommerce store have Universal
+Product Codes (UPCs) or some other identifier that requires strict and
 structured formatting.
 
-With structured search, the answer to your question is **always** a yes or no;
+With structured search, the answer to your question is _always_ a yes or no;
 something either belongs in the set or it does not.  Structured search does
-not worry about document relevance or scoring -- it simply includes or
+not worry about document relevance or scoring; it simply includes or
 excludes documents.
 
-This should make sense logically.  A number can't be ``more'' in a range than
-any other number which falls in the same range.  It is either in the range...
-or it isn't.  Similarly, for structured text, a value is either equal or it
-isn't. There is no concept of ``more similar''.
+This should make sense logically.  A number can't be _more_ in a range than
+any other number that falls in the same range.  It is either in the range--or it isn't.  Similarly, for structured text, a value is either equal or it
+isn't. There is no concept of _more similar_.
 
