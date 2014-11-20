@@ -1,18 +1,17 @@
 [[full-text-search]]
-== Full text search
+== Full-Text Search
 
 Now that we have covered the simple case of searching for structured data,
-it is time to ((("full text search")))explore _full text search_ -- how to search within full
-text fields in order to find the most relevant documents.
+it is time to ((("full text search")))explore _full-text search_: how to search within full-text fields in order to find the most relevant documents.
 
-The two most important aspects of ((("relevance")))full text search are:
+The two most important aspects of ((("relevance")))full-text search are as follows:
 
 Relevance::
 
     The ability to rank results by how relevant they are to
     the given query, whether relevance is calculated using
-    TF/IDF (see <<relevance-intro>>), proximity to a geo-location,
-    fuzzy similarity or some other algorithm.
+    TF/IDF (see <<relevance-intro>>), proximity to a geolocation,
+    fuzzy similarity, or some other algorithm.
 
 Analysis::
 
@@ -24,28 +23,28 @@ As soon as we talk ((("analysis")))about either relevance or analysis, we are in
 of queries, rather than filters.
 
 [[term-vs-full-text]]
-=== Term-based vs. Full-text
+=== Term-Based Versus Full-Text
 
 While all queries perform some sort of relevance calculation, not all queries
 have an analysis phase.((("full text search", "term-based versus")))((("term-based queries"))) Besides specialized queries like the `bool` or
-`function_score` queries which don't operate on text at all, textual queries can
+`function_score` queries, which don't operate on text at all, textual queries can
 be broken down into two families:
 
 Term-based queries::
 +
 --
 
-Queries like the `term` or `fuzzy` queries are low-level queries which have no
+Queries like the `term` or `fuzzy` queries are low-level queries that have no
 analysis phase.((("fuzzy queries"))) They operate on a single term. A `term` query for the term
-`"Foo"` looks for that *exact term* in the inverted index and calculates the
+`Foo` looks for that _exact term_ in the inverted index and calculates the
 TF/IDF relevance `_score` for each document that contains the term.
 
 It is important to remember that the `term` query looks in the inverted index
-for the exact term only -- it won't match any variants like `"foo"` or
-`"FOO"`.  It doesn't matter how the term came to be in the index, just that it
+for the exact term only; it won't match any variants like `foo` or
+`FOO`.  It doesn't matter how the term came to be in the index, just that it
 is.  If you were to index `["Foo","Bar"]` into an exact value `not_analyzed`
-field, or `"Foo Bar"` into an analyzed field with the `whitespace` analyzer,
-both would result in having the two terms `"Foo"` and `"Bar"` in the inverted
+field, or `Foo Bar` into an analyzed field with the `whitespace` analyzer,
+both would result in having the two terms `Foo` and `Bar` in the inverted
 index.
 
 --
