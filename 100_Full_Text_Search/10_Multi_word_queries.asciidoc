@@ -150,5 +150,5 @@ documentation see the
 http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/match-multi-word.html#match-precision[`minimum_should_match` reference documentation].
 
 
-To fully understand how the `match` query handles multi-word queries, we need
+To fully understand how the `match` query handles multiword queries, we need
 to look at how to combine multiple queries with the `bool` query.
