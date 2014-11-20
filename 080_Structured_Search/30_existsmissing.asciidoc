@@ -17,18 +17,18 @@ look at that inverted index from the previous section:
 
 How would you store a field that doesn't exist in that data structure?  You
 can't!  An inverted index is simply a list of tokens and the documents that
-contain them.  If a field doesn't exist... it doesn't hold any tokens, which
+contain them.  If a field doesn't exist, it doesn't hold any tokens, which
 means it won't be represented in an inverted index data structure.
 
 Ultimately, this((("strings", "empty")))((("arrays", "empty"))) means that a `null`, `""` (an empty string), `[]` (an empty
-array), and `[null]` are all equivalent... they simply don't exist in the
+array), and `[null]` are all equivalent. They simply don't exist in the
 inverted index!
 
-Obviously the world is not simple, and data is often missing fields, contains
+Obviously, the world is not simple, and data is often missing fields, or contains
 explicit nulls or empty arrays. To deal with these situations, Elasticsearch has
 a few tools to work with null or missing values.
 
-==== Exists Filter
+==== exists Filter
 
 The first tool in your arsenal is the `exists` filter.((("null values", "working with, using exists filter")))((("exists filter")))  This filter will return
 documents that have any value in the specified field. Let's use the tagging example
@@ -117,17 +117,17 @@ Our query returns three documents:
     }
 ]
 --------------------------------------------------
-<1> Doc `5` is returned even though it contains a `null` value. The field
-    exists because a real value tag was indexed, so the `null` had no impact
+<1> Document 5 is returned even though it contains a `null` value. The field
+    exists because a real-value tag was indexed, so the `null` had no impact
     on the filter.
 
-The results are easy to understand.  Any document that has actual terms in the
+The results are easy to understand.  Any document that has terms in the
 `tags` field was returned as a hit.  The only two documents that were excluded
-were documents `3` and `4`.
+were documents 3 and 4.
 
-==== Missing Filter
+==== missing Filter
 
-The `missing` filter is essentially((("null values", "working with, using missing filter")))((("missing filter"))) the inverse of the `exists`: it returns
+The `missing` filter is essentially((("null values", "working with, using missing filter")))((("missing filter"))) the inverse of `exists`: it returns
 documents where there is _no_ value for a particular field, much like this
 SQL:
 
@@ -138,7 +138,7 @@ FROM   posts
 WHERE  tags IS  NULL
 --------------------------------------------------
 
-Let's swap the `exists` filter for a `missing` filter from our example above:
+Let's swap the `exists` filter for a `missing` filter from our previous example:
 
 [source,js]
 --------------------------------------------------
@@ -156,8 +156,8 @@ GET /my_index/posts/_search
 // SENSE: 080_Structured_Search/30_Exists_missing.json
 
 
-And, as you would expect, we get back the two docs which have no real values
-in the `tags` field -- docs `3` and `4`:
+And, as you would expect, we get back the two docs that have no real values
+in the `tags` field--documents 3 and 4:
 
 [source,json]
 --------------------------------------------------
@@ -175,12 +175,12 @@ in the `tags` field -- docs `3` and `4`:
 ]
 --------------------------------------------------
 
-.When `null` means `null`
+.When null Means null
 ****
 
 Sometimes you need to be able to distinguish between a field that doesn't have
 a value, and a field that has been explicitly set to `null`. With the default
-behavior that we saw above, this is impossible -- the data is lost. Luckily,
+behavior that we saw previously, this is impossible; the data is lost. Luckily,
 there is an option that we can set that replaces explicit  `null` values with
 a ``placeholder'' value of our choosing.
 
