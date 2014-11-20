@@ -146,15 +146,15 @@ If we want a range from `a` up to but not including `b`, we can use the same
 }
 --------------------------------------------------
 
-.Be careful of cardinality
+.Be Careful of Cardinality
 ****
-Numeric and date fields are indexed in such a way that ranges are very efficient
+Numeric and date fields are indexed in such a way that ranges are efficient
 to calculate.((("cardinality, string ranges and")))  This is not the case for string fields, however.  To perform
-a range on a string field, Elasticsearch is effectively performing a term
+a range on a string field, Elasticsearch is effectively performing a `term`
 filter for every term that falls in the range.  This is much slower than
 a date or numeric range.
 
-String ranges are fine on a field with _low cardinality_ -- a small number of
+String ranges are fine on a field with _low cardinality_--a small number of
 unique terms.  But the more unique terms you have, the slower the string range
 will be.
 
