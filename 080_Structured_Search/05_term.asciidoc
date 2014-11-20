@@ -225,7 +225,7 @@ PUT /my_store <2>
 // SENSE: 080_Structured_Search/05_Term_text.json
 <1> Deleting the index first is required, since we cannot change mappings that
     already exist.
-<2> With the index deleted, we can recreate it with our custom mapping.
+<2> With the index deleted, we can re-create it with our custom mapping.
 <3> Here we explicitly say that we don't want `productID` to be analyzed.
 
 Now we can go ahead and reindex our documents:
@@ -266,7 +266,7 @@ GET /my_store/products/_search
 // SENSE: 080_Structured_Search/05_Term_text.json
 
 Since the `productID` field is not analyzed, and the `term` filter performs no
-analysis, the query finds the exact match and returns document `1` as a hit.
+analysis, the query finds the exact match and returns document 1 as a hit.
 Success!
 
 [[_internal_filter_operation]]
@@ -275,26 +275,26 @@ Success!
 Internally, Elasticsearch is((("structured search", "finding exact values", "intrnal filter operations")))((("filters", "internal filter operation"))) performing several operations when executing a
 filter:
 
-1. *Find Matching Docs*
+1. _Find matching docs_.
 +
-The `term` filter looks up the term `"XHDK-A-1293-#fJ3"` in the inverted index
+The `term` filter looks up the term `XHDK-A-1293-#fJ3` in the inverted index
 and retrieves the list of documents that contain that term.  In this case,
-only document `1` has the term we are looking for
+only document 1 has the term we are looking for.
 
-2. *Build a Bitset*
+2. _Build a bitset_.
 +
-The filter then builds a _bitset_ -- an array of 1's and 0's -- which
+The filter then builds a _bitset_--an array of 1s and 0s--that
 describes which documents contain the term.  Matching documents receive a  `1`
-bit.  In our example, the bitset would be: `[1,0,0,0]`
+bit.  In our example, the bitset would be `[1,0,0,0]`.
 
-3. *Cache the Bitset*
+3. _Cache the bitset_.
 +
-Lastly, the bitset is stored in memory, since we can use this in the future
-and skip steps 1. and 2.  This adds a lot of performance and makes filters very
+Last, the bitset is stored in memory, since we can use this in the future
+and skip steps 1 and 2.  This adds a lot of performance and makes filters very
 fast.
 
 When executing a `filtered` query, the `filter` is executed before the
-`query`. The resulting bitset is given to the `query` which uses it to simply
+`query`. The resulting bitset is given to the `query`, which uses it to simply
 skip over any documents that have already been excluded by the filter. This is
 one of the ways that filters can improve performance.  Fewer documents
 evaluated by the query  means faster response times.
