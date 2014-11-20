@@ -120,18 +120,18 @@ Date math is _calendar aware_, so it knows the number of days in each month,
 days in a year, and so forth.  More details about working with dates can be found in
 the http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/_ranges.html#_ranges_on_dates[date format reference documentation] (see http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/_ranges.html#_ranges_on_dates).
 
-==== Ranges on strings
+==== Ranges on Strings
 
-The range filter can also operate on string fields.((("range filters", "using on strings")))((("strings", "using range filter on")))((("lexicographical order, string ranges")))  String ranges are
+The `range` filter can also operate on string fields.((("range filters", "using on strings")))((("strings", "using range filter on")))((("lexicographical order, string ranges")))  String ranges are
 calculated _lexicographically_  or alphabetically.  For example, these values
 are sorted in lexicographic order:
 
 * 5, 50, 6, B, C, a, ab, abb, abc, b
 
-****
-Terms in the inverted index are sorted in lexicographical order, which is why
+
+NOTE: Terms in the inverted index are sorted in lexicographical order, which is why
 string ranges use this order.
-****
+
 
 If we want a range from `a` up to but not including `b`, we can use the same
 range filter syntax:
