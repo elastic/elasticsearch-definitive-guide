@@ -152,8 +152,8 @@ GET /my_store/products/_search
 --------------------------------------------------
 // SENSE: 080_Structured_Search/10_Bool_filter.json
 
-<1> Because the `term` and the `bool` are sibling clauses inside of the first
-    boolean `should`, at least one of these filters must match for a document
+<1> Because the `term` and the `bool` are sibling clauses inside the first
+    Boolean `should`, at least one of these filters must match for a document
     to be a hit.
 
 <2> These two `term` clauses are siblings in a `must` clause, so they both
@@ -182,8 +182,8 @@ The results show us two documents, one matching each of the `should` clauses:
     }
 ]
 --------------------------------------------------
-<1> This productID matches the `term` in the first `bool`
-<2> These two fields match the `term` filters in the nested `bool`
+<1> This `productID` matches the `term` in the first `bool`.
+<2> These two fields match the `term` filters in the nested `bool`.
 
-This was just a simple example, but it demonstrates how boolean filters can be
+This was a simple example, but it demonstrates how Boolean filters can be
 used as building blocks to construct complex logical conditions.
