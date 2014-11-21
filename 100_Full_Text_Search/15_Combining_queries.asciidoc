@@ -62,26 +62,24 @@ it should be considered _more relevant_:
 
 <1> Document 3 scores higher because it contains both `brown` and `dog`.
 
-==== Score calculation
+==== Score Calculation
 
 The `bool` query calculates((("relevance scores", "calculation in bool queries")))((("bool query", "score calculation"))) the relevance `_score` for each document by adding
 together the `_score` from all of the matching `must` and `should` clauses,
-then dividing by the total number of `must` and `should` clauses.
+and then dividing by the total number of `must` and `should` clauses.
 
-The `must_not` clauses do not affect ((("must_not clause", "in bool queries")))the score -- their only purpose is to
+The `must_not` clauses do not affect ((("must_not clause", "in bool queries")))the score; their only purpose is to
 exclude documents that might otherwise have been included.
 
-==== Controlling precision
+==== Controlling Precision
 
-All of the `must` clauses must match and all of the `must_not` clause must not
-match, but how many `should` clauses((("bool query", "controlling precision")))((("full text search", "combining queries", "controlling precision")))((("precision", "controlling for bool query"))) should match?
-
-By default, none of the `should` clauses are required to match, with one
+All the `must` clauses must match, and all the `must_not` clauses must not
+match, but how many `should` clauses((("bool query", "controlling precision")))((("full text search", "combining queries", "controlling precision")))((("precision", "controlling for bool query"))) should match? By default, none of the `should` clauses are required to match, with one
 exception: if there are no `must` clauses, then at least one `should` clause
 must match.
 
 Just as we can control the <<match-precision,precision of the `match` query>>,
-we can control how many `should` clauses need to match using the
+we can control how many `should` clauses need to match by using the
 `minimum_should_match` parameter,((("minimum_should_match parameter", "in bool queries"))) either as an absolute number or as a
 percentage:
 
@@ -105,8 +103,8 @@ GET /my_index/my_type/_search
 
 <1> This could also be expressed as a percentage.
 
-The results would only include documents whose `title` field contains `"brown"
+The results would include only documents whose `title` field contains `"brown"
 AND "fox"`, `"brown" AND "dog"`, or `"fox" AND "dog"`. If a document contains
-all three, then it would be considered more relevant than those which contain
+all three, it would be considered more relevant than those that contain
 just two of the three.
 
