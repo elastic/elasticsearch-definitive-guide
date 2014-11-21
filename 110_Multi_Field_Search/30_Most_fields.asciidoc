@@ -19,20 +19,18 @@ we have 100 documents that contain the words `quick brown fox`, then the
 push it further down the list.  After including many potential matches, we
 need to ensure that the best ones rise to the top.
 
-A common technique for fine-tuning full text relevance((("relevance", "fine-tuning full text relevance"))) is to index the same
-text in multiple ways, each of which provides a different relevance _signal_.
+A common technique for fine-tuning full-text relevance((("relevance", "fine-tuning full text relevance"))) is to index the same
+text in multiple ways, each of which provides a different relevance _signal_. The main field would contain terms in their broadest-matching form to match as
+many documents as possible.  For instance, we could do the following:
 
-The main field would contain terms in their broadest-matching form to match as
-many documents as possible.  For instance, we could:
+*   Use a stemmer to index `jumps`, `jumping`, and `jumped` as their root
+    form: `jump`.  Then it doesn't matter if the user searches for
+    `jumped`; we could still match documents containing `jumping`.
 
-*   use a stemmer to index ``jumps'', ``jumping'' and ``jumped'' as their root
-    form: ``jump''.  Then it doesn't matter if the user searches for
-    ``jumped'', we could still match documents which containing ``jumping''.
+*   Include synonyms like `jump`, `leap`, and `hop`.
 
-*   include synonyms like ``jump'', ``leap'' and ``hop''
-
-*   remove _diacritics_ or accents: eg ``ésta'', ``está'' and ``esta'' would
-    all be indexed without accents as ``esta''
+*   Remove diacritics, or accents: for example, `ésta`, `está`, and `esta` would
+    all be indexed without accents as `esta`.
 
 However, if we have two documents, one of which contains ``jumped'' and the
 other ``jumping'', the user would probably expect the first document to rank
