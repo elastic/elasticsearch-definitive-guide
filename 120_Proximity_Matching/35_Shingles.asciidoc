@@ -1,5 +1,5 @@
 [[shingles]]
-=== Finding associated words
+=== Finding Associated Words
 
 As useful as phrase and proximity queries can be, they still have a downside.
 They are overly strict: all terms must be present for a phrase query to match,
@@ -7,23 +7,23 @@ even when using `slop`.((("proximity matching", "finding associated words", rang
 
 The flexibility in word ordering that you gain with `slop` also comes at a
 price, because you lose the association between word pairs.  While you can
-identify documents where `sue`, `alligator` and `ate` occur close together,
-you can't tell whether ``Sue ate...'' or the ``alligator ate...''.
+identify documents in which `sue`, `alligator`, and `ate` occur close together,
+you can't tell whether _Sue ate_ or the _alligator ate_.
 
 When words are used in conjunction with each other, they express an idea that
 is bigger or more meaningful than each word in isolation. The two clauses
-``I'm not happy...'' and ``Happy I'm not...'' contain the sames words, in
+_I'm not happy I'm working_ and _I'm happy I'm not working_ contain the sames words, in
 close proximity, but have quite different meanings.
 
 If, instead of indexing each word independently, we were to index pairs of
-words then we could retain more of the context in which the words were used.
+words, then we could retain more of the context in which the words were used.
 
-For the sentence `"Sue ate the alligator"`, we would not only index each word
-(or _unigram_) as((("unigrams"))) a term:
+For the sentence `Sue ate the alligator`, we would not only index each word
+(or _unigram_) as((("unigrams"))) a term
 
     ["sue", "ate", "the", "alligator"]
 
-but also each word *and its neighbour* as single terms:
+but also each word _and its neighbor_ as single terms:
 
     ["sue ate", "ate the", "the alligator"]
 
@@ -37,30 +37,30 @@ triplets (_trigrams_) as ((("trigrams")))well:
 
     ["sue ate the", "ate the alligator"]
 
-Trigrams give you a higher degree of precision, but greatly increases the
+Trigrams give you a higher degree of precision, but greatly increase the
 number of unique terms in the index. Bigrams are sufficient for most use
 cases.
 
 ==================================================
 
-Of course, shingles are only useful if the user enters their query in the same
-order as in the original document; a query for `"sue alligator"` would match
+Of course, shingles are useful only if the user enters the query in the same
+order as in the original document; a query for `sue alligator` would match
 the individual words but none of our shingles.
 
-Fortunately, users tend to express themselves using similar constructs to
+Fortunately, users tend to express themselves using constructs similar to
 those that appear in the data they are searching. But this point is an
 important one: it is not enough to index just bigrams; we still need unigrams,
 but we can use matching bigrams as a signal to increase the relevance score.
 
-==== Producing shingles
+==== Producing Shingles
 
 Shingles need to be created at index time as part of the analysis process.((("shingles", "producing at index time"))) We
 could index both unigrams and bigrams into a single field, but it is cleaner
-to keep unigrams and bigrams in separate fields which can be queried
+to keep unigrams and bigrams in separate fields that can be queried
 independently.  The unigram field would form the basis of our search, with the
 bigram field being used to boost relevance.
 
-First, we need to create an analyzer which uses the `shingle` token filter:
+First, we need to create an analyzer that uses the `shingle` token filter:
 
 [source,js]
 --------------------------------------------------
@@ -114,9 +114,9 @@ Sue ate the alligator
 
 Sure enough, we get back three terms:
 
-* `"sue ate"`
-* `"ate the"`
-* `"the alligator"`
+* `sue ate`
+* `ate the`
+* `the alligator`
 
 Now we can proceed to setting up a field to use the new analyzer.
 
