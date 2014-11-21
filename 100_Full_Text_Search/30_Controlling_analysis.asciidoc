@@ -1,6 +1,6 @@
-=== Controlling analysis
+=== Controlling Analysis
 
-Queries can only find terms that actually ((("full text search", "controlling analysis")))((("analysis", "controlling")))exist in the inverted index, so it
+Queries can find only terms that actually ((("full text search", "controlling analysis")))((("analysis", "controlling")))exist in the inverted index, so it
 is important to ensure that the same analysis process is applied both to the
 document at index time, and to the query string at search time so that the
 terms in the query match the terms in the inverted index.
