@@ -1,8 +1,8 @@
-=== Tuning best fields queries
+=== Tuning Best Fields Queries
 
 What would happen if the use((("multi-field search", "best fields queries", "tuning")))((("best fields queries", "tuning")))r had searched instead for ``quick pets''?  Both
-documents contain the word ``quick''  but only document 2 contains the word
-``pets''. Neither document contains *both words* in the *same field*.
+documents contain the word `quick`, but only document 2 contains the word
+`pets`. Neither document contains _both words_ in the _same field_.
 
 A simple `dis_max` query like the following would ((("dis_max (disjunction max) query")))choose the single best
 matching field, and ignore the other:
@@ -50,12 +50,12 @@ matching field, and ignore the other:
 We would probably expect documents that match on both the `title` field and
 the `body` field to rank higher than documents that match on just one field,
 but this isn't the case. Remember: the `dis_max` query simply uses the
-`_score` from the *single* best matching clause.
+`_score` from the _single_ best-matching clause.
 
 ==== tie_breaker
 
 It is possible, however, to((("dis_max (disjunction max) query", "using tie_breaker parameter")))((("relevance scores", "calculation in dis_match queries"))) also take the `_score` from the other matching
-clauses into account, by specifying ((("tie_breaker parameter")))the `tie_breaker` parameter.
+clauses into account, by specifying ((("tie_breaker parameter")))the `tie_breaker` parameter:
 
 [source,js]
 --------------------------------------------------
