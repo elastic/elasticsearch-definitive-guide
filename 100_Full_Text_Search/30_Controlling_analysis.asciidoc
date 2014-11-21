@@ -5,7 +5,7 @@ is important to ensure that the same analysis process is applied both to the
 document at index time, and to the query string at search time so that the
 terms in the query match the terms in the inverted index.
 
-While we say ``document'', really analyzers are determined per-field.((("analyzers", "determined per-field"))) Each
+Although we say _document_, analyzers are determined per-field.((("analyzers", "determined per-field"))) Each
 field can have a different analyzer, either by configuring a specific analyzer
 for that field or by falling back on the type, index or node defaults.  At
 index time, a field's value is analyzed using the configured or default
