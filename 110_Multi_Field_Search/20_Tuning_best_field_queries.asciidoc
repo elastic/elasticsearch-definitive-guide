@@ -73,7 +73,7 @@ clauses into account, by specifying ((("tie_breaker parameter")))the `tie_breake
 --------------------------------------------------
 // SENSE: 110_Multi_Field_Search/15_Best_fields.json
 
-which gives us the following results:
+This gives us the following results:
 
 [source,js]
 --------------------------------------------------
@@ -102,20 +102,20 @@ which gives us the following results:
 
 The `tie_breaker` parameter ((("relevance scores", "calculation in dis_max query using tie_breaker parameter")))makes the `dis_max` query behave more like a
 halfway house between `dis_max` and `bool`. It changes the score calculation
-to the following:
+as follows:
 
-* take the `_score` of the best matching clause
-* multiply the score of each of the other matching clauses by the `tie_breaker`
-* add them all together, and normalize
+1. Take the `_score` of the best-matching clause.
+2. Multiply the score of each of the other matching clauses by the `tie_breaker`.
+3. Add them all together and normalize.
 
-With the `tie_breaker`, all matching clauses count, but the best matching
+With the `tie_breaker`, all matching clauses count, but the best-matching
 clause counts most.
 
-****
-The `tie_breaker` can be a floating point value between `0` and `1`, where `0`
-uses just the best matching clause((("tie_breaker parameter", "value of"))) and `1` counts all matching clauses
+
+NOTE: The `tie_breaker` can be a floating-point value between `0` and `1`, where `0`
+uses just the best-matching clause((("tie_breaker parameter", "value of"))) and `1` counts all matching clauses
 equally.  The exact value can be tuned based on your data and queries, but a
 reasonable value should be close to zero, eg `0.1 - 0.4`, in order not to
 overwhelm the ``best-matching'' nature of `dis_max`.
-****
+
 
