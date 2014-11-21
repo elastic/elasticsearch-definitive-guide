@@ -5,10 +5,10 @@ is important to ensure that the same analysis process is applied both to the
 document at index time, and to the query string at search time so that the
 terms in the query match the terms in the inverted index.
 
-Although we say _document_, analyzers are determined per-field.((("analyzers", "determined per-field"))) Each
+Although we say _document_, analyzers are determined per field.((("analyzers", "determined per-field"))) Each
 field can have a different analyzer, either by configuring a specific analyzer
-for that field or by falling back on the type, index or node defaults.  At
-index time, a field's value is analyzed using the configured or default
+for that field or by falling back on the type, index, or node defaults.  At
+index time, a field's value is analyzed by using the configured or default
 analyzer for that field.
 
 For instance, let's add a new field to `my_index`:
@@ -30,7 +30,7 @@ PUT /my_index/_mapping/my_type
 // SENSE: 100_Full_Text_Search/30_Analysis.json
 
 Now we can compare how values in the `english_title` field and the `title` field are
-analyzed at index time using the `analyze` API to analyze the word `"Foxes"`:
+analyzed at index time by using the `analyze` API to analyze the word `Foxes`:
 
 [source,js]
 --------------------------------------------------
@@ -42,19 +42,19 @@ Foxes
 --------------------------------------------------
 // SENSE: 100_Full_Text_Search/30_Analysis.json
 
-<1> Field `title`, which uses the default `standard` analyzer will return the
-    term `foxes`
+<1> Field `title`, which uses the default `standard` analyzer, will return the
+    term `foxes`.
 
-<2> Field `english_title`, which uses the `english` analyzer will return the term
+<2> Field `english_title`, which uses the `english` analyzer, will return the term
     `fox`.
 
 This means that, were we to run a low-level `term` query for the exact term
-`"fox"`, the `english_title` field would match but the `title` field would
+`fox`, the `english_title` field would match but the `title` field would
 not.
 
 High-level queries like the `match` query understand field mappings and can
 apply the correct analyzer for each field being queried.((("match query", "applying appropriate analyzer to each field"))) We can see this
-in action with ((("validate query API")))the `validate query` API:
+in action with ((("validate query API")))the `validate-query` API:
 
 
 [source,js]
@@ -80,13 +80,13 @@ which returns this `explanation`:
 The `match` query uses the appropriate analyzer for each field to ensure
 that it looks for each term in the correct format for that field.
 
-==== Default analyzers
+==== Default Analyzers
 
-While we can specify an analyzer at field level,((("full text search", "controlling analysis", "default analyzers")))((("analyzers", "default"))) how do we determine which
-analyzer is used for a field if none is specified at field level?
+While we can specify an analyzer at the field level,((("full text search", "controlling analysis", "default analyzers")))((("analyzers", "default"))) how do we determine which
+analyzer is used for a field if none is specified at the field level?
 
 Analyzers can be specified at several levels.  Elasticsearch works through
-each level until it finds an analyzer which it can use.  At index time, the
+each level until it finds an analyzer that it can use.  At index time, the
 process ((("indexing", "applying analyzers")))is as follows:
 
 * the `analyzer` defined in the field mapping, else
