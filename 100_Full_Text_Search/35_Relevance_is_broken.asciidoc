@@ -7,11 +7,11 @@ Before we move on to discussing more-complex queries in
 
 Every now and again a new user opens an issue claiming that sorting by
 relevance((("relevance", "differences in IDF producing incorrect results"))) is broken and offering a short reproduction: the user indexes a few
-documents, run a simple query and find apparently less relevant results
-appearing above more relevant results.
+documents, runs a simple query, and finds apparently less-relevant results
+appearing above more-relevant results.
 
 To understand why this happens, let's imagine that we create an index with two
-primary shards and we index 10 documents, 6 of which contain the word `"foo"`.
+primary shards and we index ten documents, six of which contain the word `foo`.
 It may happen that shard 1 contains 3 of the `"foo"` documents and shard
 2 contains the other 3.  In other words, our documents are well distributed.
 
