@@ -1,9 +1,9 @@
 [[phrase-matching]]
-=== Phrase matching
+=== Phrase Matching
 
-In the same way that the `match` query is the ``go-to'' query for standard
-full text search, the `match_phrase` query((("proximity matching", "phrase matching")))((("phrase matching")))((("match_phrase query"))) is the one you should reach for
-when you want to find words that are near to each other:
+In the same way that the `match` query is the go-to query for standard
+full-text search, the `match_phrase` query((("proximity matching", "phrase matching")))((("phrase matching")))((("match_phrase query"))) is the one you should reach for
+when you want to find words that are near each other:
 
 [source,js]
 --------------------------------------------------
@@ -20,10 +20,10 @@ GET /my_index/my_type/_search
 
 Like the `match` query, the `match_phrase` query first analyzes the query
 string to produce a list of terms. It then searches for all the terms, but
-only keeps documents which contain *all* of the search terms in the same
-*positions*, relative to each other.  A query for the phrase `"quick fox"`
-would not match any of our documents because no document contains the word
-`"quick"` immediately followed by `"fox"`.
+keeps only documents that contain _all_ of the search terms, in the same
+_positions_ relative to each other.  A query for the phrase `quick fox`
+would not match any of our documents, because no document contains the word
+`quick` immediately followed by `fox`.
 
 [TIP]
 ==================================================
