@@ -152,10 +152,10 @@ And at search time:
 * The analyzer named `default` at node level, which defaults to
 * The `standard` analyzer
 
-==== Configuring analyzers in practice
+==== Configuring Analyzers in Practice
 
 The sheer number of places where you can specify an analyzer is quite
-overwhelming.((("full text search", "controlling analysis", "configuring analyzers in practice")))((("analyzers", "configuring in practice")))  In practice, though, it is pretty simple:
+overwhelming.((("full text search", "controlling analysis", "configuring analyzers in practice")))((("analyzers", "configuring in practice")))  In practice, though, it is pretty simple.
 
 ===== Use index settings, not config files
 
@@ -164,11 +164,11 @@ Elasticsearch for a single purpose or a single application such as logging,
 chances are that you will find more use cases and end up running several
 distinct applications on the same cluster.  Each index needs to be independent
 and independently configurable. You don't want to set defaults for one use
-case, only to have to override them for another use case later on.
+case, only to have to override them for another use case later.
 
 This rules out configuring analyzers at the node level.  Additionally,
-configuring analyzers at node level requires changing the config file on every
-node and restarting every node which becomes a maintenance nightmare. It's a
+configuring analyzers at the node level requires changing the config file on every
+node and restarting every node, which becomes a maintenance nightmare. It's a
 much better idea to keep Elasticsearch running and to manage settings only via
 the API.
 
@@ -177,11 +177,11 @@ the API.
 Most of the time, you will know what fields your documents will contain ahead
 of time.  The simplest approach is to set the analyzer for each full-text
 field when you create your index or add type mappings.  While this approach is
-slightly more verbose, it makes it easy to see which analyzer is being applied
+slightly more verbose, it enables you to easily see which analyzer is being applied
 to each field.
 
 Typically, most of your string fields will be exact-value `not_analyzed`
-fields such as tags or enums, plus a handful of full-text fields which will
+fields such as tags or enums, plus a handful of full-text fields that will
 use some default analyzer like `standard` or `english` or some other language.
 Then you may have one or two fields which need custom analysis: perhaps the
 `title` field needs to be indexed in a way that supports _find-as-you-type_.
