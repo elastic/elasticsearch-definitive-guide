@@ -53,8 +53,8 @@ unstemmed fields to illustrate this technique.
 ==== Multifield Mapping
 
 The first thing to do is to set up our ((("most fields queries", "multi-field mapping")))((("mapping (types)", "multi-field mapping")))field to be indexed twice: once in a
-stemmed form and once in an unstemmed form.  To do this we will use 
-_multi-fields_ which we introduced in <<multi-fields>>.
+stemmed form and once in an unstemmed form.  To do this, we will use 
+_multifields_, which we introduced in <<multi-fields>>:
 
 
 [source,js]
@@ -100,7 +100,7 @@ PUT /my_index/my_type/2
 --------------------------------------------------
 // SENSE: 110_Multi_Field_Search/30_Most_fields.json
 
-A simple `match` query on the `title` field for ``jumping rabbits'':
+A simple `match` query on the `title` field for `jumping rabbits`:
 
 [source,js]
 --------------------------------------------------
