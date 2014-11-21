@@ -86,7 +86,7 @@ directly through to the `bool` query, making these two queries equivalent:
 
 Of course, we would normally write these types of queries by using the `match`
 query, but understanding how the `match` query works internally lets you take
-control of the process when you need to. There are some things that can't be
+control of the process when you need to. Some things can't be
 done with a single `match` query, such as give more weight to some query terms
 than to others. We will look at an example of this in the next section.
 
