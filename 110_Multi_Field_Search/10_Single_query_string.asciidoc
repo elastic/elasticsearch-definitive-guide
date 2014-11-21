@@ -21,29 +21,29 @@ When your only user input is a single query string, you will encounter three sce
 
 Best fields::
 
-When searching for words that represent a concept, such as ``brown fox'', the
+When searching for words that represent a concept, such as ``brown fox,'' the
 words mean more together than they do individually. Fields like the `title`
 and `body`, while related, can be considered to be in competition with each
-other. Documents should have as many words as possible in *the same field*
-and the score should come from the *best matching field*.
+other. Documents should have as many words as possible in _the same field_,
+and the score should come from the _best-matching field_.
 
 Most fields::
 +
 --
 A common technique for fine-tuning relevance is to index the same data into
-multiple fields, each with their own analysis chain.
+multiple fields, each with its own analysis chain.
 
-The main field may contain words in their stemmed form, synonyms and words
-stripped of their _diacritics_ or accents. It is used to match as many
+The main field may contain words in their stemmed form, synonyms, and words
+stripped of their _diacritics_, or accents. It is used to match as many
 documents as possible.
 
-The same text could then be indexed in other fields to provide more precise
+The same text could then be indexed in other fields to provide more-precise
 matching.  One field may contain the unstemmed version, another the original
-word with accents and a third might use _shingles_ to provide information
+word with accents, and a third might use _shingles_ to provide information
 about <<proximity-matching,word proximity>>.
 
 These other fields act as _signals_ to increase the relevance score of each
-matching document. The *more fields that match*, the better.
+matching document. The _more fields that match_, the better.
 --
 
 Cross fields::
@@ -53,10 +53,10 @@ For some entities, the identifying information is spread across multiple
 fields, each of which contains just a part of the whole:
 
 * Person: `first_name` and `last_name`
-* Book: `title`, `author` and `description`
-* Address:  `street`, `city`, `country` and `postcode`.
+* Book: `title`, `author`, and `description`
+* Address:  `street`, `city`, `country`, and `postcode`
 
-In this case we want to find as many words as possible in *any* of the listed
+In this case we want to find as many words as possible in _any_ of the listed
 fields -- we need to search across multiple fields as if they were one big
 field.
 --
