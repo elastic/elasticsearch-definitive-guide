@@ -1,8 +1,8 @@
-=== Cross-fields entity search
+=== Cross-fields Entity Search
 
 Now we come to a common pattern: cross-fields entity search. ((("cross-fields entity search")))((("multi-field search", "cross-fields entity search"))) With entities
-like `person`, `product`, or `address` the identifying information is spread
-across several fields.  We may have a `person` indexed as:
+like `person`, `product`, or `address`, the identifying information is spread
+across several fields.  We may have a `person` indexed as follows:
 
 [source,js]
 --------------------------------------------------
@@ -12,7 +12,7 @@ across several fields.  We may have a `person` indexed as:
 }
 --------------------------------------------------
 
-Or an address like:
+Or an address like this:
 
 [source,js]
 --------------------------------------------------
@@ -27,18 +27,18 @@ Or an address like:
 This sounds a lot like the example we described in <<multi-query-strings>>,
 but there is a big difference between these two scenarios.  In
 <<multi-query-strings>>, we used a separate query string for each field. In
-this scenario, we want to search across multiple fields with a *single* query
+this scenario, we want to search across multiple fields with a _single_ query
 string.
 
 Our user might search for the person ``Peter Smith'' or for the address
-``Poland Street W1V''. Each of those words appears in a different field so
-using a `dis_max` / `best_fields` query to find the *single* best matching
+``Poland Street W1V.'' Each of those words appears in a different field, so
+using a `dis_max` / `best_fields` query to find the _single_ best-matching
 field is clearly the wrong approach.
 
-==== A naive approach
+==== A Naive Approach
 
-Really we want to query each field in turn and add up the scores of every
-field that matches, which sounds like it is a job for the `bool` query:
+Really, we want to query each field in turn and add up the scores of every
+field that matches, which sounds like a job for the `bool` query:
 
 [source,js]
 --------------------------------------------------
@@ -73,16 +73,16 @@ combine the scores of all matching fields:
 }
 --------------------------------------------------
 
-==== Problems with the most_fields approach
+==== Problems with the most_fields Approach
 
-The `most_fields` approach to entity search has some problems which are not
+The `most_fields` approach to entity search has some problems that are not
 immediately obvious:
 
-* It is designed to find the most fields matching *any* words, rather than to
-  find the most matching words *across all fields*.
+* It is designed to find the most fields matching _any_ words, rather than to
+  find the most matching words _across all fields_.
 
 * It can't use the `operator` or `minimum_should_match` parameters
-  to reduce the long tail of less relevant results.
+  to reduce the long tail of less-relevant results.
 
 * Term frequencies are different in each field and could interfere with each
   other to produce badly ordered results.
