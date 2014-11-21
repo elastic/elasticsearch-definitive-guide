@@ -143,7 +143,7 @@ terms, so both documents receive the same score:
 
 If we were to query just the `title.std` field, then only document 2 would
 match.  However, if we were to query both fields and to _combine_ their scores
-using the `bool` query, then both documents would match (thanks to the `title`
+by using the `bool` query, then both documents would match (thanks to the `title`
 field) and document 2 would score higher (thanks to the `title.std` field):
 
 [source,js]
@@ -189,7 +189,7 @@ GET /my_index/_search
 <1> Document 2 now scores much higher than document 1.
 
 We are using the broad-matching `title` field to include as many documents as
-possible -- to increase recall -- but we use the `title.std` field as a
+possible--to increase recall--but we use the `title.std` field as a
 _signal_ to push the most relevant results to the top.
 
 The contribution of each field to the final score can be controlled by
