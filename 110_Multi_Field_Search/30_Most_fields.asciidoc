@@ -32,28 +32,27 @@ many documents as possible.  For instance, we could do the following:
 *   Remove diacritics, or accents: for example, `ésta`, `está`, and `esta` would
     all be indexed without accents as `esta`.
 
-However, if we have two documents, one of which contains ``jumped'' and the
-other ``jumping'', the user would probably expect the first document to rank
-higher, as it contains exactly what they typed in.
+However, if we have two documents, one of which contains `jumped` and the
+other `jumping`, the user would probably expect the first document to rank
+higher, as it contains exactly what was typed in.
 
-We can achieve this by indexing the same text in other fields to provide more
-precise matching.  One field may contain the unstemmed version, another the
-original word with diacritics and a third might use _shingles_ to provide
+We can achieve this by indexing the same text in other fields to provide more-precise matching.  One field may contain the unstemmed version, another the
+original word with diacritics, and a third might use _shingles_ to provide
 information about <<proximity-matching,word proximity>>. These other fields
-act as _signals_ which increase the relevance score of each matching document.
+act as _signals_ that increase the relevance score of each matching document.
 The more fields that match, the better.
 
 A document is included in the results list if it matches the broad-matching
-main field, but if it also matches the _signal_ fields then it gets extra
+main field. If it also matches the _signal_ fields, it gets extra
 points and is pushed up the results list.
 
-We will discuss synonyms, word proximity, partial-matching and other potential
+We discuss synonyms, word proximity, partial-matching and other potential
 signals later in the book, but we will use the simple example of stemmed and
 unstemmed fields to illustrate this technique.
 
-==== Multi-field mapping
+==== Multifield Mapping
 
-The first thing to do is to setup our ((("most fields queries", "multi-field mapping")))((("mapping (types)", "multi-field mapping")))field to be indexed twice: once in a
+The first thing to do is to set up our ((("most fields queries", "multi-field mapping")))((("mapping (types)", "multi-field mapping")))field to be indexed twice: once in a
 stemmed form and once in an unstemmed form.  To do this we will use 
 _multi-fields_ which we introduced in <<multi-fields>>.
 
