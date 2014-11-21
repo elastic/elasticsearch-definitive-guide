@@ -1,20 +1,20 @@
 [[most-fields]]
 === Most Fields
 
-Full text search is a battle between _recall_ --returning all of the
-documents that are ((("most fields queries")))((("multi-field search", "most fields queries")))relevant -- and _precision_ -- not returning irrelevant
+Full-text search is a battle between _recall_--returning all the
+documents that are ((("most fields queries")))((("multi-field search", "most fields queries")))relevant--and _precision_--not returning irrelevant
 documents.  The goal is to present the user with the most relevant documents
 on the first page of results.
 
-In order to improve recall, we cast((("recall", "improving in full text searches"))) the net wide -- not only do we include
-documents that match the user's search terms exactly, we also include
+To improve recall, we cast((("recall", "improving in full text searches"))) the net wide--we include not only
+documents that match the user's search terms exactly, but also
 documents that we believe to be pertinent to the query.  If a user searches
-for ``quick brown fox'', a document which contains ``fast foxes'' may well be
+for ``quick brown fox,'' a document that contains `fast foxes` may well be
 a reasonable result to return.
 
-If the only pertinent document that we have is the one containing ``fast
-foxes'', then it will appear at the top of the results list.  But of course, if
-we have 100 documents which contain the words ``quick brown fox'', then the
+If the only pertinent document that we have is the one containing `fast
+foxes`, it will appear at the top of the results list.  But of course, if
+we have 100 documents that contain the words ``quick brown fox'', then the
 ``fast foxes'' document may be considered less relevant and we would want to
 push it further down the list.  After including many potential matches, we
 need to ensure that the best ones rise to the top.
