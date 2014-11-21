@@ -120,10 +120,10 @@ Sure enough, we get back three terms:
 
 Now we can proceed to setting up a field to use the new analyzer.
 
-==== Multi-fields
+==== Multifields
 
 We said that it is cleaner to index unigrams and bigrams separately, so we
-will create the `title` field ((("multi-fields")))as a multi-field (see <<multi-fields>>):
+will create the `title` field ((("multi-fields")))as a multifield (see <<multi-fields>>):
 
 [source,js]
 --------------------------------------------------
@@ -162,7 +162,7 @@ POST /my_index/my_type/_bulk
 { "title": "Sue never goes anywhere without her alligator skin purse" }
 --------------------------------------------------
 
-==== Searching for shingles
+==== Searching for Shingles
 
 To understand the benefit ((("shingles", "searching for")))that the `shingles` field adds, let's first look at
 the results from a simple `match` query for ``The hungry alligator ate Sue'':
@@ -179,7 +179,7 @@ GET /my_index/my_type/_search
 }
 --------------------------------------------------
 
-This query returns all three documents, but note that documents `1` and `2`
+This query returns all three documents, but note that documents 1 and 2
 have the same relevance score because they contain the same words:
 
 [source,js]
@@ -210,14 +210,14 @@ have the same relevance score because they contain the same words:
   ]
 }
 --------------------------------------------------
-<1> Both documents contain `the`, `alligator` and `ate` and so have the
+<1> Both documents contain `the`, `alligator`, and `ate` and so have the
     same score.
-<2> We could have excluded document `3` by setting the `minimum_should_match`
+<2> We could have excluded document 3 by setting the `minimum_should_match`
     parameter. See <<match-precision>>.
 
 Now let's add the `shingles` field into the query.  Remember that we want
-matches on the `shingles` field to act as a signal -- to increase the
-relevance score -- so we still need to include the query on the main `title`
+matches on the `shingles` field to act as a signal--to increase the
+relevance score--so we still need to include the query on the main `title`
 field:
 
 [source,js]
@@ -241,8 +241,8 @@ GET /my_index/my_type/_search
 }
 --------------------------------------------------
 
-We still match all three documents, but document `2` has now been bumped into
-first place because it matched the shingled term `"ate sue"`.
+We still match all three documents, but document 2 has now been bumped into
+first place because it matched the shingled term `ate sue`.
 
 [source,js]
 --------------------------------------------------
@@ -273,23 +273,20 @@ first place because it matched the shingled term `"ate sue"`.
 }
 --------------------------------------------------
 
-Even though our query included the word `"hungry"`, which doesn't appear in
+Even though our query included the word `hungry`, which doesn't appear in
 any of our documents, we still managed to use word proximity to return the
 most relevant document first.
 
 ==== Performance
 
-Not only are shingles more flexible than phrase queries,((("shingles", "better performance than phrase queries"))) they perform better
+Not only are shingles more flexible than phrase queries,((("shingles", "better performance than phrase queries"))) but they perform better
 as well.  Instead of paying the price of a phrase query every time you search,
-queries for shingles are just as efficient as a simple `match` query.
-
-There is a small cost that is payed at index time because more terms need to
+queries for shingles are just as efficient as a simple `match` query. A small price is paid at index time, because more terms need to
 be indexed, which also means that fields with shingles use more disk space.
 However, most applications write once and read many times, so it makes sense
 to optimize for fast queries.
 
-This is a theme that you will encounter frequently in Elasticsearch: it makes
-it possible to achieve a lot with your existing data, without requiring any
+This is a theme that you will encounter frequently in Elasticsearch: enables you to achieve a lot at search time, without requiring any up-front
 setup.  But once you understand your requirements better it is worth putting
 in the extra effort to model your data at index time.  A little bit of
 preparation will help you to achieve better results with better performance.
