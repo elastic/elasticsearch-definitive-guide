@@ -79,8 +79,8 @@ wildcard pattern((("multi_match queries", "wildcards in field names")))((("wildc
 
 ==== Boosting Individual Fields
 
-Individual fields can be boosted using the caret (`^`) syntax: just add
-`^boost` after the field((("multi_match queries", "boosting individual fields")))((("boost parameter", "boosting individual fields in multi_match queries"))) name, where `boost` is a floating point number:
+Individual fields can be boosted by using the caret (`^`) syntax: just add
+`^boost` after the field((("multi_match queries", "boosting individual fields")))((("boost parameter", "boosting individual fields in multi_match queries"))) name, where `boost` is a floating-point number:
 
 [source,js]
 --------------------------------------------------
@@ -92,5 +92,5 @@ Individual fields can be boosted using the caret (`^`) syntax: just add
 }
 --------------------------------------------------
 
-<1> The `chapter_title` field has a `boost` of 2, while the `book_title` and
-    `section_title` fields have a default boost of 1.
+<1> The `chapter_title` field has a `boost` of `2`, while the `book_title` and
+    `section_title` fields have a default boost of `1`.
