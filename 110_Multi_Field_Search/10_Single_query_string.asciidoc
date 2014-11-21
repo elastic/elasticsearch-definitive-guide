@@ -6,19 +6,18 @@ individual fields.
 
 The problem is that, these days, users expect to be able to type all of their
 search terms into a single field, and expect that the application will figure out how
-to give them the right results.  It is ironic that the multi-field search form
+to give them the right results.  It is ironic that the multifield search form
 is known as _Advanced Search_ --it may appear advanced to the user, but it is
 much simpler to implement.
 
-There is no simple _one-size-fits-all_ approach to multi-word multi-field
-queries.  To get the best results you have to *know your data* and to know how
+There is no simple _one-size-fits-all_ approach to multiword, multifield
+queries.  To get the best results, you have to _know your data_ and know how
 to use the appropriate tools.
 
 [[know-your-data]]
-==== Know your data
+==== Know Your Data
 
-When your only user input is a single query string, there are three scenarios
-that you will encounter frequently:
+When your only user input is a single query string, you will encounter three scenarios frequently:
 
 Best fields::
 
