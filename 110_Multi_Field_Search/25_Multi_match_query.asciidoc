@@ -12,7 +12,7 @@ happen to coincide with the three scenarios that we listed in
 
 By default, this query runs as type `best_fields`, which means((("best fields queries", "multi-match queries")))((("dis_max (disjunction max) query", "multi_match query wrapped in"))) that it generates a
 `match` query for each field and wraps them in a `dis_max` query. This
-`dis_max` query:
+`dis_max` query
 
 [source,js]
 --------------------------------------------------
@@ -41,7 +41,7 @@ By default, this query runs as type `best_fields`, which means((("best fields qu
 }
 --------------------------------------------------
 
-could be rewritten more concisely with `multi_match` as:
+could be rewritten more concisely with `multi_match` as follows:
 
 [source,js]
 --------------------------------------------------
@@ -61,11 +61,11 @@ could be rewritten more concisely with `multi_match` as:
 <2> Parameters like `minimum_should_match` or `operator` are passed through to
     the generated `match` queries.
 
-==== Wildcards in field names
+==== Using Wildcards in Field Names
 
-Field names can be specified with wildcards -- any field which matches the
+Field names can be specified with wildcards: any field that matches the
 wildcard pattern((("multi_match queries", "wildcards in field names")))((("wildcards", "in field names")))((("fields", "wildcards in field names"))) will be included in the search. You could match on the
-`book_title`, `chapter_title` and `section_title` fields, with the following:
+`book_title`, `chapter_title`, and `section_title` fields, with the following:
 
 [source,js]
 --------------------------------------------------
@@ -77,7 +77,7 @@ wildcard pattern((("multi_match queries", "wildcards in field names")))((("wildc
 }
 --------------------------------------------------
 
-==== Boosting individual fields
+==== Boosting Individual Fields
 
 Individual fields can be boosted using the caret (`^`) syntax: just add
 `^boost` after the field((("multi_match queries", "boosting individual fields")))((("boost parameter", "boosting individual fields in multi_match queries"))) name, where `boost` is a floating point number:
