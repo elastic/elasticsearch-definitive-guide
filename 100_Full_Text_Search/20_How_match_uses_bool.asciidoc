@@ -1,8 +1,8 @@
-=== How match uses bool
+=== How match Uses bool
 
-By now, you have probably realized that <<match-multi-word,multi-word `match`
+By now, you have probably realized that <<match-multi-word,multiword `match`
 queries>> simply wrap((("match query", "use of bool query in multi-word searches")))((("bool query", "use by match query in multi-word searches")))((("full text search", "how match query uses bool query"))) the generated `term` queries in a `bool` query. With the
-default `"or"` operator, each `term` query is added as a `should` clause, so
+default `or` operator, each `term` query is added as a `should` clause, so
 at least one clause must match. These two queries are equivalent:
 
 [source,js]
@@ -25,7 +25,7 @@ at least one clause must match. These two queries are equivalent:
 --------------------------------------------------
 
 With the `"and"` operator, all the `term` queries are added as `must` clauses,
-so *all* clauses must match. These two queries are equivalent:
+so _all_ clauses must match. These two queries are equivalent:
 
 [source,js]
 --------------------------------------------------
