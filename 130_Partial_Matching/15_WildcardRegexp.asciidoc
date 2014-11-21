@@ -1,8 +1,8 @@
-=== wildcard and regexp queries
+=== wildcard and regexp Queries
 
-The `wildcard` query is a low-level term-based query ((("wildcard query")))((("partial matching", "wildcard and regexp queries")))similar in nature to the
+The `wildcard` query is a low-level, term-based query ((("wildcard query")))((("partial matching", "wildcard and regexp queries")))similar in nature to the
 `prefix` query, but it allows you to specify a pattern instead of just a prefix.
-It uses the standard shell wildcards where `?` matches any character, and `*`
+It uses the standard shell wildcards: `?` matches any character, and `*`
 matches zero or more characters.((("postcodes (UK), partial matching with", "wildcard queries")))
 
 This query would match the documents containing `W1F 7HW` and `W2F 8HW`:
@@ -20,12 +20,12 @@ GET /my_index/address/_search
 --------------------------------------------------
 // SENSE: 130_Partial_Matching/15_Wildcard_regexp.json
 
-<1> The `?` will match the `1` and the `2`, while the `*` matches the space
+<1> The `?` matches the `1` and the `2`, while the `*` matches the space
     and the `7` and `8`.
 
-Imagine now that you wanted to match all postcodes just in the `W` area.  A
+Imagine now that you want to match all postcodes just in the `W` area.  A
 prefix match would also include postcodes starting with `WC`, and you would
-have a similar problem with a wildcard match.  We only want to match postcodes
+have a similar problem with a wildcard match.  We want to match only postcodes
 that begin with a `W`, followed by a number.((("postcodes (UK), partial matching with", "regexp query")))((("regexp query")))  The `regexp` query allows you to
 write these more complicated patterns:
 
@@ -43,31 +43,30 @@ GET /my_index/address/_search
 // SENSE: 130_Partial_Matching/15_Wildcard_regexp.json
 
 <1> The regular expression says that the term must begin with a `W`, followed
-    by any number from 0 to 9, followed by 1 or more other characters.
+    by any number from 0 to 9, followed by one or more other characters.
 
 The `wildcard` and `regexp` queries work in exactly the same way as the
 `prefix` query.  They also have to scan the list of terms in the inverted
-index to find all matching terms, and gather document IDs term-by-term.  The
-only difference between them and the `prefix` query is that they support more
-complex patterns.
+index to find all matching terms, and gather document IDs term by term.  The
+only difference between them and the `prefix` query is that they support more-complex patterns.
 
 This means that the same caveats apply.  Running these queries on a field with
-many unique terms can be very resource intensive indeed.  Avoid using a
-pattern that starts with a wildcard, eg `"*foo"` or, as a regexp, `".*foo"`.
+many unique terms can be resource intensive indeed.  Avoid using a
+pattern that starts with a wildcard (for example, `*foo` or, as a regexp, `.*foo`).
 
-While prefix matching can be made more efficient by preparing your data at
-index time, wildcard and regular expression matching can only really be done
-at query time. These queries have their place, but should be used sparingly.
+Whereas prefix matching can be made more efficient by preparing your data at
+index time, wildcard and regular expression matching can be done only
+at query time. These queries have their place but should be used sparingly.
 
 [CAUTION]
 =================================================
 
-The `prefix`, `wildcard` and `regexp` queries operate on terms. If you use
-them to query an `analyzed` field then they will examine each term in the
+The `prefix`, `wildcard`, and `regexp` queries operate on terms. If you use
+them to query an `analyzed` field, they will examine each term in the
 field, not the field as a whole.((("prefix query", "on analyzed fields")))((("wildcard query", "on analyzed fields")))((("regexp query", "on analyzed fields")))((("analyzed fields", "prefix, wildcard, and regexp queries on")))
 
-For instance, let's say that our `title` field contains ``Quick brown box''
-which produces the terms: `quick`, `brown` and `fox`.
+For instance, let's say that our `title` field contains ``Quick brown fox''
+which produces the terms `quick`, `brown`, and `fox`.
 
 This query would match:
 
