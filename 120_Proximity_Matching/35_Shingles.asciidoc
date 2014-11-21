@@ -287,8 +287,6 @@ However, most applications write once and read many times, so it makes sense
 to optimize for fast queries.
 
 This is a theme that you will encounter frequently in Elasticsearch: enables you to achieve a lot at search time, without requiring any up-front
-setup.  But once you understand your requirements better it is worth putting
-in the extra effort to model your data at index time.  A little bit of
-preparation will help you to achieve better results with better performance.
+setup. Once you understand your requirements more clearly, you can achieve better results with better performance by modeling your data correctly at index time.
 ((("proximity matching", "finding associated words", range="endofrange", startref ="ix_proxmatchassoc")))
 
