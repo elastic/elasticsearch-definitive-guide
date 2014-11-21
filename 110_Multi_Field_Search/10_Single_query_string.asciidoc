@@ -56,12 +56,12 @@ fields, each of which contains just a part of the whole:
 * Book: `title`, `author`, and `description`
 * Address:  `street`, `city`, `country`, and `postcode`
 
-In this case we want to find as many words as possible in _any_ of the listed
-fields -- we need to search across multiple fields as if they were one big
+In this case, we want to find as many words as possible in _any_ of the listed
+fields. We need to search across multiple fields as if they were one big
 field.
 --
 
-All of the above are multi-word multi-field queries, but each requires a
+All of these are multiword, multifield queries, but each requires a
 different strategy. We will examine each strategy in turn in the rest of this
 chapter.
 
