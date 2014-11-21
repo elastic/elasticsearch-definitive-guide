@@ -1,21 +1,21 @@
-=== Postcodes and structured data
+=== Postcodes and Structured Data
 
-We will use UK postcodes to illustrate how((("partial matching", "postcodes and structured data"))) to use partial matching with
-structured data.((("structured data", "partial matching with postcodes"))) UK postcodes have a well defined structure. For instance the
-postcode `W1V 3DG` can((("postcodes (UK), partial mapping with"))) be broken down into:
+We will use United Kingdom postcodes (postal codes in the United States) to illustrate how((("partial matching", "postcodes and structured data"))) to use partial matching with
+structured data.((("structured data", "partial matching with postcodes"))) UK postcodes have a well-defined structure. For instance, the
+postcode `W1V 3DG` can((("postcodes (UK), partial mapping with"))) be broken down as follows:
 
-* `W1V` -- The outer part, identifies the postal area and district, consists of:
+* `W1V`: This outer part identifies the postal area and district:
 
-**  `W` --     Area, one or two letters
-**  `1V` --    District, one or two numbers, possibly followed by a letter
+**  `W` indicates the area (one or two letters)
+**  `1V` indicates the district (one or two numbers, possibly followed by a letter
 
-* `3DG` -- The inner part, identifies a street or building, consists of:
+* `3DG`: This inner part identifies a street or building:
 
-** `3` --     Sector, one number
-** `DG` --    Unit, two letters
+** `3` indicates the sector (one number)
+** `DG` indicates the unit (two letters)
 
 
-Let's assume that we are indexing postcodes as exact value `not_analyzed`
+Let's assume that we are indexing postcodes as exact-value `not_analyzed`
 fields, so we could create our index as follows:
 
 [source,js]
