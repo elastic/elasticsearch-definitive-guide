@@ -99,7 +99,7 @@ NOTE: The `boost` parameter is used to increase((("boost parameter", "score norm
 other words, a `boost` of `2` does not result in double the `_score`.
 
 Instead, the new `_score` is _normalized_ after((("normalization", "score normalied after boost applied"))) the boost is applied. Each
-type of query has its own normalization algorithm and the details are beyond
+type of query has its own normalization algorithm, and the details are beyond
 the scope of this book. Suffice to say that a higher `boost` value results in
 a higher `_score`.
 
