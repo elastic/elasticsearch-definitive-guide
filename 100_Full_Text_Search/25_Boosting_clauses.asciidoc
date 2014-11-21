@@ -5,14 +5,14 @@ Of course, the`bool query isn't restricted ((("full text search", "boosting quer
 queries.((("relevance scores", "controlling weight of query clauses")))  It is commonly used to fine-tune the relevance `_score` for each
 document by combining the scores from several distinct queries.
 
-Imagine that we want to search for documents((("bool query", "boosting weight of query clauses")))((("weight", "controlling for query clauses"))) about "full text search"  but we
-want to give more _weight_ to documents which also mention "Elasticsearch" or
-"Lucene". By ``more weight'' we mean that documents which mention
+Imagine that we want to search for documents((("bool query", "boosting weight of query clauses")))((("weight", "controlling for query clauses"))) about "full-text search,"  but we
+want to give more _weight_ to documents that also mention "Elasticsearch" or
+"Lucene." By _more weight_, we mean that documents mentioning
 "Elasticsearch" or "Lucene" will receive a higher relevance `_score` than
 those that don't, which means that they will appear higher in the list of
 results.
 
-A simple `bool` query allows us to write this fairly complex query as follows:
+A simple `bool` _query_ allows us to write this fairly complex query as follows:
 
 [source,js]
 --------------------------------------------------
