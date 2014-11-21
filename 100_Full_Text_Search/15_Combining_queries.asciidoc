@@ -34,9 +34,9 @@ The results from the preceding query include any document whose `title` field
 contains the term `quick`, except for those that also contain `lazy`. So
 far, this is pretty similar to how the `bool` filter works.
 
-The difference comes in with the two `should` clauses, which say: _a document
-is *not required* to contain ((("should clause", "in bool queries")))either `"brown"` or `"dog"`, but if it does, then
-it should be considered **more relevant**_:
+The difference comes in with the two `should` clauses, which say that: a document
+is _not required_ to contain ((("should clause", "in bool queries")))either `brown` or `dog`, but if it does, then
+it should be considered _more relevant_:
 
 [source,js]
 --------------------------------------------------
@@ -60,7 +60,7 @@ it should be considered **more relevant**_:
 }
 --------------------------------------------------
 
-<1> Doc 3 scores higher because it contains both `"brown"` and `"dog"`.
+<1> Document 3 scores higher because it contains both `brown` and `dog`.
 
 ==== Score calculation
 
