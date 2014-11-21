@@ -14,8 +14,8 @@ a reasonable result to return.
 
 If the only pertinent document that we have is the one containing `fast
 foxes`, it will appear at the top of the results list.  But of course, if
-we have 100 documents that contain the words ``quick brown fox'', then the
-``fast foxes'' document may be considered less relevant and we would want to
+we have 100 documents that contain the words `quick brown fox`, then the
+`fast foxes` document may be considered less relevant, and we would want to
 push it further down the list.  After including many potential matches, we
 need to ensure that the best ones rise to the top.
 
