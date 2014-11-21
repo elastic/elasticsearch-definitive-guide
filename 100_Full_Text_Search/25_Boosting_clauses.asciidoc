@@ -12,7 +12,7 @@ want to give more _weight_ to documents that also mention "Elasticsearch" or
 those that don't, which means that they will appear higher in the list of
 results.
 
-A simple `bool` _query_ allows us to write this fairly complex query as follows:
+A simple `bool` _query_ allows us to write this fairly complex logic as follows:
 
 [source,js]
 --------------------------------------------------
@@ -38,14 +38,14 @@ GET /_search
 --------------------------------------------------
 // SENSE: 100_Full_Text_Search/25_Boost.json
 
-<1> The `content` field must contain all of the words `full`, `text` and `search`.
-<2> If the `content` field also contains `Elasticsearch` or `Lucene` then
+<1> The `content` field must contain all of the words `full`, `text`, and `search`.
+<2> If the `content` field also contains `Elasticsearch` or `Lucene`,
     the document will receive a higher `_score`.
 
-The more `should` clauses that match, the more relevant the document.  So far
+The more `should` clauses that match, the more relevant the document.  So far,
 so good.
 
-But what if we want to give more weight to the docs which contain "Lucene" and
+But what if we want to give more weight to the docs which contain `Lucene` and
 even more weight to the docs containing "Elasticsearch"?
 
 We can control ((("boost parameter")))the relative weight of any query clause by specifying a `boost`
