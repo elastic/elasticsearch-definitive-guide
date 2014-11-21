@@ -14,7 +14,7 @@ First we'll look at why these problems exist, and then how we can combat them.
 ==== Problem 1: Matching the Same Word in Multiple Fields
 
 Think about how the `most_fields` query is executed: Elasticsearch generates a
-separate `match` query for each field and wraps them in an outer `bool` query.
+separate `match` query for each field and then wraps these match queries in an outer `bool` query.
 
 We can see this by passing our query through the `validate-query` API:
 
@@ -41,11 +41,11 @@ which yields this `explanation`:
     (postcode:poland postcode:street postcode:w1v)
 
 
-You can see that a document which matches just the word `poland` in *two* fields
-could score higher than a document which matches `poland` and `street` in one
+You can see that a document matching just the word `poland` in _two_ fields
+could score higher than a document matching `poland` and `street` in one
 field.
 
-==== Problem 2: Trimming the long tail
+==== Problem 2: Trimming the Long Tail
 
 In <<match-precision>> we talked about((("and operator", "most fields and best fields queries and")))((("minimum_should_match parameter", "most fields and best fields queries"))) using the `"and"` operator or the
 `minimum_should_match` parameter to trim the long tail of almost irrelevant
