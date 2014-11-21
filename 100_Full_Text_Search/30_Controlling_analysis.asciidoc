@@ -105,16 +105,14 @@ At search time, the ((("searching", "applying analyzers")))sequence is slightly 
 * The analyzer named `default` at node level, which defaults to
 * The `standard` analyzer
 
-**************************************************
 
-The two lines in bold above highlight differences in the index time sequence
+NOTE: The two lines in italics in the preceding lists highlight differences in the index time sequence
 and the search time sequence.  The `_analyzer` field allows you to specify a
 default analyzer for each document (eg `english`, `french`, `spanish`) while
 the `analyzer` parameter in the query specifies which analyzer to use on the
 query string. However, this is not the best way to handle multiple languages
 in a single index because of the pitfalls highlighted in <<languages>>.
 
-**************************************************
 
 Occasionally, it makes sense to use a different analyzer at index and search
 time.((("analyzers", "using different analyzers at index and search time"))) For instance, at index time we may want to index synonyms, eg for every
