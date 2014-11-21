@@ -44,10 +44,10 @@ The `match_phrase` query can also be written as a `match` query with type
 
 ==================================================
 
-==== Term positions
+==== Term Positions
 
 When a string is analyzed, the analyzer returns not((("phrase matching", "term positions")))((("match_phrase query", "position of terms")))((("position-aware matching"))) only a list of terms, but
-also the _position_ or order of each term in the original string:
+also the _position_, or order, of each term in the original string:
 
 [source,js]
 --------------------------------------------------
@@ -56,7 +56,7 @@ Quick brown fox
 --------------------------------------------------
 // SENSE: 120_Proximity_Matching/05_Term_positions.json
 
-This returns:
+This returns the following:
 
 [source,js]
 --------------------------------------------------
@@ -89,31 +89,31 @@ This returns:
 <1> The `position` of each term in the original string.
 
 Positions can be stored in the inverted index, and position-aware queries like
-the `match_phrase` query can use them to match only documents which contains
-all of the words in exactly the order specified, with no words inbetween.
+the `match_phrase` query can use them to match only documents that contain
+all the words in exactly the order specified, with no words in-between.
 
-==== What is a phrase
+==== What Is a Phrase
 
-For a document to be considered a((("match_phrase query", "documents matching a phrase"))) match for the phrase ``quick brown fox'':
+For a document to be considered a((("match_phrase query", "documents matching a phrase"))) match for the phrase ``quick brown fox,'' the following must be true:
 
-* `quick`, `brown` and `fox` must all appear in the field
+* `quick`, `brown`, and `fox` must all appear in the field.
 
-* the position of `brown` must be `1` greater than the position of `quick`
+* The position of `brown` must be `1` greater than the position of `quick`.
 
-* the position of `fox` must be `2` greater than the position of `quick`
+* The position of `fox` must be `2` greater than the position of `quick`.
 
 If any of these conditions is not met, the document is not considered a match.
 
 [TIP]
 ==================================================
 
-Internally, the `match_phrase` query use the low-level `span` query family to
+Internally, the `match_phrase` query uses the low-level `span` query family to
 do position-aware matching. ((("match_phrase query", "use of span queries for position-aware matching")))((("span queries")))Span queries are term-level queries, so they have
-no analysis phase -- they search for the exact term specified.
+no analysis phase; they search for the exact term specified.
 
-Thankfully, most people never need to use the `span` queries directly as the
+Thankfully, most people never need to use the `span` queries directly, as the
 `match_phrase` query is usually good enough. However, certain specialized
 fields, like patent searches, use these low-level queries to perform very
-specific carefully constructed positional searches.
+specific, carefully constructed positional searches.
 
 ==================================================
