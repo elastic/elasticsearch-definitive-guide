@@ -183,7 +183,7 @@ to each field.
 Typically, most of your string fields will be exact-value `not_analyzed`
 fields such as tags or enums, plus a handful of full-text fields that will
 use some default analyzer like `standard` or `english` or some other language.
-Then you may have one or two fields which need custom analysis: perhaps the
+Then you may have one or two fields that need custom analysis: perhaps the
 `title` field needs to be indexed in a way that supports _find-as-you-type_.
 
 You can set the `default` analyzer in the index to the analyzer you want to
@@ -192,10 +192,10 @@ analyzer on the one or two fields that need it.  If, in your model, you need
 a different default analyzer per type, then use the type level `analyzer`
 setting instead.
 
-****
-A common work-flow for time based data like logging is to create a new index
+
+NOTE: A common work flow for time based data like logging is to create a new index
 per day on the fly by just indexing into it.  While this work flow prevents
-you from creating your index up front, you can still use
-{ref}indices-templates.html[index templates]
+you from creating your index up front, you can still use 
+http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-templates.html[index templates]
 to specify the settings and mappings that a new index should have.
-****
+
