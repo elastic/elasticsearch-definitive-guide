@@ -1,6 +1,6 @@
-=== Multi-value fields
+=== Multivalue Fields
 
-A curious thing can happen when you try to use phrase matching on multi-value
+A curious thing can happen when you try to use phrase matching on multivalue
 fields. ((("proximity matching", "on multi-value fields")))((("match_phrase query", "on multi-value fields"))) Imagine that you index this document:
 
 [source,js]
@@ -12,7 +12,7 @@ PUT /my_index/groups/1
 --------------------------------------------------
 // SENSE: 120_Proximity_Matching/15_Multi_value_fields.json
 
-Then run a phrase query for `"Abraham Lincoln"`:
+Then run a phrase query for `Abraham Lincoln`:
 
 [source,js]
 --------------------------------------------------
@@ -27,24 +27,24 @@ GET /my_index/groups/_search
 --------------------------------------------------
 // SENSE: 120_Proximity_Matching/15_Multi_value_fields.json
 
-Surprisingly our document matches, even though `"Abraham"` and `"Lincoln"`
+Surprisingly, our document matches, even though `Abraham` and `Lincoln`
 belong to two different people in the `names` array. The reason for this comes
 down to the way arrays are indexed in Elasticsearch.
 
-When `"John Abraham"` is analyzed, it produces:
+When `John Abraham` is analyzed, it produces this:
 
 * Position 1: `john`
 * Position 2: `abraham`
 
-Then when `"Lincoln Smith"` is analyzed, it produces:
+Then when `Lincoln Smith` is analyzed, it produces this:
 
 * Position 3: `lincoln`
 * Position 4: `smith`
 
-In other words, it produces exactly the same list of tokens as it would have
-done for the single string `"John Abraham Lincoln Smith"`. Our example query
+In other words, Elasticsearch produces exactly the same list of tokens as it would have
+for the single string `John Abraham Lincoln Smith`. Our example query
 looks for `abraham` directly followed by `lincoln`, and these two terms do
-indeed exist and they are right next to each other, so the query matches.
+indeed exist, and they are right next to each other, so the query matches.
 
 Fortunately, there is a simple workaround for cases like these, called the
 `position_offset_gap`, which((("mapping (types)", "position_offset_gap")))((("position_offset_gap"))) we need to configure in the field mapping:
