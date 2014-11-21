@@ -151,8 +151,8 @@ When querying just the `full_name` field:
   expected.
 
 * The inverse document frequencies for first and last names would be combined
-  so it wouldn't matter whether ``Smith'' were a first or last name anymore.
+  so it wouldn't matter whether Smith were a first or last name anymore.
 
 While this would work, we don't like having to store redundant data.  Instead,
-Elasticsearch offers us two solutions -- one at index time and one at search
-time -- which we will discuss next.
+Elasticsearch offers us two solutions--one at index time and one at search
+time--which we discuss next.
