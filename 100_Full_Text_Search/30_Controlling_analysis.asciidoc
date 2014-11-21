@@ -115,42 +115,42 @@ in a single index because of the pitfalls highlighted in <<languages>>.
 
 
 Occasionally, it makes sense to use a different analyzer at index and search
-time.((("analyzers", "using different analyzers at index and search time"))) For instance, at index time we may want to index synonyms, eg for every
-occurrence of `quick` we also index `fast`, `rapid` and `speedy`. But at
+time.((("analyzers", "using different analyzers at index and search time"))) For instance, at index time we may want to index synonyms (for example, for every
+occurrence of `quick`, we also index `fast`, `rapid`, and `speedy`). But at
 search time, we don't need to search for all of these synonyms.  Instead we
 can just look up the single word that the user has entered, be it `quick`,
-`fast`, `rapid` or `speedy`.
+`fast`, `rapid`, or `speedy`.
 
 To enable this distinction, Elasticsearch also supports ((("index_analyzer parameter")))((("search_analyzer parameter")))the `index_analyzer`
 and `search_analyzer` parameters, and((("default_search parameter"))) ((("default_index analyzer")))analyzers named `default_index` and
 `default_search`.
 
-Taking these extra parameters into account, the *full* sequence at index time
+Taking these extra parameters into account, the _full_ sequence at index time
 really looks like this:
 
-* the `index_analyzer` defined in the field mapping, else
-* the `analyzer` defined in the field mapping, else
-* the analyzer defined in the `_analyzer` field of the document, else
-* the default `index_analyzer` for the `type`, which defaults to
-* the default `analyzer` for the `type`, which defaults to
-* the analyzer named `default_index` in the index settings, which defaults to
-* the analyzer named `default` in the index settings, which defaults to
-* the analyzer named `default_index` at node level, which defaults to
-* the analyzer named `default` at node level, which defaults to
-* the `standard` analyzer
+* The `index_analyzer` defined in the field mapping, else
+* The `analyzer` defined in the field mapping, else
+* The analyzer defined in the `_analyzer` field of the document, else
+* The default `index_analyzer` for the `type`, which defaults to
+* The default `analyzer` for the `type`, which defaults to
+* The analyzer named `default_index` in the index settings, which defaults to
+* The analyzer named `default` in the index settings, which defaults to
+* The analyzer named `default_index` at node level, which defaults to
+* The analyzer named `default` at node level, which defaults to
+* The `standard` analyzer
 
 And at search time:
 
-* the `analyzer` defined in the query itself, else
-* the `search_analyzer` defined in the field mapping, else
-* the `analyzer` defined in the field mapping, else
-* the default `search_analyzer` for the `type`, which defaults to
-* the default `analyzer` for the `type`, which defaults to
-* the analyzer named `default_search` in the index settings, which defaults to
-* the analyzer named `default` in the index settings, which defaults to
-* the analyzer named `default_search` at node level, which defaults to
-* the analyzer named `default` at node level, which defaults to
-* the `standard` analyzer
+* The `analyzer` defined in the query itself, else
+* The `search_analyzer` defined in the field mapping, else
+* The `analyzer` defined in the field mapping, else
+* The default `search_analyzer` for the `type`, which defaults to
+* The default `analyzer` for the `type`, which defaults to
+* The analyzer named `default_search` in the index settings, which defaults to
+* The analyzer named `default` in the index settings, which defaults to
+* The analyzer named `default_search` at node level, which defaults to
+* The analyzer named `default` at node level, which defaults to
+* The `standard` analyzer
 
 ==== Configuring analyzers in practice
 
