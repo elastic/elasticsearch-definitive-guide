@@ -100,7 +100,7 @@ PUT /my_index/my_type/2
 --------------------------------------------------
 // SENSE: 110_Multi_Field_Search/30_Most_fields.json
 
-A simple `match` query on the `title` field for `jumping rabbits`:
+Here is a simple `match` query on the `title` field for `jumping rabbits`:
 
 [source,js]
 --------------------------------------------------
@@ -115,7 +115,7 @@ GET /my_index/_search
 --------------------------------------------------
 // SENSE: 110_Multi_Field_Search/30_Most_fields.json
 
-becomes a query for the two stemmed terms `jump` and `rabbit`, thanks to the
+This becomes a query for the two stemmed terms `jump` and `rabbit`, thanks to the
 `english` analyzer. The `title` field of both documents contains both of those
 terms, so both documents receive the same score:
 
@@ -142,7 +142,7 @@ terms, so both documents receive the same score:
 --------------------------------------------------
 
 If we were to query just the `title.std` field, then only document 2 would
-match.  However, if we were to query both fields and to *combine* their scores
+match.  However, if we were to query both fields and to _combine_ their scores
 using the `bool` query, then both documents would match (thanks to the `title`
 field) and document 2 would score higher (thanks to the `title.std` field):
 
