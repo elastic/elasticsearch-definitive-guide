@@ -24,7 +24,7 @@ at least one clause must match. These two queries are equivalent:
 }
 --------------------------------------------------
 
-With the `"and"` operator, all the `term` queries are added as `must` clauses,
+With the `and` operator, all the `term` queries are added as `must` clauses,
 so _all_ clauses must match. These two queries are equivalent:
 
 [source,js]
@@ -80,11 +80,11 @@ directly through to the `bool` query, making these two queries equivalent:
 }
 --------------------------------------------------
 <1> Because there are only three clauses, the `minimum_should_match`
-    value of `75%` in the `match` query is rounded down to `2` --
-    at least 2 out of the 3 `should`  clauses must match.
+    value of `75%` in the `match` query is rounded down to `2`.
+    At least two out of the three `should`  clauses must match.
 
 
-Of course, we would normally write these types of queries using the `match`
+Of course, we would normally write these types of queries by using the `match`
 query, but understanding how the `match` query works internally lets you take
 control of the process when you need to. There are some things that can't be
 done with a single `match` query, such as give more weight to some query terms
