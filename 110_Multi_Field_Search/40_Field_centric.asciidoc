@@ -47,7 +47,7 @@ field.
 
 ==== Problem 2: Trimming the Long Tail
 
-In <<match-precision>> we talked about((("and operator", "most fields and best fields queries and")))((("minimum_should_match parameter", "most fields and best fields queries"))) using the `"and"` operator or the
+In <<match-precision>>, we talked about((("and operator", "most fields and best fields queries and")))((("minimum_should_match parameter", "most fields and best fields queries"))) using the `and` operator or the
 `minimum_should_match` parameter to trim the long tail of almost irrelevant
 results. Perhaps we could try this:
 
@@ -68,7 +68,7 @@ results. Perhaps we could try this:
 
 <1> All terms must be present.
 
-However, with `best_fields` or `most_fields` these parameters are passed down
+However, with `best_fields` or `most_fields`, these parameters are passed down
 to the generated `match` queries. The `explanation` for this query shows the
 following:
 
@@ -77,21 +77,21 @@ following:
     (+country:poland  +country:street  +country:w1v)
     (+postcode:poland +postcode:street +postcode:w1v)
 
-In other words, using the `and` operator means that all words must exist *in
-the same field*, which is clearly wrong! It is unlikely that any documents
+In other words, using the `and` operator means that all words must exist _in
+the same field_, which is clearly wrong! It is unlikely that any documents
 would match this query.
 
-==== Problem 3: Term frequencies
+==== Problem 3: Term Frequencies
 
 In <<relevance-intro>>, we explained that the default similarity algorithm
 used to calculate the relevance score ((("term frequency", "problems with field-centric queries")))for each term is TF/IDF:
 
-Term Frequency::
+Term frequency::
 
     The more often a term appears in a field in a single document, the more
     relevant the document.
 
-Inverse Document Frequency::
+Inverse document frequency::
 
     The more often a term appears in a field in all documents in the index,
     the less relevant is that term.
@@ -101,12 +101,12 @@ results.
 
 Consider our example of searching for ``Peter Smith'' using the `first_name`
 and `last_name` fields.  Peter is a common first name and Smith is a common
-last name -- both will have low IDFs.  But what if we have another person in
-the index whose name is ``Smith Williams''.  Smith as a first name is very
+last name--both will have low IDFs.  But what if we have another person in
+the index whose name is Smith Williams?  Smith as a first name is very
 uncommon and so will have a high IDF!
 
-A simple query like the following may well return ``Smith Williams'' above
-``Peter Smith'' in spite of the fact that the second person is a better match
+A simple query like the following may well return Smith Williams above
+Peter Smith in spite of the fact that the second person is a better match
 than the first.
 
 [source,js]
