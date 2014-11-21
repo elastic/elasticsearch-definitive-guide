@@ -64,15 +64,15 @@ The answer lies in how the score is calculated.((("relevance scores", "calculati
 `match` query, adds their scores together, then multiplies by the number of
 matching clauses, and divides by the total number of clauses. Each clause at
 the same level has the same weight. In the preceding query, the `bool` query
-containing the translator clauses counts for ⅓ of the total score. If we had
-put the translator clauses at the same level as title and author, then they
-would have reduced the contribution of the title and author clauses to ¼ each.
+containing the translator clauses counts for one-third of the total score. If we had
+put the translator clauses at the same level as title and author, they
+would have reduced the contribution of the title and author clauses to one-quarter each.
 
 [[prioritising-clauses]]
-==== Prioritising clauses
+==== Prioritizing Clauses
 
-It is likely that an even ⅓ split between clauses is not what we need for
-the above query. ((("multi-field search", "multiple query strings", "prioritizing query clauses")))((("bool query", "prioritizing clauses"))) Probably we're more interested in the title and author
+It is likely that an even one-third split between clauses is not what we need for
+the preceding query. ((("multi-field search", "multiple query strings", "prioritizing query clauses")))((("bool query", "prioritizing clauses"))) Probably we're more interested in the title and author
 clauses then we are in the translator clauses. We need to tune the query to
 make the title and author clauses relatively more important.
 
@@ -110,8 +110,8 @@ GET /_search
 --------------------------------------------------
 // SENSE: 110_Multi_Field_Search/05_Multiple_query_strings.json
 
-<1> The `title` and `author` clauses have a `boost` value of 2.
-<2> The nested `bool` clauses has the default `boost` of 1.
+<1> The `title` and `author` clauses have a `boost` value of `2`.
+<2> The nested `bool` clause has the default `boost` of `1`.
 
 The ``best'' value for the `boost` parameter is most easily determined by
 trial and error: set a `boost` value, run test queries, repeat. A reasonable
