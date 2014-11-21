@@ -1,18 +1,18 @@
 [[partial-matching]]
-== Partial matching
+== Partial Matching
 
 A keen observer will notice  that all the queries so far in this book have
-operated on whole terms.((("partial matching")))  To match something, the smallest ``unit'' had to be a
-single term -- you can only find terms that exist in the inverted index.
+operated on whole terms.((("partial matching")))  To match something, the smallest unit had to be a
+single term. You can find only terms that exist in the inverted index.
 
 But what happens if you want to match parts of a term but not the whole thing?
-Partial matching allows the user to specify a portion of the term they are
+_Partial matching_ allows users to specify a portion of the term they are
 looking for and find any words that contain that fragment.
 
-The requirement to match on part of a term is less common in the full text
-search engine world than you might think.  If you have come from an SQL
-background, it is likely that you have, at some stage of your career,
-implemented a ``poor man's full text search'' using SQL constructs like:
+The requirement to match on part of a term is less common in the full-text
+search-engine world than you might think.  If you have come from an SQL
+background, you likely have, at some stage of your career,
+implemented a _poor man's full-text search_ using SQL constructs like this:
 
 [source,js]
 --------------------------------------------------
@@ -21,25 +21,25 @@ implemented a ``poor man's full text search'' using SQL constructs like:
       AND text LIKE "*fox*" <1>
 --------------------------------------------------
 
-<1> `"*fox*"` would match ``fox'' and ``foxes''.
+<1> `*fox*` would match ``fox'' and ``foxes.''
 
-Of course, with Elasticsearch we have the analysis process and the inverted
-index which remove the need for such brute-force techniques. To handle the
-case of matching both ``fox'' and ``foxes'' we could simply use a stemmer to
+Of course, with Elasticsearch, we have the analysis process and the inverted
+index that remove the need for such brute-force techniques. To handle the
+case of matching both ``fox'' and ``foxes,'' we could simply use a stemmer to
 index words in their root form.  There is no need to match partial terms.
 
-That said, there are occasions when partial matching can be very useful.
-Common use ((("partial matching", "common use cases")))cases include:
+That said, on some occasions partial matching can be useful.
+Common use ((("partial matching", "common use cases")))cases include the following:
 
-* matching postcodes, product serial numbers or other `not_analyzed` values
-  which start with a particular prefix or match some wildcard pattern
-  or even a regular expression.
+* Matching postal codes, product serial numbers, or other `not_analyzed` values
+  that start with a particular prefix or match a wildcard pattern
+  or even a regular expression
 
-* _search-as-you-type_ -- displaying the most likely results before the
-  user has finished typing their search terms
+* _search-as-you-type_&#x2014;displaying the most likely results before the
+  user has finished typing the search terms
 
-* matching in languages like German or Dutch which contain long compound
-  words, like _Weltgesundheitsorganisation_ (World Health Organisation)
+* Matching in languages like German or Dutch, which contain long compound
+  words, like _Weltgesundheitsorganisation_ (World Health Organization)
 
-We will start by examining prefix matching on exact value `not_analyzed`
+We will start by examining prefix matching on exact-value `not_analyzed`
 fields.
