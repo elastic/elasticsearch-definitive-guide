@@ -1,13 +1,13 @@
 === Single Query String
 
-The `bool` query is the mainstay of multi-clause queries.((("multi-field search", "single query string"))) It works very well
+The `bool` query is the mainstay of multiclause queries.((("multi-field search", "single query string"))) It works well
 for many cases, especially when you are able to map different query strings to
 individual fields.
 
 The problem is that, these days, users expect to be able to type all of their
-search terms into a single field, and that the application will figure out how
+search terms into a single field, and expect that the application will figure out how
 to give them the right results.  It is ironic that the multi-field search form
-is known as _Advanced Search_ -- it may appear advanced to the user, but it is
+is known as _Advanced Search_ --it may appear advanced to the user, but it is
 much simpler to implement.
 
 There is no simple _one-size-fits-all_ approach to multi-word multi-field
