@@ -87,23 +87,23 @@ analyzer is used for a field if none is specified at the field level?
 
 Analyzers can be specified at several levels.  Elasticsearch works through
 each level until it finds an analyzer that it can use.  At index time, the
-process ((("indexing", "applying analyzers")))is as follows:
+order ((("indexing", "applying analyzers")))is as follows:
 
-* the `analyzer` defined in the field mapping, else
-* *the analyzer defined in the `_analyzer` field of the document, else*
-* the default `analyzer` for the `type`, which defaults to
-* the analyzer named `default` in the index settings, which defaults to
-* the analyzer named `default` at node level, which defaults to
-* the `standard` analyzer
+* The `analyzer` defined in the field mapping, else
+* _The analyzer defined in the `_analyzer` field of the document, else_
+* The default `analyzer` for the `type`, which defaults to
+* The analyzer named `default` in the index settings, which defaults to
+* The analyzer named `default` at node level, which defaults to
+* The `standard` analyzer
 
 At search time, the ((("searching", "applying analyzers")))sequence is slightly different:
 
-* *the `analyzer` defined in the query itself, else*
-* the `analyzer` defined in the field mapping, else
-* the default `analyzer` for the `type`, which defaults to
-* the analyzer named `default` in the index settings, which defaults to
-* the analyzer named `default` at node level, which defaults to
-* the `standard` analyzer
+* _The `analyzer` defined in the query itself, else_
+* The `analyzer` defined in the field mapping, else
+* The default `analyzer` for the `type`, which defaults to
+* The analyzer named `default` in the index settings, which defaults to
+* The analyzer named `default` at node level, which defaults to
+* The `standard` analyzer
 
 **************************************************
 
