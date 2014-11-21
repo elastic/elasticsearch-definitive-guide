@@ -45,12 +45,12 @@ GET /_search
 The more `should` clauses that match, the more relevant the document.  So far,
 so good.
 
-But what if we want to give more weight to the docs which contain `Lucene` and
-even more weight to the docs containing "Elasticsearch"?
+But what if we want to give more weight to the docs that contain `Lucene` and
+even more weight to the docs containing `Elasticsearch`?
 
 We can control ((("boost parameter")))the relative weight of any query clause by specifying a `boost`
 value, which defaults to `1`. A `boost` value greater than `1` increases the
-relative weight of that clause.  So we could  rewrite the above query as
+relative weight of that clause.  So we could  rewrite the preceding query as
 follows:
 
 [source,js]
@@ -87,15 +87,13 @@ GET /_search
 --------------------------------------------------
 // SENSE: 100_Full_Text_Search/25_Boost.json
 
-<1> This clauses use the default `boost` of `1`.
+<1> These clauses use the default `boost` of `1`.
 <2> This clause is the most important, as it has the highest `boost`.
 <3> This clause is more important than the default, but not as important
-    as the "Elasticsearch" clause.
+    as the `Elasticsearch` clause.
 
 [[boost-normalization]]
-**************************************************
-
-The `boost` parameter is used to increase((("boost parameter", "score normalied after boost applied"))) the relative weight of a clause
+NOTE: The `boost` parameter is used to increase((("boost parameter", "score normalied after boost applied"))) the relative weight of a clause
 (with a `boost` greater than `1`) or decrease the relative weight (with a
 `boost` between `0` and `1`), but the increase or decrease is not linear. In
 other words, a `boost` of `2` does not result in double the `_score`.
@@ -110,7 +108,6 @@ need more control over the boosting process, you can use the
 <<function-score-query,`function_score` query>> to((("function_score query"))) manipulate a document's
 boost without the normalization step.
 
-**************************************************
 
 We will discuss other ways of combining queries in the next chapter:
 <<multi-field-search>>. But first, let's take a look at the other important
