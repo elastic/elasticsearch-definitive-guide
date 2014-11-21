@@ -7,10 +7,10 @@ multiple filter clauses with `and`, `or`, and `not` logic.  In query land, the
 
 Filters make a binary decision: should this document be included in the
 results list or not? Queries, however, are more subtle. They decide not only
-whether to include a document or not, but also how *relevant* that document is.
+whether to include a document, but also how _relevant_ that document is.
 
 Like the filter equivalent, the `bool` query accepts((("bool query"))) multiple query clauses
-under the `must`, `must_not` and `should` parameters.  For instance:
+under the `must`, `must_not`, and `should` parameters.  For instance:
 
 [source,js]
 --------------------------------------------------
@@ -30,9 +30,9 @@ GET /my_index/my_type/_search
 --------------------------------------------------
 // SENSE: 100_Full_Text_Search/15_Bool_query.json
 
-The results from the above query include any document whose `title` field
-contains the term `"quick"`, except for those that also contain `"lazy"`. So
-far this is pretty similar to how the `bool` filter works.
+The results from the preceding query include any document whose `title` field
+contains the term `quick`, except for those that also contain `lazy`. So
+far, this is pretty similar to how the `bool` filter works.
 
 The difference comes in with the two `should` clauses, which say: _a document
 is *not required* to contain ((("should clause", "in bool queries")))either `"brown"` or `"dog"`, but if it does, then
