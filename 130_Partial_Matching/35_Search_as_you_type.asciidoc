@@ -278,27 +278,27 @@ do is to look up the two terms `brown` and `fo`, which is much more efficient
 than the `match_phrase_prefix` approach of having to find all terms beginning
 with `fo`.
 
-.Completion suggester
+.Completion Suggester
 *************************************************
 
-Using edge n-grams for search-as-you-type is easy to set up, flexible and
+Using edge n-grams for search-as-you-type is easy to set up, flexible, and
 fast.  However, sometimes it is not fast enough.  Latency matters, especially
 when you are trying to provide instant feedback.  Sometimes the fastest way of
 searching is not to search at all.
 
-The {ref}/search-suggesters-completion.html[completion suggester] in
-Elasticsearch((("completion suggester"))) takes a completely different approach.  You feed it with a list
-of all possible completions and it builds them into a _Finite State
-Transducer_, an((("Finite State Transducer"))) optimized data structure which resembles a big graph.  To
+The http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-suggesters-completion.html[completion suggester] in
+Elasticsearch((("completion suggester"))) takes a completely different approach.  You feed it a list
+of all possible completions, and it builds them into a _finite state
+transducer_, an((("Finite State Transducer"))) optimized data structure that resembles a big graph.  To
 search for suggestions, Elasticsearch starts at the beginning of the graph and
-moves character-by-character along the matching path. Once it has run out of
+moves character by character along the matching path. Once it has run out of
 user input, it looks at all possible endings of the  current path to produce a
 list of suggestions.
 
 This data structure lives in memory and makes prefix lookups extremely fast,
 much faster than any term-based query could be.  It is an excellent match for
-autocompletion of names and brands, whose words are usually organised in a
-common order: ``Johnny Rotten'', rather than ``Rotten Johnny''.
+autocompletion of names and brands, whose words are usually organized in a
+common order: ``Johnny Rotten'' rather than ``Rotten Johnny.''
 
 When word order is less predictable, edge n-grams can be a better solution
 than the completion suggester.  This particular cat may be skinned in myriad
@@ -306,24 +306,26 @@ ways.
 
 *************************************************
 
-==== Edge n-grams and postcodes
+==== Edge n-grams and Postcodes
 
 The edge n-gram approach can((("postcodes (UK), partial matching with", "using edge n-grams")))((("edge n-grams", "and postcodes"))) also be used for structured data, such as the
 postcodes example from <<prefix-query,earlier in this chapter>>.  Of course,
-the `postcode` field would need to be `analyzed` instead of `not_analyzed` but
+the `postcode` field would need to be `analyzed` instead of `not_analyzed`, but
 you could use the `keyword` tokenizer((("keyword tokenizer", "using for values treated as not_analyzed")))((("not_analyzed fields", "using keyword tokenizer with"))) to treat the postcodes as if they were
 `not_analyzed`.
 
 [TIP]
 ==================================================
 
-The `keyword` tokenizer is the NOOP tokenizer, the tokenizer which does
+The `keyword` tokenizer is the no-operation tokenizer, the tokenizer that does
 nothing.  Whatever string it receives as input, it emits exactly the same
 string as a single token.  It can therefore be used for values that we would
-normally treat as `not_analyzed` but which require some other analysis
+normally treat as `not_analyzed` but that require some other analysis
 transformation such as lowercasing.
 
 ==================================================
+
+This example uses the `keyword` tokenizer to convert the postcode string into a token stream, so that we can use the edge n-gram token filter:
 
 [source,js]
 --------------------------------------------------
