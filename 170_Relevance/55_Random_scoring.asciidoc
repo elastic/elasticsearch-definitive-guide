@@ -1,20 +1,20 @@
 [[random-scoring]]
-=== Random scoring
+=== Random Scoring
 
-You may have been wondering what ``consistently random scoring'' is, or why
+You may have been wondering what _consistently random scoring_ is, or why
 you would ever want to use it.((("consistently random scoring")))((("relevance", "controlling", "random scoring")))((("random scoring")))  The previous example provides a good use case.
 All results from the previous example would receive a final `_score` of 1, 2,
-3, 4, or 5. Maybe there are only a few homes which score 5, but presumably
+3, 4, or 5. Maybe there are only a few homes that score 5, but presumably
 there would be a lot of homes scoring 2 or 3.
 
 As the owner of the website, you want to give your advertisers as much
 exposure as possible.  With the current query, results with the same `_score`
 would be returned in the same order every time.  It would be good to introduce
-some randomness here, to ensure that all documents in a single score ``level''
+some randomness here, to ensure that all documents in a single score level
 get a similar amount of exposure.
 
 We want every user to see a different random order, but we want the same user
-to see the same order when they click on page 2, 3, etc.  This is what is
+to see the same order when clicking on page 2, 3, and so forth.  This is what is
 meant by _consistently random_.
 
 The `random_score` function, which((("function_score query", "random_score function")))((("random_score function"))) outputs a number between 0 and 1, will
@@ -54,7 +54,7 @@ GET /_search
   }
 }
 --------------------------------
-<1> The `random_score` clause doesn't have any `filter` so it will
+<1> The `random_score` clause doesn't have any `filter`, so it will
     be applied to all documents.
 <2> Pass the user's session ID as the `seed`, to make randomization
     consistent for that user. The same `seed` will result in the
