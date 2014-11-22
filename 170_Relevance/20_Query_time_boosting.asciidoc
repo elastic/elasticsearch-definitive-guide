@@ -1,7 +1,7 @@
 [[query-time-boosting]]
-=== Query time boosting
+=== Query-Time Boosting
 
-In <<prioritising-clauses>> we explained ((("relevance", "controlling", "query time boosting")))((("boosting", "query-time")))how you could use the `boost`
+In <<prioritising-clauses,Prioritizing Clauses>>, we explained ((("relevance", "controlling", "query time boosting")))((("boosting", "query-time")))how you could use the `boost`
 parameter at search time to give one query clause more importance than
 another.  For instance:
 
@@ -31,12 +31,12 @@ GET /_search
 }
 ------------------------------
 <1> The `title` query clause is twice as important as the `content` query
-    clause, because it has been boosted by a factor of 2.
-<2> A query clause without a `boost` value has a neutral boost of 1.
+    clause, because it has been boosted by a factor of `2`.
+<2> A query clause without a `boost` value has a neutral boost of `1`.
 
-Query-time boosting is the main tool that you can use to tune relevance. Any
-type of query accepts a `boost` parameter.((("boost parameter", "setting value")))  Setting a `boost` of 2 doesn't
-simply double the final `_score` -- the actual boost value that is applied
+_Query-time boosting_ is the main tool that you can use to tune relevance. Any
+type of query accepts a `boost` parameter.((("boost parameter", "setting value")))  Setting a `boost` of `2` doesn't
+simply double the final `_score`; the actual boost value that is applied
 goes through normalization and some internal optimization.  However, it does
 imply that a clause with a boost of `2` is twice as important as a clause with
 a boost of `1`.
@@ -44,16 +44,16 @@ a boost of `1`.
 Practically, there is no simple formula for deciding on the ``correct'' boost
 value for a particular query clause.  It's a matter of try-it-and-see.
 Remember that `boost` is just one of the factors involved in the relevance
-score -- it has to compete with the other factors.  For instance in the above
+score; it has to compete with the other factors.  For instance, in the preceding
 example, the `title` field will probably already have a ``natural'' boost over
-the `content` field thanks ((("field length norm")))to the <<field-norm,field length norm>> -- titles
-are usually shorter than the related content -- so don't blindly boost fields
+the `content` field thanks ((("field length norm")))to the <<field-norm,field-length norm>> (titles
+are usually shorter than the related content), so don't blindly boost fields
 just because you think they should be boosted.  Apply a boost and check the
 results. Change the boost and check again.
 
-==== Boosting an index
+==== Boosting an Index
 
-When searching across multipled indices, you((("boosting", "query-time", "boosting an index")))((("indexes", "boosting an index"))) can boost an entire index over
+When searching across multiple indices, you((("boosting", "query-time", "boosting an index")))((("indexes", "boosting an index"))) can boost an entire index over
 the others with the `indices_boost` parameter.((("indices_boost parameter")))  This could be used, as in the
 next example, to give more weight to documents from a more recent index:
 
