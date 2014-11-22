@@ -236,23 +236,25 @@ vector&#x2014;`[2,5]`&#x2014;as a line on a graph starting at point (0,0) and
 ending at point (2,5), as shown in <<img-vector-query>>.
 
 [[img-vector-query]]
+.A two-dimensional query vector for "happy hippopotamus" represented
 image::images/elas_17in01.png["The query vector plotted on a graph"]
 
 Now, imagine we have three documents:
 
-1. ``I am *happy* in summer''
-2. ``After Christmas I'm a *hippopotamus*''
-3. ``The *happy hippopotamus* helped Harry''
+1. I am _happy_ in summer.
+2. After Christmas I'm a _hippopotamus_.
+3. The _happy hippopotamus_ helped Harry.
 
 We can create a similar vector for each document, consisting of the weight of
-each of the query terms -- `happy` and `hippopotamus` -- that appear in the
-document, and plot them on the same graph:
+each query term&#x2014;`happy` and `hippopotamus`&#x2014;that appears in the
+document, and plot these vectors on the same graph, as shown in <<img-vector-docs>>:
 
-* Document 1: `(happy,____________)` -- `[2,0]`
-* Document 2: `( ___ ,hippopotamus)` -- `[0,5]`
-* Document 3: `(happy,hippopotamus)` -- `[2,5]`
+* Document 1: `(happy,____________)`&#x2014;`[2,0]`
+* Document 2: `( ___ ,hippopotamus)`&#x2014;`[0,5]`
+* Document 3: `(happy,hippopotamus)`&#x2014;`[2,5]`
 
 [[img-vector-docs]]
+.Query and document vectors for "happy hippopotamus"
 image::images/elas_17in02.png["The query and document vectors plotted on a graph"]
 
 The nice thing about vectors is that they can be compared. By measuring the
@@ -266,12 +268,12 @@ match.
 ==================================================
 
 In practice, only two-dimensional vectors (queries with two terms) can  be
-plotted easily on a graph. Fortunately, _linear algebra_ -- the branch of
-mathematics which deals with vectors -- provides us with tools to compare the
-angle between multi-dimensional vectors, which means that we can apply the
-same principles explained above to queries which consist of many terms.
+plotted easily on a graph. Fortunately, _linear algebra_&#x2014;the branch of
+mathematics that deals with vectors--provides tools to compare the
+angle between multidimensional vectors, which means that we can apply the
+same principles explained above to queries that consist of many terms.
 
-You can read more about how to compare two vectors using _Cosine Similarity_
+You can read more about how to compare two vectors by using _cosine similarity_
 at http://en.wikipedia.org/wiki/Cosine_similarity.
 
 ==================================================
