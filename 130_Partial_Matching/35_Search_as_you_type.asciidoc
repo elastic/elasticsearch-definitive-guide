@@ -1,10 +1,10 @@
-=== Index time search-as-you-type
+=== Index-Time Search-as-You-Type
 
-The first step to setting up index time search-as-you-type is to((("search-as-you-type", "index time")))((("partial matching", "index time search-as-you-type"))) define our
+The first step to setting up index-time search-as-you-type is to((("search-as-you-type", "index time")))((("partial matching", "index time search-as-you-type"))) define our
 analysis chain, which we discussed  in <<configuring-analyzers>>, but we will
 go over the steps again here.
 
-==== Preparing the index
+==== Preparing the Index
 
 The first step is to configure a ((("partial matching", "index time search-as-you-type", "preparing the index")))custom `edge_ngram` token filter,((("edge_ngram token filter"))) which we
 will call the `autocomplete_filter`:
@@ -44,10 +44,10 @@ the `autocomplete` analyzer:
     }
 }
 --------------------------------------------------
-<1> Our custom edge-ngram token filter.
+<1> Our custom edge-ngram token filter
 
-This analyzer will tokenize a string into individual terms using the
-`standard` tokenizer, lowercase each term, then produce edge n-grams of each
+This analyzer will tokenize a string into individual terms by using the
+`standard` tokenizer, lowercase each term, and then produce edge n-grams of each
 term, thanks to our `autocomplete_filter`.
 
 The full request to create the index and instantiate the token filter and
@@ -87,7 +87,7 @@ PUT /my_index
 <2> First we define our custom token filter.
 <3> Then we use it in an analyzer.
 
-You can test out this new analyzer to make sure it is behaving correctly using
+You can test this new analyzer to make sure it is behaving correctly by using
 the `analyze` API:
 
 [source,js]
@@ -97,7 +97,7 @@ quick brown
 --------------------------------------------------
 // SENSE: 130_Partial_Matching/35_Search_as_you_type.json
 
-The results show us that the analyzer is working correctly. It returns the
+The results show us that the analyzer is working correctly. It returns these
 terms:
 
 * `q`
@@ -111,7 +111,7 @@ terms:
 * `brow`
 * `brown`
 
-In order to use the analyzer, we need to apply it to a field, which we can do
+To use the analyzer, we need to apply it to a field, which we can do
 with((("update-mapping API", "applying custom autocomplete analyzer to a field"))) the `update-mapping` API:
 
 [source,js]
@@ -142,9 +142,9 @@ POST /my_index/my_type/_bulk
 --------------------------------------------------
 // SENSE: 130_Partial_Matching/35_Search_as_you_type.json
 
-==== Querying the field
+==== Querying the Field
 
-If you test out a query for ``brown fo'' using ((("partial matching", "index time search-as-you-type", "querying the field")))a simple `match` query:
+If you test out a query for ``brown fo'' by using ((("partial matching", "index time search-as-you-type", "querying the field")))a simple `match` query
 
 [source,js]
 --------------------------------------------------
@@ -159,7 +159,7 @@ GET /my_index/my_type/_search
 --------------------------------------------------
 // SENSE: 130_Partial_Matching/35_Search_as_you_type.json
 
-you will see that *both* documents match, even though the ``Yellow furballs''
+you will see that _both_ documents match, even though the `Yellow furballs`
 doc contains neither `brown` nor `fo`:
 
 [source,js]
@@ -206,16 +206,15 @@ word in the query string:
     name:b name:br name:bro name:brow name:brown name:f name:fo
 
 The `name:f` condition is satisfied by the second document because
-``furballs'' has been indexed as `f`, `fu`, `fur`, etc.  In retrospect, this
+`furballs` has been indexed as `f`, `fu`, `fur`, and so forth.  In retrospect, this
 is not surprising.  The same `autocomplete` analyzer is being applied both at
-index time and at search time which, in most situations, is the right thing to
+index time and at search time, which in most situations is the right thing to
 do. This is one of the few occasions when it makes sense to break this rule.
 
-We want to ensure that our inverted index contains edge n-grams of every word
-but we only want to match on the full words that the user has entered, ie
-`brown` and `fo`. ((("analyzers", "changing search analyzer from index analyzer"))) We can do this by using the `autocomplete` analyzer at
+We want to ensure that our inverted index contains edge n-grams of every word,
+but we want to match only the full words that the user has entered (`brown` and `fo`). ((("analyzers", "changing search analyzer from index analyzer"))) We can do this by using the `autocomplete` analyzer at
 index time and the `standard` analyzer at search time.  One way to change the
-search analyzer is just to specify it in in the query:
+search analyzer is just to specify it in the query:
 
 
 [source,js]
@@ -237,7 +236,7 @@ GET /my_index/my_type/_search
 <1> This overrides the `analyzer` setting on the `name` field.
 
 Alternatively, we can specify ((("search_analyzer parameter")))((("index_analyzer parameter")))the `index_analyzer` and `search_analyzer` in
-the mapping for the `name` field itself. Because we only want to change the
+the mapping for the `name` field itself. Because we want to change only the
 `search_analyzer`, we can update the existing mapping without having to
 reindex our data:
 
@@ -271,7 +270,7 @@ explanation:
 
     name:brown name:fo
 
-and repeating our query correctly returns just the ``Brown foxes''
+Repeating our query correctly returns just the `Brown foxes`
 document.
 
 Because most of the work has been done at index time, all this query needs to
