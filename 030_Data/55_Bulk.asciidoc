@@ -34,13 +34,17 @@ The +action/metadata+ line specifies _what action_ to do to _which document_.
 
 The +action+ must be((("action, in bulk requests"))) one of the following:
 
-[horizontal]
-* `create`:: Create a document only if the document does not already exist.
-           See <<create-doc>>.
-* `index`::  Create a new document or replace an existing document.
-           See <<index-doc>> and <<update-doc>>.
-* `update`:: Do a partial update on a document. See <<partial-updates>>.
-* `delete`:: Delete a document. See <<delete-doc>>.
+ `create`:: 
+    Create a document only if the document does not already exist. See <<create-doc>>.
+    
+ `index`::  
+    Create a new document or replace an existing document. See <<index-doc>> and <<update-doc>>.
+    
+ `update`:: 
+    Do a partial update on a document. See <<partial-updates>>.
+ 
+ `delete`:: 
+    Delete a document. See <<delete-doc>>.
 
 The +metadata+ should ((("metadata, document", "in bulk requests")))specify the `_index`, `_type`, and `_id` of the document
 to be indexed, created, updated, or deleted.
