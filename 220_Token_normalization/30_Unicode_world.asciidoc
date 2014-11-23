@@ -1,19 +1,19 @@
 [[unicode-normalization]]
-=== Living in a Unicode world
+=== Living in a Unicode World
 
 When Elasticsearch compares one token with another, it does so at the byte
 level. ((("Unicode", "token normalization and")))((("tokens", "normalizing", "Unicode and")))In other words, for two tokens to be considered the same, they need to
 consist of exactly the same bytes.  Unicode, however, allows you to write the
 same letter in different ways.
 
-For instance, what's the difference between ``&#x00e9;'' and ``e&#769;''? It
-depends on who you ask... According to Elasticsearch, the first one consists of
-the two bytes `0xC3 0xA9` and the second one consists of three bytes: `0x65
+For instance, what's the difference between _&#x00e9;_ and _e&#769;_? It
+depends on who you ask. According to Elasticsearch, the first one consists of
+the two bytes `0xC3 0xA9`, and the second one consists of three bytes, `0x65
 0xCC 0x81`.
 
 According to Unicode, the differences in how they are represented as bytes is
-irrelevant and they are the same letter. The first one is the single letter
-`é` while the second is a plain `e` combined with an acute accent +´+.
+irrelevant, and they are the same letter. The first one is the single letter
+`é`, while the second is a plain `e` combined with an acute accent +´+.
 
 If you get your data from more than one source, it may happen that you have
 the same  letters encoded in different ways, which may result in one form of
@@ -23,25 +23,25 @@ Fortunately, a solution is at hand.  There are four Unicode _normalization
 forms_, all of which convert Unicode characters into a standard format, making
 all characters((("Unicode", "normalization forms"))) comparable at a byte level: `nfc`, `nfd`, `nfkc`, `nfkd`.((("nfkd normalization form")))((("nfkc normalization form")))((("nfd normalization form")))((("nfc normalization form")))
 
-.Unicode normalization forms
+.Unicode Normalization Forms
 ********************************************
 
-The _composed_ forms -- `nfc` and `nfkc` -- represent characters in the fewest
+The _composed_ forms&#x2014;`nfc` and `nfkc`&#x2014;represent characters in the fewest
 bytes possible.((("composed forms (Unicode normalization)")))  So `é` is represented as the single letter `é`.  The
-_decomposed_ forms -- `nfd` and `nfkd` -- represent characters by their
+_decomposed_ forms&#x2014;`nfd` and `nfkd`&#x2014;represent characters by their
 constituent parts, that is `e` + `´`.((("decomposed forms (Unicode normalization)")))
 
-The _canonical_ forms  -- `nfc` and `nfd` -- represent ligatures like `ﬃ` or
-`œ` as a single character,((("canonical forms (Unicode normalization)"))) while the _compatibility_ forms -- `nfkc` and
-`nfkd` -- break down these composed characters into a simpler multi-letter
+The _canonical_ forms&#x2014;`nfc` and `nfd`&#x2014;represent ligatures like `ﬃ` or
+`œ` as a single character,((("canonical forms (Unicode normalization)"))) while the _compatibility_ forms&#x2014;`nfkc` and
+`nfkd`&#x2014;break down these composed characters into a simpler multiletter
 equivalent: `f` + `f` + `i` or `o` + `e`.
 
 ********************************************
 
 It doesn't really matter which normalization form you choose, as long as all
-of your text is in the same form.  That way, the same tokens consist of the
+your text is in the same form.  That way, the same tokens consist of the
 same bytes.  That said, the _compatibility_ forms ((("compatibility forms (Unicode normalization)")))allow you to compare
-ligatures like `ﬃ` with their simpler representation `ffi`.
+ligatures like `ﬃ` with their simpler representation, `ffi`.
 
 You can use the `icu_normalizer` token filter to ((("icu_normalizer token filter")))ensure that all of your
 tokens are in the same form:
