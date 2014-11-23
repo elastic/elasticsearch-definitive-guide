@@ -1,8 +1,8 @@
 [[language-intro]]
-== Getting started with languages
+== Getting Started with Languages
 
-Elasticsearch ships with a collection of language analyzers which provide
-good, basic, out-of-the-box ((("language analyzers")))((("languages", "getting started with")))support for a number of the world's most common
+Elasticsearch ships with a collection of language analyzers that provide
+good, basic, out-of-the-box ((("language analyzers")))((("languages", "getting started with")))support for many of the world's most common
 languages:
 
 Arabic, Armenian, Basque, Brazilian, Bulgarian, Catalan, Chinese,
@@ -32,16 +32,16 @@ These analyzers typically((("language analyzers", "roles performed by"))) perfor
 Each analyzer may also apply other transformations specific to its language in
 order to make words from that((("language analyzers", "other transformations specific to the language"))) language more searchable:
 
-* the `english` analyzer ((("english analyzer")))removes the possessive `'s`:
+* The `english` analyzer ((("english analyzer")))removes the possessive `'s`:
 +
 `John's` -> `john`
 
-* the `french` analyzer ((("french analyzer")))removes _elisions_ like `l'` and `qu'` and
-  _diactrics_ like `¨` or `^`:
+* The `french` analyzer ((("french analyzer")))removes _elisions_ like `l'` and `qu'` and
+  _diacritics_ like `¨` or `^`:
 +
 `l'église` -> `eglis`
 
-* the `german` analyzer normalizes((("german analyzer"))) terms, replacing `ä` and `ae` with `a`, or
+* The `german` analyzer normalizes((("german analyzer"))) terms, replacing `ä` and `ae` with `a`, or
   `ß` with `ss`, among others:
 +
 `äußerst` -> `ausserst`
