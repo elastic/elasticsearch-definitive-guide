@@ -33,10 +33,14 @@ The `bool` filter is composed of three sections:
 }
 --------------------------------------------------
 
-[horizontal]
-`must`::     All of these clauses _must_ match. The equivalent of `AND`.
-`must_not`:: All of these clauses _must not_ match. The equivalent of `NOT`.
-`should`::   At least one of these clauses must match. The equivalent of `OR`.
+* `must`::    
+   All of these clauses _must_ match. The equivalent of `AND`.
+   
+* `must_not`:: 
+   All of these clauses _must not_ match. The equivalent of `NOT`.
+   
+* `should`::   
+   At least one of these clauses must match. The equivalent of `OR`.
 
 And that's it!((("should clause", "in bool filters")))((("must_not clause", "in bool filters")))((("must clause", "in bool filters"))) When you need multiple filters, simply place them into the
 different sections of the `bool` filter.
