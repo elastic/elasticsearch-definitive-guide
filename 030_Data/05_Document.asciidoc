@@ -45,10 +45,15 @@ A document doesn't consist only of its data.((("documents", "metadata"))) It als
 _metadata_--information _about_ the document.((("metadata, document"))) The three required metadata
 elements are as follows:
 
-[horizontal]
-* `_index`::  Where the document lives
-* `_type`::   The class of object that the document represents
-* `_id`::     The unique identifier for the document
+
+* `_index`::  
+   Where the document lives
+   
+* `_type`::   
+   The class of object that the document represents
+   
+* `_id`::     
+   The unique identifier for the document
 
 ==== _index
 
