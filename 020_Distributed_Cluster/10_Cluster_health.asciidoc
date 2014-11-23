@@ -33,13 +33,13 @@ On an empty cluster with no indices, this will return something like the followi
 The `status` field provides ((("status field")))an overall indication of how the cluster is
 functioning. The meanings of the three colors are provided here for reference:
 
-* `green`::   
+`green`::   
    All primary and replica shards are active.
    
-* `yellow`::  
+ `yellow`::  
    All primary shards are active, but not all replica shards are active.
    
-* `red`::     
+ `red`::     
    Not all primary shards are active.
 
 In the rest of this chapter, we explain what _primary_ and _replica_ shards are
