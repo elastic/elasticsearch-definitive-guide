@@ -194,12 +194,14 @@ filters give binary yes/no answers, queries calculate a relevance score
 instead. The `bool` query combines the `_score` from each `must` or
 `should` clause that matches.((("should clause", "in bool queries")))((("must_not clause", "in bool queries")))((("must clause", "in bool queries"))) This query accepts the following parameters:
 
-[horizontal]
-`must`::        Clauses that _must_ match for the document to be included.
+`must`::        
+   Clauses that _must_ match for the document to be included.
 
-`must_not`::    Clauses that _must not_ match for the document to be included.
+`must_not`::    
+   Clauses that _must not_ match for the document to be included.
 
-`should`::      If these clauses match, they increase the `_score`;
+`should`::      
+   If these clauses match, they increase the `_score`;
                 otherwise, they have no effect. They are simply used to refine
                 the relevance score for each document.
 
