@@ -22,16 +22,14 @@ contain the following:
 We have already discussed the three most important settings for document
 fields or ((("root object", "properties")))((("properties", "important settings")))properties in <<core-fields>> and <<complex-core-fields>>:
 
-[horizontal]
-`type`::        The datatype that the field contains, such as `string` or
-                `date`
+* `type`::
+   The datatype that the field contains, such as `string` or `date`
 
-`index`::       Whether a field should be searchable as full text (`analyzed`),
-                searchable as an exact value (`not_analyzed`), or not searchable
-                at all (`no`)
+* `index`::      
+   Whether a field should be searchable as full text (`analyzed`), searchable as an exact value (`not_analyzed`), or not searchable at all (`no`)
 
-`analyzer`::    Which `analyzer` to use for a full-text field, both at index
-                time and at search time
+* `analyzer`::    
+   Which `analyzer` to use for a full-text field, both at index time and at search time
 
 We will discuss other field types such as `ip`, `geo_point`, and `geo_shape` in
 the appropriate sections later in the book.
