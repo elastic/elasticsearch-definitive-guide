@@ -60,7 +60,7 @@ a `date` field, you have to add it manually.
 [NOTE]
 ====
 Elasticsearch's idea of which strings look like dates can be altered
-with the {ref}/mapping-root-object-type.html#_dynamic_date_formats[`dynamic_date_formats` setting].
+with the http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping-root-object-type.html[`dynamic_date_formats` setting].
 ====
 
 [[dynamic-templates]]
