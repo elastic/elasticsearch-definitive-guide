@@ -197,7 +197,7 @@ parameters, but instead a request body.  This request body is built with JSON,
 and uses a `match` query (one of several types of queries, which we will learn
 about later).
 
-=== More Complicated Searches
+=== More-Complicated Searches
 
 Let's make the search a little more complicated.((("searches", "more complicated")))((("filters")))  We still want to find all
 employees with a last name of Smith, but  we want only employees who are
