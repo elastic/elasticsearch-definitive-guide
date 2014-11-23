@@ -1,8 +1,8 @@
 [[one-lang-fields]]
-=== One language per field
+=== One Language per Field
 
 For documents that represent entities like products, movies, or legal notices, it is common((("fields", "one language per field")))((("languages", "one language per field")))
-for the same text to be translated into several languages.  While each translation
+for the same text to be translated into several languages.  Although each translation
 could be represented in a single document in an index per language, another
 reasonable approach is to keep all translations in the same document:
 
@@ -59,11 +59,10 @@ PUT /movies
 
 Like the _index-per-language_ approach, the _field-per-language_ approach
 maintains clean term frequencies. It is not quite as flexible as having
-separate indices.  While it is easy to add a new field using the
-<<updating-a-mapping,`update-mapping` API>>, those new fields may require new
-custom analyzers, which can only be setup at index creation time.  As a
-workaround, you can {ref}indices-open-close.html[close] the index, add the new
-analyzers with the {ref}indices-update-settings.html[`update-settings` API],
+separate indices.  Although it is easy to add a new field by using the <<updating-a-mapping,`update-mapping` API>>, those new fields may require new
+custom analyzers, which can only be set up at index creation time.  As a
+workaround, you can http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-open-close.html[close] the index, add the new
+analyzers with the http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-update-settings.html[`update-settings` API],
 then reopen the index, but closing the index means that it will require some
 downtime.
 
@@ -85,6 +84,6 @@ GET /movies/movie/_search
 }
 --------------------------------------------------
 <1> This search queries any field beginning with `title` but
-    boosts the `title_es` field by 2.  All other fields have
-    a neutral boost of 1.
+    boosts the `title_es` field by `2`.  All other fields have
+    a neutral boost of `1`.
 
