@@ -1,5 +1,5 @@
 [[languages]]
-= Dealing with human language
+= Dealing with Human Language
 
 [partintro]
 --
@@ -10,8 +10,8 @@ ____
 ``I know all those words, but that sentence makes no sense to me.''
 ____
 
-Full text search is a battle between _precision_ -- returning as few
-irrelevant documents as possible -- and _recall_ -- returning as many relevant
+Full-text search is a battle between _precision_&#x2014;returning as few
+irrelevant documents as possible--and _recall_&#x2014;returning as many relevant
 documents as possible.((("recall", "in full text search")))((("precision", "in full text search")))((("full text search", "battle between precision and recall"))) While matching only the exact words that the user has
 queried would be precise, it is not enough. We would miss out on many
 documents that the user would consider to be relevant. Instead, we need to
@@ -19,35 +19,32 @@ spread the net wider, to also search for words that are not exactly the same
 as the original but are related.
 
 Wouldn't you expect a search for ``quick brown fox'' to match a document
-containing ``fast brown foxes'', ``Johnny Walker'' to match ``Johnnie
-Walker'', or ``Arnolt Schwarzenneger'' to match ``Arnold Schwarzenegger''?
+containing ``fast brown foxes,'' ``Johnny Walker'' to match ``Johnnie
+Walker,'' or ``Arnolt Schwarzenneger'' to match ``Arnold Schwarzenegger''?
 
-If documents exist which *do* contain exactly what the user has queried then
+If documents exist that _do_ contain exactly what the user has queried,
 those documents should appear at the top of the result set, but weaker matches
-can be included further down the list.  If there are no documents which match
-exactly, then at least we can show the user potential matches -- they may even
+can be included further down the list.  If no documents match
+exactly, at least we can show the user potential matches; they may even
 be what the user originally intended!
 
 There are several((("full text search", "finding inexact matches"))) lines of attack:
 
-*   Remove diacritics like +´+, `^` and `¨` so that a search for ``rôle'' will
-    also match ``role'', and vice versa. See <<token-normalization>>.
+*   Remove diacritics like +´+, `^`, and `¨` so that a search for `rôle` will
+    also match `role`, and vice versa. See <<token-normalization>>.
 
-*   Remove the distinction between singular and plural -- ``fox'' vs ``foxes''
-    -- or between different tenses -- ``jumping'' vs ``jumped'' vs ``jumps''
-    -- by _stemming_ each word to its root form. See <<stemming>>.
+*   Remove the distinction between singular and plural&#x2014;`fox` versus `foxes`&#x2014;or between tenses&#x2014;`jumping` versus `jumped` versus `jumps`&#x2014;by _stemming_ each word to its root form. See <<stemming>>.
 
-*   Remove commonly used words or _stopwords_ like ``the'', ``and'', and ``or''
+*   Remove commonly used words or _stopwords_ like `the`, `and`, and `or`
     to improve search performance.  See <<stopwords>>.
 
-*   Including synonyms so that a query for ``quick'' could also match ``fast'',
-    or ``UK'' could match ``United Kingdom''. See <<synonyms>>.
+*   Including synonyms so that a query for `quick` could also match `fast`,
+    or `UK` could match `United Kingdom`. See <<synonyms>>.
 
-*   Check for misspellings or alternate spellings, or match on _homophones_
-    -- words that sound the same like ``their'' vs ``there'', ``meat'' vs
-    ``meet''  vs ``mete''. See <<fuzzy-matching>>.
+*   Check for misspellings or alternate spellings, or match on _homophones_&#x2014;words that sound the same, like `their` versus `there`, `meat` versus
+    `meet`  versus `mete`. See <<fuzzy-matching>>.
 
-Before we can manipulate individual words, we need to divide text up into
+Before we can manipulate individual words, we need to divide text into
 words, ((("words", "dividing text into")))which means that we need to know what constitutes a _word_. We will
 tackle this in <<identifying-words>>.
 
