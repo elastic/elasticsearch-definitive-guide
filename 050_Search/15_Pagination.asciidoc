@@ -8,9 +8,11 @@ the `hits` array.  How can we see the other documents?
 In the same way as SQL uses the `LIMIT` keyword to return a single ``page'' of
 results, Elasticsearch accepts ((("from parameter")))((("size parameter")))the `from` and `size` parameters:
 
-[horizontal]
-* `size`:: Indicates the number of results that should be returned, defaults to `10`
-* `from`:: Indicates the number of initial results that should be skipped, defaults to `0`
+* `size`:: 
+   Indicates the number of results that should be returned, defaults to `10`
+   
+* `from`:: 
+   Indicates the number of initial results that should be skipped, defaults to `0`
 
 If you wanted to show five results per page, then pages 1 to 3
 could be requested as follows:
