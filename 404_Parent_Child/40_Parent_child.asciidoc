@@ -41,7 +41,8 @@ setting to use <<doc-values,doc values>> by default instead.
 All that is needed in order to establish the parent-child relationship, is to
 specify which document type should be the parent of a child type.  This must
 be done at index creation time, or with the `update-mapping` API before the
-child type has been created.
+child type has been created. However, both parent and child types need to be 
+created in the same index.
 
 As an example, let's say that we have a company that has branches in many
 cities.  We would like to associate employees with the branch where they work.
@@ -72,4 +73,5 @@ PUT /company
 -------------------------
 <1> Documents of type `employee` are children of type `branch`.
 
+Note that both employee and branch types are created under the same index 'company'.
 
