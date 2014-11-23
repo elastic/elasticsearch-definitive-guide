@@ -109,13 +109,13 @@ from both fields into an overall relevance score.
 This solution can help when both fields have the same datatype, but consider
 what would happen if you indexed these two documents into the same index:
 
-.Type: user
+* Type: user
 [source,js]
 --------------------------------------------------
 * { "login": "john_smith" }
 --------------------------------------------------
 
-.Type: event
+* Type: event
 [source,js]
 --------------------------------------------------
 * { "login": "2014-06-01" }
