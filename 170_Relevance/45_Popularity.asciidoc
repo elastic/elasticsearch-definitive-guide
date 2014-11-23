@@ -158,19 +158,19 @@ Perhaps multiplying the full-text score by the result of the
 how the result of a function is combined with the `_score` from the query by
 using the `boost_mode` parameter, which accepts the following values:
 
-* `multiply`::    
+`multiply`::    
       Multiply the `_score` with the function result (default)
       
-* `sum`::         
+`sum`::         
       Add the function result to the `_score`
       
-* `min`::         
+`min`::         
       The lower of the `_score` and the function result
       
-* `max`::         
+`max`::         
       The higher of the `_score` and the function result
       
-* `replace`::     
+`replace`::     
       Replace the `_score` with the function result
 
 If, instead of multiplying, we add the function result to the `_score`, we can
