@@ -1,5 +1,5 @@
 [[changing-similarities]]
-=== Changing similarities
+=== Changing Similarities
 
 The similarity algorithm can be set on a per-field basis.((("relevance", "controlling", "changing similarities")))((("similarity algorithms", "changing on a per-field basis")))  It's just a matter
 of specifying the chosen algorithm ((("mapping (types)", "specifying similarity algorithm")))in the field's mapping:
@@ -24,8 +24,7 @@ PUT /my_index
 }
 ------------------------------
 <1> The `title` field uses BM25 similarity.
-<2> The `body` field uses the default similarity --
-    see <<practical-scoring-function>>.
+<2> The `body` field uses the default similarity (see <<practical-scoring-function>>).
 
 Currently, it is not possible to change the `similarity` mapping for an
 existing field.  You would need to reindex your data in order to do that.
@@ -64,7 +63,7 @@ PUT /my_index
 }
 ------------------------------
 <1> Create a custom similarity called `my_bm25`, based on the built-in `BM25` similarity.
-<2> Disable field length normalization. See <<bm25-tunability>>.
+<2> Disable field-length normalization. See <<bm25-tunability>>.
 <3> Field `title` uses the custom similarity `my_bm25`.
 <4> Field `body` uses the built-in similarity `BM25`.
 
