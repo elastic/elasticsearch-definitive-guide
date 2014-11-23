@@ -29,11 +29,14 @@ A _search_ can be any of the following:
 While many searches will just work out of((("full-text search"))) the box, to use Elasticsearch to
 its full potential, you need to understand three subjects:
 
-[horizontal]
-
-* _Mapping_::     How the data in each field is interpreted
-* _Analysis_::    How full text is processed to make it searchable
-* _Query DSL_::   The flexible, powerful query language used by Elasticsearch
+* _Mapping_::     
+   How the data in each field is interpreted
+   
+* _Analysis_::    
+   How full text is processed to make it searchable
+   
+* _Query DSL_::   
+   The flexible, powerful query language used by Elasticsearch
 
 Each of these is a big subject in its own right, and we explain them in
 detail in <<search-in-depth>>. The chapters in this section introduce the
