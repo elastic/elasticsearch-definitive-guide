@@ -106,10 +106,14 @@ PUT /megacorp/employee/1
 Notice that the path `/megacorp/employee/1` contains three pieces of
 information:
 
-[horizontal]
-* +megacorp+::    The index name
-* +employee+::    The type name
-* +1+::           The ID of this particular employee
++megacorp+::
+      The index name
+      
++employee+::
+      The type name
+      
++1+::          
+      The ID of this particular employee
 
 The request body--the JSON document--contains all the information about
 this employee.  His name is John Smith, he's 25, and enjoys rock climbing.
