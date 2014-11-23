@@ -89,13 +89,13 @@ present, and to apply a different condition if it is missing.
 The `bool` filter is used ((("bool filter")))((("must clause", "in bool filters")))((("must_not clause", "in bool filters")))((("should clause", "in bool filters")))to combine multiple filter clauses using
 Boolean logic.  It accepts three parameters:
 
-* `must`:: 
+ `must`:: 
    These clauses _must_ match, like `and`.
    
-* `must_not`:: 
+ `must_not`:: 
    These clauses _must not_ match, like `not`.
    
-* `should`:: 
+ `should`:: 
    At least one of these clauses must match, like `or`.
 
 Each of these parameters can accept a single filter clause or an array
