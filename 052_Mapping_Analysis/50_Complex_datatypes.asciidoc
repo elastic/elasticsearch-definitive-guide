@@ -26,7 +26,9 @@ a new field by indexing an array, Elasticsearch will use the
 datatype of the first value in the array to determine the `type` of the
 new field.
 
-NOTE: When you get a document back from Elasticsearch, any arrays will be in the
+[NOTE]
+====
+When you get a document back from Elasticsearch, any arrays will be in the
 same order as when you indexed the document.  The `_source` field that you get
 back contains exactly the same JSON document that you indexed.
 
@@ -34,7 +36,7 @@ However, arrays are _indexed_&#x2014;made searchable--as multivalue fields,
 which are unordered. ((("indexing", "of arrays")))((("arrays", "indexed as multi-value fields"))) At search time, you can't refer to ``the first element''
 or ``the last element.''  Rather, think of an array as a _bag of values_.
 ((("arrays", "empty")))
-
+====
 
 ==== Empty Fields
 
