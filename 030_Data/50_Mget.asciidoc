@@ -130,8 +130,11 @@ nonexistence is reported in the response body:
 The fact that the second document wasn't found didn't affect the retrieval of
 the first document. Each doc is retrieved and reported on individually.
 
-NOTE: The HTTP status code for the preceding request is `200`, even though one
+[NOTE]
+====
+The HTTP status code for the preceding request is `200`, even though one
 document wasn't found. In fact, it would still be `200` if _none_ of the
 requested documents were found--because the `mget`
 request itself completed successfully. To determine the success or failure of
 the individual documents, you need to check ((("found flag")))the `found` flag.
+====
