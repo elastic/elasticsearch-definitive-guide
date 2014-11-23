@@ -1,11 +1,11 @@
 [[token-normalization]]
-== Normalizing tokens
+== Normalizing Tokens
 
-Breaking text up into tokens is ((("normalization", "of tokens")))((("tokens", "normalizing")))only half the job. In order to make those
-tokens more easily searchable, they need to go through some _normalization_
+Breaking text into tokens is ((("normalization", "of tokens")))((("tokens", "normalizing")))only half the job. To make those
+tokens more easily searchable, they need to go through a _normalization_
 process to remove insignificant differences between otherwise identical words,
-such as uppercase vs lowercase.  Perhaps we also need to remove significant
-differences, to make `esta`, `ésta` and `está` all searchable as the same
+such as uppercase versus lowercase.  Perhaps we also need to remove significant
+differences, to make `esta`, `ésta`, and `está` all searchable as the same
 word.  Would you search for `déjà vu`, or just for `deja vu`?
 
 This is the job of the token filters, which((("token filters"))) receive a stream of tokens from
