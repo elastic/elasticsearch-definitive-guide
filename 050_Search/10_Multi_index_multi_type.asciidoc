@@ -14,26 +14,26 @@ Usually, however, you will((("types", "specifying in search requests")))((("inde
 and probably one or more specific types. We can do this by specifying the
 index and type in the URL, as follows:
 
-[horizontal]
-. `/_search`::     
+
+* `/_search`::     
     Search all types in all indices
 
-. `/gb/_search`:: 
+* `/gb/_search`:: 
     Search all types in the `gb` index
 
-. `/gb,us/_search`::            
+* `/gb,us/_search`::            
     Search all types in the `gb` and `us` indices
 
-. `/g*,u*/_search`::            
+* `/g*,u*/_search`::            
     Search all types in any indices beginning with `g` or beginning with `u`
 
-. `/gb/user/_search`::          
+* `/gb/user/_search`::          
     Search type `user` in the `gb` index
 
-. `/gb,us/user,tweet/_search`::
+* `/gb,us/user,tweet/_search`::
     Search types `user` and `tweet` in the `gb` and `us` indices
 
-. `/_all/user,tweet/_search`::  
+* `/_all/user,tweet/_search`::  
     Search types `user` and `tweet` in all indices
 
 
