@@ -93,8 +93,9 @@ sorting; we're not sorting by relevance, so it doesn't make sense to keep
 track of the `_score`.  If you want the `_score` to be calculated regardless,
 you can set((("track_scores parameter"))) the `track_scores` parameter to `true`.
 
-
-TIP: As a shortcut, you can ((("sorting", "specifying just the field name to sort on")))specify just the name of the field to sort on:
+[TIP]
+====
+As a shortcut, you can ((("sorting", "specifying just the field name to sort on")))specify just the name of the field to sort on:
 
 [source,js]
 --------------------------------------------------
@@ -103,7 +104,7 @@ TIP: As a shortcut, you can ((("sorting", "specifying just the field name to sor
 
 Fields will be sorted in ((("sorting", "default ordering")))ascending order by default, and
 the `_score` value in descending order.
-
+====
 
 ==== Multilevel Sorting
 
