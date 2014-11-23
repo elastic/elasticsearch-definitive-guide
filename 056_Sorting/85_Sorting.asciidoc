@@ -137,15 +137,16 @@ Multilevel sorting doesn't have to involve the `_score`. You could sort
 by using several different fields,((("fields", "sorting by multiple fields"))) on geo-distance or on a custom value
 calculated in a script.
 
-
-NOTE: Query-string search((("sorting", "in query string searches")))((("sort parameter", "using in query strings")))((("query strings", "sorting search results for"))) also supports custom sorting, using the `sort` parameter
+[NOTE]
+====
+Query-string search((("sorting", "in query string searches")))((("sort parameter", "using in query strings")))((("query strings", "sorting search results for"))) also supports custom sorting, using the `sort` parameter
 in the query string:
 
 [source,js]
 --------------------------------------------------
 GET /_search?sort=date:desc&sort=_score&q=search
 --------------------------------------------------
-
+====
 
 ==== Sorting on Multivalue Fields
 
