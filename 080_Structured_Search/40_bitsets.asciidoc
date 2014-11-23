@@ -49,7 +49,7 @@ Let's look at this example query, which looks for emails that are either of the 
 <1> These two filters are identical and will use the same bitset.
 
 Even though one of the inbox clauses is a `must` clause and the other is a
-`must_not` clause, the two clauses themselves are identical.  This means that
+`must_not` clause, the two clauses themselves are identical. This means that
 the bitset is calculated once for the first clause that is executed, and then
 the cached bitset is used for the other clause.  By the time this query is run
 a second time, the inbox filter is already cached and so both clauses will use
