@@ -23,7 +23,7 @@ PUT /blogs/_settings
 
 As can be seen in <<cluster-three-nodes-two-replicas>>, the `blogs` index now
 has nine shards: three primaries and six replicas. This means that we can scale out to
-a total of nine nodes, again with one shard per node.  This would allow us to
+a total of nine nodes, again with one shard per node. This would allow us to
 _triple_ search performance compared to our original three-node cluster.
 
 [[cluster-three-nodes-two-replicas]]
