@@ -113,14 +113,14 @@ what would happen if you indexed these two documents into the same index:
 
 [source,js]
 --------------------------------------------------
-* { "login": "john_smith" }
+ { "login": "john_smith" }
 --------------------------------------------------
 
 * Type: event
 
 [source,js]
 --------------------------------------------------
-* { "login": "2014-06-01" }
+ { "login": "2014-06-01" }
 --------------------------------------------------
 
 Lucene doesn't care that one field contains a string and the other field
