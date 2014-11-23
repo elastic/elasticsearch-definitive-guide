@@ -1,9 +1,9 @@
 [[one-lang-docs]]
-=== One language per document
+=== One Language per Document
 
 A single predominant language per document ((("languages", "one language per document")))((("indexes", "documents in different languages")))requires a relatively simple setup.
-Documents from different languages can be stored in separate indices -- `blogs-en`,
-`blogs-fr`, etc. -- which use the same type and the same fields for each index,
+Documents from different languages can be stored in separate indices&#x2014;`blogs-en`,
+`blogs-fr`, and so forth&#x2014;that use the same type and the same fields for each index,
 just with different analyzers:
 
 [source,js]
@@ -36,14 +36,14 @@ PUT /blogs-fr
             }
 }}}}}}
 --------------------------------------------------
-<1> Both `blogs-en` and `blogs-fr` have a type called `post` which contains
+<1> Both `blogs-en` and `blogs-fr` have a type called `post` that contains
     the field `title`.
-<2> The `title.stemmed` sub-field uses a language-specific analyzer.
+<2> The `title.stemmed` subfield uses a language-specific analyzer.
 
 
-This approach is clean and flexible.  New languages are easy to add -- just
-create a new index -- and because each language is completely separate, we
-don't suffer from the term frequency and stemming problems described in
+This approach is clean and flexible.  New languages are easy to add--just
+create a new index--and because each language is completely separate, we
+don't suffer from the term-frequency and stemming problems described in
 <<language-pitfalls>>.
 
 The documents of a single language can be queried independently, or queries
@@ -67,33 +67,33 @@ GET /blogs-*/post/_search <1>
     }
 }
 --------------------------------------------------
-<1> This search is performed on any index beginning with `blogs-`
+<1> This search is performed on any index beginning with `blogs-`.
 <2> The `title.stemmed` fields are queried using the analyzer
     specified in each index.
 <3> Perhaps the user's `accept-language` headers showed a preference for
-    English, then French, so we boost results from each index accordingly.
+    English, and then French, so we boost results from each index accordingly.
     Any other languages will have a neutral boost of `1`.
 
-==== Foreign words
+==== Foreign Words
 
 Of course, these documents may contain words or sentences in other languages,
 and these words are unlikely to be stemmed correctly.  With
-predominant-language documents this is not usually a major problem.  The user will
-often search for the exact words -- for instance, of a quotation from another
-language -- rather than for inflections of a word. Recall can be improved
+predominant-language documents, this is not usually a major problem.  The user will
+often search for the exact words--for instance, of a quotation from another
+language--rather than for inflections of a word. Recall can be improved
 by using techniques explained in <<token-normalization>>.
 
 Perhaps some words like place names should be queryable in the predominant
-language and in the original language, such as Munich and München.  These
-words are effectively synonyms, which we will discuss in <<synonyms>>.
+language and in the original language, such as _Munich_ and _München_.  These
+words are effectively synonyms, which we discuss in <<synonyms>>.
 
-.Don't use types for languages
+.Don't Use Types for Languages
 *************************************************
 
 You may be tempted to use a separate type for each language,((("types", "not using for languages")))((("languages", "not using types for"))) instead of a
 separate index. For best results, you should avoid using types for this
 purpose.  As explained in <<mapping>>, fields from different types but with
-the same field name are indexed into the *same inverted index*.  This means
+the same field name are indexed into the _same inverted index_.  This means
 that the term frequencies from each type (and thus each language) are mixed
 together.
 
