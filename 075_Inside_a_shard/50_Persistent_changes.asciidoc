@@ -86,7 +86,7 @@ minutes, or when the translog becomes too big. See the
 {ref}index-modules-translog.html[`translog` documentation] for settings
 that can be used to control these thresholds:
 
-The {ref}indices-flush.html[`flush` API] can be used to perform a manual flush:
+The http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-flush.html[`flush` API] can be used to perform a manual flush:
 
 [source,json]
 -----------------------------
