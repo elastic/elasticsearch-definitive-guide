@@ -141,15 +141,14 @@ The two most important mapping((("strings", "mapping attributes, index and analy
 The `index` attribute controls((("index attribute, strings"))) how the string will be indexed. It
 can contain one of three values:
 
-[horizontal]
-1. `analyzed`            First analyze the string and then index it.  In other words,
-                    index this field as full text.
+* `analyzed`::
+   First analyze the string and then index it.  In other words, index this field as full text.
 
-2. `not_analyzed`        Index this field, so it is searchable, but index the
-                    value exactly as specified. Do not analyze it.
+* `not_analyzed`::        
+   Index this field, so it is searchable, but index the value exactly as specified. Do not analyze it.
 
-3. `no`                  Don't index this field at all. This field
-                    will not be searchable.
+* `no`                  
+   Don't index this field at all. This field will not be searchable.
 
 The default value of `index` for a `string` field is `analyzed`.  If we
 want to map the field as an exact value, we need to set it to
