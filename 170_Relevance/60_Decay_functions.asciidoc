@@ -104,7 +104,7 @@ GET /_search
 ----------------------------------
 <1> The `location` field is mapped as a `geo_point`.
 <2> The `price` field is numeric.
-<3> See <<Understanding the price Clause>> for the reason that `origin` is `50` instead of `100`.
+<3> See <<Understanding-the-price-Clause>> for the reason that `origin` is `50` instead of `100`.
 <4> The `price` clause has twice the weight of the `location` clause.
 
 The `location` clause is((("location clause", "gauss (Gaussian) function"))) easy to understand:
@@ -114,7 +114,7 @@ The `location` clause is((("location clause", "gauss (Gaussian) function"))) eas
 * Locations more than `5km` (`offset + scale`) from the center receive a score
 of `0.5`.
 
-[[Understanding the price Clause]]
+[[Understanding-the-price-Clause]]
 === Understanding the price Clause
 
 The `price` clause is a little trickier.((("price clause (gauss function)")))  The user's preferred price is
