@@ -15,7 +15,7 @@ sitting on a hard drive is just not useful.
 Whether you need full-text search, real-time analytics of structured data, or
 a combination of the two, this book introduces you to the fundamental
 concepts required to start working with Elasticsearch at a basic level. With
-these foundations laid, it will move on to more advanced search techniques,
+these foundations laid, it will move on to more-advanced search techniques,
 which you will need to shape the search experience to fit your requirements.
 
 Elasticsearch is not just about full-text search. We explain structured
@@ -126,7 +126,7 @@ This book is divided into seven parts:
    processes at work, but are not required reading.
 
 *  Chapters pass:[<xref linkend="structured-search" xrefstyle="select: labelnumber"/>] through pass:[<xref linkend="controlling-relevance" xrefstyle="select: labelnumber"/>] offer a deep dive into search--how to index and
-   query your data to allow  you to take advantage of more advanced concepts
+   query your data to allow  you to take advantage of more-advanced concepts
    such as word proximity, and partial matching. You will understand how
    relevance works and how to control it to ensure that the best results are
    on the first page.
@@ -150,15 +150,15 @@ This book is divided into seven parts:
    These chapters also explain how to suit your index design to
    match the flow of data through your system.
 
-*  Finally, chapters pass:[<xref linkend="scale" xrefstyle="select: labelnumber"/>] through pass:[<xref linkend="cluster-admin" xrefstyle="select: labelnumber"/>] discuss moving to production: the important
+*  Finally, Chapters pass:[<xref linkend="scale" xrefstyle="select: labelnumber"/>] through pass:[<xref linkend="cluster-admin" xrefstyle="select: labelnumber"/>] discuss moving to production: the important
    configurations, what to monitor, and how to diagnose and prevent problems.
 
 There are three topics that we do not cover in this book, because they are evolving rapidly and anything we
 write will soon be out-of-date:
 
-* Highlighting of result snippets: see {ref}search-request-highlighting.html[Highlighting].
-* _Did-you-mean_ and _search-as-you-type_ suggesters: see {ref}search-suggesters.html[Suggesters].
-* Percolation -- finding queries which match a document: see {ref}search-percolate.html[Percolators].
+* Highlighting of result snippets: see http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-request-highlighting.html[Highlighting].
+* _Did-you-mean_ and _search-as-you-type_ suggesters: see http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-suggesters.html[Suggesters].
+* Percolation--finding queries which match a document: see http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-percolate.html[Percolators].
 
 === Online Resources
 
