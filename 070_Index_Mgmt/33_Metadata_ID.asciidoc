@@ -2,11 +2,17 @@
 
 There are four metadata fields ((("metadata, document", "identity")))associated with document identity:
 
-[horizontal]
-`_id`::    The string ID of the document
-`_type`::  The type name of the document
-`_index`:: The index where the document lives
-`_uid`::   The `_type` and `_id` concatenated together as `type#id`
+`_id`::    
+   The string ID of the document
+   
+`_type`::  
+   The type name of the document
+   
+`_index`:: 
+   The index where the document lives
+   
+`_uid`::   
+   The `_type` and `_id` concatenated together as `type#id`
 
 By default, the `_uid` field is((("id field"))) stored (can be retrieved) and
 indexed (searchable).  The `_type` field((("type field")))((("index field")))((("uid field"))) is indexed but not stored,
