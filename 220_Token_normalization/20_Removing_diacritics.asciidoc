@@ -1,17 +1,16 @@
 [[asciifolding-token-filter]]
-=== You have an accent
+=== You Have an Accent
 
-English only uses diacritics (like `´`, `^` and `¨`) for imported words --
-like `rôle`, ++déjà++ and `däis` -- but usually they are optional. ((("diacritics")))((("tokens", "normalizing", "diacritics"))) Other
+English uses diacritics (like `´`, `^`, and `¨`) only for imported words--like `rôle`, ++déjà++, and `däis`&#x2014;but usually they are optional. ((("diacritics")))((("tokens", "normalizing", "diacritics"))) Other
 languages require diacritics in order to be correct.  Of course, just because
 words are spelled correctly in your index doesn't mean that the user will
 search for the correct spelling.
 
 It is often useful to strip diacritics from words, allowing `rôle` to match
-`role` and vice versa. With Western languages, this can be done with the
+`role`, and vice versa. With Western languages, this can be done with the
 `asciifolding` character filter.((("asciifolding character filter")))  Actually, it does more than just strip
 diacritics.  It tries to convert many Unicode characters into a simpler ASCII
-representation, including:
+representation:
 
 * `ß` => `ss`
 * `æ` => `ae`
@@ -22,7 +21,7 @@ representation, including:
 * `⁶` => `6`
 
 Like the `lowercase` filter, the `asciifolding` filter doesn't require any
-configuration but can be included directly in a custom analyzer:
+configuration but can be included directly in a `custom` analyzer:
 
 [source,js]
 --------------------------------------------------
@@ -45,32 +44,31 @@ My œsophagus caused a débâcle <1>
 --------------------------------------------------
 <1> Emits `my`, `oesophagus`, `caused`, `a`, `debacle`
 
-==== Retaining meaning
+==== Retaining Meaning
 
 Of course, when you strip diacritical marks from a word, you lose meaning.
 For instance, consider((("diacritics", "stripping, meaning loss from"))) these three ((("Spanis", "stripping diacritics, meaning loss from")))Spanish words:
 
-[horizontal]
-`esta`::    Feminine form of the adjective ``this'' as in ``esta silla'' (this
-            chair) or ``esta'' (this one).
+`esta`::    
+      Feminine form of the adjective _this_, as in _esta silla_ (this chair) or _esta_ (this one).
 
-`ésta`::    An archaic form of `esta`.
+`ésta`::    
+      An archaic form of `esta`.
 
-`está`::    The third person form of the verb ``estar'' (to be), as in ``está
-            feliz'' (he is happy).
+`está`::    
+      The third-person form of the verb _estar_ (to be), as in _está feliz_ (he is happy).
 
 While we would like to conflate the first two forms, they differ in meaning
 from the third form, which we would like to keep separate.  Similarly:
 
-[horizontal]
-`sé`::      The first person form of the verb ``saber'' (to know) as in ``Yo
-            sé''  (I know).
+`sé`::      
+      The first person form of the verb _saber_ (to know) as in _Yo sé_  (I know).
 
-`se`::      The third person reflexive pronoun used with many verbs, such as
-            ``se sabe'' (it is known).
+`se`::      
+      The third-person reflexive pronoun used with many verbs, such as _se sabe_ (it is known).
 
-Unfortunately, there is no easy way to separate out words that should have
-their diacritics removed and words that shouldn't.  And it is quite likely
+Unfortunately, there is no easy way to separate words that should have
+their diacritics removed from words that shouldn't.  And it is quite likely
 that your users won't know either.
 
 Instead, we index the text twice: once in the original form and once with
@@ -99,8 +97,8 @@ PUT /my_index/_mapping/my_type
 <2> The `title.folded` field uses the `folding` analyzer, which strips
     the diacritical marks.((("folding analyzer")))
 
-You can test out the field mappings using the `analyze` API on the sentence
-``Esta está loca'' (This woman is crazy):
+You can test the field mappings by using the `analyze` API on the sentence
+_Esta está loca_ (This woman is crazy):
 
 [source,js]
 --------------------------------------------------
@@ -125,7 +123,7 @@ PUT /my_index/my_type/2
 --------------------------------------------------
 
 Now we can search across both fields, using the `multi_match` query in
-<<most-fields,`most_fields` mode>> to combine the scores from each field.
+<<most-fields,`most_fields` mode>> to combine the scores from each field:
 
 
 [source,js]
@@ -159,30 +157,30 @@ GET /my_index/_validate/query?explain
 }
 --------------------------------------------------
 
-It searches for the original form of the word `está` in the `title` field,
+The `multi-match` query searches for the original form of the word (`está`) in the `title` field,
 and the form without diacritics `esta` in the `title.folded` field:
 
     (title:está        title:loca       )
     (title.folded:esta title.folded:loca)
 
-It doesn't matter whether the user searches for `esta` or `está` -- both
+It doesn't matter whether the user searches for `esta` or `está`; both
 documents will match because the form without diacritics exists in the the
 `title.folded` field.  However, only the original form exists in the `title`
 field. This extra match will push the document containing the original form of
 the word to the top of the results list.
 
-We use the `title.folded` field to  ``widen the net'' in order to match more
+We use the `title.folded` field to  _widen the net_ in order to match more
 documents, and use the original `title` field to push the most relevant
 document to the top. This same technique can be used wherever an analyzer is
-used to increase matches at the expense of meaning.
+used, to increase matches at the expense of meaning.
 
 [TIP]
 =================================================
 
-The `asciifolding` filter does have an option called `preserve_original` which
+The `asciifolding` filter does have an option called `preserve_original` that
 allows you to index the((("asciifolding character filter", "preserve_original option"))) original token and the folded token in the same
 position in the same field.  With this option enabled, you would end up with
-something like:
+something like this:
 
     Position 1     Position 2
     --------------------------
@@ -190,9 +188,8 @@ something like:
     --------------------------
 
 While this appears to be a nice way to save space, it does mean that you have
-no way of saying ``Give me an exact match on the original word''.  Mixing
-tokens with and without diacritics can also end up interfering with term
-frequency counts, resulting in less reliable relevance calcuations.
+no way of saying, ``Give me an exact match on the original word.''  Mixing
+tokens with and without diacritics can also end up interfering with term-frequency counts, resulting in less-reliable relevance calcuations.
 
 As a rule, it is cleaner to index each field variant into a separate field,
 as we have done in this section.
