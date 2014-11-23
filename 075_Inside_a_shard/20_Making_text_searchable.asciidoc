@@ -20,13 +20,14 @@ of all the documents that contain it.
      the   |   X   |       |  X    | ...
 
 
-
-NOTE: When discussing inverted indices, we talk about indexing _documents_ because,
+[NOTE]
+====
+When discussing inverted indices, we talk about indexing _documents_ because,
 historically, an inverted index was used to index whole unstructured text
 documents.  A _document_ in Elasticsearch is a structured JSON document with
 fields and values.  In reality, every indexed field in a JSON document has its
 own inverted index.
-
+====
 
 The inverted index may hold a lot more information than the list
 of documents that contain a particular term. It may store a count of the number of
