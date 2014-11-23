@@ -1,8 +1,8 @@
 [[lowercase-token-filter]]
-=== In that case
+=== In That Case
 
 The most frequently used token filter is the `lowercase` filter, which does
-exactly what you would expect: it transforms ((("tokens", "normalizing", "lowercase filter")))((("lowercase token filter")))each token into its lowercase
+exactly what you would expect; it transforms ((("tokens", "normalizing", "lowercase filter")))((("lowercase token filter")))each token into its lowercase
 form:
 
 [source,js]
@@ -10,7 +10,7 @@ form:
 GET /_analyze?tokenizer=standard&filters=lowercase
 The QUICK Brown FOX! <1>
 --------------------------------------------------
-<1> Emits tokens: `the`, `quick`, `brown`, `fox`
+<1> Emits tokens `the`, `quick`, `brown`, `fox`
 
 It doesn't matter whether users search for `fox` or `FOX`, as long as the same
 analysis process is applied at query time and at search time. The `lowercase`
@@ -37,12 +37,12 @@ PUT /my_index
 }
 --------------------------------------------------
 
-And test it out with the `analyze` API:
+And we can test it out with the `analyze` API:
 
 [source,js]
 --------------------------------------------------
 GET /my_index/_analyze?analyzer=my_lowercaser
 The QUICK Brown FOX! <1>
 --------------------------------------------------
-<1> Emits tokens: `the`, `quick`, `brown`, `fox`
+<1> Emits tokens `the`, `quick`, `brown`, `fox`
 
