@@ -1,5 +1,5 @@
 [[using-language-analyzers]]
-=== Using language analyzers
+=== Using Language Analyzers
 
 The built-in language analyzers are available globally and don't need to be
 configured before being used.((("language analyzers", "using")))  They can be specified directly in the field
@@ -32,15 +32,15 @@ information:
 GET /my_index/_analyze?field=title <1>
 I'm not happy about the foxes
 --------------------------------------------------
-<1> Emits tokens: `i'm`, `happi`, `about`, `fox`
+<1> Emits token: `i'm`, `happi`, `about`, `fox`
 
 We can't tell if the document mentions one `fox` or many  `foxes`; the word
 `not` is a stopword and is removed, so we can't tell whether the document is
-happy about foxes or *not*. By using the `english` analyzer, we have increased
+happy about foxes or not. By using the `english` analyzer, we have increased
 recall as we can match more loosely, but we have reduced our ability to rank
 documents accurately.
 
-To get the best of both worlds, we can use <<multi-fields,multi-fields>> to
+To get the best of both worlds, we can use <<multi-fields,multifields>> to
 index the `title` field twice: once((("multi-fields", "using to index a field with two different analyzers"))) with the `english` analyzer and once with
 the `standard` analyzer:
 
@@ -66,7 +66,7 @@ PUT /my_index
 }
 --------------------------------------------------
 <1> The main `title` field uses the `standard` analyzer.
-<2> The `title.english` sub-field uses the `english` analyzer.
+<2> The `title.english` subfield uses the `english` analyzer.
 
 With this mapping in place, we can index some test documents to demonstrate
 how to use both fields at query time:
