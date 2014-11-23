@@ -26,9 +26,7 @@ a new field by indexing an array, Elasticsearch will use the
 datatype of the first value in the array to determine the `type` of the
 new field.
 
-[[NOTE]]
-=====================
-When you get a document back from Elasticsearch, any arrays will be in the
+NOTE: When you get a document back from Elasticsearch, any arrays will be in the
 same order as when you indexed the document.  The `_source` field that you get
 back contains exactly the same JSON document that you indexed.
 
