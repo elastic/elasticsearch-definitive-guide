@@ -1,6 +1,6 @@
 === Add an Index
 
-To add data to Elasticsearch, we need an _index_--a place to store related
+To add data to Elasticsearch, we need an _index_&#x2014;a place to store related
 data.((("indexes")))((("clusters", "adding an index")))  In reality, an index is just a _logical namespace_ that points to
 one or more physical _shards_.
 
@@ -82,7 +82,7 @@ If we were to check the
 A cluster health of `yellow` means that all _primary_ shards are up and
 running (the cluster is capable of serving any request successfully) but
 not  all _replica_ shards are active.  In fact, all three of our replica shards
-are currently `unassigned`--they haven't been allocated to a node. It
+are currently `unassigned`&#x2014;they haven't been allocated to a node. It
 doesn't make sense to store copies of the same data on the same node. If we
 were to lose that node, we would lose all copies of our data.
 
