@@ -74,5 +74,5 @@ PUT /my_index
 <2> The `swedish` analyzer first tokenizes words, then folds
     each token by using the `swedish_folding` filter, and then
     lowercases each token in case it includes some of
-    the uppercase excluded letters: ++Å++, `Ä`, or `Ö`
+    the uppercase excluded letters: ++Å++, `Ä`, or `Ö`.
 
