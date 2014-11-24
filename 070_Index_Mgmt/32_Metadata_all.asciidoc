@@ -28,14 +28,15 @@ is a shotgun approach to search. By querying individual fields, you have more
 flexbility, power, and fine-grained control over which results are considered
 to be most relevant.
 
-
-NOTE: One of the important factors taken into account by the
+[NOTE]
+====
+One of the important factors taken into account by the
 <<relevance-intro,relevance algorithm>>
 is the length of the field: the shorter the field, the more important. A term
 that appears in a short `title` field is likely to be more important than the
 same term that appears somewhere in a long `content` field. This distinction
 between field lengths disappears in the `_all` field.
-
+====
 
 If you decide that you no longer ((("all field", "disabling")))need the `_all` field, you can disable it
 with this mapping:
