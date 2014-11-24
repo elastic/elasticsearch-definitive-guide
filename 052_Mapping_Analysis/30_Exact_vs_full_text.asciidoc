@@ -11,15 +11,16 @@ The exact value `2014` is not the same as the exact value `2014-09-15`.
 _Full text_, on the other hand, refers ((("full text")))to textual data--usually written in
 some human language -- like the text of a tweet or the body of an email.
 
-
-NOTE: Full text is often referred to as _unstructured data_, which is a misnomer--natural language is highly structured. The problem is that the rules of
+[NOTE]
+====
+Full text is often referred to as _unstructured data_, which is a misnomer--natural language is highly structured. The problem is that the rules of
 natural languages are complex, which makes them difficult for computers to
 parse correctly. For instance, consider this sentence:
 
     May is fun but June bores me.
 
 Does it refer to months or to people?
-
+====
 
 Exact values are easy to query. The decision is binary; a value either
 matches the query, or it doesn't. This kind of query is easy to express with
