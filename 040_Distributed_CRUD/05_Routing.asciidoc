@@ -23,10 +23,13 @@ is created and never changed:  if the number of primary shards ever changed in
 the future, all previous routing values would be invalid and documents would
 never be found.
 
-NOTE: Users sometimes think that having a fixed number of primary shards makes it
+[NOTE]
+====
+Users sometimes think that having a fixed number of primary shards makes it
 difficult to scale out an index later.  In reality, there are techniques
 that make it easy to scale out as and when you need. We talk more about these
 in <<scale>>.
+====
 
 All document APIs (`get`, `index`, `delete`, `bulk`, `update`, and `mget`)
 accept a `routing` parameter ((("routing parameter")))that can be used to customize the document-to-
