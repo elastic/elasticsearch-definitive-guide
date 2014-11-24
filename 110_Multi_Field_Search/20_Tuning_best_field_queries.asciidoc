@@ -111,11 +111,12 @@ as follows:
 With the `tie_breaker`, all matching clauses count, but the best-matching
 clause counts most.
 
-
-NOTE: The `tie_breaker` can be a floating-point value between `0` and `1`, where `0`
+[NOTE]
+====
+The `tie_breaker` can be a floating-point value between `0` and `1`, where `0`
 uses just the best-matching clause((("tie_breaker parameter", "value of"))) and `1` counts all matching clauses
 equally.  The exact value can be tuned based on your data and queries, but a
 reasonable value should be close to zero, (for example, `0.1 - 0.4`), in order not to
 overwhelm the best-matching nature of `dis_max`.
-
+====
 
