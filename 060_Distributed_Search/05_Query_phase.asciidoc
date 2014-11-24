@@ -64,9 +64,10 @@ The coordinating node merges these shard-level results into its own sorted
 priority queue, which represents the globally sorted result set. Here the query
 phase ends.
 
-
-NOTE: An index can consist of one or more primary shards,((("indexes", "multi-index search"))) so a search request
+[NOTE]
+====
+An index can consist of one or more primary shards,((("indexes", "multi-index search"))) so a search request
 against a single index needs to be able to combine the results from multiple
 shards. A search against _multiple_ or _all_ indices works in exactly the same
 way--there are just more shards involved.
-
+====
