@@ -117,40 +117,40 @@ are more standalone and can be referred to as needed.
 
 This book is divided into seven parts:
 
-*  Chapters pass:[<a data-type="xref" href="#intro">1</a>] through pass:[<a data-type="xref" href="#inside-a-shard">11</a>] provide an introduction to Elasticsearch. They
+*  Chapters pass:[<a href="#intro">1</a>] through pass:[<a href="#inside-a-shard">11</a>] provide an introduction to Elasticsearch. They
    explain how to get your data in and out of Elasticsearch, how Elasticsearch
    interprets the data in your documents, how basic search works, and how to
    manage indices. By the end of this section, you will already be able to
-   integrate your application with Elasticsearch. Chapters pass:[<a data-type="xref" href="#distributed-cluster">2</a>], pass:[<a data-type="xref" href="#distributed-docs">4</a>], pass:[<a data-type="xref" href="#distributed-search">9</a>], and pass:[<a data-type="xref" href="#inside-a-shard">11</a>] are
+   integrate your application with Elasticsearch. Chapters pass:[<a href="#distributed-cluster">2</a>], pass:[<a href="#distributed-docs">4</a>], pass:[<a href="#distributed-search">9</a>], and pass:[<a href="#inside-a-shard">11</a>] are
    supplemental chapters that provide more insight into the distributed
    processes at work, but are not required reading.
 
-*  Chapters pass:[<a data-type="xref" href="#structured-search">12</a>] through pass:[<a data-type="xref" href="#controlling-relevance">17</a>] offer a deep dive into search--how to index and
+*  Chapters pass:[<a href="#structured-search">12</a>] through pass:[<a href="#controlling-relevance">17</a>] offer a deep dive into search--how to index and
    query your data to allow  you to take advantage of more-advanced concepts
    such as word proximity, and partial matching. You will understand how
    relevance works and how to control it to ensure that the best results are
    on the first page.
 
-*  Chapters pass:[<a data-type="xref" href="#language-intro">18</a>] through pass:[<a data-type="xref" href="#fuzzy-matching">23</a>] tackle the thorny subject of dealing with human
+*  Chapters pass:[<a href="#language-intro">18</a>] through pass:[<a href="#fuzzy-matching">23</a>] tackle the thorny subject of dealing with human
    language through effective use of analyzers and queries. We start with
    an easy approach to language analysis before diving into the complexities
    of language, alphabets, and sorting. We cover stemming, stopwords, synonyms,
    and fuzzy matching.
 
-*  Chapters pass:[<a data-type="xref" href="#_high_level_concepts">24</a>] through pass:[<a data-type="xref" href="#_controlling_memory_use_and_latency">34</a>] discuss aggregations and analytics--ways to
+*  Chapters pass:[<a href="#_high_level_concepts">24</a>] through pass:[<a href="#_controlling_memory_use_and_latency">34</a>] discuss aggregations and analytics--ways to
    summarize and group your data to show overall trends.
 
-*  Chapters pass:[<a data-type="xref" href="#_closing_thoughts">35</a>] through pass:[<a data-type="xref" href="#geo-aggs">38</a>] present the two approaches to geolocation
+*  Chapters pass:[<a href="#_closing_thoughts">35</a>] through pass:[<a href="#geo-aggs">38</a>] present the two approaches to geolocation
    supported by Elasticsearch: lat/lon geo-points, and complex geo-shapes.
 
-*  Chapters pass:[<a data-type="xref" href="#geo-shapes">39</a>] through pass:[<a data-type="xref" href="#parent-child">42</a>] talk about how to model your data to work
+*  Chapters pass:[<a href="#geo-shapes">39</a>] through pass:[<a href="#parent-child">42</a>] talk about how to model your data to work
    most efficiently with Elasticsearch.  Representing relationships
    between entities is not as easy in a search engine as it is in
    a relational database, which has been designed for that purpose.
    These chapters also explain how to suit your index design to
    match the flow of data through your system.
 
-*  Finally, Chapters pass:[<a data-type="xref" href="#scale">43</a>] through pass:[<a data-type="xref" href="#cluster-admin">44</a>] discuss moving to production: the important configurations, what to monitor, and how to diagnose and prevent problems.
+*  Finally, Chapters pass:[<a href="#scale">43</a>] through pass:[<a href="#cluster-admin">44</a>] discuss moving to production: the important configurations, what to monitor, and how to diagnose and prevent problems.
 
 There are three topics that we do not cover in this book, because they are evolving rapidly and anything we
 write will soon be out-of-date:
