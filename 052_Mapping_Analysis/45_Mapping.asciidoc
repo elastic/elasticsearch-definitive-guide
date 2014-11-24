@@ -164,11 +164,12 @@ want to map the field as an exact value, we need to set it to
 }
 --------------------------------------------------
 
-
-NOTE: The other simple types (such as `long`, `double`, `date` etc) also accept the
+[NOTE]
+====
+The other simple types (such as `long`, `double`, `date` etc) also accept the
 `index` parameter, but the only relevant values are `no` and `not_analyzed`,
 as their values are never analyzed.
-
+====
 
 ===== analyzer
 
