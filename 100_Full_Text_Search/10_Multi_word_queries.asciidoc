@@ -143,12 +143,13 @@ in the preceding example with three terms, `75%` would be rounded down to `66.6%
 or two out of the three terms. No matter what you set it to, at least one term
 must match for a document to be considered a match.
 
-
-NOTE:The `minimum_should_match` parameter is flexible, and different rules can
+[NOTE]
+====
+The `minimum_should_match` parameter is flexible, and different rules can
 be applied depending on the number of terms the user enters.  For the full
 documentation see the
 http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/match-multi-word.html#match-precision[`minimum_should_match` reference documentation].
-
+====
 
 To fully understand how the `match` query handles multiword queries, we need
 to look at how to combine multiple queries with the `bool` query.
