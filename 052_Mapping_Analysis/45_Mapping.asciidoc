@@ -147,7 +147,7 @@ can contain one of three values:
  `not_analyzed`::        
    Index this field, so it is searchable, but index the value exactly as specified. Do not analyze it.
 
- `no`                  
+ `no`::                  
    Don't index this field at all. This field will not be searchable.
 
 The default value of `index` for a `string` field is `analyzed`.  If we
