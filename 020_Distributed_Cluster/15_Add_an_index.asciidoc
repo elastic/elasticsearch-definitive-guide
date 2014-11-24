@@ -21,11 +21,14 @@ A shard can be either a _primary_ shard or a _replica_ shard.((("primary shards"
 your index belongs to a single primary shard, so the number of primary shards
 that you have determines the maximum amount of data that your index can hold.
 
-NOTE: While there is no theoretical limit to the amount of data that a primary shard
+[NOTE]
+====
+While there is no theoretical limit to the amount of data that a primary shard
 can hold, there is a practical limit.  What constitutes the maximum shard size
 depends entirely on your use case: the hardware you have, the size and
 complexity of your documents, how you index and query your documents, and your
 expected response times.
+====
 
 A replica shard is just a copy of a primary shard.((("shards", "replica"))) Replicas are used to provide
 redundant copies of your data to protect against hardware failure, and to
