@@ -45,11 +45,12 @@ The `bool` filter is composed of three sections:
 And that's it!((("should clause", "in bool filters")))((("must_not clause", "in bool filters")))((("must clause", "in bool filters"))) When you need multiple filters, simply place them into the
 different sections of the `bool` filter.
 
-
-NOTE: Each section of the `bool` filter is optional (for example, you can have a `must`
+[NOTE]
+====
+Each section of the `bool` filter is optional (for example, you can have a `must`
 clause and nothing else), and each section can contain a single filter or an
 array of filters.
-
+====
 
 To replicate the preceding SQL example, we will take the two `term` filters that
 we used((("term filter", "placing inside bool filter")))((("bool filter", "with two term filters in should clause and must_not clause"))) previously and place them inside the `should` clause of a `bool`
