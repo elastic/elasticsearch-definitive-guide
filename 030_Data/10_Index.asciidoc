@@ -1,7 +1,7 @@
 [[index-doc]]
 === Indexing a Document
 
-Documents are _indexed_--stored and made ((("documents", "indexing")))((("indexes", "indexing a document")))searchable--by using the `index`
+Documents are _indexed_&#x2014;stored and made ((("documents", "indexing")))((("indexes", "indexing a document")))searchable--by using the `index`
 API. But first, we need to decide where the document  lives.  As we just
 discussed, a document's `_index`, `_type`, and `_id` uniquely identify the
 document.  We can either provide our own `_id` value or let the `index` API
@@ -57,7 +57,7 @@ and includes the `_index`, `_type`, and `_id` metadata, and a new element:
 
 Every document in Elasticsearch has a version number. Every time a change is
 made to a document (including deleting it), the `_version` number is
-incremented.  In <<version-control>>, we discuss how to use the `_version`
+incremented. In <<version-control>>, we discuss how to use the `_version`
 number to ensure that one part of your application doesn't overwrite changes
 made by another part.
 
