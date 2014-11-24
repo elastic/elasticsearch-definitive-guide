@@ -93,7 +93,8 @@ GET /_search
     as the `Elasticsearch` clause.
 
 [[boost-normalization]]
-NOTE: The `boost` parameter is used to increase((("boost parameter", "score normalied after boost applied"))) the relative weight of a clause
+[NOTE]
+The `boost` parameter is used to increase((("boost parameter", "score normalied after boost applied"))) the relative weight of a clause
 (with a `boost` greater than `1`) or decrease the relative weight (with a
 `boost` between `0` and `1`), but the increase or decrease is not linear. In
 other words, a `boost` of `2` does not result in double the `_score`.
@@ -107,7 +108,7 @@ If you are implementing your own scoring model not based on TF/IDF and you
 need more control over the boosting process, you can use the
 <<function-score-query,`function_score` query>> to((("function_score query"))) manipulate a document's
 boost without the normalization step.
-
+====
 
 We present other ways of combining queries in the next chapter,
 <<multi-field-search>>. But first, let's take a look at the other important
