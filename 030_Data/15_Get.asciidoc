@@ -31,10 +31,13 @@ when we indexed it:
 }
 --------------------------------------------------
 
-NOTE: Adding `pretty` to the query-string parameters for any request,((("query strings", "adding pretty"))) as in the
+[NOTE]
+====
+Adding `pretty` to the query-string parameters for any request,((("query strings", "adding pretty"))) as in the
 preceding example, causes Elasticsearch to _pretty-print_ the((("pretty-printing JSON response"))) JSON response to
 make it more readable. The `_source` field, however, isn't pretty-printed.
 Instead we get back exactly the same JSON string that we passed in.
+====
 
 The response to the +GET+ request includes `{"found": true}`. This confirms that
 the document was found.  ((("documents", "requesting non-existant document")))If we were to request a document that doesn't exist,
