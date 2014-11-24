@@ -2,7 +2,7 @@
 
 The query phase identifies which documents satisfy((("distributed search execution", "fetch phase")))((("fetch phase of distributed search"))) the search request, but we
 still need to retrieve the documents themselves. This is the job of the fetch
-phase, shown in <<img-distib-fetch>>.
+phase, shown in <<img-distrib-fetch>>.
 
 [[img-distrib-fetch]]
 .Fetch phase of distributed search
