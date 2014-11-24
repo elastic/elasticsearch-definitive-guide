@@ -71,21 +71,20 @@ PUT /my_index
 <1> Normalize all tokens into the `nfkc` normalization form.
 
 [TIP]
-.When to normalize
 ==================================================
 
-Besides the `icu_normalizer` token filter mentioned above, there is also an
-`icu_normalizer` *character* filter, which((("icu_normalizer character filter"))) does the same job as the token
-filter, but it does it before the text reaches the tokenizer.  When using the
+Besides the `icu_normalizer` token filter mentioned previously, there is also an
+`icu_normalizer` _character_ filter, which((("icu_normalizer character filter"))) does the same job as the token
+filter, but does so before the text reaches the tokenizer.  When using the
 `standard` tokenizer or `icu_tokenizer`, this doesn't really matter.  These
 tokenizers know how to deal with all forms of Unicode correctly.
 
 However, if you plan on using a different tokenizer, such as the `ngram`,
-`edge_ngram` or `pattern` tokenizers, then it woud make sense to use the
+`edge_ngram`, or `pattern` tokenizers, it would make sense to use the
 `icu_normalizer` character filter in preference to the token filter.
 
 ==================================================
 
-Usually, though, not only will you want to normalize the byte order of tokens,
-but also to lowercase them. This can be done with the `icu_normalizer` using
+Usually, though, you will want to not only normalize the byte order of tokens,
+but also lowercase them. This can be done with `icu_normalizer`, using
 the custom normalization form `nfkc_cf`, which we discuss in the next section.
