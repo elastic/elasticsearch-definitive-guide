@@ -1,3 +1,5 @@
+= placeholder6
+
 [[modeling-your-data]]
 
 = Modeling your data
@@ -29,4 +31,13 @@ of documents.
 And finally, we talk about the one thing in Elasticsearch that doesn't scale.
 
 --
+
+include::400_Relationships.asciidoc[]
+
+include::402_Nested.asciidoc[]
+
+include::404_Parent_Child.asciidoc[]
+
+include::410_Scaling.asciidoc[]
+
 

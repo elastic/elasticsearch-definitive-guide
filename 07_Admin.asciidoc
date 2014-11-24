@@ -1,3 +1,5 @@
+= placeholder7
+
 [[administration]]
 = Administration, Monitoring and Deployment
 
@@ -18,4 +20,11 @@ configuration which should (or should not!) be changed
 - Post-deployment logistics, such as how to perform a rolling restart or backup
 your cluster
 --
+
+include::500_Cluster_Admin.asciidoc[]
+
+include::510_Deployment.asciidoc[]
+
+include::520_Post_Deployment.asciidoc[]
+
 

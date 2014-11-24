@@ -1,3 +1,5 @@
+= placeholder1
+
 [[search-in-depth]]
 = Search in Depth
 
@@ -26,3 +28,17 @@ be structured values like dates and numbers. We will start by explaining how
 to combine structured search((("structured search", "combining with full text search")))((("full text search", "combining with structured search"))) with full-text search in the most efficient way.
 
 --
+
+include::080_Structured_Search.asciidoc[]
+
+include::100_Full_Text_Search.asciidoc[]
+
+include::110_Multi_Field_Search.asciidoc[]
+
+include::120_Proximity_Matching.asciidoc[]
+
+include::130_Partial_Matching.asciidoc[]
+
+include::170_Relevance.asciidoc[]
+
+
