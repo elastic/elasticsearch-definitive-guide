@@ -127,10 +127,11 @@ are sorted in lexicographic order:
 
 * 5, 50, 6, B, C, a, ab, abb, abc, b
 
-
-NOTE: Terms in the inverted index are sorted in lexicographical order, which is why
+[NOTE]
+====
+Terms in the inverted index are sorted in lexicographical order, which is why
 string ranges use this order.
-
+====
 
 If we want a range from `a` up to but not including `b`, we can use the same
 `range` filter syntax:
