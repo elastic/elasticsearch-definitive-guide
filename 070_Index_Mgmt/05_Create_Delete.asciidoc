@@ -28,13 +28,14 @@ node:
 action.auto_create_index: false
 --------------------------------------------------
 
-
-NOTE: Later, we discuss how you can use <<index-templates>> to preconfigure
+[NOTE]
+====
+Later, we discuss how you can use <<index-templates>> to preconfigure
 automatically created indices. This is particularly useful when indexing log
 data: you log into an index whose name includes the date and, as midnight
 rolls over, a new properly configured index automatically springs into
 existence.
-
+====
 
 === Deleting an Index
 
