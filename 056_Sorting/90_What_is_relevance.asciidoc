@@ -72,11 +72,13 @@ GET /_search?explain <1>
 <1> The `explain` parameter adds an explanation of how the `_score` was
     calculated to every result.
 
-
-NOTE: Adding `explain` produces a lot of output for every hit, which can look
+[NOTE]
+====
+Adding `explain` produces a lot of output for every hit, which can look
 overwhelming, but it is worth taking the time to understand what it all means.
 Don't worry if it doesn't all make sense now; you can refer to this section
 when you need it.  We'll work through the output for one `hit` bit by bit.
+====
 
 First, we have the metadata that is returned on normal search requests:
 
