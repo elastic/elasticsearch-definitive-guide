@@ -4,11 +4,12 @@
 The `multi_match` query provides ((("multi-field search", "multi-match query")))((("multi_match queries")))((("match query", "multi_match queries"))) a convenient shorthand way of running
 the same query against multiple fields.
 
-
-NOTE: There are several types of `multi_match` query, three of which just
+[NOTE]
+====
+There are several types of `multi_match` query, three of which just
 happen to coincide with the three scenarios that we listed in
 <<know-your-data>>:  `best_fields`, `most_fields`, and `cross_fields`.
-
+====
 
 By default, this query runs as type `best_fields`, which means((("best fields queries", "multi-match queries")))((("dis_max (disjunction max) query", "multi_match query wrapped in"))) that it generates a
 `match` query for each field and wraps them in a `dis_max` query. This
