@@ -117,41 +117,40 @@ are more standalone and can be referred to as needed.
 
 This book is divided into seven parts:
 
-*  Chapters pass:[<xref linkend="intro" xrefstyle="select: labelnumber"/>] through pass:[<xref linkend="inside-a-shard" xrefstyle="select: labelnumber"/>] provide an introduction to Elasticsearch. They
+*  Chapters pass:[<a data-type="xref" href="#intro">1</a>] through pass:[<a data-type="xref" href="#inside-a-shard">11</a>] provide an introduction to Elasticsearch. They
    explain how to get your data in and out of Elasticsearch, how Elasticsearch
    interprets the data in your documents, how basic search works, and how to
    manage indices. By the end of this section, you will already be able to
-   integrate your application with Elasticsearch. Chapters pass:[<xref linkend="distributed-cluster" xrefstyle="select: labelnumber"/>], pass:[<xref linkend="distributed-docs" xrefstyle="select: labelnumber"/>], pass:[<xref linkend="distributed-search" xrefstyle="select: labelnumber"/>], and pass:[<xref linkend="inside-a-shard" xrefstyle="select: labelnumber"/>] are
+   integrate your application with Elasticsearch. Chapters pass:[<a data-type="xref" href="#distributed-cluster">2</a>], pass:[<a data-type="xref" href="#distributed-docs">4</a>], pass:[<a data-type="xref" href="#distributed-search">9</a>], and pass:[<a data-type="xref" href="#inside-a-shard">11</a>] are
    supplemental chapters that provide more insight into the distributed
    processes at work, but are not required reading.
 
-*  Chapters pass:[<xref linkend="structured-search" xrefstyle="select: labelnumber"/>] through pass:[<xref linkend="controlling-relevance" xrefstyle="select: labelnumber"/>] offer a deep dive into search--how to index and
+*  Chapters pass:[<a data-type="xref" href="#structured-search">12</a>] through pass:[<a data-type="xref" href="#controlling-relevance">17</a>] offer a deep dive into search--how to index and
    query your data to allow  you to take advantage of more-advanced concepts
    such as word proximity, and partial matching. You will understand how
    relevance works and how to control it to ensure that the best results are
    on the first page.
 
-*  Chapters pass:[<xref linkend="language-intro" xrefstyle="select: labelnumber"/>] through pass:[<xref linkend="fuzzy-matching" xrefstyle="select: labelnumber"/>] tackle the thorny subject of dealing with human
+*  Chapters pass:[<a data-type="xref" href="#language-intro">18</a>] through pass:[<a data-type="xref" href="#fuzzy-matching">23</a>] tackle the thorny subject of dealing with human
    language through effective use of analyzers and queries. We start with
    an easy approach to language analysis before diving into the complexities
    of language, alphabets, and sorting. We cover stemming, stopwords, synonyms,
    and fuzzy matching.
 
-*  Chapters pass:[<xref linkend="_high_level_concepts" xrefstyle="select: labelnumber"/>] through pass:[<xref linkend="_controlling_memory_use_and_latency" xrefstyle="select: labelnumber"/>] discuss aggregations and analytics--ways to
+*  Chapters pass:[<a data-type="xref" href="#_high_level_concepts">24</a>] through pass:[<a data-type="xref" href="#_controlling_memory_use_and_latency">34</a>] discuss aggregations and analytics--ways to
    summarize and group your data to show overall trends.
 
-*  Chapters pass:[<xref linkend="_closing_thoughts" xrefstyle="select: labelnumber"/>] through pass:[<xref linkend="geo-aggs" xrefstyle="select: labelnumber"/>] present the two approaches to geolocation
+*  Chapters pass:[<a data-type="xref" href="#_closing_thoughts">35</a>] through pass:[<a data-type="xref" href="#geo-aggs">38</a>] present the two approaches to geolocation
    supported by Elasticsearch: lat/lon geo-points, and complex geo-shapes.
 
-*  Chapters pass:[<xref linkend="geo-shapes" xrefstyle="select: labelnumber"/>] through pass:[<xref linkend="parent-child" xrefstyle="select: labelnumber"/>] talk about how to model your data to work
+*  Chapters pass:[<a data-type="xref" href="#geo-shapes">39</a>] through pass:[<a data-type="xref" href="#parent-child">42</a>] talk about how to model your data to work
    most efficiently with Elasticsearch.  Representing relationships
    between entities is not as easy in a search engine as it is in
    a relational database, which has been designed for that purpose.
    These chapters also explain how to suit your index design to
    match the flow of data through your system.
 
-*  Finally, Chapters pass:[<xref linkend="scale" xrefstyle="select: labelnumber"/>] through pass:[<xref linkend="cluster-admin" xrefstyle="select: labelnumber"/>] discuss moving to production: the important
-   configurations, what to monitor, and how to diagnose and prevent problems.
+*  Finally, Chapters pass:[<a data-type="xref" href="#scale">43</a>] through pass:[<a data-type="xref" href="#cluster-admin">44</a>] discuss moving to production: the important configurations, what to monitor, and how to diagnose and prevent problems.
 
 There are three topics that we do not cover in this book, because they are evolving rapidly and anything we
 write will soon be out-of-date:
@@ -200,7 +199,7 @@ This book is here to help you get your job done. In general, if example code is 
 
 We appreciate, but do not require, attribution. An attribution usually includes the title, author, publisher, and ISBN. For example: “_Elasticsearch: The Definitive Guide_ by Clinton Gormley and Zachary Tony (O’Reilly). Copyright 2014 Elasticsearch BV, 978-0-596-xxxx-x.”
 
-If you feel your use of code examples falls outside fair use or the permission given above, feel free to contact us at pass:[<email>permissions@oreilly.com</email>].
+If you feel your use of code examples falls outside fair use or the permission given above, feel free to contact us at pass:[<a class="email" href="mailto:permissions@oreilly.com"><em>permissions@oreilly.com</em></a>].
 
 === Safari® Books Online
 ////
@@ -209,12 +208,16 @@ Do not edit this section.
 [role = "safarienabled"]
 [NOTE]
 ====
-pass:[<ulink role="orm:hideurl:ital" url="http://my.safaribooksonline.com/?portal=oreilly">Safari Books Online</ulink>] is an on-demand digital library that delivers expert pass:[<ulink role="orm:hideurl" url="http://www.safaribooksonline.com/content">content</ulink>] in both book and video form from the world&#8217;s leading authors in technology and business.
+pass:[<a href="http://safaribooksonline.com" class="orm:hideurl:ital"><em class="hyperlink">Safari Books Online</em></a>] is an on-demand digital library that delivers expert pass:[<a href="https://www.safaribooksonline.com/explore/" class="orm:hideurl">content</a>] in both book and video form from the world&#8217;s leading authors in technology and business.
 ====
 
 Technology professionals, software developers, web designers, and business and creative professionals use Safari Books Online as their primary resource for research, problem solving, learning, and certification training.
 
-Safari Books Online offers a range of pass:[<ulink role="orm:hideurl" url="http://www.safaribooksonline.com/subscriptions">product mixes</ulink>] and pricing programs for pass:[<ulink role="orm:hideurl" url="http://www.safaribooksonline.com/organizations-teams">organizations</ulink>], pass:[<ulink role="orm:hideurl" url="http://www.safaribooksonline.com/government">government agencies</ulink>], and pass:[<ulink role="orm:hideurl" url="http://www.safaribooksonline.com/individuals">individuals</ulink>]. Subscribers have access to thousands of books, training videos, and prepublication manuscripts in one fully searchable database from publishers like O’Reilly Media, Prentice Hall Professional, Addison-Wesley Professional, Microsoft Press, Sams, Que, Peachpit Press, Focal Press, Cisco Press, John Wiley & Sons, Syngress, Morgan Kaufmann, IBM Redbooks, Packt, Adobe Press, FT Press, Apress, Manning, New Riders, McGraw-Hill, Jones & Bartlett, Course Technology, and dozens pass:[<ulink role="orm:hideurl" url="http://www.safaribooksonline.com/publishers">more</ulink>]. For more information about Safari Books Online, please visit us pass:[<ulink role="orm:hideurl" url="http://www.safaribooksonline.com/">online</ulink>].
+++++
+<p>Safari Books Online offers a range of <a href="https://www.safaribooksonline.com/pricing/" class="orm:hideurl">plans and pricing</a> for <a href="https://www.safaribooksonline.com/enterprise/" class="orm:hideurl">enterprise</a>, <a href="https://www.safaribooksonline.com/government/" class="orm:hideurl">government</a>, <a href="https://www.safaribooksonline.com/academic-public-library/" class="orm:hideurl">education</a>, and individuals.</p>
+
+<p>Members have access to thousands of books, training videos, and prepublication manuscripts in one fully searchable database from publishers like O&#8217;Reilly Media, Prentice Hall Professional, Addison-Wesley Professional, Microsoft Press, Sams, Que, Peachpit Press, Focal Press, Cisco Press, John Wiley &amp; Sons, Syngress, Morgan Kaufmann, IBM Redbooks, Packt, Adobe Press, FT Press, Apress, Manning, New Riders, McGraw-Hill, Jones &amp; Bartlett, Course Technology, and hundreds <a href="https://www.safaribooksonline.com/our-library/" class="orm:hideurl">more</a>. For more information about Safari Books Online, please visit us <a class="orm:hideurl">online</a>.</p>
+++++
 
 === How to Contact Us
 ////
@@ -223,23 +226,23 @@ Do not edit this section.
 Please address comments and questions concerning this book to the publisher:
 
 ++++
-<simplelist>
-<member>O’Reilly Media, Inc.</member>
-<member>1005 Gravenstein Highway North</member>
-<member>Sebastopol, CA 95472</member>
-<member>800-998-9938 (in the United States or Canada)</member>
-<member>707-829-0515 (international or local)</member>
-<member>707-829-0104 (fax)</member>
-</simplelist>
+<ul class="simplelist">
+  <li>O’Reilly Media, Inc.</li>
+  <li>1005 Gravenstein Highway North</li>
+  <li>Sebastopol, CA 95472</li>
+  <li>800-998-9938 (in the United States or Canada)</li>
+  <li>707-829-0515 (international or local)</li>
+  <li>707-829-0104 (fax)</li>
+</ul>
 ++++
 
 We have a web page for this book, where we list errata, examples, and any additional information. You can access this page at link:$$http://www.oreilly.com/catalog/0636920028505$$[].
 
-++++
-<remark>Don't forget to update the link above.</remark>
-++++
+////
+Don't forget to update the link above.
+////
 
-To comment or ask technical questions about this book, send email to pass:[<email>bookquestions@oreilly.com</email>].
+To comment or ask technical questions about this book, send email to pass:[<a class="email" href="mailto:bookquestions@oreilly.com"><em>bookquestions@oreilly.com</em></a>].
 
 For more information about our books, courses, conferences, and news, see our website at link:$$http://www.oreilly.com$$[].
 
