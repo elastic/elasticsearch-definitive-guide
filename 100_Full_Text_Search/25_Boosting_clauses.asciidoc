@@ -92,8 +92,8 @@ GET /_search
 <3> This clause is more important than the default, but not as important
     as the `Elasticsearch` clause.
 
-[[boost-normalization]]
 [NOTE]
+[[boost-normalization]]
 ====
 The `boost` parameter is used to increase((("boost parameter", "score normalied after boost applied"))) the relative weight of a clause
 (with a `boost` greater than `1`) or decrease the relative weight (with a
