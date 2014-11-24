@@ -44,7 +44,7 @@ _must equal exactly_.
 ====
 
 ==== Equals Exactly
-If you do want that behavior--entire field equality -- the best way to
+If you do want that behavior--entire field equality--the best way to
 accomplish it involves indexing a secondary field. ((("structured search", "equals exactly"))) In this field, you index the
 number of values that your field contains.  Using our two previous documents,
 we now include a field that maintains the number of tags:
