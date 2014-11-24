@@ -78,8 +78,9 @@ query full text, not individual terms, and this is easier to do with the
 high-level full-text queries (which end up using term-based queries
 internally).
 
-
-NOTE: If you do find yourself wanting to use a query on an exact value
+[NOTE]
+====
+If you do find yourself wanting to use a query on an exact value
 `not_analyzed` field, ((("exact values", "not_analyzed fields, querying")))think about whether you really want a query or a filter.
 
 Single-term queries usually represent binary yes/no questions and are
@@ -99,4 +100,4 @@ GET /_search
     }
 }
 --------------------------------------------------
-
+====
