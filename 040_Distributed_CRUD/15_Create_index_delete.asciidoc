@@ -56,7 +56,7 @@ completion.
 --
 By default, the primary shard((("consistency request parameter")))((("quorum of shard copies"))) requires a _quorum_, or majority, of shard copies
 (where a shard copy can be a primary or a replica shard) to be available
-before even attempting a write operation.  This is to prevent writing data to the
+before even attempting a write operation. This is to prevent writing data to the
 ``wrong side'' of a network partition.  A quorum is defined as follows:
 
     int( (primary + number_of_replicas) / 2 ) + 1
