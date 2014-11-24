@@ -65,12 +65,13 @@ performance benefits.
 Most _leaf filters_--those dealing directly with fields like the `term`
 filter--are cached, while((("leaf filters", "caching of")))((("caching", "of leaf filters, controlling")))((("filters", "controlling caching of"))) compound filters, like the `bool` filter, are not.
 
-
-NOTE: Leaf filters have to consult the inverted index on disk, so it makes sense to
+[NOTE]
+====
+Leaf filters have to consult the inverted index on disk, so it makes sense to
 cache them. Compound filters, on the other hand, use fast bit logic to combine
 the bitsets resulting from their inner clauses, so it is efficient to
 recalculate them every time.
-
+====
 
 Certain leaf filters, however, are not cached by default, because it
 doesn't make sense to do so:
