@@ -1,17 +1,16 @@
 [[stemming]]
-== Reducing words to their root form
+== Reducing Words to Their Root Form
 
-Most languages of the world are *inflected*, meaning ((("languages", "inflection in")))((("words", "stemming", see="stemming words")))((("stemming words")))that words can change
-their form to express differences in:
+Most languages of the world are _inflected_, meaning ((("languages", "inflection in")))((("words", "stemming", see="stemming words")))((("stemming words")))that words can change
+their form to express differences in the following:
 
-[horizontal]
-_number_::      fox, foxes
-_tense_::       pay, paid, paying
-_gender_::      waiter, waitress
-_person_::      hear, hears
-_case_::        I, me, my
-_aspect_::      ate, eaten
-_mood_::        so *be* it, *were* it so
+* _Number_:      fox, foxes
+* _tense_:       pay, paid, paying
+* _gender_:      waiter, waitress
+* _person_:      hear, hears
+* _case_:        I, me, my
+* _aspect_:      ate, eaten
+* _mood_:        so *be* it, *were* it so
 
 While inflection aids expressivity, it interferes((("inflection"))) with retrievability as a
 single root _word sense_ or meaning may be represented by many different
