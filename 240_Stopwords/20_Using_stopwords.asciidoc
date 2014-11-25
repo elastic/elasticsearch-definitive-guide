@@ -1,27 +1,27 @@
 [[using-stopwords]]
-=== Using stopwords
+=== Using Stopwords
 
 The removal of stopwords is ((("stopwords", "removal of")))handled by the
-{ref}analysis-stop-tokenfilter.html[`stop` token filter] which can be used
-when ((("stop token filter")))creating a `custom` analyzer (see <<stop-token-filter>> below).
+http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-stop-tokenfilter.html[`stop` token filter] which can be used
+when ((("stop token filter")))creating a `custom` analyzer (see <<stop-token-filter>>).
 However, some out-of-the-box analyzers((("analyzers", "stop filter pre-integrated")))((("pattern analyzer", "stopwords and")))((("standard analyzer", "stop filter")))((("language analyzers", "stop filter pre-integrated"))) come with the `stop` filter pre-integrated:
 
-{ref}analysis-lang-analyzer.html[Language analyzers]::
+http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-lang-analyzer.html[Language analyzers]::
 
     Each language analyzer defaults to using the appropriate stopwords list
     for that language. For instance, the `english` analyzer uses the
     `_english_` stopwords list.
 
-{ref}analysis-standard-analyzer.html[`standard` analyzer]::
+http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-standard-analyzer.html[`standard` analyzer]::
 
     Defaults to the empty stopwords list: `_none_`, essentially disabling
     stopwords.
 
-{ref}analysis-pattern-analyzer.html[`pattern` analyzer]::
+http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-pattern-analyzer.html[`pattern` analyzer]::
 
     Defaults to `_none_`, like the `standard` analyzer.
 
-==== Stopwords and the standard analyzer
+==== Stopwords and the Standard Analyzer
 
 To use custom stopwords in conjunction with ((("standard analyzer", "stopwords and")))((("stopwords", "using with standard analyzer")))the `standard` analyzer, all we
 need to do is to create a configured version of the analyzer and pass in the
@@ -51,7 +51,7 @@ TIP: This same technique can be used to configure custom stopword lists for
 any of the language analyzers.
 
 [[maintaining-positions]]
-==== Maintaining positions
+==== Maintaining Positions
 
 The output from the `analyze` API((("stopwords", "maintaining position of terms and"))) is quite interesting:
 
@@ -87,12 +87,12 @@ The quick and the dead
 The stopwords have been filtered out, as expected, but the interesting part is
 that the `position` of the((("phrase matching", "position of terms", "stopwords and"))) two remaining terms is unchanged: `quick` is the
 second word in the original sentence, and `dead` is the fifth. This is
-important for phrase queries -- if the positions of each term had been
-adjusted, then a phrase query for `"quick dead"` would have matched the above
+important for phrase queries--if the positions of each term had been
+adjusted, a phrase query for `quick dead` would have matched the preceding
 example incorrectly.
 
 [[specifying-stopwords]]
-==== Specifying stopwords
+==== Specifying Stopwords
 
 Stopwords can be passed inline, as we did in ((("stopwords", "specifying")))the previous example, by
 specifying an array:
@@ -112,7 +112,7 @@ The default stopword list for a particular language can be specified using the
 
 TIP: The predefined language-specific stopword((("languages", "predefined stopword lists for"))) lists available in
 Elasticsearch can be found in the
-{ref}analysis-stop-tokenfilter.html[`stop` token filter] documentation.
+http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/using-stopwords.html#specifying-stopwords[`stop` token filter] documentation.
 
 Stopwords can be disabled by ((("stopwords", "disabling")))specifying the special list: `_none_`.  For
 instance, to use the `english` analyzer((("english analyzer", "using without stopwords"))) without stopwords, you can do the
@@ -158,19 +158,19 @@ PUT /my_index
 }
 ---------------------------------
 <1> The path to the stopwords file, relative to the Elasticsearch `config`
-    directory.
+    directory
 
 [[stop-token-filter]]
-==== Using the stop token filter
+==== Using the stop Token Filter
 
-The {ref}analysis-stop-tokenfilter.html[`stop` token filter] can be combined
+The http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/using-stopwords.html#stop-token-filter[`stop` token filter] can be combined
 with a tokenizer((("stopwords", "using stop token filter")))((("stop token filter", "using in custom analyzer"))) and other token filters when you need to create a `custom`
 analyzer.  For instance, let's say that we wanted to ((("Spanish analyzer", "custom, creating")))((("light_spanish stemmer")))create a Spanish analyzer
-with:
+with the following:
 
-* a custom stopwords list.
-* the `light_spanish` stemmer.
-* the <<asciifolding-token-filter,`asciifolding` filter>> to remove diacritics.
+* A custom stopwords list
+* The `light_spanish` stemmer
+* The <<asciifolding-token-filter,`asciifolding` filter>> to remove diacritics
 
 We could set that up as follows:
 
@@ -208,36 +208,36 @@ PUT /my_index
 <1> The `stop` token filter takes the same `stopwords` and `stopwords_path`
     parameters as the `standard` analyzer.
 <2> See <<algorithmic-stemmers>>.
-<3> The order of token filters is important, as explained below.
+<3> The order of token filters is important, as explained next.
 
 We have placed the `spanish_stop` filter after the `asciifolding` filter.((("asciifolding token filter", "in custom Spanish analyzer"))) This
-means that `esta`, `ésta` and ++está++ will first have their diacritics
+means that `esta`, `ésta`, and ++está++ will first have their diacritics
 removed to become just `esta`, which will then be removed as a stopword. If,
-instead, we wanted to remove `esta` and `ésta`, but not ++está++,  then we
-would have to put the `spanish_stop` filter *before* the `asciifolding`
+instead, we wanted to remove `esta` and `ésta`, but not ++está++, we
+would have to put the `spanish_stop` filter _before_ the `asciifolding`
 filter, and specify both words in the stopwords list.
 
 [[updating-stopwords]]
-==== Updating stopwords
+==== Updating Stopwords
 
-There are a few techniques which can be used to update the list of stopwords
+A few techniques can be used to update the list of stopwords
 used by an analyzer.((("analyzers", "stopwords list, updating")))((("stopwords", "updating list used by analyzers"))) Analyzers are instantiated at index creation time, when a
 node is restarted, or when a closed index is reopened.
 
-If you specify stopwords inline with the `stopwords` parameter, then your
-only option is to close the index, update the analyzer configuration with the
-{ref}indices-update-settings.html[update index settings API], then reopen
+If you specify stopwords inline with the `stopwords` parameter, your
+only option is to close the index and update the analyzer configuration with the
+http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-update-settings.html[update index settings API], then reopen
 the index.
 
 Updating stopwords is easier if you specify them in a file with the
 `stopwords_path` parameter.((("stopwords_path parameter")))  You can just update the file (on every node in
-the cluster) then force the analyzers to be recreated by either:
+the cluster) and then force the analyzers to be re-created by either of these actions:
 
-* closing and reopening the index
+* Closing and reopening the index
   (see {ref}indices-open-close.html[open/close index]), or
-* restarting each node in the cluster, one by one.
+* Restarting each node in the cluster, one by one
 
 Of course, updating the stopwords list will not change any documents that have
-already been indexed -- it will only apply to searches and to new or updated
-documents.  To apply the changes to existing documents you will need to
-reindex your data. See <<reindex>>
+already been indexed. It will apply only to searches and to new or updated
+documents.  To apply the changes to existing documents, you will need to
+reindex your data. See <<reindex>>.
