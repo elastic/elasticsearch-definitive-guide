@@ -1,34 +1,33 @@
 [[fuzzy-scoring]]
-=== Scoring fuzziness
+=== Scoring Fuzziness
 
-Users love fuzzy queries -- they assume that it will somehow magically find
+Users love fuzzy queries. They assume that these queries will somehow magically find
 the right combination of proper spellings.((("fuzzy queries", "scoring fuzziness")))((("typoes and misspellings", "scoring fuzziness")))((("relevance scores", "fuzziness and")))  Unfortunately, the truth is
 somewhat more prosaic.
 
-Imagine that we have 1,000 documents containing ``Schwarzenegger'', and just
-one document with the misspelling ``Schwarzeneger''.  According to the theory
-of <<tfidf,Term frequency/Inverse document frequency>>, the misspelling is
+Imagine that we have 1,000 documents containing ``Schwarzenegger,'' and just
+one document with the misspelling ``Schwarzeneger.''  According to the theory
+of <<tfidf,term frequency/inverse document frequency>>, the misspelling is
 much more relevant than the correct spelling, because it appears in far fewer
 documents!
 
 In other words, if we were to treat fuzzy matches((("match query", "fuzzy match query"))) like any other match, we
-would favour misspellings over correct spellings, which would make for grumpy
+would favor misspellings over correct spellings, which would make for grumpy
 users.
 
-TIP: Fuzzy matching should not be used for scoring purposes -- only to widen
+TIP: Fuzzy matching should not be used for scoring purposes--only to widen
 the net of matching terms in case there are misspellings.
 
 By default, the `match` query gives all fuzzy matches the constant score of 1.
-This is sufficient to add potential matches on to the end of the result list,
-without interfering with the relevance scoring of non-fuzzy queries.
+This is sufficient to add potential matches onto the end of the result list,
+without interfering with the relevance scoring of nonfuzzy queries.
 
 [TIP]
-.Use suggesters, rather than fuzzy queries
 ==================================================
 
 Fuzzy queries alone are much less useful than they initially appear.  They are
 better used as part of a ``bigger'' feature, such as the _search-as-you-type_
-{ref}search-suggesters-completion.html[`completion` suggester] or the
-_did-you-mean_ {ref}search-suggesters-phrase.html[`phrase` suggester].
+http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-suggesters-completion.html[`completion` suggester] or the
+_did-you-mean_ http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-suggesters-phrase.html[`phrase` suggester].
 
 ==================================================
