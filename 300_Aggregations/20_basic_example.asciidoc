@@ -1,5 +1,5 @@
 
-== Aggregation Test-drive
+== Aggregation Test-Drive
 
 We could spend the next few pages defining the various aggregations
 and their syntax,((("aggregations", "basic example", id="ix_basicex"))) but aggregations are truly best learned by example.
@@ -8,9 +8,9 @@ the syntax is fairly trivial.
 
 So let's just dive in and start with an example.  We are going to build some
 aggregations that might be useful to a car dealer.  Our data will be about car
-transactions: the car model, manufacturer, sale price, when it sold, etc.
+transactions: the car model, manufacturer, sale price, when it sold, and more.
 
-First we will bulk index some data to work with:
+First we will bulk-index some data to work with:
 
 [source,js]
 --------------------------------------------------
@@ -56,25 +56,25 @@ GET /cars/transactions/_search?search_type=count <1>
 // Add the search_type=count thing as a sidebar, so it doesn't get in the way
 <1> Because we don't care about search results, we are going to use the `count`
 <<search-type,search_type>>, which((("count search type"))) will be faster.
-<2> Aggregations are placed under the ((("aggs parameter")))top-level `"aggs"` parameter (the longer `"aggregations"`
-will also work if you prefer that)
-<3> We then name the aggregation whatever we want -- "colors" in this example
-<4> Finally, we define a single bucket of type `terms`
+<2> Aggregations are placed under the ((("aggs parameter")))top-level `aggs` parameter (the longer `aggregations`
+will also work if you prefer that).
+<3> We then name the aggregation whatever we want: `colors`, in this example
+<4> Finally, we define a single bucket of type `terms`.
 
 Aggregations are executed in the context of search results,((("searching", "aggregations executed in context of search results"))) which means it is
-just another top-level parameter in a search request (e.g. using the `/_search`
+just another top-level parameter in a search request (for example, using the `/_search`
 endpoint).  Aggregations can be paired with queries, but we'll tackle that later
 in <<_scoping_aggregations>>.
 
 
-Next we define a name for our aggregation.  Naming is up to you...
+Next we define a name for our aggregation.  Naming is up to you;
 the response will be labeled with the name you provide so that your application
 can parse the results later.
 
 Next we define the aggregation itself.  For this example, we are defining
 a single `terms` bucket.((("buckets", "terms bucket (example)")))((("terms bucket", "defining in example aggregation")))  The `terms` bucket will dynamically create a new
 bucket for every unique term it encounters.  Since we are telling it to use the
-"color" field, the `terms` bucket will dynamically create a new bucket for each color.
+`color` field, the `terms` bucket will dynamically create a new bucket for each color.
 
 
 Let's execute that aggregation and take a look at the results:
@@ -106,17 +106,17 @@ Let's execute that aggregation and take a look at the results:
    }
 }
 --------------------------------------------------
-<1> No search hits are returned because we used the `search_type=count` param
-<2> Our "colors" aggregation is returned as part of the "aggregations" field
-<3> The key to each bucket corresponds to a unique term found in the "color" field.
-It also always includes `doc_count` which tells us how many docs contained the term
-<4> The count of each bucket represents the number of documents with this color
+<1> No search hits are returned because we used the `search_type=count` parameter
+<2> Our `colors` aggregation is returned as part of the `aggregations` field.
+<3> The `key` to each bucket corresponds to a unique term found in the `color` field.
+It also always includes `doc_count`, which tells us the number of docs containing the term.
+<4> The count of each bucket represents the number of documents with this color.
 
 The ((("doc_count")))response contains a list of buckets, each corresponding to a unique color
-(red, green, etc.). Each bucket also includes a count of how many documents
-"fell into" that particular bucket.  For example, there are four red cars.
+(for example, red or green). Each bucket also includes a count of the number of documents
+that "fell into" that particular bucket.  For example, there are four red cars.
 
-The above example is operating entirely in real-time: if the documents are searchable,
+The preceding example is operating entirely in real time: if the documents are searchable,
 they can be aggregated.  This means you can take the aggregation results and
 pipe them straight into a graphing library to generate real-time dashboards.
 As soon as you sell a silver car, your graphs would dynamically update to include
