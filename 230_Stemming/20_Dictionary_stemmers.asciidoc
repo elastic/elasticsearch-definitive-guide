@@ -1,18 +1,18 @@
 [[dictionary-stemmers]]
-=== Dictionary stemmers
+=== Dictionary Stemmers
 
-Dictionary stemmers work quite differently from
+_Dictionary stemmers_ work quite differently from
 <<algorithmic-stemmers,algorithmic stemmers>>.((("stemming words", "dictionary stemmers")))((("dictionary stemmers"))) Instead
-of applying a standard set of rules to each word, they simply look the
-word up in the dictionary.  Theoretically, they could produce much better
-results than an algorithmic stemmer. A dictionary stemmer should be able to:
+of applying a standard set of rules to each word, they simply look up the
+word in the dictionary.  Theoretically, they could produce much better
+results than an algorithmic stemmer. A dictionary stemmer should be able to do the following:
 
-* return the correct root word for irregular forms like `feet` and `mice`
-* recognise the distinction between words that are similar but have
-  different word senses, like `organ` and `organization`
+* Return the correct root word for irregular forms such as `feet` and `mice`
+* Recognize the distinction between words that are similar but have
+  different word senses&#x2014;for example, `organ` and `organization`
 
 In practice, a good algorithmic stemmer usually outperforms a dictionary
-stemmer. There are a couple of reasons why this should be so:
+stemmer. There are a couple of reasons this should be so:
 
 Dictionary quality::
 +
@@ -24,9 +24,9 @@ available for computers contain about 10% of those.
 
 The meaning of words changes with time.  While stemming `mobility` to `mobil`
 may have made sense previously, it now conflates the idea of mobility with a
-mobile phone. Dictionaries need to be kept current, which is a time consuming
-task.  Often, by the time a dictionary has been made available some of its
-entries are already out of date.
+mobile phone. Dictionaries need to be kept current, which is a time-consuming
+task.  Often, by the time a dictionary has been made available, some of its
+entries are already out-of-date.
 
 If a dictionary stemmer encounters a word not in its dictionary, it doesn't
 know how to deal with it.  An algorithmic stemmer, on the other hand, will
@@ -37,20 +37,19 @@ Size and performance::
 +
 --
 
-A dictionary stemmer needs to load all words,((("dictionary stemmers", "size and performance"))) all prefixes and all suffixes
+A dictionary stemmer needs to load all words,((("dictionary stemmers", "size and performance"))) all prefixes, and all suffixes
 into memory. This can use a significant amount of RAM. Finding the right stem
 for a word is often considerably more complex than the equivalent process with
 an algorithmic stemmer.
 
 Depending on the quality of the dictionary, the process of removing prefixes
-and suffixes may be more or less efficient.  Less efficient forms can slow
-down the stemming process significantly.
+and suffixes may be more or less efficient.  Less-efficient forms can slow
+the stemming process significantly.
 
-Algorithmic stemmers, on the other hand, are usually simple, small and fast.
+Algorithmic stemmers, on the other hand, are usually simple, small, and fast.
 --
 
 TIP: If a good algorithmic stemmer exists for your language, it is usually a
-better choice than a dictionary based stemmer.  Languages with poor (or non-
-existent) algorithmic stemmers can use the Hunspell dictionary stemmer, which
+better choice than a dictionary-based stemmer.  Languages with poor (or nonexistent) algorithmic stemmers can use the Hunspell dictionary stemmer, which
 we discuss in the next section.
 
