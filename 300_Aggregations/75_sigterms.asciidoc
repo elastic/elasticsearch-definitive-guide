@@ -26,6 +26,7 @@ POST /_snapshot/sigterms/snapshot/_restore <3>
 
 GET /mlmovies,mlratings/_recovery <4>
 ----
+// SENSE: 300_Aggregations/20_basic_example.json
 <1> Register a new read-only URL repository pointing at the demo snapshot
 <2> (Optional) Inspect the repository to learn details about available snapshots
 <3> Begin the Restore process.  This will download two indices into your cluster: `mlmovies`
@@ -69,6 +70,7 @@ GET mlmovies/_search <1>
          },
          ....
 ----
+// SENSE: 300_Aggregations/20_basic_example.json
 <1> Execute a search without a query, so that we can see a random sampling of docs
 
 Each document in `mlmovies` represents a single movie.  The two important pieces
