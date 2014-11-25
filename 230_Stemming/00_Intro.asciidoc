@@ -5,69 +5,67 @@ Most languages of the world are _inflected_, meaning ((("languages", "inflection
 their form to express differences in the following:
 
 * _Number_:      fox, foxes
-* _tense_:       pay, paid, paying
-* _gender_:      waiter, waitress
-* _person_:      hear, hears
-* _case_:        I, me, my
-* _aspect_:      ate, eaten
-* _mood_:        so *be* it, *were* it so
+* _Tense_:       pay, paid, paying
+* _Gender_:      waiter, waitress
+* _Person_:      hear, hears
+* _Case_:        I, me, my
+* _Aspect_:      ate, eaten
+* _Mood_:        so be it, were it so
 
-While inflection aids expressivity, it interferes((("inflection"))) with retrievability as a
-single root _word sense_ or meaning may be represented by many different
-sequences of letters.((("English", "inflection in"))) English is a weakly inflected language -- you could
-ignore inflections and still get reasonable search results -- but some other
+While inflection aids expressivity, it interferes((("inflection"))) with retrievability, as a
+single root _word sense_ (or meaning) may be represented by many different
+sequences of letters.((("English", "inflection in"))) English is a weakly inflected language (you could
+ignore inflections and still get reasonable search results), but some other
 languages are highly inflected and need extra work in order to achieve
-high quality search results.
+high-quality search results.
 
-_Stemming_ attempts to remove the difference between inflected forms of a
+_Stemming_ attempts to remove the differences between inflected forms of a
 word, in order to reduce each word to its root form. For instance `foxes` may
 be reduced to the root `fox`, to remove the difference between singular and
-plural in the same way that we removed the difference between lower case and
-upper case.
+plural in the same way that we removed the difference between lowercase and
+uppercase.
 
 The root form of a word may not even be a real word. The words `jumping` and
-`jumpiness` may both be stemmed to `jumpi`. It doesn't matter -- as long as
+`jumpiness` may both be stemmed to `jumpi`. It doesn't matter--as long as
 the same terms are produced at index time and at search time, search will just
 work.
 
 If stemming were easy, there would be only one implementation. Unfortunately,
-stemming is an inexact science which ((("stemming words", "understemming and overstemming")))suffers from two issues: _understemming_
-and _overstemming_.
+stemming is an inexact science that ((("stemming words", "understemming and overstemming")))suffers from two issues: understemming
+and overstemming.
 
-Understemming is the failure to reduce words with the same meaning to the same
-root. For example, `jumped`, and `jumps` may be reduced to `jump`, while
-`jumping` may be reduced to `jumpi`.  Understemming reduces retrieval --
+_Understemming_ is the failure to reduce words with the same meaning to the same
+root. For example, `jumped` and `jumps` may be reduced to `jump`, while
+`jumping` may be reduced to `jumpi`.  Understemming reduces retrieval
 relevant documents are not returned.
 
-Overstemming is the failure to keep two words with distinct meaning separate.
-For instance `general` and `generate` may both be stemmed to `gener`.
-Overstemming reduces precision -- irrelevant documents are returned when they
+_Overstemming_ is the failure to keep two words with distinct meanings separate.
+For instance, `general` and `generate` may both be stemmed to `gener`.
+Overstemming reduces precision: irrelevant documents are returned when they
 shouldn't be.
 
-.Lemmatisation
+.Lemmatization
 **********************************************
 
-A _lemma_ is the canonical or dictionary form ((("lemma")))of a set of related words -- the
-lemma of `paying`, `paid` and `pays` is `pay`.  Usually the lemma resembles
+A _lemma_ is the canonical, or dictionary, form ((("lemma")))of a set of related words--the
+lemma of `paying`, `paid`, and `pays` is `pay`.  Usually the lemma resembles
 the words it is related to but sometimes it doesn't -- the lemma of `is`,
-`was`, `am` and `being` is `be`.
+`was`, `am`, and `being` is `be`.
 
-Lemmatisation, like stemming, tries to group related words,((("lemmatisation"))) but it goes one
+Lemmatization, like stemming, tries to group related words,((("lemmatisation"))) but it goes one
 step further than stemming in that it tries to group words by their _word
-sense_ or meaning.  The same word may represent two different meanings --
-``wake'' can mean ``to wake up'' or ``a funeral''.  While lemmatisation would
+sense_, or meaning.  The same word may represent two  meanings&#x2014;for example,_wake_ can mean _to wake up_ or _a funeral_.  While lemmatization would
 try to distinguish these two word senses, stemming would incorrectly conflate
 them.
 
-Lemmatisation is a much more complicated and expensive process that needs to
+Lemmatization is a much more complicated and expensive process that needs to
 understand the context in which words appear in order to make decisions
 about what they mean. In practice, stemming appears to be just as effective
-as lemmatisation, but with a much lower cost.
+as lemmatization, but with a much lower cost.
 
 **********************************************
 
-First we will discuss the two classes of stemmers available in Elasticsearch
--- <<algorithmic-stemmers>> and <<dictionary-stemmers>> -- then look at how to
+First we will discuss the two classes of stemmers available in Elasticsearch&#x2014;<<algorithmic-stemmers>> and <<dictionary-stemmers>>&#x2014;and then look at how to
 choose the right stemmer for your needs in <<choosing-a-stemmer>>.  Finally,
 we will discuss options for tailoring stemming in <<controlling-stemming>> and
 <<stemming-in-situ>>.
