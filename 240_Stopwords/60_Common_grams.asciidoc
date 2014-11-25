@@ -1,12 +1,12 @@
 [[common-grams]]
-=== common_grams token filter
+=== common_grams Token Filter
 
 The `common_grams` token filter is designed to make phrase queries with
-stopwords more efficient. ((("stopwords", "phrase queries and", "common_grams token filter")))((("common_grams token filter")))((("phrase matching", "stopwords and", "common_grams token filter")))It is similar to the `shingles` token ((("shingles", "shingles token filter")))filter, (see
-<<shingles>>) which creates _bigrams_ out of every pair of adjacent words. It
+stopwords more efficient. ((("stopwords", "phrase queries and", "common_grams token filter")))((("common_grams token filter")))((("phrase matching", "stopwords and", "common_grams token filter")))It is similar to the `shingles` token ((("shingles", "shingles token filter")))filter (see
+<<shingles>>), which creates _bigrams_ out of every pair of adjacent words. It
 is most easily explained by example.((("bigrams")))
 
-The `common_grams` token filter produces different out depending on whether
+The `common_grams` token filter produces different output depending on whether
 `query_mode` is set to `false` (for indexing) or to `true` (for searching), so
 we have to create two separate analyzers:
 
@@ -49,13 +49,13 @@ PUT /my_index
 
 <2> The `common_words` parameter accepts the same options as the `stopwords`
     parameter (see <<specifying-stopwords>>).  The filter also
-    accepts a `common_words_path` parameter which allows you to maintain the
+    accepts a `common_words_path` parameter, which allows you to maintain the
     common words list in a file.
 
 <3> Then we use each filter to create an analyzer for index time and another
     for query time.
 
-With our custom analyzers in place, we can create a field which will use the
+With our custom analyzers in place, we can create a field that will use the
 `index_grams` analyzer at index time:
 
 [source,json]
@@ -73,11 +73,11 @@ PUT /my_index/_mapping/my_type
 -------------------------------
 <1> The `text` field uses the `index_grams` analyzer at index time, but
     defaults to using the `standard` analyzer at search time, for reasons we
-    will explain below.
+    will explain next.
 
-==== At index time
+==== At Index Time
 
-If we were to ((("common_grams token filter", "at index time")))analyze the phrase ``The quick and brown fox'' with shingles, it
+If we were to ((("common_grams token filter", "at index time")))analyze the phrase _The quick and brown fox_ with shingles, it
 would produce these terms:
 
 [source,text]
@@ -99,11 +99,11 @@ Pos 4: brown
 Pos 5: fox
 -------------------------------
 
-All terms are output as unigrams -- `the`, `quick` etc -- but if a word is a
+All terms are output as unigrams&#x2014;`the`, `quick`, and so forth--but if a word is a
 common word or is followed by a common word, then it also outputs a bigram in
-the same position as the unigram -- `the_quick`, `quick_and`, `and_brown`.
+the same position as the unigram&#x2014;`the_quick`, `quick_and`, `and_brown`.
 
-==== Unigram queries
+==== Unigram Queries
 
 Because the index contains unigrams,((("unigrams", "unigram phrase queries")))((("common_grams token filter", "unigram queries"))) the field can be queried using the same
 techniques that we have used for any other field, for example:
@@ -123,15 +123,15 @@ GET /my_index/_search
 }
 -------------------------------
 
-The above query string is analyzed by the `search_analyzer` configured for the
-`text` field -- the `standard` analyzer in this example -- to produce the
-terms:  `the`, `quick`, `and`, `brown`, `fox`.
+The preceding query string is analyzed by the `search_analyzer` configured for the
+`text` field--the `standard` analyzer in this example--to produce the
+terms  `the`, `quick`, `and`, `brown`, `fox`.
 
 Because the index for the `text` field contains the same unigrams as produced
-by the `standard` analyzer, search functions like it would for any normal
+by the `standard` analyzer, search functions as it would for any normal
 field.
 
-==== Bigram phrase queries
+==== Bigram Phrase Queries
 
 However, when we come to do phrase queries,((("common_grams token filter", "bigram phrase queries")))((("bigrams", "bigram phrase queries"))) we can use the specialized
 `search_grams` analyzer to make the process much more efficient:
@@ -165,21 +165,21 @@ Pos 4: brown
 Pos 5: fox
 -------------------------------
 
-It has stripped out all of the common word unigrams, leaving the common word
-bigrams and the low frequency unigrams.  Bigrams like `the_quick` are much
+The analyzer has stripped out all of the common word unigrams, leaving the common word
+bigrams and the low-frequency unigrams.  Bigrams like `the_quick` are much
 less common than the single term `the`.  This has two advantages:
 
 * The positions data for `the_quick` is much smaller than for `the`, so it is
-  faster to read from disk and has less of an impact on the file system cache.
+  faster to read from disk and has less of an impact on the filesystem cache.
 
 * The term `the_quick` is much less common than `the`, so it drastically
   decreases the number of documents that have to be examined.
 
-==== Two word phrases
+==== Two-Word Phrases
 
 There is one further optimization. ((("common_grams token filter", "two word phrases"))) By far the majority of phrase queries
 consist of only two words.  If one of those words happens to be a common word,
-such as:
+such as
 
 [source,json]
 -------------------------------
@@ -198,4 +198,4 @@ GET /my_index/_search
 
 then the `search_grams` analyzer outputs a single token: `the_quick`.  This
 transforms what originally could have been an expensive phrase query for `the`
-and `quick` into a very efficient single term lookup.
+and `quick` into a very efficient single-term lookup.
