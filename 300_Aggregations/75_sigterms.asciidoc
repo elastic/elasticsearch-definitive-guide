@@ -26,7 +26,7 @@ POST /_snapshot/sigterms/snapshot/_restore <3>
 
 GET /mlmovies,mlratings/_recovery <4>
 ----
-// SENSE: 300_Aggregations/20_basic_example.json
+// SENSE: 300_Aggregations/75_sigterms.json
 <1> Register a new read-only URL repository pointing at the demo snapshot
 <2> (Optional) Inspect the repository to learn details about available snapshots
 <3> Begin the Restore process.  This will download two indices into your cluster: `mlmovies`
@@ -70,7 +70,7 @@ GET mlmovies/_search <1>
          },
          ....
 ----
-// SENSE: 300_Aggregations/20_basic_example.json
+// SENSE: 300_Aggregations/75_sigterms.json
 <1> Execute a search without a query, so that we can see a random sampling of docs.
 
 Each document in `mlmovies` represents a single movie.  The two important pieces
@@ -110,6 +110,7 @@ GET mlratings/_search
          },
          ...
 ----
+// SENSE: 300_Aggregations/75_sigterms.json
 
 Here we can see the recommendations of individual users.  Each document represents
 a single user, denoted by the `user` ID field.  The `movie` field holds a list
@@ -154,7 +155,8 @@ GET mlmovies/_search
      },
     ...
 ----
-<1> The _Talladega Nights_ ID is `46970`.
+// SENSE: 300_Aggregations/75_sigterms.json
+<1> _Talladega Nights_ is ID `46970`.
 
 Armed with the ID, we can now filter the ratings and ((("filtering", "in aggregations")))apply our `terms` aggregation
 to find the most popular movies from people who also like _Talladega Nights_:
@@ -182,6 +184,7 @@ GET mlratings/_search?search_type=count <1>
   }
 }
 ----
+// SENSE: 300_Aggregations/75_sigterms.json
 <1> We execute our query on `mlratings` this time, and specify `search_type=count`
 since we are interested only in the aggregation results.
 <2> Apply a filter on the ID corresponding to _Talladega Nights_.
@@ -258,6 +261,7 @@ GET mlmovies/_search
   }
 }
 ----
+// SENSE: 300_Aggregations/75_sigterms.json
 
 And finally, we end up with the following list:
 
@@ -290,6 +294,7 @@ GET mlratings/_search?search_type=count
   }
 }
 ----
+// SENSE: 300_Aggregations/75_sigterms.json
 
 This returns a list that is very similar:
 
@@ -339,7 +344,8 @@ GET mlratings/_search?search_type=count
   }
 }
 ----
-<1> The setup is nearly identical: we just use `significant_terms` instead of
+// SENSE: 300_Aggregations/75_sigterms.json
+<1> The setup is nearly identical -- we just use `significant_terms` instead of
 `terms`.
 
 As you can see, the query is nearly the same.  We filter for users who
