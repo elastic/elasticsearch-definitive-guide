@@ -10,7 +10,28 @@ saved as a snapshot (for more information about snapshots and restore, see
 <<backing-up-your-cluster>>) in our public demo repository.  You can "restore" 
 this dataset into your cluster by using these commands:
 
-TODO -- add information about the public repo
+[source,js]
+----
+PUT /_snapshot/sigterms <1>
+{
+    "type": "url",
+    "settings": {
+        "url": "http://download.elasticsearch.org/definitiveguide/sigterms_demo/"
+    }
+}
+
+GET /_snapshot/sigterms/_all <2>
+
+POST /_snapshot/sigterms/snapshot/_restore <3>
+
+GET /mlmovies,mlratings/_recovery <4>
+----
+<1> Register a new read-only URL repository pointing at the demo snapshot
+<2> (Optional) Inspect the repository to learn details about available snapshots
+<3> Begin the Restore process.  This will download two indices into your cluster: `mlmovies`
+and `mlratings`
+<4> (Optional) Monitor the Restore process using the Recovery API
+
 
 NOTE: The dataset is around 50 MB and may take some time to download.
 
