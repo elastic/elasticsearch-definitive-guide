@@ -1,10 +1,10 @@
 [[multi-word-synonyms]]
-=== Multi-word synonyms and phrase queries
+=== Multiword Synonyms and Phrase Queries
 
 So far, synonyms appear to be quite straightforward. Unfortunately, this is
 where things start to go wrong.((("synonyms", "multi-word, and phrase queries")))((("phrase matching", "multi-word synonyms and"))) For <<phrase-matching,phrase queries>> to
 function correctly, Elasticsearch needs to know the position that each term
-occupies in the original text. Multi-word synonyms can play havoc with term
+occupies in the original text. Multiword synonyms can play havoc with term
 positions, especially when the injected synonyms are of differing lengths.
 
 To demonstrate, we'll create a synonym token filter that uses this rule:
@@ -57,19 +57,18 @@ If we were to index a document analyzed with synonyms as above, and then run a
 phrase query without synonyms, we'd have some surprising results.  These
 phrases would not match:
 
-* ``the usa is wealthy''
-* ``the united states of america is wealthy''
-* ``the U.S.A. is wealthy''
+* The usa is wealthy
+* The united states of america is wealthy
+* The U.S.A. is wealthy
 
-While these phrases would:
+However, these phrases would:
 
-* ``united states is wealthy''
-* ``usa states of wealthy''
-* ``the U.S. of wealthy''
-* ``U.S. is america''
+* United states is wealthy
+* Usa states of wealthy
+* The U.S. of wealthy
+* U.S. is america
 
-If we were to use synonyms at query time instead, we would see even more
-bizarre matches. Look at the output of this `validate-query` request:
+If we were to use synonyms at query time instead, we would see even more-bizarre matches. Look at the output of this `validate-query` request:
 
 [source,json]
 -----------------------------------
@@ -86,27 +85,26 @@ GET /my_index/_validate/query?explain
 }
 -----------------------------------
 
-The explanation from the above is:
+The explanation is as follows:
 
     "(usa united u united) (is states s states) (wealthy a of) america"
 
-which would match documents containg `u is of america` but wouldn't match any
+This would match documents containg `u is of america` but wouldn't match any
 document that didn't contain the term `america`.
 
 [TIP]
-.Synonyms and highlighting
 ==================================================
 
-Multi-word synonyms ((("highlighting searches", "multi-word synonyms and")))affects highlighting in a similar way.  A query for `USA`
-could end up returning a highlighted snippet like: ``The *United* *States*
-*is* *wealthy*''.
+Multiword synonyms ((("highlighting searches", "multi-word synonyms and")))affect highlighting in a similar way.  A query for `USA`
+could end up returning a highlighted snippet such as: ``The _United States
+is wealthy_''.
 
 ==================================================
 
-==== Use simple contraction for phrase queries
+==== Use Simple Contraction for Phrase Queries
 
 The way to avoid this mess is to use <<synonyms-contraction,simple contraction>>
-to inject a single((("synonyms", "multi-word, and phrase queries", "using simple contraction")))((("phrase matching", "multi-word synonyms and", "using simple contraction")))((("simple contraction (synonyms)", "using for phrase queries"))) term which represents all synonyms, and to use the same
+to inject a single((("synonyms", "multi-word, and phrase queries", "using simple contraction")))((("phrase matching", "multi-word synonyms and", "using simple contraction")))((("simple contraction (synonyms)", "using for phrase queries"))) term that represents all synonyms, and to use the same
 synonym token filter at query time:
 
 [source,json]
@@ -140,7 +138,7 @@ GET /my_index/_analyze?analyzer=my_synonyms
 The United States is wealthy
 -----------------------------------
 
-The result of the above `analyze` request looks much more sane:
+The result of the preceding `analyze` request looks much more sane:
 
 [source,text]
 -----------------------------------
@@ -150,7 +148,7 @@ Pos 3:  (is)
 Pos 5:  (wealthy)
 -----------------------------------
 
-And repeating the `validate-query` request that we made above yields a simple,
+And repeating the `validate-query` request that we made previously yields a simple,
 sane explanation:
 
     "usa is wealthy"
@@ -160,25 +158,25 @@ down to the single term `usa`, you can't use the same field to find just the
 word `united` or `states`. You would need to use a separate field with a
 different analysis chain for that purpose.
 
-==== Synonyms and the query_string query
+==== Synonyms and the query_string Query
 
 We have tried to avoid discussing the `query_string` query ((("query strings", "synonyms and")))((("synonyms", "multi-word, and query string queries")))because we don't
-recommend using it.  In <<query-string-query>> we said that, because the
-`query_string` query supports a terse mini ``search-syntax'', it could
+recommend using it.  In <<query-string-query, "More-Complicated Queries">>, we said that, because the
+`query_string` query supports a terse mini _search-syntax_, it could
 frequently lead to surprising results or even syntax errors.
 
-One of the gotchas of this query involves multi-word synonyms. In order to
-support its search-syntax, it has to parse the query string to recognise
-special operators like `AND`, `OR`, `+`, `-`, `field:` etc.  (See the full
-{ref}query-dsl-query-string-query.html#query-string-syntax[`query_string` syntax]
+One of the gotchas of this query involves multiword synonyms. To
+support its search-syntax, it has to parse the query string to recognize
+special operators like `AND`, `OR`, `+`, `-`, `field:`, and so forth.  (See the full
+http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html[`query_string` syntax]
 here.)
 
 As part of this parsing process, it breaks up the query string on whitespace,
 and passes each word that it finds to the relevant analyzer separately. This
-means that your synonym analyzer will never receive a multi-word synonym.
+means that your synonym analyzer will never receive a multiword synonym.
 Instead of seeing `United States` as a single string, the analyzer will
 receive `United` and `States` separately.
 
-Fortunately, the trustworthy `match` query supports no such syntax and
-multi-word synonyms will be passed to the analyzer in their entirety.
+Fortunately, the trustworthy `match` query supports no such syntax, and
+multiword synonyms will be passed to the analyzer in their entirety.
 
