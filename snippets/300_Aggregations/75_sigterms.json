@@ -1,0 +1,108 @@
+# Register the SigTerms demo repository
+PUT /_snapshot/sigterms
+{
+    "type": "url",
+    "settings": {
+        "url": "http://download.elasticsearch.org/definitiveguide/sigterms_demo/"
+    }
+}
+
+# Inspect the repo to see what snapshots are available
+GET /_snapshot/sigterms/_all
+
+# Begin the Restore process
+POST /_snapshot/sigterms/snapshot/_restore
+
+# Monitor the Restore process as shards download
+GET /mlmovies,mlratings/_recovery
+
+
+### Recommendations based on Popularity
+
+# Inspect the movie data with an empty search
+GET mlmovies/_search
+GET mlratings/_search
+
+# Find the ID of "Talladega Nights"
+GET mlmovies/_search
+{
+  "query": {
+    "match": {
+      "title": "Talladega Nights"
+    }
+  }
+}
+
+# Use a terms agg to find most popular
+GET mlratings/_search?search_type=count
+{
+  "query": {
+    "filtered": {
+      "filter": {
+        "term": {
+          "movie": 46970
+        }
+      }
+    }
+  },
+  "aggs": {
+    "most_popular": {
+      "terms": {
+        "field": "movie",
+        "size": 6
+      }
+    }
+  }
+}
+
+# Correlate IDs back to original titles
+GET mlmovies/_search
+{
+  "query": {
+    "filtered": {
+      "filter": {
+        "ids": {
+          "values": [2571,318,296,2959,260]
+        }
+      }
+    }
+  }
+}
+
+# Find most popular movies overall
+GET mlratings/_search?search_type=count
+{
+  "aggs": {
+    "most_popular": {
+      "terms": {
+        "field": "movie",
+        "size": 5
+      }
+    }
+  }
+}
+
+
+### Recommendations based on Statistics
+
+# Replace terms agg with SigTerms
+GET mlratings/_search?search_type=count
+{
+  "query": {
+    "filtered": {
+      "filter": {
+        "term": {
+          "movie": 46970
+        }
+      }
+    }
+  },
+  "aggs": {
+    "most_sig": {
+      "significant_terms": {
+        "field": "movie",
+        "size": 6
+      }
+    }
+  }
+}

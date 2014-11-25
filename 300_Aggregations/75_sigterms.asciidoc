@@ -1,13 +1,13 @@
 
 === significant_terms Demo
 
-Because the `significant_terms` aggregation((("significant_terms aggregation", "demonstration of")))((("aggregations", "significant_terms", "demonstration of"))) works by analyzing 
+Because the `significant_terms` aggregation((("significant_terms aggregation", "demonstration of")))((("aggregations", "significant_terms", "demonstration of"))) works by analyzing
 statistics, you need to have a certain threshold of data for it to become effective.
 That means we won't be able to index a small amount of example data for the demo.
 
 Instead, we have a pre-prepared dataset of around 80,000 documents.  This is
 saved as a snapshot (for more information about snapshots and restore, see
-<<backing-up-your-cluster>>) in our public demo repository.  You can "restore" 
+<<backing-up-your-cluster>>) in our public demo repository.  You can "restore"
 this dataset into your cluster by using these commands:
 
 [source,js]
@@ -26,6 +26,7 @@ POST /_snapshot/sigterms/snapshot/_restore <3>
 
 GET /mlmovies,mlratings/_recovery <4>
 ----
+// SENSE: 300_Aggregations/20_basic_example.json
 <1> Register a new read-only URL repository pointing at the demo snapshot
 <2> (Optional) Inspect the repository to learn details about available snapshots
 <3> Begin the Restore process.  This will download two indices into your cluster: `mlmovies`
@@ -69,12 +70,13 @@ GET mlmovies/_search <1>
          },
          ....
 ----
-<1> Execute a search without a query, so we can see a random sampling of docs.
+// SENSE: 300_Aggregations/20_basic_example.json
+<1> Execute a search without a query, so that we can see a random sampling of docs.
 
 Each document in `mlmovies` represents a single movie.  The two important pieces
 of data are the `_id` of the movie and the `title` of the movie.  You can ignore
 `offset` and `bytes`; they are artifacts of the process used to extract this
-data from the original CSV files. There are 10,681 movies in this dataset.  
+data from the original CSV files. There are 10,681 movies in this dataset.
 
 Now let's look at `mlratings`:
 
@@ -105,7 +107,7 @@ GET mlratings/_search
                ],
                "user": 1
             }
-         }, 
+         },
          ...
 ----
 
@@ -186,9 +188,9 @@ since we are interested only in the aggregation results.
 <3> Finally, find the most popular movies by using a `terms` bucket.
 
 We perform the search on the `mlratings` index, and apply a filter for the ID of
-_Talladega Nights_.  Since aggregations operate on query scope, this will 
-effectively filter the aggregation results to only the users who recommended 
-_Talladega Nights_. Finally, we execute ((("terms aggregation", "movie recommendations (example)")))a `terms` aggregation to bucket the most 
+_Talladega Nights_.  Since aggregations operate on query scope, this will
+effectively filter the aggregation results to only the users who recommended
+_Talladega Nights_. Finally, we execute ((("terms aggregation", "movie recommendations (example)")))a `terms` aggregation to bucket the most
 popular movies.  We are requesting the top six results, since it is likely
 that _Talladega Nights_ itself will be returned as a hit (and we don't want
 to recommend the same movie).
@@ -271,7 +273,7 @@ well-liked, which means they are popular on everyone's recommendations.  The
 list is basically a recommendation of popular movies, not recommendations related
 to _Talladega Nights_.
 
-This is easily verified by running the aggregation again, but without the filter 
+This is easily verified by running the aggregation again, but without the filter
 on _Talladega Nights_.  This will give a top-five most popular movie list:
 
 [source,js]
@@ -303,7 +305,7 @@ discriminating recommender.
 ==== Recommending Based on Statistics
 
 Now that the scene is set, let's try using `significant_terms`.  `significant_terms` will analyze
-the group of people who enjoy _Talladega Nights_ (the _foreground_ group) and 
+the group of people who enjoy _Talladega Nights_ (the _foreground_ group) and
 determine what movies are most popular. ((("statistics, movie recommendations based on (example)"))) It will then construct a list of
 popular films for everyone (the _background_ group) and compare the two.
 
@@ -356,11 +358,11 @@ extra ((("buckets", "returned by significant_terms aggregation")))metadata:
          "doc_count": 271, <1>
          "buckets": [
             {
-               "key": 46970, 
+               "key": 46970,
                "key_as_string": "46970",
-               "doc_count": 271, 
+               "doc_count": 271,
                "score": 256.549815498155,
-               "bg_count": 271 
+               "bg_count": 271
             },
             {
                "key": 52245, <2>
@@ -402,17 +404,17 @@ extra ((("buckets", "returned by significant_terms aggregation")))metadata:
 ----
 <1> The top-level `doc_count` shows the number of docs in the foreground group.
 <2> Each bucket lists the key (for example, movie ID) being aggregated.
-<3> A `doc_count` for that bucket.  
-<4> And a background count, which shows the rate at which this value appears in 
+<3> A `doc_count` for that bucket.
+<4> And a background count, which shows the rate at which this value appears in
 the entire background.
 
-You can see that the first bucket we get back is _Talladega Nights_.  It is 
+You can see that the first bucket we get back is _Talladega Nights_.  It is
 found in all 271 documents, which is not surprising.  Let's look at the next bucket:
 key `52245`.
 
 This ID corresponds to _Blades of Glory_, a comedy about male figure skating
 that also stars Will Ferrell.  We can see that it was recommended 59 times by
-the people who also liked _Talladega Nights_.  This means that 21% of the foreground 
+the people who also liked _Talladega Nights_.  This means that 21% of the foreground
 group recommended _Blades of Glory_ (`59 / 271 = 0.2177`).
 
 In contrast, _Blades of Glory_ was recommended only 185 times in the entire dataset,
