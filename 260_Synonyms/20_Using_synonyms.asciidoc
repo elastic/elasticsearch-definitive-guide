@@ -1,8 +1,8 @@
 [[using-synonyms]]
-=== Using synonyms
+=== Using Synonyms
 
-Synonyms can replace existing tokens or((("synonyms", "using"))) be added to the token stream using the((("synonym token filter")))
-{ref}analysis-synonym-tokenfilter.html[`synonym` token filter]:
+Synonyms can replace existing tokens or((("synonyms", "using"))) be added to the token stream by using the((("synonym token filter")))
+http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-synonym-tokenfilter.html[`synonym` token filter]:
 
 [source,json]
 -------------------------------------
@@ -33,14 +33,14 @@ PUT /my_index
 }
 -------------------------------------
 <1> First, we define a token filter of type `synonym`.
-<2> We will discuss synonym formats in <<synonym-formats>>.
-<3> Then we create a custom analyzer which uses the `my_synonym_filter`.
+<2> We discuss synonym formats in <<synonym-formats>>.
+<3> Then we create a custom analyzer that uses the `my_synonym_filter`.
 
 [TIP]
 ==================================================
 
 Synonyms can be specified inline with the `synonyms` parameter, or in a
-synonyms file which must((("synonyms", "specifying inline or in a separate file"))) be present on every node in the cluster. The path to
+synonyms file that must((("synonyms", "specifying inline or in a separate file"))) be present on every node in the cluster. The path to
 the synonyms file should be specified with the `synonyms_path` parameter, and
 should be either absolute or relative to the Elasticsearch `config` directory.
 See <<updating-stopwords>> for techniques that can be used to refresh the
@@ -48,7 +48,7 @@ synonyms list.
 
 ==================================================
 
-Testing out our analyzer with the `analyze` API shows the following:
+Testing our analyzer with the `analyze` API shows the following:
 
 [source,json]
 -------------------------------------
@@ -66,19 +66,18 @@ Pos 5: (queen,monarch) <1>
 ------------------------------------
 <1> All synonyms occupy the same position as the original term.
 
-A document like this will match queries for any of: ``English queen'',
-``British queen'', ``English monarch'' or ``British monarch''.
+A document like this will match queries for any of the following: `English queen`,
+`British queen`, `English monarch`, or `British monarch`.
 Even a phrase query will work, because the position of
 each term has been preserved.
 
 [TIP]
-.Index time vs search time
 ======================================
 
 Using the same `synonym` token filter at both index time and search time is
 redundant.((("synonym token filter", "using at index time versus search time")))  If, at index time, we replace `English` with the two terms
-`english` and `british`, then at search time we only need to search for one of
-those terms.  Alternatively, if we don't use synonyms at index time then, at
+`english` and `british`, then at search time we need to search for only one of
+those terms.  Alternatively, if we don't use synonyms at index time, then at
 search time, we would need to convert a query for `English` into a query for
 `english OR british`.
 
