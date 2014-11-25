@@ -73,7 +73,7 @@ GET /cars/transactions/_search?search_type=count
   }
 }
 --------------------------------------------------
-
+// SENSE: 300_Aggregations/60_cardinality.json
 
 ==== Understanding the Tradeoffs
 As mentioned at the top of this chapter, the `cardinality` metric is an approximate

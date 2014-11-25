@@ -1,0 +1,93 @@
+# Find count of distinct colors
+GET /cars/transactions/_search?search_type=count
+{
+    "aggs" : {
+        "distinct_colors" : {
+            "cardinality" : {
+              "field" : "color"
+            }
+        }
+    }
+}
+
+# How many colors were sold each month
+GET /cars/transactions/_search?search_type=count
+{
+  "aggs" : {
+      "months" : {
+        "date_histogram": {
+          "field": "sold",
+          "interval": "month"
+        },
+        "aggs": {
+          "distinct_colors" : {
+              "cardinality" : {
+                "field" : "color"
+              }
+          }
+        }
+      }
+  }
+}
+
+# Changing the precision 
+GET /cars/transactions/_search?search_type=count
+{
+    "aggs" : {
+        "distinct_colors" : {
+            "cardinality" : {
+              "field" : "color",
+              "precision_threshold" : 100
+            }
+        }
+    }
+}
+
+# Precomputing hashes - delete the index
+DELETE /cars/
+
+# Precomputing hashes - Add a new mapping which precomputes the hash
+PUT /cars/
+{
+  "mappings": {
+    "color": {
+      "type": "string",
+      "fields": {
+          "hash": {
+              "type": "murmur3"
+          }
+      }
+    }
+  }
+}
+
+# Precomputing hashes - Reindex all the data
+POST /cars/transactions/_bulk
+{ "index": {}}
+{ "price" : 10000, "color" : "red", "make" : "honda", "sold" : "2014-10-28" }
+{ "index": {}}
+{ "price" : 20000, "color" : "red", "make" : "honda", "sold" : "2014-11-05" }
+{ "index": {}}
+{ "price" : 30000, "color" : "green", "make" : "ford", "sold" : "2014-05-18" }
+{ "index": {}}
+{ "price" : 15000, "color" : "blue", "make" : "toyota", "sold" : "2014-07-02" }
+{ "index": {}}
+{ "price" : 12000, "color" : "green", "make" : "toyota", "sold" : "2014-08-19" }
+{ "index": {}}
+{ "price" : 20000, "color" : "red", "make" : "honda", "sold" : "2014-11-05" }
+{ "index": {}}
+{ "price" : 80000, "color" : "red", "make" : "bmw", "sold" : "2014-01-01" }
+{ "index": {}}
+{ "price" : 25000, "color" : "blue", "make" : "ford", "sold" : "2014-02-12" }
+
+# Now the cardinality agg can use `color.hash` for a speed boost
+GET /cars/transactions/_search?search_type=count
+{
+    "aggs" : {
+        "distinct_colors" : {
+            "cardinality" : {
+              "field" : "color.hash"
+            }
+        }
+    }
+}
