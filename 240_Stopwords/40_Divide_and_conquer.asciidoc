@@ -1,26 +1,25 @@
 [[common-terms]]
-=== Divide and conquer
+=== Divide and Conquer
 
-The terms in a query string can be divided into more important (low frequency)
-and less important (high frequency) terms.((("stopwods", "low and high frequency terms"))) Documents that match only the less
+The terms in a query string can be divided into more-important (low-frequency)
+and less-important (high-frequency) terms.((("stopwods", "low and high frequency terms"))) Documents that match only the less
 important terms are probably of very little interest.  Really, we want
 documents that match as many of the more important terms as possible.
 
 The `match` query accepts ((("cutoff_frequency parameter")))((("match query", "cutoff_frequency parameter")))a `cutoff_frequency` parameter, which allows it to
-divide the terms in the query string into a low frequency and high frequency
-group.((("term frequency", "cutoff_frequency parameter in match query"))) The low frequency group (more important terms) form the bulk of the
-query, while the high frequency group (less important terms) is used only for
+divide the terms in the query string into a low-frequency and high-frequency
+group.((("term frequency", "cutoff_frequency parameter in match query"))) The low-frequency group (more-important terms) form the bulk of the
+query, while the high-frequency group (less-important terms) is used only for
 scoring, not for matching. By treating these two groups differently, we can
 gain a real boost of speed on previously slow queries.
 
-.Domain specific stopwords
+.Domain-Specific Stopwords
 *********************************************
 
-One of the benefits of `cutoff_frequency` is that you get _domain specific_
+One of the benefits of `cutoff_frequency` is that you get _domain-specific_
 stopwords for free.((("domain specific stopwords"))) For instance, a website about movies may use the words
-``movie'', ``color'', ``black'' and ``white'' so often that they could be
-considered almost meaningless.  With the `stop` token filter, these domain
-specific terms would have to be added to the stopwords list manually. However,
+_movie_, _color_, _black_, and _white_ so often that they could be
+considered almost meaningless.  With the `stop` token filter, these domain-specific terms would have to be added to the stopwords list manually. However,
 because the `cutoff_frequency` looks at the actual frequency of terms in the
 index,  these words would be classified as _high frequency_ automatically.
 
@@ -43,7 +42,7 @@ Take this query as an example:
     or as an absolute number (`5`).
 
 This query uses the `cutoff_frequency` to first divide the query terms into a
-low frequency group: (`quick`, `dead`), and a high frequency group: (`and`,
+low-frequency group (`quick`, `dead`) and a high-frequency group (`and`,
 `the`). Then, the query is rewritten to produce the following `bool` query:
 
 [source,json]
@@ -69,35 +68,32 @@ low frequency group: (`quick`, `dead`), and a high frequency group: (`and`,
   }
 }
 ---------------------------------
-<1> At least one low frequency / high importance term *must* match.
-<2> High frequency / low importance terms are entirely optional.
+<1> At least one low-frequency/high-importance term _must_ match.
+<2> High-frequency/low-importance terms are entirely optional.
 
-The `must` clause means that at least one of the low frequency terms --
-`quick` or `dead` -- *must* be present for a document to be considered a
+The `must` clause means that at least one of the low-frequency terms&#x2014;`quick` or `dead`&#x2014;_must_ be present for a document to be considered a
 match. All other documents are excluded.  The `should` clause then looks for
-the high frequency terms `and` and `the`,  but only in the documents collected
+the high-frequency terms `and` and `the`,  but only in the documents collected
 by the `must` clause. The sole job of the `should` clause is to score a
-document like ``Quick **AND THE** dead'' higher than ``**THE** quick but
+document like ``Quick _and the_ dead'' higher than ``_The_ quick but
 dead''.  This approach greatly reduces the number of documents that need to be
 examined and scored.
 
 [TIP]
-.`and` query
 ==================================================
 
-Setting the operator parameter to `and` would make *all* low frequency terms
-required, and score documents that contain *all* high frequency terms higher.
-However, matching documents would not be required to contain all high
-frequency terms.  If you would prefer all low and high frequency terms to be
-required, then you should use a `bool` query instead.   As we saw in
+Setting the operator parameter to `and` would make _all_ low-frequency terms
+required, and score documents that contain _all_ high-frequency terms higher.
+However, matching documents would not be required to contain all high-frequency terms.  If you would prefer all low- and high-frequency terms to be
+required, you should use a `bool` query instead.   As we saw in
 <<stopwords-and>>, this is already an efficient query.
 
 ==================================================
 
-==== Controlling precision
+==== Controlling Precision
 
 The `minimum_should_match` parameter can be combined with `cutoff_frequency`
-but it only applies to the low frequency terms.((("stopwords", "low and high frequency terms", "controlling precision")))((("minimum_should_match parameter", "controlling precision")))  This query:
+but it applies to only the low-frequency terms.((("stopwords", "low and high frequency terms", "controlling precision")))((("minimum_should_match parameter", "controlling precision")))  This query:
 
 [source,json]
 ---------------------------------
@@ -111,7 +107,7 @@ but it only applies to the low frequency terms.((("stopwords", "low and high fre
 }
 ---------------------------------
 
-would be rewritten as:
+would be rewritten as follows:
 
 [source,json]
 ---------------------------------
@@ -138,17 +134,17 @@ would be rewritten as:
 }
 ---------------------------------
 <1> Because there are only two terms, the original 75% is rounded down
-    to `1`, that is: ``1 out of 2 low frequency terms must match''.
-<2> The high frequency terms are still optional and used only for scoring.
+    to `1`, that is: _one out of two low-terms must match_.
+<2> The high-frequency terms are still optional and used only for scoring.
 
-==== Only high frequency terms
+==== Only High-Frequency Terms
 
-An `or` query for high frequency((("stopwords", "low and high frequency terms", "only high frequency terms"))) terms only -- ``To be or not to be'' -- is
-the worst case for performance. It is pointless to score *all* of the
+An `or` query for high-frequency((("stopwords", "low and high frequency terms", "only high frequency terms"))) terms only&#x2014;``To be, or not to be''&#x2014;is
+the worst case for performance. It is pointless to score _all_ the
 documents that contain only one of these terms in order to return just the top
-ten matches. We are really only interested in documents where they all occur
-together, so in the case where there are no low frequency terms, the query is
-rewritten to make all high frequency terms required:
+10 matches. We are really interested only in documents in which the terms all occur
+together, so in the case where there are no low-frequency terms, the query is
+rewritten to make all high-frequency terms required:
 
 [source,json]
 ---------------------------------
@@ -166,15 +162,15 @@ rewritten to make all high frequency terms required:
 }
 ---------------------------------
 
-==== More control with common terms
+==== More Control with Common Terms
 
 While the high/low frequency functionality in the `match` query is useful,
-sometimes you want more control((("stopwords", "low and high frequency terms", "more control over common terms"))) over how the high and low frequency groups
-should be handled.  The `match` query just exposes a subset of the
+sometimes you want more control((("stopwords", "low and high frequency terms", "more control over common terms"))) over how the high- and low-frequency groups
+should be handled.  The `match` query exposes a subset of the
 functionality available in the `common` terms query.((("common terms query")))
 
-For instance, we could make all low frequency terms required, and only score
-documents that have 75% of all high frequency terms with a query like this:
+For instance, we could make all low-frequency terms required, and score only
+documents that have 75% of all high-frequency terms with a query like this:
 
 [source,json]
 ---------------------------------
@@ -192,6 +188,6 @@ documents that have 75% of all high frequency terms with a query like this:
 }
 ---------------------------------
 
-See the {ref}query-dsl-common-terms-query.html[`common` terms query] reference
+See the http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/common-terms.html#_more_control_with_literal_common_literal_terms[`common` terms query] reference
 page for more options.
 
