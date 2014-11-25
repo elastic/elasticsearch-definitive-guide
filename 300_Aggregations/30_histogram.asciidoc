@@ -2,9 +2,9 @@
 == Building Bar Charts
 
 One of the exciting aspects of aggregations are how easily they are converted
-into charts and graphs.((("bar charts", "building from aggregations")))((("aggregations", "building bar charts from")))  For the rest of the chapter, we are going to focus
-on various analytics that we can wring out of our toy dataset.  We will also
-demonstrate the different types of charts aggregations can power.
+into charts and graphs.((("bar charts", "building from aggregations")))((("aggregations", "building bar charts from")))  In this chapter, we are focusing
+on various analytics that we can wring out of our example dataset.  We will also
+demonstrate the types of charts aggregations can power.
 
 The `histogram` bucket is particularly useful.((("buckets", "histogram")))((("histogram bucket")))((("histograms")))  Histograms are essentially
 bar charts, and if you've ever built a report or analytics dashboard, you
@@ -12,12 +12,12 @@ undoubtedly had a few bar charts in it.
 
 // Perhaps "demonstrate" that a car of 28,000 gets dropped into the "20,000" bucket,while a car of 15,000 gets dropped into the "0" bucket
 // Delete "Just like the ...."
-The histogram works by specifying an interval.  If we were histogram'ing sale
+The histogram works by specifying an interval.  If we were histogramming sale
 prices, you might specify an interval of 20,000.  This would create a new bucket
 every $20,000.  Documents are then sorted into buckets.
 
 For our dashboard, we want a bar chart of car sale prices, but we
-also want to know the top selling make per price range.  This is easily accomplished
+also want to know the top-selling make per price range.  This is easily accomplished
 using a `terms` bucket ((("terms bucket", "nested in a histogram bucket")))((("buckets", "nested in other buckets", "terms bucket nested in histogram bucket")))nested inside the `histogram`:
 
 [source,js]
@@ -44,21 +44,20 @@ GET /cars/transactions/_search?search_type=count
 --------------------------------------------------
 // SENSE: 300_Aggregations/30_histogram.json
 <1> The `histogram` bucket requires two parameters: a numeric field, and an
-interval which defines the bucket size
+interval that defines the bucket size.
 // Mention use of "size" to get back just the top result?
 <2> A `terms` bucket is nested inside each price range, which will show us the
-top make per price range
+top make per price range.
 
 // Make the point that the upper limit is exclusive
-As you can see, our query is built around the "price" aggregation, which contains
+As you can see, our query is built around the `price` aggregation, which contains
 a `histogram` bucket.  This bucket requires a numeric field to calculate
 buckets on, and an interval size.  The interval defines how "wide" each bucket
-is.  An interval of 20000 means we will have ranges `[0-20000, 20000-40000, ...]`
+is.  An interval of 20000 means we will have the ranges `[0-20000, 20000-40000, ...]`.
 
-Next, we define a nested bucket inside of the histogram.  This is a `terms` bucket
-over the "make" field.  There is also a new "size" parameter, which defines how
-many terms we want to generate.  A size of one means we only want the top make
-for each price range (e.g. the make that has the highest doc count).
+Next, we define a nested bucket inside the histogram.  This is a `terms` bucket
+over the `make` field.  There is also a new `size` parameter, which defines the number of terms we want to generate.  A `size` of `1` means we want only the top make
+for each price range (the make that has the highest doc count).
 
 And here is the response (truncated):
 
@@ -99,17 +98,17 @@ And here is the response (truncated):
 
 The response is fairly self-explanatory, but it should be noted that the
 histogram keys correspond to the lower boundary of the interval.  The key `0`
-means `0-20,000`, the key `20000` means `20,000-40,000`, etc.
+means `0-20,000`, the key `20000` means `20,000-40,000`, and so forth.
 
-Graphically, you could represent the above data in a histogram like this:
+Graphically, you could represent the preceding data in the histogram shown in <<barcharts-histo1>>:
 
 [[barcharts-histo1]]
 image::images/elas_28in01.png["Histogram of top makes per price range"]
 
-Of course, you can build bar charts with any aggregation which emits categories
+Of course, you can build bar charts with any aggregation that emits categories
 and statistics, not just the `histogram` bucket.  Let's build a bar chart of
-popular makes, their average price, and then calculate the standard error
-to add error bars on our chart.  This will make use of the `terms` bucket
+popular makes, and their average price, and then calculate the standard error
+to add error bars on our chart.  This will use the `terms` bucket
 and an `extended_stats` ((("extended_stats metric")))metric:
 
 [source,js]
@@ -142,7 +141,7 @@ and `stats.std_deviation`.  Using((("standard error, calculating"))) this inform
 std_err = std_deviation / count
 ................................
 
-Which will allow us to build a chart like this:
+This will allow us to build a chart like <<barcharts-bar1>>:
 
 [[barcharts-bar1]]
 image::images/elas_28in02.png["Barchart of average price per make, with error bars"]
