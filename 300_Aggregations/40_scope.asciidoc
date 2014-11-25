@@ -11,7 +11,7 @@ understand a new concept: _scope_. ((("scope", "scoping aggregations"))) By defa
 scope as the query.  Put another way, aggregations are calculated on the set of 
 documents that match your query.
 
-If we look at one of our first aggregation examples:
+Let's look at one of our first aggregation examples:
 
 [source,js]
 --------------------------------------------------
@@ -28,9 +28,9 @@ GET /cars/transactions/_search?search_type=count
 --------------------------------------------------
 // SENSE: 300_Aggregations/40_scope.json
 
-...you can see that the aggregation is in isolation.  In reality, Elasticsearch
-assumes "no query specified" is equivalent to "query all documents". The above
-query is internally translated into:
+You can see that the aggregation is in isolation.  In reality, Elasticsearch
+assumes "no query specified" is equivalent to "query all documents." The preceding
+query is internally translated as follows:
 
 [source,js]
 --------------------------------------------------
@@ -51,16 +51,16 @@ GET /cars/transactions/_search?search_type=count
 // SENSE: 300_Aggregations/40_scope.json
 
 The aggregation always operates in the scope of the query, so an isolated
-aggregation really operates in the scope of ((("match_all query", "isolated aggregations in scope of")))a `match_all` query...that is to say,
+aggregation really operates in the scope of ((("match_all query", "isolated aggregations in scope of")))a `match_all` query--that is to say,
 all documents.
 
 Once armed with the knowledge of scoping, we can start to customize 
 aggregations even further.  All of our previous examples calculated statistics
-about _all_ of the data: top selling cars, average price of all cars, most sales
-per month, etc.
+about _all_ of the data: top-selling cars, average price of all cars, most sales
+per month, and so forth.
 
-With scope, we can ask questions like "How many colors are Ford cars are
-available in?".  We do this by simply adding a query to the request (in this case
+With scope, we can ask questions such as "How many colors are Ford cars are
+available in?"  We do this by simply adding a query to the request (in this case
 a `match` query):
 
 [source,js]
@@ -82,7 +82,7 @@ GET /cars/transactions/_search  <1>
 }
 --------------------------------------------------
 // SENSE: 300_Aggregations/40_scope.json
-<1> We are omitting `search_type=count` so((("search_type", "count"))) that search hits are returned too
+<1> We are omitting `search_type=count` so((("search_type", "count"))) that search hits are returned too.
 
 By omitting the `search_type=count` this time, we can see both the search
 results and the aggregation results:
@@ -135,7 +135,7 @@ This may seem trivial, but it is the key to advanced and powerful dashboards.
 You can transform any static dashboard into a real-time data exploration device
 by adding a search bar.((("dashboards", "adding a search bar")))  This allows the user to search for terms and see all
 of the graphs (which are powered by aggregations, and thus scoped to the query)
-update in real-time.  Try that with Hadoop!
+update in real time.  Try that with Hadoop!
 
 //<TODO> Maybe add two screenshots of a Kibana dashboard that changes considerably
 
@@ -143,17 +143,17 @@ update in real-time.  Try that with Hadoop!
 === Global Bucket
 
 You'll often want your aggregation to be scoped to your query.  But sometimes
-you'll want to search for some subset of data, but aggregate across _all_ of
+you'll want to search for a subset of data, but aggregate across _all_ of
 your data.((("aggregations", "scoping", "global bucket")))((("scope", "scoping aggregations", "using a global bucket")))
 
-For example, say you want to know the average price for Ford cars compared to the
+For example, say you want to know the average price of Ford cars compared to the
 average price of _all_ cars. We can use a regular aggregation (scoped to the query) 
 to get the first piece of information.  The second piece of information can be 
 obtained by using((("buckets", "global")))((("global bucket"))) a `global` bucket.
 
-The global bucket will contain _all_ of your documents, regardless of the query 
+The +global+ bucket will contain _all_ of your documents, regardless of the query 
 scope; it bypasses the scope completely.  Because it is a bucket, you can nest
-aggregations inside of it like normal:
+aggregations inside it as usual:
 
 [source,js]
 --------------------------------------------------
@@ -181,19 +181,19 @@ GET /cars/transactions/_search?search_type=count
 }
 --------------------------------------------------
 // SENSE: 300_Aggregations/40_scope.json
-<1> This aggregation operates in the query scope (e.g. all docs matching "ford")
-<2> The `global` bucket has no parameters
-<3> This aggregation operates on the all documents, regardless of the make
+<1> This aggregation operates in the query scope (for example, all docs matching +ford+)
+<2> The `global` bucket has no parameters.
+<3> This aggregation operates on the all documents, regardless of the make.
 
 
-The first `avg` metric calculates is based on all documents that fall under the
-query scope -- all "ford" cars.  The second `avg` metric is nested under a 
+The +single_avg_price+ metric calculation is based on all documents that fall under the
+query scope--all +ford+ cars.  The +avg_price+ metric is nested under a 
 `global` bucket, which means it ignores scoping entirely and calculates on 
 all the documents.  The average returned for that aggregation represents
 the average price of all cars.
 
 If you've made it this far in the book, you'll recognize the mantra: use a filter
 wherever you can.  The same applies to aggregations, and in the next chapter
-we'll show you how to filter an aggregation instead of just limiting the query
+we show you how to filter an aggregation instead of just limiting the query
 scope.
 
