@@ -1,11 +1,11 @@
 [[geo-bounding-box]]
-=== geo_bounding_box filter
+=== geo_bounding_box Filter
 
-This is by far the most performant geo-filter because its calculation is very
+This is by far the most efficient geo-filter because its calculation is very
 simple. ((("geo_bounding_box filter")))((("filtering", "by geo-points", "geo_bounding_box filter"))) You provide it with the `top`, `bottom`, `left`, and `right`
-coordinates of a rectangle and all it does is compare the latitude with the
+coordinates of a rectangle, and all it does is compare the latitude with the
 left and right coordinates, and the longitude with the top and bottom
-coordinates.
+coordinates:
 
 [source,json]
 ---------------------
@@ -34,14 +34,14 @@ GET /attractions/restaurant/_search
 <1> These coordinates can also be specified as `bottom_left` and `top_right`.
 
 [[optimize-bounding-box]]
-==== Optimizing bounding boxes
+==== Optimizing Bounding Boxes
 
-The `geo_bounding_box` is the one geo-filter which doesn't require all
-geo-points to be loaded into memory.((("geo_bounding_box filter", "optimization")))  Because all it has to do is to check
+The `geo_bounding_box` is the one geo-filter that doesn't require all
+geo-points to be loaded into memory.((("geo_bounding_box filter", "optimization")))  Because all it has to do is check
 whether the `lat` and `lon` values fall within the specified ranges, it can
 use the inverted index to do a ((("range filters")))glorified `range` filter.
 
-In order to use this optimization, the `geo_point` field ((("latitude/longitude pairs", "geo-point fields mapped to index lat/lon values separately")))must be mapped to
+To use this optimization, the `geo_point` field ((("latitude/longitude pairs", "geo-point fields mapped to index lat/lon values separately")))must be mapped to
 index the `lat` and `lon` values separately:
 
 [source,json]
@@ -98,6 +98,6 @@ GET /attractions/restaurant/_search
     `memory`) tells Elasticsearch to use the inverted index for this filter.
 
 CAUTION: While a `geo_point` field can contain multiple geo-points, the
-`lat_lon` optimization can only be used on fields which contain a single
+`lat_lon` optimization can be used only on fields that contain a single
 geo-point.
 

@@ -1,5 +1,5 @@
 [[geo-distance]]
-=== geo_distance filter
+=== geo_distance Filter
 
 The `geo_distance` filter draws a circle around the specified location and
 finds all documents((("geo_distance filter")))((("filtering", "by geo-points", "geo_distance filter"))) that have a geo-point within that circle:
@@ -27,12 +27,12 @@ GET /attractions/restaurant/_search
     See http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/common-options.html#distance-units[Distance Units] for
     a list of the accepted units.
 <2> The central point can be specified as a string, an array, or (as in this
-    example) as an object. See <<lat-lon-formats>>.
+    example) an object. See <<lat-lon-formats>>.
 
 A geo-distance calculation is expensive.  To optimize performance,
 Elasticsearch draws a box around the circle and first uses the less expensive
-bounding-box calculation to exclude as many documents as it can.  It only runs
-the geo-distance calculation on those points that fall within the bounding
+bounding-box calculation to exclude as many documents as it can.  It runs
+the geo-distance calculation only on those points that fall within the bounding
 box.
 
 TIP: Do your users really require an accurate circular filter to be applied to
@@ -40,10 +40,10 @@ their results?((("geo_bounding_box filter", "using instead of geo_distance"))) U
 more efficient than geo-distance and will usually serve their purposes just as
 well.
 
-==== Faster geo-distance calculations
+==== Faster Geo-Distance Calculations
 
-The distance between two points can be calculated using different algorithms,
-which trade performance for accuracy.((("distance", "calculating")))((("geo_distance filter", "faster geo_distance calculations")))
+The distance between two points can be calculated using algorithms,
+which trade performance for accuracy:((("distance", "calculating")))((("geo_distance filter", "faster geo_distance calculations")))
 
 `arc`::
 
@@ -54,7 +54,7 @@ as a sphere.((("arc distance calculation")))  Accuracy is still limited because 
 
 The `plane` calculation, which((("plane distance calculation"))) treats the world as if it were flat, is faster
 but less accurate. It is most accurate at the equator and becomes less
-accurate towards the poles.
+accurate toward the poles.
 
 `sloppy_arc`::
 
@@ -88,19 +88,18 @@ GET /attractions/restaurant/_search
 ---------------------
 <1> Use the faster but less accurate `plane` calculation.
 
-TIP: Will your users really care if a restaurant is a few metres outside of
-their specified radius? While some geo applications require great accuracy,
+TIP: Will your users really care if a restaurant is a few meters outside their specified radius? While some geo applications require great accuracy,
 less accurate but faster calculations will suit the majority of use cases just
 fine.
 
 [[geo-distance-range]]
-==== geo_distance_range filter
+==== geo_distance_range Filter
 
 The only difference between the `geo_distance` and `geo_distance_range`
 filters((("geo_distance_range filter")))((("filtering", "by geo-points", "geo_distance_range filter")))((("range filters", "geo_distance_range filter"))) is that the latter has a doughnut shape and excludes documents within
 the central hole.
 
-Instead of specifying a single `distance` from the centre, you specify a
+Instead of specifying a single `distance` from the center, you specify a
 minimum distance (with `gt` or `gte`)  and maximum distance (with `lt` or
 `lte`), just like a `range` filter:
 
@@ -124,7 +123,7 @@ GET /attractions/restaurant/_search
   }
 }
 ---------------------
-<1> Matches locations which are at least `1km` from the centre, and less than
-    `2km` from the centre.
+<1> Matches locations that are at least `1km` from the center, and less than
+    `2km` from the center.
 
 

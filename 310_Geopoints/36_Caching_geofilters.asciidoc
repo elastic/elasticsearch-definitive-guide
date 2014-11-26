@@ -3,12 +3,12 @@
 
 The results of geo-filters are not cached by default,((("caching", "of geo-filters")))((("filters", "caching geo-filters")))((("geo-filters, caching"))) for two reasons:
 
-1.  Geo-filters are usually used to find entities that are near to a user's
-    current location. The problem is that users move, and that no two users
+* Geo-filters are usually used to find entities that are near to a user's
+    current location. The problem is that users move, and no two users
     are in exactly the same location.  A cached filter would have little
     chance of being reused.
 
-2.  Filters are cached as bitsets which represent all documents in a
+* Filters are cached as bitsets that represent all documents in a
     <<dynamic-indices,segment>>.  Imagine that our query excludes all
     documents but one in a particular segment.  An uncached geo-filter just
     needs to check the one remaining document, but a cached geo-filter would
@@ -17,14 +17,13 @@ The results of geo-filters are not cached by default,((("caching", "of geo-filte
 That said, caching can be used to good effect with geo-filters.  Imagine that
 your index contains restaurants from all over the United States. A user in New
 York is not interested in restaurants in San Francisco.  We can treat New York
-as a ``hot spot'' and draw a big bounding box around the city and neighbouring
+as a _hot spot_ and draw a big bounding box around the city and neighboring
 areas.
 
 This `geo_bounding_box` filter can be cached and((("geo_bounding_box filter", "caching and reusing"))) reused whenever we have a
 user within the city limits of New York.  It will exclude all restaurants
-from the rest of the country. We can then use an uncached more specific
-`geo_bounding_box` or `geo_distance` filter((("geo_distance filter"))) to narrow the remaining results
-down to those which are close to the user.
+from the rest of the country. We can then use an uncached, more specific
+`geo_bounding_box` or `geo_distance` filter((("geo_distance filter"))) to narrow the remaining results to those that are close to the user:
 
 [source,json]
 ---------------------
@@ -69,7 +68,7 @@ GET /attractions/restaurant/_search
 ---------------------
 <1> The cached bounding box filter reduces all results down to those in the
     greater New York area.
-<2> The more costly `geo_distance` filter narrows down the results to those
+<2> The more costly `geo_distance` filter narrows the results to those
     within 1km of the user.
 
 

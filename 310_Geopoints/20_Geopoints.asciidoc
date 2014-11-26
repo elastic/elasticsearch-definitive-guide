@@ -1,7 +1,7 @@
 [[geopoints]]
-== Geo-points
+== Geo-Points
 
-A geo-point is a single latitude-longitude point on the Earth's surface.((("geo-points"))) They
+A _geo-point_ is a single latitude/longitude point on the Earth's surface.((("geo-points"))) Geo-points
 can be used to calculate distance from a point, to determine whether a point
 falls within a bounding box, or in aggregations.
 
@@ -30,7 +30,7 @@ PUT /attractions
 
 [[lat-lon-formats]]
 [float]
-=== Lat/Lon formats
+=== Lat/Lon Formats
 
 With the `location` field defined as a `geo_point`, we can proceed to index
 documents containing latitude/longitude pairs,((("geo-points", "location fields defined as, lat/lon formats")))((("location field", "defined as geo-point")))((("latitude/longitude pairs", "lat/lon formats for geo-points")))((("arrays", "geo-point, lon/lat format")))((("strings", "geo-point, lat/lon format")))((("objects", "geo-point, lat/lon format"))) which can be formatted as
@@ -67,15 +67,14 @@ PUT /attractions/restaurant/3
 ========================
 
 Everybody gets caught at least once: string geo-points are
-`"latitude,longitude"`, while array geo-points are `[longitude,latitude]` --
-the opposite order!
+`"latitude,longitude"`, while array geo-points are `[longitude,latitude]`&#x2014;the opposite order!
 
 Originally, both strings and arrays in Elasticsearch used latitude followed by
 longitude. However, it was decided early on to switch the order for arrays in
 order to conform with GeoJSON.
 
 The result is a bear trap that captures all unsuspecting users on their
-journey to full geo-location nirvana.
+journey to full geolocation nirvana.
 
 ========================
 

@@ -1,9 +1,9 @@
 [[sorting-by-distance]]
-=== Sorting by distance
+=== Sorting by Distance
 
 Search results can be sorted by distance((("sorting", "by distance")))((("distance", "sorting search results by")))((("geo-points", "distance between, sorting search results by"))) from a point:
 
-TIP: While you *can* sort by distance, <<scoring-by-distance>> is usually a
+TIP: While you _can_ sort by distance, <<scoring-by-distance>> is usually a
 better solution.
 
 [source,json]
@@ -50,7 +50,7 @@ GET /attractions/restaurant/_search
 <3> Use the faster but less accurate `plane` calculation.
 
 You may ask yourself: why do we specify the distance `unit`? For sorting, it
-doesn't matter whether we compare distances in miles, kilometres or light
+doesn't matter whether we compare distances in miles, kilometers, or light
 years.  The reason is that the actual value used for sorting is returned with
 each result, in the `sort` element:
 
@@ -82,29 +82,28 @@ You can set the `unit` to return these values in whatever form makes sense for
 your application.
 
 [TIP]
-.Multi-location sorting
 ==================================================
 
 Geo-distance sorting can also handle multiple geo-points, both in the document
 and in the sort parameters.  Use the `sort_mode` to specify whether it should
 use the `min`, `max`, or `avg` distance between each combination of locations.
-This can be used to return ``friends nearest to my work and home locations''.
+This can be used to return ``friends nearest to my work and home locations.''
 
 ==================================================
 
 [[scoring-by-distance]]
-==== Scoring by distance
+==== Scoring by Distance
 
 It may be that distance is the only important factor in deciding the order in
 which results are returned, but more frequently we need to combine distance
-with other factors, such as full text relevance, popularity, and price.
+with other factors, such as full-text relevance, popularity, and price.
 
-In these situations we should reach for the
-<<function-score-query,`function_score` query>> which allows us to blend all
+In these situations, we should reach for the
+<<function-score-query,`function_score` query>> that allows us to blend all
 of these factors into an overall score.  See <<decay-functions>> for an
-example which uses geo-distance to influence scoring.
+example that uses geo-distance to influence scoring.
 
 The other drawback of sorting by distance is performance: the distance has to
 be calculated for all matching documents.  The `function_score` query, on the
 other hand, can be executed during the <<rescore-api,`rescore` phase>>,
-limiting the number of calculations to just the top _N_  results.
+limiting the number of calculations to just the top _n_ results.
