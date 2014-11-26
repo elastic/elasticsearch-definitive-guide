@@ -71,7 +71,7 @@ lowercase. It would produce:
 
 Language analyzers::
 
-Language-specific analyzers are available for many languages. They are able to
+Language-specific analyzers are <<analysis-lang-analyzer,available for many languages>>. They are able to
 take the peculiarities of the specified language into account. For instance,
 the `english` analyzer comes with a set of English stopwords -- common words
 like `and` or `the` which don't have much impact on relevance -- which it
