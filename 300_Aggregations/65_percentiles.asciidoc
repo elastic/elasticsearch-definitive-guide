@@ -161,7 +161,7 @@ GET /website/logs/_search?search_type=count
 }
 ----
 // SENSE: 300_Aggregations/65_percentiles.json
-<1> First separate we separate our latencies into buckets depending on their zone
+<1> First we separate our latencies into buckets depending on their zone
 <2> Then calculate the percentiles per zone
 <3> The "percents" parameter accepts an array of percentiles that we want returned,
 since we are only interested in slow latencies
