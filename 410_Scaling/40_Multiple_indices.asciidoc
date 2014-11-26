@@ -71,8 +71,8 @@ to point only to the new index.
 A document `GET` request, like((("HTTP methods", "GET")))((("GET method"))) an indexing request, can only target one index.
 This makes retrieving a document by ID a bit more complicated in this
 scenario.  Instead, run a search request with the
-{ref}query-dsl-ids-query.html[`ids` query], or do a((("mget (multi-get) API")))
-{ref}docs-multi-get.html[`multi-get`] request on `tweets_1` and `tweets_2`.
+http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-ids-query.html[`ids` query], or do a((("mget (multi-get) API")))
+http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/docs-multi-get.html[`multi-get`] request on `tweets_1` and `tweets_2`.
 
 ==================================================
 

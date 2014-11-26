@@ -52,7 +52,7 @@ PUT /my_index/blogpost/_bulk
 
 Now we can run a query looking for blogposts about ``relationships'', by users
 called ``John'', and group the results by user, thanks to the
-{ref}search-aggregations-metrics-top-hits-aggregation.html[`top_hits` aggregation]:
+http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-aggregations-metrics-top-hits-aggregation.html[`top_hits` aggregation]:
 
 [source,json]
 --------------------------------

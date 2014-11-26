@@ -30,5 +30,5 @@ PUT /my_index
 
 That's all that is required.  Any `comments` objects would now be indexed as
 separate nested documents. See the
-{ref}mapping-nested-type.html[`nested` type reference docs] for more.
+http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping-nested-type.html[`nested` type reference docs] for more.
 

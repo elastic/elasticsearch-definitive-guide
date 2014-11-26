@@ -2,7 +2,7 @@
 === Children aggregation
 
 Parent-child supports a
-{ref}search-aggregations-bucket-children-aggregation.html[`children`
+http://www.elasticsearch.org/guide/en/elasticsearch/reference/1.4/search-aggregations-bucket-children-aggregation.html[`children`
 aggregation]  as ((("aggregations", "children aggregation")))((("children aggregation")))((("parent-child relationship", "children aggregation")))a direct analog to the `nested` aggregation discussed in
 <<nested-aggregation>>.  A parent aggregation (the equivalent of
 `reverse_nested`) is not supported.
