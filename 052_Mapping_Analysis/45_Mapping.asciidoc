@@ -282,13 +282,16 @@ name. Compare the output of these two requests:
 [source,js]
 --------------------------------------------------
 GET /gb/_analyze?field=tweet
-Black-cats <1>
+{
+  "text" : "Black-cats"
+}
 
 GET /gb/_analyze?field=tag
-Black-cats <1>
+{
+  "text" : "Black-cats"
+}
 --------------------------------------------------
 // SENSE: 052_Mapping_Analysis/45_Mapping.json
-<1> The text we want to analyze is passed in the body.
 
 The `tweet` field produces the two terms `"black"` and `"cat"`, while the
 `tag` field produces the single term `"Black-cats"`. In other words, our
