@@ -96,19 +96,17 @@ GET /_search?timeout=10ms
 
 
 Elasticsearch will return any results that it has managed to gather from
-shards which responded before the request timed out.
+each shard before the requests timed out on the shards.
 
 .Timeout is not a circuit breaker
 [WARNING]
 ================================================
 
-It should be noted that this `timeout` does not halt the execution of the
-query, it merely tells the coordinating node to return the results collected
-_so far_ and to close the connection.  In the background, other shards may
-still be processing the query even though results have been sent.
-
-Use the timeout because it is important to your SLA, not because you want
-to abort the execution of long running queries.
+The `timeout` parameter is only checked during collection of documents. 
+Operations that execute before document collection or during the fetch phase are 
+not affected by the timeout. This also means that the timeout is only checked if documents actually match. 
+Queries with few matching documents might not respect the timeout at all.
+The current time from which the elapsed time is computed is only sampled every 200ms so a request will never timeout before 200ms.
 
 ================================================
 
