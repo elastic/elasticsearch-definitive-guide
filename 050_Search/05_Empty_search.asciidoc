@@ -96,7 +96,7 @@ GET /_search?timeout=10ms
 
 
 Elasticsearch will return any results that it has managed to gather from
-shards that responded before the request timed out.
+each shard before the requests timed out.
 
 [WARNING]
 ================================================
