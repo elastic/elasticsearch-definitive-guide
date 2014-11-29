@@ -127,8 +127,8 @@ the pattern `"address.*.name"` would match a field like this:
 [source,js]
 --------------------------------------------------
 {
-    "address":
-        "city":
+    "address": {
+        "city": {
             "name": "New York"
         }
     }
