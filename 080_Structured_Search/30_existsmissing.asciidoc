@@ -20,7 +20,7 @@ can't!  An inverted index is simply a list of tokens and the documents that
 contain them.  If a field doesn't exist, it doesn't hold any tokens, which
 means it won't be represented in an inverted index data structure.
 
-Ultimately, this((("strings", "empty")))((("arrays", "empty"))) means that a `null`, `""` (an empty string), `[]` (an empty
+Ultimately, this((("strings", "empty")))((("arrays", "empty"))) means that a `null`, `[]` (an empty
 array), and `[null]` are all equivalent. They simply don't exist in the
 inverted index!
 
