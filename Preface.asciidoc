@@ -117,40 +117,95 @@ are more standalone and can be referred to as needed.
 
 This book is divided into seven parts:
 
-*  Chapters pass:[<a href="#intro">1</a>] through pass:[<a href="#inside-a-shard">11</a>] provide an introduction to Elasticsearch. They
+ifndef::es_build[]
+
+*  Chapters pass:[<a href="#intro">1</a>] through pass:[<a href="#inside-a-shard">11</a>]
+   provide an introduction to Elasticsearch. They
    explain how to get your data in and out of Elasticsearch, how Elasticsearch
    interprets the data in your documents, how basic search works, and how to
    manage indices. By the end of this section, you will already be able to
-   integrate your application with Elasticsearch. Chapters pass:[<a href="#distributed-cluster">2</a>], pass:[<a href="#distributed-docs">4</a>], pass:[<a href="#distributed-search">9</a>], and pass:[<a href="#inside-a-shard">11</a>] are
-   supplemental chapters that provide more insight into the distributed
+   integrate your application with Elasticsearch. Chapters pass:[<a href="#distributed-cluster">2</a>], pass:[<a href="#distributed-docs">4</a>], pass:[<a href="#distributed-search">9</a>], and pass:[<a href="#inside-a-shard">11</a>]
+   are supplemental chapters that provide more insight into the distributed
    processes at work, but are not required reading.
 
-*  Chapters pass:[<a href="#structured-search">12</a>] through pass:[<a href="#controlling-relevance">17</a>] offer a deep dive into search--how to index and
+*  Chapters pass:[<a href="#structured-search">12</a>] through pass:[<a href="#controlling-relevance">17</a>]
+   offer a deep dive into search--how to index and
    query your data to allow  you to take advantage of more-advanced concepts
    such as word proximity, and partial matching. You will understand how
    relevance works and how to control it to ensure that the best results are
    on the first page.
 
-*  Chapters pass:[<a href="#language-intro">18</a>] through pass:[<a href="#fuzzy-matching">23</a>] tackle the thorny subject of dealing with human
+*  Chapters pass:[<a href="#language-intro">18</a>] through pass:[<a href="#fuzzy-matching">23</a>]
+   tackle the thorny subject of dealing with human
    language through effective use of analyzers and queries. We start with
    an easy approach to language analysis before diving into the complexities
    of language, alphabets, and sorting. We cover stemming, stopwords, synonyms,
    and fuzzy matching.
 
-*  Chapters pass:[<a href="#_high_level_concepts">24</a>] through pass:[<a href="#_controlling_memory_use_and_latency">34</a>] discuss aggregations and analytics--ways to
-   summarize and group your data to show overall trends.
+*  Chapters pass:[<a href="#aggs-high-level">24</a>] through pass:[<a href="#controlling-memory">34</a>]
+   discuss aggregations and analytics--ways to summarize and group your data to show overall trends.
 
-*  Chapters pass:[<a href="#_closing_thoughts">35</a>] through pass:[<a href="#geo-aggs">38</a>] present the two approaches to geolocation
+*  Chapters pass:[<a href="#geopoints">35</a>] through pass:[<a href="#geo-shapes">38</a>] CHECK CHAPTERS HERE
+   present the two approaches to geolocation
    supported by Elasticsearch: lat/lon geo-points, and complex geo-shapes.
 
-*  Chapters pass:[<a href="#geo-shapes">39</a>] through pass:[<a href="#parent-child">42</a>] talk about how to model your data to work
+*  Chapters pass:[<a href="#relations">39</a>] through pass:[<a href="#scale">42</a>] CHECK CHAPTERS HERE
+   talk about how to model your data to work
    most efficiently with Elasticsearch.  Representing relationships
    between entities is not as easy in a search engine as it is in
    a relational database, which has been designed for that purpose.
    These chapters also explain how to suit your index design to
    match the flow of data through your system.
 
-*  Finally, Chapters pass:[<a href="#scale">43</a>] through pass:[<a href="#cluster-admin">44</a>] discuss moving to production: the important configurations, what to monitor, and how to diagnose and prevent problems.
+*  Finally, Chapters pass:[<a href="#cluster-admin">43</a>] through pass:[<a href="#post_deploy">44</a>] CHECK CHAPTERS HERE
+   discuss moving to production: the important configurations, what to monitor, and how to diagnose and prevent problems.
+
+endif::es_build[]
+
+ifdef::es_build[]
+
+*  Chapters <<intro>> through <<inside-a-shard>> provide an introduction to Elasticsearch. They
+   explain how to get your data in and out of Elasticsearch, how Elasticsearch
+   interprets the data in your documents, how basic search works, and how to
+   manage indices. By the end of this section, you will already be able to
+   integrate your application with Elasticsearch. Chapters
+   <<distributed-cluster>>, <<distributed-docs>>, <<distributed-search>>, and <<inside-a-shard>>
+   are supplemental chapters that provide more insight into the distributed
+   processes at work, but are not required reading.
+
+*  Chapters <<structured-search>> through <<controlling-relevance>>
+   offer a deep dive into search--how to index and
+   query your data to allow  you to take advantage of more-advanced concepts
+   such as word proximity, and partial matching. You will understand how
+   relevance works and how to control it to ensure that the best results are
+   on the first page.
+
+*  Chapters <<language-intro>> through <<fuzzy-matching>>
+   tackle the thorny subject of dealing with human
+   language through effective use of analyzers and queries. We start with
+   an easy approach to language analysis before diving into the complexities
+   of language, alphabets, and sorting. We cover stemming, stopwords, synonyms,
+   and fuzzy matching.
+
+*  Chapters <<aggs-high-level>> through <<controlling-memory>>
+   discuss aggregations and analytics--ways to summarize and group your data to show overall trends.
+
+*  Chapters <<geopoints>> through <<geo-shapes>>
+   present the two approaches to geolocation
+   supported by Elasticsearch: lat/lon geo-points, and complex geo-shapes.
+
+*  Chapters <<relations>> through <<scale>>
+   talk about how to model your data to work
+   most efficiently with Elasticsearch.  Representing relationships
+   between entities is not as easy in a search engine as it is in
+   a relational database, which has been designed for that purpose.
+   These chapters also explain how to suit your index design to
+   match the flow of data through your system.
+
+*  Finally, Chapters <<cluster-admin>> through <<post_deploy>>
+   discuss moving to production: the important configurations, what to monitor, and how to diagnose and prevent problems.
+
+endif::es_build[]
 
 There are three topics that we do not cover in this book, because they are evolving rapidly and anything we
 write will soon be out-of-date:
@@ -197,10 +252,19 @@ Do not edit this section.
 
 This book is here to help you get your job done. In general, if example code is offered with this book, you may use it in your programs and documentation. You do not need to contact us for permission unless you’re reproducing a significant portion of the code. For example, writing a program that uses several chunks of code from this book does not require permission. Selling or distributing a CD-ROM of examples from O’Reilly books does require permission. Answering a question by citing this book and quoting example code does not require permission. Incorporating a significant amount of example code from this book into your product’s documentation does require permission.
 
-We appreciate, but do not require, attribution. An attribution usually includes the title, author, publisher, and ISBN. For example: “_Elasticsearch: The Definitive Guide_ by Clinton Gormley and Zachary Tony (O’Reilly). Copyright 2014 Elasticsearch BV, 978-0-596-xxxx-x.”
+We appreciate, but do not require, attribution. An attribution usually includes the title, author, publisher, and ISBN. For example: ``_Elasticsearch: The Definitive Guide_ by Clinton Gormley and Zachary Tony (O’Reilly). Copyright 2014 Elasticsearch BV, 978-0-596-xxxx-x.''
 
-If you feel your use of code examples falls outside fair use or the permission given above, feel free to contact us at pass:[<a class="email" href="mailto:permissions@oreilly.com"><em>permissions@oreilly.com</em></a>].
+ifndef::es_build[]
+If you feel your use of code examples falls outside fair use or the permission given above, feel free to contact us at
+pass:[<a class="email" href="mailto:permissions@oreilly.com"><em>permissions@oreilly.com</em></a>].
+endif::es_build[]
 
+ifdef::es_build[]
+If you feel your use of code examples falls outside fair use or the permission given above, feel free to contact us at
+mailto:permissions@oreilly.com[].
+endif::es_build[]
+
+ifndef::es_build[]
 === Safari® Books Online
 ////
 Do not edit this section.
@@ -251,6 +315,8 @@ Find us on Facebook: link:$$http://facebook.com/oreilly$$[]
 Follow us on Twitter: link:$$http://twitter.com/oreillymedia$$[]
 
 Watch us on YouTube: link:$$http://www.youtube.com/oreillymedia$$[]
+
+endif::es_build[]
 
 === Acknowledgments
 
