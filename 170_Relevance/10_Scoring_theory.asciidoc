@@ -237,7 +237,7 @@ vector&#x2014;`[2,5]`&#x2014;as a line on a graph starting at point (0,0) and
 ending at point (2,5), as shown in <<img-vector-query>>.
 
 [[img-vector-query]]
-.A two-dimensional query vector for "happy hippopotamus" represented
+.A two-dimensional query vector for ``happy hippopotamus'' represented
 image::images/elas_17in01.png["The query vector plotted on a graph"]
 
 Now, imagine we have three documents:
@@ -255,7 +255,7 @@ document, and plot these vectors on the same graph, as shown in <<img-vector-doc
 * Document 3: `(happy,hippopotamus)`&#x2014;`[2,5]`
 
 [[img-vector-docs]]
-.Query and document vectors for "happy hippopotamus"
+.Query and document vectors for ``happy hippopotamus''
 image::images/elas_17in02.png["The query and document vectors plotted on a graph"]
 
 The nice thing about vectors is that they can be compared. By measuring the
