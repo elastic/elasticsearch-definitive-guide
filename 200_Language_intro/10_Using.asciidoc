@@ -79,7 +79,7 @@ PUT /my_index/blog/1
 PUT /my_index/blog/2
 { "title": "I'm not happy about my fox problem" }
 
-GET /_search
+POST /_search
 {
   "query": {
     "multi_match": {
