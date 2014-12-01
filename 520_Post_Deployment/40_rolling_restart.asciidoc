@@ -47,20 +47,27 @@ POST /_cluster/nodes/_local/_shutdown
 
 4. Perform maintenance/upgrade
 5. Restart node, confirm that it joins the cluster
-6. Repeat 3-5 for the rest of your nodes
-7. Re-enable shard allocation using:
+6. Re-enable shard allocation with:
 +
 [source,js]
 ----
 PUT /_cluster/settings
 {
     "transient" : {
-        "cluster.routing.allocation.enable" : "all"
+        "cluster.routing.allocation.enable": "all"
     }
 }
 ----
+
+7. Wait for the cluster to be green. You can check the cluster status with:
 +
+[source,js]
+----
+/_cat/health
+----
+
+8. Repeat 2-7 for the rest of your nodes
+
 Shard re-balancing may take some time.  At this point you are safe to resume
 indexing (if you had previously stopped), but waiting until the cluster is fully
 balanced before resuming indexing will help speed up the process
-
