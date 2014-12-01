@@ -177,9 +177,9 @@ image::images/elas_29in01.png["Line chart of cars sold per month"]
 
 === Extended Example
 
-Just like we've seen a dozen times already, buckets can be nested in buckets for
-more sophisticated behavior.((("buckets", "nested in other buckets", "extended example")))((("aggregations", "extended example")))  For illustration, we'll build an aggregation
-which shows the total sum of prices for all makes, listed by quarter.  Let's also
+Just as we've seen a dozen times already, buckets can be nested in buckets for
+more-sophisticated behavior.((("buckets", "nested in other buckets", "extended example")))((("aggregations", "extended example")))  For illustration, we'll build an aggregation
+that shows the total sum of prices for all makes, listed by quarter.  Let's also
 calculate the sum of prices per individual make per quarter, so we can see
 which car type is bringing in the most money to our business:
 
@@ -219,11 +219,11 @@ GET /cars/transactions/_search?search_type=count
 }
 --------------------------------------------------
 // SENSE: 300_Aggregations/35_date_histogram.json
-<1> Note that we changed the interval from `month` to `quarter`
-<2> Calculate the sum per make
-<3> And the total sum of all makes combined together
+<1> Note that we changed the interval from `month` to `quarter`.
+<2> Calculate the sum per make.
+<3> And the total sum of all makes combined together.
 
-Which returns a (heavily truncated) response:
+This returns a (heavily truncated) response:
 
 [source,js]
 --------------------------------------------------
@@ -263,12 +263,12 @@ Which returns a (heavily truncated) response:
 --------------------------------------------------
 
 We can take this response and put it into a graph, ((("line charts, building from aggregations")))((("bar charts", "building from aggregations")))showing a line chart for
-total sale price, and a bar chart for each individual make (per quarter):
+total sale price, and a bar chart for each individual make (per quarter), as shown in <<date-histo-ts2>>.
 
 [[date-histo-ts2]]
 image::images/elas_29in02.png["Line chart of cars sold per month"]
 
-=== The sky's the limit
+=== The Sky's the Limit
 
 These were obviously simple examples, but the sky really is the limit
 when it comes to charting aggregations. ((("dashboards", "building from aggregations")))((("Kibana, dashboard in"))) For example, here is a dashboard in
@@ -277,10 +277,10 @@ Kibana built with a variety of aggregations:
 [[kibana-img]]
 image::images/elas_29in03.png["Kibana - a real time analytics dashboard built with aggregations"]
 
-Due to the real-time nature of aggregations, dashboards like this are easy to query,
-manipulate and interact with.  This makes them ideal for non-technical employees
+Because of the real-time nature of aggregations, dashboards like this are easy to query,
+manipulate, and interact with.  This makes them ideal for nontechnical employees
 and analysts who need to analyze the data but cannot build a Hadoop job.
 
-To build powerful dashboards like Kibana, however, you'll likely need to some of
-the more advanced concepts such as scoping, filtering and sorting aggregations.
+To build powerful dashboards like Kibana, however, you'll likely need some of
+the more advanced concepts such as scoping, filtering, and sorting aggregations.
 ((("time, analytics over", startref ="ix_timeanalyze")))
