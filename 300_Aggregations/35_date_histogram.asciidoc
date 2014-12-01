@@ -60,12 +60,12 @@ GET /cars/transactions/_search?search_type=count
 
 Our query has a single aggregation, which builds a bucket
 per month.  This will give us the number of cars sold in each month.  An additional
-format" parameter is provided so that the buckets have "pretty" keys.  Internally,
+`format` parameter is provided so the buckets have "pretty" keys.  Internally,
 dates are simply represented as a numeric value.  This tends to make UI designers
 grumpy, however, so a prettier format can be specified using common date formatting.
 
 The response is both expected and a little surprising (see if you can spot
-the "surprise"):
+the surprise):
 
 [source,js]
 --------------------------------------------------
@@ -115,22 +115,22 @@ the "surprise"):
 --------------------------------------------------
 
 The aggregation is represented in full.  As you can see, we have buckets
-which represent months, a count of docs in each month, and our pretty "key_as_string".
+that represent months, a count of docs in each month, and our pretty `key_as_string`.
 
-=== Returning empty buckets
+=== Returning Empty Buckets
 
 Notice something odd about that last response?
 
 Yep, that's right.((("aggregations", "returning empty buckets")))((("buckets", "empty, returning")))  We are missing a few months!  By default, the `date_histogram`
-(and `histogram` too) only returns buckets which have a non-zero
+(and `histogram` too) returns only buckets that have a nonzero
 document count.
 
 This means your histogram will be a minimal response.  Often, this is not the
-behavior you actually want.  For many applications, you would like to dump the
+behavior you want.  For many applications, you would like to dump the
 response directly into a graphing library without doing any post-processing.
 
-Essentially, we want buckets even if they have a count of zero. There are two
-additional parameters we can set which will provide this behavior:
+Essentially, we want buckets even if they have a count of zero. We can set two
+additional parameters that will provide this behavior:
 
 [source,js]
 --------------------------------------------------
@@ -153,25 +153,24 @@ GET /cars/transactions/_search?search_type=count
 }
 --------------------------------------------------
 // SENSE: 300_Aggregations/35_date_histogram.json
-<1> This parameter forces empty buckets to be returned
-<2> This parameter forces the entire year to be returned
+<1> This parameter forces empty buckets to be returned.
+<2> This parameter forces the entire year to be returned.
 
 The two additional parameters will force the response to return all months in the
 year, regardless of their doc count.((("min_doc_count parameter")))  The `min_doc_count` is very understandable:
 it forces buckets to be returned even if they are empty.
 
 The `extended_bounds` parameter requires a little explanation.((("extended_bounds parameter")))  The `min_doc_count`
-parameter forces empty buckets to be returned, but by default Elasticsearch will
-only return buckets that are between the minimum and maximum value in your data.
+parameter forces empty buckets to be returned, but by default Elasticsearch will return only buckets that are between the minimum and maximum value in your data.
 
-So if your data falls between April and July, you'll only have buckets
-representing those months (empty or otherwise).  To get the full year, we need
+So if your data falls between April and July, you'll have buckets
+representing only those months (empty or otherwise).  To get the full year, we need
 to tell  Elasticsearch that we want buckets even if they fall _before_ the
 minimum value or _after_ the maximum value.
 
 The `extended_bounds` parameter does just that.  Once you add those two settings,
 you'll get a response that is easy to plug straight into your graphing libraries
-and give you a graph like this:
+and give you a graph like <<date-histo-ts1>>:
 
 [[date-histo-ts1]]
 image::images/elas_29in01.png["Line chart of cars sold per month"]
