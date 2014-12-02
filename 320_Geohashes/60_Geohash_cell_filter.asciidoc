@@ -1,9 +1,9 @@
 [[geohash-cell-filter]]
-=== geohash_cell filter
+=== geohash_cell Filter
 
 The `geohash_cell` filter simply translates a `lat/lon` location((("geohash_cell filter")))((("filters", "geohash_cell"))) into a
-geohash with the specified precision and finds all locations which contain
-that geohash -- a very efficient filter indeed.
+geohash with the specified precision and finds all locations that contain
+that geohash--a very efficient filter indeed.
 
 [source,json]
 ----------------------------
