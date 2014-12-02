@@ -1,13 +1,13 @@
 [[geo-bounds-agg]]
-=== geo_bound aggregation
+=== geo_bounds Aggregation
 
-In our <<geohash-grid-agg,previous example>>, we filtered our results using a
+In our <<geohash-grid-agg,previous example>>, we filtered our results by using a
 bounding box that covered the greater New York area.((("aggregations", "geo_bounds")))((("geo_bounds aggregation")))  However, our results
 were all located in downton Manhattan.  When displaying a map for our user, it
-makes sense to zoom in to the area of the map that contains the data -- there
+makes sense to zoom into the area of the map that contains the data; there
 is no point in showing lots of empty space.
 
-The `geo_bounds` aggregation does exactly this -- it calculates the smallest
+The `geo_bounds` aggregation does exactly this: it calculates the smallest
 bounding box that is needed to encapsulate all of the geo-points:
 
 [source,json]
@@ -47,8 +47,9 @@ GET /attractions/restaurant/_search?search_type=count
   }
 }
 ----------------------------
+<1> The `geo_bounds` aggregation will calculate the smallest bounding box required to encapsulate all of the documents matching our query. 
 
-The response now includes a bounding box which we can use to zoom our map:
+The response now includes a bounding box that we can use to zoom our map:
 
 [source,json]
 ----------------------------
@@ -112,7 +113,7 @@ GET /attractions/restaurant/_search?search_type=count
   }
 }
 ----------------------------
-<1> The `cell_bounds` sub-aggregation is calculated for every geohash cell.
+<1> The `cell_bounds` subaggregation is calculated for every geohash cell.
 
 Now the ((("cell_bounds aggregation")))points in each cell have a bounding box:
 
