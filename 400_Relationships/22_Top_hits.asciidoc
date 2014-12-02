@@ -2,9 +2,9 @@
 === Field Collapsing
 
 A common requirement is the need to present search results grouped by a particular
-field. ((("field collapsing")))((("relationships", "field collapsing")))We might want to return the most relevant blogposts *grouped* by the
+field. ((("field collapsing")))((("relationships", "field collapsing")))We might want to return the most relevant blog posts _grouped_ by the
 user's name. ((("terms aggregation")))((("aggregations", "field collapsing"))) Grouping by name implies the need for a `terms` aggregation.  To
-be able to group on the user's *whole* name, the name field should be
+be able to group on the user's _whole_ name, the name field should be
 available in its original `not_analyzed` form, as explained in
 <<aggregations-and-analysis>>:
 
@@ -29,7 +29,7 @@ PUT /my_index/_mapping/blogpost
   }
 }
 --------------------------------
-<1> The `user.name` field will be used for full text search.
+<1> The `user.name` field will be used for full-text search.
 <2> The `user.name.raw` field will be used for grouping with the `terms`
     aggregation.
 
@@ -50,8 +50,8 @@ PUT /my_index/blogpost/_bulk
 {"title":"Relationships are cool","body":"It's not complicated at all...","user":{"id":3,"name":"Alice John"}}
 --------------------------------
 
-Now we can run a query looking for blogposts about ``relationships'', by users
-called ``John'', and group the results by user, thanks to the
+Now we can run a query looking for blog posts about `relationships`, by users
+called `John`, and group the results by user, thanks to the
 http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-aggregations-metrics-top-hits-aggregation.html[`top_hits` aggregation]:
 
 [source,json]
@@ -80,17 +80,17 @@ GET /my_index/blogpost/_search?search_type=count <1>
   }
 }
 --------------------------------
-<1> The blogposts that we are interested in are returned under the
+<1> The blog posts that we are interested in are returned under the
     `blogposts` aggregation, so we can disable the usual search `hits` by
     setting the `search_type=count`.
-<2> The `query` returns blogposts about ``relationships'' by users named ``John''.
+<2> The `query` returns blog posts about `relationships` by users named `John`.
 <3> The `terms` aggregation creates a bucket for each `user.name.raw` value.
 <4> The `top_score` aggregation orders the terms in the `users` aggregation
-    by the top scoring document in each bucket.
-<5> The `top_hits` aggregation returns just the `title` field of the 5 most
-    relevant blogposts for each user.
+    by the top-scoring document in each bucket.
+<5> The `top_hits` aggregation returns just the `title` field of the five most
+    relevant blog posts for each user.
 
-The abbreviated response is shown below:
+The abbreviated response is shown here:
 
 [source,json]
 --------------------------------
