@@ -1,7 +1,7 @@
 [[geo-aggs]]
 == Geo-aggregations
 
-While filtering or scoring results by geolocation is useful,((("geo-aggregations")))((("aggregations", "geo"))) it is often more
+Although filtering or scoring results by geolocation is useful,((("geo-aggregations")))((("aggregations", "geo"))) it is often more
 useful to be able to present information to the user on a map. A search may
 return way too many results to be able to display each geo-point individually,
 but geo-aggregations can be used to cluster geo-points into more manageable
