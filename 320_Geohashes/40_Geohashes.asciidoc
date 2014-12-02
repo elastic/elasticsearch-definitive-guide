@@ -4,7 +4,7 @@
 http://en.wikipedia.org/wiki/Geohash[Geohashes] are a way of encoding
 `lat/lon` points as strings.((("geohashes")))((("latitude/longitude pairs", "encoding lat/lon points as strings with geohashes")))((("strings", "geohash")))  The original intention was to have a
 URL-friendly way of specifying geolocations, but geohashes have turned out to
-be a useful way of indexing geo-points and geo- shapes in databases.
+be a useful way of indexing geo-points and geo-shapes in databases.
 
 Geohashes divide the world up into a grid of 32 cells -- 4 rows and 8 columns
 -- each represented by a letter or number.  The `g` cell covers half of
