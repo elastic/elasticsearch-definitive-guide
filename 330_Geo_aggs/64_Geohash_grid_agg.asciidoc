@@ -83,9 +83,9 @@ The response from the preceding request looks like this:
 ----------------------------
 <1> Each bucket contains the geohash as the `key`.
 
-Again, we didn't specify any sub-aggregations so all we got back was the
-document count, but we could have asked for popular restaurant types, average
-price, etc.
+Again, we didn't specify any subaggregations, so all we got back was the
+document count. We could have asked for popular restaurant types, average
+price, or other details.
 
 TIP: In order to plot these buckets on a map, you will need a library that
 understands how to convert a geohash into the equivalent bounding box or
