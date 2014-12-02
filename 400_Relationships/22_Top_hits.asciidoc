@@ -133,15 +133,15 @@ The abbreviated response is shown here:
 <2> There is a bucket for each user who appeared in the top results.
 <3> Under each user bucket there is a `blogposts.hits` array containing
     the top results for that user.
-<4> The user buckets are sorted by the user's most relevant blogpost.
+<4> The user buckets are sorted by the user's most relevant blog post.
 
 Using the `top_hits` aggregation is the((("top_hits aggregation"))) equivalent of running a query to
-return the names of the users with the most relevant blogposts, then running
-the same query for each user, to get their best blogposts. But it is much more
+return the names of the users with the most relevant blog posts, and then running
+the same query for each user, to get their best blog posts. But it is much more
 efficient.
 
 The top hits returned in each bucket are the result of running a light
-``mini-query'' based on the original main query.  The mini-query supports the
+_mini-query_ based on the original main query.  The mini-query supports the
 usual features that you would expect from search such as highlighting and
 pagination.
 
