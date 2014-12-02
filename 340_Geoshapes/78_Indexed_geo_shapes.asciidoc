@@ -1,16 +1,16 @@
 [[indexed-geo-shapes]]
-=== Querying with indexed shapes
+=== Querying with Indexed Shapes
 
 With shapes that are often used in queries, it can be more convenient to store
 them in the index and to refer to them by name in the query.((("indexed shapes, querying with")))((("geo-shapes", "querying with indexed shapes")))  Take our example
 of central Amsterdam in the previous example.  We could store it as a document
-of type `neighbourhood`.
+of type `neighborhood`.
 
 First, we set up the mapping in the same way as we did for `landmark`:
 
 [source,json]
 -----------------------
-PUT /attractions/_mapping/neighbourhood
+PUT /attractions/_mapping/neighborhood
 {
   "properties": {
     "name": {
@@ -27,7 +27,7 @@ Then we can index a shape for central Amsterdam:
 
 [source,json]
 -----------------------
-PUT /attractions/neighbourhood/central_amsterdam
+PUT /attractions/neighborhood/central_amsterdam
 {
   "name" : "Central Amsterdam",
   "location" : {
@@ -49,7 +49,7 @@ PUT /attractions/neighbourhood/central_amsterdam
 }
 -----------------------
 
-Once indexed, we can refer to this shape by `index`, `type`, and `id` in the
+After the shape is indexed, we can refer to it by `index`, `type`, and `id` in the
 query itself:
 
 [source,json]
@@ -62,7 +62,7 @@ GET /attractions/landmark/_search
         "relation": "within",
         "indexed_shape": { <1>
           "index": "attractions",
-          "type":  "neighbourhood",
+          "type":  "neighborhood",
           "id":    "central_amsterdam",
           "path":  "location"
         }
@@ -77,11 +77,11 @@ GET /attractions/landmark/_search
 
 There is nothing special about the shape for central Amsterdam.  We could
 equally use our existing shape for Dam Square in queries.  This query finds
-neighbourhoods which intersect with Dam Square:
+neighborhoods that intersect with Dam Square:
 
 [source,json]
 -----------------------
-GET /attractions/neighbourhood/_search
+GET /attractions/neighborhood/_search
 {
   "query": {
     "geo_shape": {
