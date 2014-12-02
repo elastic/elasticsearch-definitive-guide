@@ -1,19 +1,19 @@
 [[relations]]
-== Handling relationships
+== Handling Relationships
 
-In the real world, relationships((("relationships"))) matter: blogposts have comments, bank
+In the real world, relationships((("relationships"))) matter: blog posts have comments, bank
 accounts have transactions, customers have bank accounts, orders have order
-lines, directories have files and sub-directories...
+lines, and directories have files and subdirectories.
 
-Relational databases are specifically designed -- and this will not come as a
-surpise to you -- to manage((("relational databases", "managing relationships"))) relationships:
+Relational databases are specifically designed--and this will not come as a
+surprise to you--to manage((("relational databases", "managing relationships"))) relationships:
 
 *   Each entity (or _row_, in the relational world) can be uniquely identified
     by a _primary key_.((("primary key")))
 
 *   Entities are _normalized_. The data for a unique entity is stored only
     once, and related entities store just its primary key. Changing the data of
-    an entity only has to happen in one place.((("joins", "in relational databases")))
+    an entity has to happen in only one place.((("joins", "in relational databases")))
 
 *   Entities can be joined at query time, allowing for cross-entity search.
 
