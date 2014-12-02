@@ -14,7 +14,7 @@ London and part of Southern England, and `gcpuuz94k` is the entrance to
 Buckingham Palace, accurate to about 5 meters.
 
 In other words, the longer the geohash string, the more accurate it is.  If
-two geohashes share a prefix&#x2014;`gcpuux` and `gcpuuz`&#x2014;then it implies that
+two geohashes share a prefix&#x2014; and `gcpuuz`&#x2014;then it implies that
 they are near each other.  The longer the shared prefix, the closer they
 are.
 
@@ -25,8 +25,8 @@ geohash `u10hbp`, because it falls into the `u` cell, the next top-level cell
 to the east of the `g` cell.
 
 Geo-points can index their associated geohashes automatically, but more
-importantly, they can also index all geohash *prefixes*. Indexing the location
-of the entrance to Buckingham Palace -- latitude `51.501568` and longitude
+important, they can also index all geohash _prefixes_. Indexing the location
+of the entrance to Buckingham Palace--latitude `51.501568` and longitude
 `-0.141257` -- would index all of the geohashes listed in the table below,
 along with  the approximate dimensions of each geohash cell:
 
