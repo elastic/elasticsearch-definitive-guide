@@ -6,13 +6,12 @@ http://en.wikipedia.org/wiki/Geohash[Geohashes] are a way of encoding
 URL-friendly way of specifying geolocations, but geohashes have turned out to
 be a useful way of indexing geo-points and geo-shapes in databases.
 
-Geohashes divide the world up into a grid of 32 cells -- 4 rows and 8 columns
--- each represented by a letter or number.  The `g` cell covers half of
-Greenland, all of Iceland and most of Great Britian. Each cell can be further
+Geohashes divide the world into a grid of 32 cells--4 rows and 8 columns--each represented by a letter or number.  The `g` cell covers half of
+Greenland, all of Iceland, and most of Great Britian. Each cell can be further
 divided into another 32 cells, which can be divided into another 32 cells,
-and so on.  The `gc`, cell covers Ireland and England, `gcp` covers most of
+and so on.  The `gc` cell covers Ireland and England, `gcp` covers most of
 London and part of Southern England, and `gcpuuz94k` is the entrance to
-Buckingham Palace, accurate to about 5 metres.
+Buckingham Palace, accurate to about 5 meters.
 
 In other words, the longer the geohash string, the more accurate it is.  If
 two geohashes share a prefix -- `gcpuux` and `gcpuuz` -- then it implies that
