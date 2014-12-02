@@ -160,25 +160,25 @@ DELETE /fs/lock/_query
 <1> The `refresh` call ensures that all `lock` documents are visible to
     the `delete-by-query` request.
 
-Document level locking enables fine-grained access control, but creating lock
+Document-level locking enables fine-grained access control, but creating lock
 files for millions of documents can be expensive.  In certain scenarios, such
 as this example with directory trees, it is possible to achieve fine-grained
 locking with much less work.
 
 [[tree-locking]]
-==== Tree locking
+==== Tree Locking
 
 Rather than locking every involved document, as in the previous option, we
 could lock just part of the directory tree.((("locking", "tree locking")))  We will need exclusive access
-to the file or directory which we want to rename, which can be achieved with an
-``exclusive lock'' document:
+to the file or directory that we want to rename, which can be achieved with an
+_exclusive lock_ document:
 
 [source,json]
 --------------------------
 { "lock_type": "exclusive" }
 --------------------------
 
-And we need shared locks on any parent directories, with a ``shared lock''
+And we need shared locks on any parent directories, with a _shared lock_
 document:
 
 [source,json]
@@ -188,7 +188,7 @@ document:
   "lock_count": 1 <1>
 }
 --------------------------
-<1> The `lock_count` records how many processes hold a shared lock.
+<1> The `lock_count` records the number of processes that hold a shared lock.
 
 A process that wants to rename `/clinton/projects/elasticsearch/README.txt`
 needs an _exclusive_ lock on that file, and a _shared_ lock on `/clinton`,
@@ -204,7 +204,7 @@ if (ctx._source.lock_type == 'exclusive') {
 }
 ctx._source.lock_count++ <2>
 --------------------------
-<1> If the `lock_type` is `exclusive` then the `assert` statement will throw
+<1> If the `lock_type` is `exclusive`, the `assert` statement will throw
     an exception, causing the update request to fail.
 <2> Otherwise, we increment the `lock_count`.
 
@@ -246,7 +246,7 @@ PUT /fs/lock/%2Fclinton/_create
 --------------------------
 
 This request would fail because a `lock` document with the same ID already
-exists -- the other user would have to wait until our operation is done and we
+exists. The other user would have to wait until our operation is done and we
 have released our locks. The exclusive lock can just be deleted:
 
 [source,json]
@@ -254,7 +254,7 @@ have released our locks. The exclusive lock can just be deleted:
 DELETE /fs/lock/%2Fclinton%2fprojects%2felasticsearch%2fREADME.txt
 --------------------------
 
-The shared locks need another script which decrements the `lock_count` and, if
+The shared locks need another script that decrements the `lock_count` and, if
 the count drops to zero, deletes the `lock` document:
 
 [source,groovy]
@@ -267,7 +267,7 @@ if (--ctx._source.lock_count == 0) {
     to `delete`.
 
 This update request would need to be run for each parent directory in reverse
-order: from longest to shortest.
+order, from longest to shortest:
 
 [source,json]
 --------------------------
@@ -278,20 +278,20 @@ POST /fs/lock/%2Fclinton%2fprojects%2felasticsearch/_update
 --------------------------
 
 Tree locking gives us fine-grained concurrency control with the minimum of
-effort. Of course, it is not applicable to every situation -- the data model
-must have some sort of ``access path'' like the directory tree for it to work.
+effort. Of course, it is not applicable to every situation--the data model
+must have some sort of access path like the directory tree for it to work.
 
 [NOTE]
 =====================================
 
-None of the three options  -- global, document, or tree locking -- deals with
+None of the three options--global, document, or tree locking--deals with
 the thorniest problem associated with locking: what happens if the process
 holding the lock dies?
 
 The unexpected death of a process leaves us with two problems:
 
-1. How do we know that we can release the locks held by the dead process?
-2. How do we clean up the change that the dead process did not manage to complete?
+* How do we know that we can release the locks held by the dead process?
+* How do we clean up the change that the dead process did not manage to complete?
 
 These topics are beyond the scope of this book, but you will need to give them
 some thought  if you decide to use locking.
@@ -300,5 +300,5 @@ some thought  if you decide to use locking.
 
 While denormalization is a good choice for many projects, the need for locking
 schemes can make for complicated implementations. Instead, Elasticsearch
-provides us with two models that help us to deal with related entities:
+provides two models that help us deal with related entities:
 _nested objects_ and _parent-child relationships_.
