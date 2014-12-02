@@ -1,7 +1,7 @@
 [[top-hits]]
-=== Field collapsing
+=== Field Collapsing
 
-A common requirement is the need to present search results grouped by some
+A common requirement is the need to present search results grouped by a particular
 field. ((("field collapsing")))((("relationships", "field collapsing")))We might want to return the most relevant blogposts *grouped* by the
 user's name. ((("terms aggregation")))((("aggregations", "field collapsing"))) Grouping by name implies the need for a `terms` aggregation.  To
 be able to group on the user's *whole* name, the name field should be
