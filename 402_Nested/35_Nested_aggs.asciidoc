@@ -1,9 +1,9 @@
 [[nested-aggregation]]
-=== Nested aggregations
+=== Nested Aggregations
 
 In the same way as we need to use the special `nested` query ((("aggregations", "nested")))((("nested aggregation")))to gain access to
 nested objects at search time, the dedicated `nested` aggregation allows us to
-aggregate fields in nested objects.
+aggregate fields in nested objects:
 
 [source,json]
 --------------------------
@@ -70,14 +70,14 @@ The results show that aggregation has happened at the nested document level:
 }
 ...
 --------------------------
-<1> There are a total of 4 `comments`, 1 in September and 3 in October.
+<1> There are a total of four `comments`: one in September and three in October.
 
 [[reverse-nested-aggregation]]
-==== reverse_nested aggregation
+==== reverse_nested Aggregation
 
-A `nested` aggregation can only access((("aggregations", "nested", "reverse_nested aggregation")))((("reverse_nested aggregation"))) the fields within the nested document -
-it can't see fields in the root document or in a different nested document.
-However, we can ``step out'' of the nested scope back into the parent with a
+A `nested` aggregation can access((("aggregations", "nested", "reverse_nested aggregation")))((("reverse_nested aggregation"))) only the fields within the nested document.
+It can't see fields in the root document or in a different nested document.
+However, we can _step out_ of the nested scope back into the parent with a
 `reverse_nested` aggregation.
 
 For instance, we can find out which `tags` our commenters are interested in,
@@ -118,7 +118,7 @@ GET /my_index/blogpost/_search?search_type=count
 }
 --------------------------
 <1> The `nested` agg steps down into the `comments` object.
-<2> The `histogram` agg buckets on the `comments.age` field, in buckets
+<2> The `histogram` agg groups on the `comments.age` field, in buckets
     of 10 years.
 <3> The `reverse_nested` agg steps back up to the root document.
 <4> The `terms` agg counts popular terms per age group of the commenter.
@@ -150,20 +150,20 @@ The abbreviated results show us the following:
            },
 ...
 --------------------------
-<1> There are 4 comments.
-<2> There are 2 comments by commenters between the ages of 20 and 30.
-<3> Two blogposts are associated with those comments.
-<4> The popular tags in those blogposts are: `shares`, `cash` and `equities`.
+<1> There are four comments.
+<2> There are two comments by commenters between the ages of 20 and 30.
+<3> Two blog posts are associated with those comments.
+<4> The popular tags in those blog posts are `shares`, `cash`, and `equities`.
 
-==== When to use nested objects
+==== When to Use Nested Objects
 
 Nested objects are useful when there is one main entity, like our `blogpost`,
 with a limited number of closely related but less important entities, such as
-comments.  It is useful to be able to find blogposts based on the content of
+comments.  It is useful to be able to find blog posts based on the content of
 the comments, and the `nested` query and filter provide for fast query-time
 joins.
 
-The disadvantages of the nested model are:
+The disadvantages of the nested model are as follows:
 
 * To add, change or delete  a nested document, the whole document must be
   reindexed. This becomes more costly the more nested documents there are.
