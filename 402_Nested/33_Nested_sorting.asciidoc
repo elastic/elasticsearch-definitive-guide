@@ -76,9 +76,9 @@ GET /_search
     the main `query` clause. The reason is explained next.
 
 Why do we need to repeat the query conditions in the `nested_filter`?  The
-reason is that sorting happens after the query has been executed.  The query
-matches blogposts that received comments in October, but it returns
-blogpost documents as the result.  If we didn't include the `nested_filter`
-clause, we would end up sorting based on any comments that the blogpost has
+reason is that sorting happens after the query has been executed. The query
+matches blog posts that received comments in October, but it returns
+blog post documents as the result. If we didn't include the `nested_filter`
+clause, we would end up sorting based on any comments that the blog post has
 ever received, not just those received in October.
 
