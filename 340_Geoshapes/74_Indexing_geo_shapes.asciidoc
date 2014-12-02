@@ -2,8 +2,8 @@
 === Indexing geo-shapes
 
 Shapes are represented using http://geojson.org/[GeoJSON], a simple open
-standard for encoding two dimensional shapes in JSON.((("JSON", "shapes in (GeoJSON)")))((("shapes", see="geo-shapes")))((("GeoJSON")))((("geo-shapes", "indexing")))  Each shape definition
-contains the type of shape --  `point`, `line`, `polygon`, `envelope`, etc. --
+standard for encoding two-dimensional shapes in JSON.((("JSON", "shapes in (GeoJSON)")))((("shapes", see="geo-shapes")))((("GeoJSON")))((("geo-shapes", "indexing")))  Each shape definition
+contains the type of shape&#x2014;`point`, `line`, `polygon`, `envelope`, etc. --
 and one or more arrays of longitude/latitude points.
 
 CAUTION: In GeoJSON, coordinates are always written as *longitude*  followed
