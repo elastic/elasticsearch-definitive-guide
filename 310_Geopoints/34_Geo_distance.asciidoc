@@ -32,7 +32,7 @@ GET /attractions/restaurant/_search
 A geo-distance calculation is expensive.  To optimize performance,
 Elasticsearch draws a box around the circle and first uses the less expensive
 bounding-box calculation to exclude as many documents as it can.  It runs
-the geo-distance calculation only on those points that fall within the bounding
+the geo-distance calculation on only those points that fall within the bounding
 box.
 
 TIP: Do your users really require an accurate circular filter to be applied to
@@ -89,7 +89,7 @@ GET /attractions/restaurant/_search
 <1> Use the faster but less accurate `plane` calculation.
 
 TIP: Will your users really care if a restaurant is a few meters outside their specified radius? While some geo applications require great accuracy,
-less accurate but faster calculations will suit the majority of use cases just
+less-accurate but faster calculations will suit the majority of use cases just
 fine.
 
 [[geo-distance-range]]
