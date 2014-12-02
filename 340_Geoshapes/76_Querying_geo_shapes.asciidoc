@@ -1,7 +1,7 @@
 [[querying-geo-shapes]]
 === Querying geo-shapes
 
-The unusual thing ((("geo-shapes", "querying")))about the http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-geo-shape-query.html[`geo_shape`
+The unusual thing ((("geo-shapes", "querying")))about the http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/querying-geo-shapes.html[`geo_shape`
 query] and http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-geo-shape-filter.html[`geo_shape` filter] is that
 they allow us to query using shapes, rather than just points.
 
@@ -34,13 +34,13 @@ GET /attractions/landmark/_search
 <4> This point is situated at the entrance of the central train station in
     Amsterdam.
 
-By default, the query (or filter -- they do the same job) looks for indexed
-shapes which intersect with the query shape. ((("relation parameter (geo-shapes)", "disjoint or within"))) The `relation` parameter can be
-set to `disjoint` to find indexed shapes which don't intersect with the query
+By default, the query (or filter--do the same job) looks for indexed
+shapes that intersect with the query shape. ((("relation parameter (geo-shapes)", "disjoint or within"))) The `relation` parameter can be
+set to `disjoint` to find indexed shapes that don't intersect with the query
 shape, or `within` to find indexed shapes that are completely contained by the
 query shape.
 
-For instance, we could find all landmarks in the centre of Amsterdam with this
+For instance, we could find all landmarks in the center of Amsterdam with this
 query:
 
 [source,json]
@@ -72,6 +72,6 @@ GET /attractions/landmark/_search
   }
 }
 -----------------------
-<1> Only match indexed shapes that are completely within the query shape.
-<2> This polygon represents the centre of Amsterdam.
+<1> Match only indexed shapes that are completely within the query shape.
+<2> This polygon represents the center of Amsterdam.
 
