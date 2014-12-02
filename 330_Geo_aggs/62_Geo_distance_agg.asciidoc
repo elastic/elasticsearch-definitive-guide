@@ -1,10 +1,10 @@
 [[geo-distance-agg]]
-=== geo_distance aggregation
+=== geo_distance Aggregation
 
-The `geo_distance` agg is useful((("geo_distance aggregation")))((("aggregations", "geo_distance"))) for the types of searches where a user wants
-to find ``all pizza restaurants within 1km of me''. The search results
+The `geo_distance` agg is useful((("geo_distance aggregation")))((("aggregations", "geo_distance"))) for searches such as
+to "find all pizza restaurants within 1km of me." The search results
 should, indeed, be limited to the 1km radius specified by the user, but we can
-add: ``Another result found within 2km'':
+add ``another result found within 2km'':
 
 [source,json]
 ----------------------------
@@ -68,7 +68,7 @@ GET /attractions/restaurant/_search
 <4> Finally, the `post_filter` reduces the search results to just
     those restaurants within 1km of the user.
 
-The response from ((("post filter", "geo_distance aggregation")))the above request is as follows:
+The response from ((("post filter", "geo_distance aggregation")))the preceding request is as follows:
 
 [source,json]
 ----------------------------
@@ -115,7 +115,7 @@ The response from ((("post filter", "geo_distance aggregation")))the above reque
 <2> The aggregation includes the search result plus the other pizza
     restaurant within 2km of the user.
 
-In this example, we have just counted the number of restaurants which fall
-into each concentric ring.  Of course, we could nest sub-aggregations under
+In this example, we have counted the number of restaurants that fall
+into each concentric ring.  Of course, we could nest subaggregations under
 the `per_rings` aggregation to calculate the average price per ring, the
-maximium popularity, etc.((("per_rings aggregation")))
+maximium popularity, and more.((("per_rings aggregation")))
