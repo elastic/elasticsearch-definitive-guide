@@ -8,13 +8,13 @@ user renames the single file `/clinton/projects/elasticsearch/README.txt`.
 That user's change, although it started after yours, will probably finish more
 quickly.
 
-One of two things will happen. Either:
+One of two things will happen:
 
-*   you have decided to use `version` numbers, in which case your mass rename
+*   You have decided to use `version` numbers, in which case your mass rename
     will fail with a version conflict when it hits the renamed
-    `README.asciidoc` file, or
+    `README.asciidoc` file.
 
-*   you didn't use versioning and your changes will overwrite the changes from
+*   You didn't use versioning, and your changes will overwrite the changes from
     the other user.
 
 The problem is that Elasticsearch does not support
@@ -22,39 +22,39 @@ http://en.wikipedia.org/wiki/ACID_transactions[ACID transactions].((("ACID trans
 individual documents are ACIDic, but not changes involving multiple documents.
 
 If your main data store is a relational database, and Elasticsearch is simply
-being used as a search engine((("relational databases", "Elasticsearch used with"))) or as a way to improve performance, then make
+being used as a search engine((("relational databases", "Elasticsearch used with"))) or as a way to improve performance, make
 your changes in the database first and replicate those changes to
-Elasticsearch once they have succeeded. This way you benefit from the ACID
-transactions available in the database and all changes to Elasticsearch happen
+Elasticsearch after they have succeeded. This way, you benefit from the ACID
+transactions available in the database, and all changes to Elasticsearch happen
 in the right order. Concurrency is dealt with in the relational database.
 
-If you are not using a relational store, then these concurrency issues need to
-be dealt with at the Elasticsearch level.  Below we present three practical
+If you are not using a relational store, these concurrency issues need to
+be dealt with at the Elasticsearch level.  The following are three practical
 solutions using Elasticsearch, all of which involve some form of locking:
 
-* <<global-lock>>
-* <<document-locking>>
-* <<tree-locking>>
+* Global Locking
+* Document Locking
+* Tree Locking
 
 [TIP]
 ==================================================
 
-The solutions described below could also be implemented by applying the same
-principles using some external system instead of Elasticsearch.
+The solutions described in this section could also be implemented by applying the same
+principles while using an external system instead of Elasticsearch.
 
 ==================================================
 
 [[global-lock]]
-==== Global lock
+==== Global Locking
 
-We can avoid concurrency issues completely by only allowing one process to
-make changes at any time.((("locking", "global lock")))((("global lock")))  Most changes will only involve a few files and will
+We can avoid concurrency issues completely by allowing only one process to
+make changes at any time.((("locking", "global lock")))((("global lock")))  Most changes will involve only a few files and will
 complete very quickly.  A rename of a top-level directory may block all other
 changes for longer, but these are likely to be much less frequent.
 
 Because document-level changes in Elasticsearch are ACIDic, we can use the
-existence or absence of a document as a global lock.  In order to request a
-lock, we try to `create` the ``global lock'' document:
+existence or absence of a document as a global lock.  To request a
+lock, we try to `create` the global-lock document:
 
 [source,json]
 --------------------------
@@ -62,9 +62,9 @@ PUT /fs/lock/global/_create
 {}
 --------------------------
 
-If this `create` request fails with a conflict exception, then it means that
+If this `create` request fails with a conflict exception,
 another process has already been granted the global lock and we will have to
-try again later.  If it succeeds, then we are now the proud owners of the
+try again later.  If it succeeds, we are now the proud owners of the
 global lock and we can continue with our changes.  Once we are finished, we
 must release the lock by deleting the global lock document:
 
@@ -78,10 +78,10 @@ could restrict the performance of a system significantly.  We can increase
 parallelism by making our locking more fine-grained.
 
 [[document-locking]]
-==== Document locking
+==== Document Locking
 
-Instead of locking the whole file system, we could lock individual documents
-using the same technique as above.((("locking", "document locking")))((("document locking")))  A process could use a
+Instead of locking the whole filesystem, we could lock individual documents
+by using the same technique as previously described.((("locking", "document locking")))((("document locking")))  A process could use a
 <<scan-scroll,scan-and-scroll>> request to retrieve the IDs of all documents
 that would be affected by the change, and would need to create a lock file for
 each of them:
@@ -97,14 +97,14 @@ PUT /fs/lock/_bulk
 --------------------------
 <1> The ID of the `lock` document would be the same as the ID of  the file
     that should be locked.
-<2> The `process_id` is some unique ID that represents the process that
+<2> The `process_id` is a unique ID that represents the process that
     wants to perform the changes.
 
 If some files are already locked, parts of the `bulk` request will fail and we
 will have to try again.
 
-Of course, if we try to lock *all* of the files again, the `create` statements
-that we used above will fail for any file that is already locked by us!
+Of course, if we try to lock _all_ of the files again, the `create` statements
+that we used previously will fail for any file that is already locked by us!
 Instead of a simple `create` statement, we need an `update` request with an
 `upsert` parameter and this `script`:
 
