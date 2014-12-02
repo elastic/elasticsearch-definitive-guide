@@ -52,5 +52,5 @@ GET /my_index/blogpost/_search
 
 The advantage of data denormalization is speed.  Because each document
 contains all of the information that is required to determine whether it
-matches the query or not, there is no need for expensive joins.
+matches the query, there is no need for expensive joins.
 
