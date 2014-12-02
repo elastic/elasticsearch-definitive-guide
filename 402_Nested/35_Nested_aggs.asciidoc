@@ -165,12 +165,12 @@ joins.
 
 The disadvantages of the nested model are as follows:
 
-* To add, change or delete  a nested document, the whole document must be
+* To add, change, or delete  a nested document, the whole document must be
   reindexed. This becomes more costly the more nested documents there are.
 
 * Search requests return the whole document, not just the matching nested
   documents. Although there are plans afoot to support returning the best
-  matching nested documents with the root document, this is not yet supported.
+ -matching nested documents with the root document, this is not yet supported.
 
 Sometimes you need a complete separation between the main document and its
 associated entities.  This separation is provided by the _parent-child
