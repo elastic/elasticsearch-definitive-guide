@@ -1,10 +1,10 @@
 [[nested-objects]]
-== Nested objects
+== Nested Objects
 
-Given the fact that creating, deleting and updating a single document in
+Given the fact that creating, deleting, and updating a single document in
 Elasticsearch is atomic, it makes sense to store closely related entities
 within the same document.((("nested objects")))((("objects", "nested")))  For instance, we could store an order and all of
-its order lines in one document, or we could store a blogpost and all of its
+its order lines in one document, or we could store a blog post and all of its
 comments together, by passing an array of `comments`:
 
 [source,json]
@@ -33,12 +33,12 @@ PUT /my_index/blogpost/1
 }
 --------------------------
 <1> If we rely on <<dynamic-mapping,dynamic mapping>>, the `comments`
-    field will be auto-created as an `object` field.
+    field will be autocreated as an `object` field.
 
 Because all of the content is in the same document, there is no need to join
-blogposts and comments at query time, so searches perform well.
+blog posts and comments at query time, so searches perform well.
 
-The problem is that the document above would match a query like this:
+The problem is that the preceding document would match a query like this:
 
 [source,json]
 --------------------------
@@ -58,7 +58,7 @@ GET /_search
 
 The reason for this cross-object matching, as discussed in <<object-arrays>>,
 is that our beautifully structured JSON document((("documents")))((("JSON documents"))) is flattened into a simple
-key-value format in the index which looks like this:
+key-value format in the index that looks like this:
 
 [source,json]
 --------------------------
@@ -74,14 +74,13 @@ key-value format in the index which looks like this:
 }
 --------------------------
 
-The correlation between ``Alice'' and 31, or between ``John'' and
-"2014-09-01", has been irretrievably lost.  While fields of type `object` (see
-<<inner-objects>>) are useful for storing a *single* object, they are useless,
+The correlation between `Alice` and `31`, or between `John` and `2014-09-01`, has been irretrievably lost.  While fields of type `object` (see
+<<inner-objects>>) are useful for storing a _single_ object, they are useless,
 from a search point of view, for storing an array of objects.
 
 This is the problem that _nested objects_ are designed to solve.  By mapping
 the `commments` field as type `nested` instead of type `object`, each nested
-object is indexed as a *hidden separate document*, something like this:
+object is indexed as a _hidden separate document_, something like this:
 
 [source,json]
 --------------------------
@@ -105,20 +104,20 @@ object is indexed as a *hidden separate document*, something like this:
   "tags":             [ cash, shares ]
 }
 --------------------------
-<1> First `nested` object.
-<2> Second `nested` object.
-<3> The _root_  or parent document.
+<1> First `nested` object
+<2> Second `nested` object
+<3> The _root_  or parent document
 
 By indexing each nested object separately, the fields within the object
-maintain their relationship. We can run queries that will only match if the
+maintain their relationships. We can run queries that will match only if the
 match occurs within the same nested object.
 
 Not only that, because of the way that nested objects are indexed, joining the
-nested documents to the root document at query time is fast -- almost as fast
+nested documents to the root document at query time is fast--almost as fast
 as if they were a single document.
 
-These extra nested documents are hidden -- we can't access them directly.  To
-update, add or remove a nested object, we have to reindex the whole document.
-Importantly, the result returned by a search request is not the nested object
-alone, it is the whole document.
+These extra nested documents are hidden; we can't access them directly.  To
+update, add, or remove a nested object, we have to reindex the whole document.
+It's important to note that, the result returned by a search request is not the nested object
+alone; it is the whole document.
 
