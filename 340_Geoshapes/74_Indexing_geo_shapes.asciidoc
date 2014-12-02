@@ -3,11 +3,10 @@
 
 Shapes are represented using http://geojson.org/[GeoJSON], a simple open
 standard for encoding two-dimensional shapes in JSON.((("JSON", "shapes in (GeoJSON)")))((("shapes", see="geo-shapes")))((("GeoJSON")))((("geo-shapes", "indexing")))  Each shape definition
-contains the type of shape&#x2014;`point`, `line`, `polygon`, `envelope`, etc. --
-and one or more arrays of longitude/latitude points.
+contains the type of shape&#x2014;`point`, `line`, `polygon`, `envelope`,&#x2014;and one or more arrays of longitude/latitude points.
 
-CAUTION: In GeoJSON, coordinates are always written as *longitude*  followed
-by *latitude*.((("longitude/latitude coordinates in GeoJSON")))
+CAUTION: In GeoJSON, coordinates are always written as _longitude_  followed
+by _latitude_.((("longitude/latitude coordinates in GeoJSON")))
 
 For instance, we can index a polygon representing Dam Square in Amsterdam as
 follows:
@@ -34,7 +33,7 @@ PUT /attractions/landmark/dam_square
 -----------------------
 <1> The `type` parameter indicates the type of shape that the coordinates
     represent.
-<2> The list of `lon/lat` points which describe the polygon.
+<2> The list of `lon/lat` points that describe the polygon.
 
 The excess of square brackets in the example may look confusing, but the
 GeoJSON syntax is quite simple:
@@ -47,8 +46,8 @@ GeoJSON syntax is quite simple:
 +
     [[lon,lat],[lon,lat], ... ]
 
-3. A shape of type `polygon` can optionally contain several polygons: the
-   first represents the polygon proper while any subsequent polygons represent
+3. A shape of type `polygon` can optionally contain several polygons; the
+   first represents the polygon proper, while any subsequent polygons represent
    holes in the first:
 +
     [
