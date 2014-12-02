@@ -1,8 +1,8 @@
 [[geo-shape-caching]]
-=== Geo-shape filters and caching
+=== Geo-shape Filters and Caching
 
 The `geo_shape` query and filter perform the same function.((("caching", "geo-shape filters and")))((("filters", "geo_shape")))((("geo-shapes", "geo_shape filters, caching and")))  The query simply
-acts as a filter -- any matching documents receive a relevance `_score` of
+acts as a filter: any matching documents receive a relevance `_score` of
 `1`. Query results cannot be cached, but filter results can be.
 
 The results are not cached by default.  Just as with geo-points, any
@@ -13,7 +13,7 @@ results, by setting `_cache` to `true`:
 
 [source,json]
 -----------------------
-GET /attractions/neighbourhood/_search
+GET /attractions/neighborhood/_search
 {
   "query": {
     "filtered": {
