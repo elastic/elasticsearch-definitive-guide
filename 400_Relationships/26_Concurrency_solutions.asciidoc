@@ -134,15 +134,14 @@ POST /fs/lock/1/_update
 }
 --------------------------
 
-If the document doesn't already exist, the `upsert` document will be inserted
--- much the same as the `create` request we used previously.  However, if the
-document *does* exist, the script will look at the `process_id` stored in the
+If the document doesn't already exist, the `upsert` document will be inserted--much the same as the `create` request we used previously.  However, if the
+document _does_ exist, the script will look at the `process_id` stored in the
 document.  If it is the same as ours, it aborts the update (`noop`) and
 returns success.  If it is different, the `assert false` throws an exception
 and we know that the lock has failed.
 
 Once all locks have been successfully created, the rename operation can begin.
-Afterwards, we must release((("delete-by-query request"))) all of the locks, which we can do with a
+Afterward, we must release((("delete-by-query request"))) all of the locks, which we can do with a
 `delete-by-query` request:
 
 [source,json]
