@@ -1,11 +1,11 @@
 [[concurrency-solutions]]
-=== Solving concurrency issues
+=== Solving Concurrency Issues
 
 The problem comes when we want to allow more than one person to rename files
-or directories *at the same time*. ((("concurrency", "solving concurrency issues")))((("relationships", "solving concurrency issues"))) Imagine that you rename the `/clinton`
+or directories _at the same time_. ((("concurrency", "solving concurrency issues")))((("relationships", "solving concurrency issues"))) Imagine that you rename the `/clinton`
 directory, which contains hundreds of thousands of files.  Meanwhile, another
 user renames the single file `/clinton/projects/elasticsearch/README.txt`.
-Their change, although it started after yours, will probably finish more
+That user's change, although it started after yours, will probably finish more
 quickly.
 
 One of two things will happen. Either:
