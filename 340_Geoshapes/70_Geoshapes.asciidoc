@@ -6,21 +6,18 @@ computer screen does not consist of a perfect continuous line. Instead it is
 drawn by coloring adjacent pixels as an approximation of a circle. Geo-shapes
 work in much the same way.
 
-Complex shapes -- points, lines, polygons, multi-polygons, polygons with
-holes, etc -- are ``painted'' onto a grid of geohash cells, and the shape is
+Complex shapes--such as points, lines, polygons, multipolygons, and polygons with
+holes,--are ``painted'' onto a grid of geohash cells, and the shape is
 converted into a list of the ((("geohashes", "in geo-shapes")))geohashes of all the cells that it touches.
 
-.Quad trees
-***************************************
-
-Actually, there are two types of grids that can be used with geo-shapes:
+[NOTE]
+====
+Actually, two types of grids can be used with geo-shapes:
 geohashes, which we have already discussed and which are the default encoding,
 and _quad trees_.  ((("quad trees")))Quad trees are similar to geohashes except that there are
 only four cells at each level, instead of 32.  The difference comes down to a
 choice of encoding.
-
-***************************************
-
+====
 
 All of the geohashes that comprise a shape are indexed as if they were terms.
 With this information in the index, it is easy to determine whether one shape
