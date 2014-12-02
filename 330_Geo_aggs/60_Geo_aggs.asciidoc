@@ -7,15 +7,15 @@ return way too many results to be able to display each geo-point individually,
 but geo-aggregations can be used to cluster geo-points into more manageable
 buckets.
 
-There are three aggregations which work with fields of type `geo_point`:
+Three aggregations work with fields of type `geo_point`:
 
 <<geo-distance-agg,`geo_distance`>>::
 
-    Buckets documents into concentric circles around a central point.
+    Groups documents into concentric circles around a central point.
 
 <<geohash-grid-agg,`geohash_grid`>>::
 
-    Buckets documents by geohash cell, for display on a map.
+    Groups documents by geohash cell, for display on a map.
 
 <<geo-bounds-agg,`geo_bounds`>>::
 
