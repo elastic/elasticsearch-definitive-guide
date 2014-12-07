@@ -50,7 +50,7 @@ instance, to count the number of documents in the cluster, we could use this:
 [source,js]
 --------------------------------------------------
       <1>     <2>                     <3>    <4>
-curl -XGET 'http://localhost:9200/_count?pretty' -d '
+curl -XPOST 'http://localhost:9200/_count?pretty' -d '
 {  <5>
     "query": {
         "match_all": {}
@@ -98,7 +98,7 @@ a full request like
 
 [source,js]
 --------------------------------------------------
-curl -XGET 'localhost:9200/_count?pretty' -d '
+curl -XPOST 'localhost:9200/_count?pretty' -d '
 {
     "query": {
         "match_all": {}
@@ -110,7 +110,7 @@ we will show it in this shorthand format:
 
 [source,js]
 --------------------------------------------------
-GET /_count
+POST /_count
 {
     "query": {
         "match_all": {}
