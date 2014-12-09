@@ -1,8 +1,7 @@
 [[grandparents]]
-=== Grandparents and grandchildren
+=== Grandparents and Grandchildren
 
-The parent-child relationship can extend across more than one generation --
-grandchildren can ((("parent-child relationship", "grandparents and grandchildren")))((("grandparents and grandchildren")))have grandparents -- but it requires an extra step to ensure
+The parent-child relationship can extend across more than one generation--grandchildren can ((("parent-child relationship", "grandparents and grandchildren")))((("grandparents and grandchildren")))have grandparents--but it requires an extra step to ensure
 that documents from all generations are indexed on the same shard.
 
 Let's change our previous example to make the `country` type a parent of the
@@ -64,9 +63,8 @@ PUT /company/employee/1?parent=london
 }
 -------------------------
 
-The shard routing of the employee document would be decided by the parent ID
--- `london` -- but the `london` document was routed to a shard by *its own*
-parent ID -- `uk`.  It is very likely that the grandchild would end up on
+The shard routing of the employee document would be decided by the parent ID&#x2014;`london`&#x2014;but the `london` document was routed to a shard by _its own_
+parent ID&#x2014;`uk`.  It is very likely that the grandchild would end up on
 a different shard from its parent and grandparent, which would prevent the
 same-shard parent-child mapping from functioning.
 
