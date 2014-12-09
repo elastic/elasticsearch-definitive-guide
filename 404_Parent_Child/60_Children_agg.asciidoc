@@ -1,13 +1,12 @@
 [[children-agg]]
-=== Children aggregation
+=== Children Aggregation
 
 Parent-child supports a
-http://www.elasticsearch.org/guide/en/elasticsearch/reference/1.4/search-aggregations-bucket-children-aggregation.html[`children`
-aggregation]  as ((("aggregations", "children aggregation")))((("children aggregation")))((("parent-child relationship", "children aggregation")))a direct analog to the `nested` aggregation discussed in
+http://www.elasticsearch.org/guide/en/elasticsearch/reference/1.4/search-aggregations-bucket-children-aggregation.html[`children` aggregation]  as ((("aggregations", "children aggregation")))((("children aggregation")))((("parent-child relationship", "children aggregation")))a direct analog to the `nested` aggregation discussed in
 <<nested-aggregation>>.  A parent aggregation (the equivalent of
 `reverse_nested`) is not supported.
 
-This example demonstrates how we could determine the favourite hobbies of our
+This example demonstrates how we could determine the favorite hobbies of our
 employees by country:
 
 [source,json]
