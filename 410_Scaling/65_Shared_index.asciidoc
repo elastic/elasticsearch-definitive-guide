@@ -1,5 +1,5 @@
 [[shared-index]]
-=== Shared index
+=== Shared Index
 
 We can use a large shared index for the many smaller ((("scaling", "shared index")))((("indexes", "shared")))forums by indexing
 the forum identifier in a field and using it as a filter:
@@ -36,7 +36,7 @@ PUT /forums/post/1
 
 We can use the `forum_id` as a filter to search within a single forum.  The
 filter will exclude most of the documents in the index (those from other
-forums) and filter caching will ensure that responses are fast:
+forums), and filter caching will ensure that responses are fast:
 
 [source,json]
 ------------------------------
@@ -63,18 +63,18 @@ GET /forums/post/_search
 <1> The `term` filter is cached by default.
 
 This approach works, but we can do better. ((("shards", "routing a document to"))) The posts from a single forum
-would fit easily onto one shard but currently they are scattered across all 10
+would fit easily onto one shard, but currently they are scattered across all ten
 shards in the index. This means that every search request has to be forwarded
-to a primary or replica of all 10 shards. What would be ideal is to ensure
+to a primary or replica of all ten shards. What would be ideal is to ensure
 that all the posts from a single forum are stored on the same shard.
 
 In <<routing-value>>, we explained((("routing a document to a shard"))) that a document is allocated to a
-particular shard using this formula:
+particular shard by using this formula:
 
     shard = hash(routing) % number_of_primary_shards
 
 The `routing` value defaults to the document's `_id`, but we can override that
-and provide our own custom routing value, such as the `forum_id`.  All
+and provide our own custom routing value, such as `forum_id`.  All
 documents with the same `routing` value will be stored on the same shard:
 
 [source,json]
@@ -86,11 +86,11 @@ PUT /forums/post/1?routing=baking <1>
   ...
 }
 ------------------------------
-<1> Using the `forum_id` as the routing value ensures that all posts from the
+<1> Using `forum_id` as the routing value ensures that all posts from the
     same forum are stored on the same shard.
 
 When we search for posts in a particular forum, we can pass the same `routing`
-value to ensure that the search request is only run on the single shard that
+value to ensure that the search request is run on only the single shard that
 holds our documents:
 
 [source,json]
@@ -115,7 +115,7 @@ GET /forums/post/_search?routing=baking <1>
   }
 }
 ------------------------------
-<1> The query is only run on the shard that corresponds to this `routing` value.
+<1> The query is run on only the shard that corresponds to this `routing` value.
 <2> We still need the filter, as a single shard can hold posts from many forums.
 
 Multiple forums can be queried by passing a comma-separated list of `routing`
@@ -146,7 +146,6 @@ GET /forums/post/_search?routing=baking,cooking,recipes
 
 While this approach is technically efficient, it looks a bit clumsy because of
 the need to specify `routing` values and `terms` filters on every query or
-indexing request.  Things look a lot better once we add index aliases into the
-mix.
+indexing request.  Index aliases to the rescue!
 
 
