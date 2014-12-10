@@ -93,11 +93,11 @@ of RAM.
 
 First, we would recommend to avoid such large machines (see <<hardware>>).
 
-But if you already have the machines, you have to practical options:
+But if you already have the machines, you have two practical options:
 
 1. Are you doing most full-text search?  Consider giving 32gb to Elasticsearch
 and just let Lucene use the rest of memory via the OS file system cache.  All that
-memory will cache segments and lead to blisteringly fast full-text search
+memory will cache segments and lead to blisteringly fast full-text search.
 
 2. Are you doing a lot of sorting/aggregations?  You'll likely want that memory
 in the heap then.  Instead of one node with 32gb+ of RAM, consider running two or
@@ -107,7 +107,7 @@ used for heaps, and 64 will be leftover for Lucene.
 +
 If you choose this option, set `cluster.routing.allocation.same_shard.host: true`
 in your config.  This will prevent a primary and a replica shard from co-locating
-to the same physical machine (since this would remove the benefits of replica HA)
+to the same physical machine (since this would remove the benefits of replica HA).
 ****
 
 ==== Swapping is the death of performance
