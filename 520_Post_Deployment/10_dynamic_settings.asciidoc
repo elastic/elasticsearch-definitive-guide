@@ -1,20 +1,22 @@
 
-=== Changing settings dynamically
+=== Changing Settings Dynamically
 
-Many settings in Elasticsearch are dynamic, and modifiable through the API.
+Many settings in Elasticsearch are dynamic and can be modified through the API.
 Configuration changes that force a node (or cluster) restart are strenuously avoided.((("post-deployment", "changing settings dynamically")))
 And while it's possible to make the changes through the static configs, we
 recommend that you use the API instead.
 
-The _Cluster Update_ API operates((("Cluster Update API"))) in two modes:
+The `cluster-update` API operates((("Cluster Update API"))) in two modes:
 
-- Transient: these changes are in effect until the cluster restarts.  Once
-a full cluster restart takes place, these settings are erased
+Transient:: 
+    These changes are in effect until the cluster restarts.  Once
+a full cluster restart takes place, these settings are erased.
 
-- Persistent: these changes are permanently in place unless explicitly changed.
+Persistent::
+    These changes are permanently in place unless explicitly changed.
 They will survive full cluster restarts and override the static configuration files.
 
-Transient vs Persistent settings are supplied in the JSON body:
+Transient versus persistent settings are supplied in the JSON body:
 
 [source,js]
 ----
@@ -28,10 +30,10 @@ PUT /_cluster/settings
     }
 }
 ----
-<1> This persistent setting will survive full cluster restarts
-<2> While this transient setting will be removed after the first full cluster 
-restart
+<1> This persistent setting will survive full cluster restarts.
+<2> This transient setting will be removed after the first full cluster 
+restart.
 
-A complete list of settings that are dynamically updateable can be found in the
+A complete list of settings that can be updated dynamically can be found in the
 http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/cluster-update-settings.html[online reference docs].
 
