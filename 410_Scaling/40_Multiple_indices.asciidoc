@@ -1,10 +1,10 @@
 [[multiple-indices]]
-=== Multiple indices
+=== Multiple Indices
 
 Finally, remember that there is no rule that limits your application to using
 only a single index.((("scaling", "using multiple indexes")))((("indexes", "multiple")))  When we issue a search request, it is forwarded to a
 copy (a primary or a replica) of all the shards in an index.  If we issue the
-same search request on multiple indices, the exact same thing happens -- there
+same search request on multiple indices, the exact same thing happens--there
 are just more shards involved.
 
 TIP: Searching 1 index of 50 shards is exactly equivalent to searching
@@ -12,7 +12,7 @@ TIP: Searching 1 index of 50 shards is exactly equivalent to searching
 
 This can be a useful fact to remember when you need to add capacity on the
 fly.  Instead of having to reindex your data into a bigger index, you can
-just:
+just do the following:
 
 * Create a new index to hold new data.
 * Search across both indices to retrieve new and old data.
@@ -24,7 +24,7 @@ anything has changed.
 In <<index-aliases>>, we spoke about using an index alias to point to the
 current version of your index. ((("index aliases")))((("aliases, index"))) For instance, instead of naming your index
 `tweets`, name it `tweets_v1`.  Your application would still talk to `tweets`,
-but in reality that would be an alias which points to `tweets_v1`. This allows
+but in reality that would be an alias that points to `tweets_v1`. This allows
 you to switch the alias to point to a newer version of the index on the fly.
 
 A similar technique can be used to expand capacity by adding a new index.  It
@@ -62,13 +62,13 @@ POST /_aliases
 
 A search request can target multiple indices, so having the search alias point
 to `tweets_1` and `tweets_2` is perfectly valid.  However, indexing requests can
-only target a single index. For this reason, we have to switch the index alias
-to point only to the new index.
+target only a single index. For this reason, we have to switch the index alias
+to point to only the new index.
 
 [TIP]
 ==================================================
 
-A document `GET` request, like((("HTTP methods", "GET")))((("GET method"))) an indexing request, can only target one index.
+A document `GET` request, like((("HTTP methods", "GET")))((("GET method"))) an indexing request, can target only one index.
 This makes retrieving a document by ID a bit more complicated in this
 scenario.  Instead, run a search request with the
 http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-ids-query.html[`ids` query], or do a((("mget (multi-get) API")))
@@ -77,6 +77,6 @@ http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/docs-multi
 ==================================================
 
 Using multiple indices to expand index capacity on the fly is of particular
-benefit when dealing with time-based data such as logs or social event
-streams, which we will discuss in the next section.
+benefit when dealing with time-based data such as logs or social-event
+streams, which we discuss in the next section.
 
