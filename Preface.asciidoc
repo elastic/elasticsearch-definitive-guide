@@ -151,7 +151,7 @@ ifndef::es_build[]
    present the two approaches to geolocation
    supported by Elasticsearch: lat/lon geo-points, and complex geo-shapes.
 
-*  Chapters pass:[<a href="#relations">39</a>] through pass:[<a href="#scale">42</a>] CHECK CHAPTERS HERE
+*  Chapters pass:[<a href="#relations">41</a>] through pass:[<a href="#scale">44</a>]
    talk about how to model your data to work
    most efficiently with Elasticsearch.  Representing relationships
    between entities is not as easy in a search engine as it is in
@@ -159,7 +159,7 @@ ifndef::es_build[]
    These chapters also explain how to suit your index design to
    match the flow of data through your system.
 
-*  Finally, Chapters pass:[<a href="#cluster-admin">43</a>] through pass:[<a href="#post_deploy">44</a>] CHECK CHAPTERS HERE
+*  Finally, Chapters pass:[<a href="#cluster-admin">45</a>] through pass:[<a href="#post_deploy">47</a>]
    discuss moving to production: the important configurations, what to monitor, and how to diagnose and prevent problems.
 
 endif::es_build[]
