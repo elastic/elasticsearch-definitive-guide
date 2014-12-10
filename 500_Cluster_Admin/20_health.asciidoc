@@ -204,21 +204,19 @@ This call will _block_ (not return control to your program) until the `cluster-h
 This is important for automated scripts and tests.
 
 If you create an index, Elasticsearch must broadcast the change in cluster state
-to all nodes.  Those nodes must initialize those new shards, then respond to the
-master that the shards are Started.  This process is very fast, but due to network
-latency may take 10-20ms.
+to all nodes.  Those nodes must initialize those new shards, and then respond to the
+master that the shards are `Started`.  This process is fast, but because network
+latency may take 10 - 20ms.
 
-If you have an automated script that A) creates an index and then B) immediately
-attempts to index a document, this operation may fail since the index has not
-been fully initialized yet.  The time between A) and B) will likely be <1ms...
-not nearly enough time to account for network latency.
+If you have an automated script that (a) creates an index and then (b) immediately
+attempts to index a document, this operation may fail, because the index has not
+been fully initialized yet.  The time between (a) and (b) will likely be less than 1ms--not nearly enough time to account for network latency.
 
-Rather than sleeping, just have your script/test call the cluster health with
-a `wait_for_status` parameter.  As soon as the index is fully created, the cluster
-health will change to Green, the call returns control to your script, and you may
+Rather than sleeping, just have your script/test call `cluster-health` with
+a `wait_for_status` parameter.  As soon as the index is fully created, the `cluster-health` will change to `green`, the call will return control to your script, and you may
 begin indexing.
 
-Valid options are `green`, `yellow` and `red`.  The call will return when the 
-requested status (or one "higher") is reached.  E.g. if you request `yellow`,
+Valid options are `green`, `yellow`, and `red`.  The call will return when the 
+requested status (or one "higher") is reached. For example, if you request `yellow`,
 a status change to `yellow` or `green` will unblock the call.
 
