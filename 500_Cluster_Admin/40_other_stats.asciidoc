@@ -1,18 +1,18 @@
 
 === Cluster Stats
 
-The _Cluster Stats_ API provides very similar output to the Node Stats.((("clusters", "administration", "Cluster Stats API")))  There
-is one crucial difference: Node Stats shows you statistics per-node, while
-Cluster Stats will show you the sum total of all nodes in a single metric.
+The `cluster-stats` API provides similar output to the `node-stats`.((("clusters", "administration", "Cluster Stats API")))  There
+is one crucial difference: Node Stats shows you statistics per node, while
+`cluster-stats` shows you the sum total of all nodes in a single metric.
 
-This provides some useful stats to glance at.  You can see that your entire cluster
-is using 50% available heap, filter cache is not evicting heavily, etc.  It's
-main use is to provide a quick summary which is more extensive than
-the Cluster Health, but less detailed than Node Stats.  It is also useful for
-clusters which are very large, which makes Node Stats output difficult
+This provides some useful stats to glance at.  You can see for example, that your entire cluster
+is using 50% of the available heap or that filter cache is not evicting heavily.  Its
+main use is to provide a quick summary that is more extensive than
+the `cluster-health`, but less detailed than `node-stats`. It is also useful for
+clusters that are very large, which makes `node-stats` output difficult
 to read.
 
-The API may be invoked with:
+The API may be invoked as follows:
 
 [source,js]
 ----
@@ -21,16 +21,16 @@ GET _cluster/stats
 
 === Index Stats
 
-So far, we have been looking at _node-centric_ statistics.((("indexes", "index statistics")))((("clusters", "administration", "index stats")))  How much memory does 
+So far, we have been looking at _node-centric_ statistics:((("indexes", "index statistics")))((("clusters", "administration", "index stats")))  How much memory does 
 this node have?  How much CPU is being used?  How many searches is this node
-servicing?  Etc. etc.
+servicing?
 
-Sometimes it is useful to look at statistics from an _index-centric_ perspective.
+Sometimes it is useful to look at statistics from an _index-centric_ perspective:
 How many search requests is _this index_ receiving?  How much time is spent fetching
-docs in _that index_, etc.
+docs in _that index_?
 
 To do this, select the index (or indices) that you are interested in and 
-execute an Index Stats API:
+execute an Index `stats` API:
 
 [source,js]
 ----
@@ -40,21 +40,21 @@ GET my_index,another_index/_stats <2>
 
 GET _all/_stats <3>
 ----
-<1> Stats for `my_index`
-<2> Stats for multiple indices can be requested by comma separating their names
-<3> Stats indices can be requested using the special `_all` index name
+<1> Stats for `my_index`.
+<2> Stats for multiple indices can be requested by separating their names with a comma.
+<3> Stats indices can be requested using the special `_all` index name.
 
-The stats returned will be familar to the Node Stats output: search, fetch, get,
-index, bulk, segment counts, etc
+The stats returned will be familar to the `node-stats` output: `search` `fetch` `get`
+`index` `bulk` `segment counts` and so forth
 
-Index-centric stats can be useful for identifying or verifying "hot" indices
-inside your cluster, or trying to determine while some indices are faster/slower
+Index-centric stats can be useful for identifying or verifying _hot_ indices
+inside your cluster, or trying to determine why some indices are faster/slower
 than others.
 
 In practice, however, node-centric statistics tend to be more useful.  Entire
 nodes tend to bottleneck, not individual indices.  And because indices
 are usually spread across multiple nodes, index-centric statistics
-are usually not very helpful because it aggregates different physical machines
+are usually not very helpful because they aggregate data from different physical machines
 operating in different environments.
 
 Index-centric stats are a useful tool to keep in your repertoire, but are not usually
@@ -63,16 +63,16 @@ the first tool to reach for.
 === Pending Tasks
 
 There are certain tasks that only the master can perform, such as creating a new ((("clusters", "administration", "Pending Tasks API")))
-index or moving shards around the cluster.  Since a cluster can only have one
-master, only one node can ever process cluster-level metadata changes.  In 
+index or moving shards around the cluster.  Since a cluster can have only one
+master, only one node can ever process cluster-level metadata changes.  For 
 99.9999% of the time, this is never a problem.  The queue of metadata changes
 remains essentially zero.
 
-In some _very rare_ clusters, the number of metadata changes occurs faster than
-the master can process them.  This leads to a build up of pending actions which
+In some _rare_ clusters, the number of metadata changes occurs faster than
+the master can process them.  This leads to a buildup of pending actions that
 are queued.
 
-The _Pending Tasks_ API ((("Pending Tasks API")))will show you what (if any) cluster-level metadata changes
+The `pending-tasks` API ((("Pending Tasks API")))will show you what (if any) cluster-level metadata changes
 are pending in the queue:
 
 [source,js]
@@ -89,7 +89,7 @@ Usually, the response will look like this:
 }
 ----
 
-Meaning there are no pending tasks.  If you have one of the rare clusters that
+This means there are no pending tasks.  If you have one of the rare clusters that
 bottlenecks on the master node, your pending task list may look like this:
 
 [source,js]
@@ -122,14 +122,14 @@ bottlenecks on the master node, your pending task list may look like this:
 ----
 
 You can see that tasks are assigned a priority (`URGENT` is processed before `HIGH`,
-etc), the order it was inserted, how long the action has been queued and
-what the action is trying to perform.  In the above list, there is a Create Index
-action and two Shard Started actions pending.
+for example), the order it was inserted, how long the action has been queued and
+what the action is trying to perform.  In the preceding list, there is a `create-index`
+action and two `shard-started` actions pending.
 
-.When should I worry about Pending Tasks?
+.When Should I Worry About Pending Tasks?
 ****
 As mentioned, the master node is rarely the bottleneck for clusters.  The only
-time it can potentially bottleneck is if the cluster state is both very large 
+time it could bottleneck is if the cluster state is both very large 
 _and_ updated frequently.
 
 For example, if you allow customers to create as many dynamic fields as they wish,
@@ -137,35 +137,35 @@ and have a unique index for each customer every day, your cluster state will gro
 very large.  The cluster state includes (among other things) a list of all indices,
 their types, and the fields for each index.
 
-So if you have 100,000 customers, and each customer averages 1000 fields and 90
-days of retention....that's nine billion fields to keep in the cluster state.
+So if you have 100,000 customers, and each customer averages 1,000 fields and 90
+days of retention--that's nine billion fields to keep in the cluster state.
 Whenever this changes, the nodes must be notified.  
 
-The master must process these changes which requires non-trivial CPU overhead,
+The master must process these changes, which requires nontrivial CPU overhead,
 plus the network overhead of pushing the updated cluster state to all nodes.
 
-It is these clusters which may begin to see cluster state actions queuing up.
+It is these clusters that may begin to see cluster-state actions queuing up.
 There is no easy solution to this problem, however.  You have three options:
 
 - Obtain a beefier master node.  Vertical scaling just delays the inevitable, 
-unfortunately 
+unfortunately. 
 - Restrict the dynamic nature of the documents in some way, so as to limit the 
-cluster state size.  
-- Spin up another cluster once a certain threshold has been crossed.
+cluster-state size.  
+- Spin up another cluster after a certain threshold has been crossed.
 ****
 
-=== Cat API
+=== cat API
 
-If you work from the command line often, the _Cat_ APIs will be very helpful
-to you.((("Cat API")))((("clusters", "administration", "Cat API")))  Named after the linux `cat` command, these APIs are designed to be
-work like *nix command line tools.
+If you work from the command line often, the `cat` APIs will be helpful
+to you.((("Cat API")))((("clusters", "administration", "Cat API")))  Named after the linux `cat` command, these APIs are designed to
+work like *nix command-line tools.
 
 They provide statistics that are identical to all the previously discussed APIs
-(Health, Node Stats, etc), but present the output in tabular form instead of 
-JSON.  This is _very_ convenient as a system administrator and you just want
-to glance over your cluster, or find nodes with high memory usage, etc.
+(Health, `node-stats`, and so forth), but present the output in tabular form instead of 
+JSON.  This is _very_ convenient for a system administrator, and you just want
+to glance over your cluster or find nodes with high memory usage.
 
-Executing a plain GET against the Cat endpoint will show you all available 
+Executing a plain `GET` against the `cat` endpoint will show you all available 
 APIs:
 
 [source,bash]
@@ -207,9 +207,9 @@ GET /_cat/health
 ----
 
 The first thing you'll notice is that the response is plain text in tabular form,
-not JSON.  The second thing you'll notices is that there are no column headers
+not JSON.  The second thing you'll notice is that there are no column headers
 enabled by default.  This is designed to emulate *nix tools, since it is assumed
-that once you become familiar with the output you no longer want to see
+that once you become familiar with the output, you no longer want to see
 the headers.
 
 To enable headers, add the `?v` parameter:
@@ -222,11 +222,11 @@ epoch      timestamp cluster                   status node.total node.data shard
 1408723890 12:11:30  elasticsearch_zach yellow      1         1    114 114    0    0      114 
 ----
 
-Ah, much better.  We now see the timestamp, cluster name, the status, how many 
-nodes are in the cluster, etc.  All the same information as the Cluster Health
+Ah, much better.  We now see the timestamp, cluster name, status, the number of 
+nodes in the cluster, and more--all the same information as the `cluster-health`
 API.
 
-Let's look at Node Stats in the Cat API:
+Let's look at `node-stats` in the `cat` API:
 
 [source,bash]
 ----
@@ -236,9 +236,9 @@ host         ip            heap.percent ram.percent load node.role master name
 zacharys-air 192.168.1.131           45          72 1.85 d         *      Zach 
 ----
 
-We see some stats about the nodes in our cluster, but it is very basic compared
-to the full Node Stats output.  There are many additional metrics that you can
-include, but rather than consulting the documentation, let's just ask the Cat
+We see some stats about the nodes in our cluster, but the output is basic compared
+to the full `node-stats` output. You can
+include many additional metrics, but rather than consulting the documentation, let's just ask the `cat`
 API what is available.
 
 You can do this by adding `?help` to any API:
@@ -267,11 +267,11 @@ master                   | m                         | m:master-eligible, *:curr
 ...
 ...
 ----
-(Note that the output has been truncated for brevity)
+(Note that the output has been truncated for brevity).
 
-The first column shows the "fullname", the second column shows the "short name",
-and the third column offers a brief description about the parameter .  Now that
-we know some column names, we can ask for those explicitly using the `?h`
+The first column shows the full name, the second column shows the short name,
+and the third column offers a brief description about the parameter. Now that
+we know some column names, we can ask for those explicitly by using the `?h`
 parameter:
 
 [source,bash]
@@ -282,9 +282,9 @@ ip            port heapPercent heapMax
 192.168.1.131 9300          53 990.7mb 
 ----
 
-Because the Cat API tries to behave like *nix utilities, you can pipe the output
-to other tools such as sort, grep, awk, etc.  For example, we can find the largest
-index in our cluster by using:
+Because the `cat` API tries to behave like *nix utilities, you can pipe the output
+to other tools such as `sort` `grep` or `awk`.  For example, we can find the largest
+index in our cluster by using the following:
 
 [source,bash]
 ----
@@ -319,13 +319,13 @@ yellow cars               5 1       0 0      1249      1249
 yellow wavelet2           5 1       0 0       615       615 
 ----
 
-By adding `?bytes=b` we disable the "human readable" formatting on numbers and
+By adding `?bytes=b`, we disable the human-readable formatting on numbers and
 force them to be listed as bytes.  This output is then piped into `sort` so that
-our indices are ranked according to size (the 8th column).
+our indices are ranked according to size (the eighth column).
 
 Unfortunately, you'll notice that the Marvel indices are clogging up the results,
 and we don't really care about those indices right now.  Let's pipe the output
-through `grep` and remove anything mentioning marvel:
+through `grep` and remove anything mentioning Marvel:
 
 [source,bash]
 ----
@@ -351,13 +351,13 @@ yellow wavelet2           5 1       0 0       615       615
 ----
 
 Voila!  After piping through `grep` (with `-v` to invert the matches), we get
-a sorted list of indices without marvel cluttering it up.
+a sorted list of indices without Marvel cluttering it up.
 
-This is just a simple example of the flexibility of Cat at the command line.
-Once you get used to using Cat, you'll see it like any other *nix tool and start
-going crazy with piping, sorting, grepping.  If you are a system admin and spend
-any length of time ssh'd into boxes...definitely spend some time getting familiar
-with the Cat API.
+This is just a simple example of the flexibility of `cat` at the command line.
+Once you get used to using `cat`, you'll see it like any other *nix tool and start
+going crazy with piping, sorting, and grepping.  If you are a system admin and spend
+any time SSH'd into boxes, definitely spend some time getting familiar
+with the `cat` API.
 
 
 
