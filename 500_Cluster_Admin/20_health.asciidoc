@@ -200,7 +200,7 @@ You can specify a `wait_for_status` parameter, which will only return after the 
 GET _cluster/health?wait_for_status=green
 ----
 
-This call will _block_ (not return control to your program) until the `cluster-health` has turned green, meaning all primary + replica shards have been allocated.
+This call will _block_ (not return control to your program) until the `cluster-health` has turned `green`, meaning all primary and replica shards have been allocated.
 This is important for automated scripts and tests.
 
 If you create an index, Elasticsearch must broadcast the change in cluster state
