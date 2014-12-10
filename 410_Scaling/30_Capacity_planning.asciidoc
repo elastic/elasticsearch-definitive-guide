@@ -1,16 +1,14 @@
 [[capacity-planning]]
-=== Capacity planning
+=== Capacity Planning
 
 If 1 shard is too few and 1,000 shards are too many, how do I know how many
-shards I need?((("shards", "determining number you need")))((("capacity planning")))((("scaling", "capacity planning")))
-
-This is a question that is impossible to answer in the general case. There are
+shards I need?((("shards", "determining number you need")))((("capacity planning")))((("scaling", "capacity planning"))) This is a question that is impossible to answer in the general case. There are
 just too many variables:  the hardware that you use, the size and complexity
 of your documents, how you index and analyze those documents, the types of
 queries that you run, the aggregations that you perform, how you model your
-data, etc., etc.
+data, and more.
 
-Fortunately, it is an easy question to answer in the specific case: yours.
+Fortunately, it is an easy question to answer in the specific case--yours:
 
 1.  Create a cluster consisting of a single server, with the hardware that you
     are considering using in production.
@@ -22,9 +20,9 @@ Fortunately, it is an easy question to answer in the specific case: yours.
 
 4.  Run real queries and aggregations (or as close to real as you can get).
 
-Essentially, you want to replicate real world usage and to push this single
-shard until it ``breaks''.  Even the definition of ``breaks'' depends on you:
-some users require that all responses return within 50ms, others are quite
+Essentially, you want to replicate real-world usage and to push this single
+shard until it ``breaks.''  Even the definition of _breaks_ depends on you:
+some users require that all responses return within 50ms; others are quite
 happy to wait for 5 seconds.
 
 Once you define the capacity of a single shard, it is easy to extrapolate that
