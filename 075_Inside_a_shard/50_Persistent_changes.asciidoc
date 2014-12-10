@@ -111,7 +111,7 @@ The purpose of the translog is to ensure that operations are not lost.  This
 begs the question: how safe is the translog?
 
 Writes to a file will not survive a reboot until the file has been
-++fsync++'ed to disk.  By default, the translog is ++fsync++'ed every 5
++fsync+'ed to disk.  By default, the translog is +fsync+'ed every 5
 seconds. Potentially, we could lose 5 seconds worth of data--if the translog
 were the only mechanism that we had for dealing with failure.
 
