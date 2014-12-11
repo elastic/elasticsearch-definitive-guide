@@ -102,8 +102,8 @@ means `0-20,000`, the key `20000` means `20,000-40,000`, and so forth.
 Graphically, you could represent the preceding data in the histogram shown in <<barcharts-histo1>>:
 
 [[barcharts-histo1]]
-.Histogram of top makes per price range
-image::images/elas_28in01.png["Histogram of top makes per price range"]
+.Top cars in each price range
+image::images/elas_28in01.png["Top cars in each price range"]
 
 Of course, you can build bar charts with any aggregation that emits categories
 and statistics, not just the `histogram` bucket.  Let's build a bar chart of
