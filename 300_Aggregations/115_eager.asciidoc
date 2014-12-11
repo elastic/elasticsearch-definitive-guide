@@ -7,7 +7,7 @@ particular field, it will load that entire field into memory for each segment
 in the index.
 
 For small segments, this requires a negligible amount of time.  But if you
-have a few 5GB segments and need to load 10GB of fielddata into memory, this
+have a few 5 GB segments and need to load 10 GB of fielddata into memory, this
 process could take tens of seconds.  Users accustomed to subsecond response
 times would all of a sudden be hit by an apparently unresponsive website.
 
@@ -74,7 +74,7 @@ fielddata is ((("ordinals")))called _ordinals_.
 Imagine that we have a billion documents, each of which has a `status` field.
 There are only three statuses: `status_pending`, `status_published`,
 `status_deleted`. If we were to hold the full string status in memory for
-every document, we would use 14 to 16 bytes per document, or about 15GB.
+every document, we would use 14 to 16 bytes per document, or about 15 GB.
 
 Instead, we can identify the three unique strings, sort them, and number them: 0, 1, 2.
 
@@ -95,7 +95,7 @@ contains.
     2       | 2  # published
     3       | 0  # deleted
 
-This reduces memory usage from 15GB to less than 1GB!
+This reduces memory usage from 15 GB to less than 1 GB!
 
 But there is a problem. Remember that fielddata caches are _per segment_.  If
 one segment contains only two statuses&#x2014;`status_deleted` and
