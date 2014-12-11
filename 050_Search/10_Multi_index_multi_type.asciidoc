@@ -2,8 +2,8 @@
 === Multi-index, Multitype
 
 Did you notice that the results from the preceding <<empty-search,empty search>> 
-contained documents ((("searching", "multi-index, multi-type search")))of different types--`user` and `tweet`--from two
-different indices--`us` and `gb`?
+contained documents ((("searching", "multi-index, multi-type search")))of different types&#x2014;`user` and `tweet`&#x2014;from two
+different indices&#x2014;`us` and `gb`?
 
 By not limiting our search to a particular index or type, we have searched
 across _all_ documents in the cluster. Elasticsearch forwarded the search
