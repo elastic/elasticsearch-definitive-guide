@@ -169,7 +169,7 @@ GET /cars/transactions/_search?search_type=count
 In this example, you can see that we are accessing a nested metric.  The `stats`
 metric is a child of `red_green_cars`, which is in turn a child of `colors`.  To
 sort on that metric, we define the path as `red_green_cars>stats.variance`.
-This is allowed because the `filter` bucket is a single-valued bucket.
+This is allowed because the `filter` bucket is a single-value bucket.
 
 
 
