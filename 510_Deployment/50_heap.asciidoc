@@ -85,7 +85,7 @@ The moral of the story is this: even when you have memory to spare, try to avoid
 crossing the 32 GB heap boundary.  It wastes memory, reduces CPU performance, and
 makes the GC struggle with large heaps.
 
-.I Have a Machine with 1TB RAM!
+.I Have a Machine with 1 TB RAM!
 ****
 The 32 GB line is fairly important.  So what do you do when your machine has a lot
 of memory?  It is becoming increasingly common to see super-servers with 300&#x2013;500 GB
