@@ -116,7 +116,7 @@ image::images/300_120_breadth_first_2.svg["Sort first level"]
 image::images/300_120_breadth_first_3.svg["Prune first level"]
 
 Since we already know the top ten actors, we can safely prune away the rest of the
-long tail. After pruning, the next layer is populated based on _it's_ execution mode,
+long tail. After pruning, the next layer is populated based on _its_ execution mode,
 and the process repeats until the aggregation is done. This prevents the
 combinatorial explosion of buckets and drastically reduces memory requirements
 for classes of queries that are amenable to breadth-first.
