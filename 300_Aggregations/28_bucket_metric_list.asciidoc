@@ -41,7 +41,7 @@ exact parameters.((("metrics", "available types of, reference list")))
     - See http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/fuzzy-query.html#fuzzy-query[Stats]: calculates min/mean/max/sum/count of documents in bucket
     - See http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/fuzzy-query.html#fuzzy-query[Extended Stats]: Same as stats, except it also includes variance, std deviation, sum of squares
     - See http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/fuzzy-query.html#fuzzy-query[Value Count]: calculates the number of values, which may
-    be different from the number of documents (e.g. multi-valued fields)
+    be different from the number of documents (for example, multi-valued fields)
     - See http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/fuzzy-query.html#fuzzy-query[Cardinality]: calculates number of distinct/unique values (see <<cardinality>>)
     - See http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/fuzzy-query.html#fuzzy-query[Percentiles]: calculates percentiles/quantiles for
     numeric values in a bucket (see <<percentiles>>)
