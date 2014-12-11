@@ -38,7 +38,7 @@ exact parameters.((("metrics", "available types of, reference list")))
 === Metrics
 
     - Individual statistics: See http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/fuzzy-query.html#fuzzy-query[Min], See http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/fuzzy-query.html#fuzzy-query[Max], See http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/fuzzy-query.html#fuzzy-query[Avg], See http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/fuzzy-query.html#fuzzy-query[Sum]
-    - {See http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/fuzzy-query.html#fuzzy-query[Stats]: calculates min/mean/max/sum/count of documents in bucket
+    - See http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/fuzzy-query.html#fuzzy-query[Stats]: calculates min/mean/max/sum/count of documents in bucket
     - See http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/fuzzy-query.html#fuzzy-query[Extended Stats]: Same as stats, except it also includes variance, std deviation, sum of squares
     - See http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/fuzzy-query.html#fuzzy-query[Value Count]: calculates the number of values, which may
     be different from the number of documents (e.g. multi-valued fields)
