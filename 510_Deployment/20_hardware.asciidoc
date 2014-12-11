@@ -18,9 +18,9 @@ extra memory can be given to the OS filesystem cache.  Because many data structu
 used by Lucene are disk-based formats, Elasticsearch leverages the OS cache to
 great effect.
 
-A machine with 64GB of RAM is the ideal sweet spot, but 32GB and 16GB machines
-are also common.  Less than 8GB tends to be counterproductive (you end up
-needing many, many small machines), and greater than 64GB has problems that we will
+A machine with 64 GB of RAM is the ideal sweet spot, but 32 GB and 16 GB machines
+are also common.  Less than 8 GB tends to be counterproductive (you end up
+needing many, many small machines), and greater than 64 GB has problems that we will
 discuss in <<heap-sizing>>.
 
 ==== CPUs
@@ -83,7 +83,7 @@ point of failure.
 A fast and reliable network is obviously important to performance in a distributed((("hardware", "network")))((("network")))
 system.  Low latency helps ensure that nodes can communicate easily, while
 high bandwidth helps shard movement and recovery.  Modern data-center networking
-(1GbE, 10GbE) is sufficient for the vast majority of clusters.
+(1 GbE, 10 GbE) is sufficient for the vast majority of clusters.
 
 Avoid clusters that span multiple data centers, even if the data centers are
 colocated in close proximity.  Definitely avoid clusters that span large geographic
