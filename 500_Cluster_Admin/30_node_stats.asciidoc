@@ -320,8 +320,8 @@ is configured to initiate GCs when the heap reaches 75% full.  If your node is
 consistently >= 75%, your node is experiencing _memory pressure_.
 This is a warning sign that slow GCs may be in your near future.
 +
-If the heap usage is consistently >=85%, you are in trouble.  Heaps over 90 - 95%
-are in risk of horrible performance with long 10 - 30s GCs at best, and out-of-memory
+If the heap usage is consistently >=85%, you are in trouble.  Heaps over 90&#x2013;95%
+are in risk of horrible performance with long 10&#x2013;30s GCs at best, and out-of-memory
 (OOM) exceptions at worst.
 
 [source,js]
@@ -447,7 +447,7 @@ up a lot of memory, which is not ideal.
 It is much better to handle queuing in your application by gracefully handling
 the back pressure from a full queue.  When you receive bulk rejections, you should take these steps:
 
-1. Pause the import thread for 3 - 5 seconds.
+1. Pause the import thread for 3&#x2013;5 seconds.
 2. Extract the rejected actions from the bulk response, since it is probable that
 many of the actions were successful. The bulk response will tell you which succeeded
 and which were rejected.
