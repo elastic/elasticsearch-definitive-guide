@@ -194,7 +194,7 @@ evictions here, you need to reevaluate your memory situation, fielddata limits,
 queries, or all three.
 
 - `segments` will tell you the number of Lucene segments this node currently serves.
-This can be an important number.  Most indices should have around 50 - 150 segments,
+This can be an important number.  Most indices should have around 50&#x2013;150 segments,
 even if they are terabytes in size with billions of documents.  Large numbers
 of segments can indicate a problem with merging (for example, merging is not keeping up
 with segment creation).  Note that this statistic is the aggregate total of all
