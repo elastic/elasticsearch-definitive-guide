@@ -8,13 +8,12 @@ demonstrate the types of charts aggregations can power.
 
 The ++histogram++ bucket is particularly useful.((("buckets", "histogram")))((("histogram bucket")))((("histograms")))  Histograms are essentially
 bar charts, and if you've ever built a report or analytics dashboard, you
-undoubtedly had a few bar charts in it.
+undoubtedly had a few bar charts in it. The histogram works by specifying an interval.  If we were histogramming sale
+prices, you might specify an interval of 20,000.  This would create a new bucket
+every $20,000.  Documents are then sorted into buckets.
 
 // Perhaps "demonstrate" that a car of 28,000 gets dropped into the "20,000" bucket,while a car of 15,000 gets dropped into the "0" bucket
 // Delete "Just like the ...."
-The histogram works by specifying an interval.  If we were histogramming sale
-prices, you might specify an interval of 20,000.  This would create a new bucket
-every $20,000.  Documents are then sorted into buckets.
 
 For our dashboard, we want a bar chart of car sale prices, but we
 also want to know the top-selling make per price range.  This is easily accomplished
