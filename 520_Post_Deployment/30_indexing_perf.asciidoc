@@ -44,18 +44,18 @@ next one.
 
 This should be fairly obvious, but use bulk indexing requests for optimal performance.((("indexing", "performance tips", "bulk requests, using and sizing")))((("bulk API", "using and sizing bulk requests")))
 Bulk sizing is dependent on your data, analysis, and cluster configuration, but
-a good starting point is 5 - 15MB per bulk.  Note that this is physical size.
+a good starting point is 5&#x2013;15 MB per bulk.  Note that this is physical size.
 Document count is not a good metric for bulk size.  For example, if you are
 indexing 1,000 documents per bulk, keep the following in mind:
 
-- 1,000 documents at 1KB each is 1MB.
-- 1,000 documents at 100KB each is 100MB.
+- 1,000 documents at 1 KB each is 1 MB.
+- 1,000 documents at 100 KB each is 100 MB.
 
 Those are drastically different bulk sizes.  Bulks need to be loaded into memory
 at the coordinating node, so it is the physical size of the bulk that is more
 important than the document count.
 
-Start with a bulk size around 5 - 15MB and slowly increase it until you do not
+Start with a bulk size around 5&#x2013;15 MB and slowly increase it until you do not
 see performance gains anymore.  Then start increasing the concurrency of your
 bulk ingestion (multiple threads, and so forth).
 
@@ -103,8 +103,8 @@ Elasticsearch defaults here are conservative: you don't want search performance
 to be impacted by background merging.  But sometimes (especially on SSD, or logging
 scenarios), the throttle limit is too low.
 
-The default is 20MB/s, which is a good setting for spinning disks.  If you have
-SSDs, you might consider increasing this to 100 - 200MB/s.  Test to see what works
+The default is 20 MB/s, which is a good setting for spinning disks.  If you have
+SSDs, you might consider increasing this to 100&#x2013;200 MB/s.  Test to see what works
 for your system:
 
 [source,js]
@@ -151,7 +151,7 @@ For SSDs, you can ignore this setting.  The default is
 for SSD.
 
 Finally, you can increase `index.translog.flush_threshold_size` from the default
-200MB to something larger, such as 1GB.  This allows larger segments to accumulate
+200 MB to something larger, such as 1 GB.  This allows larger segments to accumulate
 in the translog before a flush occurs.  By letting larger segments build, you
 flush less often, and the larger segments merge less often.  All of this adds up
 to less disk I/O overhead and better indexing rates.
