@@ -106,6 +106,7 @@ GET /blogposts/post/_search
 -------------------------------
 <1> Set the `modifier` to `log1p`.
 
+[role="pagebreak-before"]
 The available modifiers are `none` (the default), `log`, `log1p`, `log2p`,
 `ln`, `ln1p`, `ln2p`, `square`, `sqrt`,  and `reciprocal`.  You can read more
 about them in the
