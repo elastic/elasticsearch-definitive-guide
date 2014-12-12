@@ -37,12 +37,12 @@ index,'' but we haven't done anything special to index these postcodes; each
 postcode is simply indexed as the exact value specified in each document.  So
 how does the `prefix` query work?
 
+[role="pagebreak-after"]
 Remember that the inverted index consists((("inverted index", "for postcodes"))) of a sorted list of unique terms (in
 this case, postcodes).  For each term, it lists the IDs of the documents
 containing that term in the _postings list_.  The inverted index for our
 example documents looks something like this:
 
-[role="pagebreak-before"]
     Term:          Doc IDs:
     -------------------------
     "SW5 0BE"    |  5
