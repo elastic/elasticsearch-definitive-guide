@@ -42,6 +42,7 @@ this case, postcodes).  For each term, it lists the IDs of the documents
 containing that term in the _postings list_.  The inverted index for our
 example documents looks something like this:
 
+[role="pagebreak-before"]
     Term:          Doc IDs:
     -------------------------
     "SW5 0BE"    |  5
