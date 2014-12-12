@@ -2,10 +2,10 @@
 === Types and Mappings
 
 A _type_ in Elasticsearch represents a class of similar documents.((("types", "defined"))) A type
-consists of a _name_--such as `user` or `blogpost`--and a _mapping_. The
+consists of a _name_&#x2014;such as `user` or `blogpost`&#x2014;and a _mapping_. The
 mapping, ((("mapping (types)")))like a database schema, describes the fields or _properties_ that
 documents of that type may have, ((("fields", "datatypes")))the datatype of each field--such as `string`,
-`integer`, or `date`--and how those fields should be indexed and stored by
+`integer`, or `date`&#x2014;and how those fields should be indexed and stored by
 Lucene.
 
 In <<document>>, we said that a type is like a table in a relational database.
@@ -84,7 +84,7 @@ to be analyzed, but which analyzer does it use: `spanish` or `english`? It
 will use the analyzer for the first `title` field that it finds, which
 will be correct for some docs and incorrect for the others.
 
-We can avoid this problem either by naming the fields differently--for example, `title_en` and `title_es`--or by explicitly including the type name in the
+We can avoid this problem either by naming the fields differently--for example, `title_en` and `title_es`&#x2014;or by explicitly including the type name in the
 field name and querying each field separately:
 
 [source,js]
