@@ -1,7 +1,7 @@
 [[full-body-search]]
 == Full-Body Search
 
-Search _lite_-- a <<search-lite,query-string search>>-- is useful for ad
+Search _lite_&#x2014;a <<search-lite,query-string search>>&#x2014;is useful for ad
 hoc queries from the command line. ((("searching", "request body search", id="ix_reqbodysearch")))To harness the full power of search,
 however, you should use the _request body_ `search` API,((("request body search"))) so called because
 most parameters are passed in the HTTP request body instead of in the query
