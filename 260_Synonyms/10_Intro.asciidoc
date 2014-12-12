@@ -32,11 +32,14 @@ Synonyms appear to be a simple concept but they are quite tricky to get right.
 In this chapter, we explain the mechanics of using synonyms and discuss
 the limitations and gotchas.
 
-TIP: Synonyms are used to broaden the scope of what is considered a
+[TIP]
+====
+Synonyms are used to broaden the scope of what is considered a
 matching document.  Just as with <<stemming,stemming>> or
 <<partial-matching,partial matching>>, synonym fields should not be used
 alone but should be combined with a query on a main field that contains
 the original text in unadulterated form.  See <<most-fields>> for an
 explanation of how to maintain relevance when using synonyms.
+====
 
 
