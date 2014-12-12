@@ -158,6 +158,7 @@ For numbers and dates, you can reduce a multivalue field to a single value
 by using the `min`, `max`, `avg`, or `sum` _sort modes_. ((("sum sort mode")))((("avg sort mode")))((("max sort mode")))((("min sort mode")))((("sort modes")))((("dates field", "sorting on earliest value")))For instance, you
 could sort on the earliest date in each `dates` field by using the following:
 
+[role="pagebreak-before"]
 [source,js]
 --------------------------------------------------
 "sort": {
