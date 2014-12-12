@@ -157,18 +157,18 @@ It then provides details of how the weight was calculated:
 
 Term frequency::
 
-    How many times did the term `honeymoon` appear in the `tweet` field in
-    this document?
+   How many times did the term `honeymoon` appear in the `tweet` field in
+   this document?
 
 Inverse document frequency::
 
-    How many times did the term `honeymoon` appear in the `tweet` field
-    of all documents in the index?
+   How many times did the term `honeymoon` appear in the `tweet` field
+   of all documents in the index?
 
 Field-length norm::
 
-    How long is the `tweet` field in this document? The longer the field,
-    the smaller this number.
+   How long is the `tweet` field in this document? The longer the field,
+   the smaller this number.
 
 Explanations for more-complicated queries can appear to be very complex, but
 really they just contain more of the same calculations that appear in the
