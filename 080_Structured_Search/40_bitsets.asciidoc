@@ -62,7 +62,7 @@ performance benefits.
 
 ==== Controlling Caching
 
-Most _leaf filters_--those dealing directly with fields like the `term`
+Most _leaf filters_&#x2014;those dealing directly with fields like the `term`
 filter--are cached, while((("leaf filters", "caching of")))((("caching", "of leaf filters, controlling")))((("filters", "controlling caching of"))) compound filters, like the `bool` filter, are not.
 
 [NOTE]
