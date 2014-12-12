@@ -6,6 +6,7 @@ blog posts that they like.((("relevance", "controlling", "boosting by popularity
 results list, but still have the full-text score as the main relevance driver.
 We can do this easily by storing the number of votes with each blog post:
 
+[role="pagebreak-before"]
 [source,json]
 -------------------------------
 PUT /blogposts/post/1
