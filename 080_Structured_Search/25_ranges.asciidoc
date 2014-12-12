@@ -154,7 +154,7 @@ a range on a string field, Elasticsearch is effectively performing a `term`
 filter for every term that falls in the range.  This is much slower than
 a date or numeric range.
 
-String ranges are fine on a field with _low cardinality_--a small number of
+String ranges are fine on a field with _low cardinality_&#x2014;a small number of
 unique terms.  But the more unique terms you have, the slower the string range
 will be.
 
