@@ -64,7 +64,7 @@ The preceding query returns all four documents in the results list:
 
 <3> Document 1 matches even though it contains only `brown`, not `dog`.
 
-Because the `match` query has to look for two terms--`["brown","dog"]`--internally it has to execute two `term` queries and combine their individual
+Because the `match` query has to look for two terms&#x2014;`["brown","dog"]`&#x2014;internally it has to execute two `term` queries and combine their individual
 results into the overall result. To do this, it wraps the two `term` queries
 in a `bool` query, which we examine in detail in <<bool-query>>.
 
