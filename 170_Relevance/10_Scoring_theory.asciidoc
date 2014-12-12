@@ -165,6 +165,7 @@ When we run a simple `term` query with `explain` set to `true` (see
 <<explain>>), you will see that the only factors involved in calculating the
 score are the ones explained in the preceding sections:
 
+[role="pagebreak-before"]
 [source,json]
 ----------------------------
 PUT /my_index/doc/1
