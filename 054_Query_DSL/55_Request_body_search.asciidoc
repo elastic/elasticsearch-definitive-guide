@@ -7,7 +7,7 @@ however, you should use the _request body_ `search` API,((("request body search"
 most parameters are passed in the HTTP request body instead of in the query
 string.
 
-Request body search--henceforth known as _search_--not only handles
+Request body search--henceforth known as _search_&#x2014;not only handles
 the query itself, but also allows you to return highlighted snippets from your
 results, aggregate analytics across all results or subsets of results, and
 return _did-you-mean_ suggestions, which will help guide your users to the
