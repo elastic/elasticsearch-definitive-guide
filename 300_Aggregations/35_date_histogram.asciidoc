@@ -22,6 +22,7 @@ than building buckets based on a numeric field representing numeric ranges,
 it builds buckets based on time ranges.  Each bucket is therefore defined as a
 certain calendar size (for example, `1 month` or `2.5 days`).
 
+[role="pagebreak-before"]
 .Can a Regular Histogram Work with Dates?
 ****
 Technically, yes.((("histogram bucket", "dates and")))  A regular `histogram` bucket will work with dates.  However,
