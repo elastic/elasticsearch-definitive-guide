@@ -16,7 +16,7 @@ GET /_search
 }
 --------------------------------------------------
 
-The _empty search_--`{}`--is ((("empty search", "equivalent to match_all query clause")))functionally equivalent to using the
+The _empty search_&#x2014;`{}`&#x2014;is ((("empty search", "equivalent to match_all query clause")))functionally equivalent to using the
 `match_all` query clause, which,((("match_all query clause"))) as the name suggests, matches all documents:
 
 [source,js]
