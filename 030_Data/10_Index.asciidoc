@@ -14,6 +14,7 @@ If your document has a natural ((("id", "providing for a document")))identifier 
 or some other value that identifies the document), you should provide
 your own `_id`, using this form of the `index` API:
 
+[role="pagebreak-before"]
 [source,js]
 --------------------------------------------------
 PUT /{index}/{type}/{id}
