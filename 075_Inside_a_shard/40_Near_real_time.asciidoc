@@ -54,11 +54,14 @@ POST /blogs/_refresh <2>
 <1> Refresh all indices.
 <2> Refresh just the `blogs` index.
 
-TIP: While a refresh is much lighter than a commit, it still has a performance
+[TIP]
+====
+While a refresh is much lighter than a commit, it still has a performance
 cost.  A manual refresh can be useful when writing tests, but don't do a
 manual refresh every time you index a document in production; it will hurt
 your performance.  Instead, your application needs to be aware of the near
 real-time nature of Elasticsearch and make allowances for it.
+====
 
 Not all use cases require a refresh every second.  Perhaps you are using
 Elasticsearch to index millions of log files, and you would prefer to optimize
