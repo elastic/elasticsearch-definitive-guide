@@ -523,6 +523,7 @@ are configured appropriately.
 Finally, we come to the last section: stats about the fielddata circuit breaker
 (introduced in <<circuit-breaker>>):
 
+[role="pagebreak-before"]
 [source,js]
 ----
          "fielddata_breaker": {
