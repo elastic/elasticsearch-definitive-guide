@@ -45,6 +45,7 @@ In the early days of full-text search, one big inverted index was built for
 the entire document collection and written to disk.  As soon as the new index
 was ready, it replaced the old index, and recent changes became searchable.
 
+[role="pagebreak-before"]
 ==== Immutability
 
 The inverted index that is written to disk is _immutable_: it doesn't
