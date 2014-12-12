@@ -33,7 +33,9 @@ code
   font-family: "UbuntuMono", "Arial Unicode MS", "DejaVu Sans", "Code2000";
 }
 
-
+section[data-type="preface"] + section[data-type="chapter"] {
+ counter-reset: page 1
+}
 
 
 
