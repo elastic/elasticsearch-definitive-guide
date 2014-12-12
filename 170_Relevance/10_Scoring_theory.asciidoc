@@ -188,8 +188,8 @@ result of:
     fieldWeight in 0                         0.15342641
     product of:
         tf(freq=1.0), with freq of 1:        1.0 <2>
-        idf(docFreq=1, maxDocs=1):           0.30685282 <3>
-        fieldNorm(doc=0):                    0.5 <4>
+        idf(docFreq=1, maxDocs=1):           0.69897000 <3>
+        fieldNorm(doc=0):                    0.57735027 <4>
 .......................................................
 <1> The final `score` for term `fox` in field `text` in the document with internal
     Lucene doc ID `0`.
