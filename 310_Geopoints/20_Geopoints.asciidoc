@@ -36,6 +36,7 @@ With the `location` field defined as a `geo_point`, we can proceed to index
 documents containing latitude/longitude pairs,((("geo-points", "location fields defined as, lat/lon formats")))((("location field", "defined as geo-point")))((("latitude/longitude pairs", "lat/lon formats for geo-points")))((("arrays", "geo-point, lon/lat format")))((("strings", "geo-point, lat/lon format")))((("objects", "geo-point, lat/lon format"))) which can be formatted as
 strings, arrays, or objects:
 
+[role="pagebreak-before"]
 [source,json]
 -----------------------
 PUT /attractions/restaurant/1
