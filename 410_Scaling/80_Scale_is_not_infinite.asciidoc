@@ -46,6 +46,7 @@ address, or every referer URL.  The following example keeps track of the number 
 times a page has been visited by using a different field name for every unique
 referer:
 
+[role="pagebreak-before"]
 [source,json]
 ------------------------------
 POST /counters/pageview/home_page/_update
