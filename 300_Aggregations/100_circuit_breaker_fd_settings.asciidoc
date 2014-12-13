@@ -206,7 +206,7 @@ file, or can be updated dynamically on a live cluster:
 PUT /_cluster/settings
 {
   "persistent" : {
-    "indices.breaker.fielddata.limit" : 40% <1>
+    "indices.breaker.fielddata.limit" : "40%" <1>
   }
 }
 ----
