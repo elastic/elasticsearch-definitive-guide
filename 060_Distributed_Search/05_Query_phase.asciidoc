@@ -55,7 +55,7 @@ A coordinating node will round-robin through all shard copies on subsequent
 requests in order to spread the load.
 
 Each shard executes the query locally and builds a sorted priority queue of
-length `from + size`--in other words, enough results to satisfy the global
+length `from + size`&#x2014;in other words, enough results to satisfy the global
 search request all by itself. It returns a lightweight list of results to the
 coordinating node, which contains just the doc IDs and any values required for
 sorting, such as the `_score`.
