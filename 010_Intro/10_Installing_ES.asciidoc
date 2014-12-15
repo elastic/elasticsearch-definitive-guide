@@ -19,12 +19,15 @@ cd  elasticsearch-$VERSION
 <1> Fill in the URL for the latest version available on
     http://www.elasticsearch.org/download/[_elasticsearch.org/download_].
 
-TIP: When installing Elasticsearch in production, you can use the method
+[TIP]
+====
+When installing Elasticsearch in production, you can use the method
 described previously, or the Debian or RPM packages provided on the
 http://www.elasticsearch.org/downloads[downloads page]. You can also use
 the officially supported
 https://github.com/elasticsearch/puppet-elasticsearch[Puppet module] or
 https://github.com/elasticsearch/cookbook-elasticsearch[Chef cookbook].
+====
 
 [[marvel]]
 ==== Installing Marvel
