@@ -47,8 +47,12 @@ the object has been retained in the JSON version. Converting an object to JSON
 for indexing in Elasticsearch is much simpler than the equivalent process for
 a flat table structure.
 
-NOTE: Almost all languages have modules that will convert arbitrary  data
+[NOTE]
+====
+Almost all languages have modules that will convert arbitrary  data
 structures or objects((("JSON", "converting your data to"))) into JSON for you, but the details are specific  to each
 language. Look for modules that handle JSON _serialization_ or _marshalling_. http://www.elasticsearch.org/guide[The official
 Elasticsearch clients] all handle conversion to and from JSON for you
 automatically.
+====
+
