@@ -150,7 +150,7 @@ WARNING: Producing the `explain` output is expensive.((("explain parameter", "ov
 only. Don't leave it turned on in production.
 
 The first part is the summary of the calculation. It tells us that it has
-calculated the _weight_--the ((("weight", "calculation of")))((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm", "weight calculation for a term")))TF/IDF--of the term `honeymoon` in the field `tweet`, for document `0`.  (This is
+calculated the _weight_&#x2014;the ((("weight", "calculation of")))((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm", "weight calculation for a term")))TF/IDF--of the term `honeymoon` in the field `tweet`, for document `0`.  (This is
 an internal document ID and, for our purposes, can be ignored.)
 
 It then provides details of how the weight was calculated:
