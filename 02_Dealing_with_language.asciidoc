@@ -6,11 +6,12 @@ ifndef::es_build[= placeholder2]
 [partintro]
 --
 
-[quote, Matt Groening]
-____
-[role="alignmeright"]
-``I know all those words, but that sentence makes no sense to me.''
-____
+++++
+<blockquote data-type="epigraph">
+    <p>I know all those words, but that sentence makes no sense to me</p>
+    <p data-type="attribution">Matt Groening</p>
+</blockquote>
+++++
 
 Full-text search is a battle between _precision_&#x2014;returning as few
 irrelevant documents as possible--and _recall_&#x2014;returning as many relevant
