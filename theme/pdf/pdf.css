@@ -10,7 +10,7 @@
   text-align: right;
 }
 
-section[data-type="preface"] + section[data-type="chapter"] {
+section[data-type="preface"] + div[data-type="part"] section[data-type="chapter"] {
  counter-reset: page 1
 }
 
