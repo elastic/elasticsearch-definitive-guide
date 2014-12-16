@@ -10,6 +10,10 @@
   text-align: right;
 }
 
+section[data-type="preface"] + section[data-type="chapter"] {
+ counter-reset: page 1
+}
+
 /* Font fall backs */
 p
 {
@@ -33,9 +37,7 @@ code
   font-family: "UbuntuMono", "Arial Unicode MS", "DejaVu Sans", "Code2000";
 }
 
-section[data-type="preface"] + section[data-type="chapter"] {
- counter-reset: page 1
-}
+
 
 
 
