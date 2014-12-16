@@ -10,10 +10,6 @@
   text-align: right;
 }
 
-section[data-type="preface"] + div[data-type="part"] {
- counter-reset: page 1
-}
-
 /* Font fall backs */
 p
 {
