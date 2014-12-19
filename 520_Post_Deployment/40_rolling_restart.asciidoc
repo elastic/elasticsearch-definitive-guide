@@ -24,7 +24,7 @@ The procedure is as follows:
 help speed up recovery time
 
 2. Disable shard allocation.  This prevents Elasticsearch from re-balancing
-missing shards until you tell it otherwise.  If you know the maintenance will be
+missing shards until you tell it otherwise.  If you know the maintenance window will be
 short, this is a good idea.  You can disable allocation with:
 +
 [source,js]
@@ -47,8 +47,7 @@ POST /_cluster/nodes/_local/_shutdown
 
 4. Perform maintenance/upgrade
 5. Restart node, confirm that it joins the cluster
-6. Repeat 3-5 for the rest of your nodes
-7. Re-enable shard allocation using:
+6. Re-enable shard allocation using:
 +
 [source,js]
 ----
@@ -60,7 +59,10 @@ PUT /_cluster/settings
 }
 ----
 +
-Shard re-balancing may take some time.  At this point you are safe to resume
-indexing (if you had previously stopped), but waiting until the cluster is fully
-balanced before resuming indexing will help speed up the process
+Shard re-balancing may take some time. Wait until the cluster has _green_ status.
+
+7. Repeat 2-6 for the rest of your nodes
+8. At this point you are safe to resume indexing (if you had previously stopped),
+but waiting until the cluster is fully balanced before resuming indexing will help
+to speed up the process.
 
