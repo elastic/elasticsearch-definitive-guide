@@ -4,7 +4,7 @@
 Our final topic in this chapter is about an internal aspect of Elasticsearch.
 While we don't demonstrate any new techniques here, fielddata is an
 important topic that we will refer to repeatedly, and is something that you
-should be aware of.
+should be aware of.((("fielddata")))
 
 When you sort on a field, Elasticsearch needs access to the value of that
 field for every document that matches the query.  The inverted index, which
