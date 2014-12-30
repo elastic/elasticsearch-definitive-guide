@@ -56,7 +56,7 @@ GET /cars/transactions/_search?search_type=count <1>
 // Add the search_type=count thing as a sidebar, so it doesn't get in the way
 <1> Because we don't care about search results, we are going to use the `count`
 <<search-type,search_type>>, which((("count search type"))) will be faster.
-<2> Aggregations are placed under the ((("aggs parameter")))top-level `aggs` parameter (the longer `aggregations`
+<2> Aggregations are placed under the ((("aggregations", "aggs parameter")))top-level `aggs` parameter (the longer `aggregations`
 will also work if you prefer that).
 <3> We then name the aggregation whatever we want: `colors`, in this example
 <4> Finally, we define a single bucket of type `terms`.
