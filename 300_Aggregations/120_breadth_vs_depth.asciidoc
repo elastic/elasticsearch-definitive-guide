@@ -51,7 +51,7 @@ This will return a list of the top 10 actors, and for each actor, a list of thei
 top five costars.  This seems like a very modest aggregation; only 50
 values will be returned!
 
-However, this seemingly innocuous query can easily consume a vast amount of
+However, this seemingly ((("aggregations", "fielddata", "datastructure, overview")))innocuous query can easily consume a vast amount of
 memory. You can visualize a `terms` aggregation as building a tree in memory.
 The `actors` aggregation will build the first level of the tree, with a bucket
 for every actor.  Then, nested under each node in the first level, the
