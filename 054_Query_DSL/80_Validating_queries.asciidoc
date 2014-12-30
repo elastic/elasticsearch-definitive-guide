@@ -1,6 +1,6 @@
 === Validating Queries
 
-Queries can become quite complex and, especially when combined with
+Queries can become quite complex and, especially((("queries", "validating"))) when combined with
 different analyzers and field mappings, can become a bit difficult to follow.
 The `validate-query` API can be used to check whether a query is valid.
 
