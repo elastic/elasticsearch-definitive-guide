@@ -148,7 +148,7 @@ the search:
 --------------------------------------------------
 // SENSE: 054_Query_DSL/70_Match_query.json
 
-If you use it on a field containing an exact value, such as a number, a date,
+If you use it on a field containing an exact value, ((("exact values", "searching for, match queries and")))such as a number, a date,
 a Boolean, or a `not_analyzed` string field, then it will search for that
 exact value:
 
