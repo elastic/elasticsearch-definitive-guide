@@ -107,7 +107,7 @@ GET /_search
 ==== A Query as a Filter
 
 Occasionally, you will want to use a query while you are in filter context.
-This can be achieved with the `query` filter, which ((("queries", "combining with filters", "query filter")))just wraps a query. The following 
+This can be achieved with the `query` filter, which ((("filters", "combining with queries", "query as a filter")))((("queries", "combining with filters", "query filter")))just wraps a query. The following 
 example shows one way we could exclude emails that look like spam:
 
 
