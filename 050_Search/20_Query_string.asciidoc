@@ -60,7 +60,7 @@ How has Elasticsearch managed to find results in three different fields?
 
 When you index a document, Elasticsearch takes the string values of all of
 its fields and concatenates them into one big string, which it indexes as
-the special `_all` field.((("all field"))) For example, when we index this document:
+the special `_all` field.((("_all field", sortas="all field"))) For example, when we index this document:
 
 [source,js]
 --------------------------------------------------
