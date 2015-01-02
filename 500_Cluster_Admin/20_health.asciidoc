@@ -3,7 +3,7 @@
 
 An Elasticsearch cluster may consist of a single node with a single index.  Or it((("cluster health")))((("clusters", "administration", "Cluster Health API")))
 may have a hundred data nodes, three dedicated masters, a few dozen clients nodes
-...all operating on a thousand indices (and tends of thousands of shards).
+...all operating on a thousand indices (and tens of thousands of shards).
 
 No matter the scale of the cluster, you'll want a quick way to assess the status
 of your cluster.  The _Cluster Health_ API fills that role.  You can think of it
@@ -46,7 +46,7 @@ operational
 No data is missing so search results will still be complete. However,  your 
 high-availability is compromised to some degree.  If _more_ shards disappear, you
 might lose data.  Think of Yellow as a warning which should prompt investigation.
-- *Red:* at least one primary shard (and all of it's replicas) are missing. This means
+- *Red:* at least one primary shard (and all of its replicas) are missing. This means
 that you are missing data: searches will return partial results and indexing
 into that shard will return an exception.
 
