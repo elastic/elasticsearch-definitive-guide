@@ -29,7 +29,7 @@ An analyzer _must_ have a single tokenizer.((("tokenizers", "in analyzers")))  T
 string into individual terms or tokens. The
 http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-tokenizers.html[`standard` tokenizer],
 which is used((("standard tokenizer"))) in the `standard` analyzer, breaks up a string into
-invidual terms on word boundaries, and removes most punctuation, but
+individual terms on word boundaries, and removes most punctuation, but
 other tokenizers exist that have different behavior.
 
 For instance, the
