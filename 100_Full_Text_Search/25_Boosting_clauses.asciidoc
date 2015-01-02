@@ -1,6 +1,6 @@
 === Boosting Query Clauses
 
-Of course, the`bool query isn't restricted ((("full text search", "boosting query clauses")))to combining simple one-word
+Of course, the `bool` query isn't restricted ((("full text search", "boosting query clauses")))to combining simple one-word
 `match` queries. It can combine any other query, including other `bool`
 queries.((("relevance scores", "controlling weight of query clauses")))  It is commonly used to fine-tune the relevance `_score` for each
 document by combining the scores from several distinct queries.
