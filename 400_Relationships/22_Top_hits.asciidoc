@@ -37,17 +37,39 @@ Then add some data:
 
 [source,json]
 --------------------------------
-PUT /my_index/user/_bulk
-{"index":{"_id":1}}
-{"name":"John Smith","email":"john@smith.com","dob":"1970/10/24"}
-{"index":{"_id":3}}
-{"name":"Alice John","email":"alice@john.com","dob":"1979/01/04"}
+PUT /my_index/user/1
+{
+  "name": "John Smith",
+  "email": "john@smith.com",
+  "dob": "1970/10/24"
+}
 
-PUT /my_index/blogpost/_bulk
-{"index":{"_id":2}}
-{"title":"Relationships","body":"It's complicated...","user":{"id":1,"name":"John Smith"}}
-{"index":{"_id":4}}
-{"title":"Relationships are cool","body":"It's not complicated at all...","user":{"id":3,"name":"Alice John"}}
+PUT /my_index/blogpost/2
+{
+  "title": "Relationships",
+  "body": "It's complicated...",
+  "user": {
+    "id": 1,
+    "name": "John Smith"
+  }
+}
+
+PUT /my_index/user/3
+{
+  "name": "Alice John",
+  "email": "alice@john.com",
+  "dob": "1979/01/04"
+}
+
+PUT /my_index/blogpost/4
+{
+  "title": "Relationships are cool",
+  "body": "It's not complicated at all...",
+  "user": {
+    "id": 3,
+    "name": "Alice John"
+  }
+}
 --------------------------------
 
 Now we can run a query looking for blog posts about `relationships`, by users
