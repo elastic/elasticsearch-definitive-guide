@@ -44,27 +44,36 @@ JavaScript, .NET, PHP, Perl, Python, and Ruby--and there are numerous
 community-provided clients and integrations, all of which can be found in the
 http://www.elasticsearch.org/guide/[Guide].
 
-A request to Elasticsearch consists of the same parts as any HTTP request.((("HTTP requests")))((("requests to Elasticsearch"))) For
-instance, to count the number of documents in the cluster, we could use this:
+A request to Elasticsearch consists of the same parts as any HTTP request:((("HTTP requests")))((("requests to Elasticsearch")))
 
 [source,js]
 --------------------------------------------------
-      <1>     <2>                     <3>    <4>
+curl -X<VERB> '<PROTOCOL>://<HOST>/<PATH>?<QUERY_STRING>' -d '<BODY>'
+--------------------------------------------------
+
+The parts marked with `< >` above are:
+
+[horizontal]
+`VERB`::            The appropriate HTTP _method_ or _verb_: `GET`, `POST`, `PUT`, `HEAD`, or `DELETE`.
+`PROTOCOL`::        Either `http` or `https` (if you have an `https` proxy in front of Elasticsearch.)
+`HOST`::            The hostname of any node in your Elasticsearch cluster, or +localhost+ for a node on your local machine.
+`PORT`::            The port running the Elasticsearch HTTP service, which defaults to `9200`.
+`QUERY_STRING`::    Any optional query-string parameters (for example `?pretty` will _pretty-print_  the JSON response to make it easier to read.)
+`BODY`::            A JSON-encoded request body (if the request needs one.)
+
+
+For instance, to count the number of documents in the cluster, we could use this:
+
+[source,js]
+--------------------------------------------------
 curl -XGET 'http://localhost:9200/_count?pretty' -d '
-{  <5>
+{
     "query": {
         "match_all": {}
     }
 }
 '
 --------------------------------------------------
-<1> The appropriate HTTP _method_ or _verb_: `GET`, `POST`, `PUT`, `HEAD`, or
-    `DELETE`
-<2> The protocol, hostname, and port of any node in the cluster
-<3> The path of the request
-<4> Any optional query-string parameters (for example `?pretty` will _pretty-print_
-    the JSON response to make it easier to read)
-<5> A JSON-encoded request body (if the request needs one)
 
 Elasticsearch returns an HTTP status code like `200 OK` and (except for `HEAD`
 requests) a JSON-encoded response body. The preceding `curl` request would respond
