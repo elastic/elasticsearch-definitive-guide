@@ -15,7 +15,7 @@ exact parameters.((("metrics", "available types of, reference list")))
     - See http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/_scoping_aggregations.html#_global_bucket[Global]: includes all documents in your index
     - See http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/_filter_bucket.html#_filter_bucket[Filter]: only includes documents that match
     the filter
-    - See http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/fuzzy-query.html#fuzzy-query[Missing]: all documents which _do not_ have
+    - See http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-aggregations-bucket-missing-aggregation.html[Missing]: all documents which _do not_ have
     a particular field
     - See http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/fuzzy-query.html#fuzzy-query[Terms]: generates a new bucket for each unique term
     - See http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-aggregations-bucket-range-aggregation.html[Range]: creates arbitrary ranges which documents
