@@ -18,7 +18,7 @@ exact parameters.((("metrics", "available types of, reference list")))
     - See http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/fuzzy-query.html#fuzzy-query[Missing]: all documents which _do not_ have
     a particular field
     - See http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/fuzzy-query.html#fuzzy-query[Terms]: generates a new bucket for each unique term
-    - See http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/fuzzy-query.html#fuzzy-query[Range]: creates arbitrary ranges which documents
+    - See http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-aggregations-bucket-range-aggregation.html[Range]: creates arbitrary ranges which documents
     fall into
     - See http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/fuzzy-query.html#fuzzy-query[Date Range]: similar to Range, but calendar
     aware
