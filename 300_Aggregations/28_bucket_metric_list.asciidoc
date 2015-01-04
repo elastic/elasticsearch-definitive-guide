@@ -20,7 +20,7 @@ exact parameters.((("metrics", "available types of, reference list")))
     - See http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-aggregations-bucket-terms-aggregation.html[Terms]: generates a new bucket for each unique term
     - See http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-aggregations-bucket-range-aggregation.html[Range]: creates arbitrary ranges which documents
     fall into
-    - See http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/fuzzy-query.html#fuzzy-query[Date Range]: similar to Range, but calendar
+    - See http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-aggregations-bucket-daterange-aggregation.html[Date Range]: similar to Range, but calendar
     aware
     - See http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/fuzzy-query.html#fuzzy-query[IPV4 Range]: similar to Range, but can handle "IP logic" like CIDR masks, etc
     - See http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/fuzzy-query.html#fuzzy-query[Geo Distance]: similar to Range, but operates on
