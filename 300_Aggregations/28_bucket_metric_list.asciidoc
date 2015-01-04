@@ -25,7 +25,7 @@ exact parameters.((("metrics", "available types of, reference list")))
     - See http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-aggregations-bucket-iprange-aggregation.html[IPV4 Range]: similar to Range, but can handle "IP logic" like CIDR masks, etc
     - See http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-aggregations-bucket-geodistance-aggregation.html[Geo Distance]: similar to Range, but operates on
     geo points
-    - See http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/fuzzy-query.html#fuzzy-query[Histogram]: equal-width, dynamic ranges
+    - See http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-aggregations-bucket-histogram-aggregation.html[Histogram]: equal-width, dynamic ranges
     - See http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/fuzzy-query.html#fuzzy-query[Date Histogram]: similar to Histogram, but
     calendar aware
     - See http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/fuzzy-query.html#fuzzy-query[Nested]: a special bucket for working with
