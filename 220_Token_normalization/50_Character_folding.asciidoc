@@ -7,7 +7,7 @@ the <<asciifolding-token-filter,`asciifolding` token filter>> requires a more
 effective Unicode _character-folding_ counterpart((("character folding"))) for dealing with the many
 languages of the world.((("asciifolding token filter")))
 
-The `icu_folding` token filter (provided by the <<icu-plugin,`icu`plug-in>>)
+The `icu_folding` token filter (provided by the <<icu-plugin,`icu` plug-in>>)
 does the same job as the `asciifolding` filter, ((("icu_folding token filter")))but extends the transformation
 to scripts that are not ASCII-based, such as Greek, Hebrew, Han, conversion
 of numbers in other scripts into their Latin equivalents, plus various other
