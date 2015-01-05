@@ -12,9 +12,6 @@ undoubtedly had a few bar charts in it. The histogram works by specifying an int
 prices, you might specify an interval of 20,000.  This would create a new bucket
 every $20,000.  Documents are then sorted into buckets.
 
-// Perhaps "demonstrate" that a car of 28,000 gets dropped into the "20,000" bucket,while a car of 15,000 gets dropped into the "0" bucket
-// Delete "Just like the ...."
-
 For our dashboard, we want a bar chart of car sale prices, but we
 also want to know the top-selling make per price range.  This is easily accomplished
 using a `terms` bucket ((("terms bucket", "nested in a histogram bucket")))((("buckets", "nested in other buckets", "terms bucket nested in histogram bucket")))nested inside the `histogram`:
@@ -48,11 +45,10 @@ interval that defines the bucket size.
 <2> A `terms` bucket is nested inside each price range, which will show us the
 top make per price range.
 
-// Make the point that the upper limit is exclusive
 As you can see, our query is built around the `price` aggregation, which contains
 a `histogram` bucket.  This bucket requires a numeric field to calculate
 buckets on, and an interval size.  The interval defines how "wide" each bucket
-is.  An interval of 20000 means we will have the ranges `[0-20000, 20000-40000, ...]`.
+is.  An interval of 20000 means we will have the ranges `[0-19999, 20000-39999, ...]`.
 
 Next, we define a nested bucket inside the histogram.  This is a `terms` bucket
 over the `make` field.  There is also a new `size` parameter, which defines the number of terms we want to generate.  A `size` of `1` means we want only the top make

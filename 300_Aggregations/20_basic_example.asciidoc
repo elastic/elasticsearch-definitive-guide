@@ -6,6 +6,13 @@ and their syntax,((("aggregations", "basic example", id="ix_basicex"))) but aggr
 Once you learn how to think about aggregations, and how to nest them appropriately,
 the syntax is fairly trivial.
 
+[NOTE]
+=========================
+A complete list of aggregation buckets and metrics can be found at the http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-aggregations.html[online
+reference documentation].  We'll cover many of them in this chapter, but glance
+over it after finishing so you are familiar with the full range of capabilities.
+=========================
+
 So let's just dive in and start with an example.  We are going to build some
 aggregations that might be useful to a car dealer.  Our data will be about car
 transactions: the car model, manufacturer, sale price, when it sold, and more.
@@ -40,12 +47,12 @@ using a simple aggregation.  We will do this using a `terms` bucket:
 
 [source,js]
 --------------------------------------------------
-GET /cars/transactions/_search?search_type=count <1>
+GET /cars/transactions/_search?search_type=count
 {
-    "aggs" : { <2>
-        "colors" : { <3>
+    "aggs" : { <1>
+        "colors" : { <2>
             "terms" : {
-              "field" : "color" <4>
+              "field" : "color" <3>
             }
         }
     }
@@ -53,19 +60,22 @@ GET /cars/transactions/_search?search_type=count <1>
 --------------------------------------------------
 // SENSE: 300_Aggregations/20_basic_example.json
 
-// Add the search_type=count thing as a sidebar, so it doesn't get in the way
-<1> Because we don't care about search results, we are going to use the `count`
-<<search-type,search_type>>, which((("count search type"))) will be faster.
-<2> Aggregations are placed under the ((("aggs parameter")))top-level `aggs` parameter (the longer `aggregations`
+<1> Aggregations are placed under the ((("aggs parameter")))top-level `aggs` parameter (the longer `aggregations`
 will also work if you prefer that).
-<3> We then name the aggregation whatever we want: `colors`, in this example
-<4> Finally, we define a single bucket of type `terms`.
+<2> We then name the aggregation whatever we want: `colors`, in this example
+<3> Finally, we define a single bucket of type `terms`.
 
 Aggregations are executed in the context of search results,((("searching", "aggregations executed in context of search results"))) which means it is
 just another top-level parameter in a search request (for example, using the `/_search`
 endpoint).  Aggregations can be paired with queries, but we'll tackle that later
 in <<_scoping_aggregations>>.
 
+[NOTE]
+=========================
+You'll notice that we used the `count` <<search-type,search_type>>.((("count search type")))
+Because we don't care about search results -- the aggregation totals -- the 
+`count` search_type will be faster because it omits the fetch phase.
+=========================
 
 Next we define a name for our aggregation.  Naming is up to you;
 the response will be labeled with the name you provide so that your application

@@ -33,9 +33,8 @@ _near real-time_, just like search.
 This is extremely powerful for reporting and dashboards.  Instead of performing
 _rollups_ of your data (_that crusty Hadoop job that takes a week to run_),
 you can visualize your data in real time, allowing you to respond immediately.
-
-// Perhaps mention "not precalculated, out of date, and irrelevant"?
-// Perhaps "aggs are calculated in the context of the user's search, so you're not showing them that you have 10 4 star hotels on your site, but that you have 10 4 star hotels that *match their criteria*".
+Your report changes as your data changes, rather than being pre-calculated, out of
+date and irrelevant.
 
 Finally, aggregations operate alongside search requests.((("aggregations", "operating alongside search requests"))) This means you can
 both search/filter documents _and_ perform analytics at the same time, on the
