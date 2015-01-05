@@ -9,12 +9,11 @@ GET /cars/transactions/_search?search_type=count
             "interval":20000
          },
          "aggs":{
-            "make":{
-               "terms":{
-                  "field":"make",
-                  "size":1
+            "revenue": {
+               "sum": {
+                 "field" : "price"
                }
-            }
+             }
          }
       }
    }
