@@ -68,7 +68,7 @@ visible to search, so the slower refresh time is not important.
 [[global-ordinals]]
 ==== Global Ordinals
 
-One of the techniques used to reduce the memory usage of (especially string)
+One of the techniques used to reduce the memory usage of string
 fielddata is ((("ordinals")))called _ordinals_.
 
 Imagine that we have a billion documents, each of which has a `status` field.
@@ -140,14 +140,14 @@ change: after a refresh, a flush, or a merge.
 [[eager-global-ordinals]]
 ===== Eager global ordinals
 
-Individual fields((("eager loading", "of global ordinals")))((("global ordinals", "eager"))) can be configured to prebuild global ordinals eagerly:
+Individual string fields((("eager loading", "of global ordinals")))((("global ordinals", "eager"))) can be configured to prebuild global ordinals eagerly:
 
 [source,js]
 ----
 PUT /music/_mapping/_song
 {
-  "price_usd": {
-    "type": "integer",
+  "song_title": {
+    "type": "string",
     "fielddata": {
       "loading" : "eager_global_ordinals" <1>
     }
@@ -157,15 +157,25 @@ PUT /music/_mapping/_song
 <1> Setting `eager_global_ordinals` also implies loading fielddata eagerly.
 
 Just like the eager preloading of fielddata, eager global ordinals are built
-before a new segment becomes visible to search.  Doc values can also have
-their global ordinals built eagerly:
+before a new segment becomes visible to search.  
+
+[NOTE]
+=========================
+Ordinals are only built and used for strings.  Numerical data (integers, geopoints,
+dates, etc) doesn't need an ordinal mapping, since the value itself acts as an
+intrinsic ordinal mapping.
+
+Therefore, you can only enable eager global ordinals for string fields.
+=========================
+
+Doc values can also have their global ordinals built eagerly:
 
 [source,js]
 ----
 PUT /music/_mapping/_song
 {
-  "price_usd": {
-    "type":       "integer",
+  "song_title": {
+    "type":       "string",
     "doc_values": true,
     "fielddata": {
       "loading" : "eager_global_ordinals" <1>
