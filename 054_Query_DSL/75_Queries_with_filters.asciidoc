@@ -1,7 +1,7 @@
 === Combining Queries with Filters
 
 Queries can be used in _query context_, and filters can be used
-in _filter context_.  Throughout the Elasticsearch API, you will see parameters
+in _filter context_. ((("filters", "combining with queries")))((("queries", "combining with filters"))) Throughout the Elasticsearch API, you will see parameters
 with `query` or `filter` in the name.  These
 expect a single argument containing either a single query or filter clause
 respectively. In other words, they establish the
@@ -19,7 +19,7 @@ to achieve your goal in the most efficient way.
 [[filtered-query]]
 ==== Filtering a Query
 
-Let's say we have this query:
+Let's say we have((("filters", "combining with queries", "filtering a query"))) this query:
 
 [source,js]
 --------------------------------------------------
@@ -69,7 +69,7 @@ GET /_search
 [role="pagebreak-before"]
 ==== Just a Filter
 
-While in query context, if you need to use a filter without a query (for
+While in query context, if ((("filters", "combining with queries", "using just a filter in query context")))you need to use a filter without a query (for
 instance, to match all emails in the inbox), you can just omit the
 query:
 
@@ -107,7 +107,7 @@ GET /_search
 ==== A Query as a Filter
 
 Occasionally, you will want to use a query while you are in filter context.
-This can be achieved with the `query` filter, which just wraps a query. The following 
+This can be achieved with the `query` filter, which ((("filters", "combining with queries", "query as a filter")))((("queries", "combining with filters", "query filter")))just wraps a query. The following 
 example shows one way we could exclude emails that look like spam:
 
 

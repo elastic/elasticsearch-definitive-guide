@@ -1,6 +1,6 @@
 === Validating Queries
 
-Queries can become quite complex and, especially when combined with
+Queries can become quite complex and, especially((("validate query API")))((("queries", "validating"))) when combined with
 different analyzers and field mappings, can become a bit difficult to follow.
 The `validate-query` API can be used to check whether a query is valid.
 
@@ -36,7 +36,7 @@ invalid:
 
 ==== Understanding Errors
 
-To find out why it is invalid, add the `explain` parameter to the query
+To find out ((("validate query API", "understqnding errors")))why it is invalid, add the `explain` parameter((("explain parameter"))) to the query
 string:
 
 [source,js]

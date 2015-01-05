@@ -7,7 +7,7 @@ to the rescue!
 
 An index _alias_ is like a shortcut or symbolic link, which can point to
 one or more indices, and can be used in any API that expects an index name.
-Aliases((("aliases", "index"))) give us an enormous amount of flexibility. They allow us to do the following:
+Aliases((("aliases, index"))) give us an enormous amount of flexibility. They allow us to do the following:
 
  * Switch transparently between one index and another on a running cluster
  * Group multiple indices (for example, `last_three_months`)

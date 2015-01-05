@@ -25,7 +25,7 @@ geolocation:
 
 All of these filters work in a similar way: the `lat/lon` values are loaded
 into memory for _all documents in the index_, not just the documents that
-match the query (see <<fielddata-intro>>). Each filter performs a slightly
+match the query (see <<fielddata-intro>>).((("aggregations", "fielddata", "filtering"))) Each filter performs a slightly
 different calculation to check whether a point falls into the containing area.
 
 [TIP]

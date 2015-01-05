@@ -60,7 +60,7 @@ GET /cars/transactions/_search?search_type=count
 --------------------------------------------------
 // SENSE: 300_Aggregations/20_basic_example.json
 
-<1> Aggregations are placed under the ((("aggs parameter")))top-level `aggs` parameter (the longer `aggregations`
+<1> Aggregations are placed under the ((("aggregations", "aggs parameter")))top-level `aggs` parameter (the longer `aggregations`
 will also work if you prefer that).
 <2> We then name the aggregation whatever we want: `colors`, in this example
 <3> Finally, we define a single bucket of type `terms`.
