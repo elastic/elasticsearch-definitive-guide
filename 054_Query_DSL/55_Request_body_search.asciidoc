@@ -55,7 +55,7 @@ requests to have a request body. ((("searching", "using GET and POST HTTP method
 requests are ever allowed to have a body.
 
 The truth is that http://tools.ietf.org/html/rfc7231#page-24[RFC 7231]&#x2014;the
-RFC that deals with HTTP semantics and content --does not define what should
+RFC that deals with HTTP semantics and content--does not define what should
 happen to a `GET` request with a body!  As a result, some HTTP servers allow
 it, and some--especially caching proxies--don't.
 
