@@ -2,7 +2,7 @@
 === Custom _all Fields
 
 In <<all-field>>, we explained that the special `_all` field indexes the values
-from all other fields as one big string.((("all field", "custom")))((("multi-field search", "custom _all fields"))) Having all fields indexed into one
+from all other fields as one big string.((("_all field", "custom", sortas="all field")))((("multi-field search", "custom _all fields"))) Having all fields indexed into one
 field is not terribly flexible, though.  It would be nice to have one custom
 `_all` field for the person's name, and another custom `_all` field for the
 address.
