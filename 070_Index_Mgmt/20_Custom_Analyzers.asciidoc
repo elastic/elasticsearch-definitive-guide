@@ -66,7 +66,7 @@ analyzer.
 
 ==== Creating a Custom Analyzer
 
-In the same way as((("index settings", "analysis", "creating custom analyzers")))((("analyzers", "custom, creating"))) we configured the `es_std` analyzer previously, we can configure
+In the same way as((("index settings", "analysis", "creating custom analyzers")))((("analyzers", "custom", "creating"))) we configured the `es_std` analyzer previously, we can configure
 character filters, tokenizers, and token filters in their respective sections
 under `analysis`:
 
@@ -190,7 +190,7 @@ The following abbreviated results show that our analyzer is working correctly:
 }
 --------------------------------------------------
 
-The analyzer is not much use unless we tell ((("analyzers", "custom, telling Elasticsearch where to use it")))((("mapping (types)", "applying custom analyzer to a string field")))Elasticsearch where to use it. We
+The analyzer is not much use unless we tell ((("analyzers", "custom", "telling Elasticsearch where to use")))((("mapping (types)", "applying custom analyzer to a string field")))Elasticsearch where to use it. We
 can apply it to a `string` field with a mapping such as the following:
 
 [source,js]
