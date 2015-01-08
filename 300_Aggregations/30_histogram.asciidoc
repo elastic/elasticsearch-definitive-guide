@@ -97,7 +97,6 @@ histogram keys correspond to the lower boundary of the interval.  The key `0`
 means `0-19,999`, the key `20000` means `20,000-39,999`, and so forth.
 
 [NOTE]
-.Empty buckets are missing!
 =====================
 You'll notice that empty intervals, such as $40,000-60,000, is missing in the
 response.  The `histogram` bucket omits these by default, since it could lead
