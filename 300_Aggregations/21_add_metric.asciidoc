@@ -83,6 +83,6 @@ and what field we want the average to be calculated on (`price`):
 <1> New `avg_price` element in response
 
 Although the response has changed minimally, the data we get out of it has grown
-substantially.((("avg_price metric (example)")))  Before, we knew there were four red cars.  Now we know that the
+substantially.  Before, we knew there were four red cars.  Now we know that the
 average price of red cars is $32,500.  This is something that you can plug directly
 into reports or graphs.
