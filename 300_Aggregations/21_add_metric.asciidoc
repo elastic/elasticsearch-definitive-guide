@@ -10,7 +10,7 @@ and on which fields. ((("buckets", "nesting metrics in"))) This requires _nestin
 Metrics will calculate mathematical statistics based on the values of documents
 within a bucket.
 
-Let's go ahead and add ((("average metric (aggregation example)")))an `average` metric to our car example:
+Let's go ahead and add ((("average metric")))an `average` metric to our car example:
 
 [source,js]
 --------------------------------------------------
