@@ -65,7 +65,7 @@ This gives us the following:
 
 Elasticsearch has dynamically generated a mapping for us, based on what it
 could guess about our field types. The response shows us that the `date` field
-has been recognized as a field of type `date`. ((("&#x5f;all field")))The `_all` field isn't
+has been recognized as a field of type `date`. ((("&amp;#x5f;all field", sortas="all field")))The `_all` field isn't
 mentioned because it is a default field, but we know that the `_all` field is
 of type `string`.((("string fields")))
 
