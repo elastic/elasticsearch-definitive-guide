@@ -10,7 +10,7 @@ across _all_ documents in the cluster. Elasticsearch forwarded the search
 request in parallel to a primary or replica of every shard in the cluster,
 gathered the results to select the overall top 10, and returned them to us.
 
-Usually, however, you will((("types", "specifying in search requests")))((("indexes", "specifying in search requests"))) want to search within one or more specific indices,
+Usually, however, you will((("types", "specifying in search requests")))((("indices", "specifying in search requests"))) want to search within one or more specific indices,
 and probably one or more specific types. We can do this by specifying the
 index and type in the URL, as follows:
 
