@@ -173,7 +173,7 @@ as their values are never analyzed.
 
 ===== analyzer
 
-For `analyzed` string fields, use ((("analyzer attribute, strings", "using to specify analyzer")))the `analyzer` attribute to
+For `analyzed` string fields, use ((("analyzer attribute, strings, using to specify analyzer")))the `analyzer` attribute to
 specify which analyzer to apply both at search time and at index time. By
 default, Elasticsearch uses the `standard` analyzer,((("standard analyzer", "specifying another analyzer for strings"))) but you can change this
 by specifying one of the built-in analyzers, such((("english analyzer"))) as

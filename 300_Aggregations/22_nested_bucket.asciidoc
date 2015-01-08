@@ -41,7 +41,7 @@ GET /cars/transactions/_search?search_type=count
 <3> This aggregation is a `terms` bucket and will generate unique buckets for
 each car make.
 
-A few interesting things happened here.((("metrics", "independent, on levels of an aggregation")))((("avg_price metric (example)")))  First, you'll notice that the previous
+A few interesting things happened here.((("metrics", "independent, on levels of an aggregation")))  First, you'll notice that the previous
 `avg_price` metric is left entirely intact.  Each _level_ of an aggregation can
 have many metrics or buckets.  The `avg_price` metric tells us the average price
 for each car color.  This is independent of other buckets and metrics that

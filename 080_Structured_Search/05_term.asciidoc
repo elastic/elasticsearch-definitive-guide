@@ -144,7 +144,7 @@ GET /my_store/products/_search
 
 Except there is a little hiccup: we don't get any results back!  Why is
 that? The problem isn't with the the `term` query; it is with the way
-the data has been indexed. ((("analyze API", "using to analyze UPC tokenization"))) If we use the `analyze` API (<<analyze-api>>), we
+the data has been indexed. ((("analyze API, using to understand tokenization"))) If we use the `analyze` API (<<analyze-api>>), we
 can see that our UPC has been tokenized into smaller tokens:
 
 [source,js]
