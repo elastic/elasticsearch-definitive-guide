@@ -118,6 +118,7 @@ the surprise):
 The aggregation is represented in full.  As you can see, we have buckets
 that represent months, a count of docs in each month, and our pretty `key_as_string`.
 
+[[_returning_empty_buckets]]
 === Returning Empty Buckets
 
 Notice something odd about that last response?
