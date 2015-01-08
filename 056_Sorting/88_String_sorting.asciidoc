@@ -1,7 +1,7 @@
 [[multi-fields]]
 === String Sorting and Multifields
 
-Analyzed string fields are also multivalue fields,((("strings", "sorting on string fields")))((("analyzed string fields", "sorting and"))) but sorting on them seldom
+Analyzed string fields are also multivalue fields,((("strings", "sorting on string fields")))((("analyzed fields", "string fields"))) but sorting on them seldom
 gives you the results you want. If you analyze a string like `fine old art`,
 it results in three terms. We probably want to sort alphabetically on the
 first term, then the second term, and so forth, but Elasticsearch doesn't have this
