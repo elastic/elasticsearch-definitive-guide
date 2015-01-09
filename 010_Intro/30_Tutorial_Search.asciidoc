@@ -267,7 +267,7 @@ We are going to search for all employees who enjoy rock climbing:
 
 [source,js]
 --------------------------------------------------
-GET /megacorp/employee/_search
+POST /megacorp/employee/_search
 {
     "query" : {
         "match" : {
