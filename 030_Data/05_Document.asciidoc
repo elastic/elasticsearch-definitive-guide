@@ -99,7 +99,7 @@ automatically.
 A `_type` name can be lowercase or uppercase, but shouldn't begin with an
 underscore or contain commas.((("types", "names of")))  We will use `blog` for our type name.
 
-==== _id
+==== &#x5f;id
 
 The _ID_ is a string that,((("id", "&#x5f;id, in document metadata"))) when combined with the `_index` and `_type`,
 uniquely identifies a document in Elasticsearch. When creating a new document,
