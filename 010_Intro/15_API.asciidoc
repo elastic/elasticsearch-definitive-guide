@@ -35,7 +35,7 @@ of the http://www.elasticsearch.org/guide/[Guide].
 ==== RESTful API with JSON over HTTP
 
 All other languages can communicate with Elasticsearch((("port 9200 for non-Java clients"))) over port _9200_ using
-a ((("RESTful API", "communicating with Elasticseach")))RESTful API, accessible with your favorite web client. In fact, as you have
+a ((("RESTful API, communicating with Elasticseach")))RESTful API, accessible with your favorite web client. In fact, as you have
 seen, you can even talk to Elasticsearch from the command line by using the
 `curl` command.((("curl command", "talking to Elasticsearch with")))
 
@@ -128,6 +128,6 @@ GET /_count
 --------------------------------------------------
 // SENSE: 010_Intro/15_Count.json
 
-In fact, this is the same format that is used by the ((("Sense", "curl requests in")))Sense console that we
+In fact, this is the same format that is used by the ((("Marvel", "Sense console")))((("Sense console (Marvel plugin)", "curl requests in")))Sense console that we
 installed with <<marvel,Marvel>>. If in the online version of this book, you can open and run this code example in
 Sense by clicking the View in Sense link above.

@@ -5,7 +5,7 @@ While a `nested` query can always ((("parent-child relationship", "finding child
 parent and child documents are independent and each can be queried
 independently.  The `has_child` query allows us to return parents based on
 data in their children, and the `has_parent` query returns children based on
-data in their parents.((("has_parent query")))
+data in their parents.((("has_parent query and filter", "query")))
 
 It looks very similar to the `has_child` query.  This example returns
 employees who work in the UK:
@@ -28,7 +28,7 @@ GET /company/employee/_search
 -------------------------
 <1> Returns children who have parents of type `branch`
 
-The `has_parent` query also supports the `score_mode`, but it accepts only two
+The `has_parent` query also supports the `score_mode`,((("score_mode parameter"))) but it accepts only two
 settings: `none` (the default) and `score`.  Each child can have only one
 parent, so there is no need to reduce multiple scores into a single score for
 the child.  The choice is simply between using the score (`score`) or not
@@ -37,7 +37,7 @@ the child.  The choice is simply between using the score (`score`) or not
 .has_parent Filter
 **************************
 
-The `has_parent` filter works in the same way((("has_parent filter"))) as the `has_parent` query, except
+The `has_parent` filter works in the same way((("has_parent query and filter", "filter"))) as the `has_parent` query, except
 that it doesn't support the `score_mode` parameter. It can be used only in
 _filter context_&#x2014;such as inside a `filtered` query--and behaves
 like any other filter: it includes or excludes, but doesn't score.

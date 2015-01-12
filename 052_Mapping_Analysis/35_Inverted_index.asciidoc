@@ -1,7 +1,7 @@
 [[inverted-index]]
 === Inverted Index
 
-Elasticsearch uses a structure called((("inverted index"))) an _inverted index_, which is designed
+Elasticsearch uses a structure called((("inverted index", id="ix_invertidx", range="startofrange"))) an _inverted index_, which is designed
 to allow very fast full-text searches. An inverted index consists of a list
 of all the unique words that appear in any document, and for each word, a list
 of the documents in which it appears.
@@ -48,7 +48,7 @@ documents in which each term appears:
     Total   |   2   |  1
 
 Both documents match, but the first document has more matches than the second.
-If we apply a naive _similarity algorithm_ that((("similarity algorithm"))) just counts the number of
+If we apply a naive _similarity algorithm_ that((("similarity algorithms"))) just counts the number of
 matching terms, then we can say that the first document is a better match--is _more relevant_ to our query--than the second document.
 
 But there are a few problems with our current inverted index:
@@ -110,4 +110,5 @@ index, so _both the indexed text and the query string must be normalized
 into the same form_.
 
 This process of tokenization and normalization is called _analysis_, which we
-discuss in the next section.
+discuss in the next section.((("inverted index", range="endofrange", startref="ix_invertidx")))
+

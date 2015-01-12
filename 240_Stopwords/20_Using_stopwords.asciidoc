@@ -85,7 +85,7 @@ The quick and the dead
 <1> Note the `position` of each token.
 
 The stopwords have been filtered out, as expected, but the interesting part is
-that the `position` of the((("phrase matching", "position of terms", "stopwords and"))) two remaining terms is unchanged: `quick` is the
+that the `position` of the((("phrase matching", "stopwords and", "positions data"))) two remaining terms is unchanged: `quick` is the
 second word in the original sentence, and `dead` is the fifth. This is
 important for phrase queries--if the positions of each term had been
 adjusted, a phrase query for `quick dead` would have matched the preceding
@@ -165,7 +165,7 @@ PUT /my_index
 
 The http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/using-stopwords.html#stop-token-filter[`stop` token filter] can be combined
 with a tokenizer((("stopwords", "using stop token filter")))((("stop token filter", "using in custom analyzer"))) and other token filters when you need to create a `custom`
-analyzer.  For instance, let's say that we wanted to ((("Spanish analyzer", "custom, creating")))((("light_spanish stemmer")))create a Spanish analyzer
+analyzer.  For instance, let's say that we wanted to ((("Spanish", "custom analyzer for")))((("light_spanish stemmer")))create a Spanish analyzer
 with the following:
 
 * A custom stopwords list

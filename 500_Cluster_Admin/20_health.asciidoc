@@ -79,7 +79,7 @@ cluster is `red` (since primaries are missing).
 
 ==== Drilling Deeper: Finding Problematic Indices
 
-Imagine something goes wrong one day, and you notice that your cluster health
+Imagine something goes wrong one day,((("indices", "problematic, finding"))) and you notice that your cluster health
 looks like this:
 
 [source,js]

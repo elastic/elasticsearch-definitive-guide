@@ -4,20 +4,20 @@
 We've mentioned that, by default, results are returned in descending order of
 relevance.((("relevance", "defined"))) But what is relevance? How is it calculated?
 
-The relevance score of each document is represented by a positive floating-point number called the `_score`. The higher the `_score`, the more relevant
+The relevance score of each document is represented by a positive floating-point number called the `_score`.((("score", "calculation of"))) The higher the `_score`, the more relevant
 the document.
 
 A query clause generates a `_score` for each document.  How that score is
-calculated depends on the type of query clause. Different query clauses are
+calculated depends on the type of query clause.((("fuzzy queries", "calculation of relevence score"))) Different query clauses are
 used for different purposes: a `fuzzy` query might determine the `_score` by
 calculating how similar the spelling of the found word is to the original
 search term; a `terms` query would incorporate the percentage of terms that
 were found. However, what we usually mean by _relevance_ is the algorithm that we
 use to calculate how similar the contents of a full-text field are to a full-text query string.
 
-The standard _similarity algorithm_ used in Elasticsearch is((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm")))((("similarity algorithm", "Term Frequency/Inverse Document Frequency  (TF/IDF)"))) known as  _term
+The standard _similarity algorithm_ used in Elasticsearch is((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm")))((("similarity algorithms", "Term Frequency/Inverse Document Frequency  (TF/IDF)"))) known as  _term
 frequency/inverse document frequency_, or _TF/IDF_, which takes the following
-factors into account:
+factors into((("inverse document frequency"))) account:
 
 Term frequency::
 
@@ -37,7 +37,7 @@ Field-length norm::
   the field will be relevant. A term appearing in a short `title` field
   carries more weight than the same term appearing in a long `content` field.
 
-Individual queries may combine the TF/IDF score with other factors
+Individual ((("field-length norm")))queries may combine the TF/IDF score with other factors
 such as the term proximity in phrase queries, or term similarity in
 fuzzy queries.
 
@@ -74,7 +74,7 @@ GET /_search?explain <1>
 
 [NOTE]
 ====
-Adding `explain` produces a lot of output for every hit, which can look
+Adding `explain` produces a lot((("explain parameter", "for relevance score calculation"))) of output for every hit, which can look
 overwhelming, but it is worth taking the time to understand what it all means.
 Don't worry if it doesn't all make sense now; you can refer to this section
 when you need it.  We'll work through the output for one `hit` bit by bit.
@@ -153,7 +153,7 @@ The first part is the summary of the calculation. It tells us that it has
 calculated the _weight_&#x2014;the ((("weight", "calculation of")))((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm", "weight calculation for a term")))TF/IDF--of the term `honeymoon` in the field `tweet`, for document `0`.  (This is
 an internal document ID and, for our purposes, can be ignored.)
 
-It then provides details of how the weight was calculated:
+It then provides details((("field-length norm")))((("inverse document frequency"))) of how the weight was calculated:
 
 Term frequency::
 
@@ -178,7 +178,7 @@ results appear in the order that they do.
 [TIP]
 ==================================================================
 The output from `explain` can be difficult to read in JSON, but it is easier
-when it is formatted as YAML.((("explain parameter", "formatting output in YAML")))((("YAML", "formatting explain output in"))) Just add `format=yaml` to the query string.
+when it is formatted as YAML.((("explain parameter", "formatting output in YAML")))((("YAML, formatting explain output in"))) Just add `format=yaml` to the query string.
 ==================================================================
 
 
@@ -187,7 +187,7 @@ when it is formatted as YAML.((("explain parameter", "formatting output in YAML"
 
 While the `explain` option adds an explanation for every result, you can use
 the `explain` API to understand why one particular document matched or, more
-important, why it _didn't_ match.((("relevance", "understanding why a document matched")))((("explain API", "understanding why a document matched")))
+important, why it _didn't_ match.((("relevance", "understanding why a document matched")))((("explain API, understanding why a document matched")))
 
 The path for the request is `/index/type/id/_explain`, as in the following:
 

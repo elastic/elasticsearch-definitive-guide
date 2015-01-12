@@ -123,7 +123,7 @@ Now we can proceed to setting up a field to use the new analyzer.
 ==== Multifields
 
 We said that it is cleaner to index unigrams and bigrams separately, so we
-will create the `title` field ((("multi-fields")))as a multifield (see <<multi-fields>>):
+will create the `title` field ((("multifields")))as a multifield (see <<multi-fields>>):
 
 [source,js]
 --------------------------------------------------

@@ -71,7 +71,7 @@ boundaries:
 
 ==== Ranges on Dates
 
-The `range` filter can be used on date ((("dates", "range filter used on")))((("range filters", "using on dates")))fields too:
+The `range` filter can be used on date ((("date ranges")))((("range filters", "using on dates")))fields too:
 
 [source,js]
 --------------------------------------------------
@@ -149,7 +149,7 @@ If we want a range from `a` up to but not including `b`, we can use the same
 .Be Careful of Cardinality
 ****
 Numeric and date fields are indexed in such a way that ranges are efficient
-to calculate.((("cardinality, string ranges and")))  This is not the case for string fields, however.  To perform
+to calculate.((("cardinality", "string ranges and")))  This is not the case for string fields, however.  To perform
 a range on a string field, Elasticsearch is effectively performing a `term`
 filter for every term that falls in the range.  This is much slower than
 a date or numeric range.

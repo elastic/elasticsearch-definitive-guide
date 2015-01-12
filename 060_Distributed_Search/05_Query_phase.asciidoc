@@ -49,7 +49,7 @@ set that it can return to the client.
 
 The first step is to broadcast the request to a shard copy of every node in
 the index. Just like <<distrib-read,document `GET` requests>>, search requests
-can be handled by a primary shard or by any of its replicas.((("shards", "handling serch requests"))) This is how more
+can be handled by a primary shard or by any of its replicas.((("shards", "handling search requests"))) This is how more
 replicas (when combined with more hardware) can increase search throughput.
 A coordinating node will round-robin through all shard copies on subsequent
 requests in order to spread the load.

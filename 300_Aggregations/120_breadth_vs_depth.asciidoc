@@ -125,7 +125,7 @@ for classes of queries that are amenable to breadth-first.
 .Populate full depth for remaining nodes
 image::images/300_120_breadth_first_4.svg["Step 4: populate full depth for remaining nodes"]
 
-To use breadth-first, simply ((("collect parameter", "enabling breadth-first")))enable it via the `collect` parameter:
+To use breadth-first, simply ((("collect parameter, enabling breadth-first")))enable it via the `collect` parameter:
 
 [source,js]
 ----

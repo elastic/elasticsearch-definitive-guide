@@ -1,7 +1,7 @@
 [[multi-fields]]
 === String Sorting and Multifields
 
-Analyzed string fields are also multivalue fields,((("strings", "sorting on string fields")))((("analyzed fields", "string fields"))) but sorting on them seldom
+Analyzed string fields are also multivalue fields,((("strings", "sorting on string fields")))((("analyzed fields", "string fields")))((("sorting", "string sorting and multifields"))) but sorting on them seldom
 gives you the results you want. If you analyze a string like `fine old art`,
 it results in three terms. We probably want to sort alphabetically on the
 first term, then the second term, and so forth, but Elasticsearch doesn't have this
@@ -21,7 +21,7 @@ and one that is `not_analyzed` for sorting.
 
 But  storing the same string twice in the `_source` field is waste of space.
 What we really want to do is to pass in a _single field_ but to _index it in two different ways_. All of the _core_ field types (strings, numbers,
-Booleans, dates) accept a `fields` parameter ((("mapping (types)", "transforming simple mapping to multi-field mapping")))((("types", "core simple field types", "accepting fields parameter")))((("fields parameter")))((("multi-field mapping")))that allows you to transform a
+Booleans, dates) accept a `fields` parameter ((("mapping (types)", "transforming simple mapping to multifield mapping")))((("types", "core simple field types", "accepting fields parameter")))((("fields parameter")))((("multifield mapping")))that allows you to transform a
 simple mapping like
 
 [source,js]

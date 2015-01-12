@@ -16,7 +16,7 @@ full-text field.
 
 In <<phrase-matching>>, we introduced the `match_phrase` query, which matches
 all the specified words in the same positions relative to each other.  For-query time search-as-you-type, we can use a specialization of this query,
-called ((("prefixes", "match_phrase_prefix query")))((("match_phrase_prefix query")))the `match_phrase_prefix` query:
+called ((("prefix query", "match_phrase_prefix query")))((("match_phrase_prefix query")))the `match_phrase_prefix` query:
 
 [source,js]
 --------------------------------------------------

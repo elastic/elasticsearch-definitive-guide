@@ -7,7 +7,7 @@ by combining character filters, tokenizers, and token filters in a
 configuration that suits your particular data.
 
 In <<analysis-intro>>, we said that an _analyzer_ is a wrapper that combines
-three functions into a single package,((("analyzers", "functions executed in sequence"))) which are executed in sequence:
+three functions into a single package,((("analyzers", "character filters, tokenizers, and token filters in"))) which are executed in sequence:
 
 Character filters::
 +
@@ -38,7 +38,7 @@ outputs exactly((("keyword tokenizer"))) the same string as it received, without
 http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-whitespace-tokenizer.html[`whitespace` tokenizer]
 splits text((("whitespace tokenizer"))) on whitespace only. The
 http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-pattern-tokenizer.html[`pattern` tokenizer] can
-be used to split text on a matching regular expression.
+be used to split text on a ((("pattern tokenizer")))matching regular expression.
 --
 
 Token filters::

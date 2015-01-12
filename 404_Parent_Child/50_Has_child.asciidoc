@@ -2,7 +2,7 @@
 === Finding Parents by Their Children
 
 The `has_child` query and filter can be used to find parent documents based on
-the contents of their children.((("parent-child relationship", "finding parents by their children")))  For instance, we could find all branches that
+the contents of their children.((("has_child query and filter")))((("parent-child relationship", "finding parents by their children")))  For instance, we could find all branches that
 have employees born after 1980 with a query like this:
 
 [source,json]
@@ -25,7 +25,7 @@ GET /company/branch/_search
 -------------------------
 
 Like the <<nested-query,`nested` query>>, the `has_child` query could
-match several child documents,((("has_child query"))) each with a different relevance
+match several child documents,((("has_child query and filter", "query"))) each with a different relevance
 score. How these scores are reduced to a single score for the parent document
 depends on the `score_mode` parameter. The default setting is `none`, which
 ignores the child scores and assigns a score of `1.0` to the parents, but it
@@ -62,7 +62,7 @@ score.((("parent-child relationship", "finding parents by their children", "min_
 ==== min_children and max_children
 
 The `has_child` query and filter both accept the `min_children` and
-`max_children` parameters,((("min_children parameter")))((("max_children parameter")))((("has_child query"))) which will return the parent document only if the
+`max_children` parameters,((("min_children parameter")))((("max_children parameter")))((("has_child query and filter", "min_children or max_children parameters"))) which will return the parent document only if the
 number of matching children is within the specified range.
 
 This query will match only branches that have at least two employees:
@@ -91,7 +91,7 @@ enabled.
 .has_child Filter
 **************************
 
-The `has_child` filter works((("has_child filter"))) in the same way as the `has_child` query, except
+The `has_child` filter works((("has_child query and filter", "filter"))) in the same way as the `has_child` query, except
 that it doesn't support the `score_mode` parameter. It can be used only in
 _filter context_&#x2014;such as inside a `filtered` query--and behaves
 like any other filter: it includes or excludes, but doesn't score.

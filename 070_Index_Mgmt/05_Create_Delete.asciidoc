@@ -1,6 +1,6 @@
 === Creating an Index
 
-Until now, we have created a new index((("indexes", "creating"))) by simply indexing a document into it. The index is created with the default settings, and new fields are added to the type mapping by using dynamic mapping. Now we need more control over the process: we want to ensure that the index has been created with the appropriate number of primary shards, and that analyzers and mappings are set up _before_ we index any data.
+Until now, we have created a new index((("indices", "creating"))) by simply indexing a document into it. The index is created with the default settings, and new fields are added to the type mapping by using dynamic mapping. Now we need more control over the process: we want to ensure that the index has been created with the appropriate number of primary shards, and that analyzers and mappings are set up _before_ we index any data.
 
 To do this, we have to create the index manually, passing in any settings or
 type mappings in the request body, as follows:
@@ -19,7 +19,7 @@ PUT /my_index
 --------------------------------------------------
 
 
-In fact, if you want to, you ((("indexes", "preventing automatic creation of")))can prevent the automatic creation of indices by
+In fact, if you want to, you ((("indices", "preventing automatic creation of")))can prevent the automatic creation of indices by
 adding the following setting to the `config/elasticsearch.yml` file on each
 node:
 
@@ -39,7 +39,7 @@ existence.
 
 === Deleting an Index
 
-To delete an index, use ((("HTTP methods", "DELETE")))((("DELETE method", "deleting indexes")))((("indexes", "deleting")))the following request:
+To delete an index, use ((("HTTP methods", "DELETE")))((("DELETE method", "deleting indices")))((("indices", "deleting")))the following request:
 
 [source,js]
 --------------------------------------------------

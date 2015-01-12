@@ -2,7 +2,7 @@
 === Java Virtual Machine
 
 You should always run the most recent version of the Java Virtual Machine (JVM),
-unless otherwise stated on the Elasticsearch website.((("deployment", "Java Virtual Machine (JVM)")))((("JVM (Java Virtual Machine)")))((("Java Virtual Machine (JVM)")))  Elasticsearch, and in
+unless otherwise stated on the Elasticsearch website.((("deployment", "Java Virtual Machine (JVM)")))((("JVM (Java Virtual Machine)")))((("Java Virtual Machine", see="JVM")))  Elasticsearch, and in
 particular Lucene, is a demanding piece of software.  The unit and integration
 tests from Lucene often expose bugs in the JVM itself.  These bugs range from
 mild annoyances to serious segfaults, so it is best to use the latest version
@@ -20,7 +20,7 @@ between client and server.
 
 .Please Do Not Tweak JVM Settings
 ****
-The JVM exposes dozens (hundreds even!) of settings, parameters, and configurations.
+The JVM exposes dozens (hundreds even!) of settings, parameters, and configurations.((("JVMs (Java Virtual Machines)", "avoiding custom configuration")))
 They allow you to tweak and tune almost every aspect of the JVM.
 
 When a knob is encountered, it is human nature to want to turn it.  We implore
@@ -37,7 +37,7 @@ half the time, this alone restores stability and performance.
 === Transport Client Versus Node Client
 
 If you are using Java, you may wonder when to use the transport client versus the
-node client.((("clients")))((("NodeClient versus TransportClient")))((("TransportClient versus NodeClient")))  As discussed at the beginning of the book, the transport client
+node client.((("Java", "clients for Elasticsearch")))((("clients")))((("node client", "versus transport client")))((("transport client", "versus node client")))  As discussed at the beginning of the book, the transport client
 acts as a communication layer between the cluster and your application.  It knows
 the API and can automatically round-robin between nodes, sniff the cluster for you,
 and more. But it is _external_ to the cluster, similar to the REST clients.

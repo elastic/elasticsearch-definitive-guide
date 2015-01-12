@@ -1,6 +1,6 @@
 === Cross-fields Entity Search
 
-Now we come to a common pattern: cross-fields entity search. ((("cross-fields entity search")))((("multi-field search", "cross-fields entity search"))) With entities
+Now we come to a common pattern: cross-fields entity search. ((("cross-fields entity search")))((("multifield search", "cross-fields entity search"))) With entities
 like `person`, `product`, or `address`, the identifying information is spread
 across several fields.  We may have a `person` indexed as follows:
 

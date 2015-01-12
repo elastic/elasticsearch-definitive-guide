@@ -11,7 +11,7 @@ POST _snapshot/my_backup/snapshot_1/_restore
 
 The default behavior is to restore all indices that exist in that snapshot.
 If `snapshot_1` contains five indices, all five will be restored into
-our cluster. ((("indexes", "restoring from a snapshot"))) As with the `snapshot` API, it is possible to select which indices
+our cluster. ((("indices", "restoring from a snapshot"))) As with the `snapshot` API, it is possible to select which indices
 we want to restore.
 
 There are also additional options for renaming indices.  This allows you to

@@ -107,7 +107,7 @@ GET /_search
 <3> See <<Understanding-the-price-Clause>> for the reason that `origin` is `50` instead of `100`.
 <4> The `price` clause has twice the weight of the `location` clause.
 
-The `location` clause is((("location clause", "gauss (Gaussian) function"))) easy to understand:
+The `location` clause is((("location clause, Gaussian function example"))) easy to understand:
 
 * We have specified an `origin` that corresponds to the center of London.
 * Any location within `2km` of the `origin` receives the full score of `1.0`.
@@ -117,7 +117,7 @@ of `0.5`.
 [[Understanding-the-price-Clause]]
 === Understanding the price Clause
 
-The `price` clause is a little trickier.((("price clause (gauss function)")))  The user's preferred price is
+The `price` clause is a little trickier.((("price clause (Gaussian function example)")))  The user's preferred price is
 anything up to £100, but this example sets the origin to £50.  Prices can't be
 negative, but the lower they are, the better.  Really, any price between £0 and
 £100 should be considered optimal.
@@ -130,7 +130,7 @@ way, the score decays only for any prices above £100 (`origin + offset`).
 ==================================================
 
 The `weight` parameter can be used to increase or decrease the contribution of
-individual clauses. ((("weight parameter", "in function_score query"))) The `weight`, which defaults to `1.0`, is multiplied by
+individual clauses. ((("weight parameter (in function_score query)"))) The `weight`, which defaults to `1.0`, is multiplied by
 the score from each clause before the scores are combined with the specified
 `score_mode`.
 

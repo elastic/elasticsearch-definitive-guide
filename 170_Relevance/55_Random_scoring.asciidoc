@@ -2,7 +2,7 @@
 === Random Scoring
 
 You may have been wondering what _consistently random scoring_ is, or why
-you would ever want to use it.((("consistently random scoring")))((("relevance", "controlling", "random scoring")))((("random scoring")))  The previous example provides a good use case.
+you would ever want to use it.((("consistently random scoring")))((("relevance", "controlling", "random scoring")))  The previous example provides a good use case.
 All results from the previous example would receive a final `_score` of 1, 2,
 3, 4, or 5. Maybe there are only a few homes that score 5, but presumably
 there would be a lot of homes scoring 2 or 3.

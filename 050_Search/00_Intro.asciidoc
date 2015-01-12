@@ -10,7 +10,7 @@ This is the reason that we use structured JSON documents, rather than
 amorphous blobs of data.  Elasticsearch not only _stores_ the document, but
 also _indexes_ the content of the document in order to make it searchable.
 
-_Every field in a document is indexed and can be queried_.  And it's not just
+_Every field in a document is indexed and can be queried_. ((("indexing"))) And it's not just
 that. During a single query, Elasticsearch can use _all_ of these indices, to
 return results at breath-taking speed.  That's something that you could never
 consider doing with a traditional database.
@@ -26,7 +26,7 @@ A _search_ can be any of the following:
 
 * A combination of the two
 
-While many searches will just work out of((("full-text search"))) the box, to use Elasticsearch to
+While many searches will just work out of((("full text search"))) the box, to use Elasticsearch to
 its full potential, you need to understand three subjects:
 
  _Mapping_::     

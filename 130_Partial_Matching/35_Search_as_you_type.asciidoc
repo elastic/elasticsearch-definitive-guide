@@ -112,7 +112,7 @@ terms:
 * `brown`
 
 To use the analyzer, we need to apply it to a field, which we can do
-with((("update-mapping API", "applying custom autocomplete analyzer to a field"))) the `update-mapping` API:
+with((("update-mapping API, applying custom autocomplete analyzer to a field"))) the `update-mapping` API:
 
 [source,js]
 --------------------------------------------------

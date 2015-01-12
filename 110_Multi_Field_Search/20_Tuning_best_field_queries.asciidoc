@@ -1,10 +1,10 @@
 === Tuning Best Fields Queries
 
-What would happen if the user((("multi-field search", "best fields queries", "tuning")))((("best fields queries", "tuning"))) had searched instead for ``quick pets''?  Both
+What would happen if the user((("multifield search", "best fields queries", "tuning")))((("best fields queries", "tuning"))) had searched instead for ``quick pets''?  Both
 documents contain the word `quick`, but only document 2 contains the word
 `pets`. Neither document contains _both words_ in the _same field_.
 
-A simple `dis_max` query like the following would ((("dis_max (disjunction max) query")))choose the single best
+A simple `dis_max` query like the following would ((("dis_max (disjunction max) query")))((("relevance scores", "calculation in dis_max queries")))choose the single best
 matching field, and ignore the other:
 
 [source,js]
@@ -54,7 +54,7 @@ but this isn't the case. Remember: the `dis_max` query simply uses the
 
 ==== tie_breaker
 
-It is possible, however, to((("dis_max (disjunction max) query", "using tie_breaker parameter")))((("relevance scores", "calculation in dis_match queries"))) also take the `_score` from the other matching
+It is possible, however, to((("dis_max (disjunction max) query", "using tie_breaker parameter")))((("relevance scores", "calculation in dis_max queries", "using tie_breaker parameter"))) also take the `_score` from the other matching
 clauses into account, by specifying ((("tie_breaker parameter")))the `tie_breaker` parameter:
 
 [source,js]
@@ -100,7 +100,7 @@ This gives us the following results:
 --------------------------------------------------
 <1> Document 2 now has a small lead over document 1.
 
-The `tie_breaker` parameter ((("relevance scores", "calculation in dis_max query using tie_breaker parameter")))makes the `dis_max` query behave more like a
+The `tie_breaker` parameter makes the `dis_max` query behave more like a
 halfway house between `dis_max` and `bool`. It changes the score calculation
 as follows:
 

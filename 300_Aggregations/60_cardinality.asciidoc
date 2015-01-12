@@ -50,7 +50,7 @@ cars:
 --------------------------------------------------
 
 We can make our example more useful:  how many colors were sold each month?  For
-that metric, we just nest the `cardinality` metric under ((("date histograms, building", "cardinality metric nested under")))a `date_histogram`:
+that metric, we just nest the `cardinality` metric under ((("date histograms, building")))a `date_histogram`:
 
 [source,js]
 --------------------------------------------------
@@ -77,7 +77,7 @@ GET /cars/transactions/_search?search_type=count
 
 ==== Understanding the Trade-offs
 As mentioned at the top of this chapter, the `cardinality` metric is an approximate
-algorithm. ((("cardinality", "understanding the tradeoffs"))) It is based on the http://static.googleusercontent.com/media/research.google.com/fr//pubs/archive/40671.pdf[HyperLogLog++] (HLL) algorithm.((("HLL algorithm")))  HLL works by
+algorithm. ((("cardinality", "understanding the tradeoffs"))) It is based on the http://static.googleusercontent.com/media/research.google.com/fr//pubs/archive/40671.pdf[HyperLogLog++] (HLL) algorithm.((("HLL (HyperLogLog) algorithm")))((("HyperLogLog (HLL) algorithm")))  HLL works by
 hashing your input and using the bits from the hash to make probabilistic estimations
 on the cardinality.
 
@@ -129,7 +129,7 @@ counting millions of unique values.
 If you want a distinct count, you _usually_ want to query your entire dataset
 (or nearly all of it). ((("cardinality", "optimizing for speed")))((("distinct counts", "optimizing for speed"))) Any operation on all your data needs to execute quickly,
 for obvious reasons. HyperLogLog is very fast already--it simply
-hashes your data and does some bit-twiddling.((("HLL algorithm")))
+hashes your data and does some bit-twiddling.((("HyperLogLog (HLL) algorithm")))((("HLL (HyperLogLog) algorithm")))
 
 But if speed is important to you, we can optimize it a little bit further.
 Since HLL simply needs the hash of the field, we can precompute that hash at

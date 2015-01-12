@@ -27,7 +27,7 @@ parameter.((("stopwords parameter"))) Either provide a list of stopwords or tell
 stopwords list from a particular language.
 
 In the following example, we create a new analyzer called the `es_std`
-analyzer, which uses the predefined list of ((("Spanish stopwords, analyzer using")))Spanish stopwords:
+analyzer, which uses the predefined list of ((("Spanish", "analyzer using Spanish stopwords")))Spanish stopwords:
 
 [source,js]
 --------------------------------------------------

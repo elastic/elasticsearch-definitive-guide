@@ -69,13 +69,13 @@ query.((("max_score value")))
 
 ==== took
 
-The `took` value((("took value", "time taken for empty search"))) tells us how many milliseconds the entire search request took
+The `took` value((("took value (empty search)"))) tells us how many milliseconds the entire search request took
 to execute.
 
 ==== shards
 
 The `_shards` element((("shards", "number involved in an empty search"))) tells us the `total` number of shards that were involved
-in the query and,((("failed shards (in a search)")))((("successful shards", "in a search"))) of them, how many were `successful` and how many `failed`.
+in the query and,((("failed shards (in a search)")))((("successful shards (in a search)"))) of them, how many were `successful` and how many `failed`.
 We wouldn't normally expect shards to fail, but it can happen. If we were to
 suffer a major disaster in which we lost both the primary and the replica copy
 of the same shard, there would be no copies of that shard available to respond

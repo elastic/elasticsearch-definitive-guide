@@ -1,7 +1,7 @@
 === Coping with Failure
 
 We've said that Elasticsearch can cope when nodes fail, so let's go
-ahead and try it out. ((("shards", "horizontal scaling and safety of data")))((("failure", "coping with")))((("master node", "killing and replacing")))((("nodes", "failure of")))((("clusters", "coping with failure of nodes")))If we kill the first node, our cluster looks like
+ahead and try it out. ((("shards", "horizontal scaling and safety of data")))((("failure of nodes, coping with")))((("master node", "killing and replacing")))((("nodes", "failure of")))((("clusters", "coping with failure of nodes")))If we kill the first node, our cluster looks like
 <<cluster-post-kill>>.
 
 [[cluster-post-kill]]

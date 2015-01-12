@@ -1,10 +1,10 @@
 [[multi-query-strings]]
 === Multiple Query Strings
 
-The simplest multifield query to deal with is the ((("multi-field search", "multiple query strings")))one where we can _map
+The simplest multifield query to deal with is the ((("multifield search", "multiple query strings")))one where we can _map
 search terms to specific fields_. If we know that _War and Peace_ is the
 title, and Leo Tolstoy is the author, it is easy to write each of these
-conditions as a `match` clause ((("match clause", "mapping search terms to specific fields")))((("bool query", "mapping search terms to specific fields in match clause")))and to combine them with a <<bool-query,`bool`
+conditions as a `match` clause ((("match clause, mapping search terms to specific fields")))((("bool query", "mapping search terms to specific fields in match clause")))and to combine them with a <<bool-query,`bool`
 query>>:
 
 [source,js]
@@ -72,7 +72,7 @@ would have reduced the contribution of the title and author clauses to one-quart
 ==== Prioritizing Clauses
 
 It is likely that an even one-third split between clauses is not what we need for
-the preceding query. ((("multi-field search", "multiple query strings", "prioritizing query clauses")))((("bool query", "prioritizing clauses"))) Probably we're more interested in the title and author
+the preceding query. ((("multifield search", "multiple query strings", "prioritizing query clauses")))((("bool query", "prioritizing clauses"))) Probably we're more interested in the title and author
 clauses then we are in the translator clauses. We need to tune the query to
 make the title and author clauses relatively more important.
 

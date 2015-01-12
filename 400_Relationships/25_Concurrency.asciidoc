@@ -1,7 +1,7 @@
 [[denormalization-concurrency]]
 === Denormalization and Concurrency
 
-Of course, data denormalization has downsides too.((("relationships", "denormalization and concurrency")))((("concurreny", "denormalization and")))((("denormaliation", "and concurrency")))  The first disadvantage is
+Of course, data denormalization has downsides too.((("relationships", "denormalization and concurrency")))((("concurrency", "denormalization and")))((("denormalization", "and concurrency")))  The first disadvantage is
 that  the index will be bigger because the `_source` document for every
 blog post is bigger, and there are more indexed fields.  This usually isn't a
 huge problem.  The data written to disk is highly compressed, and disk space

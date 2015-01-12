@@ -20,7 +20,7 @@ rating, distance, and price. Another example: show me a map of vacation rental
 properties available in August throughout the city, and calculate the average
 price per zone.
 
-Elasticsearch offers two ways of ((("Elastisearch", "representing geolocations")))representing geolocations: latitude-longitude
+Elasticsearch offers two ways of ((("Elasticsearch", "representing geolocations")))representing geolocations: latitude-longitude
 points using the `geo_point` field type,((("geo_point field type"))) and complex shapes defined in
 http://en.wikipedia.org/wiki/GeoJSON[GeoJSON], using the `geo_shape` field
 type.((("geo_shape field type")))

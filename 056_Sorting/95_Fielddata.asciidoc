@@ -7,7 +7,7 @@ important topic that we will refer to repeatedly, and is something that you
 should be aware of.((("fielddata")))
 
 When you sort on a field, Elasticsearch needs access to the value of that
-field for every document that matches the query.  The inverted index, which
+field for every document that matches the query.((("inverted index", "sorting and")))  The inverted index, which
 performs very well when searching, is not the ideal structure for sorting on
 field values:
 

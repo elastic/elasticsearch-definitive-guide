@@ -91,7 +91,7 @@ GET /_validate/query?explain
 --------------------------------------------------
 // SENSE: 054_Query_DSL/80_Understanding_queries.json
 
-An `explanation` is returned for each index that we query, because each
+An `explanation` is returned for each index ((("indices", "explanation for each index queried")))that we query, because each
 index can have different mappings and analyzers:
 
 [source,js]

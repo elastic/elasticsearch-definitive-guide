@@ -2,7 +2,7 @@
 == Building Bar Charts
 
 One of the exciting aspects of aggregations are how easily they are converted
-into charts and graphs.((("bar charts", "building from aggregations")))((("aggregations", "building bar charts from")))  In this chapter, we are focusing
+into charts and graphs.((("bar charts, building from aggregations", id="ix_barcharts", range="startofrange")))((("aggregations", "building bar charts from")))  In this chapter, we are focusing
 on various analytics that we can wring out of our example dataset.  We will also
 demonstrate the types of charts aggregations can power.
 
@@ -154,4 +154,5 @@ This will allow us to build a chart like <<barcharts-bar1>>:
 image::images/elas_28in02.png["Average price of all makes, with error bars"]
 
 
+((("bar charts, building from aggregations", range="endofrange", startref="ix_barcharts")))
 

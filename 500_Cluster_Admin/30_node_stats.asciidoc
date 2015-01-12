@@ -2,7 +2,7 @@
 === Monitoring Individual Nodes
 
 `Cluster-health` is at one end of the spectrum--a very high-level overview of
-everything in your cluster. ((("clusters", "administration", "monitoring individual nodes")))((("nodes", "monitoring individual nodes"))) The `node-stats` API is at the other end. ((("Node Stats API"))) It provides
+everything in your cluster. ((("clusters", "administration", "monitoring individual nodes")))((("nodes", "monitoring individual nodes"))) The `node-stats` API is at the other end. ((("Node Stats API", id="ix_NodeStats", range="startofrange"))) It provides
 a bewildering array of statistics about each node in your cluster.
 
 `Node-stats` provides so many stats that, until you are accustomed to the output,
@@ -45,7 +45,7 @@ or the node is binding to the wrong IP address/interface.
 
 ==== indices Section
 
-The `indices` section lists aggregate statistics((("indexes", "indices section in Node Stats API"))) for all the indices that reside
+The `indices` section lists aggregate statistics((("indices", "indices section in Node Stats API"))) for all the indices that reside
 on this particular node:
 
 [source,js]
@@ -186,14 +186,14 @@ There is little you can do to affect this memory usage, since it has a fairly li
 relationship with the number of parent/child docs.  It is heap-resident, however,
 so it's a good idea to keep an eye on it.
 
-- `field_data` displays the memory used by fielddata, which is used for aggregations,
+- `field_data` displays the memory used by fielddata,((("fielddata", "statistics on"))) which is used for aggregations,
 sorting, and more.  There is also an eviction count.  Unlike `filter_cache`, the eviction
 count here is useful:  it should be zero or very close.  Since field data
 is not a cache, any eviction is costly and should be avoided.  If you see
 evictions here, you need to reevaluate your memory situation, fielddata limits,
 queries, or all three.
 
-- `segments` will tell you the number of Lucene segments this node currently serves.
+- `segments` will tell you the number of Lucene segments this node currently serves.((("segments", "number served by a node")))
 This can be an important number.  Most indices should have around 50&#x2013;150 segments,
 even if they are terabytes in size with billions of documents.  Large numbers
 of segments can indicate a problem with merging (for example, merging is not keeping up
@@ -201,7 +201,7 @@ with segment creation).  Note that this statistic is the aggregate total of all
 indices on the node, so keep that in mind.
 +
 The `memory` statistic gives you an idea of the amount of memory being used by the
-Lucene segments themselves.  This includes low-level data structures such as
+Lucene segments themselves.((("memory", "statistics on")))  This includes low-level data structures such as
 posting lists, dictionaries, and bloom filters.  A very large number of segments
 will increase the amount of overhead lost to these data structures, and the memory
 usage can be a handy metric to gauge that overhead.
@@ -209,7 +209,7 @@ usage can be a handy metric to gauge that overhead.
 ==== OS and Process Sections
 
 The `OS` and `Process` sections are fairly self-explanatory and won't be covered
-in great detail.  They list basic resource statistics such as CPU and load.  The
+in great detail.((("operating system (OS), statistics on")))  They list basic resource statistics such as CPU and load.((("process (Elasticsearch JVM), statistics on")))  The
 `OS` section describes it for the entire `OS`, while the `Process` section shows just
 what the Elasticsearch JVM process is using.
 
@@ -225,14 +225,14 @@ monitoring stack. Some stats include the following:
 ==== JVM Section
 
 The `jvm` section contains some critical information about the JVM process that
-is running Elasticsearch.  Most important, it contains garbage collection details,
+is running Elasticsearch.((("JVM (Java Virtual Machine)", "statistics on")))  Most important, it contains garbage collection details,
 which have a large impact on the stability of your Elasticsearch cluster.
 
 [[garbage_collector_primer]]
 .Garbage Collection Primer
 **********************************
 Before we describe the stats, it is useful to give a crash course in garbage
-collection and its impact on Elasticsearch.  If you are familar with garbage
+collection and its impact on Elasticsearch.((("garbage collection")))  If you are familar with garbage
 collection in the JVM, feel free to skip down.
 
 Java is a _garbage-collected_ language, which means that the programmer does
@@ -393,7 +393,7 @@ discussed in <<logging>>.
 
 ==== Threadpool Section
 
-Elasticsearch maintains threadpools internally.  These threadpools
+Elasticsearch maintains threadpools internally. ((("threadpools", "statistics on"))) These threadpools
 cooperate to get work done, passing work between each other as necessary. In
 general, you don't need to configure or tune the threadpools, but it is sometimes
 useful to see their stats so you can gain insight into how your cluster is behaving.
@@ -425,7 +425,7 @@ up with the influx of work.
 .Bulk Rejections
 ****
 If you are going to encounter queue rejections, it will most likely be caused
-by bulk indexing requests.  It is easy to send many bulk requests to Elasticsearch
+by bulk indexing requests.((("bulk API", "rejections of bulk requests")))  It is easy to send many bulk requests to Elasticsearch
 by using concurrent import processes.  More is better, right?
 
 In reality, each cluster has a certain limit at which it can not keep up with
@@ -480,7 +480,7 @@ are good to keep an eye on:
 
 ==== FS and Network Sections
 
-Continuing down the `node-stats` API, you'll see a bunch of statistics about your
+Continuing down the `node-stats` API, you'll see a((("filesystem, statistics on"))) bunch of statistics about your
 filesystem:  free space, data directory paths, disk I/O stats, and more.  If you are
 not monitoring free disk space, you can get those stats here.  The disk I/O stats
 are also handy, but often more specialized command-line tools (`iostat`, for example)
@@ -489,7 +489,7 @@ are more useful.
 Obviously, Elasticsearch has a difficult time functioning if you run out of disk
 space--so make sure you don't.
 
-There are also two sections on network statistics:
+There are also two sections on ((("network", "statistics on")))network statistics:
 
 [source,js]
 ----
@@ -520,7 +520,7 @@ are configured appropriately.
 
 ==== Circuit Breaker
 
-Finally, we come to the last section: stats about the fielddata circuit breaker
+Finally, we come to the last section: stats about the((("fielddata circuit breaker"))) fielddata circuit breaker
 (introduced in <<circuit-breaker>>):
 
 [role="pagebreak-before"]
@@ -544,7 +544,7 @@ the currently configured overhead.  The overhead is used to pad estimates, becau
 The main thing to watch is the `tripped` metric.  If this number is large or
 consistently increasing, it's a sign that your queries may need to be optimized
 or that you may need to obtain more memory (either per box or by adding more
-nodes).
+nodes).((("Node Stats API", range="endofrange", startref="ix_NodeStats")))
 
 
 

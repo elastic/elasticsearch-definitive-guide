@@ -2,7 +2,7 @@
 === Most Fields
 
 Full-text search is a battle between _recall_&#x2014;returning all the
-documents that are ((("most fields queries")))((("multi-field search", "most fields queries")))relevant--and _precision_&#x2014;not returning irrelevant
+documents that are ((("most fields queries")))((("multifield search", "most fields queries")))relevant--and _precision_&#x2014;not returning irrelevant
 documents.  The goal is to present the user with the most relevant documents
 on the first page of results.
 
@@ -52,7 +52,7 @@ unstemmed fields to illustrate this technique.
 
 ==== Multifield Mapping
 
-The first thing to do is to set up our ((("most fields queries", "multi-field mapping")))((("mapping (types)", "multi-field mapping")))field to be indexed twice: once in a
+The first thing to do is to set up our ((("most fields queries", "multifield mapping")))((("mapping (types)", "multifield mapping")))field to be indexed twice: once in a
 stemmed form and once in an unstemmed form.  To do this, we will use 
 _multifields_, which we introduced in <<multi-fields>>:
 

@@ -35,7 +35,7 @@ employee.  The act of storing data in Elasticsearch is called _indexing_, but
 before we can index a document, we need to decide _where_ to store it.
 
 In Elasticsearch, a document belongs to a _type_, and those((("types"))) types live inside
-an _index_. You can draw some (rough) parallels to a traditional relational database:
+an _index_. ((("indices")))You can draw some (rough) parallels to a traditional relational database:
 
 ----
 Relational DB  ⇒ Databases ⇒ Tables ⇒ Rows      ⇒ Columns
@@ -68,9 +68,9 @@ replace the old.
 
 Inverted index::
 
-Relational databases add an _index_, such as a B-tree index,((("relational databases", "indexes"))) to specific
+Relational databases add an _index_, such as a B-tree index,((("relational databases", "indices"))) to specific
 columns in order to improve the speed of data retrieval.  Elasticsearch and
-Lucene use a structure called((("inverted indexes"))) an _inverted index_ for exactly the same
+Lucene use a structure called((("inverted index"))) an _inverted index_ for exactly the same
 purpose.
 +
 By default, every field in a document is _indexed_ (has an inverted index)

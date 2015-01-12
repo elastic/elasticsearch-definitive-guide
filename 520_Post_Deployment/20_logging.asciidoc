@@ -11,7 +11,7 @@ up the logging level to `DEBUG`.
 
 You _could_ modify the `logging.yml` file and restart your nodes--but that is
 both tedious and leads to unnecessary downtime.  Instead, you can update logging
-levels through the `cluster-settings` API((("Cluster Settings API", "updating logging levels"))) that we just learned about.
+levels through the `cluster-settings` API((("Cluster Settings API, updating logging levels"))) that we just learned about.
 
 To do so, take the logger you are interested in and prepend `logger.` to it.
 Let's turn up the discovery logging:

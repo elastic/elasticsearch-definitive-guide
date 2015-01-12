@@ -8,7 +8,7 @@ instead of having to repeat yourself every time you create a new type. The
 _after_ the `_default_` mapping will include all of these default settings,
 unless explicitly overridden in the type mapping itself.
 
-For instance, we can disable the `_all` field for all types,((("all field", "disabling for all types using defaul mapping"))) using the
+For instance, we can disable the `_all` field for all types,((("_all field", "disabling for all types using default mapping", sortas="all field"))) using the
 `_default_` mapping, but enable it just for the `blog` type, as follows:
 
 [source,js]

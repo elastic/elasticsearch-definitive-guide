@@ -1,7 +1,7 @@
 === Add an Index
 
 To add data to Elasticsearch, we need an _index_&#x2014;a place to store related
-data.((("indexes")))((("clusters", "adding an index")))  In reality, an index is just a _logical namespace_ that points to
+data.((("indices")))((("clusters", "adding an index")))  In reality, an index is just a _logical namespace_ that points to
 one or more physical _shards_.
 
 A _shard_ is a low-level _worker unit_ that holds((("shards", "defined"))) just a slice of all the
@@ -37,8 +37,8 @@ serve read requests like searching or retrieving a document.
 The number of primary shards in an index is fixed at the time that an index is
 created, but the number of replica shards can be changed at any time.
 
-Let's create an index called `blogs` in our empty one-node cluster.((("indexes", "creating"))) By
-default, indices are assigned five primary shards,((("primary shards", "assigned to indexes")))((("replica shards", "assigned to indexes"))) but for the purpose of this
+Let's create an index called `blogs` in our empty one-node cluster.((("indices", "creating"))) By
+default, indices are assigned five primary shards,((("primary shards", "assigned to indices")))((("replica shards", "assigned to indices"))) but for the purpose of this
 demonstration, we'll assign just three primary shards and one replica (one replica
 of every primary shard):
 

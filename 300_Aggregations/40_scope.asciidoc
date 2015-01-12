@@ -7,7 +7,7 @@ omitted a `query` from the search request. ((("queries", "in aggregations")))(((
 simply an aggregation.
 
 Aggregations can be run at the same time as search requests, but you need to
-understand a new concept: _scope_. ((("scope", "scoping aggregations"))) By default, aggregations operate in the same 
+understand a new concept: _scope_. ((("scoping aggregations", id="ix_scopeaggs", range="startofrange"))) By default, aggregations operate in the same 
 scope as the query.  Put another way, aggregations are calculated on the set of 
 documents that match your query.
 
@@ -142,7 +142,7 @@ update in real time.  Try that with Hadoop!
 
 You'll often want your aggregation to be scoped to your query.  But sometimes
 you'll want to search for a subset of data, but aggregate across _all_ of
-your data.((("aggregations", "scoping", "global bucket")))((("scope", "scoping aggregations", "using a global bucket")))
+your data.((("aggregations", "scoping", "global bucket")))((("scoping aggregations", "using a global bucket")))
 
 For example, say you want to know the average price of Ford cars compared to the
 average price of _all_ cars. We can use a regular aggregation (scoped to the query) 
@@ -193,5 +193,5 @@ the average price of all cars.
 If you've made it this far in the book, you'll recognize the mantra: use a filter
 wherever you can.  The same applies to aggregations, and in the next chapter
 we show you how to filter an aggregation instead of just limiting the query
-scope.
+scope.((("scoping aggregations", range="endofrange", startref="ix_scopeaggs")))
 

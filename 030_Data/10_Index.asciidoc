@@ -1,7 +1,7 @@
 [[index-doc]]
 === Indexing a Document
 
-Documents are _indexed_&#x2014;stored and made ((("documents", "indexing")))((("indexes", "indexing a document")))searchable--by using the `index`
+Documents are _indexed_&#x2014;stored and made ((("documents", "indexing")))((("indexing", "a document")))searchable--by using the `index`
 API. But first, we need to decide where the document  lives.  As we just
 discussed, a document's `_index`, `_type`, and `_id` uniquely identify the
 document.  We can either provide our own `_id` value or let the `index` API
@@ -65,7 +65,7 @@ made by another part.
 ==== Autogenerating IDs
 
 If our data doesn't have a natural ID, we can let Elasticsearch autogenerate
-one for us.  ((("id", "autogenerating")))The structure of the request changes: instead of using ((("HTP methods", "POST")))the `PUT`
+one for us.  ((("id", "autogenerating")))The structure of the request changes: instead of using ((("HTTP methods", "POST")))((("POST method")))the `PUT`
 verb (``store this document at this URL''), we use the `POST` verb (``store this document _under_ this URL'').
 
 The URL now contains just the `_index` and the `_type`:
