@@ -7,7 +7,7 @@ exiting the application normally.  For Elasticsearch to be reliable, it needs
 to ensure that changes are persisted to disk.
 
 In <<dynamic-indices>>, we said that a full commit flushes segments to disk and
-writes a commit point, which lists all known segments.  Elasticsearch uses
+writes a commit point, which lists all known segments.((("commit point")))  Elasticsearch uses
 this commit point during startup or when reopening an index to decide which
 segments belong to the current shard.
 
@@ -16,7 +16,7 @@ need to do full commits regularly to make sure that we can recover from
 failure.  But what about the document changes that happen between commits?  We
 don't want to lose those either.
 
-Elasticsearch added a _translog_, or transaction log, which records every
+Elasticsearch added a _translog_, or transaction log,((("translog (transaction log)"))) which records every
 operation in Elasticsearch as it happens.  With the translog, the process now
 looks like this:
 
@@ -81,12 +81,12 @@ the document, in real-time.
 ==== flush API
 
 The action of performing a commit and truncating the translog is known in
-Elasticsearch as a _flush_.  Shards are flushed automatically every 30
+Elasticsearch as a _flush_. ((("flushes"))) Shards are flushed automatically every 30
 minutes, or when the translog becomes too big. See the
 http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/index-modules-translog.html[`translog` documentation] for settings
-that can be used to control these thresholds:
+that can be used((("translog (transaction log)", "flushes and"))) to control these thresholds:
 
-The http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-flush.html[`flush` API] can be used to perform a manual flush:
+The http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-flush.html[`flush` API] can ((("indices", "flushing")))((("flush API")))be used to perform a manual flush:
 
 [source,json]
 -----------------------------
@@ -108,7 +108,7 @@ That said, it is beneficial to <<flush-api,flush>> your indices before restartin
 ****************************************
 
 The purpose of the translog is to ensure that operations are not lost.  This
-begs the question: how safe is the translog?
+begs the question: how safe((("translog (transaction log)", "safety of"))) is the translog?
 
 Writes to a file will not survive a reboot until the file has been
 +fsync+'ed to disk.  By default, the translog is +fsync+'ed every 5

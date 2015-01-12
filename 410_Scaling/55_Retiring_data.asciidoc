@@ -5,7 +5,7 @@ As time-based data ages, it becomes less relevant.((("scaling", "retiring data")
 will want to see what happened last week, last month, or even last year, but
 for the most part, we're interested in only the here and now.
 
-The nice thing about an index per time frame ((("index per-timeframe", "deleting old data and")))((("indexes", "deleting")))is that it enables us to easily
+The nice thing about an index per time frame ((("indices", "index per-timeframe", "deleting old data and")))((("indices", "deleting")))is that it enables us to easily
 delete old data: just delete the indices that are no longer relevant:
 
 [source,json]
@@ -23,7 +23,7 @@ do to help data age gracefully, before we decide to delete it completely.
 ==== Migrate Old Indices
 
 With logging data, there is likely to be one _hot_ index--the index for
-today.((("indexes", "migrating old indexes")))  All new documents will be added to that index, and almost all queries
+today.((("indices", "migrating old indices")))  All new documents will be added to that index, and almost all queries
 will target that index.  It should use your best hardware.
 
 How does Elasticsearch know which servers are your best servers? You tell it,
@@ -63,7 +63,7 @@ POST /logs_2014-09-30/_settings
 [[optimize-indices]]
 ==== Optimize Indices
 
-Yesterday's index is unlikely to change.((("indexes", "optimizing")))  Log events are static: what
+Yesterday's index is unlikely to change.((("indices", "optimizing")))  Log events are static: what
 happened in the past stays in the past.  If we merge each shard down to just a
 single segment, it'll use fewer resources and will be quicker to query. We
 can do this with the <<optimize-api>>.
@@ -97,7 +97,7 @@ http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-sn
 ==== Closing Old Indices
 
 As indices get even older, they reach a point where they are almost never
-accessed.((("indexes", "closing old indexes")))  We could delete them at this stage, but perhaps you want to keep
+accessed.((("indices", "closing old indices")))  We could delete them at this stage, but perhaps you want to keep
 them around just in case somebody asks for them in six months.
 
 These indices can be closed. They will still exist in the cluster, but they
@@ -121,7 +121,7 @@ POST /logs_2014-01-*/_open <3>
 [[archive-indices]]
 ==== Archiving Old Indices
 
-Finally, very old indices ((("indexes", "archiving old indexes")))can be archived off to some long-term storage like a
+Finally, very old indices ((("indices", "archiving old indices")))can be archived off to some long-term storage like a
 shared disk or Amazon's S3 using the
 http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-snapshots.html[`snapshot-restore` API], just in case you may need
 to access them in the future.  Once a backup exists, the index can be deleted

@@ -2,7 +2,7 @@
 === Multiword Synonyms and Phrase Queries
 
 So far, synonyms appear to be quite straightforward. Unfortunately, this is
-where things start to go wrong.((("synonyms", "multi-word, and phrase queries")))((("phrase matching", "multi-word synonyms and"))) For <<phrase-matching,phrase queries>> to
+where things start to go wrong.((("synonyms", "multiword, and phrase queries")))((("phrase matching", "multiword synonyms and"))) For <<phrase-matching,phrase queries>> to
 function correctly, Elasticsearch needs to know the position that each term
 occupies in the original text. Multiword synonyms can play havoc with term
 positions, especially when the injected synonyms are of differing lengths.
@@ -95,7 +95,7 @@ document that didn't contain the term `america`.
 [TIP]
 ==================================================
 
-Multiword synonyms ((("highlighting searches", "multi-word synonyms and")))affect highlighting in a similar way.  A query for `USA`
+Multiword synonyms ((("highlighting searches", "multiword synonyms and")))affect highlighting in a similar way.  A query for `USA`
 could end up returning a highlighted snippet such as: ``The _United States
 is wealthy_''.
 
@@ -104,7 +104,7 @@ is wealthy_''.
 ==== Use Simple Contraction for Phrase Queries
 
 The way to avoid this mess is to use <<synonyms-contraction,simple contraction>>
-to inject a single((("synonyms", "multi-word, and phrase queries", "using simple contraction")))((("phrase matching", "multi-word synonyms and", "using simple contraction")))((("simple contraction (synonyms)", "using for phrase queries"))) term that represents all synonyms, and to use the same
+to inject a single((("synonyms", "multiword, and phrase queries", "using simple contraction")))((("phrase matching", "multiword synonyms and", "using simple contraction")))((("simple contraction (synonyms)", "using for phrase queries"))) term that represents all synonyms, and to use the same
 synonym token filter at query time:
 
 [source,json]
@@ -160,7 +160,7 @@ different analysis chain for that purpose.
 
 ==== Synonyms and the query_string Query
 
-We have tried to avoid discussing the `query_string` query ((("query strings", "synonyms and")))((("synonyms", "multi-word, and query string queries")))because we don't
+We have tried to avoid discussing the `query_string` query ((("query strings", "synonyms and")))((("synonyms", "multiword, and query string queries")))because we don't
 recommend using it.  In <<query-string-query, "More-Complicated Queries">>, we said that, because the
 `query_string` query supports a terse mini _search-syntax_, it could
 frequently lead to surprising results or even syntax errors.

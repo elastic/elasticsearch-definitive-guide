@@ -41,7 +41,7 @@ recall as we can match more loosely, but we have reduced our ability to rank
 documents accurately.
 
 To get the best of both worlds, we can use <<multi-fields,multifields>> to
-index the `title` field twice: once((("multi-fields", "using to index a field with two different analyzers"))) with the `english` analyzer and once with
+index the `title` field twice: once((("multifields", "using to index a field with two different analyzers"))) with the `english` analyzer and once with
 the `standard` analyzer:
 
 [source,js]

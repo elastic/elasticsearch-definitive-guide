@@ -1,7 +1,7 @@
 === Multivalue Fields
 
 A curious thing can happen when you try to use phrase matching on multivalue
-fields. ((("proximity matching", "on multi-value fields")))((("match_phrase query", "on multi-value fields"))) Imagine that you index this document:
+fields. ((("proximity matching", "on multivalue fields")))((("match_phrase query", "on multivalue fields"))) Imagine that you index this document:
 
 [source,js]
 --------------------------------------------------

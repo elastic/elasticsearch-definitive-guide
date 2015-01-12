@@ -96,7 +96,7 @@ any stemmer.)
 [[stemmer-degree]]
 ==== Stemmer Degree
 
-Different stemmers overstem and understem((("stemming words", "choosing as stemmer", "stemmer degree"))) to a different degree.  The `light_`
+Different stemmers overstem and understem((("stemming words", "choosing a stemmer", "stemmer degree"))) to a different degree.  The `light_`
 stemmers stem less aggressively than the standard stemmers, and the `minimal_`
 stemmers less aggressively still.  Hunspell stems aggressively.
 

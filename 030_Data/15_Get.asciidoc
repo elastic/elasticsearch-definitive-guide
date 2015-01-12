@@ -11,7 +11,7 @@ GET /website/blog/123?pretty
 
 // SENSE: 030_Data/15_Get_document.json
 
-The response includes the by-now-familiar metadata elements, plus ((("source field")))the `_source`
+The response includes the by-now-familiar metadata elements, plus ((("_source field", sortas="source field")))the `_source`
 field, which contains the original JSON document that we sent to Elasticsearch
 when we indexed it:
 
@@ -40,7 +40,7 @@ Instead we get back exactly the same JSON string that we passed in.
 ====
 
 The response to the +GET+ request includes `{"found": true}`. This confirms that
-the document was found.  ((("documents", "requesting non-existant document")))If we were to request a document that doesn't exist,
+the document was found.  ((("documents", "requesting non-existent document")))If we were to request a document that doesn't exist,
 we would still get a JSON response, but `found` would be set to `false`.
 
 Also, the HTTP response code would be `404 Not Found` instead of `200 OK`.

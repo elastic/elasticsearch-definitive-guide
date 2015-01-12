@@ -94,7 +94,7 @@ documentation, which shows the following:
     `english_keywords`, and `english_stemmer`.
 
 Having reviewed the current configuration, we can use it as the basis for
-a new analyzer, with((("english analyzer", "customiing the stemmer"))) the following changes:
+a new analyzer, with((("english analyzer", "customizing the stemmer"))) the following changes:
 
 *   Change the `english_stemmer` from `english` (which maps to the
     http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-porterstem-tokenfilter.html[`porter_stem`] token filter)

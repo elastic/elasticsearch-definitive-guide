@@ -63,7 +63,7 @@ performance benefits.
 ==== Controlling Caching
 
 Most _leaf filters_&#x2014;those dealing directly with fields like the `term`
-filter--are cached, while((("leaf filters", "caching of")))((("caching", "of leaf filters, controlling")))((("filters", "controlling caching of"))) compound filters, like the `bool` filter, are not.
+filter--are cached, while((("leaf filters, caching of")))((("caching", "of leaf filters, controlling")))((("filters", "controlling caching of"))) compound filters, like the `bool` filter, are not.
 
 [NOTE]
 ====
@@ -78,12 +78,12 @@ doesn't make sense to do so:
 
 Script filters::
 
-The results((("script filters", "no caching of results"))) from http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/filter-caching.html#_controlling_caching[`script` filters] cannot
+The results((("script filters, no caching of results"))) from http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/filter-caching.html#_controlling_caching[`script` filters] cannot
 be cached because the meaning of the script is opaque to Elasticsearch.
 
 Geo-filters::
 
-The geolocation filters, which((("geolocation filters", "no caching of results"))) we cover in more detail in <<geoloc>>, are
+The geolocation filters, which((("geolocation filters, no caching of results"))) we cover in more detail in <<geoloc>>, are
 usually used to filter results based on the geolocation of a specific user.
 Since each user has a unique geolocation, it is unlikely that geo-filters will be reused, so it makes no sense to cache them.
 
@@ -98,7 +98,7 @@ caching is enabled by default.
 Sometimes the default caching strategy is not correct. Perhaps you have a
 complicated `bool` expression that is reused several times in the same query.
 Or you have a filter on a `date` field that will never be reused.  The default
-caching strategy ((("cache flag")))((("filters", "overriding default caching strategy on")))can be overridden on almost any filter by setting the
+caching strategy ((("_cache flag", sortas="cache flag")))((("filters", "overriding default caching strategy on")))can be overridden on almost any filter by setting the
 `_cache` flag:
 
 [source,js]

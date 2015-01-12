@@ -1,7 +1,7 @@
 === cross-fields Queries
 
 The custom `_all` approach is a good solution, as long as you thought
-about setting it up before you indexed your((("multi-field search", "cross-fields queries")))((("cross-fields queries"))) documents. However, Elasticsearch
+about setting it up before you indexed your((("multifield search", "cross-fields queries")))((("cross-fields queries"))) documents. However, Elasticsearch
 also provides a search-time solution to the problem: the `multi_match` query
 with type `cross_fields`.((("multi_match queries", "cross_fields type")))
 The `cross_fields` type takes a term-centric approach, quite different from the

@@ -2,7 +2,7 @@
 === Search _Lite_
 
 There are two forms of the `search` API: a ``lite'' _query-string_ version
-that expects all its((("searching", "query string searches")))((("query string", "searching with"))) parameters to be passed in the query string, and the full
+that expects all its((("searching", "query string searches")))((("query strings", "searching with"))) parameters to be passed in the query string, and the full
 _request body_ version that expects a JSON request body and uses a
 rich search language called the query DSL.
 
@@ -115,7 +115,7 @@ readable result:
 --------------------------------------------------
 
 As you can see from the preceding examples, this _lite_ query-string search is
-surprisingly powerful. Its query syntax, which is explained in detail in the
+surprisingly powerful.((("query strings", "syntax, reference for"))) Its query syntax, which is explained in detail in the
 http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#query-string-syntax[Query String Syntax]
 reference docs, allows us to express quite complex queries succinctly. This
 makes it great for throwaway queries from the command line or during

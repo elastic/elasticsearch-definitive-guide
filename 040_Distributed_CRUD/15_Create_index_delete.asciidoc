@@ -35,7 +35,7 @@ are explained here for the sake of completeness:
 `replication`::
 +
 --
-The default value for ((("replication request parmeter", "sync and async values")))replication is `sync`. This causes the primary shard to
+The default value for ((("replication request parmeter", "sync and async values")))replication is `sync`. ((("sync value, replication parameter")))This causes the primary shard to
 wait for successful responses from the replica shards before returning.
 
 If you set `replication` to `async`,((("async value, replication parameter"))) it will return success to the client
@@ -54,7 +54,7 @@ completion.
 `consistency`::
 +
 --
-By default, the primary shard((("consistency request parameter")))((("quorum of shard copies"))) requires a _quorum_, or majority, of shard copies
+By default, the primary shard((("consistency request parameter")))((("quorum"))) requires a _quorum_, or majority, of shard copies
 (where a shard copy can be a primary or a replica shard) to be available
 before even attempting a write operation. This is to prevent writing data to the
 ``wrong side'' of a network partition.  A quorum is defined as follows:

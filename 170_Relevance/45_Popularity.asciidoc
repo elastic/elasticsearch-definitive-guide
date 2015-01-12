@@ -2,7 +2,7 @@
 === Boosting by Popularity
 
 Imagine that we have a website that hosts blog posts and enables users to vote for the
-blog posts that they like.((("relevance", "controlling", "boosting by popularity")))((("popularity, boosting by")))((("boosting", "by popularity"))) We would like more-popular posts to appear higher in the
+blog posts that they like.((("relevance", "controlling", "boosting by popularity")))((("popularity", "boosting by")))((("boosting", "by popularity"))) We would like more-popular posts to appear higher in the
 results list, but still have the full-text score as the main relevance driver.
 We can do this easily by storing the number of votes with each blog post:
 
@@ -115,7 +115,7 @@ http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-
 ==== factor
 
 The strength of the popularity effect can be increased or decreased by
-multiplying the value((("factor")))((("field_value_factor function", "factor parameter"))) in the `votes` field by some number, called the
+multiplying the value((("factor (function_score)")))((("field_value_factor function", "factor parameter"))) in the `votes` field by some number, called the
 `factor`:
 
 [source,json]

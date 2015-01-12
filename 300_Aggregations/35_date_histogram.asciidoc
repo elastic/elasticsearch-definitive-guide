@@ -265,7 +265,7 @@ This returns a (heavily truncated) response:
 }
 --------------------------------------------------
 
-We can take this response and put it into a graph, ((("line charts, building from aggregations")))((("bar charts", "building from aggregations")))showing a line chart for
+We can take this response and put it into a graph, ((("line charts, building from aggregations")))((("bar charts, building from aggregations")))showing a line chart for
 total sale price, and a bar chart for each individual make (per quarter), as shown in <<date-histo-ts2>>.
 
 [[date-histo-ts2]]
@@ -275,7 +275,7 @@ image::images/elas_29in02.png["Sales per quarter, with distribution per make"]
 === The Sky's the Limit
 
 These were obviously simple examples, but the sky really is the limit
-when it comes to charting aggregations. ((("dashboards", "building from aggregations")))((("Kibana, dashboard in"))) For example, here is a dashboard in
+when it comes to charting aggregations. ((("dashboards", "building from aggregations")))((("Kibana", "dashboard in"))) For example, here is a dashboard in
 Kibana built with a variety of aggregations:
 
 [[kibana-img]]

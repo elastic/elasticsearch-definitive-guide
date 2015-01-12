@@ -1,7 +1,7 @@
 [[practical-scoring-function]]
 === Lucene's Practical Scoring Function
 
-For multiterm queries, Lucene takes((("Boolean Model"))) the <<boolean-model,Boolean model>>,
+For multiterm queries, Lucene takes((("relevance", "controlling", "Lucene&#x27;s practical scoring function", id="ix_relcontPCF", range="startofrange")))((("Boolean Model"))) the <<boolean-model,Boolean model>>,
 <<tfidf,TF/IDF>>, and the <<vector-space-model,vector space model>> and
 combines ((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm")))((("Vector Space Model"))) them in a single efficient package that collects matching
 documents and scores them as it goes.
@@ -43,7 +43,7 @@ both.
 
 As soon as a document matches a query, Lucene calculates its score for that
 query, combining the scores of each matching term.  The formula used for
-scoring is called the _practical scoring function_.((("Practical Scoring Function"))) It looks intimidating, but
+scoring is called the _practical scoring function_.((("practical scoring function"))) It looks intimidating, but
 don't be put off--most of the components you already know. It introduces a
 few new elements that we discuss next.
 
@@ -80,7 +80,7 @@ index-time field-level boosting out of the way.
 [[query-norm]]
 ==== Query Normalization Factor
 
-The _query normalization factor_ (`queryNorm`) is ((("query normalization factor")))((("normalization", "query normalization factor")))an attempt to _normalize_ a
+The _query normalization factor_ (`queryNorm`) is ((("practical scoring function", "query normalization factor")))((("query normalization factor")))((("normalization", "query normalization factor")))an attempt to _normalize_ a
 query so that the results from one query may be compared with the results of
 another.
 
@@ -111,7 +111,7 @@ have no way of changing it. For all intents and purposes, it can be ignored.
 [[coord]]
 ==== Query Coordination
 
-The _coordination factor_ (`coord`) is used to((("coordination factor (coord)")))((("query coordination"))) reward documents that contain a
+The _coordination factor_ (`coord`) is used to((("coordination factor (coord)")))((("query coordination")))((("practical scoring function", "coordination factor"))) reward documents that contain a
 higher percentage of the query terms. The more query terms that appear in
 the document, the greater the chances that the document is a good match for
 the query.
@@ -194,13 +194,13 @@ automatically; you don't need to worry about it.
 [[index-boost]]
 ==== Index-Time Field-Level Boosting
 
-We will talk about _boosting_ a field--making it ((("boosting", "index time field-level boosting")))more important than other
+We will talk about _boosting_ a field--making it ((("indexing", "field-level index time boosts")))((("boosting", "index time field-level boosting")))((("practical scoring function", "index time field-level boosting")))more important than other
 fields--at query time in <<query-time-boosting>>.  It is also possible
 to apply a boost to a field at index time.  Actually, this boost is applied to
 every term in the field, rather than to the field itself.
 
 To store this boost value in the index without using more space
-than necessary, this field-level index-time boost is combined with the ((("field length norm")))field-length norm (see  <<field-norm>>) and stored in the index as a single byte.
+than necessary, this field-level index-time boost is combined with the ((("field-length norm")))field-length norm (see  <<field-norm>>) and stored in the index as a single byte.
 This is the value returned by `norm(t,d)` in the preceding formula.
 
 [WARNING]
@@ -228,6 +228,6 @@ flexible option.
 
 With query normalization, coordination, and index-time boosting out of the way,
 we can now move on to the most useful tool for influencing the relevance
-calculation: query-time boosting.
+calculation: query-time boosting.((("relevance", "controlling", "Lucene&#x27;s practical scoring function", range="endofrange", startref="ix_relcontPCF")))
 
 

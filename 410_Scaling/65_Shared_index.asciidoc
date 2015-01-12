@@ -1,7 +1,7 @@
 [[shared-index]]
 === Shared Index
 
-We can use a large shared index for the many smaller ((("scaling", "shared index")))((("indexes", "shared")))forums by indexing
+We can use a large shared index for the many smaller ((("scaling", "shared index")))((("indices", "shared")))forums by indexing
 the forum identifier in a field and using it as a filter:
 
 [source,json]

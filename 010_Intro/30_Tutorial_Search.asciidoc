@@ -5,7 +5,7 @@ business requirements for this application.  The first requirement is the
 ability to retrieve individual employee data.
 
 This is easy in Elasticsearch.  We simply execute((("HTTP requests", "retrieving a document with GET"))) an HTTP +GET+ request and
-specify the _address_ of the document--the index, type, and ID.((("id", "speccifying in a request")))((("indexes", "specifying index in a request")))((("types", "specifying type in a request")))  Using
+specify the _address_ of the document--the index, type, and ID.((("id", "specifying in a request")))((("indices", "specifying index in a request")))((("types", "specifying type in a request")))  Using
 those three pieces of information, we can return the original JSON document:
 
 [source,js]
@@ -15,7 +15,7 @@ GET /megacorp/employee/1
 // SENSE: 010_Intro/30_Get.json
 
 And the response contains some metadata about the document, and John Smith's
-original JSON document ((("source field")))as the `_source` field:
+original JSON document ((("_source field", sortas="source field")))as the `_source` field:
 
 [source,js]
 --------------------------------------------------
@@ -260,7 +260,7 @@ range search, and reused the same `match` query as before.  Now our results show
 === Full-Text Search
 
 The searches so far have been simple:  single names, filtered by age. Let's
-try a more advanced, full-text search--a ((("full-text search")))task that traditional databases
+try a more advanced, full-text search--a ((("full text search")))task that traditional databases
 would really struggle with.
 
 We are going to search for all employees who enjoy rock climbing:
@@ -334,7 +334,7 @@ traditional relational databases, in which a record either matches or it doesn't
 === Phrase Search
 
 Finding individual words in a field is all well and good, but sometimes you
-want to match exact sequences of words or _phrases_.((("prhase search"))) For instance, we could
+want to match exact sequences of words or _phrases_.((("phrase matching"))) For instance, we could
 perform a query that will match only employee records that contain both  ``rock''
 _and_ ``climbing'' _and_ that display the words are next to each other in the phrase
 ``rock climbing.''

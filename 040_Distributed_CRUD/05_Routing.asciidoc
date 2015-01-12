@@ -1,7 +1,7 @@
 [[routing-value]]
 === Routing a Document to a Shard
 
-When you index a document, it is stored on a single primary shard.((("shards", "routing a document to")))((("routing a document to a shard"))) How does
+When you index a document, it is stored on a single primary shard.((("shards", "routing a document to")))((("documents", "routing a document to a shard")))((("routing a document to a shard"))) How does
 Elasticsearch know which shard a document belongs to?  When we create a new
 document, how does it know whether it should store that document on shard 1 or
 shard 2?

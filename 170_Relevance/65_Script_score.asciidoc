@@ -101,7 +101,7 @@ a profit.
 [TIP]
 ========================================
 
-The `script_score` function provides enormous flexibility.((("scripting", "performance and")))  Within a script,
+The `script_score` function provides enormous flexibility.((("scripts", "performance and")))  Within a script,
 you have access to the fields of the document, to the current `_score`, and
 even to the term frequencies, inverse document frequencies, and field length
 norms (see http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-advanced-scripting.html[Text scoring in scripts]).

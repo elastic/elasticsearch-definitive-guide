@@ -87,7 +87,7 @@ present, and to apply a different condition if it is missing.
 ==== bool Filter
 
 The `bool` filter is used ((("bool filter")))((("must clause", "in bool filters")))((("must_not clause", "in bool filters")))((("should clause", "in bool filters")))to combine multiple filter clauses using
-Boolean logic.  It accepts three parameters:
+Boolean logic. ((("bool filter", "must, must_not, and should clauses"))) It accepts three parameters:
 
  `must`:: 
    These clauses _must_ match, like `and`.
@@ -172,7 +172,7 @@ it is not prone to throwing syntax errors.
 
 ==== multi_match Query
 
-The `multi_match` query allows((("multi_match query"))) to run the same `match` query on multiple
+The `multi_match` query allows((("multi_match queries"))) to run the same `match` query on multiple
 fields:
 
 [source,js]
@@ -192,7 +192,7 @@ The `bool` query, like the `bool` filter,((("bool query"))) is used to combine m
 query clauses. However, there are some differences. Remember that while
 filters give binary yes/no answers, queries calculate a relevance score
 instead. The `bool` query combines the `_score` from each `must` or
-`should` clause that matches.((("should clause", "in bool queries")))((("must_not clause", "in bool queries")))((("must clause", "in bool queries"))) This query accepts the following parameters:
+`should` clause that matches.((("bool query", "must, must_not, and should clauses")))((("should clause", "in bool queries")))((("must_not clause", "in bool queries")))((("must clause", "in bool queries"))) This query accepts the following parameters:
 
 `must`::        
    Clauses that _must_ match for the document to be included.

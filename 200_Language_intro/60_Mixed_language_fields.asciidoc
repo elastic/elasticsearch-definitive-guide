@@ -25,14 +25,14 @@ Assuming that your mix of languages uses the same script such as Latin, you have
 
 ==== Split into Separate Fields
 
-The Compact Language Detector ((("languages", "mixed language fields", "splitting into separate fields")))((("Compact Language Detector")))mentioned in <<identifying-language>> can tell
+The Compact Language Detector ((("languages", "mixed language fields", "splitting into separate fields")))((("Compact Language Detector (CLD)")))mentioned in <<identifying-language>> can tell
 you which parts of the document are in which language.  You can split up the
 text based on language and use the same approach as was used in
 <<one-lang-fields>>.
 
 ==== Analyze Multiple Times
 
-If you primarily deal with a limited number of languages, ((("languages", "mixed language fields", "analyzing multiple times")))((("analyzers", "for mixed language fields")))((("multi-fields", "analying mixed language fields")))you could use
+If you primarily deal with a limited number of languages, ((("languages", "mixed language fields", "analyzing multiple times")))((("analyzers", "for mixed language fields")))((("multifields", "analying mixed language fields")))you could use
 multi-fields to analyze the text once per language:
 
 [source,js]

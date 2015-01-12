@@ -1,7 +1,7 @@
 [[multi-match-query]]
 === multi_match Query
 
-The `multi_match` query provides ((("multi-field search", "multi-match query")))((("multi_match queries")))((("match query", "multi_match queries"))) a convenient shorthand way of running
+The `multi_match` query provides ((("multifield search", "multi_match query")))((("multi_match queries")))((("match query", "multi_match queries"))) a convenient shorthand way of running
 the same query against multiple fields.
 
 [NOTE]
@@ -65,7 +65,7 @@ could be rewritten more concisely with `multi_match` as follows:
 ==== Using Wildcards in Field Names
 
 Field names can be specified with wildcards: any field that matches the
-wildcard pattern((("multi_match queries", "wildcards in field names")))((("wildcards", "in field names")))((("fields", "wildcards in field names"))) will be included in the search. You could match on the
+wildcard pattern((("multi_match queries", "wildcards in field names")))((("wildcards in field names")))((("fields", "wildcards in field names"))) will be included in the search. You could match on the
 `book_title`, `chapter_title`, and `section_title` fields, with the following:
 
 [source,js]

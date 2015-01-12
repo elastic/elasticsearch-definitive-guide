@@ -34,7 +34,7 @@ https://github.com/elasticsearch/cookbook-elasticsearch[Chef cookbook].
 
 http://www.elasticsearch.com/products/marvel[Marvel] is a management((("Marvel", "defined"))) and monitoring
 tool for Elasticsearch, which is free for development use. It comes with an
-interactive console called Sense, which makes it easy to talk to
+interactive console called Sense,((("Sense console (Marvel plugin)"))) which makes it easy to talk to
 Elasticsearch directly from your browser.
 
 Many of the code examples in the online version of this book include a View in Sense link. When
@@ -124,6 +124,6 @@ If you installed the <<marvel,Marvel>> management ((("Marvel", "viewing")))and m
 view it in a web browser by visiting
 http://localhost:9200/_plugin/marvel/.
 
-You can reach the _Sense_ developer((("Sense", "viewing developer console"))) console either by clicking the ``Marvel
+You can reach the _Sense_ developer((("Sense console (Marvel plugin)", "viewing"))) console either by clicking the ``Marvel
 dashboards'' drop-down in Marvel, or by visiting
 http://localhost:9200/_plugin/marvel/sense/.

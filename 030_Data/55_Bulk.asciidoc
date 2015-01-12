@@ -19,7 +19,7 @@ The `bulk` request body has the following, slightly unusual, format:
 --------------------------------------------------
 
 This format is like a _stream_ of valid one-line JSON documents joined
-together by newline (`\n`) characters.((("\n (newline) characters in buk requests", sortas="n (newline)"))) Two important points to note:
+together by newline (`\n`) characters.((("\n (newline) characters in bulk requests", sortas="n (newline)"))) Two important points to note:
 
 * Every line must end with a newline character (`\n`), _including the last
   line_. These are used as markers to allow for efficient line separation.
@@ -194,7 +194,7 @@ succeeded:
 <3> The error message explaining why the request failed.
 <4> The second request succeeded with an HTTP status code of `200 OK`.
 
-That also means ((("bulk API", "bulk requests, not atomic")))that `bulk` requests are not atomic: they cannot be used to
+That also means ((("bulk API", "bulk requests, not transactions")))that `bulk` requests are not atomic: they cannot be used to
 implement transactions.  Each request is processed separately, so the success
 or failure of one request will not interfere with the others.
 

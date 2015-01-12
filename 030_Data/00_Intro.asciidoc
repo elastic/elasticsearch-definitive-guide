@@ -43,7 +43,7 @@ objects as documents, they still require us to think about how we want to
 query our data, and which fields require an index in order to make data
 retrieval fast.
 
-In Elasticsearch, _all data in every field_ is _indexed by default_. That is,
+In Elasticsearch, _all data in every field_ is _indexed by default_.((("indexing", "in Elasticsearch"))) That is,
 every field has a dedicated inverted index for fast retrieval. And, unlike
 most other databases, it can use all of those inverted indices _in the same
 query_, to return results at breathtaking speed.

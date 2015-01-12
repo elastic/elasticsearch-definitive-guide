@@ -7,7 +7,7 @@ new document and not overwriting an existing one?
 Remember that the combination of `_index`, `_type`, and `_id` uniquely
 identifies a document.  So the easiest way to ensure that our document is new
 is by letting Elasticsearch autogenerate a new unique `_id`, using the `POST`
-version of ((("HTTP methods", "POST")))the index request:
+version of ((("POST method")))((("HTTP methods", "POST")))the index request:
 
 [source,js]
 --------------------------------------------------
@@ -21,7 +21,7 @@ the same `_index`, `_type`, and `_id` doesn't exist already. There are two ways
 of doing this, both of which amount to the same thing. Use whichever method is
 more convenient for you.
 
-The first method uses the `op_type` query((("query strings", "op_type parameter")))((("op_type query string parameter")))-string parameter:
+The first method uses the `op_type` query((("PUT method")))((("HTTP methods", "PUT")))((("query strings", "op_type parameter")))((("op_type query string parameter")))-string parameter:
 
 [source,js]
 --------------------------------------------------

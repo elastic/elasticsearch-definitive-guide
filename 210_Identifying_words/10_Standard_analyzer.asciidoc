@@ -2,7 +2,7 @@
 === standard Analyzer
 
 The `standard` analyzer is used by default for any full-text `analyzed` string
-field.  If we were to reimplement the  `standard` analyzer as a
+field. ((("standard analyzer"))) If we were to reimplement the  `standard` analyzer as a
 <<custom-analyzers,`custom` analyzer>>, it would be defined as follows:
 
 [role="pagebreak-before"]

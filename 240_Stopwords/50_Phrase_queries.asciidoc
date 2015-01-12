@@ -9,7 +9,7 @@ has to do with the amount of data that is necessary to support proximity
 matching.
 
 In <<pros-cons-stopwords>>, we said that removing stopwords saves only a small
-amount of space in the inverted index.((("indexes", "typical, data contained in")))  That was only partially true.  A
+amount of space in the inverted index.((("indices", "typical, data contained in")))  That was only partially true.  A
 typical index may contain, among other data, some or all of the following:
 
 Terms dictionary::

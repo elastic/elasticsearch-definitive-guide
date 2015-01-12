@@ -1,7 +1,7 @@
 [[time-based]]
 === Time-Based Data
 
-One of the most common use cases for Elasticsearch is for logging,((("logging, use of Elasticsearch for")))((("time-based data")))((("scaling", "time-based data and"))) so common
+One of the most common use cases for Elasticsearch is for logging,((("logging", "using Elasticsearch for")))((("time-based data")))((("scaling", "time-based data and"))) so common
 in fact that Elasticsearch provides an integrated((("ELK stack"))) logging platform called the
 _ELK stack_&#x2014;Elasticsearch, Logstash, and Kibana--to make the process easy.
 
@@ -51,7 +51,7 @@ But this approach is _very inefficient_.  Remember that when you delete a
 document, it is only _marked_ as deleted (see <<deletes-and-updates>>). It won't
 be physically deleted until the segment containing it is merged away.
 
-Instead, use an _index per time frame_. ((("index per-timeframe")))You could start out with an index per
+Instead, use an _index per time frame_. ((("indices", "index per-timeframe")))You could start out with an index per
 year (`logs_2014`) or per month (`logs_2014-10`).  Perhaps, when your
 website gets really busy, you need to switch to an index per day
 (`logs_2014-10-24`).  Purging old data is easy: just delete old indices.

@@ -71,7 +71,7 @@ The response now includes a bounding box that we can use to zoom our map:
 ----------------------------
 
 In fact, we could even use the `geo_bounds` aggregation inside each geohash
-cell,((("geohash cells", "geo_bounds aggregation in"))) in case the geo-points inside a cell are clustered in just a part of the
+cell,((("geohash cells, geo_bounds aggregation in"))) in case the geo-points inside a cell are clustered in just a part of the
 cell:
 
 [source,json]

@@ -3,7 +3,7 @@
 
 Lucene (and thus Elasticsearch) uses the
 http://en.wikipedia.org/wiki/Standard_Boolean_model[_Boolean model_]
-to find matching documents, and a formula called the
+to find matching documents,((("relevance scores", "theory behind", id="ix_relscore", range="startofrange")))((("Boolean Model"))) and a formula called the
 <<practical-scoring-function,_practical scoring function_>>
 to calculate relevance.  This formula borrows concepts from
 http://en.wikipedia.org/wiki/Tfidf[_term frequency/inverse document frequency_] and the
@@ -24,7 +24,7 @@ influence the outcome.
 ==== Boolean Model
 
 The _Boolean model_ simply applies the `AND`, `OR`, and `NOT` conditions
-expressed in the query to find all the documents that match. A query for
+expressed in the query to find all the documents that match.((("and operator")))((("not operator")))((("or operator"))) A query for
 
     full AND text AND search AND (elasticsearch OR lucene)
 
@@ -38,7 +38,7 @@ cannot possibly match the query.
 ==== Term Frequency/Inverse Document Frequency (TF/IDF)
 
 Once we have a list of matching documents, they need to be ranked by
-relevance. Not all documents will contain all the terms, and some terms are
+relevance.((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm"))) Not all documents will contain all the terms, and some terms are
 more important than others. The relevance score of the whole document
 depends (in part) on the _weight_ of each query term that appears in
 that document.
@@ -50,7 +50,7 @@ sake, but you are not required to remember them.
 [[tf]]
 ===== Term frequency
 
-How often does the term appear in this document? The more often, the
+How often does the term appear in this document?((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm", "term frequency"))) The more often, the
 _higher_ the weight.  A field containing five mentions of the same term is
 more likely to be relevant than a field containing just one mention.
 The term frequency is calculated as follows:
@@ -90,7 +90,7 @@ PUT /my_index
 ===== Inverse document frequency
 
 How often does the term appear in all documents in the collection?  The more
-often, the _lower_ the weight. Common terms like `and` or `the` contribute
+often, the _lower_ the weight.((("inverse document frequency")))((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm", "inverse document frequency"))) Common terms like `and` or `the` contribute
 little to relevance, as they appear in most documents, while uncommon terms
 like `elastic` or `hippopotamus` help us zoom in on the most interesting
 documents. The inverse document frequency is calculated as follows:
@@ -106,7 +106,7 @@ idf(t) = 1 + log ( numDocs / (docFreq + 1)) <1>
 [[field-norm]]
 ===== Field-length norm
 
-How long is the field?  The shorter the field, the _higher_ the weight. If a
+How long is the field?  ((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm", "field-length norm")))((("field-length norm")))The shorter the field, the _higher_ the weight. If a
 term appears in a short field, such as a `title` field, it is more likely that
 the content of that field is _about_ the term than if the same term appears
 in a much bigger `body` field. The field length norm is calculated as follows:
@@ -117,7 +117,7 @@ norm(d) = 1 / √numTerms <1>
 <1> The field-length norm (`norm`) is the inverse square root of the number of terms
     in the field.
 
-While the field-length norm is important for full-text search, many other
+While the field-length ((("string fields", "field-length norm")))norm is important for full-text search, many other
 fields don't need norms. Norms consume approximately 1 byte per `string` field
 per document in the index, whether or not a document contains the field.  Exact-value `not_analyzed` string fields have norms disabled by default,
 but you can use the field mapping to disable norms on `analyzed` fields as
@@ -149,7 +149,7 @@ norms can save a significant amount of memory.
 
 ===== Putting it together
 
-These three factors--term frequency, inverse document frequency, and field-length norm--are calculated and stored at index time.  Together, they are
+These three factors--term frequency, inverse document frequency, and field-length norm--are calculated and stored at index time.((("weight", "calculation of")))  Together, they are
 used to calculate the _weight_ of a single term in a particular document.
 
 [TIP]
@@ -207,7 +207,7 @@ vector space model.
 [[vector-space-model]]
 ==== Vector Space Model
 
-The _vector space model_ provides a way of comparing a multiterm query
+The _vector space model_ provides a way of ((("Vector Space Model")))comparing a multiterm query
 against a document. The output is a single score that represents how well the
 document matches the query.  In order to do this, the model represents both the document
 and the query as _vectors_.
@@ -216,7 +216,7 @@ A vector is really just a one-dimensional array containing numbers, for example:
 
     [1,2,5,22,3,8]
 
-In the vector space model, each number in the vector is the _weight_ of a term,
+In the vector space((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm", "in Vector Space Model"))) model, each number in the vector is((("weight", "calculation of", "in Vector Space Model"))) the _weight_ of a term,
 as calculated with <<tfidf,term frequency/inverse document frequency>>.
 
 [TIP]
@@ -281,4 +281,4 @@ at http://en.wikipedia.org/wiki/Cosine_similarity.
 ==================================================
 
 Now that we have talked about the theoretical basis of scoring, we can move on
-to see how scoring is implemented in Lucene.
+to see how scoring is implemented in Lucene.((("relevance scores", "theory behind", range="endofrange", startref="ix_relscore")))

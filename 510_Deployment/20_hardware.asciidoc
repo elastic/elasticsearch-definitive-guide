@@ -13,7 +13,7 @@ production clusters.
 
 If there is one resource that you will run out of first, it will likely be memory.((("hardware", "memory")))((("memory")))
 Sorting and aggregations can both be memory hungry, so enough heap space to
-accommodate these is important.  Even when the heap is comparatively small,
+accommodate these is important.((("heap")))  Even when the heap is comparatively small,
 extra memory can be given to the OS filesystem cache.  Because many data structures
 used by Lucene are disk-based formats, Elasticsearch leverages the OS cache to
 great effect.

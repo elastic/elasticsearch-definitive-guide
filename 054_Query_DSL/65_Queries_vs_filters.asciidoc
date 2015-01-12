@@ -1,7 +1,7 @@
 === Queries and Filters
 
 Although we refer to the query DSL, in reality there are two DSLs: the
-query DSL and the filter DSL.((("DSL (Domain Specific Language)", "Filter DSL")))((("Filter DSL"))) Query clauses and filter clauses are similar
+query DSL and the filter DSL.((("DSL (Domain Specific Language)", "Query and Filter DSL")))((("Filter DSL"))) Query clauses and filter clauses are similar
 in nature, but have slightly different purposes.
 
 A _filter_ asks a yes|no question of((("filters", "queries versus")))((("exact values", "filters with yes|no questions for fields containing"))) every document and is used

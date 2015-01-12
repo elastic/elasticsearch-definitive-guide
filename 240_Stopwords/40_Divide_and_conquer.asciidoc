@@ -2,7 +2,7 @@
 === Divide and Conquer
 
 The terms in a query string can be divided into more-important (low-frequency)
-and less-important (high-frequency) terms.((("stopwods", "low and high frequency terms"))) Documents that match only the less
+and less-important (high-frequency) terms.((("stopwords", "low and high frequency terms"))) Documents that match only the less
 important terms are probably of very little interest.  Really, we want
 documents that match as many of the more important terms as possible.
 
@@ -17,7 +17,7 @@ gain a real boost of speed on previously slow queries.
 *********************************************
 
 One of the benefits of `cutoff_frequency` is that you get _domain-specific_
-stopwords for free.((("domain specific stopwords"))) For instance, a website about movies may use the words
+stopwords for free.((("domain specific stopwords")))((("stopwords", "domain specific"))) For instance, a website about movies may use the words
 _movie_, _color_, _black_, and _white_ so often that they could be
 considered almost meaningless.  With the `stop` token filter, these domain-specific terms would have to be added to the stopwords list manually. However,
 because the `cutoff_frequency` looks at the actual frequency of terms in the

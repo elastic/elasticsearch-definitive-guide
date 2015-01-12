@@ -24,7 +24,7 @@ token filters from touching those words.((("keyword_marker token filter", "preve
 
 For instance, we can create a simple custom analyzer that uses the
 http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-porterstem-tokenfilter.html[`porter_stem`] token filter,
-but prevents the word `skies` from being stemmed:
+but prevents the word `skies` from((("porter_stem token filter"))) being stemmed:
 
 [source,json]
 ------------------------------------------
@@ -72,7 +72,7 @@ sky skies skiing skis <1>
 While the language analyzers allow ((("language analyzers", "stem_exclusion parameter")))us only to specify an array of words in the
 `stem_exclusion` parameter, the `keyword_marker` token filter also accepts a
 `keywords_path` parameter that allows us to store all of our keywords in a
-file. ((("keyword_marker token filter", "keyword_path parameter")))The file should contain one word per line, and must be present on every
+file. ((("keyword_marker token filter", "keywords_path parameter")))The file should contain one word per line, and must be present on every
 node in the cluster. See <<updating-stopwords>> for tips on how to update this
 file.
 

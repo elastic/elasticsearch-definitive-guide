@@ -157,7 +157,7 @@ The abbreviated results show us the following:
 
 ==== When to Use Nested Objects
 
-Nested objects are useful when there is one main entity, like our `blogpost`,
+Nested objects((("nested objects", "when to use"))) are useful when there is one main entity, like our `blogpost`,
 with a limited number of closely related but less important entities, such as
 comments.  It is useful to be able to find blog posts based on the content of
 the comments, and the `nested` query and filter provide for fast query-time

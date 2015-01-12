@@ -33,7 +33,7 @@ GET /_search
 }
 --------------------------------------------------
 
-Filters have no bearing on `_score`, and the((("match_all query", "score as neutral 1")))((("filters", "score and"))) missing-but-implied `match_all`
+Filters have no bearing on `_score`, and the((("score", seealso="relevance; relevance scores")))((("match_all query", "score as neutral 1")))((("filters", "score and"))) missing-but-implied `match_all`
 query just sets the `_score` to a neutral value of `1` for all documents. In
 other words, all documents are considered to be equally relevant.
 
@@ -81,7 +81,7 @@ You will notice two differences in the results:
 <2> The value of the `date` field, expressed as milliseconds since the epoch,
     is returned in the `sort` values.
 
-The first is that we have ((("date field", "sorting search results by")))a new element in each result called `sort`, which
+The first is that we have ((("date field, sorting search results by")))a new element in each result called `sort`, which
 contains the value(s) that was used for sorting.  In this case, we sorted on
 `date`, which internally is((("milliseconds-since-the-epoch (date)"))) indexed as _milliseconds since the epoch_. The long
 number `1411516800000` is equivalent to the date string `2014-09-24 00:00:00
@@ -108,7 +108,7 @@ the `_score` value in descending order.
 
 ==== Multilevel Sorting
 
-Perhaps we want to combine the `_score` from a((("sorting", "multi-level")))((("multi-level sorting"))) query with the `date`, and
+Perhaps we want to combine the `_score` from a((("sorting", "multilevel")))((("multilevel sorting"))) query with the `date`, and
 show all matching results sorted first by date, then by relevance:
 
 [source,js]
@@ -150,12 +150,12 @@ GET /_search?sort=date:desc&sort=_score&q=search
 
 ==== Sorting on Multivalue Fields
 
-When sorting on fields with more than one value,((("sorting", "on multi-value fields")))((("fields", "multi-value", "sorting on"))) remember that the values do
+When sorting on fields with more than one value,((("sorting", "on multivalue fields")))((("fields", "multivalue", "sorting on"))) remember that the values do
 not have any intrinsic order; a multivalue field is just a bag of values.
 Which one do you choose to sort on?
 
 For numbers and dates, you can reduce a multivalue field to a single value
-by using the `min`, `max`, `avg`, or `sum` _sort modes_. ((("sum sort mode")))((("avg sort mode")))((("max sort mode")))((("min sort mode")))((("sort modes")))((("dates field", "sorting on earliest value")))For instance, you
+by using the `min`, `max`, `avg`, or `sum` _sort modes_. ((("sum sort mode")))((("avg sort mode")))((("max sort mode")))((("min sort mode")))((("sort modes")))((("dates field, sorting on earliest value")))For instance, you
 could sort on the earliest date in each `dates` field by using the following:
 
 [role="pagebreak-before"]

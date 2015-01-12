@@ -19,7 +19,7 @@ to achieve your goal in the most efficient way.
 [[filtered-query]]
 ==== Filtering a Query
 
-Let's say we have((("filters", "combining with queries", "filtering a query"))) this query:
+Let's say we have((("queries", "combining with filters", "filtering a query")))((("filters", "combining with queries", "filtering a query"))) this query:
 
 [source,js]
 --------------------------------------------------
@@ -69,7 +69,7 @@ GET /_search
 [role="pagebreak-before"]
 ==== Just a Filter
 
-While in query context, if ((("filters", "combining with queries", "using just a filter in query context")))you need to use a filter without a query (for
+While in query context, if ((("filters", "combining with queries", "using just a filter in query context")))((("queries", "combining with filters", "using just a filter in query context")))you need to use a filter without a query (for
 instance, to match all emails in the inbox), you can just omit the
 query:
 

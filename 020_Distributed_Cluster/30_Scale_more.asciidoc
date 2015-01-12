@@ -2,13 +2,13 @@
 
 But what if we want to scale our search to more than six nodes?
 
-The number of primary shards is fixed at the moment an((("indexes", "fixed number of primary shards")))((("primary shards", "fixed number in an index"))) index is created.
+The number of primary shards is fixed at the moment an((("indices", "fixed number of primary shards")))((("primary shards", "fixed number in an index"))) index is created.
 Effectively, that number defines the maximum amount of data that can be
 _stored_ in the index.  (The actual number depends on your data, your hardware
 and your use case.) However, read requests--searches or document retrieval--can be handled by a primary _or_ a replica shard, so the more copies of
 data that you have, the more search throughput you can handle.
 
-The number of replica shards can be changed dynamically on a live cluster,
+The number of ((("scaling", "increasing number of replica shards")))replica shards can be changed dynamically on a live cluster,
 allowing us to scale up or down as demand requires. Let's increase the number
 of replicas from the default of `1` to `2`:
 

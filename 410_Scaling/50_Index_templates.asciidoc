@@ -1,11 +1,11 @@
 [[index-templates]]
 === Index Templates
 
-Elasticsearch doesn't require you to create an index before using it.((("index templates")))((("scaling", "index templates and")))  With
+Elasticsearch doesn't require you to create an index before using it.((("indices", "templates")))((("scaling", "index templates and")))((("templates", "index")))  With
 logging, it is often more convenient to rely on index autocreation than to
 have to create indices manually.
 
-Logstash uses the timestamp((("Logstash")))((("timestamps", "use by Logtech to create index names"))) from an event to derive the index name.  By
+Logstash uses the timestamp((("Logstash")))((("timestamps, use by Logstash to create index names"))) from an event to derive the index name.  By
 default, it indexes into a different index every day, so an event with a
 `@timestamp` of `2014-10-01 00:00:01` will be sent to the index
 `logstash-2014.10.01`.  If that index doesn't already exist, it will be

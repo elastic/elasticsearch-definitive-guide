@@ -10,7 +10,7 @@ of the output.
 ==== Tokenizing HTML
 
 Passing HTML through the `standard` tokenizer or the `icu_tokenizer` produces
-poor results.((("HTML", "tokenizing")))  These tokenizers just don't know what to do with the HTML tags.
+poor results.((("HTML, tokenizing")))  These tokenizers just don't know what to do with the HTML tags.
 For example:
 
 [source,js]

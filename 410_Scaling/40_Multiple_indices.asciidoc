@@ -2,7 +2,7 @@
 === Multiple Indices
 
 Finally, remember that there is no rule that limits your application to using
-only a single index.((("scaling", "using multiple indexes")))((("indexes", "multiple")))  When we issue a search request, it is forwarded to a
+only a single index.((("scaling", "using multiple indices")))((("indices", "multiple")))  When we issue a search request, it is forwarded to a
 copy (a primary or a replica) of all the shards in an index.  If we issue the
 same search request on multiple indices, the exact same thing happens--there
 are just more shards involved.

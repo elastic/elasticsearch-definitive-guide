@@ -62,7 +62,7 @@ The last native JSON datatype that we need to ((("objects")))discuss is the _obj
 -- known in other languages as a hash, hashmap, dictionary or
 associative array.
 
-_Inner objects_ are often used((("inner objects"))) to embed one entity or object inside
+_Inner objects_ are often used((("objects", "inner objects")))((("inner objects"))) to embed one entity or object inside
 another. For instance, instead of having fields called `user_name`
 and `user_id` inside our `tweet` document, we could write it as follows:
 

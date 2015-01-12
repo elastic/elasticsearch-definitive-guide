@@ -89,7 +89,7 @@ their root form.
 ==== When Analyzers Are Used
 
 When we _index_ a document, its full-text fields are analyzed into terms that
-are used to create the inverted index.  However, when we _search_ on a full-text field,  we need to pass the query string through the _same analysis
+are used to create the inverted index.((("indexing", "analyzers, use on full text fields")))  However, when we _search_ on a full-text field,  we need to pass the query string through the _same analysis
 process_, to ensure that we are searching for terms in the same form as those
 that exist in the index.
 

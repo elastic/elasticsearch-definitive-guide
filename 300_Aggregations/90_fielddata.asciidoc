@@ -93,7 +93,7 @@ take the union of the two sets.
 [TIP]
 ==================================================
 
-The fielddata cache is per segment.((("segments", "fielddata cache")))((("caching", "fielddata"))) In other words, when a new segment becomes
+The fielddata cache is per segment.((("fielddata cache")))((("segments", "fielddata cache"))) In other words, when a new segment becomes
 visible to search, the fielddata cached from old segments remains valid. Only
 the data for the new segment needs to be loaded into memory.
 
