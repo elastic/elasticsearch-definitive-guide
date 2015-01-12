@@ -96,14 +96,14 @@ We show how to specify and manage mappings in <<mapping>>, but for now
 we will rely on Elasticsearch to detect our document's data structure
 automatically.
 
-A `_type` name can be lowercase or uppercase, but shouldn't begin with an
+A `&#x5f;type` name can be lowercase or uppercase, but shouldn't begin with an
 underscore or contain commas.((("types", "names of")))  We will use `blog` for our type name.
 
 ==== &#x5f;id
 
-The _ID_ is a string that,((("id", "&#x5f;id, in document metadata"))) when combined with the `_index` and `_type`,
+The _ID_ is a string that,((("id", "&#x5f;id, in document metadata"))) when combined with the `&#x5f;index` and `&#x5f;type`,
 uniquely identifies a document in Elasticsearch. When creating a new document,
-you can either provide your own `_id` or let Elasticsearch generate one for
+you can either provide your own `&#x5f;id` or let Elasticsearch generate one for
 you.
 
 ==== Other Metadata
