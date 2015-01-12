@@ -46,16 +46,16 @@ _metadata_&#x2014;information _about_ the document.((("metadata, document"))) Th
 elements are as follows:
 
 
- `_index`::  
+ `&#x5f;index`::  
    Where the document lives
    
- `_type`::   
+ `&#x5f;type`::   
    The class of object that the document represents
    
- `_id`::     
+ `&#x5f;id`::     
    The unique identifier for the document
 
-==== _index
+==== &#x5f;index
 
 An _index_ is like a database in a relational database; it's the place
 we store and index related data.((("indices", "&#x5f;index, in document metadata")))
@@ -74,7 +74,7 @@ but for now we will let Elasticsearch create the index for us.  All we have to
 do is choose an index name.  This name must be lowercase, cannot begin with an
 underscore, and cannot contain commas. Let's use `website` as our index name.
 
-==== _type
+==== &#x5f;type
 
 In applications, we use objects to represent _things_ such as a user, a blog
 post, a comment, or an email. Each object belongs to a _class_ that defines
