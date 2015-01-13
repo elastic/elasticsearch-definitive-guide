@@ -24,7 +24,7 @@ This is almost always desired functionality because it means the following:
 
 That said, storing the `_source` field does use disk space.  If none of the
 preceding reasons is important to you, you can disable the `_source` field with
-the following((("source field", "disabling"))) mapping:
+the following mapping:
 
 [source,js]
 --------------------------------------------------
