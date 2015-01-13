@@ -32,7 +32,7 @@ just not practical. This places a limit on the amount of data that can be
 stored on a single server.
 
 Elasticsearch, like((("NoSQL databases"))) most NoSQL databases, treats the world as though it were
-flat. An index is a flat collection of independent documents.((("indexes"))) A single
+flat. An index is a flat collection of independent documents.((("indices"))) A single
 document should contain all of the information that is required to decide
 whether it matches a search request.
 
