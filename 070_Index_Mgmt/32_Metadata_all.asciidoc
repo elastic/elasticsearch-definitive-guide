@@ -53,7 +53,7 @@ PUT /my_index/_mapping/my_type
 
 
 Inclusion in the `_all` field can be controlled on a field-by-field basis
-by using the `include_in_all` setting, ((("include_in_all setting")))which defaults to `true`. ((("_all field", "controlling inclusion in", sortas="all field"))) Setting
+by using the `include_in_all` setting, ((("include_in_all setting")))which defaults to `true`. ((("_all field", sortas="all field"))) Setting
 `include_in_all` on an object (or on the root object) changes the
 default for all fields within that object.
 
