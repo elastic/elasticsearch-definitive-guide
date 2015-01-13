@@ -91,7 +91,7 @@ http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-sc
 ****
 
 Scripts can be used in the `update` API to change the contents of the `_source`
-field, which ((("source field", "updating using scripts")))is referred to inside an update script as `ctx._source`. For
+field, which ((("_source field", sortas="source field")))is referred to inside an update script as `ctx._source`. For
 instance, we could use a script to increment the number of `views` that our
 blog post has had:
 
