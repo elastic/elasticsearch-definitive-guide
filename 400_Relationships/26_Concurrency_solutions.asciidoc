@@ -18,7 +18,7 @@ One of two things will happen:
     the other user.
 
 The problem is that Elasticsearch does not support
-http://en.wikipedia.org/wiki/ACID_transactions[ACID transactions].((("ACID transactions", "not supported in Elasticsearch")))  Changes to
+http://en.wikipedia.org/wiki/ACID_transactions[ACID transactions].((("ACID transactions")))  Changes to
 individual documents are ACIDic, but not changes involving multiple documents.
 
 If your main data store is a relational database, and Elasticsearch is simply
