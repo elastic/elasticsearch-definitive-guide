@@ -4,7 +4,7 @@
 The https://github.com/elasticsearch/elasticsearch-analysis-icu[ICU analysis
 plug-in]  for Elasticsearch uses the _International Components for Unicode_
 (ICU) libraries  (see http://site.icu-project.org[site.project.org]) to
-provide a rich set of tools for dealing with Unicode.((("International Components for Unicode libraries", see="ICU plugin, installing")))((("words", "identifying words", "ICU plugin, installing")))((("ICU plugin, installing"))) These include the
+provide a rich set of tools for dealing with Unicode.((("International Components for Unicode libraries", see="ICU plugin, installing")))((("words", "identifying", "installing ICU plugin")))((("ICU plugin, installing"))) These include the
 `icu_tokenizer`, which is particularly useful for Asian languages,((("Asian languages", "icu_tokenizer for"))) and a number
 of token filters that are essential for correct matching and sorting in all
 languages other than English.
