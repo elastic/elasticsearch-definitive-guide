@@ -2,7 +2,7 @@
 ==== Metadata: _all Field
 
 In <<search-lite>>, we introduced the `_all` field: a special field that
-indexes the ((("metadata, document", "_all field", secondary-sortas="all field")))((("_all field", sortas="all field")))values from all other fields as one big string. The `query_string`
+indexes the ((("metadata, document", "_all field")))((("_all field", sortas="all field")))values from all other fields as one big string. The `query_string`
 query clause (and searches performed as `?q=john`) defaults to searching in
 the `_all` field if no other field is specified.
 
