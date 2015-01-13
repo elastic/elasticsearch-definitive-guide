@@ -1,7 +1,7 @@
 [[source-field]]
 ==== Metadata: _source Field
 
-By default, Elasticsearch ((("metadata, document", "_source field", secondary-sortas="source field")))((("source field")))stores the JSON string representing the
+By default, Elasticsearch ((("metadata, document", "_source field")))((("source field")))stores the JSON string representing the
 document body in the `_source` field. Like all stored fields, the `_source`
 field is compressed before being written to disk.
 
