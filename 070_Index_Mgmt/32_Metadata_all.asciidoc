@@ -81,7 +81,7 @@ PUT /my_index/my_type/_mapping
 --------------------------------------------------
 
 
-Remember that the `_all` field is just((("_all field", sortas="all field")))((("analyzers", "configuring for all field"))) an analyzed `string` field.  It
+Remember that the `_all` field is just((("analyzers", "configuring for all field"))) an analyzed `string` field.  It
 uses the default analyzer to analyze its values, regardless of which
 analyzer has been set on the fields where the values originate.  And
 like any `string` field, you can configure which analyzer the `_all`
