@@ -74,7 +74,7 @@ Content-Length: 83
 
 By default, a `GET` request((("documents", "retrieving part of"))) will return the whole document, as stored in the
 `_source` field. But perhaps all you are interested in is the `title` field.
-Individual fields can be ((("fields", "returning individual document fields")))((("source field", "specifying fields to be returned in")))requested by using the `_source` parameter. Multiple
+Individual fields can be ((("fields", "returning individual document fields")))((("_source field", sortas="source field")))requested by using the `_source` parameter. Multiple
 fields can be specified in a comma-separated list:
 
 [source,sh]
