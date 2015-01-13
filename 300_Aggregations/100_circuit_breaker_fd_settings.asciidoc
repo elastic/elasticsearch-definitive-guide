@@ -16,7 +16,7 @@ will probably need access to other documents in the next query.  It is cheaper
 to load all values once, and to _keep them in memory_, than to have to scan
 the inverted index on every request.
 
-The JVM heap ((("JVM (Java Virtual Machine", "heap usage, fielddata and")))is a limited resource that should be used wisely. A number of
+The JVM heap ((("JVM (Java Virtual Machine)", "heap usage, fielddata and")))is a limited resource that should be used wisely. A number of
 mechanisms exist to limit the impact of fielddata on heap usage. These limits
 are important because abuse of the heap will cause node instability (thanks to
 slow garbage collections) or even node death (with an OutOfMemory exception).
