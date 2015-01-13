@@ -35,7 +35,7 @@ are explained here for the sake of completeness:
 `replication`::
 +
 --
-The default value for ((("replication request parmeter", "sync and async values")))replication is `sync`. ((("sync value, replication parameter")))This causes the primary shard to
+The default value for ((("replication request parameter", "sync and async values")))replication is `sync`. ((("sync value, replication parameter")))This causes the primary shard to
 wait for successful responses from the replica shards before returning.
 
 If you set `replication` to `async`,((("async value, replication parameter"))) it will return success to the client
