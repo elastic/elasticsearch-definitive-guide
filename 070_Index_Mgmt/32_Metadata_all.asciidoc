@@ -38,7 +38,7 @@ same term that appears somewhere in a long `content` field. This distinction
 between field lengths disappears in the `_all` field.
 ====
 
-If you decide that you no longer ((("_all field", sortas="all field")))need the `_all` field, you can disable it
+If you decide that you no longer need the `_all` field, you can disable it
 with this mapping:
 
 [source,js]
