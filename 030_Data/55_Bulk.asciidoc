@@ -227,7 +227,7 @@ POST /website/log/_bulk
 --------------------------------------------------
 // SENSE: 030_Data/55_Bulk_defaults.json
 
-==== How Big is Too Big?
+==== How Big Is Too Big?
 
 The entire bulk request needs to be loaded into memory by the node that
 receives our request, so the bigger the request, the less memory available for
