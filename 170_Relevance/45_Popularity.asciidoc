@@ -213,7 +213,7 @@ image::images/elas_1704.png["Combining popularity with `sum`"]
 
 ==== max_boost
 
-Finally, we can cap the maximimum effect((("function_score query", "max_boost parameter")))((("max_boost parameter"))) that the function can have by using the
+Finally, we can cap the maximum effect((("function_score query", "max_boost parameter")))((("max_boost parameter"))) that the function can have by using the
 `max_boost` parameter:
 
 [source,json]
