@@ -127,7 +127,8 @@ The full `update` request looks like this:
 POST /fs/lock/1/_update
 {
   "upsert": { "process_id": 123 },
-  "script": "if ( ctx._source.process_id != process_id ) { assert false }; ctx.op = 'noop';"
+  "script": "if ( ctx._source.process_id != process_id ) 
+  { assert false }; ctx.op = 'noop';"
   "params": {
     "process_id": 123
   }
