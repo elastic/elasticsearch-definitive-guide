@@ -2,7 +2,7 @@
 === Hunspell Stemmer
 
 Elasticsearch provides ((("dictionary stemmers", "Hunspell stemmer")))((("stemming words", "dictionary stemmers", "Hunspell stemmer")))dictionary-based stemming via the
-analysis-hunspell-tokenfilter.html[`hunspell` token filter].
+http://bit.ly/1KNFdXI[`hunspell` token filter].
 Hunspell http://hunspell.sourceforge.net/[_hunspell.sourceforge.net_] is the
 spell checker used by Open Office, LibreOffice, Chrome, Firefox, Thunderbird, and many
 other open and closed source projects.
@@ -11,9 +11,9 @@ Hunspell dictionaries((("Hunspell stemmer", "obtaining a Hunspell dictionary")))
 
 * http://extensions.openoffice.org/[_extensions.openoffice.org_]: Download and
   unzip the `.oxt` extension file.
-* https://addons.mozilla.org/en-US/thunderbird/language-tools/[_addons.mozilla.org_]:
+* http://mzl.la/157UORf[_addons.mozilla.org_]:
   Download and unzip the `.xpi` addon file.
-* http://archive.services.openoffice.org/pub/mirror/OpenOffice.org/contrib/dictionaries/[OpenOffice archive]: Download and unzip the `.zip` file.
+* http://bit.ly/1ygnODR[OpenOffice archive]: Download and unzip the `.zip` file.
 
 A Hunspell dictionary consists of two files with the same base name--such as
 `en_US`&#x2014;but with one of two extensions:
