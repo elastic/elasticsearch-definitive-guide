@@ -97,9 +97,9 @@ Having reviewed the current configuration, we can use it as the basis for
 a new analyzer, with((("english analyzer", "customizing the stemmer"))) the following changes:
 
 *   Change the `english_stemmer` from `english` (which maps to the
-    http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-porterstem-tokenfilter.html[`porter_stem`] token filter)
+    http://bit.ly/17LseXy[`porter_stem`] token filter)
     to `light_english` (which maps to the less aggressive
-    http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-kstem-tokenfilter.html[`kstem`] token filter).
+    http://bit.ly/1IObUjZ[`kstem`] token filter).
 
 *   Add the <<asciifolding-token-filter,`asciifolding`>> token filter to
     remove any diacritics from foreign words.((("asciifolding token filter")))
