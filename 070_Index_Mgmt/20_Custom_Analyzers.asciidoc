@@ -27,7 +27,7 @@ Tokenizers::
 --
 An analyzer _must_ have a single tokenizer.((("tokenizers", "in analyzers")))  The tokenizer breaks up the
 string into individual terms or tokens. The
-http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-tokenizers.html[`standard` tokenizer],
+http://bit.ly/1E3Fd1b[`standard` tokenizer],
 which is used((("standard tokenizer"))) in the `standard` analyzer, breaks up a string into
 individual terms on word boundaries, and removes most punctuation, but
 other tokenizers exist that have different behavior.
