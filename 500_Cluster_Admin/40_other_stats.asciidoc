@@ -220,8 +220,9 @@ To enable headers, add the `?v` parameter:
 ----
 GET /_cat/health?v
 
-epoch      timestamp cluster                   status node.total node.data shards pri relo init unassign 
-1408723890 12:11:30  elasticsearch_zach yellow      1         1    114 114    0    0      114 
+epoch   time    cluster status node.total node.data shards pri relo init  
+1408[..] 12[..] el[..]  1         1         114 114    0    0     114 
+unassign
 ----
 
 Ah, much better.  We now see the timestamp, cluster name, status, the number of 
