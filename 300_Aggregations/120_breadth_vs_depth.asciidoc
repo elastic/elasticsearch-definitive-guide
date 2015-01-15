@@ -68,7 +68,7 @@ roughly 2,000,000 generated buckets.
 Now, remember, our aggregation is simply asking for the top 10 actors and their
 co-stars, totaling 50 values.  To get the final results, we have to generate
 that tree of 2,000,000 buckets, sort it, and finally prune it such that only the
-top 10 actors are left.
+top 10 actors are left. This is illustrated in <<depth-first-2>> and <<depth-first-3>>.
 
 [[depth-first-2]]
 .Sort tree
