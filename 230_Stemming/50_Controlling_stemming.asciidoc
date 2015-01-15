@@ -8,8 +8,8 @@ your use case, it is important to keep `skies` and `skiing` as distinct words
 rather than stemming them both down to `ski` (as would happen with the
 `english` analyzer).
 
-The http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-keyword-marker-tokenfilter.html[`keyword_marker`] and
-http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-stemmer-override-tokenfilter.html[`stemmer_override`] token filters((("stemmer_override token filter")))((("keyword_marker token filter")))
+The http://bit.ly/1IOeXZD[`keyword_marker`] and
+http://bit.ly/1ymcioJ[`stemmer_override`] token filters((("stemmer_override token filter")))((("keyword_marker token filter")))
 allow us to customize the stemming process.
 
 [[preventing-stemming]]
