@@ -146,7 +146,7 @@ Adding in a `factor` changes the formula to this:
     new_score = old_score * log(1 + factor * number_of_votes)
 
 A `factor` greater than `1` increases the effect, and a `factor` less than `1`
-decreases the effect, as shown in <<img-popularity-factor>>:
+decreases the effect, as shown in <<img-popularity-factor>>.
 
 [[img-popularity-factor]]
 .Logarithmic popularity with different factors
