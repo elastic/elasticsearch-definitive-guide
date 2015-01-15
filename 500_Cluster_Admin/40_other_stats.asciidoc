@@ -250,23 +250,23 @@ You can do this by adding `?help` to any API:
 ----
 GET /_cat/nodes?help
 
-id                       | id,nodeId                 | unique node id                          
-pid                      | p                         | process id                              
-host                     | h                         | host name                               
-ip                       | i                         | ip address                              
-port                     | po                        | bound transport port                    
-version                  | v                         | es version                              
-build                    | b                         | es build hash                           
-jdk                      | j                         | jdk version                             
-disk.avail               | d,disk,diskAvail          | available disk space                    
-heap.percent             | hp,heapPercent            | used heap ratio                         
-heap.max                 | hm,heapMax                | max configured heap                     
-ram.percent              | rp,ramPercent             | used machine memory ratio               
-ram.max                  | rm,ramMax                 | total machine memory                    
-load                     | l                         | most recent load avg                    
-uptime                   | u                         | node uptime                             
-node.role                | r,role,dc,nodeRole        | d:data node, c:client node              
-master                   | m                         | m:master-eligible, *:current master  
+id                   | id,nodeId                 | unique node id                          
+pid                  | p                         | process id                              
+host                 | h                         | host name                               
+ip                   | i                         | ip address                              
+port                 | po                        | bound transport port                    
+version              | v                         | es version                              
+build                | b                         | es build hash                           
+jdk                  | j                         | jdk version                             
+disk.avail           | d,disk,diskAvail          | available disk space                    
+heap.percent         | hp,heapPercent            | used heap ratio                         
+heap.max             | hm,heapMax                | max configured heap                     
+ram.percent          | rp,ramPercent             | used machine memory ratio               
+ram.max              | rm,ramMax                 | total machine memory                    
+load                 | l                         | most recent load avg                    
+uptime               | u                         | node uptime                             
+node.role            | r,role,dc,nodeRole        | d:data node, c:client node              
+master               | m                         | m:master-eligible, *:current master  
 ...
 ...
 ----
