@@ -20,7 +20,7 @@ in Elasticsearch.
 
 One day, management decides to have a sale. Suddenly, we are selling several
 widgets every second. Imagine two web processes, running in parallel, both
-processing the sale of one widget each, as shown in <<img-data-lww>>:
+processing the sale of one widget each, as shown in <<img-data-lww>>.
 
 [[img-data-lww]]
 .Consequence of no concurrency control
