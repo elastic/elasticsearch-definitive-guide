@@ -226,7 +226,7 @@ node is restarted, or when a closed index is reopened.
 
 If you specify stopwords inline with the `stopwords` parameter, your
 only option is to close the index and update the analyzer configuration with the
-http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-update-settings.html[update index settings API], then reopen
+http://bit.ly/1zijFPx[update index settings API], then reopen
 the index.
 
 Updating stopwords is easier if you specify them in a file with the
