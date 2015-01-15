@@ -123,7 +123,7 @@ POST /logs_2014-01-*/_open <3>
 
 Finally, very old indices ((("indices", "archiving old indices")))can be archived off to some long-term storage like a
 shared disk or Amazon's S3 using the
-http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-snapshots.html[`snapshot-restore` API], just in case you may need
+http://bit.ly/14ED13A[`snapshot-restore` API], just in case you may need
 to access them in the future.  Once a backup exists, the index can be deleted
 from the cluster.
 
