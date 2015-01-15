@@ -168,7 +168,7 @@ frequently lead to surprising results or even syntax errors.
 One of the gotchas of this query involves multiword synonyms. To
 support its search-syntax, it has to parse the query string to recognize
 special operators like `AND`, `OR`, `+`, `-`, `field:`, and so forth.  (See the full
-http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html[`query_string` syntax]
+http://bit.ly/151G5I1[`query_string` syntax]
 here.)
 
 As part of this parsing process, it breaks up the query string on whitespace,
