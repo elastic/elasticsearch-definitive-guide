@@ -60,9 +60,6 @@ image::images/elas_1108.png["The transaction log keeps accumulating documents"]
    ** The filesystem cache is flushed with an `fsync`.
    ** The old translog is deleted.
 
-[[img-xlog-post-flush]]
-.After a flush, the segments are fully commited and the transaction log is cleared
-image::images/elas_1109.png["After a flush, the segments are fully commited and the transaction log is cleared"]
 --
 
 The translog provides a persistent record of all operations that have not yet
@@ -76,6 +73,9 @@ any recent changes before trying to retrieve the document from the relevant
 segment. This means that it always has access to the latest known version of
 the document, in real-time.
 
+[[img-xlog-post-flush]]
+.After a flush, the segments are fully commited and the transaction log is cleared
+image::images/elas_1109.png["After a flush, the segments are fully commited and the transaction log is cleared"]
 
 [[flush-api]]
 ==== flush API
