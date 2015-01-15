@@ -91,7 +91,7 @@ POST /logs_2014-09-30/_settings
 
 Of course, without replicas, we run the risk of losing data if a disk suffers
 catastrophic failure.  You may((("snapshot-restore API"))) want to back up the data first, with the
-http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-snapshots.html[`snapshot-restore` API].
+http://bit.ly/14ED13A[`snapshot-restore` API].
 
 [[close-indices]]
 ==== Closing Old Indices
