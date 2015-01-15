@@ -77,7 +77,7 @@ GET /cars/transactions/_search?search_type=count
 
 ==== Understanding the Trade-offs
 As mentioned at the top of this chapter, the `cardinality` metric is an approximate
-algorithm. ((("cardinality", "understanding the tradeoffs"))) It is based on the http://static.googleusercontent.com/media/research.google.com/fr//pubs/archive/40671.pdf[HyperLogLog++] (HLL) algorithm.((("HLL (HyperLogLog) algorithm")))((("HyperLogLog (HLL) algorithm")))  HLL works by
+algorithm. ((("cardinality", "understanding the tradeoffs"))) It is based on the http://bit.ly/1u6UWwd[HyperLogLog++] (HLL) algorithm.((("HLL (HyperLogLog) algorithm")))((("HyperLogLog (HLL) algorithm")))  HLL works by
 hashing your input and using the bits from the hash to make probabilistic estimations
 on the cardinality.
 
