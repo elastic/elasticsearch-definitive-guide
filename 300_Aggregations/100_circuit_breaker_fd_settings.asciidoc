@@ -130,14 +130,14 @@ indicate a serious resource issue and a reason for poor performance.
 
 Fielddata usage can be monitored:
 
-* per-index using the http://www.elasticsearch.org/guide/en/elasticsearch/reference/0.90/indices-stats.html[`indices-stats` API]:
+* per-index using the http://bit.ly/1BwZ61b[`indices-stats` API]:
 +
 [source,json]
 -------------------------------
 GET /_stats/fielddata?fields=*
 -------------------------------
 
-* per-node using the http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/cluster-nodes-stats.html[`nodes-stats` API]:
+* per-node using the http://bit.ly/1586yDn[`nodes-stats` API]:
 +
 [source,json]
 -------------------------------
