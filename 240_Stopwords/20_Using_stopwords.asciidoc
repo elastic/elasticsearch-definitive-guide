@@ -163,7 +163,7 @@ PUT /my_index
 [[stop-token-filter]]
 ==== Using the stop Token Filter
 
-The http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/using-stopwords.html#stop-token-filter[`stop` token filter] can be combined
+The http://bit.ly/1AUzDNI[`stop` token filter] can be combined
 with a tokenizer((("stopwords", "using stop token filter")))((("stop token filter", "using in custom analyzer"))) and other token filters when you need to create a `custom`
 analyzer.  For instance, let's say that we wanted to ((("Spanish", "custom analyzer for")))((("light_spanish stemmer")))create a Spanish analyzer
 with the following:
