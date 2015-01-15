@@ -79,7 +79,7 @@ PUT /fs
 }
 --------------------------
 <1> The custom `paths` analyzer uses the `path_hierarchy` tokenizer with its
-    default settings. See http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-pathhierarchy-tokenizer.html[`path_hierarchy` tokenizer].
+    default settings. See http://bit.ly/1AjGltZ[`path_hierarchy` tokenizer].
 
 The mapping for the `file` type would look like this:
 
