@@ -72,6 +72,21 @@ Retrieving the document shows the updated `_source` field:
 ==== Using Scripts to Make Partial Updates
 
 .Scripting with Groovy
+
+Scripts can be used in the `update` API to change the contents of the `_source`
+field, which ((("_source field", sortas="source field")))is referred to inside an update script as `ctx._source`. For
+instance, we could use a script to increment the number of `views` that our
+blog post has had:
+
+[source,js]
+--------------------------------------------------
+POST /website/blog/1/_update
+{
+   "script" : "ctx._source.views+=1"
+}
+--------------------------------------------------
+// SENSE: 030_Data/45_Partial_update.json
+
 ****
 
 For those ((("documents", "partial updates", "using scripts")))((("updating documents", "partial updates", "using scripts")))moments when the API just isn't enough, Elasticsearch allows you to
@@ -89,21 +104,6 @@ You can read more about scripting in the
 http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-scripting.html[scripting reference documentation].
 
 ****
-
-Scripts can be used in the `update` API to change the contents of the `_source`
-field, which ((("_source field", sortas="source field")))is referred to inside an update script as `ctx._source`. For
-instance, we could use a script to increment the number of `views` that our
-blog post has had:
-
-[source,js]
---------------------------------------------------
-POST /website/blog/1/_update
-{
-   "script" : "ctx._source.views+=1"
-}
---------------------------------------------------
-// SENSE: 030_Data/45_Partial_update.json
-
 
 We can also use a script to add a new tag to the `tags` array.  In this
 example we specify the new tag as a parameter rather than hardcoding it in
