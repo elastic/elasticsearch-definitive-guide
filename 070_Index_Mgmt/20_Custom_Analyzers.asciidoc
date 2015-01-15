@@ -15,7 +15,7 @@ Character filters::
 Character filters((("character filters"))) are used to ``tidy up'' a string before it is tokenized.
 For instance, if our text is in HTML format, it will contain HTML tags like
 `<p>` or `<div>` that we don't want to be indexed. We can use the
-http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/custom-analyzers.html#custom-analyzers[`html_strip` character filter]
+http://bit.ly/1B6f4Ay[`html_strip` character filter]
 to remove all HTML tags and to convert HTML entities like `&Aacute;` into the
 corresponding Unicode character `Á`.
 
