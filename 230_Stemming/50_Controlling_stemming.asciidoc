@@ -83,7 +83,7 @@ file.
 
 In the preceding example, we prevented `skies` from being stemmed, but perhaps we
 would prefer it to be stemmed to `sky` instead.((("stemming words", "controlling stemming", "customizing stemming")))  The
-http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-stemmer-override-tokenfilter.html[`stemmer_override`] token
+http://bit.ly/1ymcioJ[`stemmer_override`] token
 filter allows us ((("stemmer_override token filter")))to specify our own custom stemming rules. At the same time,
 we can handle some irregular forms like stemming `mice` to `mouse` and `feet`
 to `foot`:
