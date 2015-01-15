@@ -18,7 +18,7 @@ The `standard` tokenizer would simply strip out the emoticon in the second
 sentence, conflating two sentences that have quite different intent.
 
 We can use the
-http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-mapping-charfilter.html[`mapping` character filter]
+http://bit.ly/1ziua5n[`mapping` character filter]
 to replace emoticons((("mapping character filter", "replacing emoticons with symbol synonyms")))((("emoticons", "replacing with symbol synonyms"))) with symbol synonyms like `emoticon_happy` and
 `emoticon_sad` before the text is passed to the tokenizer:
 
