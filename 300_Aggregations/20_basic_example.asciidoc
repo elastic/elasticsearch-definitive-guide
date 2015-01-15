@@ -73,7 +73,7 @@ in <<_scoping_aggregations>>.
 [NOTE]
 =========================
 You'll notice that we used the `count` <<search-type,search_type>>.((("count search type")))
-Because we don't care about search results -- the aggregation totals -- the 
+Because we don't care about search results--the aggregation totals--the 
 `count` search_type will be faster because it omits the fetch phase.
 =========================
 
