@@ -97,10 +97,10 @@ cases, you need to use a heuristic to identify the predominant language.
 Fortunately, libraries are available in several languages to help with this problem.
 
 Of particular note is the
-https://code.google.com/p/chromium-compact-language-detector/[chromium-compact-language-detector]
+http://bit.ly/1AUr3i2[chromium-compact-language-detector]
 library from
-http://blog.mikemccandless.com/2013/08/a-new-version-of-compact-language.html[Mike McCandless],
-which uses the open source (http://www.apache.org/licenses/LICENSE-2.0[Apache License 2.0])
+http://bit.ly/1AUr85k[Mike McCandless],
+which uses the open source (http://bit.ly/1u9KKgI[Apache License 2.0])
 https://code.google.com/p/cld2/[Compact Language Detector] (CLD) from Google.  It is
 small, fast, ((("Compact Language Detector (CLD)")))and accurate, and can detect 160+ languages from as little as two
 sentences. It can even detect multiple languages within a single block of
