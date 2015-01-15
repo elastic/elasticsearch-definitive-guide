@@ -25,7 +25,7 @@ so that it is memory-friendly
 - During indexing, by configuring heavy fields to use disk-based doc values instead
 of in-memory fielddata
 - At search time, by utilizing approximate aggregations and data filtering
-- At a node level, by setting hard memory limits and dynamic circuit-breaker limits
+- At a node level, by setting hard memory and dynamic circuit-breaker limits
 - At an operations level, by monitoring memory usage and controlling slow garbage-collection cycles, potentially by adding more nodes to the cluster
 
 Most deployments will use one or more of the preceding methods.  The exact combination
