@@ -71,7 +71,6 @@ Retrieving the document shows the updated `_source` field:
 
 ==== Using Scripts to Make Partial Updates
 
-.Scripting with Groovy
 
 Scripts can be used in the `update` API to change the contents of the `_source`
 field, which ((("_source field", sortas="source field")))is referred to inside an update script as `ctx._source`. For
@@ -87,6 +86,7 @@ POST /website/blog/1/_update
 --------------------------------------------------
 // SENSE: 030_Data/45_Partial_update.json
 
+.Scripting with Groovy
 ****
 
 For those ((("documents", "partial updates", "using scripts")))((("updating documents", "partial updates", "using scripts")))moments when the API just isn't enough, Elasticsearch allows you to
