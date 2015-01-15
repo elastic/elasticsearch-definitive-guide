@@ -76,7 +76,7 @@ to the following:
     new_score = old_score * log(1 + number_of_votes)
 
 The `log` function smooths out the effect of the `votes` field to provide a
-curve like the one in <<img-popularity-log>>:
+curve like the one in <<img-popularity-log>>.
 
 [[img-popularity-log]]
 .Logarithmic popularity based on an original `_score` of `2.0`
