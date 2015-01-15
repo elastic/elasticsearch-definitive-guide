@@ -2,22 +2,22 @@
 === Using Stopwords
 
 The removal of stopwords is ((("stopwords", "removal of")))handled by the
-http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-stop-tokenfilter.html[`stop` token filter] which can be used
+http://bit.ly/1INX4tN[`stop` token filter] which can be used
 when ((("stop token filter")))creating a `custom` analyzer (see <<stop-token-filter>>).
 However, some out-of-the-box analyzers((("analyzers", "stop filter pre-integrated")))((("pattern analyzer", "stopwords and")))((("standard analyzer", "stop filter")))((("language analyzers", "stop filter pre-integrated"))) come with the `stop` filter pre-integrated:
 
-http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-lang-analyzer.html[Language analyzers]::
+http://bit.ly/1xtdoJV[Language analyzers]::
 
     Each language analyzer defaults to using the appropriate stopwords list
     for that language. For instance, the `english` analyzer uses the
     `_english_` stopwords list.
 
-http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-standard-analyzer.html[`standard` analyzer]::
+http://bit.ly/14EpXv3[`standard` analyzer]::
 
     Defaults to the empty stopwords list: `_none_`, essentially disabling
     stopwords.
 
-http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-pattern-analyzer.html[`pattern` analyzer]::
+http://bit.ly/1u9OVct[`pattern` analyzer]::
 
     Defaults to `_none_`, like the `standard` analyzer.
 
