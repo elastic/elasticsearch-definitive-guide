@@ -33,11 +33,11 @@ individual terms on word boundaries, and removes most punctuation, but
 other tokenizers exist that have different behavior.
 
 For instance, the
-http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-keyword-tokenizer.html[`keyword` tokenizer]
+http://bit.ly/1ICd585[`keyword` tokenizer]
 outputs exactly((("keyword tokenizer"))) the same string as it received, without any tokenization. The
-http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-whitespace-tokenizer.html[`whitespace` tokenizer]
+http://bit.ly/1xt3t7d[`whitespace` tokenizer]
 splits text((("whitespace tokenizer"))) on whitespace only. The
-http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-pattern-tokenizer.html[`pattern` tokenizer] can
+http://bit.ly/1ICdozA[`pattern` tokenizer] can
 be used to split text on a ((("pattern tokenizer")))matching regular expression.
 --
 
@@ -48,15 +48,15 @@ After tokenization, the resulting _token stream_ is passed through any
 specified token filters,((("token filters"))) in the order in which they are specified.
 
 Token filters may change, add, or remove tokens.  We have already mentioned the
-http://www.elasticsearch.org/guide/en/elasticsearch/reference/0.90/analysis-lowercase-tokenfilter.html[`lowercase`] and
-http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-stop-tokenfilter.html[`stop` token filters],
+http://bit.ly/1DIeXvZ[`lowercase`] and
+http://bit.ly/1INX4tN[`stop` token filters],
 but there are many more available in Elasticsearch.
-http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-stemmer-tokenfilter.html[Stemming token filters]
+http://bit.ly/1AUfpDN[Stemming token filters]
 ``stem'' words to ((("stemming token filters")))their root form. The
-http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-asciifolding-tokenfilter.html[`ascii_folding` filter]
+http://bit.ly/1ylU7Q7[`ascii_folding` filter]
 removes diacritics,((("ascii_folding filter"))) converting a term like `"très"` into `"tres"`. The
-http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-ngram-tokenfilter.html[`ngram`] and
-http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-edgengram-tokenfilter.html[`edge_ngram` token filters] can produce((("edge_engram token filter")))((("ngram and edge_ngram token filters")))
+http://bit.ly/1CbkmYe[`ngram`] and
+http://bit.ly/1DIf6j5[`edge_ngram` token filters] can produce((("edge_engram token filter")))((("ngram and edge_ngram token filters")))
 tokens suitable for partial matching or autocomplete.
 --
 
