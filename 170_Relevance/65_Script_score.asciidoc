@@ -80,7 +80,9 @@ GET /_search
             "discount": 0.1,
             "target": 10
           },
-          "script": "price  = doc['price'].value; margin = doc['margin'].value; if (price < threshold) { return price * margin / target }; return price * (1 - discount) * margin / target;" <3>
+          "script": "price  = doc['price'].value; margin = doc['margin'].value; 
+          if (price < threshold) { return price * margin / target };
+          return price * (1 - discount) * margin / target;" <3>
         }
       }
     ]
