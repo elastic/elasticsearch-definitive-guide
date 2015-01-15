@@ -96,12 +96,12 @@ like our actors and costars example.
 
 For these special cases, you should use an alternative collection strategy called
 _breadth-first_.  ((("beadth-first collection strategy")))This strategy works a little differently.  It executes the first
-layer of aggregations, and _then_ performs a pruning phase before continuing.
+layer of aggregations, and _then_ performs a pruning phase before continuing, as illustrated in <<breadth-first-1>> through <<breadth-first-3>>.
 
 In our example, the `actors` aggregation would be executed first.  At this
 point, we have a single layer in the tree, but we already know who the top 10
 actors are! There is no need to keep the other actors since they won't be in
-the top 10 anyway. The breadth-first strategy is illustarted in <<breadth-first-1>> through <<breadth-first-3>>. 
+the top 10 anyway. 
 
 [[breadth-first-1]]
 .Build first level
@@ -117,9 +117,9 @@ image::images/300_120_breadth_first_3.svg["Prune first level"]
 
 Since we already know the top ten actors, we can safely prune away the rest of the
 long tail. After pruning, the next layer is populated based on _its_ execution mode,
-and the process repeats until the aggregation is done. This prevents the
+and the process repeats until the aggregation is done, as illustrated in <<breadth-first-4>>. This prevents the
 combinatorial explosion of buckets and drastically reduces memory requirements
-for classes of queries that are amenable to breadth-first.
+for classes of queries that are amenable to breadth-first. 
 
 [[breadth-first-4]]
 .Populate full depth for remaining nodes
