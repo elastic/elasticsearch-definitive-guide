@@ -32,18 +32,18 @@ aggressively than the Porter stemmer.
 ==== Using an Algorithmic Stemmer
 
 While you ((("stemming words", "algorithmic stemmers", "using")))can use the
-http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-porterstem-tokenfilter.html[`porter_stem`] or
-http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-kstem-tokenfilter.html[`kstem`] token filter directly, or
+http://bit.ly/17LseXy[`porter_stem`] or
+http://bit.ly/1IObUjZ[`kstem`] token filter directly, or
 create a language-specific Snowball stemmer with the
-http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-snowball-tokenfilter.html[`snowball`] token filter, all of the
+http://bit.ly/1Cr4tNI[`snowball`] token filter, all of the
 algorithmic stemmers are exposed via a single unified interface:
-the http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-stemmer-tokenfilter.html[`stemmer` token filter], which
+the http://bit.ly/1AUfpDN[`stemmer` token filter], which
 accepts the `language` parameter.
 
 For instance, perhaps you find the default stemmer used by the `english`
 analyzer to be too aggressive and ((("english analyzer", "default stemmer, examining")))you want to make it less aggressive.
 The first step is to look up the configuration for the `english` analyzer
-in the http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-lang-analyzer.html[language analyzers]
+in the http://bit.ly/1xtdoJV[language analyzers]
 documentation, which shows the following:
 
 [source,js]
