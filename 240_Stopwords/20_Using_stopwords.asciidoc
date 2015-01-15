@@ -112,7 +112,7 @@ The default stopword list for a particular language can be specified using the
 
 TIP: The predefined language-specific stopword((("languages", "predefined stopword lists for"))) lists available in
 Elasticsearch can be found in the
-http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/using-stopwords.html#specifying-stopwords[`stop` token filter] documentation.
+http://bit.ly/157YLFy[`stop` token filter] documentation.
 
 Stopwords can be disabled by ((("stopwords", "disabling")))specifying the special list: `_none_`.  For
 instance, to use the `english` analyzer((("english analyzer", "using without stopwords"))) without stopwords, you can do the
