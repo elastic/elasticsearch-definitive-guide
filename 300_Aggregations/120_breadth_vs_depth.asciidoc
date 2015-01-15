@@ -101,7 +101,7 @@ layer of aggregations, and _then_ performs a pruning phase before continuing.
 In our example, the `actors` aggregation would be executed first.  At this
 point, we have a single layer in the tree, but we already know who the top 10
 actors are! There is no need to keep the other actors since they won't be in
-the top 10 anyway.
+the top 10 anyway. The breadth-first strategy is illustarted in <<breadth-first-1>> through <<breadth-first-3>>. 
 
 [[breadth-first-1]]
 .Build first level
