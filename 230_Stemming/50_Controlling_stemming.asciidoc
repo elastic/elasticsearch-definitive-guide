@@ -23,7 +23,7 @@ to mark the listed words as _keywords_, which prevents subsequent stemming
 token filters from touching those words.((("keyword_marker token filter", "preventing stemming of certain words")))
 
 For instance, we can create a simple custom analyzer that uses the
-http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-porterstem-tokenfilter.html[`porter_stem`] token filter,
+http://bit.ly/17LseXy[`porter_stem`] token filter,
 but prevents the word `skies` from((("porter_stem token filter"))) being stemmed:
 
 [source,json]
