@@ -221,7 +221,8 @@ POST /fs/lock/%2Fclinton/_update <1>
     "lock_type":  "shared",
     "lock_count": 1
   },
-  "script": "if (ctx._source.lock_type == 'exclusive') { assert false }; ctx._source.lock_count++"
+  "script": "if (ctx._source.lock_type == 'exclusive') 
+  { assert false }; ctx._source.lock_count++"
 }
 --------------------------
 <1> The ID of the document is `/clinton`, which is URL-encoded to `%2fclinton`.
