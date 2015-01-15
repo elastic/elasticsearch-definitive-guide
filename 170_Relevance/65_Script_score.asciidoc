@@ -106,7 +106,7 @@ a profit.
 The `script_score` function provides enormous flexibility.((("scripts", "performance and")))  Within a script,
 you have access to the fields of the document, to the current `_score`, and
 even to the term frequencies, inverse document frequencies, and field length
-norms (see http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-advanced-scripting.html[Text scoring in scripts]).
+norms (see http://bit.ly/1E3Rbbh[Text scoring in scripts]).
 
 That said, scripts can have a performance impact.  If you do find that your
 scripts are not quite fast enough, you have three options:
