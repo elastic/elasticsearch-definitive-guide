@@ -29,9 +29,6 @@ per-shards results to a global result set, as described in
 
 ***************************************
 
-[[img-memory-buffer]]
-.A Lucene index with new documents in the in-memory buffer, ready to commit
-image::images/elas_1102.png["A Lucene index with new documents in the in-memory buffer, ready to commit"]
 
 A per-segment search works as follows:
 
@@ -47,6 +44,10 @@ A per-segment search works as follows:
 
 3. The new segment is opened, making the documents it contains visible to search.
 4. The in-memory buffer is cleared, and is ready to accept new documents.
+
+[[img-memory-buffer]]
+.A Lucene index with new documents in the in-memory buffer, ready to commit
+image::images/elas_1102.png["A Lucene index with new documents in the in-memory buffer, ready to commit"]
 
 [[img-post-commit]]
 .After a commit, a new segment is added to the commit point and the buffer is cleared
