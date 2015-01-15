@@ -55,7 +55,7 @@ However, this seemingly ((("aggregations", "fielddata", "datastructure overview"
 memory. You can visualize a `terms` aggregation as building a tree in memory.
 The `actors` aggregation will build the first level of the tree, with a bucket
 for every actor.  Then, nested under each node in the first level, the
-`costars` aggregation will build a second level, with a bucket for every costar. That means that a single movie will generate n^2^ buckets!
+`costars` aggregation will build a second level, with a bucket for every costar, as seen in <<depth-first-1>>. That means that a single movie will generate n^2^ buckets!
 
 [[depth-first-1]]
 .Build full depth tree
