@@ -234,7 +234,7 @@ Updating stopwords is easier if you specify them in a file with the
 the cluster) and then force the analyzers to be re-created by either of these actions:
 
 * Closing and reopening the index
-  (see http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-open-close.html[open/close index]), or
+  (see http://bit.ly/1B6s0WY[open/close index]), or
 * Restarting each node in the cluster, one by one
 
 Of course, updating the stopwords list will not change any documents that have
