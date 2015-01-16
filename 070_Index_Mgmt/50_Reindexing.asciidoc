@@ -1,7 +1,7 @@
 [[reindex]]
 === Reindexing Your Data
 
-Alhough you can add new types to an index, or add new fields to a type, you
+Although you can add new types to an index, or add new fields to a type, you
 can't add new analyzers or make changes to existing fields.((("reindexing")))((("indexing", "reindexing your data")))  If you were to do
 so, the data that had already been indexed would be incorrect and your
 searches would no longer work as expected.
