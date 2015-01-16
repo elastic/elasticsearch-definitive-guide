@@ -207,7 +207,7 @@ The formula for the preceding request now looks like this (see <<img-popularity-
     new_score = old_score + log(1 + 0.1 * number_of_votes)
 
 [[img-popularity-sum]]
-.Combining popularity with `sum`
+.Combining popularity with `sum` (the image is not correct - should be `old_score +` instead of `old_score *`)
 image::images/elas_1704.png["Combining popularity with `sum`"]
 
 
