@@ -103,11 +103,13 @@ to dispel the magic--instead of hoping that the black box will do what you
 want, understanding gives you certainty and clarity.
 
 This is a definitive guide: we help you not only to get started with
-Elasticsearch, but also to tackle the deeper more, interesting topics. These include Chapters pass:[<a href="#distributed-cluster">2</a>], pass:[<a href="#distributed-docs">4</a>], pass:[<a href="#distributed-search">9</a>], and pass:[<a href="#inside-a-shard">11</a>], which are not essential
+Elasticsearch, but also to tackle the deeper more, interesting topics. These include <<distributed-cluster>>, <<distributed-docs>>,
+<<distributed-search>>, and <<inside-a-shard>>, which are not essential
 reading but do give you a solid understanding of the internals.
 
 The first part of the book should be read in order as each chapter builds on
-the previous one (although you can skim over the chapters just mentioned). Later chapters such as Chapters pass:[<a href="#proximity-matching">15</a>] and pass:[<a href="#partial-matching">16</a>] are more standalone and can be referred to as needed.
+the previous one (although you can skim over the chapters just mentioned).  Later chapters such as <<proximity-matching>> and <<partial-matching>>
+are more standalone and can be referred to as needed.
 
 === Navigating This Book
 
