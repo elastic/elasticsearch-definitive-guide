@@ -4,12 +4,12 @@ use strict;
 use warnings;
 use Path::Class;
 use Capture::Tiny qw(capture);
-my $inkscape = '/Applications/Inkscape.app/Contents/Resources/bin/inkscape';
+my $inkscape = 'inkscape';
 
 my $width = shift @ARGV or die "USAGE: $0 [width]\n";
 
 my $src = dir('svg');
-my $out = dir('images');
+my $out = dir('images_temp');
 
 $out->rmtree;
 $out->mkpath;
