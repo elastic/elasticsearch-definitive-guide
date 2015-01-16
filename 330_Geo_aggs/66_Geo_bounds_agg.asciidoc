@@ -3,7 +3,7 @@
 
 In our <<geohash-grid-agg,previous example>>, we filtered our results by using a
 bounding box that covered the greater New York area.((("aggregations", "geo_bounds")))((("geo_bounds aggregation")))  However, our results
-were all located in downton Manhattan.  When displaying a map for our user, it
+were all located in downtown Manhattan.  When displaying a map for our user, it
 makes sense to zoom into the area of the map that contains the data; there
 is no point in showing lots of empty space.
 
