@@ -46,19 +46,19 @@ _metadata_&#x2014;information _about_ the document.((("metadata, document"))) Th
 elements are as follows:
 
 
- `&#x5f;index`::  
+ `_index`::  
    Where the document lives
    
- `&#x5f;type`::   
+ `_type`::   
    The class of object that the document represents
    
- `&#x5f;id`::     
+ `_id`::     
    The unique identifier for the document
 
-==== &#x5f;index
+==== _index
 
 An _index_ is like a database in a relational database; it's the place
-we store and index related data.((("indices", "&#x5f;index, in document metadata")))
+we store and index related data.((("indices", "_index, in document metadata")))
 
 [TIP]
 ====
@@ -74,7 +74,7 @@ but for now we will let Elasticsearch create the index for us.  All we have to
 do is choose an index name.  This name must be lowercase, cannot begin with an
 underscore, and cannot contain commas. Let's use `website` as our index name.
 
-==== &#x5f;type
+==== _type
 
 In applications, we use objects to represent _things_ such as a user, a blog
 post, a comment, or an email. Each object belongs to a _class_ that defines
@@ -83,7 +83,7 @@ may have a name, a gender, an age, and an email address.
 
 In a relational database, we usually store objects of the same class in the
 same table, because they share the same data structure. For the same reason, in
-Elasticsearch we use the same _type_ for ((("types", "&#x5f;type, in document metadata)))documents that represent the same
+Elasticsearch we use the same _type_ for ((("types", "_type, in document metadata)))documents that represent the same
 class of _thing_, because they share the same data structure.
 
 Every _type_ has its own <<mapping,mapping>> or schema ((("mapping (types)")))((("schema definition, types")))definition, which
@@ -96,14 +96,14 @@ We show how to specify and manage mappings in <<mapping>>, but for now
 we will rely on Elasticsearch to detect our document's data structure
 automatically.
 
-A `&#x5f;type` name can be lowercase or uppercase, but shouldn't begin with an
+A `_type` name can be lowercase or uppercase, but shouldn't begin with an
 underscore or contain commas.((("types", "names of")))  We will use `blog` for our type name.
 
-==== &#x5f;id
+==== _id
 
-The _ID_ is a string that,((("id", "&#x5f;id, in document metadata"))) when combined with the `&#x5f;index` and `&#x5f;type`,
+The _ID_ is a string that,((("id", "_id, in document metadata"))) when combined with the `_index` and `_type`,
 uniquely identifies a document in Elasticsearch. When creating a new document,
-you can either provide your own `&#x5f;id` or let Elasticsearch generate one for
+you can either provide your own `_id` or let Elasticsearch generate one for
 you.
 
 ==== Other Metadata
