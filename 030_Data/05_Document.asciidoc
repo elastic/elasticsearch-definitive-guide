@@ -83,7 +83,7 @@ may have a name, a gender, an age, and an email address.
 
 In a relational database, we usually store objects of the same class in the
 same table, because they share the same data structure. For the same reason, in
-Elasticsearch we use the same _type_ for ((("types", "_type, in document metadata)))documents that represent the same
+Elasticsearch we use the same _type_ for ((("types", "&#x5f;type, in document metadata)))documents that represent the same
 class of _thing_, because they share the same data structure.
 
 Every _type_ has its own <<mapping,mapping>> or schema ((("mapping (types)")))((("schema definition, types")))definition, which
@@ -101,7 +101,7 @@ underscore or contain commas.((("types", "names of")))  We will use `blog` for o
 
 ==== _id
 
-The _ID_ is a string that,((("id", "_id, in document metadata"))) when combined with the `_index` and `_type`,
+The _ID_ is a string that,((("id", "&#x5f;id, in document metadata"))) when combined with the `_index` and `_type`,
 uniquely identifies a document in Elasticsearch. When creating a new document,
 you can either provide your own `_id` or let Elasticsearch generate one for
 you.
