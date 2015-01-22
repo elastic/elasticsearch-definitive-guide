@@ -20,7 +20,7 @@ the process, if that is easier for your setup:
 
 [source,bash]
 ----
-./bin/elasticsearch -Xmx=10g -Xms=10g <1>
+./bin/elasticsearch -Xmx10g -Xms10g <1>
 ----
 <1> Ensure that the min (`Xms`) and max (`Xmx`) sizes are the same to prevent
 the heap from resizing at runtime, a very costly process.
