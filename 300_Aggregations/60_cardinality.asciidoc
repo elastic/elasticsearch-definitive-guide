@@ -7,7 +7,7 @@ _unique_ count. ((("unique counts"))) You may be familiar with the SQL version:
 
 [source, sql]
 --------
-SELECT DISTINCT(color)
+SELECT COUNT(DISTINCT color)
 FROM cars
 --------
 
