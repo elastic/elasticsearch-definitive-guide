@@ -177,11 +177,11 @@ First, we need to give Elasticsearch a hard limit:
 gateway.recover_after_nodes: 8
 ----
 
-This will prevent Elasticsearch from starting a recovery until at least eight nodes
+This will prevent Elasticsearch from starting a recovery until at least eight (data or master) nodes
 are present.  The value for this setting is a matter of personal preference: how
 many nodes do you want present before you consider your cluster functional?
 In this case, we are setting it to `8`, which means the cluster is inoperable
-unless there are eight nodes.
+unless there are at least eight nodes.
 
 Then we tell Elasticsearch how many nodes _should_ be in the cluster, and how
 long we want to wait for all those nodes:
@@ -202,6 +202,9 @@ These three settings allow you to avoid the excessive shard swapping that can
 occur on cluster restarts.  It can literally make recovery take seconds instead
 of hours.
 
+NOTE: These settings can only be set in the `config/elasticsearch.yml` file or on 
+the command line (they are not dynamically updatable) and they are only relevant
+during a full cluster restart.
 
 ==== Prefer Unicast over Multicast
 
