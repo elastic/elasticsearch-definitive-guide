@@ -58,7 +58,7 @@ The parts marked with `< >` above are:
 `PROTOCOL`::        Either `http` or `https` (if you have an `https` proxy in front of Elasticsearch.)
 `HOST`::            The hostname of any node in your Elasticsearch cluster, or +localhost+ for a node on your local machine.
 `PORT`::            The port running the Elasticsearch HTTP service, which defaults to `9200`.
-`PATH`::            Elasticsearch API (for example `_count` will return the number of documents in the cluster.)
+`PATH`::            API Endpoint (for example _count will return the number of documents in the cluster). Path may contain multiple components, such as _cluster/stats or _nodes/stats/jvm
 `QUERY_STRING`::    Any optional query-string parameters (for example `?pretty` will _pretty-print_  the JSON response to make it easier to read.)
 `BODY`::            A JSON-encoded request body (if the request needs one.)
 
