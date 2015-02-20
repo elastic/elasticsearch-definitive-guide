@@ -42,7 +42,7 @@ GET /company/branch/_search
   "query": {
     "has_child": {
       "type":       "employee",
-      "score_mode": "max"
+      "score_mode": "max",
       "query": {
         "match": {
           "name": "Alice Smith"
