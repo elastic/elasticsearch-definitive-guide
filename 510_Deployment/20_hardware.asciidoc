@@ -86,7 +86,7 @@ high bandwidth helps shard movement and recovery.  Modern data-center networking
 (1 GbE, 10 GbE) is sufficient for the vast majority of clusters.
 
 Avoid clusters that span multiple data centers, even if the data centers are
-colocated in close proximity.  Definitely avoid clusters that span large geographic
+collocated in close proximity.  Definitely avoid clusters that span large geographic
 distances.
 
 Elasticsearch clusters assume that all nodes are equal--not that half the nodes

@@ -42,7 +42,7 @@ produce this explanation:
     "johnnie walker bl*"
 
 Like the `match_phrase` query, it accepts a `slop` parameter (see <<slop>>) to
-make the word order and relative positions ((("slop parameter", "match_prhase_prefix query")))((("match_phrase_prefix query", "slop parameter")))somewhat less rigid:
+make the word order and relative positions ((("slop parameter", "match_phrase_prefix query")))((("match_phrase_prefix query", "slop parameter")))somewhat less rigid:
 
 [source,js]
 --------------------------------------------------

@@ -63,7 +63,7 @@ Due to the flexible nature of documents in Elasticsearch, it is easy to index
 relatively anomalous data.  Perhaps the majority of your values are 20
 characters...but sometimes you get a monster that is 10,000 characters long.
 
-These anomalous fields can unescessarily bloat your index on disk.  They also
+These anomalous fields can unnecessarily bloat your index on disk.  They also
 increase the size of the inverted index and slow down searches.
 
 Depending on your use-case, you can choose to ignore fields that are over a

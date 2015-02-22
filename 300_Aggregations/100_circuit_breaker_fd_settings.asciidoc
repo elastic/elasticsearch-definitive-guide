@@ -124,7 +124,7 @@ It is not. Never use it!
 [[monitoring-fielddata]]
 ==== Monitoring fielddata
 
-It is important to keep a close watch on how much memory((("fielddata", "monitoring")))((("aggregations", "limiting memory usage", "moitoring fielddata"))) is being used by
+It is important to keep a close watch on how much memory((("fielddata", "monitoring")))((("aggregations", "limiting memory usage", "monitoring fielddata"))) is being used by
 fielddata, and whether any data is being evicted.  High eviction counts can
 indicate a serious resource issue and a reason for poor performance.
 

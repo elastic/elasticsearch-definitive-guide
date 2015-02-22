@@ -44,7 +44,7 @@ together in your filters.
 
 If the same set of terms always appear together in your `terms` filter, caching
 the "total" set via `plain` will be the most efficient.  If, instead, terms are
-rarely arranged in the same combination, use `bool`.  Whe the terms are constantly
+rarely arranged in the same combination, use `bool`.  When the terms are constantly
 changing,  the "total" set of terms will rarely be used again (much like we
 discussed with the range filter on time).  It makes more sense to cache the
 bitsets independently to avoid cache churn.

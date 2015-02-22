@@ -39,7 +39,7 @@ stemmer, and to list just the root words that would be emitted by the stemmer:
 Normally, synonym filters are placed after the `lowercase` token filter and so
 all synonyms are ((("synonyms", "and the analysis chain", "case-sensitive synonyms")))((("case-sensitive synonyms")))written in lowercase, but sometimes that can lead to odd
 conflations. For instance, a `CAT` scan and a `cat` are quite different, as
-are `PET` (positron emmision tomography) and a `pet`. For that matter, the
+are `PET` (positron emission tomography) and a `pet`. For that matter, the
 surname `Little` is distinct from the adjective `little` (although if a
 sentence starts with the adjective, it will be uppercased anyway).
 
@@ -49,7 +49,7 @@ that your synonym rules would need to list all of the case variations that you
 want to match (for example, `Little,LITTLE,little`).
 
 Instead of that, you could have two synonym filters: one to catch the case-sensitive
-synonyms and one for all the case-insentive synonyms.  For instance, the
+synonyms and one for all the case-insensitive synonyms.  For instance, the
 case-sensitive rules could look like this:
 
     "CAT,CAT scan           => cat_scan"
@@ -57,7 +57,7 @@ case-sensitive rules could look like this:
     "Johnny Little,J Little => johnny_little"
     "Johnny Small,J Small   => johnny_small"
 
-And the case-insentive rules could look like this:
+And the case-insensitive rules could look like this:
 
     "cat                    => cat,pet"
     "dog                    => dog,pet"

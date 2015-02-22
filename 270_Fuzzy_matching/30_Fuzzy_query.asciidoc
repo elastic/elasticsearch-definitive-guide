@@ -75,7 +75,7 @@ performance impact:
 
 The number of initial characters((("prefix_length parameter"))) that will not be ``fuzzified.''  Most
 spelling errors occur toward the end of the word, not toward the beginning.
-By using a `prefix_length` of `3`, for example, you can signficantly reduce
+By using a `prefix_length` of `3`, for example, you can significantly reduce
 the number of matching terms.
 
 `max_expansions`::

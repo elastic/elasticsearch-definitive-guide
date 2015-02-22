@@ -118,4 +118,4 @@ The response from ((("post filter", "geo_distance aggregation")))the preceding r
 In this example, we have counted the number of restaurants that fall
 into each concentric ring.  Of course, we could nest subaggregations under
 the `per_rings` aggregation to calculate the average price per ring, the
-maximium popularity, and more.
+maximum popularity, and more.

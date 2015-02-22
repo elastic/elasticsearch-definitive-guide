@@ -8,7 +8,7 @@ is that of string sorting.((("sorting")))
 In <<multi-fields>>, we explained that Elasticsearch cannot sort on an
 `analyzed` string field, and demonstrated how to use _multifields_ to index
 the same field once as an `analyzed` field for search, and once as a
-`not_analyzed` field for sorting.((("not_analyzed fields", "for string sorting")))((("analyzed fields", "for searh")))
+`not_analyzed` field for sorting.((("not_analyzed fields", "for string sorting")))((("analyzed fields", "for search")))
 
 The problem with sorting on an `analyzed` field is not that it uses
 an analyzer, but that the analyzer tokenizes the string value into
@@ -99,7 +99,7 @@ PUT /my_index
     as a single unchanged token.((("keyword tokenizer")))
 <2> The `lowercase` token filter lowercases the token.
 
-With((("lowercase token filter"))) the `case_insentive_sort` analyzer in place, we can now use it in our
+With((("lowercase token filter"))) the `case_insensitive_sort` analyzer in place, we can now use it in our
 multifield:
 
 [source,js]
@@ -131,7 +131,7 @@ PUT /my_index/user/3
 GET /my_index/user/_search?sort=name.lower_case_sort
 --------------------------------------------------
 <1> The `name.lower_case_sort` field will provide us with
-    case-insentive sorting.
+    case-insensitive sorting.
 
 The preceding search request returns our documents in the order that we expect:
 `bailey`, `Boffey`, `BROWN`.

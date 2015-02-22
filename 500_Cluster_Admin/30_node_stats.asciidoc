@@ -232,7 +232,7 @@ which have a large impact on the stability of your Elasticsearch cluster.
 .Garbage Collection Primer
 **********************************
 Before we describe the stats, it is useful to give a crash course in garbage
-collection and its impact on Elasticsearch.((("garbage collection")))  If you are familar with garbage
+collection and its impact on Elasticsearch.((("garbage collection")))  If you are familiar with garbage
 collection in the JVM, feel free to skip down.
 
 Java is a _garbage-collected_ language, which means that the programmer does

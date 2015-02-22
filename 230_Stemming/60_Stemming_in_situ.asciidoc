@@ -91,7 +91,7 @@ In <<using-language-analyzers>>, we demonstrated how to combine a query on a
 stemmed field (to increase recall) with a query on an unstemmed field (to
 improve relevance).((("language analyzers", "combining query on stemmed and unstemmed field")))  When the stemmed and unstemmed fields are separate, the
 contribution of each field can be tuned by boosting one field over another
-(see <<prioritising-clauses>>).  If, instead, the stemmed and unstemmed forms
+(see <<prioritizing-clauses>>).  If, instead, the stemmed and unstemmed forms
 appear in the same field, there is no way to tune your search results.
 
 The second issue has to do with how the ((("relevance scores", "stemming in situ and")))relevance score is calculated.  In

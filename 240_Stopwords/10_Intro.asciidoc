@@ -73,7 +73,7 @@ prevents us from doing the following:
 
 The primary advantage of removing stopwords is performance.  Imagine that we
 search an index with one million documents for the word `fox`.  Perhaps `fox`
-appears in only 20 of them, which means that Elastisearch has to calculate the
+appears in only 20 of them, which means that Elasticsearch has to calculate the
 relevance `_score` for 20 documents in order to return the top 10. Now, we
 change that to a search for `the OR fox`. The word `the` probably occurs in
 almost all the documents, which means that Elasticsearch has to calculate

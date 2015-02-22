@@ -201,7 +201,7 @@ or failure of one request will not interfere with the others.
 ==== Don't Repeat Yourself
 
 Perhaps you are batch-indexing logging data into the same `index`, and with the
-same `type`. Having to ((("metadata, document", "not repeating in bullk requests")))((("bulk API", "default /_index or _index/_type")))specify the same metadata for every document is a waste.
+same `type`. Having to ((("metadata, document", "not repeating in bulk requests")))((("bulk API", "default /_index or _index/_type")))specify the same metadata for every document is a waste.
 Instead, just as for the `mget` API, the `bulk` request accepts a default `/_index` or
 `/_index/_type` in the URL:
 

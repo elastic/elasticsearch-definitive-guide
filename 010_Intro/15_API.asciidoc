@@ -35,7 +35,7 @@ of the http://www.elasticsearch.org/guide/[Guide].
 ==== RESTful API with JSON over HTTP
 
 All other languages can communicate with Elasticsearch((("port 9200 for non-Java clients"))) over port _9200_ using
-a ((("RESTful API, communicating with Elasticseach")))RESTful API, accessible with your favorite web client. In fact, as you have
+a ((("RESTful API, communicating with Elasticsearch")))RESTful API, accessible with your favorite web client. In fact, as you have
 seen, you can even talk to Elasticsearch from the command line by using the
 `curl` command.((("curl command", "talking to Elasticsearch with")))
 
