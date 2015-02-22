@@ -1,7 +1,7 @@
 [[query-time-boosting]]
 === Query-Time Boosting
 
-In <<prioritizing-clauses,Prioritizing Clauses>>, we explained ((("relevance", "controlling", "query time boosting")))((("boosting", "query-time")))how you could use the `boost`
+In <<prioritising-clauses,Prioritizing Clauses>>, we explained ((("relevance", "controlling", "query time boosting")))((("boosting", "query-time")))how you could use the `boost`
 parameter at search time to give one query clause more importance than
 another.  For instance:
 
