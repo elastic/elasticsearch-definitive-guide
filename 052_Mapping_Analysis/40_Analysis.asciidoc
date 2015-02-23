@@ -202,7 +202,7 @@ that the original word occupied in the original string.
 
 TIP: The `type` values like `<ALPHANUM>` vary ((("types", "type values returned by analyzers")))per analyzer and can be ignored.
 The only place that they are used in Elasticsearch is in the
-http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/analysis-intro.html#analyze-api[`keep_types` token filter].
+http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/analysis-keep-types-tokenfilter.html[`keep_types` token filter].
 
 The `analyze` API is a useful tool for understanding what is happening
 inside Elasticsearch indices, and we will talk more about it as we progress.
