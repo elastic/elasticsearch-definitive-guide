@@ -17,7 +17,7 @@ http://en.wikipedia.org/wiki/Probabilistic_relevance_model[probabilistic relevan
 rather than the vector space model, yet((("probabalistic relevance model"))) the algorithm has a lot in common with
 Lucene's practical scoring function.
 
-Both use of term frequency, inverse document frequency, and field-length
+Both use term frequency, inverse document frequency, and field-length
 normalization, but the definition of each of these factors is a little
 different.  Rather than explaining the BM25 formula in detail, we will focus
 on the practical advantages that BM25 offers.
