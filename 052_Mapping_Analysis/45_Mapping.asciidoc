@@ -277,10 +277,10 @@ name. Compare the output of these two requests:
 
 [source,js]
 --------------------------------------------------
-GET /gb/_analyze?field=tweet
+POST /gb/_analyze?field=tweet
 Black-cats <1>
 
-GET /gb/_analyze?field=tag
+POST /gb/_analyze?field=tag
 Black-cats <1>
 --------------------------------------------------
 // SENSE: 052_Mapping_Analysis/45_Mapping.json
