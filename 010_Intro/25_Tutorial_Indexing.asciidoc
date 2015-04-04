@@ -30,7 +30,7 @@ business requirements:
 === Indexing Employee Documents
 
 The first order of business is storing employee data.((("documents", "indexing")))((("indexing")))  This will take the form
-of an _employee document'_: a single document represents a single
+of an _employee document_: a single document represents a single
 employee.  The act of storing data in Elasticsearch is called _indexing_, but
 before we can index a document, we need to decide _where_ to store it.
 
