@@ -78,7 +78,6 @@ The full search request would look like this:
 
 [source,js]
 --------------------------------------------------
-GET /_search
 {
     "query": {
         "match": {
