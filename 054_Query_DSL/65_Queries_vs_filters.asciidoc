@@ -44,7 +44,7 @@ efficiently for subsequent requests.
 
 Queries have to not only find((("queries", "performance, filters versus"))) matching documents, but also calculate how
 relevant each document is, which typically makes queries heavier than filters.
-Also, query results are not cachable.
+Also, query results are not cacheable.
 
 Thanks to the inverted index, a simple query that matches just a few documents
 may perform as well or better than a cached filter that spans millions
