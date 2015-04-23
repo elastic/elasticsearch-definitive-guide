@@ -71,9 +71,11 @@ wildcard pattern((("multi_match queries", "wildcards in field names")))((("wildc
 [source,js]
 --------------------------------------------------
 {
-    "multi_match": {
-        "query":  "Quick brown fox",
-        "fields": "*_title"
+    "query": {
+        "multi_match": {
+        "query":                "Quick brown fox",
+        "fields":               [ "*_title", "body" ],
+        }
     }
 }
 --------------------------------------------------
@@ -86,11 +88,14 @@ Individual fields can be boosted by using the caret (`^`) syntax: just add
 [source,js]
 --------------------------------------------------
 {
-    "multi_match": {
-        "query":  "Quick brown fox",
-        "fields": [ "*_title", "chapter_title^2" ] <1>
+    "query": {
+      "multi_match": {
+          "query":  "Quick brown fox",
+          "fields": [ "*_title", "chapter_title^2" ] <1>
+      }
     }
 }
+
 --------------------------------------------------
 
 <1> The `chapter_title` field has a `boost` of `2`, while the `book_title` and
