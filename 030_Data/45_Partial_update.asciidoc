@@ -91,14 +91,34 @@ POST /website/blog/1/_update
 
 For those ((("documents", "partial updates", "using scripts")))((("updating documents", "partial updates", "using scripts")))moments when the API just isn't enough, Elasticsearch allows you to
 write your own custom logic in a script.((("scripts", "using to make partial updates"))) Scripting is supported in many APIs
-including search, sorting, aggregations, and document updates. Scripts can be
-passed in as part of the  request, retrieved from the special `.scripts`
-index, or loaded from disk.
+including search, sorting, aggregations, and document updates. Scripts can be passed in as part of the request,
+retrieved from the special .scripts index, or loaded from disk.
 
 The default scripting language ((("Groovy")))is a http://groovy.codehaus.org/[Groovy], a
-fast and expressive scripting language, similar in syntax to JavaScript.  It
-runs in a _sandbox_ to prevent malicious users from breaking out of
-Elasticsearch and attacking the server.
+fast and expressive scripting language, similar in syntax to JavaScript. It was first introduced
+in Elasticsearch version v1.3.0 and it runs in a _sandbox_, however there is vulnerability
+in the Groovy scripting engine that allows an attacker to construct
+Groovy scripts that escape the sandbox and execute shell commands as the user
+running the Elasticsearch Java VM.
+
+Therefore in versions v1.3.8, v1.4.3, and version v1.5.0 and newer it has been disabled by default.
+Alternatively you can disable dynamic Groovy scripts by
+adding this setting to the `config/elasticsearch.yml` file in all nodes in the
+cluster:
+
+[source,yaml]
+-----------------------------------
+script.groovy.sandbox.enabled: false
+-----------------------------------
+
+This will turn off the Groovy sandbox, thus preventing dynamic Groovy scripts
+from being accepted as part of a request or retrieved from the special
+`.scripts` index. You will still be able to use Groovy scripts stored in files
+in the `config/scripts/` directory on every node.
+
+If your architecture and security is one that does not need worry about the vulnerability,
+for example your Elasticsearch endpoints are only exposed and available to trusted applications,
+then you can choose to re-enable the dynamic scripting if it is a feature your application needs.
 
 You can read more about scripting in the
 http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-scripting.html[scripting reference documentation].
