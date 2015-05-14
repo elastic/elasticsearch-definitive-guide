@@ -15,7 +15,7 @@ For example:
 
 [source,js]
 --------------------------------------------------
-GET /_analyzer?tokenizer=standard
+GET /_analyze?tokenizer=standard
 <p>Some d&eacute;j&agrave; vu <a href="http://somedomain.com>">website</a>
 --------------------------------------------------
 
@@ -34,7 +34,7 @@ in the query string:
 
 [source,js]
 --------------------------------------------------
-GET /_analyzer?tokenizer=standard&char_filters=html_strip
+GET /_analyze?tokenizer=standard&char_filters=html_strip
 <p>Some d&eacute;j&agrave; vu <a href="http://somedomain.com>">website</a>
 --------------------------------------------------
 
@@ -62,7 +62,7 @@ Once created, our new `my_html_analyzer` can be tested with the `analyze` API:
 
 [source,js]
 --------------------------------------------------
-GET /my_index/_analyzer?analyzer=my_html_analyzer
+GET /my_index/_analyze?analyzer=my_html_analyzer
 <p>Some d&eacute;j&agrave; vu <a href="http://somedomain.com>">website</a>
 --------------------------------------------------
 
