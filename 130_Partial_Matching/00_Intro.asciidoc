@@ -16,9 +16,9 @@ implemented a _poor man's full-text search_ using SQL constructs like this:
 
 [source,js]
 --------------------------------------------------
-    WHERE text LIKE "*quick*"
-      AND text LIKE "*brown*"
-      AND text LIKE "*fox*" <1>
+    WHERE text LIKE "%quick%"
+      AND text LIKE "%brown%"
+      AND text LIKE "%fox%" <1>
 --------------------------------------------------
 
 <1> `*fox*` would match ``fox'' and ``foxes.''
