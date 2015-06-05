@@ -22,7 +22,7 @@ hardware at search time by increasing the number of replicas:
 
 [source,json]
 -----------------------
-POST /my_index/_settings
+PUT /my_index/_settings
 {
   "number_of_replicas": 1
 }
@@ -46,7 +46,7 @@ evenly divided between three nodes, as shown in <<img-three-nodes>>:
 
 [source,json]
 -----------------------
-POST /my_index/_settings
+PUT /my_index/_settings
 {
   "number_of_replicas": 2
 }
