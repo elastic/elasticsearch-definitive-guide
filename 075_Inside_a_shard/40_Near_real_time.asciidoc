@@ -84,10 +84,10 @@ can turn off automatic refreshes while you are building a big new index, and the
 
 [source,json]
 -----------------------------
-POST /my_logs/_settings
+PUT /my_logs/_settings
 { "refresh_interval": -1 } <1>
 
-POST /my_logs/_settings
+PUT /my_logs/_settings
 { "refresh_interval": "1s" } <2>
 -----------------------------
 <1> Disable automatic refreshes.
