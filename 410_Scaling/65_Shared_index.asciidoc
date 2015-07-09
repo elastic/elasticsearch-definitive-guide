@@ -44,16 +44,16 @@ GET /forums/post/_search
 {
   "query": {
     "filtered": {
-      "query": {
-        "match": {
-          "title": "ginger nuts"
-        }
-      },
       "filter": {
         "term": { <1>
           "forum_id": {
             "baking"
           }
+        }
+      },
+      "query": {
+        "match": {
+          "title": "ginger nuts"
         }
       }
     }
