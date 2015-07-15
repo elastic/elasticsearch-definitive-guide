@@ -94,7 +94,7 @@ write your own custom logic in a script.((("scripts", "using to make partial upd
 including search, sorting, aggregations, and document updates. Scripts can be passed in as part of the request,
 retrieved from the special .scripts index, or loaded from disk.
 
-The default scripting language ((("Groovy")))is a http://groovy.codehaus.org/[Groovy], a
+The default scripting language ((("Groovy")))is http://groovy.codehaus.org/[Groovy], a
 fast and expressive scripting language, similar in syntax to JavaScript. It was first introduced
 in Elasticsearch version v1.3.0 and it runs in a _sandbox_, however there is vulnerability
 in the Groovy scripting engine that allows an attacker to construct
