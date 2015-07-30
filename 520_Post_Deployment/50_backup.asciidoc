@@ -125,7 +125,7 @@ In that case, you can specify which indices to back up when snapshotting your cl
 ----
 PUT _snapshot/my_backup/snapshot_2
 {
-    "indices": "index_1,index_2"
+    "indices": ["index_1","index_2"]
 }
 ----
 
