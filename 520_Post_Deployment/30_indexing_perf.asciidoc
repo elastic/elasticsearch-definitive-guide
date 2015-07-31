@@ -151,7 +151,7 @@ For SSDs, you can ignore this setting.  The default is
 for SSD.
 
 Finally, you can increase `index.translog.flush_threshold_size` from the default
-200 MB to something larger, such as 1 GB.  This allows larger segments to accumulate
+512 MB to something larger, such as 1 GB.  This allows larger segments to accumulate
 in the translog before a flush occurs.  By letting larger segments build, you
 flush less often, and the larger segments merge less often.  All of this adds up
 to less disk I/O overhead and better indexing rates.
