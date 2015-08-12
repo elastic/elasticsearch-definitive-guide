@@ -25,7 +25,7 @@ following command from the Elasticsearch home directory:
 
 [source,sh]
 --------------------------------------------------
-./bin/plugin -install elasticsearch/elasticsearch-analysis-icu/$VERSION <1>
+./bin/plugin --install elasticsearch/elasticsearch-analysis-icu/$VERSION <1>
 --------------------------------------------------
 
 <1> The current `$VERSION` can be found at
