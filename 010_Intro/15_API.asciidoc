@@ -48,7 +48,7 @@ A request to Elasticsearch consists of the same parts as any HTTP request:((("HT
 
 [source,js]
 --------------------------------------------------
-curl -X<VERB> '<PROTOCOL>://<HOST>/<PATH>?<QUERY_STRING>' -d '<BODY>'
+curl -X<VERB> '<PROTOCOL>://<HOST>:<PORT>/<PATH>?<QUERY_STRING>' -d '<BODY>'
 --------------------------------------------------
 
 The parts marked with `< >` above are:
