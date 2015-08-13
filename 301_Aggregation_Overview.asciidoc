@@ -32,7 +32,7 @@ Let's dig into both of these concepts((("aggregations", "high-level concepts", "
 [role="pagebreak-before"]
 === Buckets
 
-A _bucket_ is simply a collection of documents that meet a certain criteria:
+A _bucket_ is simply a collection of documents that meet certain criteria:
 
 - An employee would land in either the _male_ or _female_ bucket.
 - The city of Albany would land in the _New York_ state bucket.
@@ -50,7 +50,7 @@ USA country bucket.
 Elasticsearch has a variety of buckets, which allow you to
 partition documents in many ways (by hour, by most-popular terms, by
 age ranges, by geographical location, and more).  But fundamentally they all operate
-on the same principle: partitioning documents based on a criteria.
+on the same principle: partitioning documents based on criteria.
 
 === Metrics
 
