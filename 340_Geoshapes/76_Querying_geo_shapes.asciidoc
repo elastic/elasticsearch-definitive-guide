@@ -17,7 +17,7 @@ GET /attractions/landmark/_search
       "location": { <1>
         "shape": { <2>
           "type":   "circle", <3>
-          "radius": "1km"
+          "radius": "1km",
           "coordinates": [ <4>
             4.89994,
             52.37815
