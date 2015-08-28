@@ -130,7 +130,7 @@ indicate a serious resource issue and a reason for poor performance.
 
 Fielddata usage can be monitored:
 
-* per-index using the http://bit.ly/1BwZ61b[`indices-stats` API]:
+* per-index using the http://www.elastic.co/guide/en/elasticsearch/reference/current/indices-stats.html[`indices-stats` API]:
 +
 [source,json]
 -------------------------------
@@ -244,6 +244,3 @@ full but is actually just garbage waiting to be collected, which is hard to
 estimate properly). But as the end user, this means the setting needs to be
 conservative, since it is comparing against total heap, not _free_ heap.
 ((("memory usage", "limiting for aggregations", startref ="ix_memagg")))
-
-
-
