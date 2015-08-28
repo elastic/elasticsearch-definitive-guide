@@ -48,7 +48,7 @@ After tokenization, the resulting _token stream_ is passed through any
 specified token filters,((("token filters"))) in the order in which they are specified.
 
 Token filters may change, add, or remove tokens.  We have already mentioned the
-http://bit.ly/1DIeXvZ[`lowercase`] and
+http://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-lowercase-tokenizer.html[`lowercase`] and
 http://bit.ly/1INX4tN[`stop` token filters],
 but there are many more available in Elasticsearch.
 http://bit.ly/1AUfpDN[Stemming token filters]
@@ -206,5 +206,3 @@ PUT /my_index/_mapping/my_type
 }
 --------------------------------------------------
 // SENSE: 070_Index_Mgmt/20_Custom_analyzer.json
-
-

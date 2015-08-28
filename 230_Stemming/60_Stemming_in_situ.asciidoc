@@ -19,7 +19,7 @@ Pos 4: (jumped,jump) <1>
 WARNING: Read <<stemming-in-situ-good-idea>> before using this approach.
 
 To achieve stemming _in situ_, we will use the
-http://bit.ly/1ynIBCe[`keyword_repeat`]
+http://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-keyword-repeat-tokenfilter.html[`keyword_repeat`]
 token filter,((("keyword_repeat token filter"))) which, like the `keyword_marker` token filter (see
 <<preventing-stemming>>), marks each term as a keyword to prevent the subsequent
 stemmer from touching it.  However, it also repeats the term in the same
