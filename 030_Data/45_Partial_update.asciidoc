@@ -95,7 +95,7 @@ including search, sorting, aggregations, and document updates. Scripts can be
 passed in as part of the  request, retrieved from the special `.scripts`
 index, or loaded from disk.
 
-The default scripting language ((("Groovy")))is a http://groovy.codehaus.org/[Groovy], a
+The default scripting language ((("Groovy")))is http://groovy.codehaus.org/[Groovy], a
 fast and expressive scripting language, similar in syntax to JavaScript.  It
 runs in a _sandbox_ to prevent malicious users from breaking out of
 Elasticsearch and attacking the server.
