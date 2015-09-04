@@ -42,8 +42,7 @@ We seldom want to match the whole full-text field exactly.  Instead, we want
 to search _within_ text fields. Not only that, but we expect search to
 understand our _intent_:
 
-* A search for `UK` should also return documents mentioning the `United
-  Kingdom`.
+* A search for `UK` should also return documents mentioning the `United Kingdom`.
 
 * A search for `jump` should also match `jumped`, `jumps`, `jumping`,
   and perhaps even `leap`.
