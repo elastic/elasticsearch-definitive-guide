@@ -52,10 +52,9 @@ heap, while leaving the other 50% free.  It won't go unused; Lucene will happily
 gobble up whatever is left over.
 
 [[compressed_oops]]
-==== Don't Cross 32 GB!
+==== Don't Cross 30.5 GB!
 There is another reason to not allocate enormous heaps to Elasticsearch. As it turns((("heap", "sizing and setting", "32gb heap boundary")))((("32gb Heap boundary")))
-out, the JVM uses a trick to compress object pointers when heaps are less than
-~32 GB.
+out, the JVM uses a trick to compress object pointers when heaps are 30.5 GB or less.
 
 In Java, all objects are allocated on the heap and referenced by a pointer.
 Ordinary object pointers (OOP) point at these objects, and are traditionally
@@ -75,36 +74,36 @@ reference four billion _objects_, rather than four billion bytes.  Ultimately, t
 means the heap can grow to around 32 GB of physical size while still using a 32-bit
 pointer.
 
-Once you cross that magical ~30&#x2013;32 GB boundary, the pointers switch back to
+Once you cross that magical 30.5 GB boundary, the pointers switch back to
 ordinary object pointers.  The size of each pointer grows, more CPU-memory
 bandwidth is used, and you effectively lose memory.  In fact, it takes until around
-40&#x2013;50 GB of allocated heap before you have the same _effective_ memory of a 32 GB
+40&#x2013;50 GB of allocated heap before you have the same _effective_ memory of a 30.5 GB
 heap using compressed oops.
 
 The moral of the story is this: even when you have memory to spare, try to avoid
-crossing the 32 GB heap boundary.  It wastes memory, reduces CPU performance, and
+crossing the 30.5 GB heap boundary.  It wastes memory, reduces CPU performance, and
 makes the GC struggle with large heaps.
 
 [role="pagebreak-before"]
 .I Have a Machine with 1 TB RAM!
 ****
-The 32 GB line is fairly important.  So what do you do when your machine has a lot
-of memory?  It is becoming increasingly common to see super-servers with 300&#x2013;500 GB
+The 30.5 GB line is fairly important.  So what do you do when your machine has a lot
+of memory?  It is becoming increasingly common to see super-servers with 512&#x2013;768 GB
 of RAM.
 
 First, we would recommend avoiding such large machines (see <<hardware>>).
 
 But if you already have the machines, you have two practical options:
 
-- Are you doing mostly full-text search?  Consider giving 32 GB to Elasticsearch
+- Are you doing mostly full-text search?  Consider giving 30.5 GB to Elasticsearch
 and letting Lucene use the rest of memory via the OS filesystem cache.  All that
 memory will cache segments and lead to blisteringly fast full-text search.
 
 - Are you doing a lot of sorting/aggregations?  You'll likely want that memory
-in the heap then.  Instead of one node with 32 GB+ of RAM, consider running two or
+in the heap then.  Instead of one node with more than 31.5 GB of RAM, consider running two or
 more nodes on a single machine.  Still adhere to the 50% rule, though.  So if your
-machine has 128 GB of RAM, run two nodes, each with 32 GB.  This means 64 GB will be
-used for heaps, and 64 will be left over for Lucene.
+machine has 128 GB of RAM, run two nodes, each with 30.5 GB.  This means 61 GB will be
+used for heaps, and 67 will be left over for Lucene.
 +
 If you choose this option, set `cluster.routing.allocation.same_shard.host: true`
 in your config.  This will prevent a primary and a replica shard from colocating
