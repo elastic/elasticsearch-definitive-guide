@@ -13,7 +13,8 @@ You _could_ modify the `logging.yml` file and restart your nodes--but that is
 both tedious and leads to unnecessary downtime.  Instead, you can update logging
 levels through the `cluster-settings` API((("Cluster Settings API, updating logging levels"))) that we just learned about.
 
-To do so, take the logger you are interested in and prepend `logger.` to it.
+To do so, take the logger you are interested in and prepend `logger.` to it. You can refer to the root logger as `logger._root`.
+
 Let's turn up the discovery logging:
 
 [source,js]
