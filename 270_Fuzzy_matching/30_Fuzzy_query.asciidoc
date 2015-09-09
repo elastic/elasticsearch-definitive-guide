@@ -61,7 +61,7 @@ The `fuzzy` query works by taking the original term and building a
 _Levenshtein automaton_&#x2014;like a((("fuzzy queries", "improving performance")))((("Levenshtein automation"))) big graph representing all the strings
 that are within the specified edit distance of the original string.
 
-The fuzzy query then uses the automation to step efficiently through all of the terms
+The fuzzy query then uses the automaton to step efficiently through all of the terms
 in the term dictionary to see if they match.  Once it has collected all of the
 matching terms that exist in the term dictionary, it can compute the list of
 matching documents.
