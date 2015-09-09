@@ -45,7 +45,7 @@ values. In fact, there is no way of storing a `null` value in Lucene, so
 a field with a `null` value is also considered to be an empty
 field.((("null values", "empty fields as")))
 
-These four fields would all be considered to be empty, and would not be
+These three fields would all be considered to be empty, and would not be
 indexed:
 
 [source,js]
