@@ -25,7 +25,7 @@ not be able to form a cluster.
 
 [TIP]
 ====
-The Java client must be from the same version of Elasticsearch as the nodes;
+The Java client must be from the same _major_ version of Elasticsearch as the nodes;
 otherwise, they may not be able to understand each other.
 ====
 
