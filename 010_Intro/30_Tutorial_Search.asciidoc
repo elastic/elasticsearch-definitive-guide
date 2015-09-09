@@ -180,7 +180,7 @@ We can represent the previous search for all Smiths like so:
 
 [source,js]
 --------------------------------------------------
-GET /megacorp/employee/_search
+POST /megacorp/employee/_search
 {
     "query" : {
         "match" : {
