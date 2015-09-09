@@ -64,7 +64,7 @@ is seen, a new field is added to the already bloated cluster state, which then
 has to be published to every node in the cluster.
 
 A much better approach ((("nested objects")))((("objects", "nested")))is to use <<nested-objects,nested objects>>, with one
-field for the parameter name&#x2014;`referer`&#x2014and another field for its
+field for the parameter name&#x2014;`referer`&#x2014;and another field for its
 associated value&#x2014;`count`:
 
 [source,json]
