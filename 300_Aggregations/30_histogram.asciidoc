@@ -112,10 +112,10 @@ Graphically, you could represent the preceding data in the histogram shown in <<
 image::images/elas_28in01.png["Sales and Revenue per price bracket"]
 
 Of course, you can build bar charts with any aggregation that emits categories
-and statistics, not just the `histogram` bucket.  Let's build a bar chart of
-popular makes, and their average price, and then calculate the standard error
-to add error bars on our chart.  This will use the `terms` bucket
-and an `extended_stats` ((("extended_stats metric")))metric:
+and statistics, not just the `histogram` bucket.  Let's build a bar chart of the
+top 10 most popular makes, and their average price, and then calculate the standard
+error to add error bars on our chart.  This will use the `terms` bucket and 
+an `extended_stats` ((("extended_stats metric")))metric:
 
 [source,js]
 ----
