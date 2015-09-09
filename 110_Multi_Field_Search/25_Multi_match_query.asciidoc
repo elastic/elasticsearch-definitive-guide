@@ -18,27 +18,29 @@ By default, this query runs as type `best_fields`, which means((("best fields qu
 [source,js]
 --------------------------------------------------
 {
-  "dis_max": {
-    "queries":  [
-      {
-        "match": {
-          "title": {
-            "query": "Quick brown fox",
-            "minimum_should_match": "30%"
-          }
-        }
-      },
-      {
-        "match": {
-          "body": {
-            "query": "Quick brown fox",
-            "minimum_should_match": "30%"
-          }
-        }
-      },
-    ],
-    "tie_breaker": 0.3
-  }
+ "query": {
+     "dis_max": {
+        "tie_breaker": 0.3,
+        "queries": [
+            {
+                "match": {
+                   "title": {
+                       "query": "Quick brown fox",
+                       "minimum_should_match": "30%"
+                   }
+                }
+            },
+            {
+                "match": {
+                   "body": {
+                       "query": "Quick brown fox",
+                       "minimum_should_match": "30%"
+                   }
+                }
+            }
+        ]
+     }
+ }
 }
 --------------------------------------------------
 
