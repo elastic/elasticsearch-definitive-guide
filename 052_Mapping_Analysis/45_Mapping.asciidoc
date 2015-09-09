@@ -278,7 +278,7 @@ name. Compare the output of these two requests:
 [source,js]
 --------------------------------------------------
 GET /gb/_analyze?field=tweet
-Black-cats <1>
+black, cat <1>
 
 GET /gb/_analyze?field=tag
 Black-cats <1>
