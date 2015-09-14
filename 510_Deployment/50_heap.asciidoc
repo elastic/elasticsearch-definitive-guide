@@ -8,12 +8,16 @@ default heap values, your cluster is probably configured incorrectly.
 There are two ways to change the heap size in Elasticsearch.  The easiest is to
 set an environment variable called `ES_HEAP_SIZE`.((("ES_HEAP_SIZE environment variable")))  When the server process
 starts, it will read this environment variable and set the heap accordingly.
+
 As an example, you can set it via the command line as follows:
 
 [source,bash]
 ----
 export ES_HEAP_SIZE=10g
 ----
+
+Or, in CentOS systems, you can edit your /etc/sysconfig/elasticsearch file and permanently modify the ES_HEAP_SIZE`.((("ES_HEAP_SIZE environment variable"))) variable.
+
 
 Alternatively, you can pass in the heap size via a command-line argument when starting
 the process, if that is easier for your setup:
