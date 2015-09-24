@@ -47,7 +47,7 @@ threadpools (except `search`) the threadcount is set to the number of CPU cores.
 If you have eight cores, you can be running only eight threads simultaneously.  It makes
 sense to assign only eight threads to any particular threadpool.
 
-Search gets a larger threadpool, and is configured to `# cores * 3`. 
+Search gets a larger threadpool, and is configured to `int((# of cores * 3) / 2) + 1`. 
 
 You might argue that some threads can block (such as on a disk I/O operation), 
 which is why you need more threads.  This is not a problem in Elasticsearch:
