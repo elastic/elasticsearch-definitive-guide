@@ -13,7 +13,7 @@ more specific fields:
 
 [source,js]
 --------------------------------------------------
-GET /_mget
+POST /_mget
 {
    "docs" : [
       {
@@ -75,7 +75,7 @@ You can still override these values in the individual requests:
 
 [source,js]
 --------------------------------------------------
-GET /website/blog/_mget
+POST /website/blog/_mget
 {
    "docs" : [
       { "_id" : 2 },
@@ -90,7 +90,7 @@ can just pass an array of `ids` instead of the full `docs` array:
 
 [source,js]
 --------------------------------------------------
-GET /website/blog/_mget
+POST /website/blog/_mget
 {
    "ids" : [ "2", "1" ]
 }
