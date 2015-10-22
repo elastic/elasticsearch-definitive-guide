@@ -4,7 +4,7 @@ Now that we have some data stored in Elasticsearch,((("documents", "retrieving")
 business requirements for this application.  The first requirement is the
 ability to retrieve individual employee data.
 
-This is easy in Elasticsearch.  We simply execute((("HTTP requests", "retrieving a document with GET"))) an HTTP +GET+ request and
+This is easy in Elasticsearch.  We simply execute((("HTTP requests", "retrieving a document with GET"))) a HTTP +GET+ request and
 specify the _address_ of the document--the index, type, and ID.((("id", "specifying in a request")))((("indices", "specifying index in a request")))((("types", "specifying type in a request")))  Using
 those three pieces of information, we can return the original JSON document:
 
