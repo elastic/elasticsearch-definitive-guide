@@ -12,7 +12,7 @@ http://www.elasticsearch.org/download/[_elasticsearch.org/download_].
 
 [source,sh]
 --------------------------------------------------
-curl -L -O http://download.elasticsearch.org/PATH/TO/VERSION.zip <1>
+curl -L -O https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-$VERSION.zip <1>
 unzip elasticsearch-$VERSION.zip
 cd  elasticsearch-$VERSION
 --------------------------------------------------
