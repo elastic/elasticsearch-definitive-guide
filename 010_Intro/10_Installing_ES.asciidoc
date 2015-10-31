@@ -48,7 +48,8 @@ in the Elasticsearch directory:
 
 [source,sh]
 --------------------------------------------------
-./bin/plugin -i elasticsearch/marvel/latest
+./bin/plugin install license
+./bin/plugin install marvel-agent
 --------------------------------------------------
 
 Marvel can also be installed using a https://www.elastic.co/guide/en/marvel/1.3/installation.html[manual process] if you don't have internet connectivity.
