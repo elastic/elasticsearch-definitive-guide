@@ -46,9 +46,17 @@ Elasticsearch cluster.
 Marvel is available as a plug-in.((("Marvel", "downloading and installing"))) To download and install it, run this command
 in the Elasticsearch directory:
 
+MAC:
 [source,sh]
 --------------------------------------------------
 ./bin/plugin -i elasticsearch/marvel/latest
+--------------------------------------------------
+
+WINDOWS:
+MAC:
+[source,sh]
+--------------------------------------------------
+./bin/plugin install elasticsearch/marvel/latest
 --------------------------------------------------
 
 Marvel can also be installed using a https://www.elastic.co/guide/en/marvel/1.3/installation.html[manual process] if you don't have internet connectivity.
