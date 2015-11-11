@@ -53,6 +53,14 @@ in the Elasticsearch directory:
 
 Marvel can also be installed using a https://www.elastic.co/guide/en/marvel/1.3/installation.html[manual process] if you don't have internet connectivity.
 
+Marvel 2.0 works with Elasticsearch 2.0. Run the following command to install marvel 2.0. 
+
+[source,sh]
+--------------------------------------------------
+./bin/plugin install license
+./bin/plugin install marvel-agent
+--------------------------------------------------
+
 You probably don't want Marvel to monitor your local cluster, so you can
 disable data collection with this command:
 
