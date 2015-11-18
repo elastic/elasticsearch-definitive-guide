@@ -1,7 +1,7 @@
 [[bool-query]]
 === Combining Queries
 
-In <<combining-filters>> we discussed how to((("full text search", "combining queries"))), use the `bool` filter to combine
+In <<combining-filters>> we discussed how to((("full text search", "combining queries"))) use the `bool` filter to combine
 multiple filter clauses with `and`, `or`, and `not` logic.  In query land, the
 `bool` query does a similar job but with one important difference.
 
