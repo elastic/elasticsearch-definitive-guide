@@ -7,22 +7,17 @@ The only requirement for installing Elasticsearch is a recent version of Java.
 Preferably, you should install the latest version of the((("Java", "installing"))) official Java
 from http://www.java.com[_www.java.com_].
 
-You can download the latest version of Elasticsearch from
+You can get the latest version of Elasticsearch from
 https://www.elastic.co/downloads/elasticsearch[_elasticsearch.co/downloads/elasticsearch_].
 
-[source,sh]
---------------------------------------------------
-curl -L -O http://download.elastic.co/PATH/TO/VERSION.zip <1>
-unzip elasticsearch-$VERSION.zip
-cd  elasticsearch-$VERSION
---------------------------------------------------
-<1> Fill in the URL for the latest version available on
-    http://www.elastic.co/downloads/elasticsearch[_elastic.co/downloads/elasticsearch_].
+To install Elasticsearch, download and extract the archive file for your platform. For 
+more information, see the {ref}/_installation.html[Installation] topic in the Elasticsearch 
+Reference. 
 
 [TIP]
 ====
-When installing Elasticsearch in production, you can use the method
-described previously, or the Debian or RPM packages provided on the
+When installing Elasticsearch in production, you can choose to use 
+the Debian or RPM packages provided on the
 http://www.elastic.co/downloads/elasticsearch[downloads page]. You can also use
 the officially supported
 https://github.com/elasticsearch/puppet-elasticsearch[Puppet module] or
@@ -43,8 +38,7 @@ You do not have to install Marvel, but it will make this book much more
 interactive by allowing you to  experiment with the code samples on your local
 Elasticsearch cluster.
 
-Marvel is available as a plug-in.((("Marvel", "downloading and installing"))) To download and install it, run this command
-in the Elasticsearch directory:
+Marvel is available as a plug-in.((("Marvel", "downloading and installing"))) To download and install it, run this command in the Elasticsearch directory:
 
 [source,sh]
 --------------------------------------------------
@@ -64,14 +58,15 @@ echo 'marvel.agent.enabled: false' >> ./config/elasticsearch.yml
 [[running-elasticsearch]]
 === Running Elasticsearch
 
-Elasticsearch is now ready to run. ((("Elasticsearch", "running")))You can start it up in the foreground
-with this:
+Elasticsearch is now ready to run. ((("Elasticsearch", "running"))) To start it up in the foreground:
 
 [source,sh]
 --------------------------------------------------
-./bin/elasticsearch
+cd elasticsearch-<version>
+./bin/elasticsearch <1> <2>
 --------------------------------------------------
-Add `-d` if you want to run it in the background as a daemon.
+<1> Add `-d` if you want to run it in the background as a daemon.
+<2> If you're running Elasticsearch on Windows, simply run `bin\elasticsearch.bat` instead.
 
 Test it out by opening another terminal window and running the following:
 
@@ -80,6 +75,11 @@ Test it out by opening another terminal window and running the following:
 curl 'http://localhost:9200/?pretty'
 --------------------------------------------------
 
+TIP: If you're running Elasticsearch on Windows, you can download cURL from 
+http://curl.haxx.se/download.html[`http://curl.haxx.se/download.html`]. cURL
+provides a convenient way to submit requests to Elasticsearch and 
+installing cURL enables you to copy and paste many of the examples in this
+book to try them out.
 
 You should see a response like this:
 

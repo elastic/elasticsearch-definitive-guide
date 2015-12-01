@@ -14,7 +14,7 @@ We can send our requests to any node in the cluster.((("nodes", "sending request
 capable of serving any request.  Every node knows the location of every
 document in the cluster and so can forward requests directly to the required
 node. In the following examples, we will send all of our requests to `Node 1`,
-which we will refer to as  the _requesting node_.
+which we will refer to as  the _coordinating node_.
 
 TIP: When sending requests, it is good practice to round-robin through all the
 nodes in the cluster, in order to spread the load.

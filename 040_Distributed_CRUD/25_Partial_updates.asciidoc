@@ -21,7 +21,7 @@ document:
 4. If `Node 3` has managed to update the document successfully, it forwards
    the new version of the document in parallel to the replica shards on `Node 1` 
    and `Node 2` to be reindexed. Once all replica shards report success,
-   `Node 3` reports success to the requesting node,  which reports success to
+   `Node 3` reports success to the coordinating node,  which reports success to
    the client.
 
 The `update` API also accepts the `routing`, `replication`, `consistency`, and

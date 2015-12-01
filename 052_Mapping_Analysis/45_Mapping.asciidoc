@@ -202,9 +202,10 @@ for an existing type) later, using the `/_mapping` endpoint.
 
 [NOTE]
 ================================================
-Although you can _add_ to an existing mapping, you can't _change_ it.  If a field
-already exists in the mapping, the data from that
-field probably has already been indexed.  If you were to change the field mapping, the already indexed data would be wrong and would not be properly searchable.
+Although you can _add_ to an existing mapping, you can't _change_ existing
+field mappings.  If a mapping already exists for a field, data from that
+field has probably been indexed.  If you were to change the field mapping, 
+the indexed data would be wrong and would not be properly searchable.
 ================================================
 
 We can update a mapping to add a new field, but we can't change an existing

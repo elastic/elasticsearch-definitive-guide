@@ -1,5 +1,5 @@
 [[geo-bounding-box]]
-=== geo_bounding_box Filter
+=== Geo Bounding Box Filter
 
 This is by far the most efficient geo-filter because its calculation is very
 simple. ((("geo_bounding_box filter")))((("filtering", "by geo-points", "geo_bounding_box filter"))) You provide it with the `top`, `bottom`, `left`, and `right`

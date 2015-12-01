@@ -19,7 +19,7 @@ primary or replica shard:
 3. `Node 2` returns the document to `Node 1`, which returns the document
    to the client.
 
-For read requests, the requesting node will choose a different shard copy on
+For read requests, the coordinating node will choose a different shard copy on
 every request in order to balance the load; it round-robins through all
 shard copies.
 

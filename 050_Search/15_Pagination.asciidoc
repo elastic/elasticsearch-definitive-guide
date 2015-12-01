@@ -37,12 +37,12 @@ to be sorted centrally to ensure that the overall order is correct.
 To understand why ((("deep paging, problems with")))deep paging is problematic, let's imagine that we are
 searching within a single index with five primary shards.  When we request the
 first page of results (results 1 to 10), each shard produces its own top 10
-results and returns them to the _requesting node_, which then sorts all 50
+results and returns them to the _coordinating node_, which then sorts all 50
 results in order to select the overall top 10.
 
 Now imagine that we ask for page 1,000--results 10,001 to 10,010. Everything
 works in the same way except that each shard has to produce its top 10,010
-results. The requesting node then sorts through all 50,050 results and
+results. The coordinating node then sorts through all 50,050 results and
 discards 50,040 of them!
 
 You can see that, in a distributed system, the cost of sorting results
