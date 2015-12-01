@@ -51,8 +51,8 @@ a flat table structure.
 ====
 Almost all languages have modules that will convert arbitrary  data
 structures or objects((("JSON", "converting your data to"))) into JSON for you, but the details are specific  to each
-language. Look for modules that handle JSON _serialization_ or _marshalling_. http://www.elasticsearch.org/guide[The official
-Elasticsearch clients] all handle conversion to and from JSON for you
+language. Look for modules that handle JSON _serialization_ or _marshalling_. The official
+https://www.elastic.co/guide/en/elasticsearch/client/index.html[Elasticsearch Clients] all handle conversion to and from JSON for you
 automatically.
 ====
 

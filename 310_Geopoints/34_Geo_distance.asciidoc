@@ -24,7 +24,7 @@ GET /attractions/restaurant/_search
 }
 ---------------------
 <1> Find all `location` fields within `1km` of the specified point.
-    See http://bit.ly/1ynS64j[Distance Units] for
+    See {ref}/common-options.html#distance-units[Distance Units] for
     a list of the accepted units.
 <2> The central point can be specified as a string, an array, or (as in this
     example) an object. See <<lat-lon-formats>>.

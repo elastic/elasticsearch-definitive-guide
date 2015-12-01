@@ -168,8 +168,8 @@ frequently lead to surprising results or even syntax errors.
 One of the gotchas of this query involves multiword synonyms. To
 support its search-syntax, it has to parse the query string to recognize
 special operators like `AND`, `OR`, `+`, `-`, `field:`, and so forth.  (See the full
-http://bit.ly/151G5I1[`query_string` syntax]
-here.)
+{ref}/query-dsl-query-string-query.html#query-string-syntax[`query_string` syntax]
+for more information.)
 
 As part of this parsing process, it breaks up the query string on whitespace,
 and passes each word that it finds to the relevant analyzer separately. This

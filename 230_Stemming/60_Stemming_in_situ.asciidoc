@@ -39,7 +39,7 @@ Pos 4: (jumped,jump)
 
 To prevent the useless repetition of terms that are the same in their stemmed
 and unstemmed forms, we add the
-http://bit.ly/1B6xHUY[`unique`] token filter((("unique token filter"))) into the mix:
+{ref}/analysis-unique-tokenfilter.html[`unique`] token filter((("unique token filter"))) into the mix:
 
 [source,json]
 ------------------------------------

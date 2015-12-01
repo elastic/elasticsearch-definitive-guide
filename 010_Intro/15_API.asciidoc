@@ -29,8 +29,7 @@ The Java client must be from the same _major_ version of Elasticsearch as the no
 otherwise, they may not be able to understand each other.
 ====
 
-More information about the Java clients can be found in the Java API section
-of the http://www.elasticsearch.org/guide/[Guide].
+More information about the Java clients can be found in  https://www.elastic.co/guide/en/elasticsearch/client/index.html[Elasticsearch Clients].
 
 ==== RESTful API with JSON over HTTP
 
@@ -41,8 +40,8 @@ seen, you can even talk to Elasticsearch from the command line by using the
 
 NOTE: Elasticsearch provides official clients((("clients", "other than Java"))) for several languages--Groovy,
 JavaScript, .NET, PHP, Perl, Python, and Ruby--and there are numerous
-community-provided clients and integrations, all of which can be found in the
-http://www.elasticsearch.org/guide/[Guide].
+community-provided clients and integrations, all of which can be found in 
+https://www.elastic.co/guide/en/elasticsearch/client/index.html[Elasticsearch Clients].
 
 A request to Elasticsearch consists of the same parts as any HTTP request:((("HTTP requests")))((("requests to Elasticsearch")))
 

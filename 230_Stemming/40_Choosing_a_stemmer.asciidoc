@@ -2,16 +2,16 @@
 === Choosing a Stemmer
 
 The documentation for the
-http://bit.ly/1AUfpDN[`stemmer`] token filter
+{ref}/analysis-stemmer-tokenfilter.html[`stemmer`] token filter
 lists multiple stemmers for some languages.((("stemming words", "choosing a stemmer")))((("English", "stemmers for")))  For English we have the following:
 
 `english`::
 
-    The http://bit.ly/17LseXy[`porter_stem`] token filter.
+    The {ref}/analysis-porterstem-tokenfilter.html[`porter_stem`] token filter.
 
 `light_english`::
 
-    The http://bit.ly/1IObUjZ[`kstem`] token filter.
+    The {ref}/analysis-kstem-tokenfilter.html[`kstem`] token filter.
 
 `minimal_english`::
 
@@ -19,19 +19,19 @@ lists multiple stemmers for some languages.((("stemming words", "choosing a stem
 
 `lovins`::
 
-    The http://bit.ly/1Cr4tNI[Snowball] based
-    http://bit.ly/1ICyTjR[Lovins]
+    The {ref}/analysis-snowball-tokenfilter.html[Snowball] based
+    http://snowball.tartarus.org/algorithms/lovins/stemmer.html[Lovins]
     stemmer, the first stemmer ever produced.
 
 `porter`::
 
-    The http://bit.ly/1Cr4tNI[Snowball] based
-    http://bit.ly/1sCWihj[Porter] stemmer
+    The {ref}/analysis-snowball-tokenfilter.html[Snowball] based
+    http://snowball.tartarus.org/algorithms/porter/stemmer.html[Porter] stemmer
 
 `porter2`::
 
-    The http://bit.ly/1Cr4tNI[Snowball] based
-    http://bit.ly/1zip3lK[Porter2] stemmer
+    The {ref}/analysis-snowball-tokenfilter.html[Snowball] based
+    http://snowball.tartarus.org/algorithms/english/stemmer.html[Porter2] stemmer
 
 `possessive_english`::
 

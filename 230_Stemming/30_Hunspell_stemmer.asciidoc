@@ -2,7 +2,7 @@
 === Hunspell Stemmer
 
 Elasticsearch provides ((("dictionary stemmers", "Hunspell stemmer")))((("stemming words", "dictionary stemmers", "Hunspell stemmer")))dictionary-based stemming via the
-http://bit.ly/1KNFdXI[`hunspell` token filter].
+{ref}/analysis-hunspell-tokenfilter.html[`hunspell` token filter].
 Hunspell http://hunspell.sourceforge.net/[_hunspell.sourceforge.net_] is the
 spell checker used by Open Office, LibreOffice, Chrome, Firefox, Thunderbird, and many
 other open and closed source projects.
@@ -245,4 +245,4 @@ PFX A   0     re         . <4>
     combined with the suffix rules to form `reanalyzes`, `reanalyzed`,
     `reanalyzing`.
 
-More information about the Hunspell syntax can be found on the http://bit.ly/1ynGhv6[Hunspell documentation site].
+More information about the Hunspell syntax can be found on the http://sourceforge.net/projects/hunspell/files/Hunspell/Documentation/[Hunspell documentation site].

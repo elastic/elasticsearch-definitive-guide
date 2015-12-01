@@ -27,7 +27,7 @@ see ``Aussprachewörtebuch'' in the results list. Similarly, a search for
 ``Adler'' (eagle) should include ``Weißkopfseeadler.''
 
 One approach to indexing languages like this is to break compound words into
-their constituent parts using the http://bit.ly/1ygdjjC[compound word token filter].
+their constituent parts using the {ref}/analysis-compound-word-tokenfilter.html[compound word token filter].
 However, the quality of the results depends on how good your compound-word
 dictionary is.
 

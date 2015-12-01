@@ -27,7 +27,7 @@ without interfering with the relevance scoring of nonfuzzy queries.
 
 Fuzzy queries alone are much less useful than they initially appear.  They are
 better used as part of a ``bigger'' feature, such as the _search-as-you-type_
-http://bit.ly/1IChV5j[`completion` suggester] or the
-_did-you-mean_ http://bit.ly/1IOj5ZG[`phrase` suggester].
+{ref}/search-suggesters-completion.html[`completion` suggester] or the
+_did-you-mean_ {ref}/search-suggesters-phrase.html[`phrase` suggester].
 
 ==================================================

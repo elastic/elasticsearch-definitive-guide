@@ -5,10 +5,10 @@ One of the most common use cases for Elasticsearch is for logging,((("logging", 
 in fact that Elasticsearch provides an integrated((("ELK stack"))) logging platform called the
 _ELK stack_&#x2014;Elasticsearch, Logstash, and Kibana--to make the process easy.
 
-http://www.elasticsearch.org/overview/logstash[Logstash] collects, parses, and
+https://www.elastic.co/guide/en/logstash/current/index.html[Logstash] collects, parses, and
 enriches logs before indexing them into Elasticsearch.((("Logstash")))  Elasticsearch acts as
 a centralized logging server, and
-http://www.elasticsearch.org/overview/kibana[Kibana] is a((("Kibana"))) graphic frontend
+https://www.elastic.co/guide/en/kibana/current/index.html[Kibana] is a((("Kibana"))) graphic frontend
 that makes it easy to query and visualize what is happening across your
 network in near real-time.
 

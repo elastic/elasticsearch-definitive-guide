@@ -307,7 +307,7 @@ clearly is not possible when you have billions of values distributed across
 dozens of nodes.
 
 Instead, `percentiles` uses an algorithm called((("TDigest algorithm"))) TDigest (introduced by Ted Dunning
-in http://bit.ly/1DIpOWK[Computing Extremely Accurate Quantiles Using T-Digests]). As with HyperLogLog, it isn't
+in https://github.com/tdunning/t-digest/blob/master/docs/t-digest-paper/histo.pdf[Computing Extremely Accurate Quantiles Using T-Digests]). As with HyperLogLog, it isn't
 necessary to understand the full technical details, but it is good to know
 the properties of the algorithm:
 

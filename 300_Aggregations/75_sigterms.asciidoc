@@ -16,7 +16,7 @@ PUT /_snapshot/sigterms <1>
 {
     "type": "url",
     "settings": {
-        "url": "http://download.elasticsearch.org/definitiveguide/sigterms_demo/"
+        "url": "http://download.elastic.co/definitiveguide/sigterms_demo/"
     }
 }
 

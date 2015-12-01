@@ -8,7 +8,7 @@ The `preference` parameter allows((("preference parameter")))((("search options"
 used to handle the search request. It accepts values such as `_primary`,
 `_primary_first`, `_local`, `_only_node:xyz`, `_prefer_node:xyz`, and
 `_shards:2,3`, which are explained in detail on the
-http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-request-preference.html[search `preference`]
+{ref}/search-request-preference.html[search `preference`]
 documentation page.
 
 However, the most generally useful value is some arbitrary string, to avoid

@@ -47,6 +47,6 @@ along with  the approximate dimensions of each geohash cell:
 |gcpuuz94kkp5   |12   | ~ 3.7cm x 1.8cm
 |=============================================
 
-The http://bit.ly/1DIqyex[`geohash_cell` filter] can use
+The {ref}/query-dsl-geohash-cell-query.html[`geohash_cell` filter] can use
 these geohash prefixes((("geohash_cell filter")))((("filters", "geohash_cell"))) to find locations near a specified `lat/lon` point.
 

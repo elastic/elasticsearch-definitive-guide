@@ -15,7 +15,7 @@ Character filters::
 Character filters((("character filters"))) are used to ``tidy up'' a string before it is tokenized.
 For instance, if our text is in HTML format, it will contain HTML tags like
 `<p>` or `<div>` that we don't want to be indexed. We can use the
-http://bit.ly/1B6f4Ay[`html_strip` character filter]
+{ref}/analysis-htmlstrip-charfilter.html[`html_strip` character filter]
 to remove all HTML tags and to convert HTML entities like `&Aacute;` into the
 corresponding Unicode character `Á`.
 
@@ -27,17 +27,17 @@ Tokenizers::
 --
 An analyzer _must_ have a single tokenizer.((("tokenizers", "in analyzers")))  The tokenizer breaks up the
 string into individual terms or tokens. The
-http://bit.ly/1E3Fd1b[`standard` tokenizer],
+{ref}/analysis-standard-tokenizer.html[`standard` tokenizer],
 which is used((("standard tokenizer"))) in the `standard` analyzer, breaks up a string into
 individual terms on word boundaries, and removes most punctuation, but
 other tokenizers exist that have different behavior.
 
 For instance, the
-http://bit.ly/1ICd585[`keyword` tokenizer]
+{ref}/analysis-keyword-tokenizer.html[`keyword` tokenizer]
 outputs exactly((("keyword tokenizer"))) the same string as it received, without any tokenization. The
-http://bit.ly/1xt3t7d[`whitespace` tokenizer]
+{ref}/analysis-whitespace-tokenizer.html[`whitespace` tokenizer]
 splits text((("whitespace tokenizer"))) on whitespace only. The
-http://bit.ly/1ICdozA[`pattern` tokenizer] can
+{ref}/analysis-pattern-tokenizer.html[`pattern` tokenizer] can
 be used to split text on a ((("pattern tokenizer")))matching regular expression.
 --
 
@@ -49,14 +49,14 @@ specified token filters,((("token filters"))) in the order in which they are spe
 
 Token filters may change, add, or remove tokens.  We have already mentioned the
 http://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-lowercase-tokenizer.html[`lowercase`] and
-http://bit.ly/1INX4tN[`stop` token filters],
+{ref}/analysis-stop-tokenfilter.html[`stop` token filters],
 but there are many more available in Elasticsearch.
-http://bit.ly/1AUfpDN[Stemming token filters]
+{ref}/analysis-stemmer-tokenfilter.html[Stemming token filters]
 ``stem'' words to ((("stemming token filters")))their root form. The
-http://bit.ly/1ylU7Q7[`ascii_folding` filter]
+{ref}/analysis-asciifolding-tokenfilter.html[`ascii_folding` filter]
 removes diacritics,((("ascii_folding filter"))) converting a term like `"très"` into `"tres"`. The
-http://bit.ly/1CbkmYe[`ngram`] and
-http://bit.ly/1DIf6j5[`edge_ngram` token filters] can produce((("edge_engram token filter")))((("ngram and edge_ngram token filters")))
+{ref}/analysis-ngram-tokenfilter.html[`ngram`] and
+{ref}/analysis-edgengram-tokenfilter.html[`edge_ngram` token filters] can produce((("edge_engram token filter")))((("ngram and edge_ngram token filters")))
 tokens suitable for partial matching or autocomplete.
 --
 

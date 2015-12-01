@@ -286,7 +286,7 @@ fast.  However, sometimes it is not fast enough.  Latency matters, especially
 when you are trying to provide instant feedback.  Sometimes the fastest way of
 searching is not to search at all.
 
-The http://bit.ly/1IChV5j[completion suggester] in
+The {ref}/search-suggesters-completion.html[completion suggester] in
 Elasticsearch((("completion suggester"))) takes a completely different approach.  You feed it a list
 of all possible completions, and it builds them into a _finite state
 transducer_, an((("Finite State Transducer"))) optimized data structure that resembles a big graph.  To

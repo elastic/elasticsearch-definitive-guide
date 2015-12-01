@@ -74,7 +74,7 @@ PUT /my_index/blogpost/4
 
 Now we can run a query looking for blog posts about `relationships`, by users
 called `John`, and group the results by user, thanks to the
-http://bit.ly/1CrlWFQ[`top_hits` aggregation]:
+{ref}/search-aggregations-metrics-top-hits-aggregation.html[`top_hits` aggregation]:
 
 [source,json]
 --------------------------------

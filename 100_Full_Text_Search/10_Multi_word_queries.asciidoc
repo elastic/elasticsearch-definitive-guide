@@ -148,7 +148,7 @@ must match for a document to be considered a match.
 The `minimum_should_match` parameter is flexible, and different rules can
 be applied depending on the number of terms the user enters.  For the full
 documentation see the
-http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl-minimum-should-match.html#query-dsl-minimum-should-match
+{ref}/query-dsl-minimum-should-match.html#query-dsl-minimum-should-match
 ====
 
 To fully understand how the `match` query handles multiword queries, we need

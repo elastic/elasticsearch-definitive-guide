@@ -61,8 +61,8 @@ Like the _index-per-language_ approach, the _field-per-language_ approach
 maintains clean term frequencies. It is not quite as flexible as having
 separate indices.  Although it is easy to add a new field by using the <<updating-a-mapping,`update-mapping` API>>, those new fields may require new
 custom analyzers, which can only be set up at index creation time.  As a
-workaround, you can http://bit.ly/1B6s0WY[close] the index, add the new
-analyzers with the http://bit.ly/1zijFPx[`update-settings` API],
+workaround, you can {ref}/indices-open-close.html[close] the index, add the new
+analyzers with the {ref}/indices-update-settings.html[`update-settings` API],
 then reopen the index, but closing the index means that it will require some
 downtime.
 

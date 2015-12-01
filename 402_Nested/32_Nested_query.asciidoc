@@ -3,8 +3,7 @@
 
 Because nested objects ((("nested objects", "querying")))are indexed as separate hidden documents, we can't
 query them directly. ((("queries", "nested"))) Instead, we have to use the
-http://bit.ly/1ziFQoR[`nested` query] or
-http://bit.ly/1IOp94r[`nested` filter] to  access them:
+{ref}/query-dsl-nested-query.html[`nested` query] to  access them:
 
 [source,json]
 --------------------------

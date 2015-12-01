@@ -194,6 +194,6 @@ setting instead.
 A common work flow for time based data like logging is to create a new index
 per day on the fly by just indexing into it.  While this work flow prevents
 you from creating your index up front, you can still use 
-http://bit.ly/1ygczeq[index templates]
+{ref}/indices-templates.html[index templates]
 to specify the settings and mappings that a new index should have.
 ====

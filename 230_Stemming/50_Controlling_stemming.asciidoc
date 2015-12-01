@@ -8,8 +8,8 @@ your use case, it is important to keep `skies` and `skiing` as distinct words
 rather than stemming them both down to `ski` (as would happen with the
 `english` analyzer).
 
-The http://bit.ly/1IOeXZD[`keyword_marker`] and
-http://bit.ly/1ymcioJ[`stemmer_override`] token filters((("stemmer_override token filter")))((("keyword_marker token filter")))
+The {ref}/analysis-keyword-marker-tokenfilter.html[`keyword_marker`] and
+{ref}/analysis-stemmer-override-tokenfilter.html[`stemmer_override`] token filters((("stemmer_override token filter")))((("keyword_marker token filter")))
 allow us to customize the stemming process.
 
 [[preventing-stemming]]
@@ -18,12 +18,12 @@ allow us to customize the stemming process.
 The <<stem-exclusion,`stem_exclusion`>> parameter for language analyzers (see
 <<configuring-language-analyzers>>) allowed ((("stemming words", "controlling stemming", "preventing stemming")))us to specify a list of words that
 should not be stemmed.  Internally, these language analyzers use the
-http://bit.ly/1IOeXZD[`keyword_marker` token filter]
+{ref}/analysis-keyword-marker-tokenfilter.html[`keyword_marker` token filter]
 to mark the listed words as _keywords_, which prevents subsequent stemming
 token filters from touching those words.((("keyword_marker token filter", "preventing stemming of certain words")))
 
 For instance, we can create a simple custom analyzer that uses the
-http://bit.ly/17LseXy[`porter_stem`] token filter,
+{ref}/analysis-porterstem-tokenfilter.html[`porter_stem`] token filter,
 but prevents the word `skies` from((("porter_stem token filter"))) being stemmed:
 
 [source,json]
@@ -83,7 +83,7 @@ file.
 
 In the preceding example, we prevented `skies` from being stemmed, but perhaps we
 would prefer it to be stemmed to `sky` instead.((("stemming words", "controlling stemming", "customizing stemming")))  The
-http://bit.ly/1ymcioJ[`stemmer_override`] token
+{ref}/analysis-stemmer-override-tokenfilter.html[`stemmer_override`] token
 filter allows us ((("stemmer_override token filter")))to specify our own custom stemming rules. At the same time,
 we can handle some irregular forms like stemming `mice` to `mouse` and `feet`
 to `foot`:

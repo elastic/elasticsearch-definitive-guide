@@ -61,7 +61,7 @@ To support this, we need to index the path hierarchy:
 * `/clinton/projects/elasticsearch`
 
 This hierarchy can be generated ((("path_hierarchy tokenizer")))automatically from the `path` field using the
-http://bit.ly/1AjGltZ[`path_hierarchy` tokenizer]:
+{ref}/analysis-pathhierarchy-tokenizer.html[`path_hierarchy` tokenizer]:
 
 [source,json]
 --------------------------
@@ -78,8 +78,7 @@ PUT /fs
   }
 }
 --------------------------
-<1> The custom `paths` analyzer uses the `path_hierarchy` tokenizer with its
-    default settings. See http://bit.ly/1AjGltZ[`path_hierarchy` tokenizer].
+<1> The custom `paths` analyzer uses the {ref}/analysis-pathhierarchy-tokenizer.html[`path_hierarchy` tokenizer] with its default settings. 
 
 The mapping for the `file` type would look like this:
 

@@ -1,7 +1,7 @@
 [[function-score-query]]
 === function_score Query
 
-The http://bit.ly/1sCKtHW[`function_score` query] is the
+The {ref}/query-dsl-function-score-query.html[`function_score` query] is the
 ultimate tool for taking control of the scoring process.((("function_score query")))((("relevance", "controlling", "function_score query")))  It allows you to
 apply a function to each document that matches the main query in order to
 alter or completely replace the original query `_score`.

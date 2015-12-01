@@ -18,7 +18,7 @@ The `standard` tokenizer would simply strip out the emoticon in the second
 sentence, conflating two sentences that have quite different intent.
 
 We can use the
-http://bit.ly/1ziua5n[`mapping` character filter]
+{ref}/analysis-mapping-charfilter.html[`mapping` character filter]
 to replace emoticons((("mapping character filter", "replacing emoticons with symbol synonyms")))((("emoticons", "replacing with symbol synonyms"))) with symbol synonyms like `emoticon_happy` and
 `emoticon_sad` before the text is passed to the tokenizer:
 
@@ -64,4 +64,4 @@ have used real words, like `happy` and `sad`.
 TIP: The `mapping` character filter is useful for simple replacements of exact
 character sequences. ((("mapping character filter", "replacements of exact character sequences")))For more-flexible pattern matching, you can use regular
 expressions with the
-http://bit.ly/1DK4hgy[`pattern_replace` character filter].
+{ref}/analysis-pattern-replace-charfilter.html[`pattern_replace` character filter].

@@ -91,7 +91,7 @@ POST /logs_2014-09-30/_settings
 
 Of course, without replicas, we run the risk of losing data if a disk suffers
 catastrophic failure.  You may((("snapshot-restore API"))) want to back up the data first, with the
-http://bit.ly/14ED13A[`snapshot-restore` API].
+{ref}/modules-snapshots.html[`snapshot-restore` API].
 
 [[close-indices]]
 ==== Closing Old Indices
@@ -123,7 +123,7 @@ POST /logs_2014-01-*/_open <3>
 
 Finally, very old indices ((("indices", "archiving old indices")))can be archived off to some long-term storage like a
 shared disk or Amazon's S3 using the
-http://bit.ly/14ED13A[`snapshot-restore` API], just in case you may need
+{ref}/modules-snapshots.html[`snapshot-restore` API], just in case you may need
 to access them in the future.  Once a backup exists, the index can be deleted
 from the cluster.
 

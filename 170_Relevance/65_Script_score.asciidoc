@@ -106,7 +106,7 @@ a profit.
 The `script_score` function provides enormous flexibility.((("scripts", "performance and")))  Within a script,
 you have access to the fields of the document, to the current `_score`, and
 even to the term frequencies, inverse document frequencies, and field length
-norms (see http://bit.ly/1E3Rbbh[Text scoring in scripts]).
+norms (see {ref}/modules-advanced-scripting.html[Text scoring in scripts]).
 
 That said, scripts can have a performance impact.  If you do find that your
 scripts are not quite fast enough, you have three options:
@@ -115,7 +115,7 @@ scripts are not quite fast enough, you have three options:
   document.
 * Groovy is fast, but not quite as fast as Java.((("Java", "scripting in")))  You could reimplement your
   script as a native Java script. (See
-  http://bit.ly/1ynBidJ[Native Java Scripts]).
+  {ref}/modules-scripting.html#native-java-scripts[Native Java Scripts]).
 * Use the `rescore` functionality((("rescoring"))) described in <<rescore-api>> to apply
   your script to only the best-scoring documents.
 

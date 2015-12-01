@@ -34,7 +34,7 @@ too strict.
 [[boosting-query]]
 ==== boosting Query
 
-The  http://bit.ly/1IO281f[`boosting` query] solves((("boosting query")))((("relevance", "controlling", "boosting query"))) this problem.
+The  {ref}/query-dsl-boosting-query.html[`boosting` query] solves((("boosting query")))((("relevance", "controlling", "boosting query"))) this problem.
 It allows us to still include results that appear to be about the fruit or
 the pastries, but to downgrade them--to rank them lower than they would
 otherwise be:

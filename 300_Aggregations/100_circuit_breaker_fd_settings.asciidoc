@@ -137,7 +137,7 @@ Fielddata usage can be monitored:
 GET /_stats/fielddata?fields=*
 -------------------------------
 
-* per-node using the http://bit.ly/1586yDn[`nodes-stats` API]:
+* per-node using the {ref}/current/cluster-nodes-stats.html[`nodes-stats` API]:
 +
 [source,json]
 -------------------------------

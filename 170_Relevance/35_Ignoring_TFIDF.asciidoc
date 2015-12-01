@@ -39,7 +39,7 @@ isn't, `0`.
 [[constant-score-query]]
 ==== constant_score Query
 
-Enter the http://bit.ly/1DIgSAK[`constant_score`] query.
+Enter the {ref}/query-dsl-constant-score-query.html[`constant_score`] query.
 This ((("constant_score query")))query can wrap either a query or a filter, and assigns a score of
 `1` to any documents that match, regardless of TF/IDF:
 

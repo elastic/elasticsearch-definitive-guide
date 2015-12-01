@@ -21,7 +21,7 @@ written in Snowball.
 [TIP]
 ==================================================
 
-The http://bit.ly/1IObUjZ[`kstem` token filter] is a stemmer
+The {ref}/analysis-kstem-tokenfilter.html[`kstem` token filter] is a stemmer
 for English which((("kstem token filter"))) combines the algorithmic approach with a built-in
 dictionary. The dictionary contains a list of root words and exceptions in
 order to avoid conflating words incorrectly. `kstem` tends to stem less
@@ -32,18 +32,18 @@ aggressively than the Porter stemmer.
 ==== Using an Algorithmic Stemmer
 
 While you ((("stemming words", "algorithmic stemmers", "using")))can use the
-http://bit.ly/17LseXy[`porter_stem`] or
-http://bit.ly/1IObUjZ[`kstem`] token filter directly, or
+{ref}/analysis-porterstem-tokenfilter.html[`porter_stem`] or
+{ref}/analysis-kstem-tokenfilter.html[`kstem`] token filter directly, or
 create a language-specific Snowball stemmer with the
-http://bit.ly/1Cr4tNI[`snowball`] token filter, all of the
+{ref}/analysis-snowball-tokenfilter.html[`snowball`] token filter, all of the
 algorithmic stemmers are exposed via a single unified interface:
-the http://bit.ly/1AUfpDN[`stemmer` token filter], which
+the {ref}/analysis-stemmer-tokenfilter.html[`stemmer` token filter], which
 accepts the `language` parameter.
 
 For instance, perhaps you find the default stemmer used by the `english`
 analyzer to be too aggressive and ((("english analyzer", "default stemmer, examining")))you want to make it less aggressive.
 The first step is to look up the configuration for the `english` analyzer
-in the http://bit.ly/1xtdoJV[language analyzers]
+in the {ref}/analysis-lang-analyzer.html[language analyzers]
 documentation, which shows the following:
 
 [source,js]
@@ -97,9 +97,9 @@ Having reviewed the current configuration, we can use it as the basis for
 a new analyzer, with((("english analyzer", "customizing the stemmer"))) the following changes:
 
 *   Change the `english_stemmer` from `english` (which maps to the
-    http://bit.ly/17LseXy[`porter_stem`] token filter)
+    {ref}/analysis-porterstem-tokenfilter.html[`porter_stem`] token filter)
     to `light_english` (which maps to the less aggressive
-    http://bit.ly/1IObUjZ[`kstem`] token filter).
+    {ref}/analysis-kstem-tokenfilter.html[`kstem`] token filter).
 
 *   Add the <<asciifolding-token-filter,`asciifolding`>> token filter to
     remove any diacritics from foreign words.((("asciifolding token filter")))

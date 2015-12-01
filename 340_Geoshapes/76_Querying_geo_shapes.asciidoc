@@ -1,9 +1,7 @@
 [[querying-geo-shapes]]
 === Querying geo-shapes
 
-The unusual thing ((("geo-shapes", "querying")))about the http://bit.ly/1AjFrxE[`geo_shape`
-query] and http://bit.ly/1G2ocsZ[`geo_shape` filter] is that
-they allow us to query using shapes, rather than just points.
+The unusual thing ((("geo-shapes", "querying")))about the {ref}/query-dsl-geo-shape-query.html[`geo_shape` query] is that it allows us to query and filter using shapes, rather than just points.
 
 For instance, if our user steps out of the central train station in Amsterdam,
 we could find all landmarks within a 1km radius with a query like this:

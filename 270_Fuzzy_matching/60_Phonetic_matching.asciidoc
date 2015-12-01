@@ -13,7 +13,7 @@ http://en.wikipedia.org/wiki/Metaphone#Double_Metaphone[Double Metaphone]
 (which expands phonetic matching to languages other than English),
 http://en.wikipedia.org/wiki/Caverphone[Caverphone] for matching names in New
 Zealand, the
-http://bit.ly/1E47qoB[Beider-Morse] algorithm, which adopts the Soundex algorithm
+https://en.wikipedia.org/wiki/Daitch–Mokotoff_Soundex#Beider.E2.80.93Morse_Phonetic_Name_Matching_Algorithm[Beider-Morse] algorithm, which adopts the Soundex algorithm
 for better matching of German and Yiddish names, and the
 http://de.wikipedia.org/wiki/K%C3%B6lner_Phonetik[Kölner Phonetik] for better
 handling of German words.
@@ -25,7 +25,7 @@ purposes, and in combination with other techniques, phonetic matching can be a
 useful tool.
 
 First, you will need to install ((("Phonetic Analysis plugin")))the Phonetic Analysis plug-in from
-http://bit.ly/1CreKJQ on every node
+https://www.elastic.co/guide/en/elasticsearch/plugins/current/analysis-phonetic.html on every node
 in the cluster, and restart each node.
 
 Then, you can create a custom analyzer that uses one of the

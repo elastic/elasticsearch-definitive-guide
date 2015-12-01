@@ -78,7 +78,7 @@ doesn't make sense to do so:
 
 Script filters::
 
-The results((("script filters, no caching of results"))) from http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/filter-caching.html#_controlling_caching[`script` filters] cannot
+The results((("script filters, no caching of results"))) from {ref}/query-dsl-script-query.html cannot
 be cached because the meaning of the script is opaque to Elasticsearch.
 
 Geo-filters::

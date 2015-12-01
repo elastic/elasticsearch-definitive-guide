@@ -5,7 +5,7 @@ Before we move on from relevance and scoring, we will finish this chapter with
 a more advanced subject: pluggable similarity algorithms.((("similarity algorithms", "pluggable")))((("relevance", "controlling", "using pluggable similarity algorithms"))) While Elasticsearch
 uses the <<practical-scoring-function>> as its default similarity algorithm,
 it supports other algorithms out of the box, which are listed
-in the http://bit.ly/14Eiw7f[Similarity Modules] documentation.
+in the {ref}/index-modules-similarity.html#configuration[Similarity Modules] documentation.
 
 [[bm25]]
 ==== Okapi BM25

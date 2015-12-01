@@ -1,7 +1,7 @@
 [[fuzzy-query]]
 === Fuzzy Query
 
-The http://bit.ly/1ymh8Cu[`fuzzy` query] is ((("typoes and misspellings", "fuzzy query")))((("fuzzy queries")))the fuzzy equivalent of
+The {ref}/query-dsl-fuzzy-query.html[`fuzzy` query] is ((("typoes and misspellings", "fuzzy query")))((("fuzzy queries")))the fuzzy equivalent of
 the `term` query. You will seldom use it directly yourself, but understanding
 how it works will help you to use fuzziness in the higher-level `match` query.
 
