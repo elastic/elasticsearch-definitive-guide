@@ -1,5 +1,5 @@
 [[geo-distance]]
-=== geo_distance Filter
+=== Geo Distance Filter
 
 The `geo_distance` filter draws a circle around the specified location and
 finds all documents((("geo_distance filter")))((("filtering", "by geo-points", "geo_distance filter"))) that have a geo-point within that circle:

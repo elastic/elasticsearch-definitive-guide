@@ -2,7 +2,7 @@
 === Multidocument Patterns
 
 The patterns for the `mget` and `bulk` APIs((("mget (multi-get) API", "retrieving multiple documents, process of")))((("documents", "retrieving multiple with mget"))) are similar to those for
-individual documents. The difference is that the requesting node knows in
+individual documents. The difference is that the coordinating node knows in
 which shard each document lives. It breaks up the multidocument request into
 a multidocument request _per shard_, and forwards these in parallel to each
 participating node.
@@ -44,7 +44,7 @@ The sequence of steps((("bulk API", "multiple document changes with")))((("docum
    action succeeds, the primary forwards the new document (or deletion) to its
    replica shards in parallel, and then moves on to the next action. Once all
    replica shards report success for all actions, the node reports success to
-   the requesting node, which collates the responses and returns them to the
+   the coordinating node, which collates the responses and returns them to the
    client.
 
 The `bulk` API also accepts((("replication request parameter", "in bulk requests")))((("consistency request parameter", "in bulk requests"))) the `replication` and `consistency` parameters

@@ -87,7 +87,6 @@ documentation, which shows the following:
 --------------------------------------------------
 <1> The `keyword_marker` token filter lists words that should not be
     stemmed.((("keyword_marker token filter")))  This defaults to the empty list.
-
 <2> The `english` analyzer uses two stemmers: the `possessive_english`
     and the `english` stemmer. The ((("english stemmer")))((("possessive_english stemmer")))possessive stemmer removes `'s`
     from any words before passing them on to the `english_stop`,

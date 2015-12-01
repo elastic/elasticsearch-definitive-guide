@@ -143,7 +143,7 @@ GET /my_store/products/_search
 // SENSE: 080_Structured_Search/05_Term_text.json
 
 Except there is a little hiccup: we don't get any results back!  Why is
-that? The problem isn't with the the `term` query; it is with the way
+that? The problem isn't with the `term` query; it is with the way
 the data has been indexed. ((("analyze API, using to understand tokenization"))) If we use the `analyze` API (<<analyze-api>>), we
 can see that our UPC has been tokenized into smaller tokens:
 

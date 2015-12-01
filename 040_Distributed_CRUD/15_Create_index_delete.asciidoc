@@ -21,7 +21,7 @@ delete a document on both the primary and any replica shards:
 3. `Node 3` executes the request on the primary shard. If it is successful,
    it forwards the request in parallel to the replica shards on `Node 1` and
    `Node 2`. Once all of the replica shards report success, `Node 3` reports
-   success to the requesting node, which reports success to the client.
+   success to the coordinating node, which reports success to the client.
 
 By the time the client receives a successful response, the document change has
 been executed on the primary shard and on all replica shards. Your change is

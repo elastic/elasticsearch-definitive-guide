@@ -23,9 +23,8 @@ that you have determines the maximum amount of data that your index can hold.
 
 [NOTE]
 ====
-While there is no theoretical limit to the amount of data that a primary shard
-can hold, there is a practical limit.  What constitutes the maximum shard size
-depends entirely on your use case: the hardware you have, the size and
+While a primary shard can technically contain up to Integer.MAX_VALUE - 128 documents, 
+the practical limit depends on your use case: the hardware you have, the size and
 complexity of your documents, how you index and query your documents, and your
 expected response times.
 ====

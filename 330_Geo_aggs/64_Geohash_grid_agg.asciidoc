@@ -1,5 +1,5 @@
 [[geohash-grid-agg]]
-=== geohash_grid Aggregation
+=== Geohash Grid Aggregation
 
 The number of results returned by a query may be far too many to display each
 geo-point individually on a map.((("geohash_grid aggregation")))((("aggregations", "geohash_grid"))) The `geohash_grid` aggregation buckets nearby

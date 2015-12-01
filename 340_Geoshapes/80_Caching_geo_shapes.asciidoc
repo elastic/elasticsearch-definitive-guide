@@ -1,5 +1,5 @@
 [[geo-shape-caching]]
-=== Geo-shape Filters and Caching
+=== Geo Shape Filters and Caching
 
 The `geo_shape` query and filter perform the same function.((("caching", "geo-shape filters and")))((("filters", "geo_shape")))((("geo-shapes", "geo_shape filters, caching and")))  The query simply
 acts as a filter: any matching documents receive a relevance `_score` of

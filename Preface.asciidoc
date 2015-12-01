@@ -40,11 +40,10 @@ principles, helping novices to gain a sure footing in the complex world of
 search.
 
 The reader with a search background will also benefit from this book.
-Elasticsearch is a new technology that has some familiar concepts.  The more
-experienced user will gain an understanding of how those concepts have been
-implemented and how they interact in the context of Elasticsearch. Even  the
-early chapters contain nuggets of information that will be useful to the
-more advanced user.
+The more experienced user will gain an understanding of how familiar search 
+concepts have been implemented and how they interact in the context of 
+Elasticsearch. Even  the early chapters contain nuggets of information that 
+will be useful to the more advanced user.
 
 Finally, maybe you are in DevOps. While the other departments are stuffing
 data into Elasticsearch as fast as they can, you're the one charged with
@@ -203,13 +202,6 @@ ifdef::es_build[]
    discuss moving to production: the important configurations, what to monitor, and how to diagnose and prevent problems.
 
 endif::es_build[]
-
-There are three topics that we do not cover in this book, because they are evolving rapidly and anything we
-write will soon be out-of-date:
-
-* Highlighting of result snippets: see {ref}/search-request-highlighting.html[Highlighting].
-* _Did-you-mean_ and _search-as-you-type_ suggesters: see {ref}/search-suggesters.html[Suggesters].
-* Percolation--finding queries which match a document: see {ref}/_percolator_2.html[Percolators].
 
 === Online Resources
 

@@ -128,7 +128,7 @@ PUT /movies
 When querying the catchall `general` field, you can use
 `minimum_should_match` to reduce the number of low-quality matches.  It may
 also be necessary to boost the other fields slightly more than the `general`
-field, so that matches on the the main language fields are given more weight
+field, so that matches on the main language fields are given more weight
 than those on the `general` field:
 
 [source,js]

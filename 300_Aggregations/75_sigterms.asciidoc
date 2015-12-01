@@ -5,11 +5,22 @@ Because the `significant_terms` aggregation((("significant_terms aggregation", "
 statistics, you need to have a certain threshold of data for it to become effective.
 That means we won't be able to index a small amount of example data for the demo.
 
-Instead, we have a pre-prepared dataset of around 80,000 documents.  This is
-saved as a snapshot (for more information about snapshots and restore, see
-<<backing-up-your-cluster>>) in our public demo repository.  You can "restore"
-this dataset into your cluster by using these commands:
+Instead, we prepared a dataset that contains about 80,000 documents and saved it
+as a snapshot in our public demo repository.  To "restore"
+this dataset into your cluster:
 
+. Add the following setting to your `elasticsearch.yml` configuration file to 
+whitelist the Elastic demo repository:
++
+[source,js]
+----
+repositories.url.allowed_urls: ["http://download.elastic.co/*"]
+----
+. Restart Elasticsearch.
+
+. Run the following snapshot commands. (For more information about using 
+snapshots, see <<backing-up-your-cluster, Backing Up Your Cluster>>.)
++
 [source,js]
 ----
 PUT /_snapshot/sigterms <1>
