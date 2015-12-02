@@ -96,7 +96,7 @@ like `elastic` or `hippopotamus` help us zoom in on the most interesting
 documents. The inverse document frequency is calculated as follows:
 
 ..........................
-idf(t) = 1 + log ( numDocs / (docFreq + 1)) <1>
+idf(t) = 1 + ln ( numDocs / (docFreq + 1)) <1>
 ..........................
 <1> The inverse document frequency (`idf`) of term `t` is the
     logarithm of the number of documents in the index, divided by
