@@ -32,7 +32,7 @@ text based on language and use the same approach as was used in
 
 ==== Analyze Multiple Times
 
-If you primarily deal with a limited number of languages, ((("languages", "mixed language fields", "analyzing multiple times")))((("analyzers", "for mixed language fields")))((("multifields", "analying mixed language fields")))you could use
+If you primarily deal with a limited number of languages, ((("languages", "mixed language fields", "analyzing multiple times")))((("analyzers", "for mixed language fields")))((("multifields", "analyzing mixed language fields")))you could use
 multi-fields to analyze the text once per language:
 
 [source,js]

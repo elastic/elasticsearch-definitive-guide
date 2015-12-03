@@ -57,7 +57,7 @@ curves return a score of `0.5` at `origin +/- (offset + scale)`, or at points
 
 The difference between `linear`, `exp`, and `gauss` is the shape of the curve at other points in the range:
 
-* The `linear` funtion is just a straight line. Once the line hits zero,
+* The `linear` function is just a straight line. Once the line hits zero,
   all values outside the line will return a score of `0.0`.
 * The `exp` (exponential) function decays rapidly, then slows down.
 * The `gauss` (Gaussian) function is bell-shaped--it decays slowly, then

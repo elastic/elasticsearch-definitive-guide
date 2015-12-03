@@ -5,7 +5,7 @@ With the development of per-segment search, the ((("searching", "near real-time 
 document and making it visible to search dropped dramatically.  New documents
 could be made searchable within minutes, but that still isn't fast enough.
 
-The bottleneck is the disk. ((("committing segments to disk")))((("fsync")))((("segments", "committing to disk"))) Commiting a new segment to disk requires an
+The bottleneck is the disk. ((("committing segments to disk")))((("fsync")))((("segments", "committing to disk"))) Committing a new segment to disk requires an
 http://en.wikipedia.org/wiki/Fsync[`fsync`] to ensure that the segment is
 physically written to disk and that data will not be lost if there is a power
 failure. But an `fsync` is costly; it cannot be performed every time a

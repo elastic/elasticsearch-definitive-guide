@@ -37,7 +37,7 @@ point may fall anywhere within that rectangle.  If the point happens to fall
 near the edge of a geohash cell, the filter may well exclude any
 restaurants in the adjacent cell.
 
-To fix that, we can tell the filter to include the neigboring cells, by
+To fix that, we can tell the filter to include the neighboring cells, by
 setting `neighbors` to((("neighbors setting (geohash_cell)"))) `true`:
 
 [source,json]

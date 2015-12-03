@@ -82,7 +82,7 @@ GET /docs_2014_*/_search <1>
 
 These boost values are represented in the <<practical-scoring-function>> by
 the `t.getBoost()` element.((("practical scoring function", "t.getBoost() method")))((("boosting", "query-time", "t.getBoost()")))((("t.getBoost() method"))) Boosts are not applied at the level that they
-appear in the query DSL.  Instead, any boost values are combined and passsed
+appear in the query DSL.  Instead, any boost values are combined and passed
 down to the individual terms.  The `t.getBoost()` method returns any `boost`
 value applied to the term itself or to any of the queries higher up the chain.
 

@@ -189,7 +189,7 @@ something like this:
 
 While this appears to be a nice way to save space, it does mean that you have
 no way of saying, ``Give me an exact match on the original word.''  Mixing
-tokens with and without diacritics can also end up interfering with term-frequency counts, resulting in less-reliable relevance calcuations.
+tokens with and without diacritics can also end up interfering with term-frequency counts, resulting in less-reliable relevance calculations.
 
 As a rule, it is cleaner to index each field variant into a separate field,
 as we have done in this section.

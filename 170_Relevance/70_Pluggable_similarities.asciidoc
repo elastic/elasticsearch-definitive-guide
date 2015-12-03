@@ -14,7 +14,7 @@ The most interesting competitor to TF/IDF and the vector space model is called
 http://en.wikipedia.org/wiki/Okapi_BM25[_Okapi BM25_], which is considered to
 be a _state-of-the-art_ ranking function.((("BM25")))((("Okapi BM25", see="BM25"))) BM25 originates from the
 http://en.wikipedia.org/wiki/Probabilistic_relevance_model[probabilistic relevance model],
-rather than the vector space model, yet((("probabalistic relevance model"))) the algorithm has a lot in common with
+rather than the vector space model, yet((("probabilistic relevance model"))) the algorithm has a lot in common with
 Lucene's practical scoring function.
 
 Both use term frequency, inverse document frequency, and field-length

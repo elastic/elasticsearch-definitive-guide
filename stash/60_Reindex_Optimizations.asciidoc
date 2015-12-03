@@ -2,7 +2,7 @@
 === Optimizing the reindexing process
 
 Usually, while you are reindexing your data, the new index is not being
-used for search. It makes sense to disable some of the high availablity and
+used for search. It makes sense to disable some of the high availability and
 real time search features temporarily in order to speed up reindexing.
 
 ====  `number_of_replicas`

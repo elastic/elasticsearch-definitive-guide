@@ -52,7 +52,7 @@ GET /_search
 *************************************************
 
 The HTTP libraries of certain languages (notably JavaScript) don't allow `GET`
-requests to have a request body. ((("searching", "using GET and POST HTTP methods for search requests")))((("HTTP methods", "GET and POST, use for search requests")))((("GET method", "no body for GET requests"))) In fact, some users are suprised that `GET`
+requests to have a request body. ((("searching", "using GET and POST HTTP methods for search requests")))((("HTTP methods", "GET and POST, use for search requests")))((("GET method", "no body for GET requests"))) In fact, some users are surprised that `GET`
 requests are ever allowed to have a body.
 
 The truth is that http://tools.ietf.org/html/rfc7231#page-24[RFC 7231]&#x2014;the

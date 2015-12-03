@@ -8,7 +8,7 @@ The relevance score of each document is represented by a positive floating-point
 the document.
 
 A query clause generates a `_score` for each document.  How that score is
-calculated depends on the type of query clause.((("fuzzy queries", "calculation of relevence score"))) Different query clauses are
+calculated depends on the type of query clause.((("fuzzy queries", "calculation of relevance score"))) Different query clauses are
 used for different purposes: a `fuzzy` query might determine the `_score` by
 calculating how similar the spelling of the found word is to the original
 search term; a `terms` query would incorporate the percentage of terms that

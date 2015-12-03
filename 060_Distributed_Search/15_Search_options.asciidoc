@@ -98,7 +98,7 @@ don't need search results, just a document count or
 
 `query_and_fetch`::
 
-The `query_and_fetch` search type ((("query_and_fetch serch type")))combines the query and fetch phases into a
+The `query_and_fetch` search type ((("query_and_fetch search type")))combines the query and fetch phases into a
 single step.  This is an internal optimization that is used when a search
 request targets a single shard only, such as when a
 <<search-routing,`routing`>> value has been specified. While you can choose

@@ -10,7 +10,7 @@ PUT /blogs
    }
 }
 
-# Increae number of replicas to 2
+# Increase number of replicas to 2
 PUT /blogs/_settings
 {
    "number_of_replicas" : 2
