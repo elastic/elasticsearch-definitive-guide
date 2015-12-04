@@ -33,7 +33,7 @@ https://github.com/elasticsearch/cookbook-elasticsearch[Chef cookbook].
 ==== Installing Marvel
 
 http://www.elasticsearch.com/products/marvel[Marvel] is a management((("Marvel", "defined"))) and monitoring
-tool for Elasticsearch, which is free for development use. It comes with an
+tool for Elasticsearch, which is free for development use (and also free for production use since Elasticsearch 2.0.0). It comes with an
 interactive console called Sense,((("Sense console (Marvel plugin)"))) which makes it easy to talk to
 Elasticsearch directly from your browser.
 
