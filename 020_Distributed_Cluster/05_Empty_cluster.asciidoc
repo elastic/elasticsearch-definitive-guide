@@ -1,29 +1,26 @@
-=== An Empty Cluster
+=== 비어있는 Cluster
 
-If we start a single node, with no data and no ((("empty cluster")))((("clusters", "empty")))indices, our cluster looks like
-<<img-cluster>>.
+데이터도 없고, index들도 없는, 단일 node를 시작해보면, cluster는 그림처럼 <<img-cluster>>처럼 보일 것이다.
 
 [[img-cluster]]
-.A cluster with one empty node
-image::images/elas_0201.png["A cluster with one empty node"]
+.비어있는 단일 node로 된 cluster
+image::images/elas_0201.png["비어있는 단일 node로 된 cluster"]
 
-A _node_ is a running instance of ((("nodes", "in clusters")))Elasticsearch, while a _cluster_ consists of
-one or more nodes with the same `cluster.name` that are working together to
-share their data and workload. As nodes are added to or removed from the
-cluster, the cluster reorganizes itself to spread the data evenly.
+_node_는 ((("nodes", "in clusters")))Elasticsearch의 실행중인 instance이다.
+반면에 _cluster_는 같은 `cluster.name`을 가진 하나 이상의 함께 동작하며,
+데이터와 부하(workload)를 공유하는 node로 구성되는데, node가 cluster에 추가되거나 제거될 때에,
+cluster는 데이터를 균등하게 분산해서 스스로를 재구성한다.
 
-One node in the cluster is elected to be the _master_ node, which((("master node"))) is in charge
-of managing cluster-wide changes like creating or deleting an index, or adding
-or removing a node from the cluster.  The master node does not need to be
-involved in document-level changes or searches, which means that having just
-one master node will not become a bottleneck as traffic grows. Any node can
-become the master. Our example cluster has only one node, so it performs the
-master role.
+cluster에 있는 node 하나가 _master_ node로 선택되는데, 이 ((("master node")))node는
+index의 생성/삭제 또는 cluster에서 node의 추가/제거 같은 cluster의 큰 폭의 변화를 관리한다.
+master node는 document level의 변화나 검색에는 관여하지 않는다.
+이 말은 단지 하나의 master node를 가져서 나타날 수 있는, 트래픽 증가에 따른 병목현상이 없다는 의미이다.
+어떤 node도 master node가 될 수 있다. 예제 cluster는 단 하나의 node를 가지고 있다.
+그래서 master 역할을 하게 된다.
 
-As users, we can talk to _any node in the cluster_, including the master node.
-Every node knows where each document lives and can forward our request
-directly to the nodes that hold the data we are interested in. Whichever node
-we talk to manages the process of gathering the response from the node or
-nodes holding the data and returning the final response to the client. It is
-all managed transparently by Elasticsearch.
-
+사용자는 cluster내의 master node를 포함한 _클러스터 안에 어떤 노드_와도 이야기할 수 있다.
+모든 node는 각 document가 어디에 있는지 알고 있고,
+검색하기 원하는 데이터를 가지고 있는 node로 직접 요청을 전달할 수 있다.
+우리는, node 또는 데이터를 가지고 있는 node로부터 response을 모으고 마지막 response을 클라이언트에게 반환하는,
+프로세스를 관리하기 위해 어떤 node와도 대화할 수 있다.
+그것 모두는 Elasticsearch에 의해 투명하게 알아서 관리된다.
