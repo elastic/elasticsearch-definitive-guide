@@ -1,9 +1,9 @@
 [[cluster-health]]
 === Cluster Health
 
-Many statistics can be monitored in an Elasticsearch cluster,
-but the single most important((("cluster health"))) one is _cluster health_, which reports a
-`status` of either `green`, `yellow`, or `red`:
+Elasticsearch cluster를 모니터링할 수 있는 많은 통계가 있을 수 있지만,
+가장 중요한 것 중 하나는 _cluster health_이다.
+이것은 `green`, `yellow`, or `red` 중의 하나로 표시되어 `status`로 보고된다.
 
 [source,js]
 --------------------------------------------------
@@ -11,7 +11,7 @@ GET /_cluster/health
 --------------------------------------------------
 // SENSE: 020_Distributed_Cluster/10_Cluster_health.json
 
-On an empty cluster with no indices, this will return something like the following:
+index가 없는 empty cluster에서는 아래처럼 나타난다:
 
 [source,js]
 --------------------------------------------------
@@ -28,19 +28,19 @@ On an empty cluster with no indices, this will return something like the followi
    "unassigned_shards":     0
 }
 --------------------------------------------------
-<1> The `status` field is the one we're most interested in.
+<1> `status` field를 가장 유심히 살펴보자.
 
-The `status` field provides ((("status field")))an overall indication of how the cluster is
-functioning. The meanings of the three colors are provided here for reference:
+`status` field는 cluster가 어떻게 작동되고 있는지를 종합적으로 ((("status field"))) 나타낸다.
+이 세가지 색상은 아래와 같은 정보를 제공한다:
 
-`green`::   
-   All primary and replica shards are active.
-   
- `yellow`::  
-   All primary shards are active, but not all replica shards are active.
-   
- `red`::     
-   Not all primary shards are active.
+`green`::
+   모든 primary와 replica shard가 정상이다.
 
-In the rest of this chapter, we explain what _primary_ and _replica_ shards are
-and explain the practical implications of each of the preceding colors.
+ `yellow`::
+   모든 primary shard는 정상이다. 그러나, 모든 replica shard가 정상인 것은 아니다.
+
+ `red`::
+   모든 primary shard가 정상인 것은 아니다.
+
+이 장의 나머지 부분에서, 우리는 _primary_와 _replica_ shards가 무엇인지를 설명하고,
+위의 각 색깔의 실질적인 의미를 설명할 것이다.

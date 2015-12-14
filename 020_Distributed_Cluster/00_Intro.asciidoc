@@ -1,36 +1,34 @@
 [[distributed-cluster]]
-== Life Inside a Cluster
+== Life Cluster 내부
 
-.Supplemental Chapter
+.추가 장
 ****
 
-As mentioned earlier, this is the first of several supplemental chapters
-about how Elasticsearch operates in a distributed((("clusters"))) environment.  In this
-chapter, we explain commonly used terminology like _cluster_, _node_, and
-_shard_, the mechanics of how Elasticsearch scales out, and how it deals with
-hardware failure.
+앞에서 언급했듯이, 이 장은 분산((("clusters"))) 환경에서 Elasticsearch가
+어떻게 동작하는지에 대한 여러 추가 장들 중의 하나이다. 이 장에서 _cluster_,
+ _node_, and _shard_, Elasticsearch의 확장 기술, H/W 장애 대비 같은,
+ 흔히 사용되는 용어를 설명한다.
 
-Although this chapter is not required reading--you can use Elasticsearch for
-a long time without worrying about shards, replication, and failover--it will
-help you to understand the processes at work inside Elasticsearch. Feel free
-to skim through the chapter and to refer to it again later.
+이 장을 필수적으로 읽을 필요는 없지만--shard, replication, failover에
+대한 걱정 없이 오랫동안 사용할 수 있다--, Elasticsearch 내부에서 동작하는
+프로세스를 이해하는데 도움이 될 것이다. 이 장을 가볍게 훑어보고,
+나중에 다시 참고하도록 하자.
 
 ****
 
-Elasticsearch is built to be ((("scalability, Elasticsearch and")))always available, and to scale with your needs.
-Scale can come from buying bigger ((("vertical scaling, Elasticsearch and")))servers (_vertical scale_, or _scaling up_)
-or from buying more ((("horizontal scaling, Elasticsearch and")))servers (_horizontal scale_, or _scaling out_).
+Elasticsearch는 ((("scalability에 가진, 그리고"))) 항상 사용할 수 있도록, 그리고 필요에 따라 확장할 수 있도록 만들어졌다.
+확장은 더 큰 서버를 구매((("vertical scale")))하거나 (_vertical scale_, or _scaling up_)
+더 많은 서버를 구매((("horizontal scaling")))하는 (_vertical scale_, or _scaling up_) 방법이 있다.
 
-While Elasticsearch can benefit from more-powerful hardware, vertical scale
-has its limits. Real scalability comes from horizontal scale--the ability to
-add more nodes to the cluster and to spread load and reliability between them.
+Elasticsearch는 더 강력한 H/W로 인한 이득을 얻을 수는 있지만, 수직확장에는
+한계가 있다. 진정한 확장은 수평확장에 있다--cluster에
+더 많은 node를 추가하고, 그들간에 부하 및 안정성을 확장하는 능력에 있다.
 
-With most databases, scaling horizontally usually requires a major overhaul of
-your application to take advantage of these extra boxes. In contrast,
-Elasticsearch is _distributed_ by nature: it knows how to manage multiple
-nodes to provide scale and high availability.  This also means that your
-application doesn't need to care about it.
+대부분의 데이터베이스에서, 수평적 확장은 여분의 box의 이점을 활용하기 위해
+일반적으로 응용프로그램에서 폭넓고 정밀하게 점검할 필요가 있다. 반면에,
+Elasticsearch는 자연스럽게(확장성과 고 가용성을 제공하기 위하여 어떻게 다수의 node를 관리할 지를 안다)
+ _distributed_(분산)된다. 이 말은 응용프로그램에서 신경 쓸 필요가 없다는 말이다.
 
-In this chapter, we show how you can set up your cluster,
-nodes, and shards to scale with your needs and to ensure that your data is
-safe from hardware failure.
+이번 장에서는 필요에 따른 확장을 위해 cluster,
+node 그리고 shard를 설정하고, H/W 장애로부터 데이터를
+안전하게 보장하는 방법에 대해 살펴볼 것이다.
