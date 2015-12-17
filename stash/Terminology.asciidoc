@@ -12,10 +12,13 @@ other.
 
 Node::
 
-A node is a running instance of Elasticsearch. By default, a new node uses
-multicast to automagically discover an existing cluster with the same cluster
-name, but it can also configured to use unicast or Amazon's EC2 discovery
-instead.
+A node is a running instance of Elasticsearch. By default, new nodes are 
+configured to use unicast to discover and join a cluster. If other 
+nodes are running on the same host, it can join the cluster automatically. 
+Otherwise, you need to configure a list of unicast hosts it can contact 
+to get the information it needs to join the cluster. You can also
+install one of the https://www.elastic.co/guide/en/elasticsearch/plugins/current/discovery.html[
+discovery plugins] to use a different discovery mechanism.
 +
 Every node in the cluster knows about every other node in the cluster
 and what data it is responsible for. You can send your requests to any node

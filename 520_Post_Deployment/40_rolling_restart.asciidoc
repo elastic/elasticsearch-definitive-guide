@@ -37,14 +37,7 @@ PUT /_cluster/settings
 }
 ----
 
-3. Shut down a single node, preferably using the `shutdown` API on that particular
-machine:
-+
-[source,js]
-----
-POST /_cluster/nodes/_local/_shutdown
-----
-
+3. Shut down a single node.
 4. Perform a maintenance/upgrade.
 5. Restart the node, and confirm that it joins the cluster.
 6. Reenable shard allocation as follows:
