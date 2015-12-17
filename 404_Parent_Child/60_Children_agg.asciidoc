@@ -11,8 +11,9 @@ employees by country:
 
 [source,json]
 -------------------------
-GET /company/branch/_search?search_type=count
+GET /company/branch/_search
 {
+  "size" : 0,
   "aggs": {
     "country": {
       "terms": { <1>

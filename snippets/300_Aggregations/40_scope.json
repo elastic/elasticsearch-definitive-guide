@@ -1,7 +1,8 @@
 
 # Recap of the previous examples so far -- just an aggregation, no query
-GET /cars/transactions/_search?search_type=count
+GET /cars/transactions/_search
 {
+   "size" : 0,
     "aggs" : {
         "colors" : {
             "terms" : {
@@ -12,8 +13,9 @@ GET /cars/transactions/_search?search_type=count
 }
 
 # The above request is equivalent to this (no query == match_all)
-GET /cars/transactions/_search?search_type=count
+GET /cars/transactions/_search
 {
+   "size" : 0,
     "query" : {
         "match_all" : {}
     }
@@ -45,8 +47,9 @@ GET /cars/transactions/_search
 
 # Global bucket allows us to "escape" the query scope and calculate an agg
 # on all documents
-GET /cars/transactions/_search?search_type=count
+GET /cars/transactions/_search
 {
+    "size" : 0,
     "query" : {
         "match" : {
             "make" : "ford"

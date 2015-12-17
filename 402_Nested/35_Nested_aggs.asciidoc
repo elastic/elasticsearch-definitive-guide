@@ -7,8 +7,9 @@ aggregate fields in nested objects:
 
 [source,json]
 --------------------------
-GET /my_index/blogpost/_search?search_type=count
+GET /my_index/blogpost/_search
 {
+  "size" : 0,
   "aggs": {
     "comments": { <1>
       "nested": {
@@ -86,8 +87,9 @@ the `tags` are in the root document:
 
 [source,json]
 --------------------------
-GET /my_index/blogpost/_search?search_type=count
+GET /my_index/blogpost/_search
 {
+  "size" : 0,
   "aggs": {
     "comments": {
       "nested": { <1>

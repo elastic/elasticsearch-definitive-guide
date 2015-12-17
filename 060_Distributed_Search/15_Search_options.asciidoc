@@ -82,40 +82,14 @@ discuss it in detail in <<scale>>.
 [[search-type]]
 ==== search_type
 
-While `query_then_fetch` is the default((("query_then_fetch search type")))((("search options", "search_type")))((("search_type"))) search type, other search types can
-be specified for particular purposes, for example:
+The default search type is `query_then_fetch` ((("query_then_fetch search type")))((("search options", "search_type")))((("search_type"))). In some cases, you might want to explicitly set the `search_type`
+to `dfs_query_then_fetch` to improve the accuracy of relevance scoring: 
 
 [source,js]
 --------------------------------------------------
-GET /_search?search_type=count
+GET /_search?search_type=dfs_query_then_fetch
 --------------------------------------------------
 
-`count`::
-
-The `count` search type has only a `query` phase.((("count search type")))  It can be used when you
-don't need search results, just a document count or
-<<aggregations,aggregations>> on documents matching the query.
-
-`query_and_fetch`::
-
-The `query_and_fetch` search type ((("query_and_fetch serch type")))combines the query and fetch phases into a
-single step.  This is an internal optimization that is used when a search
-request targets a single shard only, such as when a
-<<search-routing,`routing`>> value has been specified. While you can choose
-to use this search type manually, it is almost never useful to do so.
-
-`dfs_query_then_fetch` and `dfs_query_and_fetch`::
-
-The `dfs` search types((("dfs search types"))) have a prequery phase that fetches the term
-frequencies from all involved shards in order to calculate global term
+The `dfs_query_then_fetch` search type has a prequery phase that fetches the term
+frequencies from all involved shards to calculate global term
 frequencies. We discuss this further in <<relevance-is-broken>>.
-
-`scan`::
-
-The `scan` search type is((("scan search type"))) used in conjunction with the `scroll` API ((("scroll API")))to
-retrieve large numbers of results efficiently. It does this by disabling
-sorting.  We discuss _scan-and-scroll_ in the next section.
-
-
-
-

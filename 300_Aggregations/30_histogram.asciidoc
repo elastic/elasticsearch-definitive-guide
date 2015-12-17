@@ -20,8 +20,9 @@ To do this, we use a `histogram` and a nested `sum` metric:
 
 [source,js]
 --------------------------------------------------
-GET /cars/transactions/_search?search_type=count
+GET /cars/transactions/_search
 {
+   "size" : 0,
    "aggs":{
       "price":{
          "histogram":{ <1>
@@ -119,8 +120,9 @@ an `extended_stats` ((("extended_stats metric")))metric:
 
 [source,js]
 ----
-GET /cars/transactions/_search?search_type=count
+GET /cars/transactions/_search
 {
+  "size" : 0,
   "aggs": {
     "makes": {
       "terms": {

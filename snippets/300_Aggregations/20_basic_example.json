@@ -21,8 +21,9 @@ POST /cars/transactions/_bulk
 { "price" : 25000, "color" : "blue", "make" : "ford", "sold" : "2014-02-12" }
 
 # Basic aggregation - most popular car colors
-GET /cars/transactions/_search?search_type=count
+GET /cars/transactions/_search
 {
+    "size" : 0,
     "aggs" : {
         "popular_colors" : {
             "terms" : {
@@ -34,8 +35,9 @@ GET /cars/transactions/_search?search_type=count
 
 
 # Find the average price of each car color
-GET /cars/transactions/_search?search_type=count
+GET /cars/transactions/_search
 {
+   "size" : 0,
    "aggs": {
       "colors": {
          "terms": {
@@ -54,8 +56,9 @@ GET /cars/transactions/_search?search_type=count
 
 
 # Nest a second bucket to determine top makes per color
-GET /cars/transactions/_search?search_type=count
+GET /cars/transactions/_search
 {
+   "size" : 0,
    "aggs": {
       "colors": {
          "terms": {
@@ -79,8 +82,9 @@ GET /cars/transactions/_search?search_type=count
 
 
 # Finally, add some extra metrics to determine min/max price per-make, per-color
-GET /cars/transactions/_search?search_type=count
+GET /cars/transactions/_search
 {
+   "size" : 0,
    "aggs": {
       "colors": {
          "terms": {

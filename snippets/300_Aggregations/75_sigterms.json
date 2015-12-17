@@ -34,8 +34,9 @@ GET mlmovies/_search
 }
 
 # Use a terms agg to find most popular
-GET mlratings/_search?search_type=count
+GET mlratings/_search
 {
+  "size" : 0,
   "query": {
     "filtered": {
       "filter": {
@@ -70,8 +71,9 @@ GET mlmovies/_search
 }
 
 # Find most popular movies overall
-GET mlratings/_search?search_type=count
+GET mlratings/_search
 {
+  "size" : 0,
   "aggs": {
     "most_popular": {
       "terms": {
@@ -86,8 +88,9 @@ GET mlratings/_search?search_type=count
 ### Recommendations based on Statistics
 
 # Replace terms agg with SigTerms
-GET mlratings/_search?search_type=count
+GET mlratings/_search
 {
+  "size" : 0,
   "query": {
     "filtered": {
       "filter": {

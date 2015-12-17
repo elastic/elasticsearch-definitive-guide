@@ -29,8 +29,9 @@ Simple--let's use a `terms` bucket:
 
 [source,js]
 ----
-GET /agg_analysis/data/_search?search_type=count
+GET /agg_analysis/data/_search
 {
+    "size" : 0,
     "aggs" : {
         "states" : {
             "terms" : {
@@ -123,8 +124,9 @@ POST /agg_analysis/data/_bulk
 { "index": {}}
 { "state" : "New York" }
 
-GET /agg_analysis/data/_search?search_type=count
+GET /agg_analysis/data/_search
 {
+  "size" : 0,
   "aggs" : {
     "states" : {
         "terms" : {

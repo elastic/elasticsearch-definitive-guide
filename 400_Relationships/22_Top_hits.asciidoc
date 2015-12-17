@@ -78,8 +78,9 @@ called `John`, and group the results by user, thanks to the
 
 [source,json]
 --------------------------------
-GET /my_index/blogpost/_search?search_type=count <1>
+GET /my_index/blogpost/_search 
 {
+  "size" : 0, <1>
   "query": { <2>
     "bool": {
       "must": [
@@ -104,7 +105,7 @@ GET /my_index/blogpost/_search?search_type=count <1>
 --------------------------------
 <1> The blog posts that we are interested in are returned under the
     `blogposts` aggregation, so we can disable the usual search `hits` by
-    setting the `search_type=count`.
+    setting the `size` to 0.
 <2> The `query` returns blog posts about `relationships` by users named `John`.
 <3> The `terms` aggregation creates a bucket for each `user.name.raw` value.
 <4> The `top_score` aggregation orders the terms in the `users` aggregation
@@ -151,7 +152,7 @@ The abbreviated response is shown here:
         },
 ...
 --------------------------------
-<1> The `hits` array is empty because we set `search_type=count`.
+<1> The `hits` array is empty because we set `size` to 0.
 <2> There is a bucket for each user who appeared in the top results.
 <3> Under each user bucket there is a `blogposts.hits` array containing
     the top results for that user.

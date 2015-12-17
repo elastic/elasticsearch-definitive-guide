@@ -12,11 +12,12 @@ in exactly the same way as you started the first one (see
 <<running-elasticsearch>>), and from the same directory. Multiple nodes can
 share the same directory.
 
-As long as the second node has the same `cluster.name` as the first node (see
-the `./config/elasticsearch.yml` file), it should automatically discover and
-join the cluster run by the first node. If it doesn't, check the logs to find
-out what went wrong.  It may be that multicast is disabled on your network, or
-that a firewall is preventing your nodes from communicating.
+When you run a second node on the same machine, it automatically discovers 
+and joins the cluster as long as it has the same `cluster.name` as the first node (see
+the `./config/elasticsearch.yml` file). However, for nodes running on different machines
+to join the same cluster, you need to configure a list of unicast hosts the nodes can contact
+to join the cluster. For more information about how Elasticsearch nodes find eachother, see https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-discovery-zen.html[Zen Discovery]
+in the Elasticsearch Reference. 
 
 ***************************************
 
@@ -38,16 +39,21 @@ shards (all three primary shards and all three replica shards) are active:
 [source,js]
 --------------------------------------------------
 {
-   "cluster_name":          "elasticsearch",
-   "status":                "green", <1>
-   "timed_out":             false,
-   "number_of_nodes":       2,
-   "number_of_data_nodes":  2,
-   "active_primary_shards": 3,
-   "active_shards":         6,
-   "relocating_shards":     0,
-   "initializing_shards":   0,
-   "unassigned_shards":     0
+  "cluster_name": "elasticsearch",
+  "status": "green", <1>
+  "timed_out": false,
+  "number_of_nodes": 2,
+  "number_of_data_nodes": 2,
+  "active_primary_shards": 3,
+  "active_shards": 6,
+  "relocating_shards": 0,
+  "initializing_shards": 0,
+  "unassigned_shards": 0,
+  "delayed_unassigned_shards": 0,
+  "number_of_pending_tasks": 0,
+  "number_of_in_flight_fetch": 0,
+  "task_max_waiting_in_queue_millis": 0,
+  "active_shards_percent_as_number": 100
 }
 --------------------------------------------------
 <1> Cluster `status` is `green`.

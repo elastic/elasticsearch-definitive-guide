@@ -77,15 +77,11 @@ this book to explain _why_ and _when_ to use various features.
 
 === Elasticsearch Version
 
-The explanations and code examples in this book target the latest version of
-Elasticsearch available at the time of going to print--version 1.4.0--but
-Elasticsearch is a rapidly evolving project.  The online version of this book
-will be updated as Elasticsearch changes.
+The initial print version of this book targeted Elasticsearch version 1.4.0. We 
+are actively updating the explanations and code examples in the https://www.elastic.co/guide/en/elasticsearch/guide/current/[online version]
+to target Elasticsearch 2.x. 
 
-You can find the latest version of this https://www.elastic.co/guide/en/elasticsearch/guide/current/[book online].
-
-You can also track the changes that have been made by visiting the https://github.com/elastic/elasticsearch-definitive-guide/[GitHub repository].
-
+You can track the updates by visiting the https://github.com/elastic/elasticsearch-definitive-guide/[GitHub repository].
 
 === How to Read This Book
 
@@ -205,10 +201,15 @@ endif::es_build[]
 
 === Online Resources
 
-Because this book focuses on problem solving in Elasticsearch rather than syntax, we sometimes reference the existing documentation for a complete
-list of parameters.  The reference documentation can be found at:
+Because this book focuses on problem solving in Elasticsearch rather than syntax, we sometimes refer to the detailed descriptions in the https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html[Elasticsearch Reference].  You 
+can find the latest Elasticsearch Reference and related documentation at:
 
 https://www.elastic.co/guide/
+
+If you have questions that aren't addressed in this book or in the reference documentation, we encourage
+you to visit the Elasticsearch Discussion Forum where you can ask questions, learn how other people are using Elasticsearch, and share your own experience. To join the conversation, go to:
+
+https://discuss.elastic.co/c/elasticsearch
 
 === Conventions Used in This Book
 

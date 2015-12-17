@@ -1,7 +1,8 @@
 
 # Filtered query filters both the search results and the aggregation
-GET /cars/transactions/_search?search_type=count
+GET /cars/transactions/_search
 {
+   "size" : 0,
     "query" : {
         "filtered": {
             "filter": {
@@ -23,8 +24,9 @@ GET /cars/transactions/_search?search_type=count
 # Filter bucket lets you filter just portions of the aggregation
 # in this example, we filter the agg to calculate average price of 
 # "ford" sold in the last month, while search results show all Fords
-GET /cars/transactions/_search?search_type=count
+GET /cars/transactions/_search
 {
+   "size" : 0,
    "query":{
       "match": {
          "make": "ford"
@@ -53,8 +55,9 @@ GET /cars/transactions/_search?search_type=count
 # post_filter allows filtering just the search results.
 # Agg will show the colors of all fords, while search results will show
 # all green fords
-GET /cars/transactions/_search?search_type=count
+GET /cars/transactions/_search
 {
+    "size" : 0,
     "query": {
         "match": {
             "make": "ford"

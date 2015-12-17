@@ -46,12 +46,13 @@ using a simple aggregation.  We will do this using a `terms` bucket:
 
 [source,js]
 --------------------------------------------------
-GET /cars/transactions/_search?search_type=count
+GET /cars/transactions/_search
 {
-    "aggs" : { <1>
-        "colors" : { <2>
+    "size" : 0,
+    "aggs" : {
+        "popular_colors" : {
             "terms" : {
-              "field" : "color" <3>
+              "field" : "color"
             }
         }
     }
@@ -71,9 +72,11 @@ in <<_scoping_aggregations>>.
 
 [NOTE]
 =========================
-You'll notice that we used the `count` <<search-type,search_type>>.((("count search type")))
-Because we don't care about search results--the aggregation totals--the 
-`count` search_type will be faster because it omits the fetch phase.
+You'll notice that we set the `size` to zero. We 
+don't care about the search results themselves and
+returning zero hits speeds up the query. Setting
+`size: 0` is the equivalent of using the `count` 
+search type in Elasticsearch 1.x.
 =========================
 
 Next we define a name for our aggregation.  Naming is up to you;
@@ -115,7 +118,7 @@ Let's execute that aggregation and take a look at the results:
    }
 }
 --------------------------------------------------
-<1> No search hits are returned because we used the `search_type=count` parameter
+<1> No search hits are returned because we set the `size` parameter
 <2> Our `colors` aggregation is returned as part of the `aggregations` field.
 <3> The `key` to each bucket corresponds to a unique term found in the `color` field.
 It also always includes `doc_count`, which tells us the number of docs containing the term.

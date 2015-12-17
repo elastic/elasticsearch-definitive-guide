@@ -54,34 +54,29 @@ You should see a response like this:
 [source,js]
 --------------------------------------------------
 {
-   "status": 200,
-   "name": "Shrunken Bones",
-   "version": {
-      "number": "1.4.0",
-      "lucene_version": "4.10"
-   },
-   "tagline": "You Know, for Search"
+  "name" : "Tom Foster",
+  "cluster_name" : "elasticsearch",
+  "version" : {
+    "number" : "2.1.0",
+    "build_hash" : "72cd1f1a3eee09505e036106146dc1949dc5dc87",
+    "build_timestamp" : "2015-11-18T22:40:03Z",
+    "build_snapshot" : false,
+    "lucene_version" : "5.3.1"
+  },
+  "tagline" : "You Know, for Search"
 }
 --------------------------------------------------
 // SENSE: 010_Intro/10_Info.json
 
-This means that your Elasticsearch _cluster_ is up and running, and we can
-start experimenting with it.
+This means that you have an Elasticsearch node up and running, and you can
+start experimenting with it. A _node_ is a running instance of Elasticsearch.
+((("nodes", "defined"))) A _cluster_ is ((("clusters", "defined")))a group of
+nodes with the same `cluster.name` that are working together to share data
+and to provide failover and scale. (A single node, however, can form a cluster
+all by itself.)
 
 TIP: See that View in Sense link at the bottom of the example? <<sense, Install the Sense console>>
 to run the examples in this book against your own Elasticsearch cluster and view the results. 
-
-A _node_ is a running instance of Elasticsearch.((("nodes", "defined"))) A _cluster_ is ((("clusters", "defined")))a group of
-nodes with the same `cluster.name` that are working together to share data
-and to provide failover and scale, although a single node can form a cluster
-all by itself.
-
-You should change the default `cluster.name` to something appropriate to you,
-like your own name, to stop ((("clusters", "changing default name")))your nodes from trying to join another cluster on
-the same network with the same name!
-
-You can do this by editing the `elasticsearch.yml` file in the `config/`
-directory and then restarting Elasticsearch.  
 
 When Elasticsearch is running in the foreground, you can stop it by pressing Ctrl-C.
 

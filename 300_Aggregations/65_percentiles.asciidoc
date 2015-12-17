@@ -84,8 +84,9 @@ the distribution:
 
 [source,js]
 ----
-GET /website/logs/_search?search_type=count
+GET /website/logs/_search
 {
+    "size" : 0,
     "aggs" : {
         "load_times" : {
             "percentiles" : {
@@ -137,8 +138,9 @@ correlated to the geographic zone of the data center:
 
 [source,js]
 ----
-GET /website/logs/_search?search_type=count
+GET /website/logs/_search
 {
+    "size" : 0,
     "aggs" : {
         "zones" : {
             "terms" : {
@@ -232,8 +234,9 @@ For this, you can apply the `percentile_ranks` metric instead of `percentiles`:
 
 [source,js]
 ----
-GET /website/logs/_search?search_type=count
+GET /website/logs/_search
 {
+    "size" : 0,
     "aggs" : {
         "zones" : {
             "terms" : {

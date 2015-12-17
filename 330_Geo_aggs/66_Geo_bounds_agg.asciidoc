@@ -12,8 +12,9 @@ bounding box that is needed to encapsulate all of the geo-points:
 
 [source,json]
 ----------------------------
-GET /attractions/restaurant/_search?search_type=count
+GET /attractions/restaurant/_search
 {
+  "size" : 0,
   "query": {
     "filtered": {
       "filter": {
@@ -76,8 +77,9 @@ cell:
 
 [source,json]
 ----------------------------
-GET /attractions/restaurant/_search?search_type=count
+GET /attractions/restaurant/_search
 {
+  "size" : 0,
   "query": {
     "filtered": {
       "filter": {

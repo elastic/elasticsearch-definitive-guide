@@ -22,8 +22,9 @@ sold at our dealership:
 
 [source,js]
 --------------------------------------------------
-GET /cars/transactions/_search?search_type=count
+GET /cars/transactions/_search
 {
+    "size" : 0,
     "aggs" : {
         "distinct_colors" : {
             "cardinality" : {
@@ -54,8 +55,9 @@ that metric, we just nest the `cardinality` metric under ((("date histograms, bu
 
 [source,js]
 --------------------------------------------------
-GET /cars/transactions/_search?search_type=count
+GET /cars/transactions/_search
 {
+  "size" : 0,
   "aggs" : {
       "months" : {
         "date_histogram": {
@@ -97,8 +99,9 @@ close to accurate. Consider this example:
 
 [source,js]
 --------------------------------------------------
-GET /cars/transactions/_search?search_type=count
+GET /cars/transactions/_search
 {
+    "size" : 0,
     "aggs" : {
         "distinct_colors" : {
             "cardinality" : {
@@ -204,8 +207,9 @@ Now when we run an aggregation, we use the `color.hash` field instead of the
 
 [source,js]
 --------------------------------------------------
-GET /cars/transactions/_search?search_type=count
+GET /cars/transactions/_search
 {
+    "size" : 0,
     "aggs" : {
         "distinct_colors" : {
             "cardinality" : {

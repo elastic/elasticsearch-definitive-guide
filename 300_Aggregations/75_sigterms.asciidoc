@@ -174,8 +174,9 @@ to find the most popular movies from people who also like _Talladega Nights_:
 
 [source,js]
 ----
-GET mlratings/_search?search_type=count <1>
+GET mlratings/_search
 {
+  "size" : 0, <1>
   "query": {
     "filtered": {
       "filter": {
@@ -196,7 +197,7 @@ GET mlratings/_search?search_type=count <1>
 }
 ----
 // SENSE: 300_Aggregations/75_sigterms.json
-<1> We execute our query on `mlratings` this time, and specify `search_type=count`
+<1> We execute our query on `mlratings` this time, and set the `size` to 0
 since we are interested only in the aggregation results.
 <2> Apply a filter on the ID corresponding to _Talladega Nights_.
 <3> Finally, find the most popular movies by using a `terms` bucket.
@@ -293,8 +294,9 @@ on _Talladega Nights_.  This will give a top-five most popular movie list:
 
 [source,js]
 ----
-GET mlratings/_search?search_type=count
+GET mlratings/_search
 {
+  "size" : 0,
   "aggs": {
     "most_popular": {
       "terms": {
@@ -334,8 +336,9 @@ Let's give it a shot:
 
 [source,js]
 ----
-GET mlratings/_search?search_type=count
+GET mlratings/_search
 {
+  "size" : 0,
   "query": {
     "filtered": {
       "filter": {

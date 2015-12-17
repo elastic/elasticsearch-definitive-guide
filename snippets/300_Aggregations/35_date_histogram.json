@@ -1,8 +1,9 @@
 
 # Create a histogram over time - this agg will generate a 
 # histogram of sales over time
-GET /cars/transactions/_search?search_type=count
+GET /cars/transactions/_search
 {
+   "size" : 0,
    "aggs": {
       "sales": {
          "date_histogram": {
@@ -15,8 +16,9 @@ GET /cars/transactions/_search?search_type=count
 }
 
 # Display all months in the year, including empty buckets
-GET /cars/transactions/_search?search_type=count
+GET /cars/transactions/_search
 {
+   "size" : 0,
    "aggs": {
       "sales": {
          "date_histogram": {
@@ -34,8 +36,9 @@ GET /cars/transactions/_search?search_type=count
 }
 
 # Find the average price of each month's top-selling car type
-GET /cars/transactions/_search?search_type=count
+GET /cars/transactions/_search
 {
+   "size" : 0,
    "aggs": {
       "sales": {
          "date_histogram": {
