@@ -206,41 +206,39 @@ NOTE: These settings can only be set in the `config/elasticsearch.yml` file or o
 the command line (they are not dynamically updatable) and they are only relevant
 during a full cluster restart.
 
+[[unicast]]
 ==== Prefer Unicast over Multicast
 
-Elasticsearch is configured to use multicast discovery out of the box.  Multicast((("configuration changes, important", "preferring unicast over multicast")))((("unicast, preferring over multicast")))((("multicast versus unicast")))
-works by sending UDP pings across your local network to discover nodes.  Other
-Elasticsearch nodes will receive these pings and respond.  A cluster is formed
-shortly after.
+Elasticsearch is configured to use unicast discovery out of the box to prevent
+nodes from accidentally joining a cluster. Only nodes running on the same
+machine will automatically form cluster. 
 
-Multicast is excellent for development, since you don't need to do anything.  Turn
-a few nodes on, and they automatically find each other and form a cluster.
-
-This ease of use is the exact reason you should disable it in production.  The
+While multicast is still https://www.elastic.co/guide/en/elasticsearch/plugins/current/discovery-multicast.html[provided
+as a plugin], it should never be used in production. The
 last thing you want is for nodes to accidentally join your production network, simply
 because they received an errant multicast ping.  There is nothing wrong with
 multicast _per se_.  Multicast simply leads to silly problems, and can be a bit
 more fragile (for example, a network engineer fiddles with the network without telling
 you--and all of a sudden nodes can't find each other anymore).
 
-In production, it is recommended to use unicast instead of multicast.  This works
-by providing Elasticsearch a list of nodes that it should try to contact.  Once
-the node contacts a member of the unicast list, it will receive a full cluster
-state that lists all nodes in the cluster.  It will then proceed to contact
-the master and join.
+To use unicast, you provide Elasticsearch a list of nodes that it should try to contact.  
+When a node contacts a member of the unicast list, it receives a full cluster
+state that lists all of the nodes in the cluster.  It then contacts
+the master and joins the cluster.
 
-This means your unicast list does not need to hold all the nodes in your cluster.
+This means your unicast list does not need to include all of the nodes in your cluster.
 It just needs enough nodes that a new node can find someone to talk to.  If you
 use dedicated masters, just list your three dedicated masters and call it a day.
-This setting is configured in your `elasticsearch.yml`:
+This setting is configured in `elasticsearch.yml`:
 
 [source,yaml]
 ----
-discovery.zen.ping.multicast.enabled: false <1>
 discovery.zen.ping.unicast.hosts: ["host1", "host2:port"]
 ----
-<1> Make sure you disable multicast, since it can operate in parallel with unicast.
 
+For more information about how Elasticsearch nodes find eachother, see 
+https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-discovery-zen.html[Zen Discovery]
+in the Elasticsearch Reference. 
 
 
 

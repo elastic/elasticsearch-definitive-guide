@@ -13,11 +13,10 @@ in exactly the same way as you started the first one (see
 share the same directory.
 
 When you run a second node on the same machine, it automatically discovers 
-and joins the cluster as long as it has the same `cluster.name` as the first node (see
-the `./config/elasticsearch.yml` file). However, for nodes running on different machines
+and joins the cluster as long as it has the same `cluster.name` as the first node. 
+However, for nodes running on different machines
 to join the same cluster, you need to configure a list of unicast hosts the nodes can contact
-to join the cluster. For more information about how Elasticsearch nodes find eachother, see https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-discovery-zen.html[Zen Discovery]
-in the Elasticsearch Reference. 
+to join the cluster. For more information, see <<unicast, Prefer Unicast over Multicast>>.
 
 ***************************************
 
