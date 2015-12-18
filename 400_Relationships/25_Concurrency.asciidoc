@@ -182,7 +182,7 @@ PUT /fs/file/1?version=2 <1>
 We can even rename a directory, but this means updating all of the files that
 exist anywhere in the path hierarchy beneath that directory.  This may be
 quick or slow, depending on how many files need to be updated.  All we would
-need to do is to use <<scan-scroll,scan-and-scroll>> to retrieve all the
+need to do is to use <<scan-scroll,`scroll`>> to retrieve all the
 files, and the <<bulk,`bulk` API>> to update them.  The process isn't
 atomic, but all files will quickly move to their new home.
 

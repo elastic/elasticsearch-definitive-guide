@@ -81,9 +81,8 @@ parallelism by making our locking more fine-grained.
 ==== Document Locking
 
 Instead of locking the whole filesystem, we could lock individual documents
-by using the same technique as previously described.((("locking", "document locking")))((("document locking")))  A process could use a
-<<scan-scroll,scan-and-scroll>> request to retrieve the IDs of all documents
-that would be affected by the change, and would need to create a lock file for
+by using the same technique as previously described.((("locking", "document locking")))((("document locking")))  
+You could retrieve all documents that would be affected by the change and create a lock file for
 each of them:
 
 [source,json]
@@ -93,7 +92,6 @@ PUT /fs/lock/_bulk
 { "process_id": 123    } <2>
 { "create": { "_id": 2}}
 { "process_id": 123    }
-...
 --------------------------
 <1> The ID of the `lock` document would be the same as the ID of  the file
     that should be locked.
@@ -135,41 +133,51 @@ POST /fs/lock/1/_update
 }
 --------------------------
 
-If the document doesn't already exist, the `upsert` document will be inserted--much the same as the `create` request we used previously.  However, if the
-document _does_ exist, the script will look at the `process_id` stored in the
-document.  If it is the same as ours, it aborts the update (`noop`) and
-returns success.  If it is different, the `assert false` throws an exception
-and we know that the lock has failed.
+If the document doesn't already exist, the `upsert` document is inserted--much 
+the same as the previous `create` request.  However, if the
+document _does_ exist, the script looks at the `process_id` stored in the
+document.  If the `process_id` matches, no update is performed (`noop`) but the
+script returns successfully.  If it is different, `assert false` throws an exception
+and you know that the lock has failed.
 
-Once all locks have been successfully created, the rename operation can begin.
-Afterward, we must release((("delete-by-query request"))) all of the locks, which we can do with a
-`delete-by-query` request:
+Once all locks have been successfully created, you can proceed with your changes.
+
+Afterward, you must release all of the locks, which you can do by
+retrieving all of the locked documents and performing a bulk delete:
+
 
 [source,json]
 --------------------------
 POST /fs/_refresh <1>
 
-DELETE /fs/lock/_query
+GET /fs/lock/_search?scroll=1m <2>
 {
-  "query": {
-    "term": {
-      "process_id": 123
+    "sort" : ["_doc"],
+    "query": {
+        "match" : {
+            "process_id" : 123
+        }
     }
-  }
 }
+
+PUT /fs/lock/_bulk
+{ "delete": { "_id": 1}} 
+{ "delete": { "_id": 2}}
 --------------------------
 <1> The `refresh` call ensures that all `lock` documents are visible to
-    the `delete-by-query` request.
+    the search request.
+<2> You can use a <<scan-scroll,`scroll`>> query when you need to retrieve large 
+numbers of results with a single search request.
 
 Document-level locking enables fine-grained access control, but creating lock
-files for millions of documents can be expensive.  In certain scenarios, such
-as this example with directory trees, it is possible to achieve fine-grained
-locking with much less work.
+files for millions of documents can be expensive.  In some cases, 
+you can achieve fine-grained locking with much less work, as shown in the
+following directory tree scenario. 
 
 [[tree-locking]]
 ==== Tree Locking
 
-Rather than locking every involved document, as in the previous option, we
+Rather than locking every involved document as in the previous example, we
 could lock just part of the directory tree.((("locking", "tree locking")))  We will need exclusive access
 to the file or directory that we want to rename, which can be achieved with an
 _exclusive lock_ document:
