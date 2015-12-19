@@ -1,9 +1,13 @@
 [[scan-scroll]]
 === scan and scroll
+=== scan과 scroll
 
-The `scan` search type and the `scroll` API((("scroll API", "scan and scroll"))) are used together to retrieve
-large numbers of documents from Elasticsearch efficiently, without paying the
-penalty of deep pagination.
+The `scan` search type and the `scroll` API((("scroll API", "scan and scroll"))) are
+used together to retrieve large numbers of documents
+from Elasticsearch efficiently, without paying the penalty of deep pagination.
+
+`scan` 검색 타입과 `scroll` API((("scroll API", "scan and scroll")))을 함께 사용하면,
+깊은 페이지 매김이라는 비용을 지불하지 않고도 Elasticsearch로부터 대량의 문서를 가져올 수 있다.
 
 `scroll`::
 +
@@ -18,6 +22,29 @@ this by keeping the old data files around, so that it can preserve its ``view''
 on what the index looked like at the time it started.
 
 --
+
+`scroll`::
++
+--
+A _scrolled search_ allows us to((("scrolled search"))) do an initial search and to keep pulling
+batches of results from Elasticsearch until there are no more results left.
+It's a bit like a _cursor_ in ((("cursors")))a traditional database.
+
+_scroll 검색_은((("scrolled search"))) 초기 검색을 실행한 후,
+더 이상의 검색 결과가 없을 때까지 Elasticsearch로부터 결과 데이터 집합을 반복적으로 가져올 수 있도록 한다.
+이것은 전통적인 데이터베이스의 _cursor_와 약간 유사하다.((("cursors")))
+
+A scrolled search takes a snapshot in time. It doesn't see any changes that
+are made to the index after the initial search request has been made. It does
+this by keeping the old data files around, so that it can preserve its ``view''
+on what the index looked like at the time it started.
+
+scroll 검색은 그 당시의 스냅샷을 생성한다. 여기서는 최초의 검색 요청이 있은 후 해당 인덱스에 벌어진 변경에 대해서 알지 못한다.
+이것은 인덱스가 변경되기 전의 데이터 파일을 다른 곳에 보관함으로써 가능하다.
+그렇게 함으로써 scroll 검색이 시작될 당시의 인덱스처럼 보이는 ``view''를 유지할 수 있다.
+
+--
+
 
 `scan`::
 
@@ -75,7 +102,11 @@ _previous_ scroll request.
 
 When no more hits are returned, we have processed all matching documents.
 
+더 이상 반환되는 것이 없다면, 모든 매치되는 문서를 처리한 것이다.
+
 TIP: Some of the http://www.elastic.co/guide[official Elasticsearch clients]
 provide _scan-and-scroll_ helpers that provide an easy wrapper around this
 functionality.((("clients", "providing scan-and-scroll helpers")))
 
+TIP: http://www.elastic.co/guide[공식 Elasticsearch 클라이언트]중의 일부는 _scan_과 _scroll_  기능을 쉽게 이용할 수 있는
+wrapper를 제공한다.((("clients", "providing scan-and-scroll helpers")))

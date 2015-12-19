@@ -1,15 +1,24 @@
 [[default-mapping]]
 === Default Mapping
 
-Often, all types in an index share similar fields and settings. ((("mapping (types)", "default")))((("default mapping"))) It can be
-more convenient to specify these common settings in the `_default_` mapping,
+=== 기본 매핑
+
+Often, all types in an index share similar fields and settings. ((("mapping (types)", "default")))((("default mapping")))
+It can be more convenient to specify these common settings in the `_default_` mapping,
 instead of having to repeat yourself every time you create a new type. The
 `_default_` mapping acts as a template for new types.  All types created
 _after_ the `_default_` mapping will include all of these default settings,
 unless explicitly overridden in the type mapping itself.
 
+종종, 인덱스 내의 모든 타입은 유사한 필드와 설정을 공유한다.((("mapping (types)", "default")))((("default mapping")))
+이런 공통 설정을 새로운 타입을 만들 때마다 반복해서 지정하는 것보다는, `_default_` 매핑 안에 지정해 두면 더 편리하다.
+`_default_` 매핑은 새로운 타입에 대한 템플릿 역할을 한다. `_default_` 매핑에 의해(_after_) 만들어진 타입은
+타입 매핑 자체에서 명시적으로 설정된 값이 없을 경우 모두 이러한 기본 설정을 포함하게 된다.
+
 For instance, we can disable the `_all` field for all types,((("_all field", sortas="all field"))) using the
 `_default_` mapping, but enable it just for the `blog` type, as follows:
+
+예를 들어, 다음 예제에서와 같이 `_default_` 매핑을 이용해. `blog` 타입을 제외한 모든 타입에서 `_all` 필드를 비활성화 할 수 있다.((("_all field", sortas="all field")))
 
 [source,js]
 --------------------------------------------------
@@ -30,3 +39,5 @@ PUT /my_index
 
 The `_default_` mapping can also be a good place to specify index-wide
 <<dynamic-templates,dynamic templates>>.
+
+`_default` 매핑은 인덱스 전체에 적용할 <<dynamic-templates,동적 템플릿 (dynamic template)>>을 지정할 때도 사용할 수 있다.

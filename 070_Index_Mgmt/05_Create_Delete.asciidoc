@@ -1,9 +1,18 @@
 === Creating an Index
+=== 인덱스 생성하기
 
-Until now, we have created a new index((("indices", "creating"))) by simply indexing a document into it. The index is created with the default settings, and new fields are added to the type mapping by using dynamic mapping. Now we need more control over the process: we want to ensure that the index has been created with the appropriate number of primary shards, and that analyzers and mappings are set up _before_ we index any data.
+Until now, we have created a new index((("indices", "creating"))) by simply indexing a document into it.
+The index is created with the default settings, and new fields are added to the type mapping by using dynamic mapping.
+Now we need more control over the process: we want to ensure that the index has been created with the appropriate number of primary shards, and that analyzers and mappings are set up _before_ we index any data.
 
 To do this, we have to create the index manually, passing in any settings or
 type mappings in the request body, as follows:
+
+지금까지는, 새로운 문서에 대한 인덱싱을 통해 새로운 인덱스를((("indices", "creating"))) 생성해 왔다.
+인덱스는 기본 설정값이 적용되어 생성되었고, 새로운 필드들은 동적 매핑 기능을 이용해 타입 매핑에 추가되었다.
+이제 전체적인 프로세스에 직접 개입하여 제어할 필요가 있다. 인덱스의 주 샤드 수가 적절한지, 그리고 데이터에 대한 인덱싱 작업 이전에 분석기와 매핑이 설정되었는지를 확인하고자 한다.
+
+이렇게 하려면 다음과 같이 HTTP request의 body에 설정이나 타입 매핑을 포함해 전달하여 인덱스를 수동으로 생성한다.
 
 [source,js]
 --------------------------------------------------
@@ -22,6 +31,7 @@ PUT /my_index
 In fact, if you want to, you ((("indices", "preventing automatic creation of")))can prevent the automatic creation of indices by
 adding the following setting to the `config/elasticsearch.yml` file on each
 node:
+사실, 다음과 같이 각 노드의 'config/elasticsearch.yml' 파일에 설정을 추가하여 인덱스 자동 생성을 ((("indices", "preventing automatic creation of"))) 막을 수 있다.
 
 [source,js]
 --------------------------------------------------
@@ -37,9 +47,18 @@ rolls over, a new properly configured index automatically springs into
 existence.
 ====
 
+[NOTE]
+====
+이후에, <<index-templates>>을 이용해 자동으로 생성되는 인덱스를 사전에 설정할 수 있는 방법에 대해 다룰 것이다.
+이 방법은 로그 데이터를 인덱싱 할 때 특히 유용하다.
+이름에 날짜가 포함된 인덱스에 로그를 넣을 수 있고, 자정이 지나면 날짜가 새로 반영된 인덱스가 새로 생성되도록 할 수 있다.
+====
+
 === Deleting an Index
+=== 인덱스 삭제하기
 
 To delete an index, use ((("HTTP methods", "DELETE")))((("DELETE method", "deleting indices")))((("indices", "deleting")))the following request:
+인덱스를 삭제하려면, ((("HTTP methods", "DELETE")))((("DELETE method", "deleting indices")))((("indices", "deleting"))) 다음과 같이 HTTP 요청을 보낸다.
 
 [source,js]
 --------------------------------------------------
@@ -48,6 +67,7 @@ DELETE /my_index
 
 
 You can delete multiple indices with this:
+다음 요청을 이용하면 여러 개의 인덱스를 동시에 삭제할 수 있다.
 
 [source,js]
 --------------------------------------------------
@@ -57,11 +77,9 @@ DELETE /index_*
 
 
 You can even delete _all_ indices with this:
+다음 요청을 이용하면 _모든_ 인덱스를 삭제할 수도 있다.
 
 [source,js]
 --------------------------------------------------
 DELETE /_all
 --------------------------------------------------
-
-
-

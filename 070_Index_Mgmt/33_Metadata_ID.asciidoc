@@ -2,16 +2,16 @@
 
 There are four metadata fields ((("metadata, document", "identity")))associated with document identity:
 
-`_id`::    
+`_id`::
    The string ID of the document
-   
-`_type`::  
+
+`_type`::
    The type name of the document
-   
-`_index`:: 
+
+`_index`::
    The index where the document lives
-   
-`_uid`::   
+
+`_uid`::
    The `_type` and `_id` concatenated together as `type#id`
 
 By default, the `_uid` field is((("id field"))) stored (can be retrieved) and
@@ -76,6 +76,7 @@ body:
 }
 --------------------------------------------------
 <1> The `_id` has been extracted correctly.
+<1> `_id`가 올바르게 추출되었다.
 
 
 WARNING: While this is very convenient, be aware that it has a slight
@@ -84,5 +85,6 @@ the request can no longer use the optimized bulk format to parse just
 the metadata line in order to decide which shard should receive the request.
 Instead, it has to parse the document body as well.
 
-
-
+WARNING: 이것이 매우 편리하긴 하지만, `벌크` 요청(<<bulk-format>> 참조) 시 약간의 성능 저하를 가져온다는 것을 염두에 두도록 하자.
+요청을 처리하는 노드는 메타데이터 라인만을 분석해 어떤 샤드가 요청을 받아야 할지를 결정하는
+최적화된 벌크 형식을 더 이상 사용할 수 없고, 문서 바디까지 분석해야 한다.

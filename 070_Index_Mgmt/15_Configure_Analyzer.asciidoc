@@ -1,33 +1,50 @@
 [[configuring-analyzers]]
 === Configuring Analyzers
+=== 분석기 설정
 
-The third important index setting is the `analysis` section,((("index settings", "analysis"))) which is used
-to configure existing analyzers or to create new custom analyzers
-specific to your index.
+The third important index setting is the `analysis` section,((("index settings", "analysis")))
+which is used to configure existing analyzers or to create new custom analyzers specific to your index.
+
+세 번째로 중요한 인덱스 설정은 `analysis` 부분인데,((("index settings", "analysis"))) 이 항목들은 기존의 분석기(analyzer)를 설정하거나,
+당신의 인덱스에 특화된 새로운 사용자 정의 분석기를 생성할 때 사용된다.
 
 In <<analysis-intro>>, we introduced some of the built-in ((("analyzers", "built-in")))analyzers,
 which are used to convert full-text strings into an inverted index,
 suitable for searching.
 
-The `standard` analyzer, which is the default analyzer
-used for full-text fields,((("standard analyzer", "components of"))) is a good choice for most Western languages.((("tokenization", "in standard analyzer")))((("standard token filter")))((("stop token filter")))((("standard tokenizer")))((("lowercase token filter")))
+The `standard` analyzer, which is the default analyzer used for full-text fields,((("standard analyzer", "components of")))
+is a good choice for most Western languages.((("tokenization", "in standard analyzer")))((("standard token filter")))((("stop token filter")))((("standard tokenizer")))((("lowercase token filter")))
 It consists of the following:
 
-* The `standard` tokenizer, which splits the input text on word boundaries
-* The `standard` token filter, which is intended to tidy up the tokens
-  emitted by the tokenizer (but currently does nothing)
-* The `lowercase` token filter, which converts all tokens into lowercase
-* The `stop` token filter, which removes stopwords--common words
-  that have little impact on search relevance, such as `a`, `the`, `and`,
-  `is`.
+full-text 필드에 사용되는 기본 분석기인 `standard` 분석기는 ((("standard analyzer", "components of"))) 대부분의 서양 언어에 적합하다.((("tokenization", "in standard analyzer")))((("standard token filter")))((("stop token filter")))((("standard tokenizer")))((("lowercase token filter")))
+이 기본 분석기는 다음 요소로 구성되어 있다.
 
-By default, the stopwords filter is disabled.  You can enable it by creating a
-custom analyzer based on the `standard` analyzer and setting the `stopwords`
-parameter.((("stopwords parameter"))) Either provide a list of stopwords or tell it to use a predefined
-stopwords list from a particular language.
+* The `standard` tokenizer, which splits the input text on word boundaries
+* The `standard` token filter, which is intended to tidy up the tokens emitted by the tokenizer (but currently does nothing)
+* The `lowercase` token filter, which converts all tokens into lowercase
+* The `stop` token filter, which removes stopwords--common words that have little impact on search relevance, such as `a`, `the`, `and`, `is`.
+
+* `standard` 토크나이저: 단어 기준으로 입력 텍스트를 분리한다.
+* `standard` 토큰 필터: 토크나이저에 의해 생략된 토큰을 제거한다. (현재는 아무 역할도 하지 않음)
+* `lowercase` 토큰 필터: 모든 토큰을 소문자로 변경한다.
+* `stop` 토큰 필터: `a`, `the`, `and`, `is` 같이 검색 연관성에 거의 영향을 주지 못하는 일반적인 단어를 뜻하는 불용어를 제거한다.
+*
+
+By default, the stopwords filter is disabled.
+You can enable it by creating a custom analyzer based on the `standard` analyzer
+and setting the `stopwords` parameter.((("stopwords parameter")))
+Either provide a list of stopwords or tell it to use a predefined stopwords list from a particular language.
+
+기본적으로 불용어(stopwords) 필터는 비활성화 되어 있다.
+이 필터는 `standard` 분석기에 기반한 사용자 정의 분석기를 생성하고, `stopwords` 파라미터를 설정함으로써 활성화 할 수 있다.((("stopwords parameter")))
+금칙어 리스트를 지정하거나, 특정 언어의 사전 정의된 불용어를 사용하도록 지정한다.
+
 
 In the following example, we create a new analyzer called the `es_std`
 analyzer, which uses the predefined list of ((("Spanish", "analyzer using Spanish stopwords")))Spanish stopwords:
+
+다음 예제에서는, `es_std`로 명명한 새로운 분석기를 생성한다.
+이 분석기는 사전 정의된 ((("Spanish", "analyzer using Spanish stopwords"))) 스페인어의 불용어 리스트를 사용한다.
 
 [source,js]
 --------------------------------------------------
@@ -51,6 +68,9 @@ The `es_std` analyzer is not global--it exists only in the `spanish_docs`
 index where we have defined it. To test it with the `analyze` API, we must
 specify the index name:
 
+`es_std` 분석기는 전역적이지 않다. 이것은 분석기가 정의된 `spanish_docs` 인덱스에서만 유용하다.
+`analyze` API로 이 분석기를 테스트하려면 다음과 같이 인덱스를 반드시 지정해야 한다.
+
 [source,js]
 --------------------------------------------------
 GET /spanish_docs/_analyze?analyzer=es_std
@@ -58,8 +78,9 @@ El veloz zorro marrón
 --------------------------------------------------
 // SENSE: 070_Index_Mgmt/15_Configure_Analyzer.json
 
-The abbreviated results show that the Spanish stopword `El` has been
-removed correctly:
+The abbreviated results show that the Spanish stopword `El` has been removed correctly:
+
+다음과 같이 요약된 결과에서 스페인어의 불용어인 'El'이 정확하게 삭제되었음을 확인할 수 있다.
 
 [source,js]
 --------------------------------------------------
@@ -71,4 +92,3 @@ removed correctly:
   ]
 }
 --------------------------------------------------
-

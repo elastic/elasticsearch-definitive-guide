@@ -1,24 +1,35 @@
 === Search Options
+=== 검색 옵션
 
 A few ((("search options")))optional query-string parameters can influence the search process.
 
-==== preference
+몇몇 ((("search options")))선택적인 검색어 파라미터는 검색 프로세스에 영향을 줄 수 있다.
 
-The `preference` parameter allows((("preference parameter")))((("search options", "preference"))) you to control which shards or nodes are
-used to handle the search request. It accepts values such as `_primary`,
-`_primary_first`, `_local`, `_only_node:xyz`, `_prefer_node:xyz`, and
+==== preference
+==== 선호도 (preference)
+
+The `preference` parameter allows((("preference parameter")))((("search options", "preference")))
+you to control which shards or nodes are used to handle the search request.
+It accepts values such as `_primary`, `_primary_first`, `_local`, `_only_node:xyz`, `_prefer_node:xyz`, and
 `_shards:2,3`, which are explained in detail on the
-http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-request-preference.html[search `preference`]
+{ref}/search-request-preference.html[search `preference`]
 documentation page.
+
+`preference` 파라미터를((("preference parameter")))((("search options", "preference"))) 이용하면,
+검색 요청을 처리할 샤드나 노드를 사용자가 제어할 수 있다.
+이 파라미터에는 `_primary`, `_primary_first`, `_local`, `_only_node:xyz`, `_prefer_node:xyz`, `_shards:2,3` 등의 값을 넣을 수 있는데,
+이에 대해서는 {ref}/search-request-preference.html[search `preference`] 문서에서 자세하게 설명하고 있다.
 
 However, the most generally useful value is some arbitrary string, to avoid
 the _bouncing results_ problem.((("bouncing results problem")))
+
+하지만, _bouncing results_ 문제를 회피할 수 있는 가장 유용한 값은 일반적으로 임의의 문자열이다.((("bouncing results problem")))
 
 [[bouncing-results]]
 .Bouncing Results
 ****
 
-Imagine that you are sorting your results by a `timestamp` field, and 
+Imagine that you are sorting your results by a `timestamp` field, and
 two documents have the same timestamp.  Because search requests are
 round-robined between all available shard copies, these two documents may be
 returned in one order when the request is served by the primary, and in
@@ -31,18 +42,42 @@ like the user's session ID.
 
 ****
 
-==== timeout
+[[bouncing-results]]
+.Bouncing Results
+****
 
-By default, the coordinating node waits((("search options", "timeout"))) to receive a response from all shards.
+예를 들어, `timestamp` 필드를 기준으로 결과를 정렬할 때, 두 개의 문서가 동일한 timestamp를 가진다고 가정해 보자.
+검색 요청이 모든 사용 가능한 샤드 복제본에 대해 라운드 로빈 방식으로 전달되었기 때문에,
+주 샤드에 의해 검색이 처리되었을 때와 레플리카에 의해 처리되었을 때 두 문서의 반환 순서가 다를 수 있다.
+
+이것이 바로 사용자가 페이지를 새로 고침 할 때마다 결과가 다른 순서로 나타나게 되는 _bouncing results_라고 알려진 문제이다.
+사용자의 세션 ID 같은 임의의 문자열을 `preference` 파라미터에 설정하여 동일한 사용자가 항상 동일한 샤드에 질의하도록 함으로써 이 문제를 회피할 수 있다.
+
+****
+
+==== timeout
+==== 타임아웃
+
+By default, the coordinating node waits((("search options", "timeout"))) to
+receive a response from all shards.
 If one node is having trouble, it could slow down the response to all search
 requests.
+
+기본적으로 통합 노드는 모든 샤드로부터 결과를 수신할 때까지 대기한다.((("search options", "timeout")))
+만약 한 노드에 문제가 생기면, 모든 검색 요청에 대한 결과가 지연될 수 있다.
 
 The `timeout` parameter tells((("timeout parameter"))) the coordinating node how long it should wait
 before giving up and just returning the results that it already has. It can be
 better to return some results than none at all.
 
+`timeout` 파라미터는((("timeout parameter"))) 통합 노드로 하여금 결과 수신을 포기하고 지금까지 수신한 결과만을 반환할 떄까지
+얼마나 기다릴 것인지를 지시한다. 결과를 전혀 반환하지 않는 것보다는 일부라도 반환하는 것이 더 나을 수도 있다.
+
 The response to a search request will indicate whether the search timed out and
 how many shards responded successfully:
+
+다음과 같이 검색 요청에 대한 응답에는 검색에서 타임아웃이 발생했는지 여부와,
+얼마나 많은 샤드가 성공적으로 응답했는지가 포함되어 있다.
 
 [source,js]
 --------------------------------------------------
@@ -57,19 +92,30 @@ how many shards responded successfully:
 --------------------------------------------------
 <1> The search request timed out.
 <2> One shard out of five failed to respond in time.
+<1> 검색 요청에서 타임아웃이 발생하였음.
+<2> 다섯 개 샤드 중 한 개가 제 때 응답하지 못했음.
 
 If all copies of a shard fail for other reasons--perhaps because of a
 hardware failure--this will also be reflected in the `_shards` section of
 the response.
 
+만약 모든 샤드 복제본이 (하드웨어 장애 등의 이유로) 응답하지 못했다면, 그 내용도 응답의 `_shards` 부분에 반영될 것이다.
+
 [[search-routing]]
 ==== routing
+[[search-routing]]
+==== 라우팅
 
 In <<routing-value>>, we explained how a custom `routing` parameter((("search options", "routing")))((("routing parameter"))) could be
 provided at index time to ensure that all related documents, such as the
 documents belonging to a single user, are stored on a single shard.  At search
 time, instead of searching on all the shards of an index, you can specify
 one or more `routing` values to limit the search to just those shards:
+
+<<routing-value>>에서 어떻게 하면 인덱스 시에 사용자 정의 `routing` 파라미터를((("search options", "routing")))((("routing parameter")))
+이용해 모든 연관된 문서들을(예를 들어, 한 명의 사용자에 관련된 모든 문서들) 하나의 샤드에 저장할 수 있는지에 대해 설명했다.
+검색 시에도 다음 예제에서와 같이 하나 혹은 그 이상의 `routing` 값을 이용해,
+인덱스 내의 모든 샤드가 아니라 연관된 문서만을 가진 샤드만으로 검색 범위를 제한할 수 있다.
 
 [source,js]
 --------------------------------------------------
@@ -79,11 +125,17 @@ GET /_search?routing=user_1,user2
 This technique comes in handy when designing very large search systems, and we
 discuss it in detail in <<scale>>.
 
+이 기법은 대규모 검색 시스템을 설계할 때 매우 유용하다.
+이에 대해서는 <<scale>>에서 더 자세하게 다루도록 하겠다.
+
 [[search-type]]
 ==== search_type
 
 While `query_then_fetch` is the default((("query_then_fetch search type")))((("search options", "search_type")))((("search_type"))) search type, other search types can
 be specified for particular purposes, for example:
+
+`질의 후 반환`이 기본((("query_then_fetch search type")))((("search options", "search_type")))((("search_type"))) 검색 타입이긴 하지만,
+다음 예제에서와 같이 특정한 목적에 적합한 다른 검색 조건도 지정할 수 있다.
 
 [source,js]
 --------------------------------------------------
@@ -96,6 +148,12 @@ The `count` search type has only a `query` phase.((("count search type")))  It c
 don't need search results, just a document count or
 <<aggregations,aggregations>> on documents matching the query.
 
+`count`::
+
+`count` 검색 타입은 `질의` 단계만을 거친다.((("count search type")))
+이 검색 타입은 검색 결과는 필요없고 문서의 수나 질의에 매치하는 문서에 대한 <<aggregations,aggregations>>만 필요할 때 사용할 수 있다.
+
+
 `query_and_fetch`::
 
 The `query_and_fetch` search type ((("query_and_fetch serch type")))combines the query and fetch phases into a
@@ -104,11 +162,23 @@ request targets a single shard only, such as when a
 <<search-routing,`routing`>> value has been specified. While you can choose
 to use this search type manually, it is almost never useful to do so.
 
+`query_and_fetch`::
+
+`질의 후 반환` 검색 타입((("query_and_fetch serch type")))은 질의와 반환 단계를 하나의 단계로 통합한다.
+이것은 <<search-routing,`routing`>> 값이 지정되었을 때처럼 검색이 하나의 샤드만을 대상으로 할 때 일어나는 내부적인 최적화이다.
+이 검색 타입을 사용하도록 수동으로 지정할 수는 있지만, 효용성은 거의 없다.
+
 `dfs_query_then_fetch` and `dfs_query_and_fetch`::
 
 The `dfs` search types((("dfs search types"))) have a prequery phase that fetches the term
 frequencies from all involved shards in order to calculate global term
 frequencies. We discuss this further in <<relevance-is-broken>>.
+
+`dfs_query_then_fetch` 와 `dfs_query_and_fetch`::
+
+`dfs` 검색 타입((("dfs search types")))은 사전 질의(prequery) 단계를 거친다.
+이 단계에서는 연관된 모든 샤드의 단어 빈도를 확인하여 전역의 단어 빈도를 계산한다.
+이것에 대해서는 <<relevance-is-broken>>에서 자세하게 다룰 것이다.
 
 `scan`::
 
@@ -116,6 +186,7 @@ The `scan` search type is((("scan search type"))) used in conjunction with the `
 retrieve large numbers of results efficiently. It does this by disabling
 sorting.  We discuss _scan-and-scroll_ in the next section.
 
+`scan`::
 
-
-
+`scan` 검색 타입은((("scan search type"))) `scroll` API((("scroll API")))와 함께 사용되어
+대량의 결과를 효율적으로 가져올 수 있다. 이것은 정렬을 비활성화 함으로써 가능하다. _scan과 scroll_에 대해서는 다음 절에서 다루도록 한다.

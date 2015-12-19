@@ -1,14 +1,21 @@
 === Index Settings
+=== 인덱스 설정
 
 There are many many knobs((("index settings"))) that you can twiddle to
 customize index behavior, which you can read about in the
-http://www.elasticsearch.org/guide/en/elasticsearch/guide/current/_index_settings.html#_index_settings[Index Modules reference documentation],
+{ref}/index-modules.html[Index Modules reference documentation],
 but...
+
+사용자가 직접 변경하여 인덱스의 동작을 커스터마이즈 할 수 있는 많은 설정들((("index settings")))이 있다. 이에 대한 내용은 {ref}/index-modules.html[인덱스 모듈 참조 문서]에 기술되어 있다. 그러나...
 
 TIP: Elasticsearch comes with good defaults. Don't twiddle these knobs until
 you understand what they do and why you should change them.
 
+TIP: Elasticsearch는 적절한 기본 설정값으로 설치된다. 이 설정이 어떤 역할을 하는지, 그리고 왜 변경해야 하는지를 확실히 이해하기 전까지는 기본 설정을 변경하지 않는 것이 좋다.
+
 Two of the most important((("shards", "number_of_shards index setting")))((("number_of_shards setting")))((("index settings", "number_of_shards"))) settings are as follows:
+
+((("shards", "number_of_shards index setting")))((("number_of_shards setting")))((("index settings", "number_of_shards")))가장 중요한 두 가지 설정은 다음과 같다.
 
 `number_of_shards`::
 
@@ -16,13 +23,22 @@ Two of the most important((("shards", "number_of_shards index setting")))((("num
     which defaults to `5`.  This setting cannot be changed
     after index creation.
 
+`number_of_shards`::
+    인덱스의 주 샤드 숫자로, 기본 값은 `5`이다. 이 설정은 인덱스 생성 이후에 변경할 수 없다.
+
 `number_of_replicas`::
 
     The number of replica shards (copies) that each primary shard
     should have, which defaults to `1`.  This setting can be changed
     at any time on a live index.
 
-For instance, we could create a small index--just((("index settings", "number_of_replicas")))((("replica shards", "number_of_replicas index setting"))) one primary shard--and no replica shards with the following request:
+`number_of_replicas`::
+    각 주 샤드의 레플리카 샤드 (복제본) 숫자로, 기본 값은 `1`이다. 이 값은 라이브 인덱스에 대해서도 언제든지 변경할 수 있다.
+
+For instance, we could create a small index--just((("index settings", "number_of_replicas")))((("replica shards", "number_of_replicas index setting"))) one primary shard--and
+no replica shards with the following request:
+
+예를 들어, 다음 HTTP 요청은 레플리카 샤드를 갖지 않는 하나의 주 샤드로 이루어진((("index settings", "number_of_replicas")))((("replica shards", "number_of_replicas index setting"))) 작은 인덱스를 생성한다.
 
 [source,js]
 --------------------------------------------------
@@ -39,6 +55,8 @@ PUT /my_temp_index
 Later, we can change the number of replica shards dynamically using the
 `update-index-settings` API as((("update-index-settings API"))) follows:
 
+나중에 다음과 같이 `update-index-settings` API를 이용해 레플리카 샤드의 숫자를 동적으로 변경할 수 있다.
+
 [source,js]
 --------------------------------------------------
 PUT /my_temp_index/_settings
@@ -47,5 +65,3 @@ PUT /my_temp_index/_settings
 }
 --------------------------------------------------
 // SENSE: 070_Index_Mgmt/10_Settings.json
-
-

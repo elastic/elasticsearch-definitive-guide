@@ -1,35 +1,59 @@
 [[mapping]]
 === Types and Mappings
+=== 타입과 매핑
 
 A _type_ in Elasticsearch represents a class of similar documents.((("types", "defined"))) A type
 consists of a _name_&#x2014;such as `user` or `blogpost`&#x2014;and a _mapping_. The
 mapping, ((("mapping (types)")))like a database schema, describes the fields or _properties_ that
 documents of that type may have, ((("fields", "datatypes")))the datatype of each field--such as `string`,
-`integer`, or `date`&#x2014;and how those fields should be indexed and stored by
-Lucene.
+`integer`, or `date`&#x2014;and how those fields should be indexed and stored by Lucene.
+
+Elasticsearch에서의 _타입(type)_은 유사한 문서들의 클래스를 의미한다.((("types", "defined")))
+타입은 `user`나 `blogpost`같은 타입의 _이름(name)_과 _매핑(mapping))으로 이루어진다.
+매핑((("mapping (types)")))은 데이터베이스의 스키마처럼 특정 타입의 문서가 가진 필드나 _속성(property)_,
+그리고 `string`, `integer`나 `date` 같은 각 필드의 데이터 타입에 대한 설명이 포함되어 있다.
+또한 Lucene이 이 필드들을 어떻게 인덱싱하고 저정해야 할 지에 대한 설명도 포함한다.
 
 In <<document>>, we said that a type is like a table in a relational database.
 While this is a useful way to think about types initially, it is worth
 explaining in more detail exactly what a type is and how they are implemented
 on top of Lucene.
 
-==== How Lucene Sees Documents
+<<document>>에서, 타입은 관계형 데이터베이스의 테이블과 유사하다고 설명했다.
+타입을 이렇게 이해하는 것도 처음에는 유용한 방법이지만, 타입이란 정확히 어떤 것이고
+Lucene 상에서 타입이 어떻게 구현되었는지에 대한 내용은 더 자세하게 설명할 만한 가치가 있다.
 
-A document in Lucene consists of a simple list of field-value pairs.((("documents", "in Lucene"))) A field
-must have at least one value, but any field can contain multiple values.
+==== How Lucene Sees Documents
+==== Lucene에서 문서의
+
+A document in Lucene consists of a simple list of field-value pairs.((("documents", "in Lucene")))
+A field must have at least one value, but any field can contain multiple values.
 Similarly, a single string value may be converted into multiple values by the
-analysis process.  Lucene doesn't care if the values are strings or numbers or
-dates--all values are just treated as _opaque bytes_.
+analysis process.
+Lucene doesn't care if the values are strings or numbers or dates--all values are just treated as _opaque bytes_.
+
+Lucene 내에서 문서는 필드-값 묶음에 대한 단순 리스트 형태로 이루어져 있다.((("documents", "in Lucene")))
+필드는 최소한 하나의 값을 가져야 하며, 모든 필드는 여러 개의 값을 가질 수 있다.
+유사하게, 단일 문자열 값은 분석 과정을 거쳐 여러 개의 값으로 변할 수 있다.
+Lucene은 값들이 문자열인지, 숫자인지, 아니면 날짜인지에 대해 전혀 신경을 쓰지 않는다. 모든 값들은 _단순 바이트 배열_로 처리된다.
 
 When we index a document in Lucene, the values for each field are added to the
 inverted index for the associated field.  Optionally, the original values may
 also be _stored_ unchanged so that they can be retrieved later.
 
-==== How Types Are Implemented
+Lucene에서 문서를 인덱싱할 때, 각 필드에 대한 값(들)은 연관된 필드에 대한 반전된(inverted) 인덱스에 추가된다.
+선택적으로, 원래의 값을 나중에 검색할 수 있도록 변경하지 않은 채로 _저장_할 수도 있다.
 
-Elasticsearch types are ((("types", "implementation in Elasticsearch")))implemented on top of this simple foundation. An index
-may have several types, each with its own mapping, and documents of any of
-these types may be stored in the same index.
+==== How Types Are Implemented
+==== 타입의 구현 방법
+
+Elasticsearch types are ((("types", "implementation in Elasticsearch")))implemented on top of this simple foundation.
+An index may have several types, each with its own mapping,
+and documents of any of these types may be stored in the same index.
+
+Elasticsearch의 타입은 ((("types", "Elasticsearch에서의 구현"))) 이 간단한 기초 위에서 구현되었다.
+인덱스는 여러 개의 타입을 가질 수 있으며, 각 타입은 그 자신만의 매핑을 가질 수 있다.
+그리고, 서로 다른 타입의 문서라도 모두 동일한 인덱스 안에 저장될 수 있다.
 
 Because Lucene has no concept of document types, the type name of each
 document is stored with the document in a metadata field called `_type`.((("type field"))) When
@@ -44,6 +68,10 @@ For instance, the mapping for the `name` field in the `user` type may declare
 that the field is a `string` field, and that its value should be analyzed
 by the `whitespace` analyzer before being indexed into the inverted
 index called `name`:
+
+예를 들어, 다음 예제에서는 `user` 타입의 `name` 필드에 대한 매핑은 `string` 필드이며,
+그 값은 인덱싱 되어 `name`으로 불리는 반전된 인덱스에 추가되기 전에
+`whitespace` 분석기에 의해 분석되어야 한다고 지정하고 있다.
 
 [source,js]
 --------------------------------------------------

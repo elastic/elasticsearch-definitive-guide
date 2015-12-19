@@ -1,29 +1,49 @@
 [[reindex]]
 === Reindexing Your Data
+=== 데이터 재인덱스(reindex) 하기
 
-Although you can add new types to an index, or add new fields to a type, you
-can't add new analyzers or make changes to existing fields.((("reindexing")))((("indexing", "reindexing your data")))  If you were to do
-so, the data that had already been indexed would be incorrect and your
+Although you can add new types to an index, or add new fields to a type,
+you can't add new analyzers or make changes to existing fields.((("reindexing")))((("indexing", "reindexing your data")))
+If you were to do so, the data that had already been indexed would be incorrect and your
 searches would no longer work as expected.
+
+인덱스에 새로운 타입을 추가하거나, 타입에 새로운 필드를 추가할 수 있지만,
+새로운 분석기를 추가한다거나, 기존 필드를 변경할 수는 없다.((("reindexing")))((("indexing", "reindexing your data")))
+그렇게 하면, 이미 인덱스 된 데이터가 부정확하게 되어 검색이 의도한 대로 동작하지 않게 될 것이다.
 
 The simplest way to apply these changes to your existing data is to
 reindex:  create a new index with the new settings and copy all of your
 documents from the old index to the new index.
 
+이런 변경 사항을 기존 데이터에 반영할 수 있는 가장 간단한 방법은 바로 재인덱스이다.
+새로운 설정으로 인덱스를 새로 만들고, 기존 인덱스에서 새로운 인덱스로 모든 문서를 복사하는 것이 재인덱스이다.
+
 One of the advantages of the `_source` field is that you already have the
 whole document available to you in Elasticsearch itself. You don't have to
 rebuild your index from the database, which is usually much slower.
+
+`_source` 필드의 효용 중의 하나는 바로 Elasticsearch 자체에서 전체 문서를 가지고 있다는 점이다.
+`_source` 필드를 이용하면, 데이터베이스로부터 인덱스를 다시 빌드할 필요가 없다.
+데이터베이스로부터 다시 빌드하면 보통은 훨씬 느리다.
 
 To reindex all of the documents from the old index efficiently,  use
 <<scan-scroll,_scan-and-scroll_>> to retrieve batches((("scan-and-scroll", "using in reindexing documents"))) of documents from the old index,
 and the <<bulk,`bulk` API>> to push them into the new index.
 
+기존 인덱스에서 모든 문서를 효율적으로 재인덱스하려면, <<scan-scroll,_scan-and-scroll_>>을 이용해((("scan-and-scroll", "using in reindexing documents"))) 기존 인덱스에서 문서 를 검색하고,
+<<bulk,`bulk` API>>를 이용해 새로운 인덱스로 검색한 데이터를 집어넣는다.
+
 .Reindexing in Batches
+
+.재인덱스 배치 작업
+
 ****
 
-You can run multiple reindexing jobs at the same time, but you obviously don't
-want their results to overlap.  Instead, break a big reindex down into smaller
-jobs by filtering on a date or timestamp field:
+You can run multiple reindexing jobs at the same time, but you obviously don't want their results to overlap.
+Instead, break a big reindex down into smaller jobs by filtering on a date or timestamp field:
+
+동시에 여러 개의 재인덱스 작업을 실행할 수 있지만, 그 결과가 중첩되어서는 안된다.
+그 대신, 다음과 같이 하나의 큰 재인덱스 작업을 날짜 또는 타임스탬프 필드로 필터링하여 여러 개의 작은 작업으로 쪼갤 수 있다.
 
 [source,js]
 --------------------------------------------------
@@ -48,6 +68,11 @@ This can be done by rerunning the reindex process, but again filtering
 on a date field to match only documents that have been added since the
 last reindex process started.
 
+이전 인덱스에 지속적으로 변경이 발생할 경우, 새로운 인덱스에 추가된 데이터에도
+변경된 사항이 적용되도록 해야 한다. (애매모호)
+이렇게 하려면 재인덱스 프로세스를 다시 실행하면 된다.
+이 때, 마지막 재인덱스 프로세스가 시작된 이후에 추가된 문서만 재인덱스하도록
+날짜를 기준으로 필터링 하도록 한다.
+
+
 ****
-
-

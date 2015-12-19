@@ -4,6 +4,9 @@ During the initial _query phase_,  the((("distributed search execution", "query 
 primary or replica shard) of every shard in the index. Each shard executes
 the search locally and ((("priority queue")))builds a _priority queue_ of matching documents.
 
+초기 _질의 단계_에서는, 질의가 인덱스 내의 모든 샤드에 대한 샤드 복제본 (primary 혹은 replica 샤드)로 브로드캐스트 된다.
+각 샤드는 샤드 로컬에서 검색을 실행하고, ((("priority queue")))매치하는 문서에 대한 _우선순위 큐(priority queue)를 만든다.
+
 .Priority Queue
 ****
 
@@ -21,6 +24,24 @@ GET /_search
 }
 --------------------------------------------------
 ****
+
+.우선순위 큐(Priority Queue)
+****
+
+우선순위 큐는 매치하는 문서에 대한 _top-n_ 목록을 보관하는 단순한 정렬 리스트이다.
+우선순위 큐의 크기는 `from`과 `size` 페이징 파라미터에 따라 다르다.
+예를 들어, 다음 검색 요청은 100개 문서를 보관할 수 있는 우선순위 큐를 필요로 한다.
+
+[source,js]
+--------------------------------------------------
+GET /_search
+{
+    "from": 90,
+    "size": 10
+}
+--------------------------------------------------
+****
+
 
 The query phase process is depicted in <<img-distrib-search>>.
 
@@ -47,6 +68,8 @@ node.((("nodes", "coordinating node for search requests"))) It is the job of thi
 involved shards, and to gather their responses into a globally sorted result
 set that it can return to the client.
 
+검색 요청이 노드에 전달되면, 노드는
+
 The first step is to broadcast the request to a shard copy of every node in
 the index. Just like <<distrib-read,document `GET` requests>>, search requests
 can be handled by a primary shard or by any of its replicas.((("shards", "handling search requests"))) This is how more
@@ -54,15 +77,25 @@ replicas (when combined with more hardware) can increase search throughput.
 A coordinating node will round-robin through all shard copies on subsequent
 requests in order to spread the load.
 
+첫 번째 단계는 요청을 각 노드의 인덱스 내에 있는 샤드 복제본에 브로드캐스트 하는 것이다.
+<<distrib-read,document `GET` requests>>와 유사하게, 주 샤드 또는 그 레플리카 중의 어떤 것이라도 검색 요청을 처리할 수 있다.
+((("shards", "handling search requests")))(더 많은 하드웨어와 합쳐졌을 때) 레플리카가 늘어나면 검색 성능이 높아지는 이유가 바로 이것이다.
+통합 노드는 부하 분산을 위해 모든 샤드 복제본에 라운드-로빈 방식으로 연속적인 요청을 전달한다.
+
 Each shard executes the query locally and builds a sorted priority queue of
 length `from + size`&#x2014;in other words, enough results to satisfy the global
 search request all by itself. It returns a lightweight list of results to the
 coordinating node, which contains just the doc IDs and any values required for
 sorting, such as the `_score`.
 
+각 샤드는 로컬에서 질의를 실행하고, `from + size` 길이로 생성된 정렬된 우선순위 큐를 구성한다.
+이 큐의 길이는 
+
 The coordinating node merges these shard-level results into its own sorted
 priority queue, which represents the globally sorted result set. Here the query
 phase ends.
+
+통합 노드는 이 샤드 레벨의 검색 결과를 하나의 정렬된 우선순위 큐로 병합한다. 이 우선순위 큐는 전역적으로 정렬된 검색 결과 집합이 된다. 여기서 질의 단계가 끝나게 된다.
 
 [NOTE]
 ====
@@ -70,4 +103,11 @@ An index can consist of one or more primary shards,((("indices", "multi-index se
 against a single index needs to be able to combine the results from multiple
 shards. A search against _multiple_ or _all_ indices works in exactly the same
 way--there are just more shards involved.
+====
+
+[NOTE]
+====
+하나의 인덱스는 하나 혹은 그 이상의 물리적 샤드로 구성될 수 있으므로, ((("indices", "multi-index search")))
+하나의 단일 인덱스에 대한 검색 요청은 여러 개의 샤드로부터의 결과를 조합해야 한다.
+다수 혹은 전체 인덱스에 대한 검색도 완전히 동일한 방식으로 동작한다. 다만 연관된 샤드가 더 많을 뿐이다.
 ====

@@ -1,25 +1,43 @@
 [[custom-analyzers]]
 === Custom Analyzers
+=== 사용자 정의 분석기
 
 While Elasticsearch comes with a number of analyzers available out of the box,
 the real power comes from the ability to create your own custom analyzers
 by combining character filters, tokenizers, and token filters in a
 configuration that suits your particular data.
 
+Elasticsearch는 여러 개의 분석기를 내장하고 있기도 하지만,
+사용자의 특정한 데이터에 적합한 문자 필터와 토크나이저,
+그리고 토큰 필터를 설정에서 조합하여 새로운 사용자 정의 분석기를 생성할 수 있다는 점에서 더 강력하다.
+
 In <<analysis-intro>>, we said that an _analyzer_ is a wrapper that combines
 three functions into a single package,((("analyzers", "character filters, tokenizers, and token filters in"))) which are executed in sequence:
+
+<<analysis-intro>>에서, _분석기_가 다음 순서로 실행되는 세 가지 기능을 하나의 패키지((("analyzers", "character filters, tokenizers, and token filters in")))로
+조합한 wrapper라고 설명한 바 있다.
 
 Character filters::
 +
 --
 Character filters((("character filters"))) are used to ``tidy up'' a string before it is tokenized.
-For instance, if our text is in HTML format, it will contain HTML tags like
-`<p>` or `<div>` that we don't want to be indexed. We can use the
-http://bit.ly/1B6f4Ay[`html_strip` character filter]
+For instance, if our text is in HTML format, it will contain HTML tags like `<p>` or `<div>` that we don't want to be indexed.
+We can use the {ref}/analysis-htmlstrip-charfilter.html[`html_strip` character filter]
 to remove all HTML tags and to convert HTML entities like `&Aacute;` into the
 corresponding Unicode character `Á`.
 
 An analyzer may have zero or more character filters.
+--
+
+문자 필터 (Character filters)::
++
+--
+문자 필터((("character filters")))는 토큰화 되기 전에 문자열을 ``제거(tidy up)''하는 데 사용된다.
+예를 들어, 우리 텍스트가 HTML 형식이라면, `<p>`나 `<div>`같은 인덱싱되기를 원하지 않는 HTML 태그를 포함하고 있을 것이다.
+{ref}/analysis-htmlstrip-charfilter.html[`html_strip` 문자 필터]를 이용해 모든 HTML 태그를 제거하고,
+`&Aacute;` 같은 HTML 요소를 그에 상응하는 유니코드 문자 `Á`로 변환할 수 있다.
+
+분석기는 문자 필터를 갖지 않을 수도 있고, 여러 개의 문자 필터를 가질 수도 있다.
 --
 
 Tokenizers::
@@ -27,19 +45,35 @@ Tokenizers::
 --
 An analyzer _must_ have a single tokenizer.((("tokenizers", "in analyzers")))  The tokenizer breaks up the
 string into individual terms or tokens. The
-http://bit.ly/1E3Fd1b[`standard` tokenizer],
+{ref}/analysis-standard-tokenizer.html[`standard` tokenizer],
 which is used((("standard tokenizer"))) in the `standard` analyzer, breaks up a string into
 individual terms on word boundaries, and removes most punctuation, but
 other tokenizers exist that have different behavior.
 
-For instance, the
-http://bit.ly/1ICd585[`keyword` tokenizer]
+For instance, the {ref}/analysis-keyword-tokenizer.html[`keyword` tokenizer]
 outputs exactly((("keyword tokenizer"))) the same string as it received, without any tokenization. The
-http://bit.ly/1xt3t7d[`whitespace` tokenizer]
+{ref}/analysis-whitespace-tokenizer.html[`whitespace` tokenizer]
 splits text((("whitespace tokenizer"))) on whitespace only. The
-http://bit.ly/1ICdozA[`pattern` tokenizer] can
+{ref}/analysis-pattern-tokenizer.html[`pattern` tokenizer] can
 be used to split text on a ((("pattern tokenizer")))matching regular expression.
 --
+
+토크나이저 (Tokenizers)::
++
+--
+
+분석기에는 _반드시_ 하나의 토크나이저가 있어야 한다.((("tokenizers", "in analyzers")))
+토크나이저는 문자열을 개별 단어 또는 토큰으로 분리한다.
+`standard` 분석기에서 사용되는 {ref}/analysis-standard-tokenizer.html[`standard` 토크나이저]는
+문자열을 단어 단위로 개별 단어로 분리하고, 대부분의 구둣점(punctuation)을 제거한다.
+하지만 다른 토크나이저는 다른 동작을 한다.
+
+예를 들어, the {ref}/analysis-keyword-tokenizer.html[`keyword` 토크나이저]는 입력된 문자열을 토큰화 하지 않고 그대로 반환한다.
+{ref}/analysis-whitespace-tokenizer.html[`whitespace` 토크나이저]는 텍스트를((("whitespace tokenizer"))) 공백에 의해서만 분리한다.
+{ref}/analysis-pattern-tokenizer.html[`pattern` 토크나이저]는 매치되는 정규 표현식에 의해 텍스트를 분리하는 데 사용된다.
+
+--
+
 
 Token filters::
 +
@@ -49,26 +83,52 @@ specified token filters,((("token filters"))) in the order in which they are spe
 
 Token filters may change, add, or remove tokens.  We have already mentioned the
 http://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-lowercase-tokenizer.html[`lowercase`] and
-http://bit.ly/1INX4tN[`stop` token filters],
+{ref}/analysis-stop-tokenfilter.html[`stop` token filters],
 but there are many more available in Elasticsearch.
-http://bit.ly/1AUfpDN[Stemming token filters]
+{ref}/analysis-stemmer-tokenfilter.html[Stemming token filters]
 ``stem'' words to ((("stemming token filters")))their root form. The
-http://bit.ly/1ylU7Q7[`ascii_folding` filter]
+{ref}/analysis-asciifolding-tokenfilter.html[`ascii_folding` filter]
 removes diacritics,((("ascii_folding filter"))) converting a term like `"très"` into `"tres"`. The
-http://bit.ly/1CbkmYe[`ngram`] and
-http://bit.ly/1DIf6j5[`edge_ngram` token filters] can produce((("edge_engram token filter")))((("ngram and edge_ngram token filters")))
+{ref}/analysis-ngram-tokenfilter.html[`ngram`] and
+{ref}/analysis-edgengram-tokenfilter.html[`edge_ngram` token filters] can produce((("edge_engram token filter")))((("ngram and edge_ngram token filters")))
 tokens suitable for partial matching or autocomplete.
 --
+
+토큰 필터::
++
+--
+After tokenization, the resulting _token stream_ is passed through any
+specified token filters,((("token filters"))) in the order in which they are specified.
+
+토큰화 이후 생성된 _토큰 스트림_은 지정된 순서대로 지정된 토큰 필터((("token filters")))를 거쳐 전달된다.
+
+토큰 필터는 토큰을 변경, 추가, 삭제할 수 있다.
+이미 http://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-lowercase-tokenizer.html[`lowercase`] 필터와
+{ref}/analysis-stop-tokenfilter.html[`stop` 토큰 필터]를 다루기도 했지만, Elasticsearch에는 더 많은 토큰 필터가 있다.
+{ref}/analysis-stemmer-tokenfilter.html[Stemming 토큰 필터]는 ((("stemming token filters"))) 단어의 접두사를 모두 제거하여(``stem'') 원본 형태로 만든다.
+{ref}/analysis-asciifolding-tokenfilter.html[`ascii_folding` 필터]는 발음 구별 부호를 제거하여,((("ascii_folding filter"))) `"très"` 같은 단어를 `"tres"`로 변경한다.
+{ref}/analysis-ngram-tokenfilter.html[`ngram`]과 {ref}/analysis-edgengram-tokenfilter.html[`edge_ngram` 토큰 필터]는((("edge_engram token filter")))((("ngram and edge_ngram token filters")))
+부분석 매치 또는 자동 완성(autocomplete)에 적합한 토큰을 만들어 낼 수 있다.
+--
+
 
 In <<search-in-depth>>, we discuss examples of where and how to use these
 tokenizers and filters.  But first, we need to explain how to create a custom
 analyzer.
 
-==== Creating a Custom Analyzer
+<<search-in-depth>>에서는 토크나이저와 필터를 어디서 어떻게 사용할 지에 대해 다룬다.
+하지만, 그보다 먼저 사용자 정의 분석기를 어떻게 생성하는지에 대해 먼저 설명하겠다.
 
-In the same way as((("index settings", "analysis", "creating custom analyzers")))((("analyzers", "custom", "creating"))) we configured the `es_std` analyzer previously, we can configure
+==== Creating a Custom Analyzer
+==== 사용자 정의 분석기 생성하기
+
+In the same way as((("index settings", "analysis", "creating custom analyzers")))((("analyzers", "custom", "creating")))
+we configured the `es_std` analyzer previously, we can configure
 character filters, tokenizers, and token filters in their respective sections
 under `analysis`:
+
+앞에서 `es_std` 분석기를 생성했던 것과 동일한 방법으로,
+다음 예제와 같이 `analysis`의 각 설정 부분에 문자 필터, 토크나이저, 그리고 토큰 필터를 설정할 수 있다.
 
 [source,js]
 --------------------------------------------------
@@ -120,8 +180,44 @@ As an example, let's set up a custom analyzer that will do the following:
 }
 --------------------------------------------------
 
+한 가지 예시로, 다음 동작을 하는 사용자 정의 분석기를 설정해 보도록 하자.
+
+1. `html_strip` 문자 필터를 이용해 HTML 태그를 제거한다.
+
+2. 다음과 같이 사용자 정의 'mapping' 문자 필터를 이용해 `&` 문자를 `" and "`로 치환한다.
+
++
+[source,js]
+--------------------------------------------------
+"char_filter": {
+    "&_to_and": {
+        "type":       "mapping",
+        "mappings": [ "&=> and "]
+    }
+}
+--------------------------------------------------
+
+3. `standard` 토크나이저를 이용해 단어를 토큰화 한다.
+
+4. `lowercase` 토큰 필터를 이용해 단어를 소문자로 바꾼다.
+
+5. 다음과 같이 사용자 정의 `stop` 토큰 필터를 이용해 불용어를 제거한다.
++
+[source,js]
+--------------------------------------------------
+"filter": {
+    "my_stopwords": {
+        "type":        "stop",
+        "stopwords": [ "the", "a" ]
+    }
+}
+--------------------------------------------------
+
+
 Our analyzer definition combines the predefined tokenizer and filters with the
 custom filters that we have configured previously:
+
+우리가 만든 분석기는 다음과 같이 사전 정의된 토크나이저와 필터, 그리고 앞에서 설정한 사용자 정의 필터의 구성으로 정의된다.
 
 [source,js]
 --------------------------------------------------
@@ -137,6 +233,8 @@ custom filters that we have configured previously:
 
 
 To put it all together, the whole `create-index` request((("create-index request"))) looks like this:
+
+한데 묶어서 보면, 전체 `인덱스 생성` 요청은 다음과 같다.((("인덱스 생성 요청")))
 
 [source,js]
 --------------------------------------------------
@@ -168,6 +266,8 @@ PUT /my_index
 
 After creating the index, use the `analyze` API to((("analyzers", "testing using analyze API"))) test the new analyzer:
 
+인덱스를 생성한 다음, 다음과 같이 `analyze` API를 이용해((("analyzers", "testing using analyze API"))) 새로운 분석기를 테스트할 수 있다.
+
 [source,js]
 --------------------------------------------------
 GET /my_index/_analyze?analyzer=my_analyzer
@@ -176,7 +276,11 @@ The quick & brown fox
 // SENSE: 070_Index_Mgmt/20_Custom_analyzer.json
 
 
+
+
 The following abbreviated results show that our analyzer is working correctly:
+
+다음 요약된 결과를 보면 우리 분석기가 정상적으로 동작하고 있음을 확인할 수 있다.
 
 [source,js]
 --------------------------------------------------
@@ -192,6 +296,9 @@ The following abbreviated results show that our analyzer is working correctly:
 
 The analyzer is not much use unless we tell ((("analyzers", "custom", "telling Elasticsearch where to use")))((("mapping (types)", "applying custom analyzer to a string field")))Elasticsearch where to use it. We
 can apply it to a `string` field with a mapping such as the following:
+
+우리가 Elasticsearch에 어디에 사용하라고 알려주기 전까지는((("analyzers", "custom", "telling Elasticsearch where to use")))((("mapping (types)", "applying custom analyzer to a string field"))) 분석기는 쓸모가 없다.
+다음과 같이 매핑을 이용해 `string` 필드에 우리 분석기를 적용할 수 있다.
 
 [source,js]
 --------------------------------------------------
