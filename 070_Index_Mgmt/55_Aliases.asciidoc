@@ -1,32 +1,57 @@
 [[index-aliases]]
 === Index Aliases and Zero Downtime
+=== 인덱스 알리아스와 제로 다운타임
 
 The problem with the reindexing process described previously is that you need
 to update your application to use the new index name.((("index aliases")))  Index aliases
 to the rescue!
 
+앞에서 언급했던 재인덱싱 프로세스의 문제점은 새로운 인덱스 이름을 사용하도록
+당신의 응용 프로그램을 업데이트 해야 한다는 점이다.((("index aliases")))
+인덱스 알리아스는 이 문제에 대한 해결책을 제시해 준다.
+
 An index _alias_ is like a shortcut or symbolic link, which can point to
 one or more indices, and can be used in any API that expects an index name.
 Aliases((("aliases, index"))) give us an enormous amount of flexibility. They allow us to do the following:
+
+인덱스 _알리아스_는 하나, 혹은 그 이상의 인덱스를 지칭할 수 있는 바로가기 또는 심볼릭 링크와 유사하다.
+이것은 인덱스 이름을 요구하는 어떤 API에 대해서도 사용할 수 있다.
+알라아스((("aliases, index")))는 엄청난 유연함을 제공해 주는데, 다음이 그 대표적인 예가 될 수 있다.
 
  * Switch transparently between one index and another on a running cluster
  * Group multiple indices (for example, `last_three_months`)
  * Create ``views'' on a subset of the documents in an index
 
+ * 운영 중인 클러스터에서 하나의 인덱스에서 다른 인덱스로 투명한(transparently) 전환
+ * 여러 개의 인덱스를 하나로 그룹화 (ex. `최근 3개월`)
+ * 인덱스 내의 일부 문서들로 이루어진 하위 집합에 대한 ``View'' 생성
+
 We will talk more about the other uses for aliases later in the book. For now
 we will explain how to use them to switch from an old index to a new index
 with zero downtime.
 
+알리아스의 다른 활용법에 대해서는 뒤에서 더 자세하게 다룰 것이다.
+지금은 한 인덱스에서 다른 인덱스로 전환할 때 알리아스를 이용해 제로 다운타임을 달성하는 방법에 대해 다룰 것이다.
+
 There are two endpoints for managing aliases: `_alias` for single
 operations, and `_aliases` to perform multiple operations atomically.
+
+알리아스를 관리하는 두 개의 API 엔드포인트가 있다.
+`_alias`는 단일 동작을 처리할 때 사용하며, `_aliases`는 여러 개의 동작을 원자적으로(atomically) 처리할 때 사용한다.
 
 In this scenario, we will assume that your application is talking to an
 index called `my_index`. In reality, `my_index` will be an alias that
 points to the current real index.  We will include a version number in the
 name of the real index: `my_index_v1`, `my_index_v2`, and so forth.
 
+이 시나리오에서는, 당신의 응용 프로그램이 `my_index`라는 이름의 인덱스에 대해 동작한다고 가정할 것이다.
+실제로, `my_index`는 현재의 실제 인덱스를 가리키는 알리아스가 된다.
+실제 인덱스의 이름에는 `my_index_v1`, `my_index_v2`같이 버전을 나타내는 번호를 포함할 것이다.
+
 To start off, create the index `my_index_v1`, and set up the alias
 `my_index` to point to it:
+
+먼저 `my_index_v1`이라는 인덱스를 만들고, `my_index` 알리아스가 이 인덱스를 가리키도록 한다.
 
 [source,js]
 --------------------------------------------------
@@ -38,7 +63,12 @@ PUT /my_index_v1/_alias/my_index <2>
 <1> Create the index `my_index_v1`.
 <2> Set the `my_index` alias to point to `my_index_v1`.
 
+<1> `my_index_v1` 인덱스를 만든다.
+<2> `my_index` 알리아스가 `my_index_v1`을 가르키도록 한다.
+
 You can check which index the alias points to:
+
+다음과 같이 알리아스가 가르키는 인덱스를 확인할 수 있다.
 
 [source,js]
 --------------------------------------------------
@@ -48,6 +78,8 @@ GET /*/_alias/my_index
 
 Or which aliases point to the index:
 
+다음과 같이, 인덱스를 가르키고 있는 알리아스의 목록을 모두 확인할 수도 있다.
+
 [source,js]
 --------------------------------------------------
 GET /my_index_v1/_alias/*
@@ -55,6 +87,8 @@ GET /my_index_v1/_alias/*
 // SENSE: 070_Index_Mgmt/55_Aliases.json
 
 Both of these return the following:
+
+두 API 호출은 동일하게 다음 결과를 반환한다.
 
 [source,js]
 --------------------------------------------------
@@ -70,7 +104,13 @@ Both of these return the following:
 
 Later, we decide that we want to change the mappings for a field in our index.
 Of course, we can't change the existing mapping, so we have to reindex
-our data.((("reindexing", "using index aliases")))  To start, we create `my_index_v2` with the new mappings:
+our data.((("reindexing", "using index aliases")))
+To start, we create `my_index_v2` with the new mappings:
+
+이후에, 우리는 인덱스의 한 필드에 대한 매핑을 변경하기로 결정했다.
+당연히 현재의 매핑을 변경할 수 없으므로, 우리 데이터를 재인덱싱 해야 한다.((("reindexing", "using index aliases")))
+우리는 다음과 같이 새로운 매핑을 반영한 `my_index_v2`를 만들었다.
+
 
 [source,js]
 --------------------------------------------------
@@ -95,10 +135,17 @@ the process described in <<reindex>>.  Once we are satisfied that our
 documents have been reindexed correctly, we switch our alias
 to point to the new index.
 
+그리고, <<reindex>>에서 설명했던 프로세스에 따라 `my_index_v1`에서 `my_index_v2`로 우리 데이터를 재인덱스한다.
+우리 문서들이 모두 정확하게 재인덱싱 되었음을 확인하고, 알리아스가 새로운 인덱스를 가리키도록 한다.
+
 An alias can point to multiple indices, so we need to remove the alias
 from the old index at the same time as we add it to the new index.  The
 change needs to be atomic, which means that we must use the `_aliases`
 endpoint:
+
+하나의 알리아스는 여러 개의 인덱스를 가리킬 수 있으므로, 기존 인덱스에 대한 알리아스를 삭제하는 동시에
+새로운 인덱스에 대한 알리아스를 추가해야 한다.
+이 변경은 원자적으로 이루어져야 하기 때문에, 반드시 다음과 같이 `_aliases` 엔드포인트를 이용해야 한다.
 
 [source,js]
 --------------------------------------------------
@@ -116,6 +163,9 @@ POST /_aliases
 Your application has switched from using the old index to the new
 index transparently, with zero downtime.
 
+이제 당신의 응용 프로그램이 사용하는 인덱스는 기존 인덱스에서 새로운 인덱스로 투명하게 전환되었으며,
+이 과정에 다운타임은 없었다.
+
 [TIP]
 ====
 Even when you think that your current index design is perfect, it is likely
@@ -125,4 +175,14 @@ is already being used in production.
 Be prepared: use aliases instead of indices in your application. Then you
 will be able to reindex whenever you need to. Aliases are cheap and should
 be used liberally.
+====
+
+[TIP]
+====
+지금의 인덱스 설계가 완벽하다고 생각할 수도 있지만, 이후에 운영 환경에서 이미 사용되는 중에
+일부를 변경할 필요가 생길 수도 있다.
+
+미리 대비하도록 하자. 당신의 응용 프로그램에서 인덱스 대신 알리아스를 이용하도록 한다.
+그렇게 하면 당신이 필요로 할 때마다 재인덱싱을 할 수 있다. 알리아스는 사용이 매우 쉽기 때문에,
+자유롭게 사용되어야 한다.
 ====

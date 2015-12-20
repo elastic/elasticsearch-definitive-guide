@@ -1,8 +1,12 @@
 [[root-object]]
 === The Root Object
+=== 루트 객체 (Root Object)
 
 The uppermost level of a mapping is known ((("mapping (types)", "root object")))((("root object")))as the _root object_. It may
 contain the following:
+
+최상위 수준 매핑은 ((("mapping (types)", "root object")))((("root object"))) _루트 객체_로 알려져 있다.
+루트 객체는 다음 요소들을 가진다.
 
 * A _properties_ section, which lists the mapping for each field that a
   document may contain
@@ -17,22 +21,46 @@ contain the following:
 * Other settings, which can be applied both to the root object and to fields
   of type `object`, such as `enabled`, `dynamic`, and `include_in_all`
 
+
+* 문서가 가지는 각 필드에 대한 매핑을 나열하고 있는 _properties_ 섹션
+
+* `_type`, `_id`, `_source`처럼 언더스코어 문자로 시작하는 다양한 메타데이터 필드
+
+* `analyzer`, `dynamic_date_formats`, 그리고 `dynamic_templates` 같이 새로운 필드에 대한 동적 탐지가 어떻게 이루어져야 할 지를 제어하는 설정
+
+* `enabled`, `dynamic`, `include_in_all` 같이 루트 객체와 `object` 타입의 모든 필드에 적용할 수 있는 기타 설정
+
 ==== Properties
+==== 속성 (Properties)
 
 We have already discussed the three most important settings for document
 fields or ((("root object", "properties")))((("properties", "important settings")))properties in <<core-fields>> and <<complex-core-fields>>:
 
+문서 필드 혹은 속성에서 가장 중요한 다음 세 가지 설정에 대해서는 <<core-fields>> 와 <<complex-core-fields>>에서 이미 다룬 바 있다.
+
  `type`::
    The datatype that the field contains, such as `string` or `date`
 
- `index`::      
+ `index`::
    Whether a field should be searchable as full text (`analyzed`), searchable as an exact value (`not_analyzed`), or not searchable at all (`no`)
 
- `analyzer`::    
+ `analyzer`::
    Which `analyzer` to use for a full-text field, both at index time and at search time
+
+
+ `type`::
+   필드가 가지는 `string`이나 `date` 같은 데이터 타입 설정
+
+ `index`::
+   필드가 풀텍스트로 검색될지 (`analyzed`), 정확한 값으로 검색될지(`not_analyzed`), 혹흔 전혀 검색되지 않을지(`no`)에 대한 설정
+
+ `analyzer`::
+   인덱스 시와 검색 시 풀 텍스트 검색을 위해 사용할 `분석기` 설정
 
 We will discuss other field types such as `ip`, `geo_point`, and `geo_shape` in
 the appropriate sections later in the book.
+
+`ip`, `geo_point`, `geo_shape`같은 다른 필드 타입에 대해서는 이 책의 뒷 부분에 나오는 적절한 부분에서 다룰 예정이다.
 
 include::31_Metadata_source.asciidoc[]
 
