@@ -3,8 +3,8 @@
 
 This is by far the most efficient geo-filter because its calculation is very
 simple. ((("geo_bounding_box filter")))((("filtering", "by geo-points", "geo_bounding_box filter"))) You provide it with the `top`, `bottom`, `left`, and `right`
-coordinates of a rectangle, and all it does is compare the latitude with the
-left and right coordinates, and the longitude with the top and bottom
+coordinates of a rectangle, and all it does is compare the longitude with the
+left and right coordinates, and the latitude with the top and bottom
 coordinates:
 
 [source,json]
