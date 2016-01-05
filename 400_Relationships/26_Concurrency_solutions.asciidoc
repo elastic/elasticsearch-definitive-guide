@@ -82,8 +82,8 @@ parallelism by making our locking more fine-grained.
 
 Instead of locking the whole filesystem, we could lock individual documents
 by using the same technique as previously described.((("locking", "document locking")))((("document locking")))  
-You could retrieve all documents that would be affected by the change and create a lock file for
-each of them:
+We can use a <<scroll,scrolled search>> to retrieve all documents that would be affected by the change and 
+create a lock file for each one:
 
 [source,json]
 --------------------------

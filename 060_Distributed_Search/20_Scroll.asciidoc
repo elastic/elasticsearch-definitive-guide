@@ -1,4 +1,4 @@
-[[scan-scroll]]
+[[scroll]]
 === Scroll
 
 A `scroll` query ((("scroll API))) is used to retrieve
@@ -20,7 +20,13 @@ sort by `_doc`. This instructs Elasticsearch just return the next batch of
 results from every shard that still has results to return.
 
 To scroll through results, we execute a search request and set the `scroll` value to
-the length of time we want to keep the scroll open.  
+the length of time we want to keep the scroll window open. The scroll expiry 
+time is refreshed every time we run a scroll request, so it only needs to be long enough
+to process the current batch of results, not all of the documents that match
+the query. The timeout is important because keeping the scroll window open
+consumes resources and we want to free them as soon as they are no longer needed. 
+Setting the timeout enables Elasticsearch to automatically free the resources 
+after a small period of inactivity.
 
 [source,js]
 --------------------------------------------------
@@ -31,7 +37,7 @@ GET /old_index/_search?scroll=1m <1>
     "size":  1000
 }
 --------------------------------------------------
-<1> Keep the scroll open for 1 minute.
+<1> Keep the scroll window open for 1 minute.
 <2> `_doc` is the most efficient sort order. 
 
 The response to this request includes a
@@ -43,15 +49,11 @@ results:
 --------------------------------------------------
 GET /_search/scroll
 {
-    "scroll": "1m",
+    "scroll": "1m", <1>
     "scroll_id" : "cXVlcnlUaGVuRmV0Y2g7NTsxMDk5NDpkUmpiR2FjOFNhNnlCM1ZDMWpWYnRROzEwOTk1OmRSamJHYWM4U2E2eUIzVkMxalZidFE7MTA5OTM6ZFJqYkdhYzhTYTZ5QjNWQzFqVmJ0UTsxMTE5MDpBVUtwN2lxc1FLZV8yRGVjWlI2QUVBOzEwOTk2OmRSamJHYWM4U2E2eUIzVkMxalZidFE7MDs="
 }
 --------------------------------------------------
-
-Note that we again set the scroll expiration to 1m.  The scroll expiry time is refreshed
-every time we run a scroll request, so it needs to give us only enough time
-to process the current batch of results, not all of the documents that match
-the query.
+<1> Note that we again set the scroll expiration to 1m.  
 
 The response to this scroll request includes the next batch of results.
 Although we specified a `size` of 1,000, we get back many more
@@ -64,4 +66,9 @@ we make the next scroll request, we must pass the `_scroll_id` returned by the
 _previous_ scroll request.
 
 When no more hits are returned, we have processed all matching documents.
+
+TIP: Some of the official Elasticsearch clients such as 
+http://elasticsearch-py.readthedocs.org/en/master/helpers.html#scan[Python client] and 
+https://metacpan.org/pod/Search::Elasticsearch::Scroll[Perl client] provide scroll helpers that
+provide easy-to-use wrappers around this funtionality.
 

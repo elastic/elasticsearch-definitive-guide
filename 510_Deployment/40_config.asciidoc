@@ -206,6 +206,7 @@ NOTE: These settings can only be set in the `config/elasticsearch.yml` file or o
 the command line (they are not dynamically updatable) and they are only relevant
 during a full cluster restart.
 
+[[unicast]]
 ==== Prefer Unicast over Multicast
 
 Elasticsearch is configured to use unicast discovery out of the box to prevent
@@ -234,6 +235,10 @@ This setting is configured in `elasticsearch.yml`:
 ----
 discovery.zen.ping.unicast.hosts: ["host1", "host2:port"]
 ----
+
+For more information about how Elasticsearch nodes find eachother, see 
+https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-discovery-zen.html[Zen Discovery]
+in the Elasticsearch Reference. 
 
 
 
