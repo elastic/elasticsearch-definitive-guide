@@ -23,7 +23,7 @@ PUT /baking_v1
 ------------------------------
 
 The next step is to migrate the data from the shared index into the dedicated
-index, which can be done using <<scan-scroll,scan-and-scroll>> and the
+index, which can be done using a <<scan-scroll, `scroll`>> query and the
 <<bulk,`bulk` API>>.  As soon as the migration is finished, the index alias
 can be updated to point to the new index:
 
@@ -47,20 +47,8 @@ just rely on the default sharding that Elasticsearch does using each
 document's `_id` field.
 
 The last step is to remove the old documents from the shared index, which can
-be done with a `delete-by-query` request, using the original routing value and
-forum ID:
-
-[source,json]
-------------------------------
-DELETE /forums/post/_query?routing=baking
-{
-  "query": {
-    "term": {
-      "forum_id": "baking"
-    }
-  }
-}
-------------------------------
+be done by searching using the original routing value and forum ID and performing
+a bulk delete.
 
 The beauty of this index-per-user model is that it allows you to reduce
 resources, keeping costs low, while still giving you the flexibility to scale

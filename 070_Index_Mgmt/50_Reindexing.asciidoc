@@ -15,7 +15,7 @@ whole document available to you in Elasticsearch itself. You don't have to
 rebuild your index from the database, which is usually much slower.
 
 To reindex all of the documents from the old index efficiently,  use
-<<scan-scroll,_scan-and-scroll_>> to retrieve batches((("scan-and-scroll", "using in reindexing documents"))) of documents from the old index,
+<<scan-scroll,_scroll_>> to retrieve batches((("using in reindexing documents"))) of documents from the old index,
 and the <<bulk,`bulk` API>> to push them into the new index.
 
 .Reindexing in Batches
@@ -27,7 +27,7 @@ jobs by filtering on a date or timestamp field:
 
 [source,js]
 --------------------------------------------------
-GET /old_index/_search?search_type=scan&scroll=1m
+GET /old_index/_search?scroll=1m
 {
     "query": {
         "range": {
@@ -37,6 +37,7 @@ GET /old_index/_search?search_type=scan&scroll=1m
             }
         }
     },
+    "sort": ["_doc"],
     "size":  1000
 }
 --------------------------------------------------
