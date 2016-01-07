@@ -29,7 +29,7 @@ data.
 
 If we were to have one big index for documents of this type, we would soon run
 out of space. Logging events just keep on coming, without pause or
-interruption. We could delete the old events with a <<scan-scroll,`scroll`>> 
+interruption. We could delete the old events with a <<scroll,`scroll`>> 
 query and bulk delete,  but this approach is _very inefficient_.  When you delete a
 document, it is only _marked_ as deleted (see <<deletes-and-updates>>). It won't
 be physically deleted until the segment containing it is merged away.

@@ -166,7 +166,7 @@ PUT /fs/lock/_bulk
 --------------------------
 <1> The `refresh` call ensures that all `lock` documents are visible to
     the search request.
-<2> You can use a <<scan-scroll,`scroll`>> query when you need to retrieve large 
+<2> You can use a <<scroll,`scroll`>> query when you need to retrieve large 
 numbers of results with a single search request.
 
 Document-level locking enables fine-grained access control, but creating lock

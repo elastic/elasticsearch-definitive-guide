@@ -58,6 +58,6 @@ after page until your servers crumble at the knees.
 
 If you _do_ need to fetch large numbers of docs from your cluster, you can
 do so efficiently by disabling sorting with the `scroll` query,
-which we discuss <<scan-scroll,later in this chapter>>.
+which we discuss <<scroll,later in this chapter>>.
 
 ****

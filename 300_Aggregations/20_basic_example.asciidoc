@@ -49,9 +49,9 @@ using a simple aggregation.  We will do this using a `terms` bucket:
 GET /cars/transactions/_search
 {
     "size" : 0,
-    "aggs" : {
-        "popular_colors" : {
-            "terms" : {
+    "aggs" : { <1>
+        "popular_colors" : { <2>
+            "terms" : { <3>
               "field" : "color"
             }
         }
@@ -62,7 +62,7 @@ GET /cars/transactions/_search
 
 <1> Aggregations are placed under the ((("aggregations", "aggs parameter")))top-level `aggs` parameter (the longer `aggregations`
 will also work if you prefer that).
-<2> We then name the aggregation whatever we want: `colors`, in this example
+<2> We then name the aggregation whatever we want: `popular_colors`, in this example
 <3> Finally, we define a single bucket of type `terms`.
 
 Aggregations are executed in the context of search results,((("searching", "aggregations executed in context of search results"))) which means it is

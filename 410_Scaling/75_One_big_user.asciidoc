@@ -23,7 +23,7 @@ PUT /baking_v1
 ------------------------------
 
 The next step is to migrate the data from the shared index into the dedicated
-index, which can be done using a <<scan-scroll, `scroll`>> query and the
+index, which can be done using a <<scroll, `scroll`>> query and the
 <<bulk,`bulk` API>>.  As soon as the migration is finished, the index alias
 can be updated to point to the new index:
 
