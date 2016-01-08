@@ -20,6 +20,13 @@ GET /_search
         "match": {
           "tweet": "full text"
         }
+      },
+      "filter": {
+        "range": {
+          "age" : {
+            "gt" : 30
+          }
+        }
       }
     }
   }

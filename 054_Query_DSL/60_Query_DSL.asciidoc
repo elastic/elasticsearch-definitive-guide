@@ -99,7 +99,8 @@ other to create complex queries. Clauses can be as follows:
 
 * _Compound_ clauses that are used ((("compound query clauses")))to combine other query clauses.
   For instance, a `bool` clause((("bool clause"))) allows you to combine other clauses that
-  either `must` match,  `must_not` match, or `should` match if possible:
+  either `must` match,  `must_not` match, or `should` match if possible.  They can also include non-scoring,
+  filters for structured search:
 
 [source,js]
 --------------------------------------------------
@@ -107,7 +108,8 @@ other to create complex queries. Clauses can be as follows:
     "bool": {
         "must":     { "match": { "tweet": "elasticsearch" }},
         "must_not": { "match": { "name":  "mary" }},
-        "should":   { "match": { "tweet": "full text" }}
+        "should":   { "match": { "tweet": "full text" }},
+        "filter":   { "range": { "age" : { "gt" : 30 }} }
     }
 }
 --------------------------------------------------

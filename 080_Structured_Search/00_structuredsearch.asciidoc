@@ -2,7 +2,7 @@
 == Structured Search
 
 _Structured search_ is about interrogating ((("structured search")))data that has inherent structure.
-Dates, times, and numbers are all structured: they have a precise  format
+Dates, times, and numbers are all structured: they have a precise format
 that you can perform logical operations on.  Common operations include
 comparing ranges of numbers or dates, or determining which of two values is
 larger.
@@ -21,4 +21,3 @@ excludes documents.
 This should make sense logically.  A number can't be _more_ in a range than
 any other number that falls in the same range.  It is either in the range--or it isn't.  Similarly, for structured text, a value is either equal or it
 isn't. There is no concept of _more similar_.
-
