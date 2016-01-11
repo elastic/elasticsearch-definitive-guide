@@ -32,23 +32,6 @@ this process, possibly increasing performance at the cost of data security.
 These options are seldom used because Elasticsearch is already fast, but they
 are explained here for the sake of completeness:
 
-`replication`::
-+
---
-The default value for ((("replication request parameter", "sync and async values")))replication is `sync`. ((("sync value, replication parameter")))This causes the primary shard to
-wait for successful responses from available replica shards before returning.
-
-If you set `replication` to `async`,((("async value, replication parameter"))) it will return success to the client
-as soon as the request has been executed on the primary shard. It will still
-forward the request to the replicas, but you will not know whether the replicas
-succeeded.
-
-This option is mentioned specifically to advise against using it.  The default
-`sync` replication allows Elasticsearch to exert back pressure on whatever
-system is feeding it with data. With `async` replication, it is possible to
-overload Elasticsearch by sending too many requests without waiting for their
-completion.
-
 --
 
 `consistency`::
