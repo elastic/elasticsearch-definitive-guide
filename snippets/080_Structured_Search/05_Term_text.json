@@ -16,7 +16,7 @@ POST /my_store/products/_bulk
 GET /my_store/products/_search
 {
   "query": {
-    "filtered": {
+    "bool": {
       "filter": {
         "term": {
           "productID": "XHDK-A-1293-#fJ3"
@@ -65,7 +65,7 @@ POST /my_store/products/_bulk
 GET /my_store/products/_search
 {
   "query": {
-    "filtered": {
+    "bool": {
       "filter": {
         "term": {
           "productID": "XHDK-A-1293-#fJ3"
@@ -74,4 +74,3 @@ GET /my_store/products/_search
     }
   }
 }
-

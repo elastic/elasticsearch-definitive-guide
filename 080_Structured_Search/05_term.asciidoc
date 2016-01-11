@@ -12,8 +12,8 @@ can.
 
 We are going to explore the `term` query ((("term query", "with numbers")))
 ((("structured search", "finding exact values", "using term filter with numbers")))
-first because you will use it often.
-This query is capable of handling numbers, booleans, dates, and text.
+first because you will use it often. This query is capable of handling numbers,
+booleans, dates, and text.
 
 We'll start by indexing some documents representing products, each having a
  `price` and `productID`:
@@ -59,7 +59,12 @@ that we wish to find:
 
 Usually, when looking for an exact value, we don't want to score the query.  We just
 want to include/exclude documents, so we will use the `filter` clause of a `bool`
-query:
+query.  If you look back to <<combining-queries-together>>, the `filter` clause
+of a Boolean Query will execute the queries in "non-scoring" mode, which is
+exactly what we want for filtering.
+
+The final combination will be a boolean query with one `filter` clause that
+contains a `term` query:
 
 [source,js]
 --------------------------------------------------
@@ -313,7 +318,7 @@ Although not quite true in reality (execution is a bit more complicated based on
 how the query planner re-arranges things), you can conceptually think of
 non-scoring queries as executing _before_ the scoring queries.  The job of
 non-scoring queries is to reduce the number of documents that the more costly
-scoring queries need to evaluate, resulting in a faster search request. 
+scoring queries need to evaluate, resulting in a faster search request.
 
 By conceptually thinking of non-scoring queries as executing first, you'll be
 equipped to write efficient and fast search requests.

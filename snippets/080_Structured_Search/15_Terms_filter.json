@@ -16,7 +16,7 @@ POST /my_store/products/_bulk
 GET /my_store/products/_search
 {
   "query": {
-    "filtered": {
+    "bool": {
       "filter": {
         "terms": {
           "price": [ 20, 30 ]

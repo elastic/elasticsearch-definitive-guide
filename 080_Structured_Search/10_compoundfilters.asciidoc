@@ -1,9 +1,9 @@
 [[combining-filters]]
 === Combining Filters
 
-The previous two examples showed a single filter in use.((("structured search", "combining filters")))((("filters", "combining"))) In practice, you
-will probably need to filter on multiple values or fields.  For example, how
-would you express this SQL in Elasticsearch?
+The previous two examples showed a single filter in use.((("structured search", "combining filters")))((("filters", "combining")))
+In practice, you will probably need to filter on multiple values or fields.
+For example, how would you express this SQL in Elasticsearch?
 
 [source,sql]
 --------------------------------------------------
@@ -13,14 +13,14 @@ WHERE  (price = 20 OR productID = "XHDK-A-1293-#fJ3")
   AND  (price != 30)
 --------------------------------------------------
 
-In these situations, you will need the `bool` filter.((("filters", "combining", "in bool filter")))((("bool filter")))  This is a _compound
-filter_ that accepts other filters as arguments, combining them in various
-Boolean combinations.
+In these situations, you will need to use another `bool` query((("filters", "combining", "in bool query")))((("bool query")))
+inside the `filter` clause of our first boolean query.  This allows us to build
+filters that can have multiple components in boolean combinations.
 
 [[bool-filter]]
 ==== Bool Filter
 
-The `bool` filter is composed of three sections:
+Recall that the `bool` query is composed of four sections:
 
 [source,js]
 --------------------------------------------------
@@ -29,39 +29,45 @@ The `bool` filter is composed of three sections:
       "must" :     [],
       "should" :   [],
       "must_not" : [],
+      "filter":    []
    }
 }
 --------------------------------------------------
 
- `must`::    
+ `must`::
    All of these clauses _must_ match. The equivalent of `AND`.
-   
- `must_not`:: 
+
+ `must_not`::
    All of these clauses _must not_ match. The equivalent of `NOT`.
-   
- `should`::   
+
+ `should`::
    At least one of these clauses must match. The equivalent of `OR`.
 
-And that's it!((("should clause", "in bool filters")))((("must_not clause", "in bool filters")))((("must clause", "in bool filters"))) When you need multiple filters, simply place them into the
-different sections of the `bool` filter.
+ `filter`::
+      Clauses that _must_ match, but are run in non-scoring, filtering mode.
+
+In this secondary boolean query, we can ignore the `filter` clause: the queries
+are already running in non-scoring mode, so the extra `filter` clause is useless.
 
 [NOTE]
 ====
 Each section of the `bool` filter is optional (for example, you can have a `must`
-clause and nothing else), and each section can contain a single filter or an
-array of filters.
+clause and nothing else), and each section can contain a single query or an
+array of queries.
 ====
 
-To replicate the preceding SQL example, we will take the two `term` filters that
-we used((("term filter", "placing inside bool filter")))((("bool filter", "with two term filters in should clause and must_not clause"))) previously and place them inside the `should` clause of a `bool`
-filter, and add another clause to deal with the `NOT` condition:
+To replicate the preceding SQL example, we will take the two `term` queries that
+we used((("term query", "placing inside bool query")))
+((("bool query", "with two term query in should clause and must_not clause"))) previously and
+place them inside the `should` clause of a `bool` query, and add another clause
+to deal with the `NOT` condition:
 
 [source,js]
 --------------------------------------------------
 GET /my_store/products/_search
 {
    "query" : {
-      "filtered" : { <1>
+      "bool" : { <1>
          "filter" : {
             "bool" : {
               "should" : [
@@ -79,14 +85,19 @@ GET /my_store/products/_search
 --------------------------------------------------
 // SENSE: 080_Structured_Search/10_Bool_filter.json
 
-<1> Note that we still need to use a `filtered` query to wrap everything.
-<2> These two `term` filters are _children_ of the `bool` filter, and since they
+<1> Note that we still need to use a `bool` query to wrap everything with it's
+`filter` clause. This is what enables non-scoring mode
+<2> These two `term` queries are _children_ of the `bool` query, and since they
     are placed inside the `should` clause, at least one of them needs to match.
 <3> If a product has a price of `30`, it is automatically excluded because it
     matches a `must_not` clause.
 
+Notice how the first boolean query only has a single component: its `filter` clause.
+All the boolean logic is occurring in the second boolean query (which is now running
+in non-scoring mode, since it is nested inside the first's `filter`).
+
 Our search results return two hits, each document satisfying a different clause
-in the `bool` filter:
+in the `bool` query:
 
 [source,json]
 --------------------------------------------------
@@ -109,17 +120,17 @@ in the `bool` filter:
     }
 ]
 --------------------------------------------------
-<1> Matches the `term` filter for `productID = "XHDK-A-1293-#fJ3"`
-<2> Matches the `term` filter for `price = 20`
+<1> Matches the `term` query for `productID = "XHDK-A-1293-#fJ3"`
+<2> Matches the `term` query for `price = 20`
 
-==== Nesting Boolean Filters
+==== Nesting Boolean Queries
 
-Even though `bool` is a compound filter and accepts children filters, it is
-important to understand that `bool` is just a filter itself.((("filters", "combining", "nesting bool filters")))((("bool filter", "nesting in another bool filter")))  This means you
-can nest `bool` filters inside other `bool` filters, giving you the
-ability to make arbitrarily complex Boolean logic.
+You can already see how nesting boolean queries together can give rise to more
+sophisticated boolean logic.  If you need to perform more complex operations, you
+can continue nesting boolean queries in any combination, giving rise to
+arbitrarily complex boolean logic.
 
-Given this SQL statement:
+For example, if we have this SQL statement:
 
 [source,sql]
 --------------------------------------------------
@@ -137,7 +148,7 @@ We can translate it into a pair of nested `bool` filters:
 GET /my_store/products/_search
 {
    "query" : {
-      "filtered" : {
+      "bool" : {
          "filter" : {
             "bool" : {
               "should" : [
@@ -157,8 +168,8 @@ GET /my_store/products/_search
 --------------------------------------------------
 // SENSE: 080_Structured_Search/10_Bool_filter.json
 
-<1> Because the `term` and the `bool` are sibling clauses inside the first
-    Boolean `should`, at least one of these filters must match for a document
+<1> Because the `term` and the `bool` are sibling clauses inside the
+    Boolean `should`, at least one of these queries must match for a document
     to be a hit.
 
 <2> These two `term` clauses are siblings in a `must` clause, so they both
@@ -190,5 +201,5 @@ The results show us two documents, one matching each of the `should` clauses:
 <1> This `productID` matches the `term` in the first `bool`.
 <2> These two fields match the `term` filters in the nested `bool`.
 
-This was a simple example, but it demonstrates how Boolean filters can be
+This was a simple example, but it demonstrates how Boolean queries can be
 used as building blocks to construct complex logical conditions.
