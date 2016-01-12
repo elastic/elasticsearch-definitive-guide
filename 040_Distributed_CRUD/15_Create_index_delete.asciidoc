@@ -68,6 +68,8 @@ in the hope that more shards will appear.  By default, it will wait up to 1
 minute. If you need to, you can use the `timeout` parameter((("timeout parameter"))) to make it abort
 sooner: `100` is 100 milliseconds, and `30s` is 30 seconds.
 
+-- 
+
 [NOTE]
 ===================================================
 A new index has `1` replica by default, which means that two active shard
