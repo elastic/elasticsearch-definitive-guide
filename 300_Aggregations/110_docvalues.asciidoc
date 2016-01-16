@@ -14,7 +14,9 @@ heap memory usage. This alternative format is ((("fielddata", "doc values")))(((
 Doc values were added to Elasticsearch in version 1.0.0 but, until recently,
 they were much slower than in-memory fielddata.  By benchmarking and profiling
 performance, various bottlenecks have been identified--in both Elasticsearch
-and Lucene--and removed.
+and Lucene--and removed. Starting in version 2.0, doc values became the default
+format for almost all field types, with the notable exception of analyzed
+string fields.
 
 Doc values are now only about 10&#x2013;25% slower than in-memory fielddata, and
 come with two major advantages:
@@ -40,10 +42,11 @@ RAM.  And the filesystem cache is managed by the kernel instead of the JVM.
 
 ==== Enabling Doc Values
 
-Doc values can be enabled for numeric, date, Boolean, binary, and geo-point
+Doc values are enabled by default for numeric, date, Boolean, binary, and geo-point
 fields, and for `not_analyzed` string fields.((("doc values", "enabling"))) They do not currently work with
-`analyzed` string fields.  Doc values are enabled per field in the field
-mapping, which means that you can combine in-memory fielddata with doc values:
+`analyzed` string fields.  If you are sure that you don’t need to sort or aggregate
+on a field, or access the field value from a script, you can disable doc values in
+order to save disk space:
 
 [source,js]
 ----
@@ -53,27 +56,11 @@ PUT /music/_mapping/song
     "tag": {
       "type":       "string",
       "index" :     "not_analyzed",
-      "doc_values": true <1>
+      "doc_values": false
     }
   }
 }
 ----
-<1> Setting `doc_values` to `true` at field creation time is all
-    that is required to use disk-based fielddata instead of in-memory
-    fielddata.
-
-That's it!  Queries, aggregations, sorting, and scripts will function as
-normal; they'll just be using doc values now.  There is no other
-configuration necessary.
-
-[TIP]
-==================================================
-
-Use doc values freely.  The more you use them, the less stress you place on
-the heap.  It is possible that doc values will become the default format in
-the near future.
-
-==================================================
 
 
 
