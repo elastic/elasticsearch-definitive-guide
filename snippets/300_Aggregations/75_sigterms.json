@@ -37,7 +37,7 @@ GET mlmovies/_search
 GET mlratings/_search?search_type=count
 {
   "query": {
-    "filtered": {
+    "bool": {
       "filter": {
         "term": {
           "movie": 46970
@@ -59,7 +59,7 @@ GET mlratings/_search?search_type=count
 GET mlmovies/_search
 {
   "query": {
-    "filtered": {
+    "bool": {
       "filter": {
         "ids": {
           "values": [2571,318,296,2959,260]
@@ -89,7 +89,7 @@ GET mlratings/_search?search_type=count
 GET mlratings/_search?search_type=count
 {
   "query": {
-    "filtered": {
+    "bool": {
       "filter": {
         "term": {
           "movie": 46970

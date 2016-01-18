@@ -68,7 +68,7 @@ GET /test/test/_search
 }
 
 
-# Move the date range query into the filtered clause
+# Move the date range query into the filter clause
 # to turn it into a non-scoring query
 GET /test/test/_search
 {

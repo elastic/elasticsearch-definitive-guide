@@ -36,21 +36,21 @@ PUT /forums/post/1
 
 We can use the `forum_id` as a filter to search within a single forum.  The
 filter will exclude most of the documents in the index (those from other
-forums), and filter caching will ensure that responses are fast:
+forums), and caching will ensure that responses are fast:
 
 [source,json]
 ------------------------------
 GET /forums/post/_search
 {
   "query": {
-    "filtered": {
-      "query": {
+    "bool": {
+      "must": {
         "match": {
           "title": "ginger nuts"
         }
       },
       "filter": {
-        "term": { <1>
+        "term": {
           "forum_id": {
             "baking"
           }
@@ -60,7 +60,6 @@ GET /forums/post/_search
   }
 }
 ------------------------------
-<1> The `term` filter is cached by default.
 
 This approach works, but we can do better. ((("shards", "routing a document to"))) The posts from a single forum
 would fit easily onto one shard, but currently they are scattered across all ten
@@ -98,8 +97,8 @@ holds our documents:
 GET /forums/post/_search?routing=baking <1>
 {
   "query": {
-    "filtered": {
-      "query": {
+    "bool": {
+      "must": {
         "match": {
           "title": "ginger nuts"
         }
@@ -116,18 +115,18 @@ GET /forums/post/_search?routing=baking <1>
 }
 ------------------------------
 <1> The query is run on only the shard that corresponds to this `routing` value.
-<2> We still need the filter, as a single shard can hold posts from many forums.
+<2> We still need the filtering query, as a single shard can hold posts from many forums.
 
 Multiple forums can be queried by passing a comma-separated list of `routing`
-values, and including each `forum_id` in a `terms` filter:
+values, and including each `forum_id` in a `terms` query:
 
 [source,json]
 ------------------------------
 GET /forums/post/_search?routing=baking,cooking,recipes
 {
   "query": {
-    "filtered": {
-      "query": {
+    "bool": {
+      "must": {
         "match": {
           "title": "ginger nuts"
         }
@@ -145,7 +144,5 @@ GET /forums/post/_search?routing=baking,cooking,recipes
 ------------------------------
 
 While this approach is technically efficient, it looks a bit clumsy because of
-the need to specify `routing` values and `terms` filters on every query or
+the need to specify `routing` values and `terms` queries on every query or
 indexing request.  Index aliases to the rescue!
-
-
