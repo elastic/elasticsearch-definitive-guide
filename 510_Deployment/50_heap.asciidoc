@@ -85,11 +85,52 @@ The moral of the story is this: even when you have memory to spare, try to avoid
 crossing the 32 GB heap boundary.  It wastes memory, reduces CPU performance, and
 makes the GC struggle with large heaps.
 
-With the HotSpot JVM, you can verify that your max heap size setting enables compressed
-oops by adding `-XX:+PrintFlagsFinal` and checking that the value of the `UseCompressedOops`
-flag is `true`. Do note that the exact cutoff for max heap size in bytes that allows
-compressed oops varies from JVM to JVM, so take caution when taking examples from
-elsewhere and be sure to check your system with your configuration and your JVM.
+==== Just how far under 32gb should I set the JVM?
+
+Unfortunately, that depends.  The exact cutoff varies by JVMs and platforms.
+If you want to play it safe, setting the heap to `31gb` is likely safe.
+Alternatively, you can verify the cutoff point for the HotSpot JVM by adding
+`-XX:+PrintFlagsFinal` to your JVM options and checking that the value of the
+UseCompressedOops flag is true. This will let you find the exact cutoff for your
+platform and JVM.
+
+For example, here we test a Java 1.7 installation on MacOSX and see the max heap
+size is around 32600mb (~31.83gb) before compressed pointers are disabled:
+
+[source,bash]
+----
+$ JAVA_HOME=`/usr/libexec/java_home -v 1.7` java -Xmx32600m -XX:+PrintFlagsFinal 2> /dev/null | grep UseCompressedOops
+     bool UseCompressedOops   := true
+$ JAVA_HOME=`/usr/libexec/java_home -v 1.7` java -Xmx32766m -XX:+PrintFlagsFinal 2> /dev/null | grep UseCompressedOops
+     bool UseCompressedOops   = false
+----
+
+In contrast, a Java 1.8 installation on the same machine has a max heap size
+around 32766mb (~31.99gb):
+
+[source,bash]
+----
+$ JAVA_HOME=`/usr/libexec/java_home -v 1.8` java -Xmx32766m -XX:+PrintFlagsFinal 2> /dev/null | grep UseCompressedOops
+     bool UseCompressedOops   := true
+$ JAVA_HOME=`/usr/libexec/java_home -v 1.8` java -Xmx32767m -XX:+PrintFlagsFinal 2> /dev/null | grep UseCompressedOops
+     bool UseCompressedOops   = false
+----
+
+The morale of the story is that the exact cutoff to leverage compressed oops
+varies from JVM to JVM, so take caution when taking examples from elsewhere and
+be sure to check your system with your configuration and JVM.
+
+Beginning with Elasticsearch v2.2.0, the startup log will actually tell you if your
+JVM is using compressed OOPs or not.  You'll see a log message like:
+
+[source, bash]
+----
+[2015-12-16 13:53:33,417][INFO ][env] [Illyana Rasputin] heap size [989.8mb], compressed ordinary object pointers [true]
+----
+
+Which indicates that compressed object pointers are being used.  If they are not,
+the message will say `[false]`.
+
 
 [role="pagebreak-before"]
 .I Have a Machine with 1 TB RAM!
