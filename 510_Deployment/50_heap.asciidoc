@@ -52,9 +52,10 @@ heap, while leaving the other 50% free.  It won't go unused; Lucene will happily
 gobble up whatever is left over.
 
 [[compressed_oops]]
-==== Don't Cross 30.5 GB!
+==== Don't Cross 32 GB!
 There is another reason to not allocate enormous heaps to Elasticsearch. As it turns((("heap", "sizing and setting", "32gb heap boundary")))((("32gb Heap boundary")))
-out, the JVM uses a trick to compress object pointers when heaps are 30.5 GB or less.
+out, the HotSpot JVM uses a trick to compress object pointers when heaps are less
+than around 32 GB.
 
 In Java, all objects are allocated on the heap and referenced by a pointer.
 Ordinary object pointers (OOP) point at these objects, and are traditionally
@@ -74,20 +75,67 @@ reference four billion _objects_, rather than four billion bytes.  Ultimately, t
 means the heap can grow to around 32 GB of physical size while still using a 32-bit
 pointer.
 
-Once you cross that magical 30.5 GB boundary, the pointers switch back to
+Once you cross that magical ~32 GB boundary, the pointers switch back to
 ordinary object pointers.  The size of each pointer grows, more CPU-memory
 bandwidth is used, and you effectively lose memory.  In fact, it takes until around
-40&#x2013;50 GB of allocated heap before you have the same _effective_ memory of a 30.5 GB
-heap using compressed oops.
+40&#x2013;50 GB of allocated heap before you have the same _effective_ memory of a
+heap just under 32 GB using compressed oops.
 
 The moral of the story is this: even when you have memory to spare, try to avoid
-crossing the 30.5 GB heap boundary.  It wastes memory, reduces CPU performance, and
+crossing the 32 GB heap boundary.  It wastes memory, reduces CPU performance, and
 makes the GC struggle with large heaps.
+
+==== Just how far under 32gb should I set the JVM?
+
+Unfortunately, that depends.  The exact cutoff varies by JVMs and platforms.
+If you want to play it safe, setting the heap to `31gb` is likely safe.
+Alternatively, you can verify the cutoff point for the HotSpot JVM by adding
+`-XX:+PrintFlagsFinal` to your JVM options and checking that the value of the
+UseCompressedOops flag is true. This will let you find the exact cutoff for your
+platform and JVM.
+
+For example, here we test a Java 1.7 installation on MacOSX and see the max heap
+size is around 32600mb (~31.83gb) before compressed pointers are disabled:
+
+[source,bash]
+----
+$ JAVA_HOME=`/usr/libexec/java_home -v 1.7` java -Xmx32600m -XX:+PrintFlagsFinal 2> /dev/null | grep UseCompressedOops
+     bool UseCompressedOops   := true
+$ JAVA_HOME=`/usr/libexec/java_home -v 1.7` java -Xmx32766m -XX:+PrintFlagsFinal 2> /dev/null | grep UseCompressedOops
+     bool UseCompressedOops   = false
+----
+
+In contrast, a Java 1.8 installation on the same machine has a max heap size
+around 32766mb (~31.99gb):
+
+[source,bash]
+----
+$ JAVA_HOME=`/usr/libexec/java_home -v 1.8` java -Xmx32766m -XX:+PrintFlagsFinal 2> /dev/null | grep UseCompressedOops
+     bool UseCompressedOops   := true
+$ JAVA_HOME=`/usr/libexec/java_home -v 1.8` java -Xmx32767m -XX:+PrintFlagsFinal 2> /dev/null | grep UseCompressedOops
+     bool UseCompressedOops   = false
+----
+
+The morale of the story is that the exact cutoff to leverage compressed oops
+varies from JVM to JVM, so take caution when taking examples from elsewhere and
+be sure to check your system with your configuration and JVM.
+
+Beginning with Elasticsearch v2.2.0, the startup log will actually tell you if your
+JVM is using compressed OOPs or not.  You'll see a log message like:
+
+[source, bash]
+----
+[2015-12-16 13:53:33,417][INFO ][env] [Illyana Rasputin] heap size [989.8mb], compressed ordinary object pointers [true]
+----
+
+Which indicates that compressed object pointers are being used.  If they are not,
+the message will say `[false]`.
+
 
 [role="pagebreak-before"]
 .I Have a Machine with 1 TB RAM!
 ****
-The 30.5 GB line is fairly important.  So what do you do when your machine has a lot
+The 32 GB line is fairly important.  So what do you do when your machine has a lot
 of memory?  It is becoming increasingly common to see super-servers with 512&#x2013;768 GB
 of RAM.
 
@@ -95,15 +143,15 @@ First, we would recommend avoiding such large machines (see <<hardware>>).
 
 But if you already have the machines, you have two practical options:
 
-- Are you doing mostly full-text search?  Consider giving 30.5 GB to Elasticsearch
+- Are you doing mostly full-text search?  Consider giving just under 32 GB to Elasticsearch
 and letting Lucene use the rest of memory via the OS filesystem cache.  All that
 memory will cache segments and lead to blisteringly fast full-text search.
 
 - Are you doing a lot of sorting/aggregations?  You'll likely want that memory
-in the heap then.  Instead of one node with more than 31.5 GB of RAM, consider running two or
+in the heap then.  Instead of one node with more than 32 GB of RAM, consider running two or
 more nodes on a single machine.  Still adhere to the 50% rule, though.  So if your
-machine has 128 GB of RAM, run two nodes, each with 30.5 GB.  This means 61 GB will be
-used for heaps, and 67 will be left over for Lucene.
+machine has 128 GB of RAM, run two nodes, each with just under 32 GB.  This means that less
+than 64 GB will be used for heaps, and more than 64 GB will be left over for Lucene.
 +
 If you choose this option, set `cluster.routing.allocation.same_shard.host: true`
 in your config.  This will prevent a primary and a replica shard from colocating
