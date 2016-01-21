@@ -137,8 +137,9 @@ PUT /my_index
 <1> The `my_english` analyzer is based on the `english` analyzer.
 <2> But stopwords are disabled.
 
-Finally, stopwords can also be listed in a file with one word per line.  The
-file must be present on all nodes in the cluster, and the path can be
+Finally, stopwords can also be listed in a file with one word per line. 
+Lines starting with the '#' character are considered comments (stop words can not start with a '#').
+The stopwords file must be present on all nodes in the cluster, and the path can be
 specified((("stopwords_path parameter"))) with the `stopwords_path` parameter:
 
 [source,json]
