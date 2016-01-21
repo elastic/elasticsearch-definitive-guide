@@ -59,7 +59,7 @@ in action with ((("validate query API")))the `validate-query` API:
 
 [source,js]
 --------------------------------------------------
-GET /my_index/my_type/_validate/query?explain
+POST /my_index/my_type/_validate/query?explain
 {
     "query": {
         "bool": {
