@@ -103,7 +103,7 @@ flushing is all that is required.
 
 That said, it is beneficial to <<flush-api,flush>> your indices before restarting a node or closing an index. When Elasticsearch tries to recover or reopen an index, it has to replay all of the operations in the translog, so the shorter the log, the faster the recovery.
 
-
+[[how-safe-is-the-translog]]
 .How Safe Is the Translog?
 ****************************************
 
@@ -112,20 +112,35 @@ begs the question: how safe((("translog (transaction log)", "safety of"))) is th
 
 Writes to a file will not survive a reboot until the file has been
 +fsync+'ed to disk.  By default, the translog is +fsync+'ed every 5
-seconds. Potentially, we could lose 5 seconds worth of data--if the translog
-were the only mechanism that we had for dealing with failure.
+seconds _and_ after a write request completes (e.g. index, delete, update, bulk).
+This process occurs on both the primary and replica shards. Ultimately, that means
+your client won't receive a `200 OK` response until the entire request has been
++fsync+'ed in the translog of the primary and all replicas.
 
-Fortunately, the translog is only part of a much bigger system.  Remember that
-an indexing request is considered successful only after it has  completed
-on both the primary shard and all replica shards.  Even if the node holding
-the primary shard were to suffer catastrophic failure, it would be unlikely to
-affect the nodes holding the replica shards at the same time.
+Executing an fsync after every request does come with some performance cost,
+although in practice it is relatively small (especially for bulk ingestion, which
+amortizes the cost over many documents in the single request).
 
-While we could force the translog to `fsync` more frequently (at the cost of
-indexing performance), it is unlikely to provide more reliability.
+But for some high-volume clusters where losing a few seconds of data is not
+critical, it can be advantageous to fsync _asynchronously_.  E.g. writes are
+buffered in memory and +fsync+'ed together every 5s.
 
+This behavior can be enabled by setting the `durability` parameter to `async`:
+
+[source,js]
+----
+PUT /my_index/_settings
+{
+    "index.translog.durability": "async",
+    "index.translog.sync_interval": "5s"
+}
+----
+
+This setting can be configured per-index and is dynamically updatable. If
+you decide to enable async translog behavior, you are _guaranteed_ to lose
+`sync_interval`'s worth of data if a crash happens.  Please be aware of this
+characteristic before deciding!
+
+If you are unsure the ramifications of this action, it is best to use the default
+(`"index.translog.durability": "request"`) to avoid data-loss.
 ****************************************
-
-
-
-
