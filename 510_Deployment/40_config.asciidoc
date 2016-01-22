@@ -57,7 +57,8 @@ node.name: elasticsearch_005_data
 
 ==== Paths
 
-By default, Elasticsearch will place the plug-ins,((("configuration changes, important", "paths")))((("paths"))) logs, and--most important--your data in the installation directory.  This can lead to
+By default, Elasticsearch will place the plug-ins,((("configuration changes, important", "paths")))
+((("paths"))) logs, and--most important--your data in the installation directory.  This can lead to
 unfortunate accidents, whereby the installation directory is accidentally overwritten
 by a new installation of Elasticsearch. If you aren't careful, you can erase all your data.
 
@@ -83,7 +84,31 @@ path.plugins: /path/to/plugins
 Data can be saved to multiple directories, and if each directory
 is mounted on a different hard drive, this is a simple and effective way to
 set up a software RAID 0.  Elasticsearch will automatically stripe
-data between the different directories, boosting performance
+data between the different directories, boosting performance.
+
+.Multiple data path safety and performance
+[WARNING]
+====================
+Like any RAID 0 configuration, only a single copy of your data is saved to the
+hard drives.  If you lose a hard drive, you are _guaranteed_ to lose a portion
+of your data on that machine.  With luck you'll have replicas elsewhere in the
+cluster which can recover the data, and/or a recent <<backing-up-your-cluster, backup>>.
+
+Elasticsearch attempts to minimize the extent of data loss by striping entire
+shards to a drive.  That means that `Shard 0` will be placed entirely on a single
+drive. Elasticsearch will not stripe a shard across multiple drives, since the
+loss of one drive would corrupt the entire shard.
+
+This has ramifications for performance: if you are adding multiple drives
+to improve the performance of a single index, it is unlikely to help since
+most nodes will only have one shard, and thus one active drive.  Multiple data
+paths only helps if you have many indices/shards on a single node.
+
+Multiple data paths is a nice convenience feature, but at the end of the day,
+Elasticsearch is not a software RAID package. If you need more advanced configuration,
+robustness and flexibility, we encourage you to use actual software RAID packages
+instead of the multiple data path feature.
+====================
 
 ==== Minimum Master Nodes
 
@@ -203,7 +228,7 @@ These three settings allow you to avoid the excessive shard swapping that can
 occur on cluster restarts.  It can literally make recovery take seconds instead
 of hours.
 
-NOTE: These settings can only be set in the `config/elasticsearch.yml` file or on 
+NOTE: These settings can only be set in the `config/elasticsearch.yml` file or on
 the command line (they are not dynamically updatable) and they are only relevant
 during a full cluster restart.
 
@@ -212,7 +237,7 @@ during a full cluster restart.
 
 Elasticsearch is configured to use unicast discovery out of the box to prevent
 nodes from accidentally joining a cluster. Only nodes running on the same
-machine will automatically form cluster. 
+machine will automatically form cluster.
 
 While multicast is still https://www.elastic.co/guide/en/elasticsearch/plugins/current/discovery-multicast.html[provided
 as a plugin], it should never be used in production. The
@@ -222,7 +247,7 @@ multicast _per se_.  Multicast simply leads to silly problems, and can be a bit
 more fragile (for example, a network engineer fiddles with the network without telling
 you--and all of a sudden nodes can't find each other anymore).
 
-To use unicast, you provide Elasticsearch a list of nodes that it should try to contact.  
+To use unicast, you provide Elasticsearch a list of nodes that it should try to contact.
 When a node contacts a member of the unicast list, it receives a full cluster
 state that lists all of the nodes in the cluster.  It then contacts
 the master and joins the cluster.
@@ -237,15 +262,6 @@ This setting is configured in `elasticsearch.yml`:
 discovery.zen.ping.unicast.hosts: ["host1", "host2:port"]
 ----
 
-For more information about how Elasticsearch nodes find eachother, see 
+For more information about how Elasticsearch nodes find eachother, see
 https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-discovery-zen.html[Zen Discovery]
-in the Elasticsearch Reference. 
-
-
-
-
-
-
-
-
-
+in the Elasticsearch Reference.
