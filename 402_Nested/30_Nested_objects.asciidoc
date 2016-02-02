@@ -79,7 +79,7 @@ The correlation between `Alice` and `31`, or between `John` and `2014-09-01`, ha
 from a search point of view, for storing an array of objects.
 
 This is the problem that _nested objects_ are designed to solve.  By mapping
-the `commments` field as type `nested` instead of type `object`, each nested
+the `comments` field as type `nested` instead of type `object`, each nested
 object is indexed as a _hidden separate document_, something like this:
 
 [source,json]
