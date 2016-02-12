@@ -126,17 +126,18 @@ and not marked as spam:
 [source,js]
 --------------------------------------------------
 {
-    "bool": {
-        "must": { "match":      { "email": "business opportunity" }},
-        "should": [
-             { "match":         { "starred": true }},
-             { "bool": {
-                   "must":      { "folder": "inbox" }},
-                   "must_not":  { "spam": true }}
-             }}
-        ],
-        "minimum_should_match": 1
-    }
+  "bool": {
+    "must": { "match": { "email": "business opportunity" } },
+    "should": [
+      { "match": { "starred": true } },
+      { "bool" : {
+          "must"     : { "match" : { "folder" : "inbox" } },
+          "must_not" : { "match" : { "spam" : true } }
+        }
+      }
+    ],
+    "minimum_number_should_match": 1
+  }
 }
 --------------------------------------------------
 
