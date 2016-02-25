@@ -47,9 +47,21 @@ code, and an error message like the following:
 [source,js]
 --------------------------------------------------
 {
-  "error" : "DocumentAlreadyExistsException[[website][4] [blog][123]:
-             document already exists]",
-  "status" : 409
+   "error": {
+      "root_cause": [
+         {
+            "type": "document_already_exists_exception",
+            "reason": "[blog][123]: document already exists",
+            "shard": "0",
+            "index": "website"
+         }
+      ],
+      "type": "document_already_exists_exception",
+      "reason": "[blog][123]: document already exists",
+      "shard": "0",
+      "index": "website"
+   },
+   "status": 409
 }
 --------------------------------------------------
 // SENSE: 030_Data/30_Create_doc.json
