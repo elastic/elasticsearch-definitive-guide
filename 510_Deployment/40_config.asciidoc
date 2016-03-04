@@ -1,53 +1,45 @@
-[[important-configuration-changes]]
-=== Important Configuration Changes
-Elasticsearch ships with _very good_ defaults,((("deployment", "configuration changes, important")))((("configuration changes, important"))) especially when it comes to performance-
-related settings and options.  When in doubt, just leave
-the settings alone.  We have witnessed countless dozens of clusters ruined
-by errant settings because the administrator thought he could turn a knob
-and gain 100-fold improvement.
+[[重要配置的修改]]
+
+=== 重要配置的修改
+Elasticsearch 已经有了 _很好_ 的默认值，((("deployment", "configuration changes, important")))((("configuration changes, important")))特别是涉及到性能相关的配置或者选项。
+如果你有疑问，最好就不要动它。我们已经目睹了数十个因为错误的设置而导致毁灭的集群，
+因为它的管理者总认为改动一个配置或者选项就可以带来100倍的提升。
 
 [NOTE]
 ====
-Please read this entire section!  All configurations presented are equally
-important, and are not listed in any particular order.  Please read
-through all configuration options and apply them to your cluster.
+请阅读整节文章，所有的配置项都同等重要，和描述顺序无关，请阅读所有的配置选项，并应用到你的集群中。
 ====
 
-Other databases may require tuning, but by and large, Elasticsearch does not.
-If you are hitting performance problems, the solution is usually better data
-layout or more nodes.  There are very few "magic knobs" in Elasticsearch.
-If there were, we'd have turned them already!
+其它数据库可能需要调优，但总得来说，Elasticsearch 不需要。
+如果你遇到了性能问题，最好的解决方法通常是更好的数据布局或者更多的节点。
+在 Elasticsearch 中很少有“神奇的配置项”，
+如果存在，我们也已经帮你优化了。
 
-With that said, there are some _logistical_ configurations that should be changed
-for production.  These changes are necessary either to make your life easier, or because
-there is no way to set a good default (because it depends on your cluster layout).
+说到这里，有一些保障性的配置需要在生产环境中做修改。
+这些改动是必须的，因为没有办法设定好的默认值（它取决于你的集群布局）。
 
 
-==== Assign Names
+==== 指定名字
 
-Elasticseach by default starts a cluster named `elasticsearch`. ((("configuration changes, important", "assigning names"))) It is wise
-to rename your production cluster to something else, simply to prevent accidents
-whereby someone's laptop joins the cluster.  A simple change to `elasticsearch_production`
-can save a lot of heartache.
+Elasticsearch 默认启动的集群名字叫 `elasticsearch`。((("configuration changes, important", "assigning names")))你最好
+给你的生产环境的集群改个名字，改名字的目的很简单，
+就是防止某个人的笔记本加入到了集群。简单修改成 `elasticsearch_production` 会很省心。
 
-This can be changed in your `elasticsearch.yml` file:
+你可以在你的 `elasticsearch.yml` 文件中：
 
 [source,yaml]
 ----
 cluster.name: elasticsearch_production
 ----
 
-Similarly, it is wise to change the names of your nodes. As you've probably
-noticed by now, Elasticsearch assigns a random Marvel superhero name
-to your nodes at startup.  This is cute in development--but less cute when it is
-3a.m. and you are trying to remember which physical machine was Tagak the Leopard Lord.
+同样，最好也修改你的节点名字。就像你现在可能发现的那样，
+Elasticsearch 会在你的节点启动的时候随机给它指定一个名字。你可能会觉得这很有趣，但是当凌晨3点钟的时候，
+你还在尝试回忆哪台物理机是 `Tagak the Leopard Lord` 的时候，你就不觉得有趣了。
 
-More important, since these names are generated on startup, each time you
-restart your node, it will get a new name. This can make logs confusing,
-since the names of all the nodes are constantly changing.
+更重要的是，这些名字是在启动的时候产生的，每次启动节点，
+它都会得到一个新的名字。这会使日志变得很混乱，因为所有节点的名称都是不断变化的。
 
-Boring as it might be, we recommend you give each node a name that makes sense
-to you--a plain, descriptive name.  This is also configured in your `elasticsearch.yml`:
+这可能会让你觉得厌烦，我们建议给每个节点设置一个有意义的、清楚的、描述性的名字，同样你可以在 `elasticsearch.yml` 中配置：
 
 [source,yaml]
 ----
@@ -55,19 +47,17 @@ node.name: elasticsearch_005_data
 ----
 
 
-==== Paths
+==== 路径
 
-By default, Elasticsearch will place the plug-ins,((("configuration changes, important", "paths")))
-((("paths"))) logs, and--most important--your data in the installation directory.  This can lead to
-unfortunate accidents, whereby the installation directory is accidentally overwritten
-by a new installation of Elasticsearch. If you aren't careful, you can erase all your data.
+默认情况下，((("configuration changes, important", "paths")))((("paths")))Elasticsearch 会把插件、日志以及你最重要的数据放在安装目录下。这会带来不幸的事故，
+如果你重新安装 Elasticsearch 的时候不小心把安装目录覆盖了。如果你不小心，你就可能把你的全部数据删掉了。
 
-Don't laugh--we've seen it happen more than a few times.
+不要笑，这种情况，我们见过很多次了。
 
-The best thing to do is relocate your data directory outside the installation
-location.  You can optionally move your plug-in and log directories as well.
+最好的选择就是把你的数据目录配置到安装目录以外的地方，
+同样你也可以选择转移你的插件和日志目录。
 
-This can be changed as follows:
+可以更改如下：
 
 [source,yaml]
 ----
@@ -79,12 +69,10 @@ path.logs: /path/to/logs
 # Path to where plugins are installed:
 path.plugins: /path/to/plugins
 ----
-<1> Notice that you can specify more than one directory for data by using comma-separated lists.
+<1> 注意：你可以通过逗号分隔指定多个目录。
 
-Data can be saved to multiple directories, and if each directory
-is mounted on a different hard drive, this is a simple and effective way to
-set up a software RAID 0.  Elasticsearch will automatically stripe
-data between the different directories, boosting performance.
+数据可以保存到多个不同的目录，
+每个目录如果是挂载在不同的硬盘，做 RAID 0 是一个简单而有效的办法。Elasticsearch 会自动把数据分隔到不同的目录，以便提高性能。
 
 .Multiple data path safety and performance
 [WARNING]
@@ -110,46 +98,39 @@ robustness and flexibility, we encourage you to use actual software RAID package
 instead of the multiple data path feature.
 ====================
 
-==== Minimum Master Nodes
+==== 最小主节点数
 
-The `minimum_master_nodes` setting is _extremely_ important to the
-stability of your cluster.((("configuration changes, important", "minimum_master_nodes setting")))((("minimum_master_nodes setting")))  This setting helps prevent _split brains_, the existence of two masters in a single cluster.
+`minimum_master_nodes` 设定对你的集群的稳定 _及其_ 重要。
+((("configuration changes, important", "minimum_master_nodes setting")))((("minimum_master_nodes setting")))
+当你的集群中有两个 masters（注：主节点）的时候，这个配置有助于防止集群分裂（注：脑裂）。
 
-When you have a split brain, your cluster is at danger of losing data.  Because
-the master is considered the supreme ruler of the cluster, it decides
-when new indices can be created, how shards are moved, and so forth.  If you have _two_
-masters, data integrity becomes perilous, since you have two nodes
-that think they are in charge.
+如果你的集群发生了一个脑裂，那么你的集群就会处在丢失数据的危险中，因为
+节点是被认为是这个集群的最高统治者，它决定了什么时候新的索引可以创建，多少分片要移动等等。如果你有 _两个_ masters 节点，
+你的数据的完整性将得不到保证，因为你有两个节点认为他们有集群的控制权。
 
-This setting tells Elasticsearch to not elect a master unless there are enough
-master-eligible nodes available.  Only then will an election take place.
+这个配置就是告诉 Elasticsearch 当没有足够 master 候选节点的时候，就不要进行 master 节点选举，等 master 候选节点足够了才进行选举。
 
-This setting should always be configured to a quorum (majority) of your master-eligible nodes.((("quorum")))  A quorum is `(number of master-eligible nodes / 2) + 1`.
-Here are some examples:
+此设置应该始终被配置为 master 候选节点的法定个数（大多数个）。((("quorum")))法定个数就是 `( master 候选节点个数 / 2) + 1`。
+这里有几个例子：
 
-- If you have ten regular nodes (can hold data, can become master), a quorum is
-`6`.
-- If you have three dedicated master nodes and a hundred data nodes, the quorum is `2`,
-since you need to count only nodes that are master eligible.
-- If you have two regular nodes, you are in a conundrum.  A quorum would be
-`2`, but this means a loss of one node will make your cluster inoperable.  A
-setting of `1` will allow your cluster to function, but doesn't protect against
-split brain.  It is best to have a minimum of three nodes in situations like this.
+- 如果你有10个节点（能保存数据，同时能成为 master），法定数就是 `6`。
+- 如果你有3个候选 master 节点，和100个 date 节点，法定数就是 `2`，你只要数数那些可以做 master 的节点数就可以了。
+- 如果你有两个节点，你遇到难题了。法定数当然是 `2`，但是这意味着如果有一个节点挂掉，你整个集群就不可用了。
+设置成 `1` 可以保证集群的功能，但是就无法保证集群脑裂了，像这样的情况，你最好至少保证有3个节点。
 
-This setting can be configured in your `elasticsearch.yml` file:
+你可以在你的 `elasticsearch.yml` 文件中这样配置：
 
 [source,yaml]
 ----
 discovery.zen.minimum_master_nodes: 2
 ----
 
-But because Elasticsearch clusters are dynamic, you could easily add or remove
-nodes that will change the quorum.  It would be extremely irritating if you had
-to push new configurations to each node and restart your whole cluster just to
-change the setting.
+但是由于 ELasticsearch 是动态的，你可以很容易的添加和删除节点，
+但是这会改变这个法定个数。
+你不得不修改每一个索引节点的配置并且重启你的整个集群只是为了让配置生效，这将是非常痛苦的一件事情。
 
-For this reason, `minimum_master_nodes` (and other settings) can be configured
-via a dynamic API call.  You can change the setting while your cluster is online:
+基于这个原因，`minimum_master_nodes`（还有一些其它配置）允许通过 API 调用的方式动态进行配置。
+当你的集群在线运行的时候，你可以这样修改配置：
 
 [source,js]
 ----
@@ -161,15 +142,12 @@ PUT /_cluster/settings
 }
 ----
 
-This will become a persistent setting that takes precedence over whatever is
-in the static configuration.  You should modify this setting whenever you add or
-remove master-eligible nodes.
+这将成为一个永久的配置，并且无论你配置项里配置的如何，这个将优先生效。当你添加和删除master节点的时候，你需要更改这个配置。
 
-==== Recovery Settings
+==== 集群恢复方面的配置
 
-Several settings affect the behavior of shard recovery when
-your cluster restarts.((("recovery settings")))((("configuration changes, important", "recovery settings")))  First, we need to understand what happens if nothing is
-configured.
+当你集群重启时，几个配置项影响你的分片恢复的表现。((("recovery settings")))((("configuration changes, important", "recovery settings")))首先，我们需要明白
+如果什么也没配置将会发生什么。
 
 Imagine you have ten nodes, and each node holds a single shard--either a primary
 or a replica--in a 5 primary / 1 replica index.  You take your
