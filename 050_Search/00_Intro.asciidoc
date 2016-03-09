@@ -1,60 +1,43 @@
 [[search]]
-== Searching--The Basic Tools
+== 搜索——最基本的工具
 
-So far, we have learned how to use Elasticsearch as a simple NoSQL-style
-distributed document store. We can ((("searching")))throw JSON documents at Elasticsearch and
-retrieve each one by ID. But the real power of Elasticsearch lies in its
-ability to make sense out of chaos -- to turn Big Data into Big Information.
+现在，我们已经学会了如何使用 Elasticsearch 作为一个简单的 NoSQL 风格的分布式文档存储系统。我们可以((("searching")))将一个 JSON 文档扔到 Elasticsearch 里，然后根据 ID 检索。但 Elasticsearch 真正强大之处在于可以从无规律的数据中找出有意义的信息——从“大数据”到“大信息”。
 
-This is the reason that we use structured JSON documents, rather than
-amorphous blobs of data.  Elasticsearch not only _stores_ the document, but
-also _indexes_ the content of the document in order to make it searchable.
+Elasticsearch 不只会_存储（stores）_ 文档，为了能被搜索到也会为文档添加_索引（indexes）_ ，这也是为什么我们使用结构化的 JSON 文档，而不是无结构的二进制数据。
 
-_Every field in a document is indexed and can be queried_. ((("indexing"))) And it's not just
-that. During a single query, Elasticsearch can use _all_ of these indices, to
-return results at breath-taking speed.  That's something that you could never
-consider doing with a traditional database.
+_文档中的每个字段都将被索引并且可以被查询_ 。((("indexing")))不仅如此，在简单查询时，Elasticsearch 可以使用 _所有（all）_ 这些索引字段，以惊人的速度返回结果。这是你永远不会考虑用传统数据库去做的一些事情。
 
-A _search_ can be any of the following:
+_搜索（search）_ 可以做到：
 
-* A structured query on concrete fields((("fields", "searching on")))((("searching", "types of searches"))) like `gender` or `age`, sorted by
-  a field like `join_date`, similar to the type of query that you could construct 
-  in SQL
+* 在类似于 `gender` 或者 `age` 这样的字段((("fields", "searching on")))((("searching", "types of searches")))上使用结构化查询，`join_date` 这样的字段上使用排序，就像SQL的结构化查询一样。
 
-* A full-text query, which finds all documents matching the search keywords,
-  and returns them sorted by _relevance_
+* 全文检索，找出所有匹配关键字的文档并按照_相关性（relevance）_ 排序后返回结果。
 
-* A combination of the two
+* 以上二者兼而有之。
 
-While many searches will just work out of((("full text search"))) the box, to use Elasticsearch to
-its full potential, you need to understand three subjects:
+很多搜索都是开箱即用的((("full text search")))，为了充分挖掘 Elasticsearch 的潜力，你需要理解以下三个概念：
 
- _Mapping_::     
-   How the data in each field is interpreted
-   
- _Analysis_::    
-   How full text is processed to make it searchable
-   
- _Query DSL_::   
-   The flexible, powerful query language used by Elasticsearch
+ _映射（Mapping）_ ::
+   描述数据在每个字段内如何存储
 
-Each of these is a big subject in its own right, and we explain them in
-detail in <<search-in-depth>>. The chapters in this section introduce the
-basic concepts of all three--just enough to help you to get an overall
-understanding of how search works.
+ _分析（Analysis）_ ::
+   全文是如何处理使之可以被搜索的
 
-We will start by explaining the `search` API in its simplest form.
+ _领域特定查询语言（Query DSL）_ ::
+   Elasticsearch 中强大灵活的查询语言
 
-.Test Data
+以上提到的每个点都是一个大话题，我们将在 <<search-in-depth>> 一章详细阐述它们。本章节我们将介绍这三点的一些基本概念——仅仅帮助你大致了解搜索是如何工作的。
+
+我们将使用最简单的形式开始介绍 `search` API。
+
+.测试数据
 
 ****
 
-The documents that we will use for test purposes in this chapter can be found
-in this gist: https://gist.github.com/clintongormley/8579281.
+本章节的测试数据可以在这里找到： https://gist.github.com/clintongormley/8579281 。
 
-You can copy the commands and paste them into your shell in order to follow
-along with this chapter.
+你可以把这些命令复制到终端中执行来实践本章的例子。
 
-Alternatively, if you're in the online version of this book, you can link:sense_widget.html?snippets/050_Search/Test_data.json[click here to open in Sense].
+另外，如果你读的是在线版本，可以 link:sense_widget.html?snippets/050_Search/Test_data.json[点击这个链接] 感受下。
 
 ****
