@@ -1,101 +1,76 @@
 [[heap-sizing]]
-=== Heap: Sizing and Swapping
+=== 堆内存:大小和交换
 
-The default installation of Elasticsearch is configured with a 1 GB heap. ((("deployment", "heap, sizing and swapping")))((("heap", "sizing and setting"))) For
-just about every deployment, this number is far too small.  If you are using the
-default heap values, your cluster is probably configured incorrectly.
+Elasticsearch 默认安装后设置的堆内存是 1 GB。((("deployment", "heap, sizing and swapping")))((("heap", "sizing and setting")))对于任何一个业务部署来说，
+这个设置都太小了。如果你正在使用这些默认堆内存配置，您的群集可能会出现问题。
 
-There are two ways to change the heap size in Elasticsearch.  The easiest is to
-set an environment variable called `ES_HEAP_SIZE`.((("ES_HEAP_SIZE environment variable")))  When the server process
-starts, it will read this environment variable and set the heap accordingly.
-As an example, you can set it via the command line as follows:
+这里有两种方式修改 Elasticsearch 的堆内存。最简单的一个方法就是指定 `ES_HEAP_SIZE` 环境变量。((("ES_HEAP_SIZE environment variable")))服务进程在启动时候会读取这个变量，并相应的设置堆的大小。
+比如，你可以用下面的命令设置它：
 
 [source,bash]
 ----
 export ES_HEAP_SIZE=10g
 ----
 
-Alternatively, you can pass in the heap size via a command-line argument when starting
-the process, if that is easier for your setup:
+此外，你也可以通过命令行参数的形式，在程序启动的时候把内存大小传递给它，如果你觉得这样更简单的话：
 
 [source,bash]
 ----
 ./bin/elasticsearch -Xmx10g -Xms10g <1>
 ----
-<1> Ensure that the min (`Xms`) and max (`Xmx`) sizes are the same to prevent
-the heap from resizing at runtime, a very costly process.
+<1> 确保堆内存最小值（ `Xms` ）与最大值（ `Xmx` ）的大小是相同的，防止程序在运行时改变堆内存大小，
+这是一个很耗系统资源的过程。
 
-Generally, setting the `ES_HEAP_SIZE` environment variable is preferred over setting
-explicit `-Xmx` and `-Xms` values.
+通常来说，设置 `ES_HEAP_SIZE` 环境变量，比直接写 `-Xmx -Xms` 更好一点。
 
-==== Give Half Your Memory to Lucene
+==== 把你的内存的一半给 Lucene
 
-A common problem is configuring a heap that is _too_ large. ((("heap", "sizing and setting", "giving half your memory to Lucene"))) You have a 64 GB
-machine--and by golly, you want to give Elasticsearch all 64 GB of memory.  More
-is better!
+一个常见的问题是给 Elasticsearch 分配的内存 _太_ 大了。((("heap", "sizing and setting", "giving half your memory to Lucene")))假设你有一个 64 GB 内存的机器，
+天啊，我要把 64 GB 内存全都给 Elasticsearch。因为越多越好啊！
 
-Heap is definitely important to Elasticsearch.  It is used by many in-memory data
-structures to provide fast operation.  But with that said, there is another major
-user of memory that is _off heap_: Lucene.
+当然，内存对于 Elasticsearch 来说绝对是重要的，它可以被许多内存数据结构使用来提供更快的操作。但是说到这里，
+还有另外一个内存消耗大户 _非堆内存_ （off-heap）：Lucene。
 
-Lucene is designed to leverage the underlying OS for caching in-memory data structures.((("Lucene", "memory for")))
-Lucene segments are stored in individual files.  Because segments are immutable,
-these files never change.  This makes them very cache friendly, and the underlying
-OS will happily keep hot segments resident in memory for faster access.
+Lucene 被设计为可以利用操作系统底层机制来缓存内存数据结构。((("Lucene", "memory for")))
+Lucene 的段是分别存储到单个文件中的。因为段是不可变的，这些文件也都不会变化，这是对缓存友好的，同时操作系统也会把这些段文件缓存起来，以便更快的访问。
 
-Lucene's performance relies on this interaction with the OS.  But if you give all
-available memory to Elasticsearch's heap, there won't be any left over for Lucene.
-This can seriously impact the performance of full-text search.
+Lucene 的性能取决于和操作系统的相互作用。如果你把所有的内存都分配给 Elasticsearch 的堆内存，那将不会有剩余的内存交给 Lucene。
+这将严重地影响全文检索的性能。
 
-The standard recommendation is to give 50% of the available memory to Elasticsearch
-heap, while leaving the other 50% free.  It won't go unused; Lucene will happily
-gobble up whatever is left over.
+标准的建议是把 50％ 的可用内存作为 Elasticsearch 的堆内存，保留剩下的 50％。当然它也不会被浪费，Lucene 会很乐意利用起余下的内存。
 
 [[compressed_oops]]
-==== Don't Cross 32 GB!
-There is another reason to not allocate enormous heaps to Elasticsearch. As it turns((("heap", "sizing and setting", "32gb heap boundary")))((("32gb Heap boundary")))
-out, the HotSpot JVM uses a trick to compress object pointers when heaps are less
-than around 32 GB.
+==== 不要超过 32 GB！
+这里有另外一个原因不分配大内存给 Elasticsearch。事实上((("heap", "sizing and setting", "32gb heap boundary")))((("32gb Heap boundary")))，
+JVM 在内存小于 32 GB 的时候会采用一个内存对象指针压缩技术。
 
-In Java, all objects are allocated on the heap and referenced by a pointer.
-Ordinary object pointers (OOP) point at these objects, and are traditionally
-the size of the CPU's native _word_: either 32 bits or 64 bits, depending on the
-processor.  The pointer references the exact byte location of the value.
+在 Java 中，所有的对象都分配在堆上，并通过一个指针进行引用。
+普通对象指针（OOP）指向这些对象，通常为 CPU _字长_ 的大小：32 位或 64 位，取决于你的处理器。
 
-For 32-bit systems, this means the maximum heap size is 4 GB.  For 64-bit systems,
-the heap size can get much larger, but the overhead of 64-bit pointers means there
-is more wasted space simply because the pointer is larger.  And worse than wasted
-space, the larger pointers eat up more bandwidth when moving values between
-main memory and various caches (LLC, L1, and so forth).
+对于 32 位的系统，意味着堆内存大小最大为 4 GB。对于 64 位的系统，
+可以使用更大的内存，但是 64 位的指针意味着更大的浪费，因为你的指针本身大了。更糟糕的是，
+更大的指针在主内存和各级缓存（例如 LLC，L1 等）之间移动数据的时候，会占用更多的带宽。
 
-Java uses a trick called https://wikis.oracle.com/display/HotSpotInternals/CompressedOops[compressed oops]((("compressed object pointers")))
-to get around this problem.  Instead of pointing at exact byte locations in
-memory, the pointers reference _object offsets_.((("object offsets")))  This means a 32-bit pointer can
-reference four billion _objects_, rather than four billion bytes.  Ultimately, this
-means the heap can grow to around 32 GB of physical size while still using a 32-bit
-pointer.
+Java 使用一个叫作  https://wikis.oracle.com/display/HotSpotInternals/CompressedOops[内存指针压缩（compressed oops）]((("compressed object pointers")))的技术来解决这个问题。
+它的指针不再表示对象在内存中的精确位置，而是表示 _偏移量_ 。((("object offsets")))这意味着 32 位的指针可以引用 40 亿个 _对象_ ，
+而不是 40 亿个字节。最终，
+也就是说堆内存增长到 32 GB 的物理内存，也可以用 32 位的指针表示。
 
-Once you cross that magical ~32 GB boundary, the pointers switch back to
-ordinary object pointers.  The size of each pointer grows, more CPU-memory
-bandwidth is used, and you effectively lose memory.  In fact, it takes until around
-40&#x2013;50 GB of allocated heap before you have the same _effective_ memory of a
-heap just under 32 GB using compressed oops.
+一旦你越过那个神奇的 ~32 GB 的边界，指针就会切回普通对象的指针。
+每个对象的指针都变长了，就会使用更多的 CPU 内存带宽，也就是说你实际上失去了更多的内存。事实上，当内存到达
+40&#x2013;50 GB 的时候，有效内存才相当于使用内存对象指针压缩技术时候的 32 GB 内存。
 
-The moral of the story is this: even when you have memory to spare, try to avoid
-crossing the 32 GB heap boundary.  It wastes memory, reduces CPU performance, and
-makes the GC struggle with large heaps.
+这段描述的意思就是说：即便你有足够的内存，也尽量不要
+超过 32 GB。因为它浪费了内存，降低了 CPU 的性能，还要让 GC 应对大内存。
 
-==== Just how far under 32gb should I set the JVM?
+==== 到底需要低于 32 GB多少，来设置我的 JVM？
 
-Unfortunately, that depends.  The exact cutoff varies by JVMs and platforms.
-If you want to play it safe, setting the heap to `31gb` is likely safe.
-Alternatively, you can verify the cutoff point for the HotSpot JVM by adding
-`-XX:+PrintFlagsFinal` to your JVM options and checking that the value of the
-UseCompressedOops flag is true. This will let you find the exact cutoff for your
-platform and JVM.
+遗憾的是，这需要看情况。确切的划分要根据 JVMs 和操作系统而定。
+如果你想保证其安全可靠，设置堆内存为 `31 GB` 是一个安全的选择。
+另外，你可以在你的 JVM 设置里添加 `-XX:+PrintFlagsFinal` 用来验证 `JVM` 的临界值，
+并且检查 UseCompressedOops 的值是否为 true。对于你自己使用的 JVM 和操作系统，这将找到最合适的堆内存临界值。
 
-For example, here we test a Java 1.7 installation on MacOSX and see the max heap
-size is around 32600mb (~31.83gb) before compressed pointers are disabled:
+例如，我们在一台安装  Java 1.7 的 MacOSX 上测试，可以看到指针压缩在被禁用之前，最大堆内存大约是在 32600 mb（~31.83 gb）：
 
 [source,bash]
 ----
@@ -105,8 +80,7 @@ $ JAVA_HOME=`/usr/libexec/java_home -v 1.7` java -Xmx32766m -XX:+PrintFlagsFinal
      bool UseCompressedOops   = false
 ----
 
-In contrast, a Java 1.8 installation on the same machine has a max heap size
-around 32766mb (~31.99gb):
+相比之下，同一台机器安装 Java 1.8，可以看到指针压缩在被禁用之前，最大堆内存大约是在 32766 mb（~31.99 gb）：
 
 [source,bash]
 ----
@@ -116,86 +90,75 @@ $ JAVA_HOME=`/usr/libexec/java_home -v 1.8` java -Xmx32767m -XX:+PrintFlagsFinal
      bool UseCompressedOops   = false
 ----
 
-The morale of the story is that the exact cutoff to leverage compressed oops
-varies from JVM to JVM, so take caution when taking examples from elsewhere and
-be sure to check your system with your configuration and JVM.
+这个例子告诉我们，影响内存指针压缩使用的临界值，
+是会根据 JVM 的不同而变化的。
+所以从其他地方获取的例子，需要谨慎使用，要确认检查操作系统配置和 JVM。
 
-Beginning with Elasticsearch v2.2.0, the startup log will actually tell you if your
-JVM is using compressed OOPs or not.  You'll see a log message like:
+如果使用的是  Elasticsearch v2.2.0，启动日志其实会告诉你 JVM 是否正在使用内存指针压缩。
+你会看到像这样的日志消息：
 
 [source, bash]
 ----
 [2015-12-16 13:53:33,417][INFO ][env] [Illyana Rasputin] heap size [989.8mb], compressed ordinary object pointers [true]
 ----
 
-Which indicates that compressed object pointers are being used.  If they are not,
-the message will say `[false]`.
-
+这表明内存指针压缩正在被使用。如果没有，日志消息会显示 `[false]` 。
 
 [role="pagebreak-before"]
-.I Have a Machine with 1 TB RAM!
+.我有一个 1 TB 内存的机器！
 ****
-The 32 GB line is fairly important.  So what do you do when your machine has a lot
-of memory?  It is becoming increasingly common to see super-servers with 512&#x2013;768 GB
-of RAM.
+这个 32 GB 的分割线是很重要的。那如果你的机器有很大的内存怎么办呢？
+一台有着 512&#x2013;768 GB内存的服务器愈发常见。
 
-First, we would recommend avoiding such large machines (see <<hardware>>).
+首先，我们建议避免使用这样的高配机器（参考 <<hardware>>）。
 
-But if you already have the machines, you have two practical options:
+但是如果你已经有了这样的机器，你有两个可选项：
 
-- Are you doing mostly full-text search?  Consider giving just under 32 GB to Elasticsearch
-and letting Lucene use the rest of memory via the OS filesystem cache.  All that
-memory will cache segments and lead to blisteringly fast full-text search.
+- 你主要做全文检索吗？考虑给 Elasticsearch 不超过 32 GB 的内存，
+让 Lucene 通过操作系统文件缓存来利用余下的内存。那些内存都会用来缓存 segments，带来极速的全文检索。
 
-- Are you doing a lot of sorting/aggregations?  You'll likely want that memory
-in the heap then.  Instead of one node with more than 32 GB of RAM, consider running two or
-more nodes on a single machine.  Still adhere to the 50% rule, though.  So if your
-machine has 128 GB of RAM, run two nodes, each with just under 32 GB.  This means that less
-than 64 GB will be used for heaps, and more than 64 GB will be left over for Lucene.
+- 你需要更多的排序和聚合？你可能会更希望那些那些内存用在堆中。
+你可以考虑一台机器上创建两个或者更多 ES 节点，而不要部署一个使用或者超过 32 GB 内存的节点。
+仍然要坚持 50％ 原则。假设你有个机器有 128 GB 的内存，
+你可以创建两个节点，每个节点内存分配不超过 32 GB。
+也就是说不超过 64 GB 内存给 ES 的堆内存，剩下的超过 64 GB 的内存给 Lucene。
 +
-If you choose this option, set `cluster.routing.allocation.same_shard.host: true`
-in your config.  This will prevent a primary and a replica shard from colocating
-to the same physical machine (since this would remove the benefits of replica high availability).
+如果你选择第二种，你需要配置 `cluster.routing.allocation.same_shard.host: true` 。
+这会防止同一个分片（shard）的主副本存在同一个物理机上（因为如果存在一个机器上，副本的高可用性就没有了）。
 ****
 
-==== Swapping Is the Death of Performance
+==== Swapping 是性能的坟墓
 
-It should be obvious,((("heap", "sizing and setting", "swapping, death of performance")))((("memory", "swapping as the death of performance")))((("swapping, the death of performance"))) but it bears spelling out clearly: swapping main memory
-to disk will _crush_ server performance.  Think about it: an in-memory operation
-is one that needs to execute quickly.
+这是显而易见的，((("heap", "sizing and setting", "swapping, death of performance")))((("memory", "swapping as the death of performance")))((("swapping, the death of performance")))但是还是有必要说的更清楚一点：内存交换
+到磁盘对服务器性能来说是 _致命_ 的。想想看：一个内存操作必须能够被快速执行。
 
-If memory swaps to disk, a 100-microsecond operation becomes one that take 10
-milliseconds.  Now repeat that increase in latency for all other 10us operations.
-It isn't difficult to see why swapping is terrible for performance.
+如果内存交换到磁盘上，一个 100 微秒的操作可能变成 10 毫秒。
+再想想那么多 10 微秒的操作时延累加起来。
+不难看出 swapping 对于性能是多么可怕。
 
-The best thing to do is disable swap completely on your system.  This can be done
-temporarily:
+最好的办法就是在你的操作系统中完全禁用 swap。这样可以暂时禁用：
 
 [source,bash]
 ----
 sudo swapoff -a
 ----
 
-To disable it permanently, you'll likely need to edit your `/etc/fstab`.  Consult
-the documentation for your OS.
+如果需要永久禁用，你可能需要修改 `/etc/fstab` 文件，这要参考你的操作系统相关文档。
 
-If disabling swap completely is not an option, you can try to lower `swappiness`.
-This value controls how aggressively the OS tries to swap memory.
-This prevents swapping under normal circumstances, but still allows the OS to swap
-under emergency memory situations.
+如果你并不打算完全禁用 swap，也可以选择降低 `swappiness` 的值。
+这个值决定操作系统交换内存的频率。
+这可以预防正常情况下发生交换，但仍允许操作系统在紧急情况下发生交换。
 
-For most Linux systems, this is configured using the `sysctl` value:
+对于大部分Linux操作系统，可以在 `sysctl` 中这样配置：
 
 [source,bash]
 ----
 vm.swappiness = 1 <1>
 ----
-<1> A `swappiness` of `1` is better than `0`, since on some kernel versions a `swappiness`
-of `0` can invoke the OOM-killer.
+<1> `swappiness` 设置为 `1` 比设置为 `0` 要好，因为在一些内核版本 `swappiness` 设置为 `0` 会触发系统 OOM-killer（注：Linux 内核的 Out of Memory（OOM）killer 机制）。
 
-Finally, if neither approach is possible, you should enable `mlockall`.
- file.  This allows the JVM to lock its memory and prevent
-it from being swapped by the OS.  In your `elasticsearch.yml`, set this:
+最后，如果上面的方法都不合适，你需要打开配置文件中的 `mlockall` 开关。
+它的作用就是允许 JVM 锁住内存，禁止操作系统交换出去。在你的 `elasticsearch.yml` 文件中，设置如下：
 
 [source,yaml]
 ----
