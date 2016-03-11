@@ -11,20 +11,20 @@ Elasticsearch 已经有了 _很好_ 的默认值，((("deployment", "configurati
 ====
 
 其它数据库可能需要调优，但总得来说，Elasticsearch 不需要。
-如果你遇到了性能问题，最好的解决方法通常是更好的数据布局或者更多的节点。
+如果你遇到了性能问题，解决方法通常是更好的数据布局或者更多的节点。
 在 Elasticsearch 中很少有“神奇的配置项”，
-如果存在，我们也已经帮你优化了。
+如果存在，我们也已经帮你优化了！
 
-说到这里，有一些保障性的配置需要在生产环境中做修改。
+说到这里，有一些 _逻辑上_ 的配置需要在生产环境中做修改。
 这些改动是必须的，因为没有办法设定好的默认值（它取决于你的集群布局）。
 
 
 ==== 指定名字
 
 Elasticsearch 默认启动的集群名字叫 `elasticsearch` 。((("configuration changes, important", "assigning names")))你最好给你的生产环境的集群改个名字，改名字的目的很简单，
-就是防止某个人的笔记本加入到了集群。简单修改成 `elasticsearch_production` 会很省心。
+就是防止某人的笔记本电脑加入了集群这种意外。简单修改成 `elasticsearch_production` 会很省心。
 
-你可以在你的 `elasticsearch.yml` 文件中：
+你可以在你的 `elasticsearch.yml` 文件中修改：
 
 [source,yaml]
 ----
@@ -33,7 +33,7 @@ cluster.name: elasticsearch_production
 
 同样，最好也修改你的节点名字。就像你现在可能发现的那样，
 Elasticsearch 会在你的节点启动的时候随机给它指定一个名字。你可能会觉得这很有趣，但是当凌晨 3 点钟的时候，
-你还在尝试回忆哪台物理机是 `Tagak the Leopard Lord` 的时候，你就不觉得有趣了。
+你还在尝试回忆哪台物理机是 Tagak the Leopard Lord 的时候，你就不觉得有趣了。
 
 更重要的是，这些名字是在启动的时候产生的，每次启动节点，
 它都会得到一个新的名字。这会使日志变得很混乱，因为所有节点的名称都是不断变化的。
@@ -71,7 +71,7 @@ path.plugins: /path/to/plugins
 <1> 注意：你可以通过逗号分隔指定多个目录。
 
 数据可以保存到多个不同的目录，
-每个目录如果是挂载在不同的硬盘，做一个磁盘阵列（ RAID 0 ）是简单而有效的办法。Elasticsearch 会自动把条带化（注：RAID 0 又称为 Stripe（条带化），在磁盘阵列中,数据是以条带的方式贯穿在磁盘阵列所有硬盘中的）
+如果将每个目录分别挂载不同的硬盘，这可是一个简单且高效实现一个软磁盘阵列（ RAID 0 ）的办法。Elasticsearch 会自动把条带化（注：RAID 0 又称为 Stripe（条带化），在磁盘阵列中,数据是以条带的方式贯穿在磁盘阵列所有硬盘中的）
 数据分隔到不同的目录，以便提高性能。
 
 .多个数据路径的安全性和性能
@@ -92,12 +92,11 @@ Elasticsearch 没有一个条带化的分片跨越在多个驱动器，因为一
 
 ==== 最小主节点数
 
-`minimum_master_nodes` 设定对你的集群的稳定 _及其_ 重要。
+`minimum_master_nodes` 设定对你的集群的稳定 _极其_ 重要。
 ((("configuration changes, important", "minimum_master_nodes setting")))((("minimum_master_nodes setting")))
-当你的集群中有两个 masters（注：主节点）的时候，这个配置有助于防止集群分裂（注：脑裂）。
+当你的集群中有两个 masters（注：主节点）的时候，这个配置有助于防止 _脑裂_ ，一种两个主节点同时存在于一个集群的现象。
 
-如果你的集群发生了一个脑裂，那么你的集群就会处在丢失数据的危险中，因为
-节点是被认为是这个集群的最高统治者，它决定了什么时候新的索引可以创建，多少分片要移动等等。如果你有 _两个_ masters 节点，
+如果你的集群发生了脑裂，那么你的集群就会处在丢失数据的危险中，因为主节点被认为是这个集群的最高统治者，它决定了什么时候新的索引可以创建，分片是如何移动的等等。如果你有 _两个_ masters 节点，
 你的数据的完整性将得不到保证，因为你有两个节点认为他们有集群的控制权。
 
 这个配置就是告诉 Elasticsearch 当没有足够 master 候选节点的时候，就不要进行 master 节点选举，等 master 候选节点足够了才进行选举。
@@ -138,8 +137,7 @@ PUT /_cluster/settings
 
 ==== 集群恢复方面的配置
 
-当你集群重启时，几个配置项影响你的分片恢复的表现。((("recovery settings")))((("configuration changes, important", "recovery settings")))首先，我们需要明白
-如果什么也没配置将会发生什么。
+当你集群重启时，几个配置项影响你的分片恢复的表现。((("recovery settings")))((("configuration changes, important", "recovery settings")))首先，我们需要明白如果什么也没配置将会发生什么。
 
 想象一下假设你有 10 个节点，每个节点只保存一个分片，这个分片是一个主分片或者是一个分片副本，或者说有一个有 5 个主分片／1 个分片副本的索引。有时你需要为整个集群做离线维护（比如，为了安装一个新的驱动程序），
 当你重启你的集群，恰巧出现了 5 个节点已经启动，还有 5 个还没启动的场景。
@@ -147,10 +145,10 @@ PUT /_cluster/settings
 假设其它 5 个节点出问题，或者他们根本没有收到立即重启的命令。不管什么原因，你有 5 个节点在线上，这五个节点会相互通信，选出一个 master，从而形成一个集群。
 他们注意到数据不再均匀分布，因为有 5 个节点在集群中丢失了，所以他们之间会立马启动分片复制。
 
-最后，你的其它 5 个节点打开加入了集群。这些节点会发现 _它们_ 的数据正在被复制到其他节点，（因为这份数据要么是多余的，要么是过时的）。
+最后，你的其它 5 个节点打开加入了集群。这些节点会发现 _它们_ 的数据正在被复制到其他节点，所以他们删除本地数据（因为这份数据要么是多余的，要么是过时的）。
 然后整个集群重新进行平衡，因为集群的大小已经从 5 变成了 10。
 
-在整个过程中，你的节点会消耗磁盘和网盘，来回移动数据，因为没有更好的办法。对于有 TB 数据的大集群,
+在整个过程中，你的节点会消耗磁盘和网络带宽，来回移动数据，因为没有更好的办法。对于有 TB 数据的大集群,
 这种无用的数据传输需要 _很长时间_ 。如果等待所有的节点重启好了，整个集群再上线，所有的本地的数据都不需要移动。
 
 现在我们知道问题的所在了，我们可以修改一些设置来缓解它。
@@ -164,7 +162,7 @@ gateway.recover_after_nodes: 8
 这将防止 Elasticsearch 从一开始就进行数据恢复，在存在 8 个节点（数据节点或者 master 节点）之前。
 这个值的设定取决于个人喜好：整个集群提供服务之前你希望有多少个节点在线？这种情况下，我们设置为 8，这意味着至少要有 8 个节点，该集群才可用。
 
-现在我们要告诉 Elasticsearch 集群中 _应该_ 有多少个节点，重启这些节点我们希望等待多长时间：
+现在我们要告诉 Elasticsearch 集群中 _应该_ 有多少个节点，以及我们愿意为这些节点等待多长时间：
 
 [source,yaml]
 ----
@@ -203,4 +201,4 @@ Elasticsearch 被配置为使用单播发现，开箱即用，以防止节点无
 discovery.zen.ping.unicast.hosts: ["host1", "host2:port"]
 ----
 
-关于 Elasticsearch 节点如何找到对方的详细信息，请参阅 https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-discovery-zen.html[Zen Discovery] Elasticsearch 参考文献。
+关于 Elasticsearch 节点发现的详细信息，请参阅 https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-discovery-zen.html[Zen Discovery] Elasticsearch 文献。
