@@ -279,7 +279,7 @@ GET /megacorp/employee/_search
 // SENSE: 010_Intro/30_Query_DSL.json
 
 You can see that we use the same `match` query as before to search the `about`
-field for ``rock climbing.'' We get back two matching documents:
+field for ``rock climbing''. We get back two matching documents:
 
 [source,js]
 --------------------------------------------------
