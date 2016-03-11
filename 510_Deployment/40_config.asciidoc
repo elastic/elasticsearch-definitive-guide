@@ -15,9 +15,8 @@ Elasticsearch 已经有了 _很好_ 的默认值，((("deployment", "configurati
 在 Elasticsearch 中很少有“神奇的配置项”，
 如果存在，我们也已经帮你优化了！
 
-说到这里，有一些 _逻辑上_ 的配置需要在生产环境中做修改。
-这些改动是必须的，因为没有办法设定好的默认值（它取决于你的集群布局）。
-
+也就是说，有些配置在生成环境中是应该调整的。
+这些变化会让你的生活更轻松，因为没有办法设定好的默认值（它取决于你的集群布局）。
 
 ==== 指定名字
 
@@ -183,9 +182,9 @@ gateway.recover_after_time: 5m
 
 ==== 最好使用单播代替组播
 
-Elasticsearch 被配置为使用单播发现，开箱即用，以防止节点无意中加入集群。只有在同一台机器上运行的节点将自动形成集群。
+Elasticsearch 默认被配置为使用单播发现，以防止节点无意中加入集群。只有在同一台机器上运行的节点才会自动组成集群。
 
-虽然组播仍然作为 https://www.elastic.co/guide/en/elasticsearch/plugins/current/discovery-multicast.html[一个插件]提供给我们使用，
+虽然组播仍然 https://www.elastic.co/guide/en/elasticsearch/plugins/current/discovery-multicast.html[作为插件提供]，
 但它应该永远不被使用在生产环境了，否在你得到的结果就是一个节点意外的加入到了你的生产环境，仅仅是因为他们收到了一个错误的组播信号。
 对于组播 _本身_ 并没有错，组播会导致一些愚蠢的问题，并且导致集群变的脆弱（比如，一个网络工程师正在捣鼓网络，而没有告诉你，你会发现所有的节点突然发现不了对方了）。
 
