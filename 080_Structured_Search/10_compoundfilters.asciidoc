@@ -1,9 +1,7 @@
 [[combining-filters]]
 === 组合过滤器
 
-前面的两个例子都是单个过滤器（filter）的使用方式。((("structured search", "combining filters")))((("filters", "combining"))) 在实际应用中，我们
-很有可能会过滤多个值或字段。比方说，怎样
-用 Elasticsearch 来表达下面的 SQL ？
+前面的两个例子都是单个过滤器（filter）的使用方式。((("structured search", "combining filters")))((("filters", "combining"))) 在实际应用中，我们很有可能会过滤多个值或字段。比方说，怎样用 Elasticsearch 来表达下面的 SQL ？
 
 [source,sql]
 --------------------------------------------------
@@ -13,14 +11,12 @@ WHERE  (price = 20 OR productID = "XHDK-A-1293-#fJ3")
   AND  (price != 30)
 --------------------------------------------------
 
-这种情况下，我们需要 `bool` （布尔）过滤器。((("filters", "combining", "in bool filter")))((("bool filter"))) 这是个 _复合过滤器（compound filter）_ ，
-它可以接受多个其他过滤器作为参数，并将这些过滤器结合构成各式各样的
-布尔（逻辑）组合。
+这种情况下，我们需要 `bool` （布尔）过滤器。((("filters", "combining", "in bool filter")))((("bool filter"))) 这是个 _复合过滤器（compound filter）_ ，它可以接受多个其他过滤器作为参数，并将这些过滤器结合成各式各样的布尔（逻辑）组合。
 
 [[bool-filter]]
 ==== 布尔过滤器
 
-一个 `bool` 过滤器由三部分组成:
+一个 `bool` 过滤器由三部分组成：
 
 [source,js]
 --------------------------------------------------
@@ -42,18 +38,14 @@ WHERE  (price = 20 OR productID = "XHDK-A-1293-#fJ3")
  `should`::
    至少有一个语句要匹配，与 `OR` 等价。
 
-就这么简单！((("should clause", "in bool filters")))((("must_not clause", "in bool filters")))((("must clause", "in bool filters"))) 当我们需要多个过滤器时，只须将它们置入
- `bool` 过滤器的不同部分即可。
+就这么简单！((("should clause", "in bool filters")))((("must_not clause", "in bool filters")))((("must clause", "in bool filters"))) 当我们需要多个过滤器时，只须将它们置入 `bool` 过滤器的不同部分即可。
 
 [NOTE]
 ====
-一个 `bool` 过滤器的每个部分都是可选的（例如，我们可以只有一个 `must` 语句），
-而且每个部分内部可以只有一个或一组过滤器。
+一个 `bool` 过滤器的每个部分都是可选的（例如，我们可以只有一个 `must` 语句），而且每个部分内部可以只有一个或一组过滤器。
 ====
 
-用 Elasticsearch 来表示本部分开始处的 SQL 例子，将两个 `term` 过滤器
-置入  `bool` 过滤器的 `should` 语句
-内，再增加一个语句处理 `NOT` （非）的条件：
+用 Elasticsearch 来表示本部分开始处的 SQL 例子，将两个 `term` 过滤器置入  `bool` 过滤器的 `should` 语句内，再增加一个语句处理 `NOT` 非的条件：
 
 [source,js]
 --------------------------------------------------
@@ -79,13 +71,10 @@ GET /my_store/products/_search
 // SENSE: 080_Structured_Search/10_Bool_filter.json
 
 <1> 注意，我们仍然需要一个 `filtered` 查询将所有的东西包起来。
-<2> 在 `should` 语句块里面的两个 `term` 过滤器
-    与 `bool` 过滤器是父子关系，两个 `term` 条件需要匹配其一。
-<3> 如果一个产品的价格是 `30` ，那么它会自动被排除，因为它
-    处于 `must_not` 语句里面。
+<2> 在 `should` 语句块里面的两个 `term` 过滤器与 `bool` 过滤器是父子关系，两个 `term` 条件需要匹配其一。
+<3> 如果一个产品的价格是 `30` ，那么它会自动被排除，因为它处于 `must_not` 语句里面。
 
-我们搜索的结果返回了 2 个命中结果，两个文档分别匹配了 `bool` 过滤器
-其中的一个条件：
+我们搜索的结果返回了 2 个命中结果，两个文档分别匹配了 `bool` 过滤器其中的一个条件：
 
 [source,json]
 --------------------------------------------------
@@ -113,10 +102,7 @@ GET /my_store/products/_search
 
 ==== 嵌套布尔过滤器
 
-尽管 `bool` 是一个复合的过滤器，可以接受多个子过滤器，需要
-注意的是 `bool` 过滤器本身仍然还只是一个过滤器。((("filters", "combining", "nesting bool filters")))((("bool filter", "nesting in another bool filter")))  这意味着我们
-可以将一个 `bool` 过滤器置于其他 `bool` 过滤器内部，这为我们
-提供了对任意复杂布尔逻辑进行处理的能力。
+尽管 `bool` 是一个复合的过滤器，可以接受多个子过滤器，需要注意的是 `bool` 过滤器本身仍然还只是一个过滤器。((("filters", "combining", "nesting bool filters")))((("bool filter", "nesting in another bool filter")))  这意味着我们可以将一个 `bool` 过滤器置于其他 `bool` 过滤器内部，这为我们提供了对任意复杂布尔逻辑进行处理的能力。
 
 对于以下这个 SQL 语句：
 
@@ -156,10 +142,8 @@ GET /my_store/products/_search
 --------------------------------------------------
 // SENSE: 080_Structured_Search/10_Bool_filter.json
 
-<1> 因为 `term` 和 `bool` 过滤器是兄弟关系，他们都处于外层的
-    布尔逻辑 `should` 的内部，返回的命中文档至少须匹配其中一个过滤器的条件。
-<2> 这两个 `term` 语句作为兄弟关系，同时处于 `must` 语句之中，所以
-    返回的命中文档要必须都能同时匹配这两个条件。
+<1> 因为 `term` 和 `bool` 过滤器是兄弟关系，他们都处于外层的布尔逻辑 `should` 的内部，返回的命中文档至少须匹配其中一个过滤器的条件。
+<2> 这两个 `term` 语句作为兄弟关系，同时处于 `must` 语句之中，所以返回的命中文档要必须都能同时匹配这两个条件。
 
 得到的结果有两个文档，它们各匹配 `should` 语句中的一个条件：
 
@@ -187,5 +171,4 @@ GET /my_store/products/_search
 <1> 这个 `productID` 与外层的 `bool` 过滤器 `should` 里的唯一一个 `term` 匹配。
 <2> 这两个字段与嵌套的 `bool` 过滤器 `must` 里的两个 `term` 匹配。
 
-这只是个简单的例子，但足以展示布尔过滤器可以
-用来作为构造复杂逻辑条件的基本构建模块。
+这只是个简单的例子，但足以展示布尔过滤器可以用来作为构造复杂逻辑条件的基本构建模块。
