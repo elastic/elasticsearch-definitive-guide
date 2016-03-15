@@ -6,7 +6,7 @@ and matched in endless combinations.  This single set of components can be used
 in two contexts: filtering context and query context.
 
 When used in _filtering context_, the query is said to be a "non-scoring" or "filtering"
-qeury.  That is, the query simply asks the question: "Does this document match?".
+query.  That is, the query simply asks the question: "Does this document match?".
 The answer is always a simple, binary yes|no.
 
 * Is the `created` date in the range `2013` - `2014`?
