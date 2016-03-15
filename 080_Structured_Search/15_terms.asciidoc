@@ -22,14 +22,14 @@ specifying a single price, we are now specifying an array of values:
 --------------------------------------------------
 
 And like the `term` query, we will place it inside the `filter` clause of a
-boolean query to ((("bool query", "terms query in"))) use it:
+constant score query to use it:
 
 [source,js]
 --------------------------------------------------
 GET /my_store/products/_search
 {
     "query" : {
-        "bool" : {
+        "constant_score" : {
             "filter" : {
                 "terms" : { <1>
                     "price" : [20, 30]
@@ -41,7 +41,7 @@ GET /my_store/products/_search
 --------------------------------------------------
 // SENSE: 080_Structured_Search/15_Terms_filter.json
 
-<1> The `terms` query as seen previously, but placed inside the `bool` query
+<1> The `terms` query as seen previously, but placed inside the `constant_score` query
 
 The query will return the second, third, and fourth documents:
 

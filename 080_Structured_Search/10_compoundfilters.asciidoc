@@ -13,8 +13,8 @@ WHERE  (price = 20 OR productID = "XHDK-A-1293-#fJ3")
   AND  (price != 30)
 --------------------------------------------------
 
-In these situations, you will need to use another `bool` query((("filters", "combining", "in bool query")))((("bool query")))
-inside the `filter` clause of our first boolean query.  This allows us to build
+In these situations, you will need to use a `bool` query((("filters", "combining", "in bool query")))((("bool query")))
+inside the `constant_score` query.  This allows us to build
 filters that can have multiple components in boolean combinations.
 
 [[bool-filter]]
@@ -67,7 +67,7 @@ to deal with the `NOT` condition:
 GET /my_store/products/_search
 {
    "query" : {
-      "bool" : { <1>
+      "constant_score" : { <1>
          "filter" : {
             "bool" : {
               "should" : [
@@ -85,16 +85,16 @@ GET /my_store/products/_search
 --------------------------------------------------
 // SENSE: 080_Structured_Search/10_Bool_filter.json
 
-<1> Note that we still need to use a `bool` query to wrap everything with it's
+<1> Note that we still need to use a `constant_score` query to wrap everything with its
 `filter` clause. This is what enables non-scoring mode
 <2> These two `term` queries are _children_ of the `bool` query, and since they
     are placed inside the `should` clause, at least one of them needs to match.
 <3> If a product has a price of `30`, it is automatically excluded because it
     matches a `must_not` clause.
 
-Notice how the first boolean query only has a single component: its `filter` clause.
-All the boolean logic is occurring in the second boolean query (which is now running
-in non-scoring mode, since it is nested inside the first's `filter`).
+Notice how boolean is placed inside the `constant_score`, but the individual term
+queries are just placed in the `should` and `must_not`.  Because everything is wrapped
+with the `constant_score`, the rest of the queries are executing in filtering mode.
 
 Our search results return two hits, each document satisfying a different clause
 in the `bool` query:
@@ -148,7 +148,7 @@ We can translate it into a pair of nested `bool` filters:
 GET /my_store/products/_search
 {
    "query" : {
-      "bool" : {
+      "constant_score" : {
          "filter" : {
             "bool" : {
               "should" : [

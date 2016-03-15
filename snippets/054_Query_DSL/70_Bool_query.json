@@ -140,3 +140,16 @@ GET /test/test/_search
     }
   }
 }
+
+# If you just want to apply a filter and nothing else, you can use
+# constant_score query
+GET /test/test/_search
+{
+  "query": {
+    "constant_score":   {
+      "filter": {
+          "term": { "category": "ebooks" }
+      }
+    }
+  }
+}

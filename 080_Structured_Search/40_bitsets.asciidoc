@@ -37,7 +37,7 @@ Let's look at this example query, which looks for emails that are either of the 
 GET /inbox/emails/_search
 {
   "query": {
-      "bool": {
+      "constant_score": {
           "filter": {
               "bool": {
                  "should": [
@@ -78,20 +78,23 @@ performance benefits.
 
 In older versions of Elasticsearch, the default behavior was to cache everything
 that was cacheable.  This often meant the system cached bitsets too aggressively
-and performance suffered due to thrashing the cache.
+and performance suffered due to thrashing the cache.  In addition, many filters
+are very fast to evaluate, but substantially slower to cache (and reuse from cache).
+These filters don't make sense to cache, since you'd be better off just re-executing
+the fitler again.
 
 Inspecting the inverted index is very fast and most query components are rare.
 Consider a `term` filter on a `"user_id"` field:  if you have millions of users,
-any particular user ID will only occur rarely.  It doesn't make sense to cache
-the bitsets for this filtering query, as the cached result will likely be evicted
+any particular user ID will only occur rarely.  It isn't profitable to cache
+the bitsets for this filter, as the cached result will likely be evicted
 from the cache before it is used again.
 
 This type of cache churn can have serious effects on performance.  What's worse,
 it is difficult for developers to identify which components exhibit good cache
 behavior and which are useless.
 
-To address this, Elasticsearch caches queries automatically based on frequency
-usage.  If a non-scoring query has been used five or more times in the last 256 queries,
+To address this, Elasticsearch caches queries automatically based on usage frequency.
+If a non-scoring query has been used a few times (dependent on the query type) in the last 256 queries,
 the query is a candidate for caching.  However, not all segments are guaranteed
 to cache the bitset.  Only segments that hold more than 10,000 documents (or 3%
 of the total documents, whichever is larger) will cache the bitset.  Because

@@ -85,15 +85,15 @@ If you do find yourself wanting to use a query on an exact value
 about whether you really want a scoring query, or if a non-scoring query might be better.
 
 Single-term queries usually represent binary yes/no questions and are
-almost always better expressed as a ((("non-scoring query", "single-term queries better expressed as")))
-non-scoring query, so that they can benefit from <<filter-caching, caching>>:
+almost always better expressed as a ((("non-scoring query", "filter", "single-term queries better expressed as")))
+filter, so that they can benefit from <<filter-caching, caching>>:
 
 [source,js]
 --------------------------------------------------
 GET /_search
 {
     "query": {
-        "bool": {
+        "constant_score": {
             "filter": {
                 "term": { "gender": "female" }
             }

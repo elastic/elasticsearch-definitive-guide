@@ -41,7 +41,7 @@ combinations of the following options:
 GET /my_store/products/_search
 {
     "query" : {
-        "bool" : {
+        "constant_score" : {
             "filter" : {
                 "range" : {
                     "price" : {

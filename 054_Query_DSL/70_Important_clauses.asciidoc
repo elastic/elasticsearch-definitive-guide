@@ -121,7 +121,7 @@ Booleans, or `not_analyzed` exact-value string fields:
 --------------------------------------------------
 // SENSE: 054_Query_DSL/70_Term_filter.json
 
-The `term` filter performs no _analysis_ on the input text, so it will look for exactly
+The `term` query performs no _analysis_ on the input text, so it will look for exactly
 the value that is supplied.
 
 ==== terms Query

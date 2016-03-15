@@ -9,14 +9,14 @@ will also apply to the aggregation.
 === Filtering Queres
 If we want to find all cars over $10,000 and also calculate the average price
 for those cars,((("filtering", "serch query results")))((("filtering query")))
-((("queries"))) we can use a `bool` query and its `filter` clause:
+((("queries"))) we can use a `constant_score` query and its `filter` clause:
 
 [source,js]
 --------------------------------------------------
 GET /cars/transactions/_search?search_type=count
 {
     "query" : {
-        "bool": {
+        "constant_score": {
             "filter": {
                 "range": {
                     "price": {

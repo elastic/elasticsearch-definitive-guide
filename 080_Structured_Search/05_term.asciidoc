@@ -1,10 +1,10 @@
 === Finding Exact Values
 
 When working with exact values,((("structured search", "finding exact values")))((("exact values", "finding")))
-you will be working with non-scoring, filtering queries. Filtering queries are
+you will be working with non-scoring, filtering queries. Filters are
 important because they are very fast.  They do not calculate
 relevance (avoiding the entire scoring phase) and are easily cached. We'll
-talk about the performance benefits of filtering queries later in <<filter-caching>>,
+talk about the performance benefits of filters later in <<filter-caching>>,
 but for now, just keep in mind that you should use filtering queries as often as you
 can.
 
@@ -58,20 +58,17 @@ that we wish to find:
 --------------------------------------------------
 
 Usually, when looking for an exact value, we don't want to score the query.  We just
-want to include/exclude documents, so we will use the `filter` clause of a `bool`
-query.  If you look back to <<combining-queries-together>>, the `filter` clause
-of a Boolean Query will execute the queries in "non-scoring" mode, which is
-exactly what we want for filtering.
+want to include/exclude documents, so we will use a `constant_score` query to execute
+the `term` query in a non-scoring mode and apply a uniform score of one.
 
-The final combination will be a boolean query with one `filter` clause that
-contains a `term` query:
+The final combination will be a `constant_score` query which contains a `term` query:
 
 [source,js]
 --------------------------------------------------
 GET /my_store/products/_search
 {
     "query" : {
-        "bool" : { <1>
+        "constant_score" : { <1>
             "filter" : {
                 "term" : { <2>
                     "price" : 20
@@ -83,9 +80,8 @@ GET /my_store/products/_search
 --------------------------------------------------
 // SENSE: 080_Structured_Search/05_Term_number.json
 
-<1> We use a `bool` to hold our non-scoring queries
-<2>  The `term` query that we saw previously.  Notice how it is placed inside
-the `filter` clause of the bool.
+<1> We use a `constant_score` to convert the `term` query into a filter
+<2>  The `term` query that we saw previously.
 
 Once executed, the search results from this query are exactly what you would
 expect: only document 2 is returned as a hit (because only `2` had a price
@@ -132,7 +128,7 @@ filter, like so:
 GET /my_store/products/_search
 {
     "query" : {
-        "bool" : {
+        "constant_score" : {
             "filter" : {
                 "term" : {
                     "productID" : "XHDK-A-1293-#fJ3"
@@ -255,7 +251,7 @@ how the data is mapped):
 GET /my_store/products/_search
 {
     "query" : {
-        "bool" : {
+        "constant_score" : {
             "filter" : {
                 "term" : {
                     "productID" : "XHDK-A-1293-#fJ3"
@@ -307,7 +303,7 @@ due to the inverted index, so we only want to cache queries we _know_ will be us
 again in the future to prevent resource wastage.
 +
 To do this, Elasticsearch tracks the history of query usage on a per-index basis.
-If a query is used more than five times in the last 256 queries, it is cached
+If a query is used more than a few times in the last 256 queries, it is cached
 in memory.  And when the bitset is cached, caching is omitted on segments that have
 fewer than 10,000 documents (or less than 3% of the total index size). These
 small segments tend to disappear quickly anyway and it is a waste to associate a
@@ -315,10 +311,10 @@ cache with them.
 
 
 Although not quite true in reality (execution is a bit more complicated based on
-how the query planner re-arranges things), you can conceptually think of
-non-scoring queries as executing _before_ the scoring queries.  The job of
-non-scoring queries is to reduce the number of documents that the more costly
-scoring queries need to evaluate, resulting in a faster search request.
+how the query planner re-arranges things, and some heuristics based on query cost),
+you can conceptually think of non-scoring queries as executing _before_ the scoring
+queries.  The job of non-scoring queries is to reduce the number of documents that
+the more costly scoring queries need to evaluate, resulting in a faster search request.
 
 By conceptually thinking of non-scoring queries as executing first, you'll be
 equipped to write efficient and fast search requests.

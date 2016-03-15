@@ -83,11 +83,11 @@ the previous example to use a `filter` clause:
 By moving the range query into the `filter` clause, we have converted it into a
 non-scoring query.  It will no longer contribute a score to the document's relevance
 ranking.  And because it is now a non-scoring query, it can use the variety of optimizations
-available to filtering queries which should increase performance.
+available to filters which should increase performance.
 
 Any query can be used in this manner.  Simply move a query into the
-`filter` clause of a `bool` query and it automatically converts to a non-scoring,
-filtering query.
+`filter` clause of a `bool` query and it automatically converts to a non-scoring
+filter.
 
 If you need to filter on many different criteria, the `bool` query itself can be
 used as a non-scoring query.  Simply place it inside the `filter` clause and
@@ -123,3 +123,30 @@ to our filtering criteria
 
 By mixing and matching where Boolean queries are placed, we can flexibly encode
 both scoring and filtering logic in our search request.
+
+
+==== constant_score Query
+
+Although not used nearly as often as the `bool` query, the `constant_score` query is
+still useful to have in your toolbox.  The query applies a static, constant score to
+all matching documents.  It is predominantly used when you want to execute a filter
+and nothing else (e.g. no scoring queries).
+
+You can use this instead of a `bool` that only has filter clauses.  Performance
+will be identical, but it may aid in query simplicity/clarity.
+
+[source,js]
+--------------------------------------------------
+{
+    "constant_score":   {
+        "filter": {
+            "term": { "category": "ebooks" } <1>
+        }
+    }
+}
+--------------------------------------------------
+// SENSE: 054_Query_DSL/70_bool_query.json
+
+<1> A `term` query is placed inside the `constant_score`, converting it to a
+non-scoring filter.  This method can be used in place of a `bool` query which only
+has a single filter

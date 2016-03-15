@@ -10,7 +10,7 @@ that geohash--a very efficient query indeed.
 GET /attractions/restaurant/_search
 {
   "query": {
-    "bool": {
+    "constant_score": {
       "filter": {
         "geohash_cell": {
           "location": {
@@ -45,7 +45,7 @@ setting `neighbors` to((("neighbors setting (geohash_cell)"))) `true`:
 GET /attractions/restaurant/_search
 {
   "query": {
-    "bool": {
+    "constant_score": {
       "filter": {
         "geohash_cell": {
           "location": {

@@ -15,7 +15,7 @@ bounding box that is needed to encapsulate all of the geo-points:
 GET /attractions/restaurant/_search?search_type=count
 {
   "query": {
-    "bool": {
+    "constant_score": {
       "filter": {
         "geo_bounding_box": {
           "location": {
@@ -79,7 +79,7 @@ cell:
 GET /attractions/restaurant/_search?search_type=count
 {
   "query": {
-    "bool": {
+    "constant_score": {
       "filter": {
         "geo_bounding_box": {
           "location": {

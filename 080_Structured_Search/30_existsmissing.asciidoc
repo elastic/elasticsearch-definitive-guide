@@ -84,7 +84,7 @@ In Elasticsearch, we use the `exists` query:
 GET /my_index/posts/_search
 {
     "query" : {
-        "bool" : {
+        "constant_score" : {
             "filter" : {
                 "exists" : { "field" : "tags" }
             }
@@ -146,7 +146,7 @@ Let's swap the `exists` query for a `missing` query from our previous example:
 GET /my_index/posts/_search
 {
     "query" : {
-        "bool" : {
+        "constant_score" : {
             "filter": {
                 "missing" : { "field" : "tags" }
             }

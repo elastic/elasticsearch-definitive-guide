@@ -6,7 +6,7 @@ and matched in endless combinations.  This single set of components can be used
 in two contexts: filtering context and query context.
 
 When used in _filtering context_, the query is said to be a "non-scoring" or "filtering"
-qury.  That is, the query simply asks the question: "Does this document match?".
+qeury.  That is, the query simply asks the question: "Does this document match?".
 The answer is always a simple, binary yes|no.
 
 * Is the `created` date in the range `2013` - `2014`?
@@ -38,20 +38,34 @@ sort matching documents by relevance. This concept of relevance is
 well suited to full-text search, where there is seldom a completely
 ``correct'' answer.
 
+[NOTE]
+====
+Historically, queries and filters were separate components in Elasticsearch.  Starting
+in Elasticsearch 2.0, filters were technically eliminated, and all queries gained
+the ability to become non-scoring.
+
+However, for clarity and simplicity, we will use the term "filter" to mean a query which
+is used in a non-scoring, filtering context.  You can think of the terms "filter",
+"filtering query" and "non-scoring query" as being identical.
+
+Similarly, if the term "query" is used in isolation without a qualifier, we are
+referring to a "scoring query".
+====
+
 ==== Performance Differences
 
 Filtering queries are simple checks for set inclusion/exclusion, which make them
 very fast to compute.  There are various optimizations that can be leveraged
 when at least one of your filtering query is "sparse" (few matching documents),
-an frequently used non-scoring queries can be cached in memory for faster access.
+and frequently used non-scoring queries can be cached in memory for faster access.
 
 In contrast, scoring queries have to not only find((("queries", "performance, filters versus")))
 matching documents, but also calculate how relevant each document is, which typically makes
 them heavier than their non-scoring counterparts.  Also, query results are not cacheable.
 
 Thanks to the inverted index, a simple scoring query that matches just a few documents
-may perform as well or better than a filtering query that spans millions
-of documents.  In general, however, a filtering query will outperform a
+may perform as well or better than a filter that spans millions
+of documents.  In general, however, a filter will outperform a
 scoring query.  And it will do so consistently.
 
 The goal of filtering is to _reduce the number of documents that have to
@@ -61,4 +75,4 @@ be examined by the scoring queries_.
 
 As a general rule, use((("filters", "when to use")))((("queries", "when to use")))
 query clauses for _full-text_ search or for any condition that should affect the
-_relevance score_, and use filtering clauses for everything else.
+_relevance score_, and use filters for everything else.
