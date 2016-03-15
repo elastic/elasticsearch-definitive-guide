@@ -52,7 +52,7 @@ Elasticsearch responds as follows:
 --------------------------------------------------
 
 
-The response indicates that the indexing request has been successfully created
+The response indicates that the document has been successfully created
 and includes the `_index`, `_type`, and `_id` metadata, and a new element:
 `_version`.((("version number (documents)")))
 
