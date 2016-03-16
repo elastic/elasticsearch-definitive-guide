@@ -127,13 +127,13 @@ and not marked as spam:
 --------------------------------------------------
 {
     "bool": {
-        "must": { "match":      { "email": "business opportunity" }},
+        "must": { "match":   { "email": "business opportunity" }},
         "should": [
-             { "match":         { "starred": true }},
-             { "bool": {
-                   "must":      { "folder": "inbox" }},
-                   "must_not":  { "spam": true }}
-             }}
+            { "match":       { "starred": true }},
+            { "bool": {
+                "must":      { "match": { "folder": "inbox" }},
+                "must_not":  { "match": { "spam": true }}
+            }}
         ],
         "minimum_should_match": 1
     }
