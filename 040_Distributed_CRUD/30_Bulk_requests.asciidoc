@@ -47,6 +47,6 @@ The sequence of steps((("bulk API", "multiple document changes with")))((("docum
    the coordinating node, which collates the responses and returns them to the
    client.
 
-The `bulk` API also ((("consistency request parameter", "in bulk requests"))) the `consistency` parameter
+The `bulk` API also accepts ((("consistency request parameter", "in bulk requests"))) the `consistency` parameter
 at the top level for the whole `bulk` request, and the `routing` parameter
 in the metadata for each request.
