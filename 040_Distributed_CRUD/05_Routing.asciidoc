@@ -32,8 +32,7 @@ in <<scale>>.
 ====
 
 All document APIs (`get`, `index`, `delete`, `bulk`, `update`, and `mget`)
-accept a `routing` parameter ((("routing parameter")))that can be used to customize the document-to-
-shard mapping. A custom routing value could be used to ensure that all related
+accept a `routing` parameter ((("routing parameter")))that can be used to customize the document-to-shard mapping. A custom routing value could be used to ensure that all related
 documents--for instance, all the documents belonging to the same user--are
 stored on the same shard. We discuss in detail why you may want to do this in
 <<scale>>.
