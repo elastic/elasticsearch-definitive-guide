@@ -1,9 +1,7 @@
 [[combining-filters]]
-=== Combining Filters
+=== 组合过滤器
 
-The previous two examples showed a single filter in use.((("structured search", "combining filters")))((("filters", "combining"))) In practice, you
-will probably need to filter on multiple values or fields.  For example, how
-would you express this SQL in Elasticsearch?
+前面的两个例子都是单个过滤器（filter）的使用方式。((("structured search", "combining filters")))((("filters", "combining"))) 在实际应用中，我们很有可能会过滤多个值或字段。比方说，怎样用 Elasticsearch 来表达下面的 SQL ？
 
 [source,sql]
 --------------------------------------------------
@@ -13,14 +11,12 @@ WHERE  (price = 20 OR productID = "XHDK-A-1293-#fJ3")
   AND  (price != 30)
 --------------------------------------------------
 
-In these situations, you will need the `bool` filter.((("filters", "combining", "in bool filter")))((("bool filter")))  This is a _compound
-filter_ that accepts other filters as arguments, combining them in various
-Boolean combinations.
+这种情况下，我们需要 `bool` （布尔）过滤器。((("filters", "combining", "in bool filter")))((("bool filter"))) 这是个 _复合过滤器（compound filter）_ ，它可以接受多个其他过滤器作为参数，并将这些过滤器结合成各式各样的布尔（逻辑）组合。
 
 [[bool-filter]]
-==== Bool Filter
+==== 布尔过滤器
 
-The `bool` filter is composed of three sections:
+一个 `bool` 过滤器由三部分组成：
 
 [source,js]
 --------------------------------------------------
@@ -33,28 +29,23 @@ The `bool` filter is composed of three sections:
 }
 --------------------------------------------------
 
- `must`::    
-   All of these clauses _must_ match. The equivalent of `AND`.
-   
- `must_not`:: 
-   All of these clauses _must not_ match. The equivalent of `NOT`.
-   
- `should`::   
-   At least one of these clauses must match. The equivalent of `OR`.
+ `must`::
+   所有的语句都 _必须（must）_ 匹配，与 `AND` 等价。
 
-And that's it!((("should clause", "in bool filters")))((("must_not clause", "in bool filters")))((("must clause", "in bool filters"))) When you need multiple filters, simply place them into the
-different sections of the `bool` filter.
+ `must_not`::
+   所有的语句都 _不能（must not）_ 匹配，与 `NOT` 等价。
+
+ `should`::
+   至少有一个语句要匹配，与 `OR` 等价。
+
+就这么简单！((("should clause", "in bool filters")))((("must_not clause", "in bool filters")))((("must clause", "in bool filters"))) 当我们需要多个过滤器时，只须将它们置入 `bool` 过滤器的不同部分即可。
 
 [NOTE]
 ====
-Each section of the `bool` filter is optional (for example, you can have a `must`
-clause and nothing else), and each section can contain a single filter or an
-array of filters.
+一个 `bool` 过滤器的每个部分都是可选的（例如，我们可以只有一个 `must` 语句），而且每个部分内部可以只有一个或一组过滤器。
 ====
 
-To replicate the preceding SQL example, we will take the two `term` filters that
-we used((("term filter", "placing inside bool filter")))((("bool filter", "with two term filters in should clause and must_not clause"))) previously and place them inside the `should` clause of a `bool`
-filter, and add another clause to deal with the `NOT` condition:
+用 Elasticsearch 来表示本部分开始处的 SQL 例子，将两个 `term` 过滤器置入  `bool` 过滤器的 `should` 语句内，再增加一个语句处理 `NOT` 非的条件：
 
 [source,js]
 --------------------------------------------------
@@ -79,14 +70,11 @@ GET /my_store/products/_search
 --------------------------------------------------
 // SENSE: 080_Structured_Search/10_Bool_filter.json
 
-<1> Note that we still need to use a `filtered` query to wrap everything.
-<2> These two `term` filters are _children_ of the `bool` filter, and since they
-    are placed inside the `should` clause, at least one of them needs to match.
-<3> If a product has a price of `30`, it is automatically excluded because it
-    matches a `must_not` clause.
+<1> 注意，我们仍然需要一个 `filtered` 查询将所有的东西包起来。
+<2> 在 `should` 语句块里面的两个 `term` 过滤器与 `bool` 过滤器是父子关系，两个 `term` 条件需要匹配其一。
+<3> 如果一个产品的价格是 `30` ，那么它会自动被排除，因为它处于 `must_not` 语句里面。
 
-Our search results return two hits, each document satisfying a different clause
-in the `bool` filter:
+我们搜索的结果返回了 2 个命中结果，两个文档分别匹配了 `bool` 过滤器其中的一个条件：
 
 [source,json]
 --------------------------------------------------
@@ -109,17 +97,14 @@ in the `bool` filter:
     }
 ]
 --------------------------------------------------
-<1> Matches the `term` filter for `productID = "XHDK-A-1293-#fJ3"`
-<2> Matches the `term` filter for `price = 20`
+<1> 与 `term` 过滤器中 `productID = "XHDK-A-1293-#fJ3"` 条件匹配
+<2> 与 `term` 过滤器中 `price = 20` 条件匹配
 
-==== Nesting Boolean Filters
+==== 嵌套布尔过滤器
 
-Even though `bool` is a compound filter and accepts children filters, it is
-important to understand that `bool` is just a filter itself.((("filters", "combining", "nesting bool filters")))((("bool filter", "nesting in another bool filter")))  This means you
-can nest `bool` filters inside other `bool` filters, giving you the
-ability to make arbitrarily complex Boolean logic.
+尽管 `bool` 是一个复合的过滤器，可以接受多个子过滤器，需要注意的是 `bool` 过滤器本身仍然还只是一个过滤器。((("filters", "combining", "nesting bool filters")))((("bool filter", "nesting in another bool filter")))  这意味着我们可以将一个 `bool` 过滤器置于其他 `bool` 过滤器内部，这为我们提供了对任意复杂布尔逻辑进行处理的能力。
 
-Given this SQL statement:
+对于以下这个 SQL 语句：
 
 [source,sql]
 --------------------------------------------------
@@ -130,7 +115,7 @@ WHERE  productID      = "KDKE-B-9947-#kL5"
        AND price     = 30 )
 --------------------------------------------------
 
-We can translate it into a pair of nested `bool` filters:
+我们将其转换成一组嵌套的 `bool` 过滤器：
 
 [source,js]
 --------------------------------------------------
@@ -157,14 +142,10 @@ GET /my_store/products/_search
 --------------------------------------------------
 // SENSE: 080_Structured_Search/10_Bool_filter.json
 
-<1> Because the `term` and the `bool` are sibling clauses inside the first
-    Boolean `should`, at least one of these filters must match for a document
-    to be a hit.
+<1> 因为 `term` 和 `bool` 过滤器是兄弟关系，他们都处于外层的布尔逻辑 `should` 的内部，返回的命中文档至少须匹配其中一个过滤器的条件。
+<2> 这两个 `term` 语句作为兄弟关系，同时处于 `must` 语句之中，所以返回的命中文档要必须都能同时匹配这两个条件。
 
-<2> These two `term` clauses are siblings in a `must` clause, so they both
-    have to match for a document to be returned as a hit.
-
-The results show us two documents, one matching each of the `should` clauses:
+得到的结果有两个文档，它们各匹配 `should` 语句中的一个条件：
 
 [source,json]
 --------------------------------------------------
@@ -187,8 +168,7 @@ The results show us two documents, one matching each of the `should` clauses:
     }
 ]
 --------------------------------------------------
-<1> This `productID` matches the `term` in the first `bool`.
-<2> These two fields match the `term` filters in the nested `bool`.
+<1> 这个 `productID` 与外层的 `bool` 过滤器 `should` 里的唯一一个 `term` 匹配。
+<2> 这两个字段与嵌套的 `bool` 过滤器 `must` 里的两个 `term` 匹配。
 
-This was a simple example, but it demonstrates how Boolean filters can be
-used as building blocks to construct complex logical conditions.
+这只是个简单的例子，但足以展示布尔过滤器可以用来作为构造复杂逻辑条件的基本构建模块。
