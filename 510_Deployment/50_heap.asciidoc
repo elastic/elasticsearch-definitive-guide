@@ -2,7 +2,7 @@
 === 堆内存:大小和交换
 
 Elasticsearch 默认安装后设置的堆内存是 1 GB。((("deployment", "heap, sizing and swapping")))((("heap", "sizing and setting")))对于任何一个业务部署来说，
-这个设置都太小了。如果你正在使用这些默认堆内存配置，您的群集可能会出现问题。
+这个设置都太小了。如果你正在使用这些默认堆内存配置，您的集群可能会出现问题。
 
 这里有两种方式修改 Elasticsearch 的堆内存。最简单的一个方法就是指定 `ES_HEAP_SIZE` 环境变量。((("ES_HEAP_SIZE environment variable")))服务进程在启动时候会读取这个变量，并相应的设置堆的大小。
 比如，你可以用下面的命令设置它：
