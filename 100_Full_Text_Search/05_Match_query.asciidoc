@@ -65,7 +65,7 @@ the query string should be analyzed too.
 2. _Analyze the query string_.
 +
 The query string `QUICK!` is passed through the standard analyzer, which
-results in the single term `quick`. Because we have a just a single term,
+results in the single term `quick`. Because we have just a single term,
 the `match` query can be executed as a single low-level `term` query.
 
 3. _Find matching docs_.
