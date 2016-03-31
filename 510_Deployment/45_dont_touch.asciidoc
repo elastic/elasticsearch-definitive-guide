@@ -1,84 +1,50 @@
 
-=== Don't Touch These Settings!
+=== 不要触碰这些配置！
 
-There are a few hotspots in Elasticsearch that people just can't seem to avoid
-tweaking. ((("deployment", "settings to leave unaltered"))) We understand:  knobs just beg to be turned. But of all the knobs to turn, these you should _really_ leave alone. They are
-often abused and will contribute to terrible stability or terrible performance.
-Or both.
+在 Elasticsearch 中有一些热点，人们可能不可避免的会碰到。((("deployment", "settings to leave unaltered"))) 我们理解的，所有的调整就是为了优化，但是这些调整，你真的不需要理会它。因为它们经常会被乱用，从而造成系统的不稳定或者糟糕的性能，甚至两者都有可能。
 
-==== Garbage Collector
+==== 垃圾回收器
 
-As briefly introduced in <<garbage_collector_primer>>, the JVM uses a garbage
-collector to free unused memory.((("garbage collector")))  This tip is really an extension of the last tip,
-but deserves its own section for emphasis:
+这里已经简要介绍了 <<garbage_collector_primer>>，JVM 使用一个垃圾回收器来释放不再使用的内存。((("garbage collector"))) 这篇内容的确是上一篇的一个延续，
+但是因为重要，所以值得单独拿出来作为一节。
 
-Do not change the default garbage collector!
+不要更改默认的垃圾回收器！
 
-The default GC for Elasticsearch is Concurrent-Mark and Sweep (CMS).((("Concurrent-Mark and Sweep (CMS) garbage collector")))  This GC
-runs concurrently with the execution of the application so that it can minimize
-pauses.  It does, however, have two stop-the-world phases.  It also has trouble
-collecting large heaps.
+Elasticsearch 默认的垃圾回收器（ GC ）是 CMS。((("Concurrent-Mark and Sweep (CMS) garbage collector"))) 这个垃圾回收器可以和应用并行处理，以便它可以最小化停顿。
+然而，它有两个 stop-the-world 阶段，处理大内存也有点吃力。
 
-Despite these downsides, it is currently the best GC for low-latency server software
-like Elasticsearch.  The official recommendation is to use CMS.
+尽管有这些缺点，它还是目前对于像 Elasticsearch 这样低延迟需求软件的最佳垃圾回收器。官方建议使用 CMS。
 
-There is a newer GC called the Garbage First GC (G1GC). ((("Garbage First GC (G1GC)"))) This newer GC is designed
-to minimize pausing even more than CMS, and operate on large heaps.  It works
-by dividing the heap into regions and predicting which regions contain the most
-reclaimable space.  By collecting those regions first (_garbage first_), it can
-minimize pauses and operate on very large heaps.
+现在有一款新的垃圾回收器，叫 G1 垃圾回收器（ G1GC ）。((("Garbage First GC (G1GC)"))) 这款新的 GC 被设计，旨在比 CMS 更小的暂停时间，以及对大内存的处理能力。
+它的原理是把内存分成许多区域，并且预测哪些区域最有可能需要回收内存。通过优先收集这些区域（ _garbage first_ ），产生更小的暂停时间，从而能应对更大的内存。
 
-Sounds great!  Unfortunately, G1GC is still new, and fresh bugs are found routinely.
-These bugs are usually of the segfault variety, and will cause hard crashes.
-The Lucene test suite is brutal on GC algorithms, and it seems that G1GC hasn't
-had the kinks worked out yet.
+听起来很棒！遗憾的是，G1GC 还是太新了，经常发现新的 bugs。这些错误通常是段（ segfault ）类型，便造成硬盘的崩溃。
+Lucene 的测试套件对垃圾回收算法要求严格，看起来这些缺陷 G1GC 并没有很好地解决。
 
-We would like to recommend G1GC someday, but for now, it is simply not stable
-enough to meet the demands of Elasticsearch and Lucene.
+我们很希望在将来某一天推荐使用 G1GC，但是对于现在，它还不能足够稳定的满足 Elasticsearch 和 Lucene 的要求。
 
-==== Threadpools
+==== 线程池
 
-Everyone _loves_ to tweak threadpools.((("threadpools")))  For whatever reason, it seems people
-cannot resist increasing thread counts.  Indexing a lot?  More threads!  Searching
-a lot? More threads!  Node idling 95% of the time?  More threads!
+许多人 _喜欢_ 调整线程池。((("threadpools"))) 无论什么原因，人们都对增加线程数无法抵抗。索引太多了？增加线程！搜索太多了？增加线程！节点空闲率低于 95％？增加线程！
 
-The default threadpool settings in Elasticsearch are very sensible.  For all
-threadpools (except `search`) the threadcount is set to the number of CPU cores.
-If you have eight cores, you can be running only eight threads simultaneously.  It makes
-sense to assign only eight threads to any particular threadpool.
+Elasticsearch 默认的线程设置已经是很合理的了。对于所有的线程池（除了 `搜索` ），线程个数是根据 CPU 核心数设置的。
+如果你有 8 个核，你可以同时运行的只有 8 个线程，只分配 8 个线程给任何特定的线程池是有道理的。
 
-Search gets a larger threadpool, and is configured to `int((# of cores * 3) / 2) + 1`. 
+搜索线程池设置的大一点，配置为 `int（（ 核心数 ＊ 3 ）／ 2 ）＋ 1` 。
 
-You might argue that some threads can block (such as on a disk I/O operation), 
-which is why you need more threads.  This is not a problem in Elasticsearch:
-much of the disk I/O is handled by threads managed by Lucene, not Elasticsearch.
+你可能会认为某些线程可能会阻塞（如磁盘上的 I／O 操作），所以你才想加大线程的。对于 Elasticsearch 来说这并不是一个问题：因为大多数 I／O 的操作是由 Lucene 线程管理的，而不是 Elasticsearch。
 
-Furthermore, threadpools cooperate by passing work between each other.  You don't
-need to worry about a networking thread blocking because it is waiting on a disk
-write.  The networking thread will have long since handed off that work unit to
-another threadpool and gotten back to networking.
+此外，线程池通过传递彼此之间的工作配合。你不必再因为它正在等待磁盘写操作而担心网络线程阻塞，
+因为网络线程早已把这个工作交给另外的线程池，并且网络进行了响应。
 
-Finally, the compute capacity of your process is finite.  Having more threads just forces
-the processor to switch thread contexts.  A processor can run only one thread
-at a time, so when it needs to switch to a different thread, it stores the current
-state (registers, and so forth) and loads another thread.  If you are lucky, the switch
-will happen on the same core.  If you are unlucky, the switch may migrate to a
-different core and require transport on an inter-core communication bus.
+最后，你的处理器的计算能力是有限的，拥有更多的线程会导致你的处理器频繁切换线程上下文。
+一个处理器同时只能运行一个线程。所以当它需要切换到其它不同的线程的时候，它会存储当前的状态（寄存器等等），然后加载另外一个线程。
+如果幸运的话，这个切换发生在同一个核心，如果不幸的话，这个切换可能发生在不同的核心，这就需要在内核间总线上进行传输。
 
-This context switching eats up cycles simply by doing administrative housekeeping; estimates can peg it as high as 30μs on modern CPUs.  So unless the thread
-will be blocked for longer than 30μs, it is highly likely that that time would
-have been better spent just processing and finishing early.
+这个上下文的切换，会给 CPU 时钟周期带来管理调度的开销；在现代的 CPUs 上，开销估计高达 30 μs。也就是说线程会被堵塞超过 30 μs，如果这个时间用于线程的运行，极有可能早就结束了。
 
-People routinely set threadpools to silly values.  On eight core machines, we have
-run across configs with 60, 100, or even 1000 threads.  These settings will simply
-thrash the CPU more than getting real work done.
+人们经常稀里糊涂的设置线程池的值。8 个核的 CPU，我们遇到过有人配了 60、100 甚至 1000 个线程。
+这些设置只会让 CPU 实际工作效率更低。
 
-So. Next time you want to tweak a threadpool, please don't.  And if you
-_absolutely cannot resist_, please keep your core count in mind and perhaps set
-the count to double.  More than that is just a waste.
-
-
-
-
-
-
+所以，下次请不要调整线程池的线程数。如果你真 _想调整_ ，
+一定要关注你的 CPU 核心数，最多设置成核心数的两倍，再多了都是浪费。
