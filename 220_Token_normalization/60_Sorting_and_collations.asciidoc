@@ -99,7 +99,7 @@ PUT /my_index
     as a single unchanged token.((("keyword tokenizer")))
 <2> The `lowercase` token filter lowercases the token.
 
-With((("lowercase token filter"))) the `case_insentive_sort` analyzer in place, we can now use it in our
+With((("lowercase token filter"))) the `case_insensitive_sort` analyzer in place, we can now use it in our
 multifield:
 
 [source,js]
@@ -131,7 +131,7 @@ PUT /my_index/user/3
 GET /my_index/user/_search?sort=name.lower_case_sort
 --------------------------------------------------
 <1> The `name.lower_case_sort` field will provide us with
-    case-insentive sorting.
+    case-insensitive sorting.
 
 The preceding search request returns our documents in the order that we expect:
 `bailey`, `Boffey`, `BROWN`.
@@ -144,7 +144,7 @@ to the English alphabet.
 What if we were to add the German name _Böhm_?
 
 Now our names would be returned in this order: `bailey`, `Boffey`, `BROWN`,
-`Böhm`. The reason that `böhm` comes after `BROWN` is that these words are
+`Böhm`. The reason that `Böhm` comes after `BROWN` is that these words are
 still being sorted by the values of the bytes used to represent them, and an
 `r` is stored as the byte `0x72`, while `ö` is stored as `0xF6` and so is
 sorted last. The byte value of each character is an accident of history.
