@@ -12,17 +12,32 @@ GET /my_index/blogpost/_search
   "query": {
     "bool": {
       "must": [
-        { "match": { "title": "eggs" }}, <1>
+        { 
+          "match": {
+            "title": "eggs" <1>
+          }
+        },
         {
           "nested": {
             "path": "comments", <2>
             "query": {
               "bool": {
                 "must": [ <3>
-                  { "match": { "comments.name": "john" }},
-                  { "match": { "comments.age":  28     }}
+                  { 
+                    "match": { 
+                      "comments.name": "john" 
+                    }
+                  },
+                  { 
+                    "match": {
+                      "comments.age": 28     
+                    }
+                  }
                 ]
-        }}}}
+              }
+            }
+          }
+        }
       ]
 }}}
 --------------------------
