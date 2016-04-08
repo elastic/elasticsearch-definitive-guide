@@ -279,10 +279,14 @@ name. Compare the output of these two requests:
 [source,js]
 --------------------------------------------------
 GET /gb/_analyze?field=tweet
-Black-cats <1>
+{
+  "text": "Black-cats" <1>
+}
 
 GET /gb/_analyze?field=tag
-Black-cats <1>
+{
+  "text": "Black-cats" <1>
+}
 --------------------------------------------------
 // SENSE: 052_Mapping_Analysis/45_Mapping.json
 <1> The text we want to analyze is passed in the body.
