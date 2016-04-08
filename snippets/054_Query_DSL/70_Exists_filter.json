@@ -30,7 +30,7 @@ PUT /test/test/2
 GET /test/test/_search
 {
   "query": {
-    "filtered": {
+    "bool": {
       "filter": {
         "exists": {
           "field": "title"
@@ -44,7 +44,7 @@ GET /test/test/_search
 GET /test/test/_search
 {
   "query": {
-    "filtered": {
+    "bool": {
       "filter": {
         "missing": {
           "field": "title"

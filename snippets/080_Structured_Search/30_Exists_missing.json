@@ -18,7 +18,7 @@ POST /my_index/posts/_bulk
 GET /my_index/posts/_search
 {
   "query": {
-    "filtered": {
+    "constant_score": {
       "filter": {
         "exists": {
           "field": "tags"
@@ -32,7 +32,7 @@ GET /my_index/posts/_search
 GET /my_index/posts/_search
 {
   "query": {
-    "filtered": {
+    "constant_score": {
       "filter": {
         "missing": {
           "field": "tags"

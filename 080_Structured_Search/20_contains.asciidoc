@@ -1,9 +1,11 @@
 ==== Contains, but Does Not Equal
 
 It is important to understand that `term` and `terms` are _contains_ operations,
-not _equals_.((("structured search", "contains, but does not equal")))((("terms filter", "contains, but does not equal")))((("term filter", "contains, but does not equal")))  What does that mean?
+not _equals_.((("structured search", "contains, but does not equal")))
+((("terms query", "contains, but does not equal")))((("term query", "contains, but does not equal")))
+What does that mean?
 
-If you have a term filter for `{ "term" : { "tags" : "search" } }`, it will match
+If you have a term query for `{ "term" : { "tags" : "search" } }`, it will match
 _both_ of the following documents:
 
 [source,js]
@@ -14,7 +16,7 @@ _both_ of the following documents:
 
 <1> This document is returned, even though it has terms other than `search`.
 
-Recall how the `term` filter works: it checks the inverted index for all
+Recall how the `term` query works: it checks the inverted index for all
 documents that contain a term, and then constructs a bitset.  In our simple
 example, we have the following inverted index:
 
@@ -25,7 +27,7 @@ example, we have the following inverted index:
 |`search`      | `1`,`2`
 |==========================
 
-When a `term` filter is executed for the token `search`, it goes straight to the
+When a `term` query is executed for the token `search`, it goes straight to the
 corresponding entry in the inverted index and extracts the associated doc IDs.
 As you can see, both document 1 and document 2 contain the token in the inverted index.
 Therefore, they are both returned as a result.
@@ -45,9 +47,9 @@ _must equal exactly_.
 
 ==== Equals Exactly
 If you do want that behavior--entire field equality--the best way to
-accomplish it involves indexing a secondary field. ((("structured search", "equals exactly"))) In this field, you index the
-number of values that your field contains.  Using our two previous documents,
-we now include a field that maintains the number of tags:
+accomplish it involves indexing a secondary field. ((("structured search", "equals exactly")))
+In this field, you index the number of values that your field contains.  Using
+our two previous documents, we now include a field that maintains the number of tags:
 
 [source,js]
 --------------------------------------------------
@@ -56,7 +58,7 @@ we now include a field that maintains the number of tags:
 --------------------------------------------------
 // SENSE: 080_Structured_Search/20_Exact.json
 
-Once you have the count information indexed, you can construct a `bool` filter
+Once you have the count information indexed, you can construct a `constant_score`
 that enforces the appropriate number of terms:
 
 [source,js]
@@ -64,7 +66,7 @@ that enforces the appropriate number of terms:
 GET /my_index/my_type/_search
 {
     "query": {
-        "filtered" : {
+        "constant_score" : {
             "filter" : {
                  "bool" : {
                     "must" : [
@@ -84,4 +86,3 @@ GET /my_index/my_type/_search
 
 This query will now match only the document that has a single tag that is
 `search`, rather than any document that contains `search`.
-

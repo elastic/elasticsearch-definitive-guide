@@ -16,7 +16,7 @@ GET /attractions/restaurant/_search
 {
   "size" : 0,
   "query": {
-    "filtered": {
+    "constant_score": {
       "filter": {
         "geo_bounding_box": {
           "location": {
@@ -48,7 +48,7 @@ GET /attractions/restaurant/_search
   }
 }
 ----------------------------
-<1> The `geo_bounds` aggregation will calculate the smallest bounding box required to encapsulate all of the documents matching our query. 
+<1> The `geo_bounds` aggregation will calculate the smallest bounding box required to encapsulate all of the documents matching our query.
 
 The response now includes a bounding box that we can use to zoom our map:
 
@@ -81,7 +81,7 @@ GET /attractions/restaurant/_search
 {
   "size" : 0,
   "query": {
-    "filtered": {
+    "constant_score": {
       "filter": {
         "geo_bounding_box": {
           "location": {
@@ -115,7 +115,7 @@ GET /attractions/restaurant/_search
   }
 }
 ----------------------------
-<1> The `cell_bounds` subaggregation is calculated for every geohash cell.
+<1> The `cell_bounds` sub-aggregation is calculated for every geohash cell.
 
 Now the ((("cell_bounds aggregation")))points in each cell have a bounding box:
 
@@ -143,5 +143,3 @@ Now the ((("cell_bounds aggregation")))points in each cell have a bounding box:
         },
 ...
 ----------------------------
-
-

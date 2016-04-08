@@ -38,7 +38,7 @@ GET mlratings/_search
 {
   "size" : 0,
   "query": {
-    "filtered": {
+    "bool": {
       "filter": {
         "term": {
           "movie": 46970
@@ -60,7 +60,7 @@ GET mlratings/_search
 GET mlmovies/_search
 {
   "query": {
-    "filtered": {
+    "bool": {
       "filter": {
         "ids": {
           "values": [2571,318,296,2959,260]
@@ -92,7 +92,7 @@ GET mlratings/_search
 {
   "size" : 0,
   "query": {
-    "filtered": {
+    "bool": {
       "filter": {
         "term": {
           "movie": 46970

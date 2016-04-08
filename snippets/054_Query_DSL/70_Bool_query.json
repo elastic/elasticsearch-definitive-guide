@@ -66,3 +66,90 @@ GET /test/test/_search
     }
   }
 }
+
+
+# Move the date range query into the filter clause
+# to turn it into a non-scoring query
+GET /test/test/_search
+{
+  "query": {
+    "bool": {
+      "must": {
+        "match": {
+          "title": "how to make millions"
+        }
+      },
+      "must_not": {
+        "match": {
+          "tag": "spam"
+        }
+      },
+      "should": [
+        {
+          "match": {
+            "tag": "starred"
+          }
+        }
+      ],
+      "filter": {
+        "range": {
+          "date": {
+            "gte": "2014-01-01"
+          }
+        }
+      }
+    }
+  }
+}
+
+
+# Embed another bool inside the first bool's filter clause, to
+# enable boolean logic among non-scoring queries
+GET /test/test/_search
+{
+  "query": {
+    "bool": {
+      "must": {
+        "match": {
+          "title": "how to make millions"
+        }
+      },
+      "must_not": {
+        "match": {
+          "tag": "spam"
+        }
+      },
+      "should": [
+        {
+          "match": {
+            "tag": "starred"
+          }
+        }
+      ],
+      "filter": {
+        "bool": {
+            "must": [
+                { "range": { "date": { "gte": "2014-01-01" }}},
+                { "range": { "price": { "lte": 29.99 }}}
+            ],
+            "must_not": [
+                { "term": { "category": "ebooks" }}
+            ]
+        }
+      }
+    }
+  }
+}
+
+# If you just want to apply a filter and nothing else, you can use
+# constant_score query
+GET /test/test/_search
+{
+  "query": {
+    "constant_score":   {
+      "filter": {
+          "term": { "category": "ebooks" }
+      }
+    }
+  }
+}

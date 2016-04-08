@@ -34,16 +34,11 @@ parent, so there is no need to reduce multiple scores into a single score for
 the child.  The choice is simply between using the score (`score`) or not
 (`none`).
 
-.has_parent Filter
+.Non-scoring has_parent Query
 **************************
 
-The `has_parent` filter works in the same way((("has_parent query and filter", "filter"))) as the `has_parent` query, except
-that it doesn't support the `score_mode` parameter. It can be used only in
-_filter context_&#x2014;such as inside a `filtered` query--and behaves
-like any other filter: it includes or excludes, but doesn't score.
-
-While the results of a `has_parent` filter are not cached, the usual caching
-rules apply to the filter _inside_ the `has_parent` filter.
-
+When used in non-scoring mode (e.g. inside a `filter` clause), the `has_parent`
+query no longer supports the `score_mode` parameter.  Because it is merely
+including/excluding documents and not scoring, the `score_mode` parameter
+no longer applies.
 **************************
-

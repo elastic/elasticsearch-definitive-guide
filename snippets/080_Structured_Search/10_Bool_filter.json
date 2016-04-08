@@ -34,7 +34,7 @@ POST /my_store/products/_bulk
 GET /my_store/products/_search
 {
   "query": {
-    "filtered": {
+    "constant_score": {
       "filter": {
         "bool": {
           "should": [
@@ -68,7 +68,7 @@ GET /my_store/products/_search
 GET /my_store/products/_search
 {
   "query": {
-    "filtered": {
+    "constant_score": {
       "filter": {
         "bool": {
           "should": [

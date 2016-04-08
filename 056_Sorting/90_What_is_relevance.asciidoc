@@ -196,9 +196,9 @@ The path for the request is `/index/type/id/_explain`, as in the following:
 GET /us/tweet/12/_explain
 {
    "query" : {
-      "filtered" : {
+      "bool" : {
          "filter" : { "term" :  { "user_id" : 2           }},
-         "query" :  { "match" : { "tweet" :   "honeymoon" }}
+         "must" :  { "match" : { "tweet" :   "honeymoon" }}
       }
    }
 }

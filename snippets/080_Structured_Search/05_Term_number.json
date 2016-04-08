@@ -16,10 +16,7 @@ POST /my_store/products/_bulk
 GET /my_store/products/_search
 {
   "query": {
-    "filtered": {
-      "query": {
-        "match_all": {}
-      },
+    "constant_score": {
       "filter": {
         "term": {
           "price": 20
@@ -33,7 +30,7 @@ GET /my_store/products/_search
 GET /my_store/products/_search
 {
   "query": {
-    "filtered": {
+    "constant_score": {
       "filter": {
         "term": {
           "price": 20
