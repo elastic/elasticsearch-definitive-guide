@@ -27,13 +27,13 @@ GET /my_index/groups/_search
 # Delete `groups` mapping and data
 DELETE /my_index/groups/
 
-# Map `names` to use position_offset_gap
+# Map `names` to use position_increment_gap
 PUT /my_index/_mapping/groups
 {
   "properties": {
     "names": {
       "type": "string",
-      "position_offset_gap": 100
+      "position_increment_gap": 100
     }
   }
 }

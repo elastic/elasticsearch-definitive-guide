@@ -47,7 +47,7 @@ looks for `abraham` directly followed by `lincoln`, and these two terms do
 indeed exist, and they are right next to each other, so the query matches.
 
 Fortunately, there is a simple workaround for cases like these, called the
-`position_offset_gap`, which((("mapping (types)", "position_offset_gap")))((("position_offset_gap"))) we need to configure in the field mapping:
+`position_increment_gap`, which((("mapping (types)", "position_increment_gap")))((("position_increment_gap"))) we need to configure in the field mapping:
 
 [source,js]
 --------------------------------------------------
@@ -58,7 +58,7 @@ PUT /my_index/_mapping/groups <2>
     "properties": {
         "names": {
             "type":                "string",
-            "position_offset_gap": 100
+            "position_increment_gap": 100
         }
     }
 }
@@ -68,7 +68,7 @@ PUT /my_index/_mapping/groups <2>
 <1> First delete the `groups` mapping and all documents of that type.
 <2> Then create a new `groups` mapping with the correct values.
 
-The `position_offset_gap` setting tells Elasticsearch that it should increase
+The `position_increment_gap` setting tells Elasticsearch that it should increase
 the current term `position` by the specified value for every new array
 element.  So now, when we index the array of names, the terms are emitted with
 the following positions:
