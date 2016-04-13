@@ -31,11 +31,11 @@ No more than 50% of available RAM::
 Lucene makes good use of the filesystem caches, which are managed by the
 kernel.  Without enough filesystem cache space, performance will suffer.
 
-No more than 32 GB:
-If the heap is less than 32 GB, the JVM can use compressed pointers, which
+No more than 30.5 GB:
+If the heap is equal to or less than 30.5 GB, the JVM can use compressed pointers, which
 saves a lot of memory: 4 bytes per pointer instead of 8 bytes.
 +
-Increasing the heap from 32 GB to 34 GB would mean that you have much _less_
+Increasing the heap from 30.5 GB to 34 GB would mean that you have much _less_
 memory available, because all pointers are taking double the space.  Also,
 with bigger heaps, garbage collection becomes more costly and can result in
 node instability.
