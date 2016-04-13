@@ -39,6 +39,8 @@ other objects. In Elasticsearch, the term _document_ has a specific meaning. It 
 to the top-level, or root object that((("root object"))) is serialized into JSON and
 stored in Elasticsearch under a unique ID.
 
+WARNING: Field names can be any valid string, but _may not_ include periods.
+
 === Document Metadata
 
 A document doesn't consist only of its data.((("documents", "metadata"))) It also has
@@ -46,19 +48,21 @@ _metadata_&#x2014;information _about_ the document.((("metadata, document"))) Th
 elements are as follows:
 
 
- `_index`::  
+ `_index`::
    Where the document lives
-   
- `_type`::   
+
+ `_type`::
    The class of object that the document represents
-   
- `_id`::     
+
+ `_id`::
    The unique identifier for the document
 
 ==== _index
 
-An _index_ is like a database in a relational database; it's the place
-we store and index related data.((("indices", "_index, in document metadata")))
+An _index_ is a collection of documents that should be grouped together for a
+common reason.  For example, you may store all your products in a `products` index,
+while all your sales transactions go in `sales`.  Although it is possible to store
+unrelated data together in a single index, it is often considered an anti-pattern.
 
 [TIP]
 ====
@@ -76,28 +80,23 @@ underscore, and cannot contain commas. Let's use `website` as our index name.
 
 ==== _type
 
-In applications, we use objects to represent _things_ such as a user, a blog
-post, a comment, or an email. Each object belongs to a _class_ that defines
-the properties or data associated with an object. Objects in the `user` class
-may have a name, a gender, an age, and an email address.
+Data may be grouped loosely together in an index, but often there are sub-partitions
+inside that data which may be useful to explicitly define.  For example, all your
+products may go inside a single index.  But you have different categories of products,
+such as "electronics", "kitchen" and "lawn-care".
 
-In a relational database, we usually store objects of the same class in the
-same table, because they share the same data structure. For the same reason, in
-Elasticsearch we use the same _type_ for ((("types", "&#x5f;type, in document metadata)))documents that represent the same
-class of _thing_, because they share the same data structure.
+The documents all share an identical (or very similar) schema: they have a title,
+description, product code, price.  They just happen to belong to sub-categories
+under the umbrella of "Products".
 
-Every _type_ has its own <<mapping,mapping>> or schema ((("mapping (types)")))((("schema definition, types")))definition, which
-defines the data structure for documents of that type, much like the columns
-in a database table. Documents of all types can be stored in the same index,
-but the _mapping_ for the type tells Elasticsearch how the data in each
-document should be indexed.
-
-We show how to specify and manage mappings in <<mapping>>, but for now
-we will rely on Elasticsearch to detect our document's data structure
-automatically.
+Elasticsearch exposes a feature called _types_ which allows you to logically
+partition data inside of an index.  Documents in different types may have different
+fields, but it is best if they are highly similar.  We'll talk more about the restrictions
+and applications of types in <<mapping>>.
 
 A `_type` name can be lowercase or uppercase, but shouldn't begin with an
-underscore or contain commas.((("types", "names of")))  We will use `blog` for our type name.
+underscore or period.  It also may not contain commas,((("types", "names of")))
+and is limited to a length of 256 characters. We will use `blog` for our type name.
 
 ==== _id
 
