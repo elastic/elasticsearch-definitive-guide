@@ -96,7 +96,7 @@ PUT /my_index/mytype/_mapping
     "properties": {
       "name": {
         "type": "string",
-        "index_analyzer": "autocomplete",
+        "analyzer": "autocomplete",
         "search_analyzer": "standard"
       }
     }
