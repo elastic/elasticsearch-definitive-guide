@@ -143,7 +143,7 @@ the fields are mutually exclusive, or because they share identical fields).
 
 Practically though, the important lesson is this:  types are useful when you need
 to discriminate between different segments of a single collection. The overall "shape" of the
-data is identical (or nearly so) between the different segments
+data is identical (or nearly so) between the different segments.
 
 Types are not as well suited for _entirely different types of data_.  If your two
 types have mutually exclusive sets of fields, that means half your index is going to
