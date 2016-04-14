@@ -31,11 +31,32 @@ No more than 50% of available RAM::
 Lucene makes good use of the filesystem caches, which are managed by the
 kernel.  Without enough filesystem cache space, performance will suffer.
 
-No more than 32 GB:
-If the heap is less than 32 GB, the JVM can use compressed pointers, which
-saves a lot of memory: 4 bytes per pointer instead of 8 bytes.
+No more than 30.5 GB::
+In Java, all objects are allocated on the heap and referenced by a pointer.
+Ordinary object pointers (OOP) point at these objects, and are traditionally
+the size of the CPU's native _word_: either 32 bits or 64 bits, depending on the
+processor.  The pointer references the exact byte location of the value.
 +
-Increasing the heap from 32 GB to 34 GB would mean that you have much _less_
+For 32-bit systems, this means the maximum heap size is 4 GB.  For 64-bit systems,
+the heap size can get much larger, but the overhead of 64-bit pointers means there
+is more wasted space simply because the pointer is larger.  And worse than wasted
+space, the larger pointers eat up more bandwidth when moving values between
+main memory and various caches (LLC, L1, and so forth).
++
+Java uses a trick called https://wikis.oracle.com/display/HotSpotInternals/CompressedOops[compressed oops]((("compressed object pointers")))
+to get around this problem.  Instead of pointing at exact byte locations in
+memory, the pointers reference _object offsets_.((("object offsets")))  This means a 32-bit pointer can
+reference four billion _objects_, rather than four billion bytes.  Ultimately, this
+means the heap can grow to around 32 GB of physical size while still using a 32-bit
+pointer.
++
+Once you cross that magical 30.5 GB boundary, the pointers switch back to
+ordinary object pointers.  The size of each pointer grows, more CPU-memory
+bandwidth is used, and you effectively lose memory.  In fact, it takes until around
+40&#x2013;50 GB of allocated heap before you have the same _effective_ memory of a 30.5 GB
+heap using compressed oops.
++
+Increasing the heap from 30.5 GB to 34 GB would mean that you have much _less_
 memory available, because all pointers are taking double the space.  Also,
 with bigger heaps, garbage collection becomes more costly and can result in
 node instability.
