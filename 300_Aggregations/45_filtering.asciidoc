@@ -6,7 +6,7 @@ operates in the context of the query scope, any filter applied to the query
 will also apply to the aggregation.
 
 [float="true"]
-=== Filtering Queres
+=== Filtering Queries
 If we want to find all cars over $10,000 and also calculate the average price
 for those cars,((("filtering", "serch query results")))((("filtering query")))
 ((("queries"))) we can use a `constant_score` query and its `filter` clause:
