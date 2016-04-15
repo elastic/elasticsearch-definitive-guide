@@ -355,5 +355,5 @@ This example uses the `keyword` tokenizer to convert the postcode string into a 
 <1> The `postcode_index` analyzer would use the `postcode_filter`
     to turn postcodes into edge n-grams.
 <2> The `postcode_search` analyzer would treat search terms as
-    if they were `not_indexed`.
+    if they were `not_analyzed`.
 
