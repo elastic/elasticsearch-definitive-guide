@@ -1,23 +1,13 @@
-[[fielddata]]
-=== Fielddata
+[[docvalues]]
+=== Doc Values
 
-Aggregations work via a data structure known as _fielddata_ (briefly introduced
-in <<fielddata-intro>>).  ((("fielddata")))((("memory usage", "fielddata")))Fielddata is often the largest consumer of memory
-in an Elasticsearch cluster, so it is important to understand how it works.
+Aggregations work via a data structure known as _doc values_ (briefly introduced
+in <<docvalues-intro>>).  ((("docvalues")))((("docvalues")))Doc values
+are what make aggregations fast, efficient and memory-friendly, so it is useful
+to understand how they work.
 
-[TIP]
-==================================================
-
-Fielddata can be loaded on the fly into memory, or built at index time and
-stored on disk.((("fielddata", "loaded into memory vs. on disk")))  Later, we will talk about on-disk fielddata in
-<<doc-values>>. For now we will focus on in-memory fielddata, as it is
-currently the default mode of operation in Elasticsearch. This may well change
-in a future version.
-
-==================================================
-
-Fielddata exists because inverted indices are efficient only for certain operations.
-The inverted index excels((("inverted index", "fielddata versus"))) at finding documents that contain a term.  It does not
+Doc values exists because inverted indices are efficient for only certain operations.
+The inverted index excels((("inverted index", "doc values versus"))) at finding documents that contain a term.  It does not
 perform well in the opposite direction: determining which terms exist in a single
 document. Aggregations need this secondary access pattern.
 
@@ -68,14 +58,14 @@ columns to see which documents contain +brown+.  We can very quickly see that
 `Doc_1` and `Doc_2` contain the token +brown+.
 
 Then, for the aggregation portion, we need to find all the unique terms in
-`Doc_1`  and `Doc_2`.((("aggregations", "fielddata", "using instead of inverted index")))  Trying to do this with the inverted index would be a
+`Doc_1`  and `Doc_2`.((("aggregations", "doc values", "using instead of inverted index")))  Trying to do this with the inverted index would be a
 very expensive process: we would have to iterate over every term in the index
 and collect tokens from `Doc_1`  and `Doc_2` columns.  This would be slow
 and scale poorly: as the number of terms and  documents grows, so would the
 execution time.
 
-Fielddata addresses this problem by inverting the relationship. While the
-inverted index maps terms to the documents containing the term, fielddata
+Doc values addresses this problem by inverting the relationship. While the
+inverted index maps terms to the documents containing the term, doc values
 maps documents to the terms contained by the document:
 
     Doc      Terms
@@ -89,30 +79,16 @@ Once the data has been uninverted, it is trivial to collect the unique tokens fr
 `Doc_1` and `Doc_2`.  Go to the rows for each document, collect all the terms, and
 take the union of the two sets.
 
-
-[TIP]
-==================================================
-
-The fielddata cache is per segment.((("fielddata cache")))((("segments", "fielddata cache"))) In other words, when a new segment becomes
-visible to search, the fielddata cached from old segments remains valid. Only
-the data for the new segment needs to be loaded into memory.
-
-==================================================
-
 Thus, search and aggregations are closely intertwined.  Search finds documents
 by using the inverted index.  Aggregations collect and aggregate values from
-fielddata, which is itself generated from the inverted index.
-
-The rest of this chapter covers various functionality that either
-decreases fielddata's memory footprint or increases execution speed.
+doc values.
 
 [NOTE]
 ==================================================
 
-Fielddata is not just used for aggregations.((("fielddata", "uses other than aggregations")))  It is required for any
-operation that needs to look up the value contained in a specific document.
+Doc values are not just used for aggregations.((("doc values", "uses other than aggregations")))  They are required for any
+operation that must look up the value contained in a specific document.
 Besides aggregations, this includes sorting, scripts that access field
-values, parent-child relationships (see <<parent-child>>), and certain types
-of queries or filters, such as the <<geo-distance,`geo_distance`>> filter.
+values and parent-child relationships (see <<parent-child>>).
 
 ==================================================

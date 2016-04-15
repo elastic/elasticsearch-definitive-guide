@@ -24,14 +24,9 @@ which children.  It is thanks to this map that query-time joins are fast, but
 it does place a limitation on the parent-child relationship: _the parent
 document and all of its children must live on the same shard_.
 
-[NOTE]
-==================================================
-
-At the time of going to press, the parent-child ID map is held in memory as
-part of <<fielddata,fielddata>>.  There are plans afoot to change the default
-setting to use <<doc-values,doc values>> by default instead.
-
-==================================================
+The parent-child ID maps are stored in <<docvalues>>, which allows them to execute
+quickly when fully hot in memory, but scalable enough to spill to disk when
+the map is very large.
 
 
 [[parent-child-mapping]]
@@ -70,5 +65,3 @@ PUT /company
 }
 -------------------------
 <1> Documents of type `employee` are children of type `branch`.
-
-

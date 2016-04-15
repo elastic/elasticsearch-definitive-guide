@@ -2,7 +2,7 @@
 === Heap: Sizing and Swapping
 
 The default installation of Elasticsearch is configured with a 1 GB heap. ((("deployment", "heap, sizing and swapping")))((("heap", "sizing and setting"))) For
-just about every deployment, this number is far too small.  If you are using the
+just about every deployment, this number is usually too small.  If you are using the
 default heap values, your cluster is probably configured incorrectly.
 
 There are two ways to change the heap size in Elasticsearch.  The easiest is to
@@ -28,7 +28,7 @@ the heap from resizing at runtime, a very costly process.
 Generally, setting the `ES_HEAP_SIZE` environment variable is preferred over setting
 explicit `-Xmx` and `-Xms` values.
 
-==== Give Half Your Memory to Lucene
+==== Give (less than) Half Your Memory to Lucene
 
 A common problem is configuring a heap that is _too_ large. ((("heap", "sizing and setting", "giving half your memory to Lucene"))) You have a 64 GB
 machine--and by golly, you want to give Elasticsearch all 64 GB of memory.  More
@@ -41,15 +41,21 @@ user of memory that is _off heap_: Lucene.
 Lucene is designed to leverage the underlying OS for caching in-memory data structures.((("Lucene", "memory for")))
 Lucene segments are stored in individual files.  Because segments are immutable,
 these files never change.  This makes them very cache friendly, and the underlying
-OS will happily keep hot segments resident in memory for faster access.
+OS will happily keep hot segments resident in memory for faster access.  These segments
+include both the inverted index (for fulltext search) and doc values (for aggregations).
 
 Lucene's performance relies on this interaction with the OS.  But if you give all
 available memory to Elasticsearch's heap, there won't be any left over for Lucene.
-This can seriously impact the performance of full-text search.
+This can seriously impact the performance.
 
 The standard recommendation is to give 50% of the available memory to Elasticsearch
 heap, while leaving the other 50% free.  It won't go unused; Lucene will happily
 gobble up whatever is left over.
+
+If you are not aggregating on analyzed string fields (e.g. you won't be needing
+<<aggregations-and-analysis,fielddata>>) you can consider lowering the heap even
+more.  The smaller you can make the heap, the better performance you can expect
+from both Elasticsearch (faster GCs) and Lucene (more memory for caching).
 
 [[compressed_oops]]
 ==== Don't Cross 32 GB!
@@ -143,12 +149,18 @@ First, we would recommend avoiding such large machines (see <<hardware>>).
 
 But if you already have the machines, you have two practical options:
 
-- Are you doing mostly full-text search?  Consider giving just under 32 GB to Elasticsearch
+- Are you doing mostly full-text search?  Consider giving 4-32 GB to Elasticsearch
 and letting Lucene use the rest of memory via the OS filesystem cache.  All that
 memory will cache segments and lead to blisteringly fast full-text search.
 
-- Are you doing a lot of sorting/aggregations?  You'll likely want that memory
-in the heap then.  Instead of one node with more than 32 GB of RAM, consider running two or
+- Are you doing a lot of sorting/aggregations?  Are most of your aggregations on numerics,
+dates, geo_points and `not_analyzed` strings?  You're in luck!  Give Elasticsearch
+somewhere from 4-32 GB of memory and leave the rest for the OS to cache doc values
+in memory.
+
+- Are you doing a lot of sorting/aggregations on analyzed strings (e.g. for word-tags,
+or SigTerms, etc)?  Unfortunately that means you'll need fielddata, which means you
+need heap space.  Instead of one node with more than 512 GB of RAM, consider running two or
 more nodes on a single machine.  Still adhere to the 50% rule, though.  So if your
 machine has 128 GB of RAM, run two nodes, each with just under 32 GB.  This means that less
 than 64 GB will be used for heaps, and more than 64 GB will be left over for Lucene.

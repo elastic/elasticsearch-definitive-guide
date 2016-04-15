@@ -276,7 +276,7 @@ quickly.  But the old-gen is quite a bit larger, and a slow GC here could mean
 
 The garbage collectors in the JVM are _very_ sophisticated algorithms and do
 a great job minimizing pauses.  And Elasticsearch tries very hard to be _garbage-collection friendly_, by intelligently reusing objects internally, reusing network
-buffers, and offering features like <<doc-values>>.  But ultimately,
+buffers, and enabling <<docvalues>> by default.  But ultimately,
 GC frequency and duration is a metric that needs to be watched by you, since it
 is the number one culprit for cluster instability.
 
@@ -545,7 +545,3 @@ The main thing to watch is the `tripped` metric.  If this number is large or
 consistently increasing, it's a sign that your queries may need to be optimized
 or that you may need to obtain more memory (either per box or by adding more
 nodes).((("Node Stats API", range="endofrange", startref="ix_NodeStats")))
-
-
-
-

@@ -1,20 +1,28 @@
 
 === Limiting Memory Usage
 
-In order for aggregations (or any operation that requires access to field
-values) to be fast, ((("aggregations", "limiting memory usage")))access to fielddata must be fast, which is why it is
-loaded into memory. ((("fielddata")))((("memory usage", "limiting for aggregations", id="ix_memagg"))) But loading too much data into memory will cause slow
-garbage collections as the JVM tries to find extra space in the heap, or
-possibly even an OutOfMemory exception.
+Once analyzed strings have been loaded into fielddata, they will sit there until
+evicted (or your node crashes).  For that reason it is important to keep an eye on this
+memory usage, understand how and when it loads, and how you can limit the impact on your cluster.
 
-It may surprise you to find that Elasticsearch does not load into fielddata
-just the values for the documents that match your query. It loads the values
-for _all documents in your index_, even documents with a different `_type`!
+Fielddata is loaded _lazily_.  If you never aggregate on an analyzed string, you'll
+never load fielddata into memory.  Furthermore, fielddata is loaded on a per-field basis,
+meaning only actively used fields will incur the "fielddata tax".
 
-The logic is: if you need access to documents X, Y, and Z for this query, you
-will probably need access to other documents in the next query.  It is cheaper
-to load all values once, and to _keep them in memory_, than to have to scan
-the inverted index on every request.
+However, there is a subtle surprise lurking here.  Suppose your query is highly selective and
+only returns 100 hits.  Most people assume fielddata is only loaded for those
+100 documents.
+
+In reality, fielddata will be loaded for *all* documents in that index (for that
+particular field), regardless of the query's specificity. The logic is:
+if you need access to documents X, Y, and Z for this query, you
+will probably need access to other documents in the next query.
+
+Unlike doc values,
+the fielddata structure is not created at index time.  Instead, it is populated
+on-the-fly when the query is run.  This is a potentially non-trivial operation and
+can take some time.  It is cheaper to load all the values once, and keep them in
+memory, than load only a portion of the total fielddata repeatedly.
 
 The JVM heap ((("JVM (Java Virtual Machine)", "heap usage, fielddata and")))is a limited resource that should be used wisely. A number of
 mechanisms exist to limit the impact of fielddata on heap usage. These limits
@@ -29,18 +37,15 @@ the `$ES_HEAP_SIZE` environment variable:
 
 No more than 50% of available RAM::
 Lucene makes good use of the filesystem caches, which are managed by the
-kernel.  Without enough filesystem cache space, performance will suffer.
+kernel. Without enough filesystem cache space, performance will suffer.
+Furthermore, the more memory dedicated to the heap means less available
+for all your other fields using doc values.
 
-No more than 32 GB:
+No more than 32 GB::
 If the heap is less than 32 GB, the JVM can use compressed pointers, which
 saves a lot of memory: 4 bytes per pointer instead of 8 bytes.
-+
-Increasing the heap from 32 GB to 34 GB would mean that you have much _less_
-memory available, because all pointers are taking double the space.  Also,
-with bigger heaps, garbage collection becomes more costly and can result in
-node instability.
 
-This limit has a direct impact on the amount of memory that can be devoted to fielddata.
+For a longer and more complete discussion of heap sizing, see <<heap-sizing>>
 
 ******************************************
 
@@ -48,10 +53,10 @@ This limit has a direct impact on the amount of memory that can be devoted to fi
 ==== Fielddata Size
 
 The `indices.fielddata.cache.size` controls how much heap space is allocated
-to fielddata.((("fielddata", "size")))((("aggregations", "limiting memory usage", "fielddata size")))  When you run a query that requires access to new field values,
-it will load the values into memory and then try to add them to fielddata. If
-the resulting fielddata size  would exceed the specified `size`, other
-values would be evicted in order to make space.
+to fielddata.((("fielddata", "size")))((("aggregations", "limiting memory usage", "fielddata size")))
+As you are issuing queries, aggregations on analyzed strings will load into fielddata
+if the field wasn't previously loaded. If the resulting fielddata size would
+exceed the specified `size`, other values will be evicted in order to make space.
 
 By default, this setting is _unbounded_&#x2014;Elasticsearch will never evict data
 from fielddata.
@@ -92,7 +97,7 @@ setting to the `config/elasticsearch.yml` file:
 
 [source,yaml]
 -----------------------------
-indices.fielddata.cache.size:  40% <1>
+indices.fielddata.cache.size:  20% <1>
 -----------------------------
 <1> Can be set to a percentage of the heap size, or a concrete
     value like `5gb`

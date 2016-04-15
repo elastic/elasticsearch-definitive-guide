@@ -71,5 +71,4 @@ GET /_search
 // SENSE: 056_Sorting/88_Multifield.json
 
 WARNING: Sorting on a full-text `analyzed` field can use a lot of memory.  See
-<<fielddata-intro>> for more information.
-
+<<aggregations-and-analysis>> for more information.

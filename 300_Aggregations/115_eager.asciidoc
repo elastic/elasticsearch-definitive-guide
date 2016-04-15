@@ -39,8 +39,8 @@ are pre-loaded:
 ----
 PUT /music/_mapping/_song
 {
-  "price_usd": {
-    "type": "integer",
+  "tags": {
+    "type": "string",
     "fielddata": {
       "loading" : "eager" <1>
     }
