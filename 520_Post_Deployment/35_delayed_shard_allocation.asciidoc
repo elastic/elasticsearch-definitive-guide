@@ -1,0 +1,86 @@
+
+=== Delaying Shard Allocation
+
+As discussed way back in <<_scale_horizontally>>, Elasticsearch will automatically
+balance shards between your available nodes, both when new nodes are added and
+when existing nodes leave.
+
+Theoretically, this is the best thing to do.  We want to recover missing primaries
+by promoting replicas as soon as possible.  We also want to make sure resources
+are balanced evenly across the cluster to prevent hotspots.
+
+In practice, however, immediately re-balancing can cause more problems than it solves.
+For example, consider this situation:
+
+1. Node 19 loses connectivity to your network (someone tripped on the power cable)
+2. Immediately, the master notices the node departure.  It determines
+what primary shards were on Node 19 and promotes the corresponding replicas around
+the cluster
+3. After replicas have been promoted to primary, the master begins issuing recovery
+commands to rebuild the now-missing replicas.  Nodes around the cluster fire up
+their NICs and start pumping shard data to each other in an attempt to get back
+to green health status
+4. This process will likely trigger a small cascade of shard movement, since the
+cluster is now unbalanced.  Unrelated shards will be moved between hosts to accomplish
+better balancing
+
+Meanwhile, the hapless admin who kicked out the power cable plugs it back in.
+Node 19 reboots and rejoins the cluster.  Unfortunately, the node is informed that
+its existing data is now useless; the data being re-allocated elsewhere.
+So Node 19 deletes its local data and begins recovering a different
+set of shards from the cluster (which then causes a new minor re-balancing dance).
+
+If this all sounds needless and expensive, you're right.  It is, but _only when
+you know the node will be back soon_.  If Node 19 was truly gone, the above procedure
+is exactly what we want to happen.
+
+To help address these transient outages, Elasticsearch has the ability to delay
+shard allocation.  This gives your cluster time to see if nodes will rejoin before
+starting the re-balancing dance.
+
+==== Changing the default delay
+
+By default, the cluster will wait one minute to see if the node will rejoin.  If
+the node rejoins before the timer expires, the rejoining node will use its existing
+shards and no shard allocation occurs.
+
+This default time can be changed either globally, or on a per-index basis, by
+configuring the `delayed_timeout` setting:
+
+[source,js]
+----
+PUT /_all/_settings <1>
+{
+  "settings": {
+    "index.unassigned.node_left.delayed_timeout": "5m" <2>
+  }
+}
+----
+<1> By using the `_all` index name, we can apply this setting to all indices
+in the cluster
+<2> The default time is changed to 5 minutes
+
+The setting is dynamic and can be changed at runtime.  If you would like shards to
+allocate immediately instead of waiting, you can set `delayed_timeout: 0`.
+
+NOTE: Delayed allocation won't prevent replicas from being promoted to primaries.
+The cluster will still perform promotions as necessary to get the cluster back to
+`yellow` status.  The allocation of the now-missing replicas will be the only process
+that is delayed
+
+==== Auto-cancellation of shard relocation
+
+What happens if the node comes back _after_ the timeout expires, but before
+the cluster has finished moving shards around?  In this case, Elasticsearch will
+check to see if the on-disk data matches the current "live" data in the primary shard.
+If the two shards are identical -- meaning there have been no new documents, updates
+or deletes -- the master will cancel the on-going rebalancing and restore the
+on-disk data.
+
+This is done since recovery of on-disk data will always be faster
+than transferring over the network, and since we can guarantee the shards are identical,
+the process is a win-win.
+
+If the shards have diverged (e.g. new documents have been indexed since the node
+went down), the recovery process will continue as normal.  The rejoining node
+will delete it's local, out-dated shards and obtain a new set.
