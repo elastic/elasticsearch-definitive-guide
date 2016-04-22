@@ -99,7 +99,7 @@ Let's execute that aggregation and take a look at the results:
       "hits": [] <1>
    },
    "aggregations": {
-      "colors": { <2>
+      "popular_colors": { <2>
          "buckets": [
             {
                "key": "red", <3>
@@ -119,7 +119,7 @@ Let's execute that aggregation and take a look at the results:
 }
 --------------------------------------------------
 <1> No search hits are returned because we set the `size` parameter
-<2> Our `colors` aggregation is returned as part of the `aggregations` field.
+<2> Our `popular_colors` aggregation is returned as part of the `aggregations` field.
 <3> The `key` to each bucket corresponds to a unique term found in the `color` field.
 It also always includes `doc_count`, which tells us the number of docs containing the term.
 <4> The count of each bucket represents the number of documents with this color.
