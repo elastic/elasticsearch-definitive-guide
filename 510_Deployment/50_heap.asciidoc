@@ -122,7 +122,7 @@ $ JAVA_HOME=`/usr/libexec/java_home -v 1.8` java -Xmx32767m -XX:+PrintFlagsFinal
      bool UseCompressedOops   = false
 ----
 
-The morale of the story is that the exact cutoff to leverage compressed oops
+The moral of the story is that the exact cutoff to leverage compressed oops
 varies from JVM to JVM, so take caution when taking examples from elsewhere and
 be sure to check your system with your configuration and JVM.
 
@@ -147,22 +147,23 @@ of RAM.
 
 First, we would recommend avoiding such large machines (see <<hardware>>).
 
-But if you already have the machines, you have two practical options:
+But if you already have the machines, you have three practical options:
 
 - Are you doing mostly full-text search?  Consider giving 4-32 GB to Elasticsearch
 and letting Lucene use the rest of memory via the OS filesystem cache.  All that
 memory will cache segments and lead to blisteringly fast full-text search.
 
 - Are you doing a lot of sorting/aggregations?  Are most of your aggregations on numerics,
-dates, geo_points and `not_analyzed` strings?  You're in luck!  Give Elasticsearch
-somewhere from 4-32 GB of memory and leave the rest for the OS to cache doc values
-in memory.
+dates, geo_points and `not_analyzed` strings?  You're in luck, your aggregations will be done on
+memory-friendly doc values!  Give Elasticsearch somewhere from 4-32 GB of memory and leave the 
+rest for the OS to cache doc values in memory.
 
 - Are you doing a lot of sorting/aggregations on analyzed strings (e.g. for word-tags,
 or SigTerms, etc)?  Unfortunately that means you'll need fielddata, which means you
-need heap space.  Instead of one node with more than 512 GB of RAM, consider running two or
-more nodes on a single machine.  Still adhere to the 50% rule, though.  So if your
-machine has 128 GB of RAM, run two nodes, each with just under 32 GB.  This means that less
+need heap space.  Instead of one node with a huge amount of RAM, consider running two or
+more nodes on a single machine.  Still adhere to the 50% rule, though.  
++
+So if your machine has 128 GB of RAM, run two nodes each with just under 32 GB.  This means that less
 than 64 GB will be used for heaps, and more than 64 GB will be left over for Lucene.
 +
 If you choose this option, set `cluster.routing.allocation.same_shard.host: true`
