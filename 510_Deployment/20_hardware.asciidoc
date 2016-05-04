@@ -2,7 +2,7 @@
 === Hardware
 
 If you've been following the normal development path, you've probably been playing((("deployment", "hardware")))((("hardware")))
-with Elasticsearch on your laptop or on a small cluster of machines laying around.
+with Elasticsearch on your laptop or on a small cluster of machines lying around.
 But when it comes time to deploy Elasticsearch to production, there are a few
 recommendations that you should consider.  Nothing is a hard-and-fast rule;
 Elasticsearch is used for a wide range of tasks and on a bewildering array of
@@ -27,8 +27,7 @@ discuss in <<heap-sizing>>.
 
 Most Elasticsearch deployments tend to be rather light on CPU requirements.  As
 such,((("CPUs (central processing units)")))((("hardware", "CPUs"))) the exact processor setup matters less than the other resources.  You should
-choose a modern processor with multiple cores.  Common clusters utilize two to eight
-core machines.
+choose a modern processor with multiple cores.  Common clusters utilize two- to eight-core machines.
 
 If you need to choose between faster CPUs or more cores, choose more cores.  The
 extra concurrency that multiple cores offers will far outweigh a slightly faster
