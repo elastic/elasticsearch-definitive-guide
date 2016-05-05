@@ -210,11 +210,11 @@ GET /megacorp/employee/_search
 {
     "query" : {
         "bool": {
-            "must": [
+            "must": {
                 "match" : {
                     "last_name" : "smith" <1>
                 }
-            ],
+            },
             "filter": {
                 "range" : {
                     "age" : { "gt" : 30 } <2>
