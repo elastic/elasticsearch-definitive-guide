@@ -18,6 +18,9 @@ To reindex all of the documents from the old index efficiently,  use
 <<scroll,_scroll_>> to retrieve batches((("using in reindexing documents"))) of documents from the old index,
 and the <<bulk,`bulk` API>> to push them into the new index.
 
+Beginning with Elasticsearch v2.3.0, a {ref}/docs-reindex.html[Reindex API] has been introduced. It enables you
+to reindex your documents without requiring any plugin nor external tool.
+
 .Reindexing in Batches
 ****
 
