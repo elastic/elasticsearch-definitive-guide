@@ -53,7 +53,7 @@ for all employees, with this request:
 
 [source,js]
 --------------------------------------------------
-GET /megacorp/employee/_search
+POST /megacorp/employee/_search
 --------------------------------------------------
 // SENSE: 010_Intro/30_Simple_search.json
 
@@ -127,7 +127,7 @@ search, since we pass the search as a URL query-string parameter:
 
 [source,js]
 --------------------------------------------------
-GET /megacorp/employee/_search?q=last_name:Smith
+POST /megacorp/employee/_search?q=last_name:Smith
 --------------------------------------------------
 // SENSE: 010_Intro/30_Simple_search.json
 
@@ -180,7 +180,7 @@ We can represent the previous search for all Smiths like so:
 
 [source,js]
 --------------------------------------------------
-GET /megacorp/employee/_search
+POST /megacorp/employee/_search
 {
     "query" : {
         "match" : {
@@ -269,7 +269,7 @@ We are going to search for all employees who enjoy rock climbing:
 
 [source,js]
 --------------------------------------------------
-GET /megacorp/employee/_search
+POST /megacorp/employee/_search
 {
     "query" : {
         "match" : {
@@ -346,7 +346,7 @@ To do this, we use a slight variation of the `match` query called the
 
 [source,js]
 --------------------------------------------------
-GET /megacorp/employee/_search
+POST /megacorp/employee/_search
 {
     "query" : {
         "match_phrase" : {
