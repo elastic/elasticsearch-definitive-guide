@@ -1,6 +1,6 @@
 ==== Then Scale Some More
 
-But what if we want to scale our search to more than six nodes?
+But what if we want to scale our search to more than six shards?
 
 The number of primary shards is fixed at the moment an((("indices", "fixed number of primary shards")))((("primary shards", "fixed number in an index"))) index is created.
 Effectively, that number defines the maximum amount of data that can be
