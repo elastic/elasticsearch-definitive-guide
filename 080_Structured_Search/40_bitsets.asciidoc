@@ -81,7 +81,7 @@ that was cacheable.  This often meant the system cached bitsets too aggressively
 and performance suffered due to thrashing the cache.  In addition, many filters
 are very fast to evaluate, but substantially slower to cache (and reuse from cache).
 These filters don't make sense to cache, since you'd be better off just re-executing
-the fitler again.
+the filter again.
 
 Inspecting the inverted index is very fast and most query components are rare.
 Consider a `term` filter on a `"user_id"` field:  if you have millions of users,
