@@ -2,7 +2,7 @@
 === Dynamic Mapping
 
 When Elasticsearch encounters a previously ((("mapping (types)", "dynamic")))((("dynamic mapping")))unknown field in a document, it
-uses <<mapping-intro,_dynamic mapping_>> to determine the datatype for the
+uses dynamic <<mapping-intro,_mapping_>> to determine the datatype for the
 field and automatically adds the new field to the type mapping.
 
 Sometimes this is the desired behavior and sometimes it isn't. Perhaps
