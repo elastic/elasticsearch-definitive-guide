@@ -25,7 +25,7 @@ surprise to you--to manage((("relational databases", "managing relationships")))
     entities.
 
 But relational ((("ACID transactions")))databases do have their limitations, besides their poor support
-for full-text search. Joining entities at query time is expensive--more
+for full-text search. Joining entities at query time is expensive--the more
 joins that are required, the more expensive the query.  Performing joins
 between entities that live on different hardware is so expensive that it is
 just not practical. This places a limit on the amount of data that can be
