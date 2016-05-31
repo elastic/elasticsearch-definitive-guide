@@ -122,7 +122,7 @@ $ JAVA_HOME=`/usr/libexec/java_home -v 1.8` java -Xmx32767m -XX:+PrintFlagsFinal
      bool UseCompressedOops   = false
 ----
 
-The morale of the story is that the exact cutoff to leverage compressed oops
+The moral of the story is that the exact cutoff to leverage compressed oops
 varies from JVM to JVM, so take caution when taking examples from elsewhere and
 be sure to check your system with your configuration and JVM.
 
