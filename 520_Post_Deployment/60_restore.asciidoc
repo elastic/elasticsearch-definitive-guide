@@ -66,7 +66,7 @@ The API can be invoked for the specific indices that you are recovering:
 
 [source,js]
 ----
-GET /_recovery/restored_index_3
+GET restored_index_3/_recovery
 ----
 
 Or for all indices in your cluster, which may include other shards moving around,
