@@ -1,22 +1,15 @@
 [[script-score]]
-=== Scoring with Scripts
+=== 脚本评分
 
-Finally, if none of the `function_score`&#39;s built-in functions suffice, you can
-implement the logic that you need with a script, using the `script_score`
-function.((("function_score query", "using script_score function")))((("script_score function")))((("relevance", "controlling", "scoring with scripts")))
+最后，如果所有 `function_score` 内置的函数都无法满足应用场景，可以使用 `script_score` 函数自行实现逻辑。((("function_score query", "using script_score function")))((("script_score function")))((("relevance", "controlling", "scoring with scripts")))
 
-For an example, let's say that we want to factor our profit margin into the
-relevance calculation.  In our business, the profit margin depends on three
-factors:
+举个例子，想将利润空间作为因子加入到相关度评分计算，在业务中，利润空间和以下三点相关：
 
-* The `price` per night of the vacation home.
-* The user's membership level--some levels get a percentage `discount`
-  above a certain price per night `threshold`.
-* The negotiated `margin` as a percentage of the price-per-night, after user
-  discounts.
+* `price` 度假屋每晚的价格。
+* 会员用户的级别——某些等级的用户可以在每晚房价高于某个 `threshold` 阀值价格的时候享受折扣 `discount` 。
+* 用户享受折扣后，经过议价的每晚房价的利润 `margin` 。
 
-The algorithm that we will use to calculate the profit for each home is as
-follows:
+计算每个度假屋利润的算法如下：
 
 [source,groovy]
 -------------------------
@@ -27,11 +20,8 @@ if (price < threshold) {
 }
 -------------------------
 
-We probably don't want to use the absolute profit as a score; it would
-overwhelm the other factors like location, popularity and features. Instead,
-we can express the profit as a percentage of our `target` profit.  A profit
-margin above our target will have a positive score (greater than `1.0`), and a profit margin below our target will have a negative score (less than
-`1.0`):
+我们很可能不想用绝对利润作为评分，这会弱化其他如地点、受欢迎度和特性等因子的作用，而是将利润用目标利润 `target` 的百分比来表示，高于
+目标的利润空间会有一个正向评分（大于 `1.0` ），低于目标的利润空间会有一个负向分数（小于 `1.0` ）：
 
 [source,groovy]
 -------------------------
@@ -43,9 +33,7 @@ if (price < threshold) {
 return profit / target
 -------------------------
 
-The default scripting language in Elasticsearch is
-http://groovy.codehaus.org/[Groovy], which for the most part looks a lot like
-JavaScript.((("Groovy", "script factoring profit margins into relevance calculations"))) The preceding algorithm as a Groovy script would look like this:
+Elasticsearch 里使用 http://groovy.codehaus.org/[Groovy] 作为默认的脚本语言，它与JavaScript很像，((("Groovy", "script factoring profit margins into relevance calculations")))上面这个算法用 Groovy 脚本表示如下：
 
 [source,groovy]
 -------------------------
@@ -57,13 +45,10 @@ if (price < threshold) { <2>
 }
 return price * (1 - discount) * margin / target <2>
 -------------------------
-<1> The `price` and `margin` variables are extracted from the `price` and
-    `margin` fields in the document.
-<2> The `threshold`, `discount`, and `target` variables we will pass in as
-    `params`.
+<1> `price` 和 `margin` 变量可以分别从文档的 `price` 和 `margin` 字段提取。
+<2> `threshold` 、 `discount` 和 `target` 是作为参数 `params` 传入的。
 
-Finally, we can add our `script_score` function to the list of other functions
-that we are already using:
+最终我们将 `script_score` 函数与其他函数一起使用：
 
 [source,json]
 -------------------------
@@ -80,7 +65,7 @@ GET /_search
             "discount": 0.1,
             "target": 10
           },
-          "script": "price  = doc['price'].value; margin = doc['margin'].value; 
+          "script": "price  = doc['price'].value; margin = doc['margin'].value;
           if (price < threshold) { return price * margin / target };
           return price * (1 - discount) * margin / target;" <3>
         }
@@ -89,35 +74,22 @@ GET /_search
   }
 }
 -------------------------
-<1> The `location` and `price` clauses refer to the example explained in
-    <<decay-functions>>.
-<2> By passing in these variables as `params`, we can change their values
-    every time we run this query without having to recompile the script.
-<3> JSON cannot include embedded newline characters.  Newline characters in
-    the script should  either be escaped as `\n` or replaced with semicolons.
+<1> `location` 和 `price` 语句在 <<decay-functions,衰减函数>> 中解释过。
+<2> 将这些变量作为参数 `params` 传递，我们可以查询时动态改变脚本无须重新编译。
+<3> JSON 不能接受内嵌的换行符，脚本中的换行符可以用 `\n` 或 `;` 符号替代。
 
-This query would return the documents that best satisfy the user's
-requirements for location and price, while still factoring in our need to make
-a profit.
+这个查询根据用户对地点和价格的需求，返回用户最满意的文档，同时也考虑到我们对于盈利的要求。
 
 [TIP]
 ========================================
 
-The `script_score` function provides enormous flexibility.((("scripts", "performance and")))  Within a script,
-you have access to the fields of the document, to the current `_score`, and
-even to the term frequencies, inverse document frequencies, and field length
-norms (see {ref}/modules-advanced-scripting.html[Text scoring in scripts]).
+`script_score` 函数提供了巨大的灵活性，((("scripts", "performance and")))可以通过脚本访问文档里的所有字段、当前评分 `_score` 甚至词频、逆向文档频率和字段长度规范值这样的信息（参见 see {ref}/modules-advanced-scripting.html[脚本对文本评分]）。
 
-That said, scripts can have a performance impact.  If you do find that your
-scripts are not quite fast enough, you have three options:
+有人说使用脚本对性能会有影响，如果确实发现脚本执行较慢，可以有以下三种选择：
 
-* Try to precalculate as much information as possible and include it in each
-  document.
-* Groovy is fast, but not quite as fast as Java.((("Java", "scripting in")))  You could reimplement your
-  script as a native Java script. (See
-  {ref}/modules-scripting.html#native-java-scripts[Native Java Scripts]).
-* Use the `rescore` functionality((("rescoring"))) described in <<rescore-api>> to apply
-  your script to only the best-scoring documents.
+* 尽可能多的提前计算各种信息并将结果存入每个文档中。
+* Groovy 很快，但没 Java 快。((("Java", "scripting in")))可以将脚本用原生的 Java 脚本重新实现。（参见
+  {ref}/modules-scripting.html#native-java-scripts[原生 Java 脚本]）。
+* 仅对那些最佳评分的文档应用脚本，使用 <<rescore-api,重新评分>> 中提到的 `rescore` 功能。((("rescoring")))
 
 ========================================
-
