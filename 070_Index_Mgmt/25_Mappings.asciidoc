@@ -154,5 +154,5 @@ In summary:
 
 - **Good:** `kitchen` and `lawn-care` types inside the `products` index, because
 the two types are essentially the same schema
-- **Bad:** `products` and `logs` types the `data` index, because the two types are
+- **Bad:** `products` and `logs` types inside the `data` index, because the two types are
 mutually exclusive.  Separate these into their own indices.
