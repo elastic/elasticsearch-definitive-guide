@@ -95,7 +95,7 @@ all the words in exactly the order specified, with no words in-between.
 
 ==== What Is a Phrase
 
-For a document to be considered a((("match_phrase query", "documents matching a phrase")))((("phrase matching", "criteria for matching documents"))) match for the phrase ``quick brown fox,'' the following must be true:
+For a document to be considered a((("match_phrase query", "documents matching a phrase")))((("phrase matching", "criteria for matching documents"))) match for the phrase ``quick brown fox'', the following must be true:
 
 * `quick`, `brown`, and `fox` must all appear in the field.
 
