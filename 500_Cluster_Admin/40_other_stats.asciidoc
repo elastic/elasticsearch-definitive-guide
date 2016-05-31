@@ -42,7 +42,7 @@ GET _all/_stats <3>
 ----
 <1> Stats for `my_index`.
 <2> Stats for multiple indices can be requested by separating their names with a comma.
-<3> Stats indices can be requested using the special `_all` index name.
+<3> Stats for all indices can be requested using the special `_all` index name.
 
 The stats returned will be familar to the `node-stats` output: `search` `fetch` `get`
 `index` `bulk` `segment counts` and so forth
