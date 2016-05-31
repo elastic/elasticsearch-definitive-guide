@@ -50,7 +50,7 @@ high availability is compromised to some degree.  If _more_ shards disappear, yo
 might lose data.  Think of `yellow` as a warning that should prompt investigation.
 
 `red`::
-    At least one primary shard (and all of its replicas) are missing. This means
+    At least one primary shard (and all of its replicas) is missing. This means
 that you are missing data: searches will return partial results, and indexing
 into that shard will return an exception.
 
@@ -205,7 +205,7 @@ This is important for automated scripts and tests.
 
 If you create an index, Elasticsearch must broadcast the change in cluster state
 to all nodes.  Those nodes must initialize those new shards, and then respond to the
-master that the shards are `Started`.  This process is fast, but because network
+master that the shards are `Started`.  This process is fast, but because of network
 latency may take 10&#x2013;20ms.
 
 If you have an automated script that (a) creates an index and then (b) immediately
