@@ -80,7 +80,7 @@ GET /_search
             "discount": 0.1,
             "target": 10
           },
-          "script": "price  = doc['price'].value; margin = doc['margin'].value; 
+          "script": "price  = doc['price'].value; margin = doc['margin'].value;
           if (price < threshold) { return price * margin / target };
           return price * (1 - discount) * margin / target;" <3>
         }
@@ -115,7 +115,7 @@ scripts are not quite fast enough, you have three options:
   document.
 * Groovy is fast, but not quite as fast as Java.((("Java", "scripting in")))  You could reimplement your
   script as a native Java script. (See
-  {ref}/modules-scripting.html#native-java-scripts[Native Java Scripts]).
+  {ref}/modules-scripting-native.html[Native Java Scripts]).
 * Use the `rescore` functionality((("rescoring"))) described in <<rescore-api>> to apply
   your script to only the best-scoring documents.
 
