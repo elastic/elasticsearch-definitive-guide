@@ -1,7 +1,7 @@
 [[intro]]
-== 你懂得的，关于搜索的秘密...
+== 你懂的，关于搜索的秘密...
 
-Elasticsearch是一个基于Lucence开源的全文搜索引擎。Lucene不论在开源或闭源界都称得上是最高级、高效且功能完备的搜索引擎库。
+Elasticsearch是基于Lucence、开源的全文搜索引擎。Lucene不论在开源或闭源界都称得上是最高级、高效且功能完备的搜索引擎库。
 但Lucene仅仅只是一个库。想要真正发挥它的能力你需要借助Java将它直接应用到您的项目中。更糟的是，你将会花大量精力来理解它是如何工作的。因为，Lucene极其复杂。
 
 Elasticsearch同样是由Java编写并且所有的索引和搜索功能全部基于Lucene，但它把复杂的Lucene隐藏在了简洁的RESTful API的后面。
