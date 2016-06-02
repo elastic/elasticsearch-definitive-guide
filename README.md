@@ -3,4 +3,4 @@
 ###### This is a Chinese translated copy of "The Definitive Guide of Elasticesearch"
 ###### non-official, maintained by nemo1023@gmail.com
 
-status: in progress. (ETA: EOY 2015)
+status: in progress. (ETA: EOY 2016)
