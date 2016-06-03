@@ -247,8 +247,8 @@ is really executed as
 {
     "bool": {
         "should": [
-            { "exists": { "field": { "name.first" }}},
-            { "exists": { "field": { "name.last"  }}}
+            { "exists": { "field": "name.first" }},
+            { "exists": { "field": "name.last" }}
         ]
     }
 }
