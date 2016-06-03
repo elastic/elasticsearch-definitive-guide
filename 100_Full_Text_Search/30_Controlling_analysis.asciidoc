@@ -34,11 +34,17 @@ analyzed at index time by using the `analyze` API to analyze the word `Foxes`:
 
 [source,js]
 --------------------------------------------------
-GET /my_index/_analyze?field=my_type.title   <1>
-Foxes
+GET /my_index/_analyze
+{
+  "field": "my_type.title",   <1>
+  "text": "Foxes"
+}
 
-GET /my_index/_analyze?field=my_type.english_title <2>
-Foxes
+GET /my_index/_analyze
+{
+  "field": "my_type.english_title",   <2>
+  "text": "Foxes"
+}
 --------------------------------------------------
 // SENSE: 100_Full_Text_Search/30_Analysis.json
 
