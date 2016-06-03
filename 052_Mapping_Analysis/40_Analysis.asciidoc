@@ -159,8 +159,11 @@ parameters,  and the text to analyze in the body:
 
 [source,js]
 --------------------------------------------------
-GET /_analyze?analyzer=standard
-Text to analyze
+GET /_analyze
+{
+  "analyzer": "standard",
+  "text": "Text to analyze"
+}
 --------------------------------------------------
 // SENSE: 052_Mapping_Analysis/40_Analyze.json
 
