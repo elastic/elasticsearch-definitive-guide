@@ -146,10 +146,9 @@ the data has been indexed. ((("analyze API, using to understand tokenization")))
 can see that our UPC has been tokenized into smaller tokens:
 
 [source,js]
---------------------------------------------------
-GET /my_store/_analyze?field=productID
-XHDK-A-1293-#fJ3
---------------------------------------------------
+--------------------------------------------------------------
+GET /my_store/_analyze?field=productID&text=XHDK-A-1293-%23fJ3
+--------------------------------------------------------------
 [source,js]
 --------------------------------------------------
 {
