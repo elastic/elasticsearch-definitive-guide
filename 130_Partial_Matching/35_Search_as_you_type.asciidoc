@@ -93,7 +93,9 @@ the `analyze` API:
 [source,js]
 --------------------------------------------------
 GET /my_index/_analyze?analyzer=autocomplete
-quick brown
+{
+    "text": "quick brown"
+}
 --------------------------------------------------
 // SENSE: 130_Partial_Matching/35_Search_as_you_type.json
 
