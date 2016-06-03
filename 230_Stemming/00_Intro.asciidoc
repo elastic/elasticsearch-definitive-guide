@@ -36,7 +36,7 @@ and overstemming.
 
 _Understemming_ is the failure to reduce words with the same meaning to the same
 root. For example, `jumped` and `jumps` may be reduced to `jump`, while
-`jumping` may be reduced to `jumpi`.  Understemming reduces retrieval
+`jumping` may be reduced to `jumpi`.  Understemming reduces retrieval;
 relevant documents are not returned.
 
 _Overstemming_ is the failure to keep two words with distinct meanings separate.
@@ -69,6 +69,3 @@ First we will discuss the two classes of stemmers available in Elasticsearch&#x2
 choose the right stemmer for your needs in <<choosing-a-stemmer>>.  Finally,
 we will discuss options for tailoring stemming in <<controlling-stemming>> and
 <<stemming-in-situ>>.
-
-
-
