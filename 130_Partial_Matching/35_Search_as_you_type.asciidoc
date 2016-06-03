@@ -92,9 +92,10 @@ the `analyze` API:
 
 [source,js]
 --------------------------------------------------
-GET /my_index/_analyze?analyzer=autocomplete
+GET /my_index/_analyze
 {
-    "text": "quick brown"
+  "analyzer": "autocomplete",
+  "text": "quick brown"
 }
 --------------------------------------------------
 // SENSE: 130_Partial_Matching/35_Search_as_you_type.json
@@ -358,4 +359,3 @@ This example uses the `keyword` tokenizer to convert the postcode string into a 
     to turn postcodes into edge n-grams.
 <2> The `postcode_search` analyzer would treat search terms as
     if they were `not_analyzed`.
-
