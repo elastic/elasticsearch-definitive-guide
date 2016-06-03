@@ -31,8 +31,9 @@ PUT /my_index
 }
 
 # Test the autocomplete analyzer
-GET /my_index/_analyze?analyzer=autocomplete
+GET /my_index/_analyze
 {
+  "analyzer": "autocomplete",
   "text": "quick brown"
 }
 
