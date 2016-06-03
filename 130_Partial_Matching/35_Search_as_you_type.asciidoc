@@ -14,7 +14,7 @@ will call the `autocomplete_filter`:
 {
     "filter": {
         "autocomplete_filter": {
-            "type":     "edge_ngram",
+            "type":     "edgeNGram",
             "min_gram": 1,
             "max_gram": 20
         }
