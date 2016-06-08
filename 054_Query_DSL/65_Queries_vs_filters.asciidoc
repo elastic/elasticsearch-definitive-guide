@@ -17,7 +17,7 @@ The answer is always a simple, binary yes|no.
 
 When used in a _querying context_, the query becomes a "scoring" query.  Similar to
 its non-scoring sibling, this determines if a document matches.  But it also determines
-how _well_ does the document matches.
+how _well_ the document matches.
 
 A typical use for a query is to find documents:
 
