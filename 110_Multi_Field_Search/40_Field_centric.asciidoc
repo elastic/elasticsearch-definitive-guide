@@ -3,7 +3,7 @@
 
 All three of the preceding problems stem from  ((("field-centric queries")))((("multifield search", "field-centric queries, problems with")))((("most fields queries", "problems with field-centric queries")))`most_fields` being
 _field-centric_ rather than _term-centric_: it looks for the  most matching
-_fields_, when really what we're interested is the most matching _terms_.
+_fields_, when really what we're interested in is the most matching _terms_.
 
 
 NOTE: The `best_fields` type is also field-centric((("best fields queries", "problems with field-centric queries"))) and suffers from similar problems.
