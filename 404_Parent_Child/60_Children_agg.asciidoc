@@ -27,7 +27,7 @@ GET /company/branch/_search
           "aggs": {
             "hobby": {
               "terms": { <3>
-                "field": "employee.hobby"
+                "field": "hobby"
               }
             }
           }
