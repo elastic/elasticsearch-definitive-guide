@@ -36,13 +36,13 @@ analyzed at index time by using the `analyze` API to analyze the word `Foxes`:
 --------------------------------------------------
 GET /my_index/_analyze
 {
-  "field": "my_type.title",   <1>
+  "field": "title",   <1>
   "text": "Foxes"
 }
 
 GET /my_index/_analyze
 {
-  "field": "my_type.english_title",   <2>
+  "field": "english_title",   <2>
   "text": "Foxes"
 }
 --------------------------------------------------
