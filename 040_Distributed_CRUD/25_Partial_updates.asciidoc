@@ -24,7 +24,7 @@ document:
    `Node 3` reports success to the coordinating node,  which reports success to
    the client.
 
-The `update` API also accepts the `routing`, `replication`, `consistency`, and
+The `update` API also accepts the `routing`, `consistency`, and
 `timeout` parameters that are explained in <<distrib-write>>.
 
 .Document-Based Replication
