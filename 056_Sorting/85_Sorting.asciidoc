@@ -54,7 +54,7 @@ GET /_search
 --------------------------------------------------
 // SENSE: 056_Sorting/85_Sort_by_date.json
 
-You will notice two differences in the results:
+你将注意结果中的两个不同点:
 
 [source,js]
 --------------------------------------------------
@@ -79,11 +79,11 @@ You will notice two differences in the results:
 <2>  `date` 字段的值将转化为unix时间戳毫秒数，然后返回`sort`字段的值
     
 
-第一点是我们在每个结果中有((("date field, sorting search results by")))一个新的名为 `sort` 的元素，它包含了我们用于排序的值。在这个案例中，我们按照 `date` 进行排序（这由unix时间戳毫秒数得到）。长数 `1411516800000` 等驾驭时间戳字符串 `2014-09-24 00:00:00
+第一点是我们在每个结果中有((("date field, sorting search results by")))一个新的名为 `sort` 的元素，它包含了我们用于排序的值。在这个案例中，我们按照 `date` 进行排序（这由unix时间戳毫秒数得到）。长数 `1411516800000` 等价于时间戳字符串 `2014-09-24 00:00:00
 UTC`。
 
 
-第二点是 `_score` 和 `max_score` 字段都是 `null` 。((("score", "not calculating")))计算 `_score` 的花销巨大，通常仅用于排序；我们并不根据相关性排序，所以保留 `_score` 的记录是没有意义的。如果无论如何你都要计算 `_score` ，你可以将((("track_scores parameter")))  `track_scores` 参数设置为 `true`.
+第二点是 `_score` 和 `max_score` 字段都是 `null` 。((("score", "not calculating")))计算 `_score` 的花销巨大，通常仅用于排序；我们并不根据相关性排序，所以保留 `_score` 的痕迹是没有意义的。如果无论如何你都要计算 `_score` ，你可以将((("track_scores parameter")))  `track_scores` 参数设置为 `true`.
 
 
 [TIP]
@@ -95,7 +95,7 @@ UTC`。
     "sort": "number_of_children"
 --------------------------------------------------
 
-字段将会默认升序排序 ((("sorting", "default ordering"))), 而 `_score` 的值 将会降序
+字段将会默认升序排序 ((("sorting", "default ordering"))), 而 `_score` 的值将会降序
 ====
 
 ==== Multilevel Sorting
