@@ -1,4 +1,4 @@
-[[multi-fields]]
+[[多字段]]
 === 字符串排序与多字段
 
 Analyzed string fields are also multivalue fields,((("strings", "sorting on string fields")))((("analyzed fields", "string fields")))((("sorting", "string sorting and multifields"))) but sorting on them seldom
@@ -7,13 +7,22 @@ it results in three terms. We probably want to sort alphabetically on the
 first term, then the second term, and so forth, but Elasticsearch doesn't have this
 information at its disposal at sort time.
 
-You could use the `min` and `max` sort modes (it uses `min` by default), but
-that will result in sorting on either `art` or `old`, neither of which was the
-intent.
 
-In order to sort on a string field, that field should contain one term only:
-the whole `not_analyzed` string.((("not_analyzed string fields", "sorting on")))  But of course we still need the field to be
-`analyzed` in order to be able to query it as full text.
+
+
+
+
+
+
+
+你可以使用 `min` 和 `max`  排序模式（默认是 `min` ），但是这会导致排序以 `art` 或是 `old` ，任何一个都不是所希望的
+
+
+
+为了以字符串字段进行排序， 这个字段应仅包含一项：
+整个 `not_analyzed` 字符串。((("not_analyzed string fields", "sorting on")))  但是我们仍需要 `analyzed` 字段，这样才能以全文进行查询
+
+
 
 The naive approach to indexing the same string in two ways would be to include
 two separate fields in the document: one that is  `analyzed` for searching,
@@ -49,7 +58,7 @@ into a _multifield_ mapping like this:
 --------------------------------------------------
 // SENSE: 056_Sorting/88_Multifield.json
 
-<1> The main `tweet` field is just the same as before: an `analyzed` full-text
+<1>  `tweet` 主字段 is just the same as before: an `analyzed` full-text
     field.
 <2> The new `tweet.raw` subfield is `not_analyzed`.
 
