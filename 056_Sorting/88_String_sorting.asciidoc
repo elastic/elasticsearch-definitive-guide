@@ -1,5 +1,5 @@
 [[multi-fields]]
-=== String Sorting and Multifields
+=== 字符串排序与多字段
 
 Analyzed string fields are also multivalue fields,((("strings", "sorting on string fields")))((("analyzed fields", "string fields")))((("sorting", "string sorting and multifields"))) but sorting on them seldom
 gives you the results you want. If you analyze a string like `fine old art`,
