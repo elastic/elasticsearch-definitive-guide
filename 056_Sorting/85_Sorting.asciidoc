@@ -2,7 +2,7 @@
 == 排序与相关性
 
 
-默认的是，返回的结果是按照 _相关性_ 进行排序的&#x2014;相关性最强的文档在最前。((("sorting", "by relevance")))((("relevance", "sorting results by"))) 在本章的稍后，我们会解释_相关性_意味着什么和它是如何计算的，让我们开始的时候着眼于`sort`参数和如何使用它吧。
+默认的是，返回的结果是按照 _相关性_ 进行排序的&#x2014;相关性最强的文档在最前。((("sorting", "by relevance")))((("relevance", "sorting results by"))) 在本章的稍后，我们会解释 _相关性_ 意味着什么和它是如何计算的，让我们开始的时候着眼于 `sort` 参数和如何使用它吧。
 
 
 
@@ -10,7 +10,7 @@
 
 
 
-为了按照相关性来排序，需要将相关性表示为一个值。在elasticsearch中， _relevance score_ 是作为一个浮点数，并有结果中的 `_score`返回，((("relevance scores", "returned in search results score")))((("score", "relevance score of search results")))因此默认排序是`_score`降序的。
+为了按照相关性来排序，需要将相关性表示为一个值。在elasticsearch中， _relevance score_ 是作为一个浮点数，并有结果中的  `_score` 返回，((("relevance scores", "returned in search results score")))((("score", "relevance score of search results")))因此默认排序是 `_score` 降序的。
 
 
 有些时候，尽管你并没有一个有意义的相关性洗漱。例如，下面的查询返回所有 `user_id` 字段包含1的结果
@@ -32,13 +32,13 @@ GET /_search
 }
 --------------------------------------------------
 
-筛选不与`_score`相关，并且((("score", seealso="relevance; relevance scores")))((("match_all query", "score as neutral 1")))((("filters", "score and")))默认的隐式的`match_all`查询仅将所有文档的 `_score` 设置为中性的`1`。即为，所有的文档被认定是同等相关性的。
+筛选不与 `_score` 相关，并且((("score", seealso="relevance; relevance scores")))((("match_all query", "score as neutral 1")))((("filters", "score and")))默认的隐式的 `match_all` 查询仅将所有文档的 `_score` 设置为中性的 `1` 。即为，所有的文档被认定是同等相关性的。
 
 
 ==== 按照字段的值排序
 
 
-在这个案例中，通过最近修改来排序是有意义的，最新的排在最前。((("sorting", "by field values")))((("fields", "sorting search results by field values")))((("sort parameter")))我们可以使用`sort`参数
+在这个案例中，通过最近修改来排序是有意义的，最新的排在最前。((("sorting", "by field values")))((("fields", "sorting search results by field values")))((("sort parameter")))我们可以使用 `sort` 参数
 
 [source,js]
 --------------------------------------------------
@@ -79,11 +79,11 @@ You will notice two differences in the results:
 <2>  `date` 字段的值将转化为unix时间戳毫秒数，然后返回`sort`字段的值
     
 
-第一点是我们在每个结果中有((("date field, sorting search results by")))一个新的名为`sort`的元素，它包含了我们用于排序的值。在这个案例中，我们按照`date`进行排序（这由unix时间戳毫秒数得到）。长数 `1411516800000` 等驾驭时间戳字符串`2014-09-24 00:00:00
+第一点是我们在每个结果中有((("date field, sorting search results by")))一个新的名为 `sort` 的元素，它包含了我们用于排序的值。在这个案例中，我们按照 `date` 进行排序（这由unix时间戳毫秒数得到）。长数 `1411516800000` 等驾驭时间戳字符串 `2014-09-24 00:00:00
 UTC`。
 
 
-第二点是`_score` 和 `max_score`字段都是`null`。((("score", "not calculating")))计算`_score`的花销巨大，通常仅用于排序；我们并不根据相关性排序，所以保留`_score`的记录是没有意义的。如果无论如何你都要计算`_score`，你可以将((("track_scores parameter"))) `track_scores` 参数设置为 `true`.
+第二点是 `_score` 和 `max_score` 字段都是 `null` 。((("score", "not calculating")))计算 `_score` 的花销巨大，通常仅用于排序；我们并不根据相关性排序，所以保留 `_score` 的记录是没有意义的。如果无论如何你都要计算 `_score` ，你可以将((("track_scores parameter")))  `track_scores` 参数设置为 `true`.
 
 
 [TIP]
@@ -95,13 +95,13 @@ UTC`。
     "sort": "number_of_children"
 --------------------------------------------------
 
-字段将会默认升序排序 ((("sorting", "default ordering"))), 而 `_score`的值 将会降序
+字段将会默认升序排序 ((("sorting", "default ordering"))), 而 `_score` 的值 将会降序
 ====
 
 ==== Multilevel Sorting
 
 
-也许我们想要结合使用`date`和`_score`进行查询，并且匹配的结果首先按照日期排序，然后按照相关性排序
+也许我们想要结合使用 `date` 和 `_score` 进行查询，并且匹配的结果首先按照日期排序，然后按照相关性排序
 
 [source,js]
 --------------------------------------------------
@@ -125,12 +125,12 @@ GET /_search
 顺序是重要的。结果首先被第一个规则排序，仅当同时满足第一个规则时才会按照第二个规则进行排序，其余类似。
 
 
-多重排序和`_score`并无不相关。你可以根据一些不同的字段进行排序，((("fields", "sorting by multiple fields")))，如地理距离或是脚本计算的特定值。
+多重排序和 `_score` 并无不相关。你可以根据一些不同的字段进行排序，((("fields", "sorting by multiple fields")))，如地理距离或是脚本计算的特定值。
 
 [NOTE]
 ====
 
-字符串查询((("sorting", "in query string searches")))((("sort parameter", "using in query strings")))((("query strings", "sorting search results for")))也支持特定排序，可以在查询字符串中使用`sort`参数
+字符串查询((("sorting", "in query string searches")))((("sort parameter", "using in query strings")))((("query strings", "sorting search results for")))也支持特定排序，可以在查询字符串中使用 `sort` 参数
 
 
 [source,js]
@@ -143,7 +143,7 @@ GET /_search?sort=date:desc&sort=_score&q=search
 
 一种情形是字段有多个值的排序，((("sorting", "on multivalue fields")))((("fields", "multivalue", "sorting on"))) 需要记住这些值并没有固有的顺序；一个多值的字段仅仅是多个值的包装，这时应道选择那个进行排序呢？
 
-对于数字或事日期，你可以将多值字段减为单值，这可以通过使用 `min`, `max`, `avg`, 或是 `sum` _sort modes_。 ((("sum sort mode")))((("avg sort mode")))((("max sort mode")))((("min sort mode")))((("sort modes")))((("dates field, sorting on earliest value")))例如你可以按照每个`date`字段中的最早日期进行排序，如下：
+对于数字或事日期，你可以将多值字段减为单值，这可以通过使用 `min`, `max` , `avg` , 或是 `sum` _sort modes_ 。 ((("sum sort mode")))((("avg sort mode")))((("max sort mode")))((("min sort mode")))((("sort modes")))((("dates field, sorting on earliest value")))例如你可以按照每个`date`字段中的最早日期进行排序，如下：
 
 
 [role="pagebreak-before"]
