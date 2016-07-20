@@ -143,7 +143,7 @@ GET /_search?sort=date:desc&sort=_score&q=search
 
 一种情形是字段有多个值的排序，((("sorting", "on multivalue fields")))((("fields", "multivalue", "sorting on"))) 需要记住这些值并没有固有的顺序；一个多值的字段仅仅是多个值的包装，这时应道选择那个进行排序呢？
 
-对于数字或事日期，你可以将多值字段减为单值，这可以通过使用 `min`, `max` , `avg` , 或是 `sum` _sort modes_ 。 ((("sum sort mode")))((("avg sort mode")))((("max sort mode")))((("min sort mode")))((("sort modes")))((("dates field, sorting on earliest value")))例如你可以按照每个`date`字段中的最早日期进行排序，如下：
+对于数字或事日期，你可以将多值字段减为单值，这可以通过使用 `min`, `max` , `avg` , 或是 `sum` _sort modes_ 。 ((("sum sort mode")))((("avg sort mode")))((("max sort mode")))((("min sort mode")))((("sort modes")))((("dates field, sorting on earliest value")))例如你可以按照每个 `date` 字段中的最早日期进行排序，如下：
 
 
 [role="pagebreak-before"]
