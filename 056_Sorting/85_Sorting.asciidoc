@@ -10,10 +10,10 @@
 
 
 
-为了按照相关性来排序，需要将相关性表示为一个值。在elasticsearch中， _relevance score_ 是作为一个浮点数，并有结果中的  `_score` 返回，((("relevance scores", "returned in search results score")))((("score", "relevance score of search results")))因此默认排序是 `_score` 降序的。
+为了按照相关性来排序，需要将相关性表示为一个值。在elasticsearch中， _relevance score_ 是作为一个浮点数，并在结果中的  `_score` 返回，((("relevance scores", "returned in search results score")))((("score", "relevance score of search results")))因此默认排序是 `_score` 降序的。
 
 
-有些时候，尽管你并没有一个有意义的相关性洗漱。例如，下面的查询返回所有 `user_id` 字段包含1的结果
+有些时候，尽管你并没有一个有意义的相关性系数。例如，下面的查询返回所有 `user_id` 字段包含 `1` 的结果
 
 
 [source,js]
