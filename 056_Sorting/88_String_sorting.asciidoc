@@ -15,13 +15,9 @@
 
 
 
-一个简单的方法是两种方式对同一个字符串进行索引，这将在文档中包括两个字段 ： `analyzed` 用于搜索， `not_analyzed` 用于排序
+一个简单的方法是用两种方式对同一个字符串进行索引，这将在文档中包括两个字段 ： `analyzed` 用于搜索， `not_analyzed` 用于排序
 
 
-But  storing the same string twice in the `_source` field is waste of space.
-What we really want to do is to pass in a _single field_ but to _index it in two different ways_. All of the _core_ field types (strings, numbers,
-Booleans, dates) accept a `fields` parameter ((("mapping (types)", "transforming simple mapping to multifield mapping")))((("types", "core simple field types", "accepting fields parameter")))((("fields parameter")))((("multifield mapping")))that allows you to transform a
-simple mapping like
 
 但是保存相同的字符串两次在 `_source` 字段是浪费空间的。
 我们真正想要做的是传递一个 _单字段_ 但是  却用两种方式索引它。所有的 _core_field 类型 (strings, numbers, Booleans, dates) 接收一个 `字段s` 参数((("mapping (types)", "transforming simple mapping to multifield mapping")))((("types", "core simple field types", "accepting fields parameter")))((("fields parameter")))((("multifield mapping")))
