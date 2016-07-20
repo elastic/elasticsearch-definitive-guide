@@ -2,7 +2,7 @@
 == 排序与相关性
 
 
-默认的是，返回的结果是按照_相关性_进行排序的&#x2014;相关性最强的文档在最前。((("sorting", "by relevance")))((("relevance", "sorting results by"))) 在本章的稍后，我们会解释_相关性_意味着什么和它是如何计算的，让我们开始的时候着眼于`sort`参数和如何使用它吧。
+默认的是，返回的结果是按照 _相关性_ 进行排序的&#x2014;相关性最强的文档在最前。((("sorting", "by relevance")))((("relevance", "sorting results by"))) 在本章的稍后，我们会解释_相关性_意味着什么和它是如何计算的，让我们开始的时候着眼于`sort`参数和如何使用它吧。
 
 
 
@@ -32,7 +32,7 @@ GET /_search
 }
 --------------------------------------------------
 
-筛选不与`_score`相关，并且((("score", seealso="relevance; relevance scores")))((("match_all query", "score as neutral 1")))((("filters", "score and")))默认的隐式的`match_all`查询仅将所有文档的`_score`设置为中性的`1`。即为，所有的文档被认定是同等相关性的。
+筛选不与`_score`相关，并且((("score", seealso="relevance; relevance scores")))((("match_all query", "score as neutral 1")))((("filters", "score and")))默认的隐式的`match_all`查询仅将所有文档的 `_score` 设置为中性的`1`。即为，所有的文档被认定是同等相关性的。
 
 
 ==== 按照字段的值排序
