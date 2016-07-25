@@ -33,34 +33,30 @@ like the user's session ID.
 
 ==== timeout
 
-By default, the coordinating node waits((("search options", "timeout"))) to receive a response from all shards.
+By default, shards process all the data they have before returning a response to
+the coordinating node, which will in turn merge these responses to build the
+final response.
+
+This means that the time it takes to run a search request is the sum of the time
+it takes to process the slowest shard and the time it takes to merge responses.
 If one node is having trouble, it could slow down the response to all search
 requests.
 
-The `timeout` parameter tells((("timeout parameter"))) the coordinating node how long it should wait
-before giving up and just returning the results that it already has. It can be
-better to return some results than none at all.
+The `timeout` parameter tells((("timeout parameter"))) shards how long they
+are allowed to process data before returning a response to the coordinating
+node. If there was not enough time to process all data, results for this shard
+will be partial, even possibly empty.
 
-The response to a search request will indicate whether the search timed out and
-how many shards responded successfully:
+The response to a search request will indicate whether any shards returned a
+partial response with the `timed_out` property:
 
 [source,js]
 --------------------------------------------------
     ...
     "timed_out":     true,  <1>
-    "_shards": {
-       "total":      5,
-       "successful": 4,
-       "failed":     1 <2>
-    },
     ...
 --------------------------------------------------
 <1> The search request timed out.
-<2> One shard out of five failed to respond in time.
-
-If all copies of a shard fail for other reasons--perhaps because of a
-hardware failure--this will also be reflected in the `_shards` section of
-the response.
 
 [[search-routing]]
 ==== routing
