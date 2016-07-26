@@ -1,28 +1,35 @@
 [[phonetic-matching]]
-=== 语音匹配
+=== Phonetic Matching
 
-最后，在尝试任何其他匹配方法都无效后，我们可以求助于搜索发音相似的词，即使他们的拼写不同。
+In a last, desperate, attempt to match something, anything, we could resort to
+searching for words that sound similar, ((("typoes and misspellings", "phonetic matching")))((("phonetic matching")))even if their spelling differs.
 
+Several algorithms exist for converting words into a phonetic
+representation.((("phonetic algorithms"))) The http://en.wikipedia.org/wiki/Soundex[Soundex] algorithm is
+the granddaddy of them all, and most other phonetic algorithms are
+improvements or specializations of Soundex, such as
+http://en.wikipedia.org/wiki/Metaphone[Metaphone] and
+http://en.wikipedia.org/wiki/Metaphone#Double_Metaphone[Double Metaphone]
+(which expands phonetic matching to languages other than English),
+http://en.wikipedia.org/wiki/Caverphone[Caverphone] for matching names in New
+Zealand, the
+https://en.wikipedia.org/wiki/Daitch–Mokotoff_Soundex#Beider.E2.80.93Morse_Phonetic_Name_Matching_Algorithm[Beider-Morse] algorithm, which adopts the Soundex algorithm
+for better matching of German and Yiddish names, and the
+http://de.wikipedia.org/wiki/K%C3%B6lner_Phonetik[Kölner Phonetik] for better
+handling of German words.
 
-存在一些将词转换成语音标识的算法。
-((("phonetic algorithms")))  http://en.wikipedia.org/wiki/Soundex[Soundex] 算法是这些算法的鼻祖，
-而且大多数语音算法是 Soundex 的改进或者专业版本，例如 http://en.wikipedia.org/wiki/Metaphone[Metaphone]
-和 http://en.wikipedia.org/wiki/Metaphone#Double_Metaphone[Double Metaphone] （扩展了除英语以外的其他语言的语音匹配），
-http://en.wikipedia.org/wiki/Caverphone[Caverphone] 算法匹配了新西兰的名称，
-https://en.wikipedia.org/wiki/Daitch–Mokotoff_Soundex#Beider.E2.80.93Morse_Phonetic_Name_Matching_Algorithm[Beider-Morse] 算法吸收了 Soundex 算法为了更好的匹配德语和依地语名称，
-http://de.wikipedia.org/wiki/K%C3%B6lner_Phonetik[Kölner Phonetik] 为了更好的处理德语词汇。
+The thing to take away from this list is that phonetic algorithms are fairly
+crude, and ((("languages", "phonetic algorithms")))very specific to the languages they were designed for, usually
+either English or German.  This limits their usefulness.  Still, for certain
+purposes, and in combination with other techniques, phonetic matching can be a
+useful tool.
 
+First, you will need to install ((("Phonetic Analysis plugin")))the Phonetic Analysis plug-in from
+https://www.elastic.co/guide/en/elasticsearch/plugins/current/analysis-phonetic.html on every node
+in the cluster, and restart each node.
 
-值得一提的是，语音算法是相当简陋的，((("languages", "phonetic algorithms")))他们设计初衷针对的语言通常是英语或德语。这限制了他们的实用性。
-不过，为了某些明确的目标，并与其他技术相结合，语音匹配能够作为一个有用的工具。
-
-
-首先，你将需要从
-https://www.elastic.co/guide/en/elasticsearch/plugins/current/analysis-phonetic.html 获取在集群的每个节点安装((("Phonetic Analysis plugin")))语言分析器插件，
-并且重启每个节点。
-
-
-然后，您可以创建一个使用语音语汇单元过滤器的自定义分析器，并尝试下面的方法：
+Then, you can create a custom analyzer that uses one of the
+phonetic token filters ((("phonetic matching", "creating a phonetic analyzer")))and try it out:
 
 [source,json]
 -----------------------------------
@@ -46,11 +53,12 @@ PUT /my_index
   }
 }
 -----------------------------------
-<1> 首先，配置一个自定义 `phonetic` 语汇单元过滤器并使用 `double_metaphone` 编码器。
-<2> 然后在自定义分析器中使用自定义语汇单元过滤器。
+<1> First, configure a custom `phonetic` token filter that uses the
+    `double_metaphone` encoder.
+<2> Then use the custom token filter in a custom analyzer.
 
+Now we can test it with the `analyze` API:
 
-现在我们可以通过 `analyze` API 来进行测试：
 
 [source,json]
 -----------------------------------
@@ -58,13 +66,13 @@ GET /my_index/_analyze?analyzer=dbl_metaphone
 Smith Smythe
 -----------------------------------
 
+Each of `Smith` and `Smythe` produce two tokens in the same position:  `SM0`
+and  `XMT`. Running `John`, `Jon`, and `Johnnie` through the analyzer will all
+produce the two tokens `JN` and `AN`, while `Jonathon` results in the tokens
+`JN0N` and `ANTN`.
 
-每个  `Smith` 和 `Smythe` 在同一位置产生两个语汇单元： `SM0` 和 `XMT` 。
-通过分析器播放 `John` ， `Jon` 和 `Johnnie` 将产生两个语汇单元   `JN` 和 `AN` ，而 `Jonathon` 产生语汇单元 `JN0N` 和 `ANTN` 。
-
-
-语音分析器可以像任何其他分析器一样使用。 首先映射一个字段来使用它，然后索引一些数据：
-
+The phonetic analyzer can be used just like any other analyzer. First map a
+field to use it, and then index some data:
 
 [source,json]
 -----------------------------------
@@ -93,10 +101,9 @@ PUT /my_index/my_type/2
   "name": "Jonnie Smythe"
 }
 -----------------------------------
-<1> `name.phonetic` 字段使用自定义 `dbl_metaphone` 分析器。
+<1> The `name.phonetic` field uses the custom `dbl_metaphone` analyzer.
 
-
-可以使用 `match` 查询来进行搜索：
+The `match` query can be used for searching:
 
 [source,json]
 -----------------------------------
@@ -113,10 +120,15 @@ GET /my_index/my_type/_search
 }
 -----------------------------------
 
+This query returns both documents, demonstrating just how coarse phonetic
+matching is. ((("phonetic matching", "purpose of"))) Scoring with a phonetic algorithm is pretty much worthless. The
+purpose of phonetic matching is not to increase precision, but to increase
+recall--to spread the net wide enough to catch any documents that might
+possibly match.((("recall", "increasing with phonetic matching")))
 
-这个查询返回全部两个文档，演示了如何进行简陋的语音匹配。
-((("phonetic matching", "purpose of"))) 用语音算法计算评分是没有价值的。
-语音匹配的目的不是为了提高精度，而是要提高召回率--以扩展足够的范围来捕获可能匹配的文档。
+It usually makes more sense to use phonetic algorithms when retrieving results
+which will be consumed and post-processed by another computer, rather than by
+human users.
 
 
-通常是更有意义的使用语音算法是在检索到结果后，由另一台计算机进行消费和后续处理，而不是由人类用户直接使用。
+
