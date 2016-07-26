@@ -1,29 +1,33 @@
 [[fuzzy-scoring]]
-=== 模糊性评分
+=== Scoring Fuzziness
 
+Users love fuzzy queries. They assume that these queries will somehow magically find
+the right combination of proper spellings.((("fuzzy queries", "scoring fuzziness")))((("typoes and misspellings", "scoring fuzziness")))((("relevance scores", "fuzziness and")))  Unfortunately, the truth is
+somewhat more prosaic.
 
-用户喜欢模糊查询。他们认为这种查询会魔法般的找到正确拼写组合。
-((("fuzzy queries", "scoring fuzziness")))((("typoes and misspellings", "scoring fuzziness")))((("relevance scores", "fuzziness and")))
-很遗憾，实际效果平平。
+Imagine that we have 1,000 documents containing ``Schwarzenegger,'' and just
+one document with the misspelling ``Schwarzeneger.''  According to the theory
+of <<tfidf,term frequency/inverse document frequency>>, the misspelling is
+much more relevant than the correct spelling, because it appears in far fewer
+documents!
 
+In other words, if we were to treat fuzzy matches((("match query", "fuzzy match query"))) like any other match, we
+would favor misspellings over correct spellings, which would make for grumpy
+users.
 
-假设我们有1000个文档包含 ``Schwarzenegger'' ，只是一个文档的出现拼写错误 ``Schwarzeneger'' 。
-根据 <<tfidf,term frequency/inverse document frequency>> 理论，这个拼写错误文档比拼写正确的相关度更高，因为它更少在文档中出现！
+TIP: Fuzzy matching should not be used for scoring purposes--only to widen
+the net of matching terms in case there are misspellings.
 
-
-换句话说，如果我们对待模糊匹配((("match query", "fuzzy match query")))类似其他匹配方法，我们将偏爱错误的拼写超过了正确的拼写，这会让用户发狂。
-
-
-TIP: 模糊匹配不应用于参与评分--只能在有拼写错误时扩大匹配项的范围。
-
-
-默认情况下， `match` 查询给定所有的模糊匹配的恒定评分为1。这可以满足在结果列表的末尾添加潜在的匹配记录，并且没有干扰非模糊查询的相关性评分。
-
+By default, the `match` query gives all fuzzy matches the constant score of 1.
+This is sufficient to add potential matches onto the end of the result list,
+without interfering with the relevance scoring of nonfuzzy queries.
 
 [TIP]
 ==================================================
 
-在模糊查询最初出现时很少能单独使用。他们更好的作为一个 ``bigger'' 场景的部分功能特性，如 _search-as-you-type_
-{ref}/search-suggesters-completion.html[`完成` 建议]或
-_did-you-mean_ {ref}/search-suggesters-phrase.html[`短语` 建议]。
+Fuzzy queries alone are much less useful than they initially appear.  They are
+better used as part of a ``bigger'' feature, such as the _search-as-you-type_
+{ref}/search-suggesters-completion.html[`completion` suggester] or the
+_did-you-mean_ {ref}/search-suggesters-phrase.html[`phrase` suggester].
+
 ==================================================
