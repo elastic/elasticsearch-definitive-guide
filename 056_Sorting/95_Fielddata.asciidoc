@@ -1,53 +1,50 @@
-[[fielddata-intro]]
-=== Fielddata
-
-Our final topic in this chapter is about an internal aspect of Elasticsearch.
-While we don't demonstrate any new techniques here, fielddata is an
-important topic that we will refer to repeatedly, and is something that you
-should be aware of.((("fielddata")))
-
-When you sort on a field, Elasticsearch needs access to the value of that
-field for every document that matches the query.((("inverted index", "sorting and")))  The inverted index, which
-performs very well when searching, is not the ideal structure for sorting on
-field values:
-
-* When searching, we need to be able to map a term to a list of documents.
-
-* When sorting, we need to map a document to its terms. In other words, we
-  need to ``uninvert'' the inverted index.
-
-To make sorting efficient, Elasticsearch loads all the values for
-the field that you want to sort on into memory. This is referred to as
-_fielddata_.
-
-WARNING: Elasticsearch doesn't just load the values for the documents that matched a
-particular query. It loads the values from _every document in your index_,
-regardless of the document `type`.
-
-The reason that Elasticsearch loads all values into memory is that uninverting the index
-from disk is slow.  Even though you may need the values for only a few docs
-for the current request, you will probably need access to the values for other
-docs on the next request, so it makes sense to load all the values into memory
-at once, and to keep them there.
-
-Fielddata is used in several places in Elasticsearch:
-
-* Sorting on a field
-* Aggregations on a field
-* Certain filters (for example, geolocation filters)
-* Scripts that refer to fields
-
-Clearly, this can consume a lot of memory, especially for high-cardinality
-string fields--string fields that have many unique values--like the body
-of an email. Fortunately, insufficient memory is a problem that can be solved
-by horizontal scaling, by adding more nodes to your cluster.
-
-For now, all you need to know is what fielddata is, and to be aware that it
-can be memory hungry.  Later, we will show you how to determine the amount of memory that fielddata
-is using, how to limit the amount of memory that is available to it, and
-how to preload fielddata to improve the user experience.
+[[字段数据介绍]]
+=== 字段数据
 
 
+
+我们这章的终极目标是关于Elasticsearch的一个内部的方面，且我们在这里并不会阐述任何新的技术，字段数据是我们将会重复提到的一个重要话题，并且你应当明确它。((("fielddata")))
+
+
+
+当你以字段进行排序， Elasticsearch需要访问符合查询的每个文档的该字段的值。((("inverted index", "sorting and")))反转的索引（这会对搜索更加友好）在以字段值排序时不是理想的结构。
+
+
+* 当搜索时，我们需要能将一个文档列表映射到某一项上。
+
+
+
+* 当排序时， 我们需要映射一个文档到它的某项。 换句话说， 我们需要  ``反向反转`` 已经反转的索引。
+
+
+
+
+为了使得排序效率更高， Elasticsearch 会在内存中加载你想要以之排序的所有字段的值。 这便是提到的 _字段数据_ 。
+
+
+
+
+WARNING: Elasticsearch 并不仅仅加载匹配特定查询的文档的值。 他会加载 _你的数据库中的每个文档_ , 无论这个文档的 `type`
+
+
+
+
+Elasticsearch在内存中加载所有的值的原因是在硬盘中逆反向索引是很慢的。虽然你当前的请求可能仅仅需要很少文档的值，你仍然可能在下次请求时需要可以访问其他文档的值，所以在内存中立即加载所有的值并驻留是有意义的。
+
+
+
+
+字段数据在Elasticsearch中被用于以下地方：
+
+* 按照字段排序
+* 按照字段聚合
+* 一些特定的筛选（例如，地理筛选）
+* 引入字段的脚本
+
+
+显然的，这会消耗大量的内存，特别是对于高基数的字符串字段－－字符串字段有很多独特的值－－例如email的body体。幸运的是，内存效率低的问题可以通过增加集群的节点进行水平扩展来解决。
+
+现在，所有你需要知道和明确的是它是极度需要内存的。稍后，我们会给你演示如何确定字段数据所占用的内存，如何限制可用的内存，和如何预加载字段数据来提高用户体验。
 
 
 
