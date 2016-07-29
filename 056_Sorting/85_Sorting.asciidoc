@@ -32,7 +32,7 @@ GET /_search
 }
 --------------------------------------------------
 
-筛选不与 `_score` 相关，并且((("score", seealso="relevance; relevance scores")))((("match_all query", "score as neutral 1")))((("filters", "score and")))默认的隐式的 `match_all` 查询仅将所有文档的 `_score` 设置为中性的 `1` 。即为，所有的文档被认定是同等相关性的。
+过滤不与 `_score` 相关，并且((("score", seealso="relevance; relevance scores")))((("match_all query", "score as neutral 1")))((("filters", "score and")))默认的隐式的 `match_all` 查询仅将所有文档的 `_score` 设置为中性的 `1` 。即为，所有的文档被认定是同等相关性的。
 
 
 ==== 按照字段的值排序
@@ -77,7 +77,7 @@ GET /_search
 --------------------------------------------------
 <1>  `_score` 不是被计算的, 因为它并没有用于排序。
 <2>  `date` 字段的值将转化为unix时间戳毫秒数，然后返回`sort`字段的值
-    
+
 
 第一点是我们在每个结果中有((("date field, sorting search results by")))一个新的名为 `sort` 的元素，它包含了我们用于排序的值。在这个案例中，我们按照 `date` 进行排序（这由unix时间戳毫秒数得到）。长数 `1411516800000` 等价于时间戳字符串 `2014-09-24 00:00:00
 UTC`。
@@ -98,7 +98,7 @@ UTC`。
 字段将会默认升序排序 ((("sorting", "default ordering"))), 而 `_score` 的值将会降序
 ====
 
-==== Multilevel Sorting
+==== 多重排序
 
 
 也许我们想要结合使用 `date` 和 `_score` 进行查询，并且匹配的结果首先按照日期排序，然后按照相关性排序
@@ -141,9 +141,9 @@ GET /_search?sort=date:desc&sort=_score&q=search
 
 ==== 字段多值的排序
 
-一种情形是字段有多个值的排序，((("sorting", "on multivalue fields")))((("fields", "multivalue", "sorting on"))) 需要记住这些值并没有固有的顺序；一个多值的字段仅仅是多个值的包装，这时应道选择那个进行排序呢？
+一种情形是字段有多个值的排序，((("sorting", "on multivalue fields")))((("fields", "multivalue", "sorting on"))) 需要记住这些值并没有固有的顺序；一个多值的字段仅仅是多个值的包装，这时应道选择哪个进行排序呢？
 
-对于数字或事日期，你可以将多值字段减为单值，这可以通过使用 `min`, `max` , `avg` , 或是 `sum` _sort modes_ 。 ((("sum sort mode")))((("avg sort mode")))((("max sort mode")))((("min sort mode")))((("sort modes")))((("dates field, sorting on earliest value")))例如你可以按照每个 `date` 字段中的最早日期进行排序，如下：
+对于数字或日期，你可以将多值字段减为单值，这可以通过使用 `min`, `max` , `avg` , 或是 `sum` _sort modes_ 。 ((("sum sort mode")))((("avg sort mode")))((("max sort mode")))((("min sort mode")))((("sort modes")))((("dates field, sorting on earliest value")))例如你可以按照每个 `date` 字段中的最早日期进行排序，如下：
 
 
 [role="pagebreak-before"]
