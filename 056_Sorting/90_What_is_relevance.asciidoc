@@ -1,59 +1,65 @@
-[[相关性简介]]
-=== 什么是相关性?
+[[relevance-intro]]
+=== What Is Relevance?
 
+We've mentioned that, by default, results are returned in descending order of
+relevance.((("relevance", "defined"))) But what is relevance? How is it calculated?
 
+The relevance score of each document is represented by a positive floating-point number called the `_score`.((("score", "calculation of"))) The higher the `_score`, the more relevant
+the document.
 
-我们曾经讲过，默认情况下,返回结果是按照相关性倒序排序的，((("relevance", "defined")))但是什么是相关性？相关性如何计算
-？
+A query clause generates a `_score` for each document.  How that score is
+calculated depends on the type of query clause.((("fuzzy queries", "calculation of relevence score"))) Different query clauses are
+used for different purposes: a `fuzzy` query might determine the `_score` by
+calculating how similar the spelling of the found word is to the original
+search term; a `terms` query would incorporate the percentage of terms that
+were found. However, what we usually mean by _relevance_ is the algorithm that we
+use to calculate how similar the contents of a full-text field are to a full-text query string.
 
+The standard _similarity algorithm_ used in Elasticsearch is((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm")))((("similarity algorithms", "Term Frequency/Inverse Document Frequency  (TF/IDF)"))) known as  _term
+frequency/inverse document frequency_, or _TF/IDF_, which takes the following
+factors into((("inverse document frequency"))) account:
 
+Term frequency::
 
-每个文档都会有相关性评分，用一个正浮点数 ｀_score｀ 来表示， ｀_scaore｀ 的评分越高，相关性越高。
+   How often does the term appear in the field? The more often, the more
+  relevant. A field containing five mentions of the same term is more likely
+  to be relevant than a field containing just one mention.
 
+Inverse document frequency::
 
+   How often does each term appear in the index? The more often, the _less_
+  relevant. Terms that appear in many documents have a lower _weight_ than
+  more-uncommon terms.
 
-查询子句会为每个文档添加一个 `_score` 字段，评分的计算方式取决于不同的查询类型———不同的查询子句用于不同的查询目的。((("fuzzy queries", "calculation of relevence score"))) 一个  `fuzzy`
-查询会计算与关键词的拼写相似程度， `terms` 查询会计算找到的内容于关键词组成部分匹配的百分比，但是一般意义上我们说的全文本搜索是指计算内容与关键词的类似程度。
+Field-length norm::
 
+   How long is the field? The longer it is, the less likely it is that words in
+  the field will be relevant. A term appearing in a short `title` field
+  carries more weight than the same term appearing in a long `content` field.
 
-Elasticsearch 的相似度算法被定义为 TF/IDF ,((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm")))((("similarity algorithms", "Term Frequency/Inverse Document Frequency  (TF/IDF)")))即检索词频率／反向文档频率，包括((("inverse document frequency")))以下内容：
+Individual ((("field-length norm")))queries may combine the TF/IDF score with other factors
+such as the term proximity in phrase queries, or term similarity in
+fuzzy queries.
 
+Relevance is not just about full-text search, though. It can equally be applied
+to yes/no clauses, where the more clauses that match, the higher the
+`_score`.
 
-检索词频率::
+When multiple query clauses are combined using a compound query((("compound query clauses", "relevance score for results"))) like the
+`bool` query, the `_score` from each of these query clauses is combined to
+calculate the overall `_score` for the document.
 
-
-  检索词在该字段出现的频率？出现频率越高，相关性越高。字段中出现5次相同的检索词要比只出现一次的相关性高。
-
-反向文档频率::
-
-  每个检索词在索引中出现的频率？出现的频率越高，相关性也越高。检索词出现在多数文档中的会比出现在少数文档中的权重更低，即检验一个检索词在文档中的普遍重要性。
-
-字段长度准则::
-
-
-  字段的长度是多少？长度越长，相关性越低。检索词出现在一个短的 `title` 要比同样的词出现在一个长的 `content` 字段相关性更高。
-
-
-单个查询((("field-length norm")))可以使用 TF/IDF 评分标准或其他方式，比如在短语查询中检索词的距离或模糊查询中检索词的相似度。
-
-
-
-虽然如此，相关性不仅仅关于全文搜索，也适用于 yes／no 子句， 匹配的字句越多，相关性评分越高。
-
-
-
-当多条查询子句被合并为一条复合子句时，((("compound query clauses", "relevance score for results"))) 例如 `bool` 查询，则每个查询子句计算得出的得分会被合并到总的相关性评分中。
-
-
-TIP: 我们有了一整章关于相关性计算和如何使其按照你所希望的方式运作：<<controlling-relevance>>.
-
+TIP: We have a whole chapter dedicated to relevance calculations and how to
+bend them to your will: <<controlling-relevance>>.
 
 [[explain]]
-==== 理解评分标准
+==== Understanding the Score
 
+When debugging a complex query,((("score", "calculation of")))((("relevance scores", "understanding"))) it can be difficult to understand
+exactly how a `_score` has been calculated.  Elasticsearch
+has the option of producing an _explanation_ with every search result,
+by setting the `explain` parameter((("explain parameter"))) to `true`.
 
-
-当调试一个复杂的查询语句时， 想要理解相关性评分会比较困难。Elasticsearch在每个查询语句中都会生成 _explanation_ 选项，将 `explain` 参数设置为 `true` 就可以得到更详细的信息。
 
 [source,js]
 --------------------------------------------------
@@ -63,19 +69,18 @@ GET /_search?explain <1>
 }
 --------------------------------------------------
 // SENSE: 056_Sorting/90_Explain.json
-<1>  `explain` 参数 增加了对每个结果的 `_score` 评分是如何计算出来的。
+<1> The `explain` parameter adds an explanation of how the `_score` was
+    calculated to every result.
 
 [NOTE]
 ====
-
-增加一个 `explain` 参数会为每个匹配到的文档产生一大堆额外内容，但是花时间去理解它是有意义的。如果现在看不明白也没关系———等你需要的时候再来回顾这一节就行／夏眠我们来一点点地了解这块知识点。
-
-
+Adding `explain` produces a lot((("explain parameter", "for relevance score calculation"))) of output for every hit, which can look
+overwhelming, but it is worth taking the time to understand what it all means.
+Don't worry if it doesn't all make sense now; you can refer to this section
+when you need it.  We'll work through the output for one `hit` bit by bit.
 ====
 
-
-首先，我么看一下普通查询返回的元数据。
-
+First, we have the metadata that is returned on normal search requests:
 
 [source,js]
 --------------------------------------------------
@@ -87,10 +92,9 @@ GET /_search?explain <1>
     "_source" :     { ... trimmed ... },
 --------------------------------------------------
 
-
-
-这里加入了文档来源的分片和节点的信息，这对我们是比较有帮助的，因为词频率和文档频率是在每个分片中计算出来的，而不是每个索引中。
-
+It adds information about the shard and the node that the document came from,
+which is useful to know because term and document frequencies are calculated
+per shard, rather than per index:
 
 [source,js]
 --------------------------------------------------
@@ -98,10 +102,10 @@ GET /_search?explain <1>
     "_node" :       "mzIVYCsqSWCG_M_ZffSs9Q",
 --------------------------------------------------
 
-
-
-然后返回值中的 `_explanation_` 会包含在每一个入口，((("explanation of relevance score calculation")))((("description", "of relevance score calculations")))告诉你采用了哪种计算方式，并让你知道计算结果和我们需要的其他详情。
-
+Then it provides the `_explanation`. Each ((("explanation of relevance score calculation")))((("description", "of relevance score calculations")))entry contains a  `description`
+that tells you what type of calculation is being performed, a `value`
+that gives you the result of the calculation, and the `details` of any
+subcalculations that were required:
 
 [source,js]
 --------------------------------------------------
@@ -137,54 +141,55 @@ GET /_search?explain <1>
    ]
 }
 --------------------------------------------------
-<1> `honeymoon` 相关性评分计算的总结
-<2> 检索词频率
-<3> 反向文档频率
-<4> 字段长度准则
+<1> Summary of the score calculation for `honeymoon`
+<2> Term frequency
+<3> Inverse document frequency
+<4> Field-length norm
 
-WARNING: 输出 `explain` 的代价是昂贵的.((("explain parameter", "overhead of using"))) 它只能用作调试，而不要用于生产环境。
+WARNING: Producing the `explain` output is expensive.((("explain parameter", "overhead of using"))) It is a debugging tool
+only. Don't leave it turned on in production.
 
+The first part is the summary of the calculation. It tells us that it has
+calculated the _weight_&#x2014;the ((("weight", "calculation of")))((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm", "weight calculation for a term")))TF/IDF--of the term `honeymoon` in the field `tweet`, for document `0`.  (This is
+an internal document ID and, for our purposes, can be ignored.)
 
-第一部分是关于计算的总结。告诉了我们 文档 `0` 中`honeymoon` 在 `tweet` 字段中的检索词频率／反向文档频率 （TF/IDF）((("weight", "calculation of")))((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm", "weight calculation for a term")))。（这里的文档 `0` 是一个内部的ID，跟我们没有任何关系,可以忽略）
+It then provides details((("field-length norm")))((("inverse document frequency"))) of how the weight was calculated:
 
+Term frequency::
 
-然后给出了计算的权重计算出来的详情((("field-length norm")))((("inverse document frequency"))) 。
+   How many times did the term `honeymoon` appear in the `tweet` field in
+   this document?
 
+Inverse document frequency::
 
-检索词频率::
+   How many times did the term `honeymoon` appear in the `tweet` field
+   of all documents in the index?
 
-   在本文档中检索词 `honeymoon` 在 `tweet` 字段中的出现次数。
+Field-length norm::
 
-反向文档频率::
+   How long is the `tweet` field in this document? The longer the field,
+   the smaller this number.
 
-   在本索引中， 本文档 `honeymoon` 在 `tweet` 字段出现次数和其他文档中出现总数的比率。
-
-
-字段长度准则::
-
-   文档中 `tweet` 字段内容的长度——内容越长，其值越小
-
-
-
-复杂的查询语句的解释也很复杂，但是包含的内容与上面例子大致相同。通过这段描述我们可以了解搜索结果的顺序是如何产生的，这些信息在我们调试时是无价的。
-
-
-
+Explanations for more-complicated queries can appear to be very complex, but
+really they just contain more of the same calculations that appear in the
+preceding example. This information can be invaluable for debugging why search
+results appear in the order that they do.
 
 [TIP]
 ==================================================================
-json形式的 `explain` 会非常难以阅读, 但是转成yaml会好很多。((("explain parameter", "formatting output in YAML")))((("YAML, formatting explain output in"))) 仅仅需要在查询参数中增加 `format=yaml` 。
+The output from `explain` can be difficult to read in JSON, but it is easier
+when it is formatted as YAML.((("explain parameter", "formatting output in YAML")))((("YAML, formatting explain output in"))) Just add `format=yaml` to the query string.
 ==================================================================
 
 
 [[explain-api]]
-==== 理解文档是如何被匹配到的
+==== Understanding Why a Document Matched
 
+While the `explain` option adds an explanation for every result, you can use
+the `explain` API to understand why one particular document matched or, more
+important, why it _didn't_ match.((("relevance", "understanding why a document matched")))((("explain API, understanding why a document matched")))
 
-当 `explain` 选项加到某一文档上时，他会告诉你为何这个文档会被匹配，以及一个文档为何没有被匹配。((("relevance", "understanding why a document matched")))((("explain API, understanding why a document matched")))
-
-
-请求路径为 `/index/type/id/_explain`, 如下所示:
+The path for the request is `/index/type/id/_explain`, as in the following:
 
 [source,js]
 --------------------------------------------------
@@ -200,14 +205,14 @@ GET /us/tweet/12/_explain
 --------------------------------------------------
 // SENSE: 056_Sorting/90_Explain_API.json
 
+Along with the full explanation((("description", "of why a document didn&#x27;t match"))) that we saw previously, we also now have a
+`description` element, which tells us this:
 
-和我们之前看到的全部详情一起，我们现在有了一个 `element` 元素，并告知我们如下
 
 [source,js]
 --------------------------------------------------
 "failure to match filter: cache(user_id:[2 TO 2])"
 --------------------------------------------------
 
-
-
-换句话说，我们的 `user_id` 过滤器子句防止了文档被匹配到
+In other words, our `user_id` filter clause is preventing the document from
+matching.
