@@ -1,11 +1,13 @@
 === Queries and Filters
 
-Although we refer to the query DSL, in reality there are two DSLs: the
-query DSL and the filter DSL.((("DSL (Domain Specific Language)", "Query and Filter DSL")))((("Filter DSL"))) Query clauses and filter clauses are similar
-in nature, but have slightly different purposes.
+The  DSL((("DSL (Domain Specific Language)", "Query and Filter DSL"))) used by
+Elasticsearch has a single set of components called queries, which can be mixed
+and matched in endless combinations.  This single set of components can be used
+in two contexts: filtering context and query context.
 
-A _filter_ asks a yes|no question of((("filters", "queries versus")))((("exact values", "filters with yes|no questions for fields containing"))) every document and is used
-for fields that contain exact values:
+When used in _filtering context_, the query is said to be a "non-scoring" or "filtering"
+query.  That is, the query simply asks the question: "Does this document match?".
+The answer is always a simple, binary yes|no.
 
 * Is the `created` date in the range `2013` - `2014`?
 
@@ -13,10 +15,11 @@ for fields that contain exact values:
 
 * Is the `lat_lon` field within `10km` of a specified point?
 
-A _query_ is similar to a filter, but also asks((("queries", "filters versus"))) the question:
-How _well_ does this document match?
+When used in a _querying context_, the query becomes a "scoring" query.  Similar to
+its non-scoring sibling, this determines if a document matches.  But it also determines
+how _well_ does the document matches.
 
-A typical use for a query is to find documents
+A typical use for a query is to find documents:
 
 * Best matching the words `full text search`
 
@@ -29,34 +32,47 @@ A typical use for a query is to find documents
 * Tagged with `lucene`,  `search`, or `java`&#x2014;the more tags, the more
   relevant the document
 
-A query calculates how _relevant_ each document((("relevance", "calculation by queries"))) is to the
+A scoring query calculates how _relevant_ each document((("relevance", "calculation by queries"))) is to the
 query, and assigns it a relevance `_score`, which is later used to
 sort matching documents by relevance. This concept of relevance is
 well suited to full-text search, where there is seldom a completely
 ``correct'' answer.
 
+[NOTE]
+====
+Historically, queries and filters were separate components in Elasticsearch.  Starting
+in Elasticsearch 2.0, filters were technically eliminated, and all queries gained
+the ability to become non-scoring.
+
+However, for clarity and simplicity, we will use the term "filter" to mean a query which
+is used in a non-scoring, filtering context.  You can think of the terms "filter",
+"filtering query" and "non-scoring query" as being identical.
+
+Similarly, if the term "query" is used in isolation without a qualifier, we are
+referring to a "scoring query".
+====
+
 ==== Performance Differences
 
-The output from most filter clauses--a simple((("filters", "performance, queries versus"))) list of the documents that match
-the filter--is quick to calculate and easy to cache in memory, using
-only 1 bit per document. These cached filters can be reused
-efficiently for subsequent requests.
+Filtering queries are simple checks for set inclusion/exclusion, which make them
+very fast to compute.  There are various optimizations that can be leveraged
+when at least one of your filtering query is "sparse" (few matching documents),
+and frequently used non-scoring queries can be cached in memory for faster access.
 
-Queries have to not only find((("queries", "performance, filters versus"))) matching documents, but also calculate how
-relevant each document is, which typically makes queries heavier than filters.
-Also, query results are not cachable.
+In contrast, scoring queries have to not only find((("queries", "performance, filters versus")))
+matching documents, but also calculate how relevant each document is, which typically makes
+them heavier than their non-scoring counterparts.  Also, query results are not cacheable.
 
-Thanks to the inverted index, a simple query that matches just a few documents
-may perform as well or better than a cached filter that spans millions
-of documents.  In general, however, a cached filter will outperform a
-query, and will do so consistently.
+Thanks to the inverted index, a simple scoring query that matches just a few documents
+may perform as well or better than a filter that spans millions
+of documents.  In general, however, a filter will outperform a
+scoring query.  And it will do so consistently.
 
-The goal of filters is to _reduce the number of documents that have to
-be examined by the query_.
+The goal of filtering is to _reduce the number of documents that have to
+be examined by the scoring queries_.
 
 ==== When to Use Which
 
-As a general rule, use((("filters", "when to use")))((("queries", "when to use"))) query clauses for _full-text_ search or
-for any condition that should affect the _relevance score_, and
-use filter clauses for everything else.
-
+As a general rule, use((("filters", "when to use")))((("queries", "when to use")))
+query clauses for _full-text_ search or for any condition that should affect the
+_relevance score_, and use filters for everything else.

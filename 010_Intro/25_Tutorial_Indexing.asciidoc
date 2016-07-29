@@ -16,7 +16,7 @@ So, sit back and enjoy a whirlwind tour of what Elasticsearch is capable of.
 We happen((("employee directory, building (example)"))) to work for _Megacorp_, and as part of HR's new _"We love our
 drones!"_ initiative, we have been tasked with creating an employee directory.
 The directory is supposed to foster employer empathy and
-real-time, synergistic, dynamic collaboration, so it has a few 
+real-time, synergistic, dynamic collaboration, so it has a few
 business requirements:
 
 * Enable data to contain multi value tags, numbers, and full text.
@@ -34,17 +34,10 @@ of an _employee document_: a single document represents a single
 employee.  The act of storing data in Elasticsearch is called _indexing_, but
 before we can index a document, we need to decide _where_ to store it.
 
-In Elasticsearch, a document belongs to a _type_, and those((("types"))) types live inside
-an _index_. ((("indices")))You can draw some (rough) parallels to a traditional relational database:
 
-----
-Relational DB  ⇒ Databases ⇒ Tables ⇒ Rows      ⇒ Columns
-Elasticsearch  ⇒ Indices   ⇒ Types  ⇒ Documents ⇒ Fields
-----
-
-An Elasticsearch cluster can((("clusters", "indices (databases) in")))((("databases", "in clusters"))) contain multiple _indices_ (databases), which in
-turn contain multiple _types_ (tables).((("tables"))) These types hold multiple _documents_
-(rows), and ((("rows")))each document has((("fields")))((("columns"))) multiple _fields_ (columns).
+An Elasticsearch cluster can((("clusters", "indices in")))(((in clusters"))) contain multiple _indices_, which in
+turn contain multiple _types_.((("tables"))) These types hold multiple _documents_,
+and each document has((("fields"))) multiple _fields_.
 
 .Index Versus Index Versus Index
 **************************************************
@@ -108,11 +101,11 @@ information:
 
 +megacorp+::
       The index name
-      
+
 +employee+::
       The type name
-      
-+1+::          
+
++1+::
       The ID of this particular employee
 
 The request body--the JSON document--contains all the information about
@@ -147,6 +140,3 @@ PUT /megacorp/employee/3
 }
 --------------------------------------------------
 // SENSE: 010_Intro/25_Index.json
-
-
-

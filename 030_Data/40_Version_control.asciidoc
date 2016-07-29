@@ -154,9 +154,21 @@ code, and a body like the following:
 [source,js]
 --------------------------------------------------
 {
-  "error" : "VersionConflictEngineException[[website][2] [blog][1]:
-             version conflict, current [2], provided [1]]",
-  "status" : 409
+   "error": {
+      "root_cause": [
+         {
+            "type": "version_conflict_engine_exception",
+            "reason": "[blog][1]: version conflict, current [2], provided [1]",
+            "index": "website",
+            "shard": "3"
+         }
+      ],
+      "type": "version_conflict_engine_exception",
+      "reason": "[blog][1]: version conflict, current [2], provided [1]",
+      "index": "website",
+      "shard": "3"
+   },
+   "status": 409
 }
 --------------------------------------------------
 // SENSE: 030_Data/40_Concurrency.json

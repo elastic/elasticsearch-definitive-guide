@@ -6,25 +6,6 @@ index-time performance((("parent-child relationship", "performance and"))) is mo
 comes at a significant cost.  Parent-child queries can be 5 to 10 times slower
 than the equivalent nested query!
 
-==== Memory Use
-
-At the time of going to press, the parent-child ID map is still held in
-memory.((("parent-child relationship", "memory usage")))((("memory usage", "parent-child ID map")))  There are plans to change the map to use doc values instead, which
-will be a big memory saving. Until that happens, you need to be aware of the
-following: the string `_id` field of every parent document has to be held in memory, and
-every child document requires 8 bytes (a long value) of memory.  Actually,
-it's a bit less thanks to compression, but this gives you a rough idea.
-
-You can check how much memory is being used by the parent-child cache by
-consulting ((("indices-stats API")))the `indices-stats` API (for a summary at the index level) or the
-`node-stats` API (for a summary at the node level):
-
-[source,json]
--------------------------
-GET /_nodes/stats/indices/id_cache?human <1>
--------------------------
-<1> Returns memory use of the ID cache summarized by node in a human-friendly format.
-
 ==== Global Ordinals and Latency
 
 Parent-child uses <<global-ordinals,global ordinals>> to speed((("global ordinals")))((("parent-child relationship", "global ordinals and latency"))) up joins.
@@ -78,14 +59,14 @@ attractive until ((("grandparents and grandchildren")))((("parent-child relation
 * Each generation of parents needs to have their string `_id` fields stored in
   memory, which can consume a lot of RAM.
 
-As you consider your relationship schemes and whether parent-child is right for you, 
+As you consider your relationship schemes and whether parent-child is right for you,
 consider this advice ((("parent-child relationship", "guidelines for using")))about parent-child relationships:
 
 * Use parent-child relationships sparingly, and only when there are many more children than parents.
 * Avoid using multiple parent-child joins in a single query.
 * Avoid scoring by using the `has_child` filter, or the `has_child` query with
   `score_mode` set to `none`.
-* Keep the parent IDs short, so that they require less memory.
+* Keep the parent IDs short, so that they compress better in doc values, and use
+less memory when transiently loaded.
 
 _Above all:_ think about the other relationship techniques that we have discussed before reaching for parent-child.
-

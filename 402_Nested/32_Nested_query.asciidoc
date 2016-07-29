@@ -12,17 +12,32 @@ GET /my_index/blogpost/_search
   "query": {
     "bool": {
       "must": [
-        { "match": { "title": "eggs" }}, <1>
+        { 
+          "match": {
+            "title": "eggs" <1>
+          }
+        },
         {
           "nested": {
             "path": "comments", <2>
             "query": {
               "bool": {
                 "must": [ <3>
-                  { "match": { "comments.name": "john" }},
-                  { "match": { "comments.age":  28     }}
+                  { 
+                    "match": { 
+                      "comments.name": "john" 
+                    }
+                  },
+                  { 
+                    "match": {
+                      "comments.age": 28     
+                    }
+                  }
                 ]
-        }}}}
+              }
+            }
+          }
+        }
       ]
 }}}
 --------------------------
@@ -58,31 +73,45 @@ GET /my_index/blogpost/_search
   "query": {
     "bool": {
       "must": [
-        { "match": { "title": "eggs" }},
+        {
+          "match": { 
+            "title": "eggs"
+          }
+        },
         {
           "nested": {
-            "path":       "comments",
+            "path": "comments",
             "score_mode": "max", <1>
             "query": {
               "bool": {
                 "must": [
-                  { "match": { "comments.name": "john" }},
-                  { "match": { "comments.age":  28     }}
+                  { 
+                    "match": {
+                      "comments.name": "john" 
+                    }
+                  },
+                  {
+                    "match": {
+                      "comments.age": 28     
+                    }
+                  }
                 ]
-        }}}}
+              }
+            }
+          }
+        }
       ]
-}}}
+    }
+  }
+}
 --------------------------
 <1> Give the root document the `_score` from the best-matching
     nested document.
 
 [NOTE]
 ====
-A `nested` filter behaves much like a `nested` query, except that it doesn't
-accept the `score_mode` parameter.  It can be used only in _filter context_&#x2014;such as inside a `filtered` query--and it behaves like any other filter:
-it includes or excludes, but it doesn't score.
-
-While the results of the `nested` filter itself are not cached, the usual
-caching rules apply to the filter _inside_ the `nested` filter.
+If placed inside the `filter` clause of a Boolean query, a `nested` query behaves
+much like a `nested` query, except that it doesn't accept the `score_mode`
+parameter.  Because it is being used as a non-scoring query -- it includes or excludes,
+but doesn't score --  a `score_mode` doesn't make sense since there is nothing to score.
 ====
-

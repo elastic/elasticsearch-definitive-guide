@@ -1,12 +1,13 @@
 === Finding Multiple Exact Values
 
-The `term` filter is useful for finding a single value, but often you'll  want
-to search for multiple values.((("exact values", "finding multiple")))((("structured search", "finding multiple exact values")))  What if you want to find documents that have a
-price of $20 or $30?
+The `term` query is useful for finding a single value, but often you'll  want
+to search for multiple values.((("exact values", "finding multiple")))
+((("structured search", "finding multiple exact values")))  What if you want to
+find documents that have a price of $20 or $30?
 
-Rather than using multiple `term` filters, you can instead use a single `terms`
-filter (note the _s_ at the end).  The `terms` filter((("terms filter"))) is simply the plural
-version of the singular `term` filter.
+Rather than using multiple `term` queries, you can instead use a single `terms`
+query (note the _s_ at the end).  The `terms` query((("terms query"))) is simply the plural
+version of the singular `term` query cousin.
 
 It looks nearly identical to a vanilla `term` too.  Instead of
 specifying a single price, we are now specifying an array of values:
@@ -20,15 +21,15 @@ specifying a single price, we are now specifying an array of values:
 }
 --------------------------------------------------
 
-And like the `term` filter, we will place it inside a `filtered` query to
-((("filtered query", "terms filter in"))) use it:
+And like the `term` query, we will place it inside the `filter` clause of a
+constant score query to use it:
 
 [source,js]
 --------------------------------------------------
 GET /my_store/products/_search
 {
     "query" : {
-        "filtered" : {
+        "constant_score" : {
             "filter" : {
                 "terms" : { <1>
                     "price" : [20, 30]
@@ -40,7 +41,7 @@ GET /my_store/products/_search
 --------------------------------------------------
 // SENSE: 080_Structured_Search/15_Terms_filter.json
 
-<1> The `terms` filter as seen previously, but placed inside the `filtered` query
+<1> The `terms` query as seen previously, but placed inside the `constant_score` query
 
 The query will return the second, third, and fourth documents:
 
@@ -73,7 +74,3 @@ The query will return the second, third, and fourth documents:
      }
 ]
 --------------------------------------------------
-
-
-
-

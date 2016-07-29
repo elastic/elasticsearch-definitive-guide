@@ -32,7 +32,7 @@ PUT /my_index
       "properties": {
         "postcode": {
           "type": "string",
-          "index_analyzer": "postcode_index",
+          "analyzer": "postcode_index",
           "search_analyzer": "postcode_search"
         }
       }

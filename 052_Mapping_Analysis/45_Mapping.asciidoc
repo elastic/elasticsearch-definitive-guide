@@ -144,10 +144,10 @@ can contain one of three values:
  `analyzed`::
    First analyze the string and then index it.  In other words, index this field as full text.
 
- `not_analyzed`::        
+ `not_analyzed`::
    Index this field, so it is searchable, but index the value exactly as specified. Do not analyze it.
 
- `no`::                  
+ `no`::
    Don't index this field at all. This field will not be searchable.
 
 The default value of `index` for a `string` field is `analyzed`.  If we
@@ -204,7 +204,7 @@ for an existing type) later, using the `/_mapping` endpoint.
 ================================================
 Although you can _add_ to an existing mapping, you can't _change_ existing
 field mappings.  If a mapping already exists for a field, data from that
-field has probably been indexed.  If you were to change the field mapping, 
+field has probably been indexed.  If you were to change the field mapping,
 the indexed data would be wrong and would not be properly searchable.
 ================================================
 
@@ -278,11 +278,17 @@ name. Compare the output of these two requests:
 
 [source,js]
 --------------------------------------------------
-GET /gb/_analyze?field=tweet
-Black-cats <1>
+GET /gb/_analyze
+{
+  "field": "tweet",
+  "text": "Black-cats" <1>
+}
 
-GET /gb/_analyze?field=tag
-Black-cats <1>
+GET /gb/_analyze
+{
+  "field": "tag",
+  "text": "Black-cats" <1>
+}
 --------------------------------------------------
 // SENSE: 052_Mapping_Analysis/45_Mapping.json
 <1> The text we want to analyze is passed in the body.

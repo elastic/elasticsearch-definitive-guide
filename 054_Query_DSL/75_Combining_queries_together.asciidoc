@@ -1,0 +1,152 @@
+[[combining-queries-together]]
+=== Combining queries together
+
+Real world search requests are never simple; they search multiple fields with
+various input text, and filter based on an array of criteria.  To build
+sophisticated search, you will need a way to combine multiple queries together
+into a single search request.
+
+To do that, you can use the `bool` query.  This query combines multiple queries
+together in user-defined boolean combinations. This query accepts the following parameters:
+
+`must`::
+   Clauses that _must_ match for the document to be included.
+
+`must_not`::
+   Clauses that _must not_ match for the document to be included.
+
+`should`::
+   If these clauses match, they increase the `_score`;
+                otherwise, they have no effect. They are simply used to refine
+                the relevance score for each document.
+
+`filter`::
+   Clauses that _must_ match, but are run in non-scoring, filtering mode.  These
+   clauses do not contribute to the score, instead they simply include/exclude
+   documents based on their criteria.
+
+Because this is the first query we've seen that contains other queries, we need
+to talk about how scores are combined.  Each sub-query clause will individually
+calculate a relevance score for the document.  Once these scores are calculated,
+the `bool` query will merge the scores together and return a single score representing
+the total score of the boolean operation.
+
+The following query finds documents whose `title` field matches
+the query string `how to make millions` and that are not marked
+as `spam`.  If any documents are `starred` or are from 2014 onward,
+they will rank higher than they would have otherwise. Documents that
+match _both_ conditions will rank even higher:
+
+[source,js]
+--------------------------------------------------
+{
+    "bool": {
+        "must":     { "match": { "title": "how to make millions" }},
+        "must_not": { "match": { "tag":   "spam" }},
+        "should": [
+            { "match": { "tag": "starred" }},
+            { "range": { "date": { "gte": "2014-01-01" }}}
+        ]
+    }
+}
+--------------------------------------------------
+// SENSE: 054_Query_DSL/70_Bool_query.json
+
+TIP: If there are no `must` clauses, at least one `should` clause has to
+match. However, if there is at least one `must` clause, no `should` clauses
+are required to match.
+
+==== Adding a filtering query
+
+If we don't want the date of the document to affect scoring at all, we can re-arrange
+the previous example to use a `filter` clause:
+
+[source,js]
+--------------------------------------------------
+{
+    "bool": {
+        "must":     { "match": { "title": "how to make millions" }},
+        "must_not": { "match": { "tag":   "spam" }},
+        "should": [
+            { "match": { "tag": "starred" }}
+        ],
+        "filter": {
+          "range": { "date": { "gte": "2014-01-01" }} <1>
+        }
+    }
+}
+--------------------------------------------------
+// SENSE: 054_Query_DSL/70_Bool_query.json
+
+<1> The range query was moved out of the `should` clause and into a `filter` clause
+
+By moving the range query into the `filter` clause, we have converted it into a
+non-scoring query.  It will no longer contribute a score to the document's relevance
+ranking.  And because it is now a non-scoring query, it can use the variety of optimizations
+available to filters which should increase performance.
+
+Any query can be used in this manner.  Simply move a query into the
+`filter` clause of a `bool` query and it automatically converts to a non-scoring
+filter.
+
+If you need to filter on many different criteria, the `bool` query itself can be
+used as a non-scoring query.  Simply place it inside the `filter` clause and
+continue building your boolean logic:
+
+[source,js]
+--------------------------------------------------
+{
+    "bool": {
+        "must":     { "match": { "title": "how to make millions" }},
+        "must_not": { "match": { "tag":   "spam" }},
+        "should": [
+            { "match": { "tag": "starred" }}
+        ],
+        "filter": {
+          "bool": { <1>
+              "must": [
+                  { "range": { "date": { "gte": "2014-01-01" }}},
+                  { "range": { "price": { "lte": 29.99 }}}
+              ],
+              "must_not": [
+                  { "term": { "category": "ebooks" }}
+              ]
+          }
+        }
+    }
+}
+--------------------------------------------------
+// SENSE: 054_Query_DSL/70_Bool_query.json
+
+<1> By embedding a `bool` query in the `filter` clause, we can add boolean logic
+to our filtering criteria
+
+By mixing and matching where Boolean queries are placed, we can flexibly encode
+both scoring and filtering logic in our search request.
+
+
+==== constant_score Query
+
+Although not used nearly as often as the `bool` query, the `constant_score` query is
+still useful to have in your toolbox.  The query applies a static, constant score to
+all matching documents.  It is predominantly used when you want to execute a filter
+and nothing else (e.g. no scoring queries).
+
+You can use this instead of a `bool` that only has filter clauses.  Performance
+will be identical, but it may aid in query simplicity/clarity.
+
+[source,js]
+--------------------------------------------------
+{
+    "constant_score":   {
+        "filter": {
+            "term": { "category": "ebooks" } <1>
+        }
+    }
+}
+--------------------------------------------------
+// SENSE: 054_Query_DSL/70_bool_query.json
+
+<1> A `term` query is placed inside the `constant_score`, converting it to a
+non-scoring filter.  This method can be used in place of a `bool` query which only
+has a single filter

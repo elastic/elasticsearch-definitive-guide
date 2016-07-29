@@ -45,7 +45,8 @@ GET /blogposts/post/_search
 <3> The `field_value_factor` function is applied to every document matching
     the main `query`.
 <4> Every document _must_ have a number in the `votes` field for
-    the `function_score` to work.
+    the `function_score` to work.  If every document does _not_ have a number in the `votes` field, then you _must_ use the
+    {ref}/query-dsl-function-score-query.html#function-field-value-factor[`missing` property] to provide a default value for the score calculation.
 
 In the preceding example, the final `_score` for each document has been altered as
 follows:

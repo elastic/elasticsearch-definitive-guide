@@ -8,7 +8,7 @@ tests from Lucene often expose bugs in the JVM itself.  These bugs range from
 mild annoyances to serious segfaults, so it is best to use the latest version
 of the JVM where possible.
 
-Java 7 is strongly preferred over Java 6.  Either Oracle or OpenJDK are acceptable. They are comparable in performance and stability.
+Java 8 is preferred over Java 7.  Java 6 is no longer supported.  Either Oracle or OpenJDK are acceptable. They are comparable in performance and stability.
 
 If your application is written in Java and you are using the transport client
 or node client, make sure the JVM running your application is identical to the

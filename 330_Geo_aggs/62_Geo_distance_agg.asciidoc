@@ -11,8 +11,8 @@ add ``another result found within 2km'':
 GET /attractions/restaurant/_search
 {
   "query": {
-    "filtered": {
-      "query": {
+    "bool": {
+      "must": {
         "match": { <1>
           "name": "pizza"
         }
@@ -21,7 +21,7 @@ GET /attractions/restaurant/_search
         "geo_bounding_box": {
           "location": { <2>
             "top_left": {
-              "lat":  40,8,
+              "lat":  40.8,
               "lon": -74.1
             },
             "bottom_right": {
@@ -116,6 +116,6 @@ The response from ((("post filter", "geo_distance aggregation")))the preceding r
     restaurant within 2km of the user.
 
 In this example, we have counted the number of restaurants that fall
-into each concentric ring.  Of course, we could nest subaggregations under
+into each concentric ring.  Of course, we could nest sub-aggregations under
 the `per_rings` aggregation to calculate the average price per ring, the
-maximium popularity, and more.
+maximum popularity, and more.

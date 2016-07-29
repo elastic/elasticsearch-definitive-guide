@@ -65,7 +65,7 @@ PUT /my_index/_mapping/my_type
   "properties": {
     "text": {
       "type":            "string",
-      "index_analyzer":  "index_grams", <1>
+      "analyzer":  "index_grams", <1>
       "search_analyzer": "standard" <1>
     }
   }

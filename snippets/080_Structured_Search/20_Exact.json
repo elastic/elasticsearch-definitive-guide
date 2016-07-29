@@ -23,7 +23,7 @@ PUT /my_index/my_type/2
 GET /my_index/my_type/_search
 {
   "query": {
-    "filtered": {
+    "constant_score": {
       "filter": {
         "bool": {
           "must": [

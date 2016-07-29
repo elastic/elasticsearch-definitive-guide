@@ -40,7 +40,15 @@ PUT /gb/_mapping/tweet
 GET /gb/_mapping/tweet
 
 # Test the analyzer for the `tweet` field
-GET /gb/_analyze?field=tweet&text=Black-cats
+GET /gb/_analyze
+{
+  "field": "tweet",
+  "text": "Black-cats"
+}
 
 # Test the analyzer for the `tag` field
-GET /gb/_analyze?field=tag&text=Black-cats
+GET /gb/_analyze
+{
+  "field": "tag",
+  "text": "Black-cats"
+}

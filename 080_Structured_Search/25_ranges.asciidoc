@@ -13,20 +13,20 @@ FROM   products
 WHERE  price BETWEEN 20 AND 40
 --------------------------------------------------
 
-Elasticsearch has a `range` filter, ((("range filters", "using on numbers")))which, unsurprisingly, allows you to
-filter ranges:
+Elasticsearch has a `range` query, ((("range query", "using on numbers")))which, unsurprisingly,
+can be used to find documents falling inside a range:
 
 [source,js]
 --------------------------------------------------
 "range" : {
     "price" : {
-        "gt" : 20,
-        "lt" : 40
+        "gte" : 20,
+        "lte" : 40
     }
 }
 --------------------------------------------------
 
-The `range` filter supports both inclusive and exclusive ranges, through
+The `range` query supports both inclusive and exclusive ranges, through
 combinations of the following options:
 
 * `gt`: `>` greater than
@@ -35,13 +35,13 @@ combinations of the following options:
 * `lte`: `<=` less than or equal to
 
 
-.Here is an example range filter:
+.Here is an example range query:
 [source,js]
 --------------------------------------------------
 GET /my_store/products/_search
 {
     "query" : {
-        "filtered" : {
+        "constant_score" : {
             "filter" : {
                 "range" : {
                     "price" : {
@@ -71,7 +71,7 @@ boundaries:
 
 ==== Ranges on Dates
 
-The `range` filter can be used on date ((("date ranges")))((("range filters", "using on dates")))fields too:
+The `range` query can be used on date ((("date ranges")))((("range query", "using on dates")))fields too:
 
 [source,js]
 --------------------------------------------------
@@ -83,7 +83,7 @@ The `range` filter can be used on date ((("date ranges")))((("range filters", "u
 }
 --------------------------------------------------
 
-When used on date fields, the `range` filter ((("date math operations")))supports _date math_ operations.
+When used on date fields, the `range` query ((("date math operations")))supports _date math_ operations.
 For example, if we want to find all documents that have a timestamp sometime
 in the last hour:
 
@@ -121,7 +121,8 @@ the {ref}/mapping-date-format.html[date format reference documentation].
 
 ==== Ranges on Strings
 
-The `range` filter can also operate on string fields.((("range filters", "using on strings")))((("strings", "using range filter on")))((("lexicographical order, string ranges")))  String ranges are
+The `range` query can also operate on string fields.((("range query", "using on strings")))
+((("strings", "using range query on")))((("lexicographical order, string ranges")))  String ranges are
 calculated _lexicographically_  or alphabetically.  For example, these values
 are sorted in lexicographic order:
 
@@ -134,7 +135,7 @@ string ranges use this order.
 ====
 
 If we want a range from `a` up to but not including `b`, we can use the same
-`range` filter syntax:
+`range` query syntax:
 
 [source,js]
 --------------------------------------------------
@@ -159,4 +160,3 @@ unique terms.  But the more unique terms you have, the slower the string range
 will be.
 
 ****
-

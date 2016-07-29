@@ -73,7 +73,7 @@ would have reduced the contribution of the title and author clauses to one-quart
 
 It is likely that an even one-third split between clauses is not what we need for
 the preceding query. ((("multifield search", "multiple query strings", "prioritizing query clauses")))((("bool query", "prioritizing clauses"))) Probably we're more interested in the title and author
-clauses then we are in the translator clauses. We need to tune the query to
+clauses than we are in the translator clauses. We need to tune the query to
 make the title and author clauses relatively more important.
 
 The simplest weapon in our tuning arsenal is the `boost` parameter. To

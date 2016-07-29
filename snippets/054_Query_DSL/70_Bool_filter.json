@@ -40,7 +40,7 @@ PUT /test/test/3
 GET /test/test/_search
 {
   "query": {
-    "filtered": {
+    "bool": {
       "filter": {
         "bool": {
           "must": {

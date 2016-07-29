@@ -209,15 +209,15 @@ which allows us to execute structured searches efficiently:
 GET /megacorp/employee/_search
 {
     "query" : {
-        "filtered" : {
-            "filter" : {
-                "range" : {
-                    "age" : { "gt" : 30 } <1>
+        "bool": {
+            "must": {
+                "match" : {
+                    "last_name" : "smith" <1>
                 }
             },
-            "query" : {
-                "match" : {
-                    "last_name" : "smith" <2>
+            "filter": {
+                "range" : {
+                    "age" : { "gt" : 30 } <2>
                 }
             }
         }
@@ -226,13 +226,15 @@ GET /megacorp/employee/_search
 --------------------------------------------------
 // SENSE: 010_Intro/30_Query_DSL.json
 
-<1> This portion of the query is a `range` _filter_, which((("range filters"))) will find all ages
+<1> This portion of the query is the((("match queries"))) same `match` _query_ that we used before.
+<2> This portion of the query is a `range` _filter_, which((("range filters"))) will find all ages
     older than 30&#x2014;`gt` stands for _greater than_.
-<2> This portion of the query is the((("match queries"))) same `match` _query_ that we used before.
+
 
 Don't worry about the syntax too much for now; we will cover it in great
 detail later.  Just recognize that we've added a _filter_ that performs a
-range search, and reused the same `match` query as before.  Now our results show only one employee who happens to be 32 and is named Jane Smith:
+range search, and reused the same `match` query as before.  Now our results show
+only one employee who happens to be 32 and is named Jane Smith:
 
 [source,js]
 --------------------------------------------------
@@ -446,4 +448,3 @@ HTML tags:
 
 You can read more about the highlighting of search snippets in the
 {ref}/search-request-highlighting.html[highlighting reference documentation].
-

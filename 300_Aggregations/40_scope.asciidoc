@@ -61,7 +61,7 @@ aggregations even further.  All of our previous examples calculated statistics
 about _all_ of the data: top-selling cars, average price of all cars, most sales
 per month, and so forth.
 
-With scope, we can ask questions such as "How many colors are Ford cars are
+With scope, we can ask questions such as "How many colors are Ford cars
 available in?"  We do this by simply adding a query to the request (in this case
 a `match` query):
 

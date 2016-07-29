@@ -31,7 +31,11 @@ PUT /my_index
 }
 
 # Test the autocomplete analyzer
-GET /my_index/_analyze?analyzer=autocomplete&text=quick brown
+GET /my_index/_analyze
+{
+  "analyzer": "autocomplete",
+  "text": "quick brown"
+}
 
 # Map the `name` field to use the `autocomplete` analyzer
 PUT /my_index/_mapping/mytype
@@ -96,7 +100,7 @@ PUT /my_index/mytype/_mapping
     "properties": {
       "name": {
         "type": "string",
-        "index_analyzer": "autocomplete",
+        "analyzer": "autocomplete",
         "search_analyzer": "standard"
       }
     }

@@ -1,19 +1,22 @@
 === Finding Exact Values
 
-When working with exact values,((("structured search", "finding exact values")))((("exact values", "finding"))) you will be working with filters. Filters are
-important because they are very, very fast.  Filters do not calculate
+When working with exact values,((("structured search", "finding exact values")))((("exact values", "finding")))
+you will be working with non-scoring, filtering queries. Filters are
+important because they are very fast.  They do not calculate
 relevance (avoiding the entire scoring phase) and are easily cached. We'll
 talk about the performance benefits of filters later in <<filter-caching>>,
-but for now, just keep in mind that you should use filters as often as you
+but for now, just keep in mind that you should use filtering queries as often as you
 can.
 
-==== term Filter with Numbers
+==== term Query with Numbers
 
-We are going to explore the `term` filter ((("term filter", "with numbers")))((("structured search", "finding exact values", "using term filter with numbers")))first because you will use it often.
-This filter is capable of handling numbers, Booleans, dates, and text.
+We are going to explore the `term` query ((("term query", "with numbers")))
+((("structured search", "finding exact values", "using term filter with numbers")))
+first because you will use it often. This query is capable of handling numbers,
+booleans, dates, and text.
 
-Let's look at an example using numbers first by indexing some products.  These
-documents have a `price` and a `productID`:
+We'll start by indexing some documents representing products, each having a
+ `price` and `productID`:
 
 [source,js]
 --------------------------------------------------
@@ -40,9 +43,9 @@ FROM   products
 WHERE  price = 20
 --------------------------------------------------
 
-In the Elasticsearch query DSL, we use a `term` filter to accomplish the same
-thing.  The `term` filter will look for the exact value that we specify.  By
-itself, a `term` filter is simple. It accepts a field name and the value
+In the Elasticsearch query DSL, we use a `term` query to accomplish the same
+thing.  The `term` query will look for the exact value that we specify.  By
+itself, a `term` query is simple. It accepts a field name and the value
 that we wish to find:
 
 [source,js]
@@ -54,22 +57,20 @@ that we wish to find:
 }
 --------------------------------------------------
 
-The `term` filter isn't very useful on its own, though.  As discussed in
-<<query-dsl-intro>>, the `search` API expects a `query`, not a `filter`. To
-use our `term` filter, ((("filtered query")))we need to wrap it with a
-<<filtered-query,`filtered` query>>:
+Usually, when looking for an exact value, we don't want to score the query.  We just
+want to include/exclude documents, so we will use a `constant_score` query to execute
+the `term` query in a non-scoring mode and apply a uniform score of one.
+
+The final combination will be a `constant_score` query which contains a `term` query:
 
 [source,js]
 --------------------------------------------------
 GET /my_store/products/_search
 {
     "query" : {
-        "filtered" : { <1>
-            "query" : {
-                "match_all" : {} <2>
-            },
+        "constant_score" : { <1>
             "filter" : {
-                "term" : { <3>
+                "term" : { <2>
                     "price" : 20
                 }
             }
@@ -79,11 +80,8 @@ GET /my_store/products/_search
 --------------------------------------------------
 // SENSE: 080_Structured_Search/05_Term_number.json
 
-<1> The `filtered` query accepts both a `query` and a `filter`.
-<2> A `match_all` is used to return all matching documents.((("match_all query clause")))  This is the default
-behavior, so in future examples we will simply omit the `query` section.
-<3> The `term` filter that we saw previously.  Notice how it is placed inside
-the `filter` clause.
+<1> We use a `constant_score` to convert the `term` query into a filter
+<2>  The `term` query that we saw previously.
 
 Once executed, the search results from this query are exactly what you would
 expect: only document 2 is returned as a hit (because only `2` had a price
@@ -104,13 +102,13 @@ of `20`):
     }
 ]
 --------------------------------------------------
-<1> Filters do not perform scoring or relevance. The score comes from the
-    `match_all` query, which treats all docs as equal, so all results receive
-    a neutral score of `1`.
+<1> Queries placed inside the `filter` clause do not perform scoring or relevance,
+so all results receive a neutral score of `1`.
 
-==== term Filter with Text
+==== term Query with Text
 
-As mentioned at the top of ((("structured search", "finding exact values", "using term filter with text")))((("term filter", "with text")))this section, the `term` filter can match strings
+As mentioned at the top of ((("structured search", "finding exact values", "using term filter with text")))
+((("term filter", "with text")))this section, the `term` query can match strings
 just as easily as numbers.  Instead of price, let's try to find products that
 have a certain UPC identification code. To do this with SQL, we might use a
 query like this:
@@ -130,7 +128,7 @@ filter, like so:
 GET /my_store/products/_search
 {
     "query" : {
-        "filtered" : {
+        "constant_score" : {
             "filter" : {
                 "term" : {
                     "productID" : "XHDK-A-1293-#fJ3"
@@ -149,9 +147,14 @@ can see that our UPC has been tokenized into smaller tokens:
 
 [source,js]
 --------------------------------------------------
-GET /my_store/_analyze?field=productID
-XHDK-A-1293-#fJ3
+GET /my_store/_analyze
+{
+  "field": "productID",
+  "text": "XHDK-A-1293-#fJ3"
+}
 --------------------------------------------------
+// SENSE: 080_Structured_Search/05_Term_text.json
+
 [source,js]
 --------------------------------------------------
 {
@@ -190,7 +193,7 @@ There are a few important points here:
 * All letters have been lowercased.
 * We lost the hyphen and the hash (`#`) sign.
 
-So when our `term` filter looks for the exact value `XHDK-A-1293-#fJ3`, it
+So when our `term` query looks for the exact value `XHDK-A-1293-#fJ3`, it
 doesn't find anything, because that token does not exist in our inverted index.
 Instead, there are the four tokens listed previously.
 
@@ -244,7 +247,7 @@ POST /my_store/products/_bulk
 --------------------------------------------------
 // SENSE: 080_Structured_Search/05_Term_text.json
 
-Only now will our `term` filter work as expected.  Let's try it again on the
+Only now will our `term` query work as expected.  Let's try it again on the
 newly indexed data (notice, the query and filter have not changed at all, just
 how the data is mapped):
 
@@ -253,7 +256,7 @@ how the data is mapped):
 GET /my_store/products/_search
 {
     "query" : {
-        "filtered" : {
+        "constant_score" : {
             "filter" : {
                 "term" : {
                     "productID" : "XHDK-A-1293-#fJ3"
@@ -265,19 +268,20 @@ GET /my_store/products/_search
 --------------------------------------------------
 // SENSE: 080_Structured_Search/05_Term_text.json
 
-Since the `productID` field is not analyzed, and the `term` filter performs no
+Since the `productID` field is not analyzed, and the `term` query performs no
 analysis, the query finds the exact match and returns document 1 as a hit.
 Success!
 
 [[_internal_filter_operation]]
 ==== Internal Filter Operation
 
-Internally, Elasticsearch is((("structured search", "finding exact values", "intrnal filter operations")))((("filters", "internal filter operation"))) performing several operations when executing a
-filter:
+Internally, Elasticsearch is((("structured search", "finding exact values", "intrnal filter operations")))
+((("filters", "internal filter operation"))) performing several operations when executing a
+non-scoring query:
 
 1. _Find matching docs_.
 +
-The `term` filter looks up the term `XHDK-A-1293-#fJ3` in the inverted index
+The `term` query looks up the term `XHDK-A-1293-#fJ3` in the inverted index
 and retrieves the list of documents that contain that term.  In this case,
 only document 1 has the term we are looking for.
 
@@ -285,18 +289,37 @@ only document 1 has the term we are looking for.
 +
 The filter then builds a _bitset_--an array of 1s and 0s--that
 describes which documents contain the term.  Matching documents receive a  `1`
-bit.  In our example, the bitset would be `[1,0,0,0]`.
+bit.  In our example, the bitset would be `[1,0,0,0]`.  Internally, this is represented
+as a https://www.elastic.co/blog/frame-of-reference-and-roaring-bitmaps["roaring bitmap"],
+which can efficiently encode both sparse and dense sets.
 
-3. _Cache the bitset_.
+3. _Iterate over the bitset(s)_
 +
-Last, the bitset is stored in memory, since we can use this in the future
-and skip steps 1 and 2.  This adds a lot of performance and makes filters very
-fast.
+Once the bitsets are generated for each query, Elasticsearch iterates over the
+bitsets to find the set of matching documents that satisfy all filtering criteria.
+The order of execution is decided heuristically, but generally the most sparse
+bitset is iterated on first (since it excludes the largest number of documents).
 
-When executing a `filtered` query, the `filter` is executed before the
-`query`. The resulting bitset is given to the `query`, which uses it to simply
-skip over any documents that have already been excluded by the filter. This is
-one of the ways that filters can improve performance.  Fewer documents
-evaluated by the query  means faster response times.
+4. _Increment the usage counter_.
++
+Elasticsearch can cache non-scoring queries for faster access, but its silly to
+cache something that is used only rarely.  Non-scoring queries are already quite fast
+due to the inverted index, so we only want to cache queries we _know_ will be used
+again in the future to prevent resource wastage.
++
+To do this, Elasticsearch tracks the history of query usage on a per-index basis.
+If a query is used more than a few times in the last 256 queries, it is cached
+in memory.  And when the bitset is cached, caching is omitted on segments that have
+fewer than 10,000 documents (or less than 3% of the total index size). These
+small segments tend to disappear quickly anyway and it is a waste to associate a
+cache with them.
 
 
+Although not quite true in reality (execution is a bit more complicated based on
+how the query planner re-arranges things, and some heuristics based on query cost),
+you can conceptually think of non-scoring queries as executing _before_ the scoring
+queries.  The job of non-scoring queries is to reduce the number of documents that
+the more costly scoring queries need to evaluate, resulting in a faster search request.
+
+By conceptually thinking of non-scoring queries as executing first, you'll be
+equipped to write efficient and fast search requests.

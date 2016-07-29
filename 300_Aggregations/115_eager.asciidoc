@@ -17,7 +17,7 @@ There are three methods to combat this latency spike:
 - Eagerly load global ordinals
 - Prepopulate caches with warmers
 
-All are variations on the same concept: preload the fielddata so that there is 
+All are variations on the same concept: preload the fielddata so that there is
 no latency spike when the user needs to execute a search.
 
 [[eager-fielddata]]
@@ -39,8 +39,8 @@ are pre-loaded:
 ----
 PUT /music/_mapping/_song
 {
-  "price_usd": {
-    "type": "integer",
+  "tags": {
+    "type": "string",
     "fielddata": {
       "loading" : "eager" <1>
     }
@@ -157,7 +157,7 @@ PUT /music/_mapping/_song
 <1> Setting `eager_global_ordinals` also implies loading fielddata eagerly.
 
 Just like the eager preloading of fielddata, eager global ordinals are built
-before a new segment becomes visible to search.  
+before a new segment becomes visible to search.
 
 [NOTE]
 =========================
@@ -226,7 +226,7 @@ Let's register a warmer and then talk about what's happening:
 PUT /music/_warmer/warmer_1 <1>
 {
   "query" : {
-    "filtered" : {
+    "bool" : {
       "filter" : {
         "bool": {
           "should": [ <2>
@@ -250,7 +250,7 @@ PUT /music/_warmer/warmer_1 <1>
 ----
 <1> Warmers are associated with an index (`music`) and are registered using
 the `_warmer` endpoint and a unique ID (`warmer_1`).
-<2> The three most popular music genres have their filter caches prebuilt.
+<2> The three most popular music genres are pre-warmed to help encourage caching.
 <3> The fielddata and global ordinals for the `price` field will be preloaded.
 
 Warmers are registered against a specific index.((("warmers", see="index warmers")))  Each warmer is given a
@@ -279,7 +279,3 @@ user's queries and register those.
 
 Some administrative details (such as getting existing warmers and deleting warmers) that have been omitted from this explanation.  Refer to the {ref}/indices-warmers.html[warmers documentation] for the rest
 of the details.
-
-
-
-

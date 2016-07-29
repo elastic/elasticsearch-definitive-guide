@@ -51,7 +51,6 @@ display the response headers:
 --------------------------------------------------
 curl -i -XGET http://localhost:9200/website/blog/124?pretty
 --------------------------------------------------
-// SENSE: 030_Data/15_Get_document.json
 
 
 The response now looks like this:
@@ -94,7 +93,7 @@ filtered out the `date` field:
   "_type" :    "blog",
   "_id" :      "123",
   "_version" : 1,
-  "exists" :   true,
+  "found" :   true,
   "_source" : {
       "title": "My first blog entry" ,
       "text":  "Just trying this out..."

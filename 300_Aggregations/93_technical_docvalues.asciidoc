@@ -1,0 +1,175 @@
+
+=== Deep Dive on Doc Values
+
+The last section opened by saying doc values are _"fast, efficient and memory-friendly"_.
+Those are some nice marketing buzzwords, but how do doc values actually work?
+
+Doc values are generated at index-time, alongside the creation of the inverted index.
+That means doc values are generated on a per-segment basis and are immutable, just like
+the inverted index used for search. And, like the inverted index, doc values are serialized
+to disk.  This is important to performance and scalability.
+
+By serializing a persistent data structure to disk, we can rely on the OS's file
+system cache to manage memory instead of retaining structures on the JVM heap.
+In situations where the "working set" of data is smaller than the available
+memory, the OS will naturally keep the doc values resident in memory.  This gives
+the same performance profile as on-heap data structures.
+
+But when your working set is much larger than available memory, the OS will begin
+paging the doc values on/off disk as required.  This will obviously be slower
+than an entirely memory-resident data structure, but it has the advantage of scaling
+well beyond the server's memory capacity.  If these data structures were
+purely on-heap, the only option is to crash with an OutOfMemory exception (or implement
+a paging scheme just like the OS).
+
+[NOTE]
+====
+Because doc values are not managed by the JVM, Elasticsearch servers can be
+configured with a much smaller heap.  This gives more memory to the OS for caching.
+It also has the benefit of letting the JVM's garbage collector work with a smaller
+heap, which will result in faster and more efficient collection cycles.
+
+Traditionally, the recommendation has been to dedicate 50% of the machine's memory
+to the JVM heap.  With the introduction of doc values, this recommendation is starting
+to slide.  Consider giving far less to the heap, perhaps 4-16gb on a 64gb machine,
+instead of the full 32gb previously recommended.
+
+For a more detailed discussion, see <<heap-sizing>>.
+====
+
+
+==== Column-store compression
+
+At a high level, doc values are essentially a serialized _column-store_.  As we
+discussed in the last section, column-stores excel at certain operations because
+the data is naturally laid out in a fashion that is amenable to those queries.
+
+But they also excel at compressing data, particularly numbers.  This is important for both saving space
+on disk _and_ for faster access.  Modern CPU's are many orders of magnitude faster
+than disk drives (although the gap is narrowing quickly with upcoming NVMe drives).  That means
+it is often advantageous to minimize the amount of data that must be read from disk,
+even if it requires extra CPU cycles to decompress.
+
+To see how it can help compression, take this set of doc values for a numeric field:
+
+  Doc      Terms
+  -----------------------------------------------------------------
+  Doc_1 | 100
+  Doc_2 | 1000
+  Doc_3 | 1500
+  Doc_4 | 1200
+  Doc_5 | 300
+  Doc_6 | 1900
+  Doc_7 | 4200
+  -----------------------------------------------------------------
+
+The column-stride layout means we have a contiguous block of numbers:
+`[100,1000,1500,1200,300,1900,4200]`.  Because we know they are all numbers
+(instead of a heterogeneous collection like you'd see in a document or row)
+values can be packed tightly together with uniform offsets.
+
+Further, there are a variety of compression tricks we can apply to these numbers.
+You'll notice that each of the above numbers are a multiple of 100.  Doc values
+detect when all the values in a segment share a _greatest common divisor_ and use
+that to compress the values further.
+
+If we save `100` as the divisor for this segment, we can divide each number by 100
+to get:  `[1,10,15,12,3,19,42]`.  Now that the numbers are smaller, they require
+fewer bits to store and we've reduced the size on-disk.
+
+Doc values use several tricks like this.  In order, the following compression
+schemes are checked:
+
+1. If all values are identical (or missing), set a flag and record the value
+2. If there are fewer than 256 values, a simple table encoding is used
+3. If there are > 256 values, check to see if there is a common divisor
+4. If there is no common divisor, encode everything as an offset from the smallest
+value
+
+You'll note that these compression schemes are not "traditional" general purpose
+compression like DEFLATE or LZ4.  Because the structure of column-stores are
+rigid and well-defined, we can achieve higher compression by using specialized
+schemes rather than the more general compression algorithms like LZ4.
+
+[NOTE]
+====
+You may be thinking _"Well that's great for numbers, but what about strings?"_
+Strings are encoded similarly, with the help of an ordinal table.  The
+strings are de-duplicated and sorted into a table, assigned an ID, and then those
+ID's are used as numeric doc values.  Which means strings enjoy many of the same
+compression benefits that numerics do.
+
+The ordinal table itself has some compression tricks, such as using fixed, variable
+or prefix-encoded strings.
+====
+
+==== Disabling Doc Values
+
+Doc values are enabled by default for all fields _except_ analyzed strings.  That means
+all numerics, geo_points, dates, IPs and `not_analyzed` strings.
+
+Analyzed strings are not able to use doc values at this time; the analysis process
+generates many tokens and does not work efficiently with doc values.  We'll discuss
+using analyzed strings for aggregations in <<aggregations-and-analysis>>.
+
+Because doc values are on by default, you have the option to aggregate and sort
+on most fields in your dataset.  But what if you know you will _never_ aggregate,
+sort or script on a certain field?
+
+While rare, these circumstances do arise and you may wish to disable doc values
+on that particular field.  This will save you some disk space (since the doc values
+are not being serialized to disk anymore) and may increase indexing speed slightly
+(since the doc values don't need to be generated).
+
+To disable doc values, set `doc_values: false` in the field's mapping.  For example,
+here we create a new index where doc values are disabled for the `"session_id"` field:
+
+[source,js]
+----
+PUT my_index
+{
+  "mappings": {
+    "my_type": {
+      "properties": {
+        "session_id": {
+          "type":       "string",
+          "index":      "not_analyzed",
+          "doc_values": false <1>
+        }
+      }
+    }
+  }
+}
+----
+<1> By setting `doc_values: false`, this field will not be usable in aggregations, sorts
+or scripts
+
+It is possible to configure the inverse relationship too: make a field available
+for aggregations via doc values, but make it unavailable for normal search by disabling
+the inverted index.  For example:
+
+
+[source,js]
+----
+PUT my_index
+{
+  "mappings": {
+    "my_type": {
+      "properties": {
+        "customer_token": {
+          "type":       "string",
+          "index":      "not_analyzed",
+          "doc_values": true, <1>
+          "index": "no" <2>
+        }
+      }
+    }
+  }
+}
+----
+<1> Doc values are enabled to allow aggregations
+<2> Indexing is disabled, which makes the field unavailable to queries/searches
+
+By setting `doc_values: true` and `index: no`, we generate a field which can _only_
+be used in aggregations/sorts/scripts.  This is admittedly a very rare requirement,
+but sometimes useful.

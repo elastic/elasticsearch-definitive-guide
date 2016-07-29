@@ -6,8 +6,11 @@ Some aggregations, such as the `terms` bucket, operate((("analysis", "aggregatio
 string fields may be either `analyzed` or `not_analyzed`, which begs the question:
 how does analysis affect aggregations?((("strings", "analyzed or not_analyzed string fields")))((("not_analyzed fields")))((("analyzed fields")))
 
-The answer is "a lot," but it is best shown through an example.  First, index
-some documents representing various states in the US:
+The answer is "a lot," for two reasons: analysis affects the tokens used in the aggregation,
+and doc values _do not work_ with analyzed strings.
+
+Let's tackle the first problem: how the generation of analyzed tokens affects
+aggregations. First, let's index some documents representing various states in the US:
 
 [source,js]
 ----
@@ -79,7 +82,7 @@ are built from the inverted index, and the inverted index is _post-analysis_.
 
 When we added those documents to Elasticsearch, the string `"New York"` was
 analyzed/tokenized into `["new", "york"]`.  These individual tokens were then
-used to populate fielddata, and ultimately we see counts for `new` instead of
+used to populate aggregation counts, and ultimately we see counts for `new` instead of
 `New York`.
 
 This is obviously not the behavior that we wanted, but luckily it is easily
@@ -172,6 +175,33 @@ It is a generalization, but there are not many instances where you want to use
 an analyzed  field in an aggregation.  When in doubt, add a multifield so
 you have the option for both.((("analyzed fields", "aggregations and")))
 
+==== Analyzed strings and Fielddata
+
+While the first problem relates to how data is aggregated and displayed to your
+user, the second problem is largely technical and behind the scenes.
+
+Doc values do not support `analyzed` string fields because they are not very efficient
+at representing multi-valued strings.  Doc values are most efficient
+when each document has one or several tokens, but not thousands as in the case
+of large, analyzed strings (imagine a PDF body, which may be several megabytes
+and have thousands of unique tokens).
+
+For that reason, doc values are not generated for `analyzed` strings.  Yet these fields
+can still be used in aggregations.  How is that possible?
+
+The answer is a data structure known as _fielddata_.  Unlike doc values, fielddata
+is built and managed 100% in memory, living inside the JVM heap.  That means
+it is inherently less scalable and has a lot of edge-cases to watch out for.
+The rest of this chapter are addressing the challenges of fielddata in the context
+of `analyzed` strings
+
+NOTE: Historically, fielddata was the default for _all_ fields, but Elasticsearch
+has been migrating towards doc values to reduce the chance of OOM.
+Analyzed strings are the last holdout where fielddata is still used.  The goal is to
+eventually build a serialized data structure similar to doc values which can handle
+highly dimensional analyzed strings, obsoleting fielddata once and for all.
+
+
 ==== High-Cardinality Memory Implications
 
 There is another reason to avoid aggregating analyzed fields: high-cardinality
@@ -196,18 +226,9 @@ You can imagine how the n-gramming process creates a huge number of unique token
 especially when analyzing paragraphs of text.  When these are loaded into memory,
 you can easily exhaust your heap space.
 
-So, before aggregating across fields, take a second to verify that the fields are
-`not_analyzed`.  And if you want to aggregate analyzed fields, ensure that the analysis
-process is not creating an obscene number of tokens.
+So, before aggregating string fields, assess the situation:
 
-[TIP]
-==================================================
-
-At the end of the day, it doesn't matter whether a field is `analyzed` or
-`not_analyzed`. The more unique values in a field--the higher the
-cardinality of the field--the more memory that is required. This is
-especially true for string fields, where every unique string must be held in
-memory--longer strings use more memory.
-
-==================================================
-
+- Is it a `not_analyzed` field?  If yes, the field will use doc values and be memory-friendly
+- Otherwise, this is an `analyzed` field.  It will use fielddata and live in-memory.
+Does this field have a very large cardinality caused by ngrams, shingles, etc? If yes,
+it may be very memory unfriendly.

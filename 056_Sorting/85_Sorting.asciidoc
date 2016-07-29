@@ -22,7 +22,7 @@ value `1`:
 GET /_search
 {
     "query" : {
-        "filtered" : {
+        "bool" : {
             "filter" : {
                 "term" : {
                     "user_id" : 1
@@ -33,9 +33,36 @@ GET /_search
 }
 --------------------------------------------------
 
-Filters have no bearing on `_score`, and the((("score", seealso="relevance; relevance scores")))((("match_all query", "score as neutral 1")))((("filters", "score and"))) missing-but-implied `match_all`
-query just sets the `_score` to a neutral value of `1` for all documents. In
-other words, all documents are considered to be equally relevant.
+There isn't a meaningful score here: because we are using a filter, we are indicating
+that we just want the documents that match `user_id: 1` with no attempt to determine
+relevance.  Documents will be returned in effectively random order, and each document
+will have a score of zero.
+
+[NOTE]
+====
+If a score of zero makes your life difficult for logistical reasons, you can use
+a `constant_score` query instead:
+
+[source,js]
+--------------------------------------------------
+GET /_search
+{
+    "query" : {
+        "constant_score" : {
+            "filter" : {
+                "term" : {
+                    "user_id" : 1
+                }
+            }
+        }
+    }
+}
+--------------------------------------------------
+
+This will apply a constant score (default of `1`) to all documents.  It will
+perform the same as the above query, and all documents will be returned randomly
+like before, they'll just have a score of one instead of zero.
+====
 
 ==== Sorting by Field Values
 
@@ -47,7 +74,7 @@ recent tweets first.((("sorting", "by field values")))((("fields", "sorting sear
 GET /_search
 {
     "query" : {
-        "filtered" : {
+        "bool" : {
             "filter" : { "term" : { "user_id" : 1 }}
         }
     },
@@ -116,8 +143,8 @@ show all matching results sorted first by date, then by relevance:
 GET /_search
 {
     "query" : {
-        "filtered" : {
-            "query":   { "match": { "tweet": "manage text search" }},
+        "bool" : {
+            "must":   { "match": { "tweet": "manage text search" }},
             "filter" : { "term" : { "user_id" : 2 }}
         }
     },
@@ -168,7 +195,3 @@ could sort on the earliest date in each `dates` field by using the following:
     }
 }
 --------------------------------------------------
-
-
-
-

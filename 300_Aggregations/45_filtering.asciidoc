@@ -1,14 +1,15 @@
 
 == Filtering Queries and Aggregations
 
-A natural extension to aggregation scoping is filtering.  Because the aggregation
+A natural extension to aggregation scoping are filtering queries.  Because the aggregation
 operates in the context of the query scope, any filter applied to the query
 will also apply to the aggregation.
 
 [float="true"]
-=== Filtered Query
+=== Filtering Queries
 If we want to find all cars over $10,000 and also calculate the average price
-for those cars,((("filtering", "serch query results")))((("filtered query")))((("queries", "filtered"))) we can simply use a `filtered` query:
+for those cars,((("filtering", "serch query results")))((("filtering query")))
+((("queries"))) we can use a `constant_score` query and its `filter` clause:
 
 [source,js]
 --------------------------------------------------
@@ -16,7 +17,7 @@ GET /cars/transactions/_search
 {
     "size" : 0,
     "query" : {
-        "filtered": {
+        "constant_score": {
             "filter": {
                 "range": {
                     "price": {
@@ -35,21 +36,21 @@ GET /cars/transactions/_search
 --------------------------------------------------
 // SENSE: 300_Aggregations/45_filtering.json
 
-Fundamentally, using a `filtered` query is no different from using a `match`
-query, as we discussed in the previous chapter.  The query (which happens to include
-a filter) returns a certain subset of documents, and the aggregation operates
-on those documents.
+Fundamentally, using a non-scoring query is no different from using a `match`
+query, as we discussed in the previous chapter.  The query returns a certain
+subset of documents, and the aggregation operates on those documents.  It just happens
+to omit scoring and may proactively cache bitsets, etc.
 
 [float="true"]
 === Filter Bucket
 
-But what if you would like to filter just the aggregation results?((("filtering", "aggregation results, not the query")))((("aggregations", "filtering just aggregations")))  Imagine we 
+But what if you would like to filter just the aggregation results?((("filtering", "aggregation results, not the query")))((("aggregations", "filtering just aggregations")))  Imagine we
 are building the search page for our car dealership.  We want to display
 search results according to what the user searches for.  But we also want
 to enrich the page by including the average price of cars (matching the search)
 that were sold in the last month.
 
-We can't use simple scoping here, since there are two different criteria.  The 
+We can't use simple scoping here, since there are two different criteria.  The
 search results must match +ford+, but the aggregation results must match +ford+
 AND +sold > now - 1M+.
 
@@ -101,7 +102,7 @@ This allows you to filter selective portions of the aggregation as required.
 === Post Filter
 
 So far, we have a way to filter both the search results and aggregations (a
-`filtered` query), as well as filtering individual portions of the aggregation
+non-scoring `filter` query), as well as filtering individual portions of the aggregation
 (`filter` bucket).
 
 You may be thinking to yourself, "hmm...is there a way to filter _just_ the search
@@ -114,7 +115,7 @@ it does not affect the query scope--and thus does not affect the aggregations
 either.
 
 We can use this behavior to apply additional filters to our search
-criteria that don't affect things like categorical facets in your UI.  Let's 
+criteria that don't affect things like categorical facets in your UI.  Let's
 design another search page for our car dealer.  This page will allow the user
 to search for a car and filter by color.  Color choices are populated via an
 aggregation:
@@ -153,15 +154,15 @@ Finally, the `post_filter` will filter the search results to show only green
 +ford+ cars.  This happens _after_ the query is executed, so the aggregations
 are unaffected.
 
-This is often important for coherent UIs.  Imagine that a user clicks a category in 
+This is often important for coherent UIs.  Imagine that a user clicks a category in
 your UI (for example, green).  The expectation is that the search results are filtered,
-but _not_ the UI options.  If you applied a `filtered` query, the UI would
+but _not_ the UI options.  If you applied a Boolean `filter` query, the UI would
 instantly transform to show _only_ +green+ as an option--not what the user wants!
 
 [WARNING]
 .Performance consideration
 ====
-Use a `post_filter` _only_ if you need to differentially filter search results 
+Use a `post_filter` _only_ if you need to differentially filter search results
 and aggregations. ((("post filter", "performance and")))Sometimes people will use `post_filter` for regular searches.
 
 Don't do this!  The nature of the `post_filter` means it runs _after_ the query,
@@ -179,12 +180,6 @@ both--often boils down to how you want your user interface to behave.  Choose
 the appropriate filter (or combinations) depending on how you want to display
 results to your user.
 
- - A `filtered` query affects both search results and aggregations.
+ - A non-scoring query inside a `filter` clause affects both search results and aggregations.
  - A `filter` bucket affects just aggregations.
  - A `post_filter` affects just search results.
-
-
-
-
-
-

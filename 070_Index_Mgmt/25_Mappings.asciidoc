@@ -8,10 +8,8 @@ documents of that type may have, ((("fields", "datatypes")))the datatype of each
 `integer`, or `date`&#x2014;and how those fields should be indexed and stored by
 Lucene.
 
-In <<document>>, we said that a type is like a table in a relational database.
-While this is a useful way to think about types initially, it is worth
-explaining in more detail exactly what a type is and how they are implemented
-on top of Lucene.
+Types can be useful abstractions for partitioning similar-but-not-identical data.
+But due to how Lucene operates they come with some restrictions.
 
 ==== How Lucene Sees Documents
 
@@ -28,8 +26,7 @@ also be _stored_ unchanged so that they can be retrieved later.
 ==== How Types Are Implemented
 
 Elasticsearch types are ((("types", "implementation in Elasticsearch")))implemented on top of this simple foundation. An index
-may have several types, each with its own mapping, and documents of any of
-these types may be stored in the same index.
+may have several types, and documents of any of these types may be stored in the same index.
 
 Because Lucene has no concept of document types, the type name of each
 document is stored with the document in a metadata field called `_type`.((("type field"))) When
@@ -56,86 +53,106 @@ index called `name`:
 
 ==== Avoiding Type Gotchas
 
-The fact that documents of different types can be added to the same index
-introduces some unexpected((("types", "gotchas, avoiding"))) complications.
+This leads to an interesting thought experiment: what happens if you have two
+different types, each with an identically named field but mapped differently
+(e.g. one is a string, the other is a number)?
 
-Imagine that we have two types in our index: `blog_en` for blog posts in
-English, and `blog_es` for blog posts in Spanish.  Both types have a
-`title` field, but one type uses the `english` analyzer and
-the other type uses the `spanish` analyzer.
+Well, the short answer is that bad things happen and Elasticsearch won't allow you
+to define this mapping at all.  You'd receive an exception when attempting to
+configure the mapping.
 
-The problem is illustrated by the following query:
+The longer answer is that each Lucene index contains a single, flat schema
+for all fields.  A particular field is either mapped as a string, or a number, but
+not both.  And because types are a mechanism added by Elasticsearch _on top_
+of Lucene (in the form of a metadata `_type` field), all types in Elasticsearch
+ultimately share the same mapping.
+
+Take for example this mapping of two types in the `data` index:
 
 [source,js]
 --------------------------------------------------
-GET /_search
 {
-    "query": {
-        "match": {
-            "title": "The quick brown fox"
-        }
-    }
+   "data": {
+      "mappings": {
+         "people": {
+            "properties": {
+               "name": {
+                  "type": "string",
+               },
+               "address": {
+                  "type": "string"
+               }
+            }
+         },
+         "transactions": {
+            "properties": {
+               "timestamp": {
+                  "type": "date",
+                  "format": "strict_date_optional_time"
+               },
+               "message": {
+                  "type": "string"
+               }
+            }
+         }
+      }
+   }
 }
 --------------------------------------------------
 
-
-We are searching in the `title` field in both types.  The query string needs
-to be analyzed, but which analyzer does it use: `spanish` or `english`? It
-will use the analyzer for the first `title` field that it finds, which
-will be correct for some docs and incorrect for the others.
-
-We can avoid this problem either by naming the fields differently--for example, `title_en` and `title_es`&#x2014;or by explicitly including the type name in the
-field name and querying each field separately:
+Each type defines two fields (`"name"`/`"address"` and `"timestamp"`/`"message"`
+respectively).  It may look like they are independent, but under the covers Lucene
+will create a single mapping which would look something like this:
 
 [source,js]
 --------------------------------------------------
-GET /_search
 {
-    "query": {
-        "multi_match": { <1>
-            "query":    "The quick brown fox",
-            "fields": [ "blog_en.title", "blog_es.title" ]
+   "data": {
+      "mappings": {
+        "_type": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "name": {
+          "type": "string"
         }
-    }
+        "address": {
+          "type": "string"
+        }
+        "timestamp": {
+          "type": "long"
+        }
+        "message": {
+          "type": "string"
+        }
+      }
+   }
 }
 --------------------------------------------------
-<1> The `multi_match` query runs a `match` query on multiple fields
-    and combines the results.
+_Note: This is not actually valid mapping syntax, just used for demonstration_
 
-Our new query uses the `english` analyzer for the field `blog_en.title` and
-the `spanish` analyzer for the field `blog_es.title`, and combines the results
-from both fields into an overall relevance score.
+The mappings are essentially _flattened_ into a single, global schema for the
+entire index.  And that's why two types cannot define conflicting fields:
+Lucene wouldn't know what to do when the mappings are flattened together.
 
-This solution can help when both fields have the same datatype, but consider
-what would happen if you indexed these two documents into the same index:
+==== Type Takeaways
 
-* Type: user
+So what's the takeaway from this discussion?  Technically, multiple types
+may live in the same index as long as their fields do not conflict (either because
+the fields are mutually exclusive, or because they share identical fields).
 
-[source,js]
---------------------------------------------------
- { "login": "john_smith" }
---------------------------------------------------
+Practically though, the important lesson is this:  types are useful when you need
+to discriminate between different segments of a single collection. The overall "shape" of the
+data is identical (or nearly so) between the different segments.
 
-[role="pagebreak-before"]
-* Type: event
+Types are not as well suited for _entirely different types of data_.  If your two
+types have mutually exclusive sets of fields, that means half your index is going to
+contain "empty" values (the fields will be _sparse_), which will eventually cause performance
+problems.  In these cases, it's much better to utilize two independent indices.
 
-[source,js]
---------------------------------------------------
- { "login": "2014-06-01" }
---------------------------------------------------
+In summary:
 
-Lucene doesn't care that one field contains a string and the other field
-contains a date. It will happily index the byte values from both fields.
-
-However, if we now try to _sort_ on the `event.login` field, Elasticsearch
-needs to load the values in the `login` field into memory. As we said in
-<<fielddata-intro>>, it loads the values for  _all documents_ in the index
-regardless of their type.
-
-It will try to load these values either as a string or as a date, depending on
-which `login` field it sees first. This will either produce unexpected results
-or fail outright.
-
-TIP: To ensure that you don't run into these conflicts, it is advisable to
-ensure that fields with the _same name_ are mapped in the _same way_ in every
-type in an index.
+- **Good:** `kitchen` and `lawn-care` types inside the `products` index, because
+the two types are essentially the same schema
+- **Bad:** `products` and `logs` types inside the `data` index, because the two types are
+mutually exclusive.  Separate these into their own indices.

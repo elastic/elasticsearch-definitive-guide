@@ -92,8 +92,11 @@ the `analyze` API:
 
 [source,js]
 --------------------------------------------------
-GET /my_index/_analyze?analyzer=autocomplete
-quick brown
+GET /my_index/_analyze
+{
+  "analyzer": "autocomplete",
+  "text": "quick brown"
+}
 --------------------------------------------------
 // SENSE: 130_Partial_Matching/35_Search_as_you_type.json
 
@@ -235,7 +238,7 @@ GET /my_index/my_type/_search
 
 <1> This overrides the `analyzer` setting on the `name` field.
 
-Alternatively, we can specify ((("search_analyzer parameter")))((("index_analyzer parameter")))the `index_analyzer` and `search_analyzer` in
+Alternatively, we can specify ((("search_analyzer parameter")))((("analyzer parameter")))the `analyzer` and `search_analyzer` in
 the mapping for the `name` field itself. Because we want to change only the
 `search_analyzer`, we can update the existing mapping without having to
 reindex our data:
@@ -249,7 +252,7 @@ PUT /my_index/my_type/_mapping
         "properties": {
             "name": {
                 "type":            "string",
-                "index_analyzer":  "autocomplete", <1>
+                "analyzer":  "autocomplete", <1>
                 "search_analyzer": "standard" <2>
             }
         }
@@ -355,5 +358,4 @@ This example uses the `keyword` tokenizer to convert the postcode string into a 
 <1> The `postcode_index` analyzer would use the `postcode_filter`
     to turn postcodes into edge n-grams.
 <2> The `postcode_search` analyzer would treat search terms as
-    if they were `not_indexed`.
-
+    if they were `not_analyzed`.

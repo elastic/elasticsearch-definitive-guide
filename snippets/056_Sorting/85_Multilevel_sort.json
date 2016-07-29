@@ -38,8 +38,8 @@ PUT /test/tweet/4
 GET /test/_search
 {
   "query": {
-    "filtered": {
-      "query": {
+    "bool": {
+      "must": {
         "match": {
           "tweet": "full text search"
         }

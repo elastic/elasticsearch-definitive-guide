@@ -35,14 +35,14 @@ open the way to new features that you haven't yet considered.
 
 This book is suitable for novices and experienced users alike. We expect you
 to have some programming background and, although not required, it would help
-to have used SQL and a relational database. We explain concepts from first
+to have used a relational database and SQL. We explain concepts from first
 principles, helping novices to gain a sure footing in the complex world of
 search.
 
 The reader with a search background will also benefit from this book.
-The more experienced user will gain an understanding of how familiar search 
-concepts have been implemented and how they interact in the context of 
-Elasticsearch. Even  the early chapters contain nuggets of information that 
+The more experienced user will gain an understanding of how familiar search
+concepts have been implemented and how they interact in the context of
+Elasticsearch. Even  the early chapters contain nuggets of information that
 will be useful to the more advanced user.
 
 Finally, maybe you are in DevOps. While the other departments are stuffing
@@ -77,9 +77,9 @@ this book to explain _why_ and _when_ to use various features.
 
 === Elasticsearch Version
 
-The initial print version of this book targeted Elasticsearch version 1.4.0. We 
+The initial print version of this book targeted Elasticsearch version 1.4.0. We
 are actively updating the explanations and code examples in the https://www.elastic.co/guide/en/elasticsearch/guide/current/[online version]
-to target Elasticsearch 2.x. 
+to target Elasticsearch 2.x.
 
 You can track the updates by visiting the https://github.com/elastic/elasticsearch-definitive-guide/[GitHub repository].
 
@@ -179,7 +179,7 @@ ifdef::es_build[]
    of language, alphabets, and sorting. We cover stemming, stopwords, synonyms,
    and fuzzy matching.
 
-*  Chapters <<aggs-high-level>> through <<controlling-memory>>
+*  Chapters <<aggs-high-level>> through <<docvalues-and-fielddata>>
    discuss aggregations and analytics--ways to summarize and group your data to show overall trends.
 
 *  Chapters <<geopoints>> through <<geo-shapes>>
@@ -201,7 +201,7 @@ endif::es_build[]
 
 === Online Resources
 
-Because this book focuses on problem solving in Elasticsearch rather than syntax, we sometimes refer to the detailed descriptions in the https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html[Elasticsearch Reference].  You 
+Because this book focuses on problem solving in Elasticsearch rather than syntax, we sometimes refer to the detailed descriptions in the https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html[Elasticsearch Reference].  You
 can find the latest Elasticsearch Reference and related documentation at:
 
 https://www.elastic.co/guide/

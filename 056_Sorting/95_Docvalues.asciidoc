@@ -1,0 +1,44 @@
+[[docvalues-intro]]
+=== Doc Values Intro
+
+Our final topic in this chapter is about an internal aspect of Elasticsearch.
+While we don't demonstrate any new techniques here, doc values are an
+important topic that we will refer to repeatedly, and is something that you
+should be aware of.((("docvalues")))
+
+When you sort on a field, Elasticsearch needs access to the value of that
+field for every document that matches the query.((("inverted index", "sorting and")))  The inverted index, which
+performs very well when searching, is not the ideal structure for sorting on
+field values:
+
+* When searching, we need to be able to map a term to a list of documents.
+
+* When sorting, we need to map a document to its terms. In other words, we
+  need to ``uninvert'' the inverted index.
+
+This ``uninverted'' structure is often called a ``column-store'' in other systems.
+Essentially, it stores all the values for a single field together in a single
+column of data, which makes it very efficient for operations like sorting.
+
+In Elasticsearch, this column-store is known as _doc values_, and is enabled
+by default. Doc values are created at index-time: when a field is indexed, Elasticsearch
+adds the tokens to the inverted index for search.  But it also extracts the terms
+and adds them to the columnar doc values.
+
+Doc values are used in several places in Elasticsearch:
+
+* Sorting on a field
+* Aggregations on a field
+* Certain filters (for example, geolocation filters)
+* Scripts that refer to fields
+
+Because doc values are serialized to disk, we can leverage the OS to help keep
+access fast.  When the "working set" is smaller than the available memory on a node,
+the OS will naturally keep all the doc values hot in memory, leading to very fast
+access.  When the "working set" is much larger than available memory, the OS will
+naturally start to page doc-values on/off disk without running into the dreaded
+OutOfMemory exception.
+
+We'll talk about doc values in much greater depth later.  For now, all you need
+to know is that sorting (and some other operations) happen on a parallel data
+structure which is built at index-time.

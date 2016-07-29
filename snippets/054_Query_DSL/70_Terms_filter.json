@@ -31,7 +31,7 @@ PUT /test/test/2
 GET /test/test/_search
 {
   "query": {
-    "filtered": {
+    "bool": {
       "filter": {
         "terms": {
           "tag": [
@@ -44,4 +44,3 @@ GET /test/test/_search
     }
   }
 }
-

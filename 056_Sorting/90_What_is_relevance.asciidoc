@@ -191,9 +191,9 @@ json形式的 `explain` 会非常难以阅读, 但是转成yaml会好很多。((
 GET /us/tweet/12/_explain
 {
    "query" : {
-      "filtered" : {
+      "bool" : {
          "filter" : { "term" :  { "user_id" : 2           }},
-         "query" :  { "match" : { "tweet" :   "honeymoon" }}
+         "must" :  { "match" : { "tweet" :   "honeymoon" }}
       }
    }
 }

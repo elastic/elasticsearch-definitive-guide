@@ -4,7 +4,7 @@ GET /cars/transactions/_search
 {
    "size" : 0,
     "query" : {
-        "filtered": {
+        "constant_score": {
             "filter": {
                 "range": {
                     "price": {
@@ -22,7 +22,7 @@ GET /cars/transactions/_search
 }
 
 # Filter bucket lets you filter just portions of the aggregation
-# in this example, we filter the agg to calculate average price of 
+# in this example, we filter the agg to calculate average price of
 # "ford" sold in the last month, while search results show all Fords
 GET /cars/transactions/_search
 {

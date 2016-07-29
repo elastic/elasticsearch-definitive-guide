@@ -52,7 +52,7 @@ use just a single `term` filter looking for a single term:
 GET /my_index/users/_search
 {
   "query" : {
-    "filtered" : {
+    "bool" : {
       "filter" : {
         "term" : {
           "followed_by" : 1
@@ -86,4 +86,3 @@ Moving that data to the user documents itself may seem unnatural, but in many
 cases can work substantially better as seen here.  When thinking about data
 organization and query structure, think about how you would like to search
 for your data rather than how you would like to store it.
-

@@ -1,11 +1,11 @@
 === Dealing with Null Values
 
 Think back to our earlier example, where documents have a field named `tags`.
-This is a multivalue field.((("structured search", "dealing with null values")))((("null values")))  A document may have one tag, many tags, or
-potentially no tags at all. If a field has no values, how is it stored in an
-inverted index?
+This is a multivalue field.((("structured search", "dealing with null values")))((("null values")))
+A document may have one tag, many tags, or potentially no tags at all. If a field has
+no values, how is it stored in an inverted index?
 
-That's a trick question, because the answer is, it isn't stored at all. Let's
+That's a trick question, because the answer is: it isn't stored at all. Let's
 look at that inverted index from the previous section:
 
 [width="50%",frame="topbot"]
@@ -28,11 +28,11 @@ Obviously, the world is not simple, and data is often missing fields, or contain
 explicit nulls or empty arrays. To deal with these situations, Elasticsearch has
 a few tools to work with null or missing values.
 
-==== exists Filter
+==== exists Query
 
-The first tool in your arsenal is the `exists` filter.((("null values", "working with, using exists filter")))((("exists filter")))  This filter will return
-documents that have any value in the specified field. Let's use the tagging example
-and index some example documents:
+The first tool in your arsenal is the `exists` query.((("null values", "working with, using exists filter")))
+((("exists query")))  This query will return documents that have any value in
+the specified field. Let's use the tagging example and index some example documents:
 
 [source,js]
 --------------------------------------------------
@@ -77,14 +77,14 @@ FROM   posts
 WHERE  tags IS NOT NULL
 --------------------------------------------------
 
-In Elasticsearch, we use the `exists` filter:
+In Elasticsearch, we use the `exists` query:
 
 [source,js]
 --------------------------------------------------
 GET /my_index/posts/_search
 {
     "query" : {
-        "filtered" : {
+        "constant_score" : {
             "filter" : {
                 "exists" : { "field" : "tags" }
             }
@@ -125,9 +125,10 @@ The results are easy to understand.  Any document that has terms in the
 `tags` field was returned as a hit.  The only two documents that were excluded
 were documents 3 and 4.
 
-==== missing Filter
+==== missing Query
 
-The `missing` filter is essentially((("null values", "working with, using missing filter")))((("missing filter"))) the inverse of `exists`: it returns
+The `missing` query is essentially((("null values", "working with, using missing filter")))
+((("missing filter"))) the inverse of `exists`: it returns
 documents where there is _no_ value for a particular field, much like this
 SQL:
 
@@ -135,17 +136,17 @@ SQL:
 --------------------------------------------------
 SELECT tags
 FROM   posts
-WHERE  tags IS  NULL
+WHERE  tags IS NULL
 --------------------------------------------------
 
-Let's swap the `exists` filter for a `missing` filter from our previous example:
+Let's swap the `exists` query for a `missing` query from our previous example:
 
 [source,js]
 --------------------------------------------------
 GET /my_index/posts/_search
 {
     "query" : {
-        "filtered" : {
+        "constant_score" : {
             "filter": {
                 "missing" : { "field" : "tags" }
             }
@@ -201,8 +202,9 @@ When choosing a suitable `null_value`, ensure the following:
 
 ==== exists/missing on Objects
 
-The `exists` and `missing` filters ((("objects", "using exists/missing filters on")))((("exists filter", "using on objects")))((("missing filter", "using on objects")))also work on inner objects, not just core
-types.  With the following document
+The `exists` and `missing` queries ((("objects", "using exists/missing queries on")))
+((("exists query", "using on objects")))((("missing query", "using on objects")))also
+work on inner objects, not just core types.  With the following document
 
 [source,js]
 --------------------------------------------------
@@ -226,7 +228,7 @@ flattened internally into a simple field-value structure, much like this:
 }
 --------------------------------------------------
 
-So how can we use an `exists` or `missing` filter on the `name` field, which
+So how can we use an `exists` or `missing` query on the `name` field, which
 doesn't really exist in the inverted index?
 
 The reason that it works is that a filter like
@@ -245,8 +247,8 @@ is really executed as
 {
     "bool": {
         "should": [
-            { "exists": { "field": { "name.first" }}},
-            { "exists": { "field": { "name.last"  }}}
+            { "exists": { "field": "name.first" }},
+            { "exists": { "field": "name.last" }}
         ]
     }
 }
@@ -254,5 +256,3 @@ is really executed as
 
 That also means that if `first` and `last` were both empty, the `name`
 namespace would not exist.
-
-

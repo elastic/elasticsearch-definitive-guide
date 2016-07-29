@@ -22,10 +22,18 @@ PUT /my_index
 }
 
 # Test the analysis of the `title` field
-GET /my_index/_analyze?field=my_type.title&text=Foxes
+GET /my_index/_analyze
+{
+  "field": "my_type.title",   <1>
+  "text": "Foxes"
+}
 
 # Test the analysis of the `english_title` field
-GET /my_index/_analyze?field=my_type.english_title&text=Foxes
+GET /my_index/_analyze
+{
+  "field": "my_type.english_title",   <2>
+  "text": "Foxes"
+}
 
 # Get query explanation for `title` vs `english_title`
 GET /my_index/my_type/_validate/query?explain

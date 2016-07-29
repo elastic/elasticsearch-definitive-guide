@@ -34,11 +34,17 @@ analyzed at index time by using the `analyze` API to analyze the word `Foxes`:
 
 [source,js]
 --------------------------------------------------
-GET /my_index/_analyze?field=my_type.title   <1>
-Foxes
+GET /my_index/_analyze
+{
+  "field": "my_type.title",   <1>
+  "text": "Foxes"
+}
 
-GET /my_index/_analyze?field=my_type.english_title <2>
-Foxes
+GET /my_index/_analyze
+{
+  "field": "my_type.english_title",   <2>
+  "text": "Foxes"
+}
 --------------------------------------------------
 // SENSE: 100_Full_Text_Search/30_Analysis.json
 
@@ -85,31 +91,20 @@ that it looks for each term in the correct format for that field.
 While we can specify an analyzer at the field level,((("full text search", "controlling analysis", "default analyzers")))((("analyzers", "default"))) how do we determine which
 analyzer is used for a field if none is specified at the field level?
 
-Analyzers can be specified at several levels.  Elasticsearch works through
-each level until it finds an analyzer that it can use.  At index time, the
-order ((("indexing", "applying analyzers")))is as follows:
+Analyzers can be specified at three levels: per-field, per-index or the global default.
+Elasticsearch works through each level until it finds an analyzer that it can use.
+At index time, the order ((("indexing", "applying analyzers")))is as follows:
 
 * The `analyzer` defined in the field mapping, else
-* _The analyzer defined in the `_analyzer` field of the document, else_
-* The default `analyzer` for the `type`, which defaults to
 * The analyzer named `default` in the index settings, which defaults to
-* The analyzer named `default` at node level, which defaults to
 * The `standard` analyzer
 
 At search time, the ((("searching", "applying analyzers")))sequence is slightly different:
 
-* _The `analyzer` defined in the query itself, else_
+* The `analyzer` defined in the query itself, else
 * The `analyzer` defined in the field mapping, else
-* The default `analyzer` for the `type`, which defaults to
 * The analyzer named `default` in the index settings, which defaults to
-* The analyzer named `default` at node level, which defaults to
 * The `standard` analyzer
-
-[NOTE]
-====
-The two lines in italics in the preceding lists highlight differences in the index time sequence and the search time sequence.  The `_analyzer` field allows you to specify a default analyzer for each document (for example, `english`, `french`, `spanish`) while the `analyzer` parameter in the query specifies which analyzer to use on the query string. However, this is not the best way to handle multiple languages
-in a single index because of the pitfalls highlighted in <<languages>>.
-====
 
 Occasionally, it makes sense to use a different analyzer at index and search
 time.((("analyzers", "using different analyzers at index and search time"))) For instance, at index time we may want to index synonyms (for example, for every
@@ -118,56 +113,24 @@ search time, we don't need to search for all of these synonyms.  Instead we
 can just look up the single word that the user has entered, be it `quick`,
 `fast`, `rapid`, or `speedy`.
 
-To enable this distinction, Elasticsearch also supports ((("index_analyzer parameter")))((("search_analyzer parameter")))the `index_analyzer`
-and `search_analyzer` parameters, and((("default_search parameter"))) ((("default_index analyzer")))analyzers named `default_index` and
-`default_search`.
+To enable this distinction, Elasticsearch also supports ((("search_analyzer parameter")))an
+optional `search_analyzer` mapping which will only be used at search-time (`analyzer`
+is still used for indexing). There is also an equivalent `default_search` mapping
+for configuring the default at the index-level.
 
-Taking these extra parameters into account, the _full_ sequence at index time
-really looks like this:
-
-* The `index_analyzer` defined in the field mapping, else
-* The `analyzer` defined in the field mapping, else
-* The analyzer defined in the `_analyzer` field of the document, else
-* The default `index_analyzer` for the `type`, which defaults to
-* The default `analyzer` for the `type`, which defaults to
-* The analyzer named `default_index` in the index settings, which defaults to
-* The analyzer named `default` in the index settings, which defaults to
-* The analyzer named `default_index` at node level, which defaults to
-* The analyzer named `default` at node level, which defaults to
-* The `standard` analyzer
-
-And at search time:
+Taking these extra parameters into account, the _full_ sequence at search time:
 
 * The `analyzer` defined in the query itself, else
 * The `search_analyzer` defined in the field mapping, else
 * The `analyzer` defined in the field mapping, else
-* The default `search_analyzer` for the `type`, which defaults to
-* The default `analyzer` for the `type`, which defaults to
 * The analyzer named `default_search` in the index settings, which defaults to
 * The analyzer named `default` in the index settings, which defaults to
-* The analyzer named `default_search` at node level, which defaults to
-* The analyzer named `default` at node level, which defaults to
 * The `standard` analyzer
 
 ==== Configuring Analyzers in Practice
 
 The sheer number of places where you can specify an analyzer is quite
 overwhelming.((("full text search", "controlling analysis", "configuring analyzers in practice")))((("analyzers", "configuring in practice")))  In practice, though, it is pretty simple.
-
-===== Use index settings, not config files
-
-The first thing to remember is that, even though you may start out using
-Elasticsearch for a single purpose or a single application such as logging,
-chances are that you will find more use cases and end up running several
-distinct applications on the same cluster.  Each index needs to be independent
-and independently configurable. You don't want to set defaults for one use
-case, only to have to override them for another use case later.
-
-This rules out configuring analyzers at the node level.  Additionally,
-configuring analyzers at the node level requires changing the config file on every
-node and restarting every node, which becomes a maintenance nightmare. It's a
-much better idea to keep Elasticsearch running and to manage settings only via
-the API.
 
 ===== Keep it simple
 
@@ -185,15 +148,13 @@ Then you may have one or two fields that need custom analysis: perhaps the
 
 You can set the `default` analyzer in the index to the analyzer you want to
 use for almost all full-text fields, and just configure the specialized
-analyzer on the one or two fields that need it.  If, in your model, you need
-a different default analyzer per type, then use the type level `analyzer`
-setting instead.
+analyzer on the one or two fields that need it.
 
 [NOTE]
 ====
 A common work flow for time based data like logging is to create a new index
 per day on the fly by just indexing into it.  While this work flow prevents
-you from creating your index up front, you can still use 
+you from creating your index up front, you can still use
 {ref}/indices-templates.html[index templates]
 to specify the settings and mappings that a new index should have.
 ====

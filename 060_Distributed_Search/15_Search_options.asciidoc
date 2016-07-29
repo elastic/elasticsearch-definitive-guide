@@ -18,7 +18,7 @@ the _bouncing results_ problem.((("bouncing results problem")))
 .Bouncing Results
 ****
 
-Imagine that you are sorting your results by a `timestamp` field, and 
+Imagine that you are sorting your results by a `timestamp` field, and
 two documents have the same timestamp.  Because search requests are
 round-robined between all available shard copies, these two documents may be
 returned in one order when the request is served by the primary, and in
@@ -33,34 +33,46 @@ like the user's session ID.
 
 ==== timeout
 
-By default, the coordinating node waits((("search options", "timeout"))) to receive a response from all shards.
+By default, shards process all the data they have before returning a response to
+the coordinating node, which will in turn merge these responses to build the
+final response.
+
+This means that the time it takes to run a search request is the sum of the time
+it takes to process the slowest shard and the time it takes to merge responses.
 If one node is having trouble, it could slow down the response to all search
 requests.
 
-The `timeout` parameter tells((("timeout parameter"))) the coordinating node how long it should wait
-before giving up and just returning the results that it already has. It can be
-better to return some results than none at all.
+The `timeout` parameter tells((("timeout parameter"))) shards how long they
+are allowed to process data before returning a response to the coordinating
+node. If there was not enough time to process all data, results for this shard
+will be partial, even possibly empty.
 
-The response to a search request will indicate whether the search timed out and
-how many shards responded successfully:
+The response to a search request will indicate whether any shards returned a
+partial response with the `timed_out` property:
 
 [source,js]
 --------------------------------------------------
     ...
     "timed_out":     true,  <1>
-    "_shards": {
-       "total":      5,
-       "successful": 4,
-       "failed":     1 <2>
-    },
     ...
 --------------------------------------------------
 <1> The search request timed out.
-<2> One shard out of five failed to respond in time.
 
-If all copies of a shard fail for other reasons--perhaps because of a
-hardware failure--this will also be reflected in the `_shards` section of
-the response.
+[WARNING]
+====
+It's important to know that the timeout is still a best-effort operation; it's
+possible for the query to surpass the allotted timeout.  There are two reasons for
+this behavior:
+
+1. Timeout checks are performed on a per-document basis.  However, some query types
+have a significant amount of work that must be performed *before* documents are evaluated.
+This "setup" phase does not consult the timeout, and so very long setup times can cause
+the overall latency to shoot past the timeout.
+2. Because the time is once per document, a very long query can execute on a single
+document and it won't timeout until the next document is evaluated.  This also means
+poorly written scripts (e.g. ones with infinite loops) will be allowed to execute
+forever.
+====
 
 [[search-routing]]
 ==== routing
@@ -83,7 +95,7 @@ discuss it in detail in <<scale>>.
 ==== search_type
 
 The default search type is `query_then_fetch` ((("query_then_fetch search type")))((("search options", "search_type")))((("search_type"))). In some cases, you might want to explicitly set the `search_type`
-to `dfs_query_then_fetch` to improve the accuracy of relevance scoring: 
+to `dfs_query_then_fetch` to improve the accuracy of relevance scoring:
 
 [source,js]
 --------------------------------------------------

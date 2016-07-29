@@ -16,10 +16,7 @@ POST /my_store/products/_bulk
 GET /my_store/products/_search
 {
   "query": {
-    "filtered": {
-      "query": {
-        "match_all": {}
-      },
+    "constant_score": {
       "filter": {
         "term": {
           "price": 20
@@ -29,11 +26,18 @@ GET /my_store/products/_search
   }
 }
 
+# Check the analyzed tokens
+GET /my_store/_analyze
+{
+  "field": "productID",
+  "text": "XHDK-A-1293-#fJ3"
+}
+
 # Same as above, without the `match_all` query
 GET /my_store/products/_search
 {
   "query": {
-    "filtered": {
+    "constant_score": {
       "filter": {
         "term": {
           "price": 20

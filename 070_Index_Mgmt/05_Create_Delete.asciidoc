@@ -61,7 +61,20 @@ You can even delete _all_ indices with this:
 [source,js]
 --------------------------------------------------
 DELETE /_all
+DELETE /*
 --------------------------------------------------
 
+[NOTE]
+====
+For some, the ability to delete all your data with a single command is a very
+scary prospect.  If you want to eliminate the possibility of an accidental
+mass-deletion, you can set the following to true in your `elasticsearch.yml`:
+
+`action.destructive_requires_name: true`
+
+This restricts deletions to specific names, instead of allowing the special `_all`
+or wildcard options. You can also update this setting dynamically through the
+<<_changing_settings_dynamically, Cluster State API>>
 
 
+====

@@ -150,9 +150,6 @@ cause segment _fragmentation_ that needs to be merged out eventually.
            "memory_size_in_bytes": 48,
            "evictions": 0
         },
-        "id_cache": {
-           "memory_size_in_bytes": 0
-        },
         "fielddata": {
            "memory_size_in_bytes": 0,
            "evictions": 0
@@ -178,13 +175,6 @@ little impact on query performance.
 Use the eviction metric as a rough guideline.  If you see a large number, investigate
 your filters to make sure they are caching well.  Filters that constantly evict,
 even on small segments, will be much less effective than properly cached filters.
-
-- `id_cache` shows the memory usage by parent/child mappings.  When you use
-parent/children, the `id_cache` maintains an in-memory join table that maintains
-the relationship.  This statistic will show you how much memory is being used.
-There is little you can do to affect this memory usage, since it has a fairly linear
-relationship with the number of parent/child docs.  It is heap-resident, however,
-so it's a good idea to keep an eye on it.
 
 - `field_data` displays the memory used by fielddata,((("fielddata", "statistics on"))) which is used for aggregations,
 sorting, and more.  There is also an eviction count.  Unlike `filter_cache`, the eviction
@@ -276,7 +266,7 @@ quickly.  But the old-gen is quite a bit larger, and a slow GC here could mean
 
 The garbage collectors in the JVM are _very_ sophisticated algorithms and do
 a great job minimizing pauses.  And Elasticsearch tries very hard to be _garbage-collection friendly_, by intelligently reusing objects internally, reusing network
-buffers, and offering features like <<doc-values>>.  But ultimately,
+buffers, and enabling <<docvalues>> by default.  But ultimately,
 GC frequency and duration is a metric that needs to be watched by you, since it
 is the number one culprit for cluster instability.
 
@@ -545,7 +535,3 @@ The main thing to watch is the `tripped` metric.  If this number is large or
 consistently increasing, it's a sign that your queries may need to be optimized
 or that you may need to obtain more memory (either per box or by adding more
 nodes).((("Node Stats API", range="endofrange", startref="ix_NodeStats")))
-
-
-
-

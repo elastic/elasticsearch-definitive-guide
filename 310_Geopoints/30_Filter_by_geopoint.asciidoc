@@ -23,15 +23,15 @@ geolocation:
     very expensive_. If you find yourself wanting to use it, you should be
     looking at <<geo-shapes,geo-shapes>> instead.
 
-All of these filters work in a similar way: the `lat/lon` values are loaded
-into memory for _all documents in the index_, not just the documents that
-match the query (see <<fielddata-intro>>).((("aggregations", "fielddata", "filtering"))) Each filter performs a slightly
-different calculation to check whether a point falls into the containing area.
+Each filter performs a slightly different calculation to check whether a point
+falls into the containing area, but the process is similar.  The requested area
+is converted into a range of quad/geohash prefix tokens and used to search the
+inverted index for documents who share the same tokens.
 
 [TIP]
 ============================
 
-Geo-filters are expensive -- they should be used on as few documents as
+Geo-filters are relatively expensive -- they should be used on as few documents as
 possible. First remove as many documents as you can with cheaper filters, like
 `term` or `range` filters, and apply the geo-filters last.
 
