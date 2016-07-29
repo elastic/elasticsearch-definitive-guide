@@ -22,7 +22,7 @@ and one that is `not_analyzed` for sorting.
 But  storing the same string twice in the `_source` field is waste of space.
 What we really want to do is to pass in a _single field_ but to _index it in two different ways_. All of the _core_ field types (strings, numbers,
 Booleans, dates) accept a `fields` parameter ((("mapping (types)", "transforming simple mapping to multifield mapping")))((("types", "core simple field types", "accepting fields parameter")))((("fields parameter")))((("multifield mapping")))that allows you to transform a
-simple mapping like
+simple mapping like:
 
 [source,js]
 --------------------------------------------------
@@ -71,5 +71,4 @@ GET /_search
 // SENSE: 056_Sorting/88_Multifield.json
 
 WARNING: Sorting on a full-text `analyzed` field can use a lot of memory.  See
-<<fielddata-intro>> for more information.
-
+<<aggregations-and-analysis>> for more information.
