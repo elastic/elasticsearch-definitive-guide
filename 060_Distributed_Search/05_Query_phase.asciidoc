@@ -6,12 +6,16 @@ the search locally and ((("priority queue")))builds a _priority queue_ of matchi
 
 .Priority Queue
 ****
+== 搜索语句
+在最初阶段_query phase_时，((("distributed search execution", "query phase")))((("query phase of distributed search")))搜索是广播查询索引中的每一个分片复本，不管是主本还是副本。每个分片执行搜索本地，同时((("priority queue")))创建文档命中后的_priority queue_。
+
 
 A _priority queue_ is just a sorted list that holds the _top-n_ matching
 documents. The size of the priority queue depends on the pagination
 parameters `from` and `size`.  For example, the following search request
 would require a priority queue big enough to hold 100 documents:
 
+一个_priority queue_仅仅是一个执行过滤后列表
 [source,js]
 --------------------------------------------------
 GET /_search
