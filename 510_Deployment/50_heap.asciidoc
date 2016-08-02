@@ -15,12 +15,12 @@ As an example, you can set it via the command line as follows:
 export ES_HEAP_SIZE=10g
 ----
 
-Alternatively, you can pass in the heap size via a command-line argument when starting
+Alternatively, you can pass in the heap size via JVM flags when starting
 the process, if that is easier for your setup:
 
 [source,bash]
 ----
-./bin/elasticsearch -Xmx10g -Xms10g <1>
+ES_JAVA_OPTS="-Xms10g -Xmx10g" ./bin/elasticsearch <1>
 ----
 <1> Ensure that the min (`Xms`) and max (`Xmx`) sizes are the same to prevent
 the heap from resizing at runtime, a very costly process.
