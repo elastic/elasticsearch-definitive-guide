@@ -1,22 +1,19 @@
-=== Postcodes and Structured Data
+=== 邮编与结构化数据
 
-We will use United Kingdom postcodes (postal codes in the United States) to illustrate how((("partial matching", "postcodes and structured data"))) to use partial matching with
-structured data. UK postcodes have a well-defined structure. For instance, the
-postcode `W1V 3DG` can((("postcodes (UK), partial matching with"))) be broken down as follows:
+我们会使用美国目前使用的邮编形式（United Kingdom postcodes 标准）来说明如何用部分匹配查询结构化数据。((("partial matching", "postcodes and structured data")))这种邮编形式有很好的结构定义。例如，邮编 `W1V 3DG` 可以分解成如下形式：((("postcodes (UK), partial matching with")))
 
-* `W1V`: This outer part identifies the postal area and district:
+* `W1V` ：这是邮编的外部，它定义了邮件的区域和行政区：
 
-**  `W` indicates the area (one or two letters)
-**  `1V` indicates the district (one or two numbers, possibly followed by a letter)
+**  `W` 代表区域（ 1 或 2 个字母）
+**  `1V` 代表行政区（ 1 或 2 个数字，可能跟着一个字符）
 
-* `3DG`: This inner part identifies a street or building:
+* `3DG` ：内部定义了街道或建筑：
 
-** `3` indicates the sector (one number)
-** `DG` indicates the unit (two letters)
+** `3` 代表街区区块（ 1 个数字）
+** `DG` 代表单元（ 2 个字母）
 
 
-Let's assume that we are indexing postcodes as exact-value `not_analyzed`
-fields, so we could create our index as follows:
+假设将邮编作为 `not_analyzed` 的精确值字段索引，所以可以为其创建索引，如下：
 
 [source,js]
 --------------------------------------------------
@@ -36,7 +33,7 @@ PUT /my_index
 --------------------------------------------------
 // SENSE: 130_Partial_Matching/10_Prefix_query.json
 
-And index some ((("indexing", "postcodes")))postcodes:
+然后索引一些邮编：((("indexing", "postcodes")))
 
 [source,js]
 --------------------------------------------------
@@ -57,4 +54,4 @@ PUT /my_index/address/5
 --------------------------------------------------
 // SENSE: 130_Partial_Matching/10_Prefix_query.json
 
-Now our data is ready to be queried.
+现在这些数据已可查询。
