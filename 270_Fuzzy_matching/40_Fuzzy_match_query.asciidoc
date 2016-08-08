@@ -1,7 +1,7 @@
 [[fuzzy-match-query]]
-=== Fuzzy match Query
+=== 模糊匹配查询
 
-The `match` query supports ((("typoes and misspellings", "fuzzy match query")))((("match query", "fuzzy matching")))((("fuzzy matching", "match query")))fuzzy matching out of the box:
+`match` 查询支持((("typoes and misspellings", "fuzzy match query")))((("match query", "fuzzy matching")))((("fuzzy matching", "match query")))开箱即用的模糊匹配：
 
 [source,json]
 -----------------------------------
@@ -19,11 +19,9 @@ GET /my_index/my_type/_search
 }
 -----------------------------------
 
-The query string is first analyzed, to produce the terms `[surprize, me]`, and
-then each term is fuzzified using the specified `fuzziness`.
+查询字符串首先进行分析，会产生词项 `[surprize, me]` ，并且每个词项根据指定的 `fuzziness` 进行模糊化。
 
-Similarly, the `multi_match` query also ((("multi_match queries", "fuzziness support")))supports `fuzziness`, but only when
-executing with type `best_fields` or `most_fields`:
+同样， `multi_match` 查询也((("multi_match queries", "fuzziness support")))支持 `fuzziness` ，但只有当执行查询时类型是 `best_fields` 或者 `most_fields` ：
 
 [source,json]
 -----------------------------------
@@ -39,9 +37,6 @@ GET /my_index/my_type/_search
 }
 -----------------------------------
 
-Both the `match` and `multi_match` queries  also support the `prefix_length`
-and `max_expansions` parameters.
+`match` 和 `multi_match` 查询都支持 `prefix_length` 和 `max_expansions` 参数。
 
-TIP: Fuzziness works only with the basic `match` and `multi_match` queries. It
-doesn't work with phrase matching, common terms, or `cross_fields` matches.
-
+TIP: 模糊性（Fuzziness）只能在 `match` and `multi_match` 查询中使用。不能使用在短语匹配、常用词项或 `cross_fields` 匹配。
