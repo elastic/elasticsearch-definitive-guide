@@ -1,15 +1,11 @@
 [[denormalization]]
-=== Denormalizing Your Data
+=== 非规范化你的数据
 
-The way to get the best search performance out of Elasticsearch is to use it
-as it is intended, by((("relationships", "denormalizing your data")))((("denormalization", "denormalizing data at index time")))
-http://en.wikipedia.org/wiki/Denormalization[denormalizing] your data at index
-time. Having redundant copies of data in each document that requires access to
-it removes the need for joins.
 
-If we want to be able to find a blog post by the name of the user who wrote it,
-include the user's name in the blog-post document itself:
+使用 Elasticsearch 得到最好的搜索性能的方法是有目的的通过在索引时进行非规范化 ((("relationships", "denormalizing your data")))((("denormalization", "denormalizing data at index time")))
+http://en.wikipedia.org/wiki/Denormalization[denormalizing]。对每个文档保持一定数量的冗余副本可以在需要访问时避免进行关联。
 
+如果我们希望能够通过某个用户姓名找到他写的博客文章，可以在博客文档中包含这个用户的姓名：
 
 [source,json]
 --------------------------------
@@ -30,10 +26,9 @@ PUT /my_index/blogpost/2
   }
 }
 --------------------------------
-<1> Part of the user's data has been denormalized into the `blogpost` document.
+<1> 这部分用户的字段数据已被冗余到 `blogpost` 文档中。
 
-Now, we can find blog posts about `relationships` by users called `John`
-with a single query:
+现在，我们通过单次查询就能够通过 `relationships` 找到用户 `John` 的博客文章。
 
 [source,json]
 --------------------------------
@@ -50,7 +45,4 @@ GET /my_index/blogpost/_search
 }
 --------------------------------
 
-The advantage of data denormalization is speed.  Because each document
-contains all of the information that is required to determine whether it
-matches the query, there is no need for expensive joins.
-
+数据非规范化的优点是速度快。因为每个文档都包含了所需的所有信息，当这些信息需要在查询进行匹配时，并不需要进行昂贵的联接操作。
