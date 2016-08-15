@@ -1,7 +1,7 @@
 [[lowercase-token-filter]]
 === 这个列子
 
-用的最多的语汇单元过滤器("token filters")应该是`lowercase` 过滤器，它的功能正如它的名字描述一样；它可以归一化((("tokens", "normalizing", "lowercase filter")))((("lowercase token filter")))所有单词到小写形式：
+用的最多的语汇单元过滤器(token filters)应该是 `lowercase` 过滤器，它的功能正如它的名字描述一样；它可以归一化((("tokens", "normalizing", "lowercase filter")))((("lowercase token filter")))所有单词到小写形式：
 [source,js]
 --------------------------------------------------
 GET /_analyze?tokenizer=standard&filters=lowercase
@@ -9,9 +9,9 @@ The QUICK Brown FOX! <1>
 --------------------------------------------------
 <1> 得到的词元是 `the`, `quick`, `brown`, `fox`
 
-无论用户在搜索`fox` 或者 `FOX`的时候，在查询和搜索过程中都会使用到相同的分析过程。`lowercase` 过滤器会归一化`FOX`的查询为`fox`的查询，`fox`也作为同一个词元已经被储存到倒排索引中。
+无论用户在搜索 `fox` 或者 `FOX` 的时候，在查询和搜索过程中都会使用到相同的分析过程。`lowercase` 过滤器会归一化 `FOX` 的查询为 `fox` 的查询， `fox` 也作为同一个词元已经被储存到倒排索引中。
 
-为了把语汇单元过滤器添加到分析过程中，分析器((("analyzers", "using token filters")))((("token filters", "using with analyzers")))可以创建一个`custom`分析器：
+为了把语汇单元过滤器添加到分析过程中，分析器((("analyzers", "using token filters")))((("token filters", "using with analyzers")))可以创建一个 `custom` 分析器：
 
 [source,js]
 --------------------------------------------------
