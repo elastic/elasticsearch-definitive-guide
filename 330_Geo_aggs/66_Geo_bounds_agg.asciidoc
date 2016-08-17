@@ -86,7 +86,7 @@ GET /attractions/restaurant/_search
         "geo_bounding_box": {
           "location": {
             "top_left": {
-              "lat":  40,8,
+              "lat":  40.8,
               "lon": -74.1
             },
             "bottom_right": {
