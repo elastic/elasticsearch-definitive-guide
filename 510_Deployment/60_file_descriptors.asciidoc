@@ -19,27 +19,32 @@ have enough file descriptors:
 
 [source,js]
 ----
-GET /_nodes/process
-
 {
-   "cluster_name": "elasticsearch__zach",
-   "nodes": {
-      "TGn9iO2_QQKb0kavcLbnDw": {
-         "name": "Zach",
-         "transport_address": "inet[/192.168.1.131:9300]",
-         "host": "zacharys-air",
-         "ip": "192.168.1.131",
-         "version": "2.0.0-SNAPSHOT",
-         "build": "612f461",
-         "http_address": "inet[/192.168.1.131:9200]",
-         "process": {
-            "refresh_interval_in_millis": 1000,
-            "id": 19808,
-            "max_file_descriptors": 64000, <1>
-            "mlockall": true
-         }
+  "cluster_name": "elasticsearch",
+  "nodes": {
+    "nLd81iLsRcqmah-cuHAbaQ": {
+      "timestamp": 1471516160318,
+      "name": "Marsha Rosenberg",
+      "transport_address": "127.0.0.1:9300",
+      "host": "127.0.0.1",
+      "ip": [
+        "127.0.0.1:9300",
+        "NONE"
+      ],
+      "process": {
+        "timestamp": 1471516160318,
+        "open_file_descriptors": 155,
+        "max_file_descriptors": 10240, <1>
+        "cpu": {
+          "percent": 0,
+          "total_in_millis": 25084
+        },
+        "mem": {
+          "total_virtual_in_bytes": 5221900288
+        }
       }
-   }
+    }
+  }
 }
 ----
 <1> The `max_file_descriptors` field shows the number of available descriptors that
