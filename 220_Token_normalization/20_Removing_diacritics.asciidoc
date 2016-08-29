@@ -2,7 +2,7 @@
 === 如果有口音 You Have an Accent
 
 英语用变音符号(例如 `´`, `^`, 和 `¨`) 来强调单词--例如 `rôle`, ++déjà++, 和 `däis`&#x2014;但是是否使用他们通常是可选的. ((("diacritics")))((("tokens", "normalizing", "diacritics"))) 其他语言则通过变音符号来区分单词。当然，只是因为在你的索引中拼写正确的单词并不意味着用户将搜索正确的拼写。
-去掉变音符号通常是有用的，让 `rôle` 对应 `role`, 或者反过来。 对于西方语言，可以用`asciifolding` 字符过滤器来实现这个功能。((("asciifolding character filter")))  实际上，它不仅仅能去掉变音符号。它会把Unicode字符转化为ASCII来表示:
+去掉变音符号通常是有用的，让 `rôle` 对应 `role`, 或者反过来。 对于西方语言，可以用 `asciifolding` 字符过滤器来实现这个功能。((("asciifolding character filter")))  实际上，它不仅仅能去掉变音符号。它会把Unicode字符转化为ASCII来表示:
 
 * `ß` => `ss`
 * `æ` => `ae`
