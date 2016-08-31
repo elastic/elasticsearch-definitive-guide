@@ -54,7 +54,9 @@ specify the index name:
 [source,js]
 --------------------------------------------------
 GET /spanish_docs/_analyze?analyzer=es_std
-El veloz zorro marrón
+{
+  "text":"El veloz zorro marrón"
+}
 --------------------------------------------------
 // SENSE: 070_Index_Mgmt/15_Configure_Analyzer.json
 
