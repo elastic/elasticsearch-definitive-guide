@@ -1,16 +1,9 @@
-=== Query Phase
+=== 搜索阶段
+在最初阶段 _query phase_ 时， ((("distributed search execution", "query phase"))) ((("query phase of distributed search"))) 搜索是广播查询索引中的每一个分片复本，不管是主本还是副本。每个分片执行本地查询，同时 ((("priority queue"))) 创建文档命中后的 _priority queue_ 。
 
-During the initial _query phase_,  the((("distributed search execution", "query phase")))((("query phase of distributed search"))) query is broadcast to a shard copy (a
-primary or replica shard) of every shard in the index. Each shard executes
-the search locally and ((("priority queue")))builds a _priority queue_ of matching documents.
-
-.Priority Queue
+.优先队列
 ****
-
-A _priority queue_ is just a sorted list that holds the _top-n_ matching
-documents. The size of the priority queue depends on the pagination
-parameters `from` and `size`.  For example, the following search request
-would require a priority queue big enough to hold 100 documents:
+_priority queue_ 仅仅是一个含有命中文档的 _top-n_ 过滤后列表。优先队列的大小取决于分页参数 `from` 和 `size` 。例如，如下搜索请求将需要足够大的优先队列来放入100条文档。
 
 [source,js]
 --------------------------------------------------
@@ -22,52 +15,30 @@ GET /_search
 --------------------------------------------------
 ****
 
-The query phase process is depicted in <<img-distrib-search>>.
+查询过程在 <<img-distrib-search>> 中有描述。
 
 [[img-distrib-search]]
-.Query phase of distributed search
-image::images/elas_0901.png["Query phase of distributed search"]
+.Query phase of distributed s
+.查询过程分布式搜索
+image::images/elas_0901.png["查询过程分布式搜索"]
 
-The query phase consists of the following three steps:
+查询过程包含以下几个步骤:
 
-1. The client sends a `search` request to `Node 3`, which creates an empty
-   priority queue of size `from + size`.
+1. 客户端发送 `search` 请求到 `Node 3`，会差生一个大小为 `from + size` 的空优先队列。
 
-2. `Node 3` forwards the search request to a primary or replica copy of every
-   shard in the index. Each shard executes the query locally and adds the
-   results into a local sorted priority queue of size `from + size`.
+2. `Node 3` 将查询请求前转到每个索引的每个分片中的主本或复本去。每个分片执行本地查询并添加结果到大小为 `from + size` 的本地优先队列中。
 
-3. Each shard returns the doc IDs and sort values of all the docs in its
-   priority queue to the coordinating node, `Node 3`, which merges these
-   values into its own priority queue to produce a globally sorted list of
-   results.
+3. 每个分片返回文档的IDs并且将所有优先队列中文档归类到对应的节点， `Node 3` 合并这些值到其优先队列中来产生一个全局排序后的列表。
 
-When a search request is sent to a node, that node becomes the coordinating
-node.((("nodes", "coordinating node for search requests"))) It is the job of this node to broadcast the search request to all
-involved shards, and to gather their responses into a globally sorted result
-set that it can return to the client.
+当查询请求到达节点的时候，节点变成了并列节点。 ((("nodes", "coordinating node for search requests"))) 这个节点任务是广播查询请求到所有相关节点并收集其他节点的返回状态存入全局排序后的集合，状态最终可以返回到客户端。
 
-The first step is to broadcast the request to a shard copy of every node in
-the index. Just like <<distrib-read,document `GET` requests>>, search requests
-can be handled by a primary shard or by any of its replicas.((("shards", "handling search requests"))) This is how more
-replicas (when combined with more hardware) can increase search throughput.
-A coordinating node will round-robin through all shard copies on subsequent
-requests in order to spread the load.
+第一步是广播请求到索引中的每个几点钟一个分片复本去。就像 <<distrib-read,document `GET` requests>> 查询请求可以被某个主分片或其副本处理， ((("shards", "handling search requests"))) 则是在结合硬件的时候处理多个复本如何增加查询吞吐率。一个并列节点将在之后的请求中轮询所有的分片复本来分散负载。
 
-Each shard executes the query locally and builds a sorted priority queue of
-length `from + size`&#x2014;in other words, enough results to satisfy the global
-search request all by itself. It returns a lightweight list of results to the
-coordinating node, which contains just the doc IDs and any values required for
-sorting, such as the `_score`.
+每个分片在本地执行查询请求并且创建一个长度为 `from + size`&#x2014 的优先队列；换句话说，它自己的查询结果来满足全局查询请求，它返回一个轻量级的结果列表到并列节点上，其中并列节点仅包含文档IDs和排序的任何值，比如 `_score` 。
 
-The coordinating node merges these shard-level results into its own sorted
-priority queue, which represents the globally sorted result set. Here the query
-phase ends.
+并列节点合并了这些分片段到其排序后的优先队列，这些队列代表着全局排序结果集合，以下是查询过程结束。
 
 [NOTE]
 ====
-An index can consist of one or more primary shards,((("indices", "multi-index search"))) so a search request
-against a single index needs to be able to combine the results from multiple
-shards. A search against _multiple_ or _all_ indices works in exactly the same
-way--there are just more shards involved.
+一个索引可被一个或几个主分片组成， ((("indices", "multi-index search"))) 所以一条搜索请求到单独的索引时需要参考多个分片。除了涉及到更多的分片， _multiple_ 或者 _all_ 索引搜索工作方式是一样的。
 ====
