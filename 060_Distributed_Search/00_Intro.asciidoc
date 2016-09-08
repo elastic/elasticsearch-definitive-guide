@@ -1,34 +1,18 @@
 [[distributed-search]]
-== Distributed Search Execution
+== 分布式检索执行
 
-Before moving on, we are going to take a detour and talk about how search is
-executed in a distributed environment.((("distributed search execution")))  It is a bit more complicated than the
-basic _create-read-update-delete_ (CRUD) requests((("CRUD (create-read-update-delete) operations"))) that we discussed in
-<<distributed-docs>>.
+在继续之前，我们将讨论一下在分布式环境中搜索是怎么运行的。 ((("distributed search execution"))) 这比基本的 _create-read-update-delete_ (CRUD) 请求，即 <<distributed-docs>> 章节中的 ((("CRUD (create-read-update-delete) operations"))) 要复杂一些.
 
-.Content Warning
+.内容提示
 ****
 
-The information presented in this chapter is for your interest. You are not required to
-understand and remember all the detail in order to use Elasticsearch.
-
-Read this chapter to gain a taste for how things work, and to know where the
-information is in case you need to refer to it in the future, but don't be
-overwhelmed by the detail.
+你有兴趣的话可以读一读这章，注意的是并不需要为了使用Elasticsearch而理解和记住所有的细节。
+这章的阅读目的只为在脑海中形成服务运行的梗概以及了解信息的存放位置以便不时之需，但是不要被细节搞的云里雾里。
 
 ****
 
-A CRUD operation deals with a single document that has a unique combination of
-`_index`, `_type`, and <<routing-value,`routing` values>> (which defaults to the
-document's `_id`). This means that we know exactly which shard in the cluster
-holds that document.
+一条运行CRUD的操作处理一条单个的文档，这些文档中与 `_index` 、 `_type` 和 <<routing-value,`routing` values>> 有着特殊的连接，其中 <<routing-value,`routing` values>> 的默认值为文档中的 `_id` 值。这表示我们确切的知道集群中哪个分片含有此文档。
 
-Search requires a more complicated execution model because we don't know which
-documents will match the query: they could be on any shard in the cluster. A
-search request has to consult a copy of every shard in the index or indices
-we're interested in to see if they have any matching documents.
+搜索需要一种更加复杂的运行模型因为我们不知道查询会命中哪条文档，这些文档有可能在集群的任何分片上。一条查询请求务必询问我们在意的所有索引的所有分片来确保是否有任何命中的文档。
 
-But finding all matching documents is only half the story. Results from
-multiple shards must be combined into a single sorted list before the `search`
-API can return a ``page'' of results. For this reason, search is executed in a
-two-phase process called _query then fetch_.
+但是发现所有的命中文档仅仅是开始。多分片中的结果必须在 `search` 接口返回一个 ``page'' 结果前和单个的筛选后的列表联系起来，为此，查询执行分为两步，先是 _query ，后是 fetch_ 。
