@@ -1,7 +1,7 @@
 [[distributed-search]]
 == 分布式检索执行
 
-在继续之前，我们将讨论一下在分布式环境中搜索是怎么运行的。 ((("distributed search execution"))) 这比基本的 _create-read-update-delete_ (CRUD) 请求，即 <<distributed-docs>> 章节中的 ((("CRUD (create-read-update-delete) operations"))) 要复杂一些.
+在继续之前，我们将讨论一下在分布式环境中搜索是怎么运行的。 ((("distributed search execution"))) 这比基本的 _create-read-update-delete_ (CRUD) 请求，即 <<distributed-docs>> 章节中的 ((("CRUD (create-read-update-delete) operations"))) 要复杂一些。
 
 .内容提示
 ****
