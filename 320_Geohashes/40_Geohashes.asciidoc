@@ -1,6 +1,9 @@
 [[geohashes]]
 == Geohashes
 
+NOTE: 5.0 introduces a `LatLonPoint` type and support for `geohash_cell` queries
+has been removed. 
+
 http://en.wikipedia.org/wiki/Geohash[Geohashes] are a way of encoding
 `lat/lon` points as strings.((("geohashes")))((("latitude/longitude pairs", "encoding lat/lon points as strings with geohashes")))((("strings", "geohash")))  The original intention was to have a
 URL-friendly way of specifying geolocations, but geohashes have turned out to
@@ -47,6 +50,6 @@ along with  the approximate dimensions of each geohash cell:
 |gcpuuz94kkp5   |12   | ~ 3.7cm x 1.8cm
 |=============================================
 
-The {ref}/query-dsl-geohash-cell-query.html[`geohash_cell` filter] can use
-these geohash prefixes((("geohash_cell filter")))((("filters", "geohash_cell"))) to find locations near a specified `lat/lon` point.
+The `geohash_cell` filter can use these geohash prefixes((("geohash_cell filter")))
+((("filters", "geohash_cell"))) to find locations near a specified `lat/lon` point.
 
