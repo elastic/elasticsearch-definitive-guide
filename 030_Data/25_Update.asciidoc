@@ -4,7 +4,37 @@
 Documents in Elasticsearch are _immutable_; we cannot change them.((("documents", "updating whole document")))((("updating documents", "whole document"))) Instead, if
 we need to update an existing document, we _reindex_ or replace it,((("reindexing")))((("indexing", seealso="reindexing"))) which we
 can do using the same `index` API that we have already discussed in
-<<index-doc>>.
+<<index-doc>>. 
+
+For example, we index a new document and the index is called `website`, our type is called `blog`,
+and we choose the ID `123`, then the index request looks like this:
+
+[source,js]
+--------------------------------------------------
+PUT /website/blog/123
+{
+  "title": "My first blog entry",
+  "text":  "Just trying this out...",
+  "date":  "2014/01/01"
+}
+--------------------------------------------------
+// SENSE: 030_Data/10_Create_doc_123.json
+
+Elasticsearch responds as follows:
+
+[source,js]
+--------------------------------------------------
+{
+   "_index":    "website",
+   "_type":     "blog",
+   "_id":       "123",
+   "_version":  1,
+   "created":   true
+}
+--------------------------------------------------
+
+Then we want to reindex the whole document. Again, the index is called `website`, our type is called `blog`,
+and we choose the same ID `123`, then the index request looks like this:
 
 [source,js]
 --------------------------------------------------
