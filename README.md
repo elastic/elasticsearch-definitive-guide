@@ -13,7 +13,7 @@ if [ $? != 0 ]; then
   [ $? = 0 ] && manager="apt-get"
   echo "Need to install some packages: docbook2X fop libxml2"
   if [ "$manager" = "yum" ]; then
-    sudo yum install docbook2X fop libxml2-devel -y # for Fedora based distro
+    sudo yum install docbook2X fop libxml2 -y # for Fedora based distro
   elif [ "$manager" = "apt-get" ]; then
     sudo apt-get install docbook2x libxml2-utils fop -y # for Ubuntu based distro
   else 
