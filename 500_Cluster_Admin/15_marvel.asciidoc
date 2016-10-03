@@ -15,7 +15,7 @@ behavior over time, which makes it easy to spot trends.
 
 As your cluster grows, the output from the stats APIs can get truly hairy.
 Once you have a dozen nodes, let alone a hundred, reading through stacks of JSON
-becomes very tedious. Marvel lets your explore the data interactively and
+becomes very tedious. Marvel lets you explore the data interactively and
 makes it easy to zero in on what's going on with particular nodes or indices.
 
 Marvel uses the same stats APIs that are available to you--it does not expose 
