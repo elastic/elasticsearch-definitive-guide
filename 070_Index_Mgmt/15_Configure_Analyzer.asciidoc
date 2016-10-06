@@ -53,8 +53,9 @@ specify the index name:
 
 [source,js]
 --------------------------------------------------
-GET /spanish_docs/_analyze?analyzer=es_std
+GET /spanish_docs/_analyze
 {
+  "analyzer": "es_std",
   "text":"El veloz zorro marrón"
 }
 --------------------------------------------------
@@ -73,4 +74,3 @@ removed correctly:
   ]
 }
 --------------------------------------------------
-

@@ -17,5 +17,8 @@ PUT /spanish_docs
 }
 
 # Test out the new analyzer
-GET /spanish_docs/_analyze?analyzer=es_std&text=El veloz zorro marrón
-
+GET /spanish_docs/_analyze
+{
+  "analyzer": "es_std",
+  "text":"El veloz zorro marrón"
+}
