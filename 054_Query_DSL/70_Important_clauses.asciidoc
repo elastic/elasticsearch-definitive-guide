@@ -60,7 +60,7 @@ it is not prone to throwing syntax errors.
 
 ==== multi_match Query
 
-The `multi_match` query allows((("multi_match queries"))) to run the same `match` query on multiple
+The `multi_match` query allows((("multi_match queries"))) you to run the same `match` query on multiple
 fields:
 
 [source,js]
