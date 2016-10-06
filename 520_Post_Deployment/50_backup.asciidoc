@@ -315,9 +315,9 @@ be snapshotted.  This is usually very fast.
 could not be completed.  Check your logs for more information.
 
 
-==== Canceling a Snapshot
+==== Cancelling a Snapshot
 
-Finally, you may want to cancel a snapshot or restore.((("backing up your cluster", "canceling a snapshot")))  Since these are long-running
+Finally, you may want to cancel a snapshot or restore.((("backing up your cluster", "cancelling a snapshot")))  Since these are long-running
 processes, a typo or mistake when executing the operation could take a long time to
 resolve--and use up valuable resources at the same time.
 
