@@ -42,7 +42,11 @@ PUT /my_index
 }
 
 # Test out the new analyzer
-GET /my_index/_analyze?analyzer=my_analyzer&text=The quick %26 brown fox
+GET /my_index/_analyze
+{
+    "text": "The quick & brown fox",
+    "analyzer": "my_analyzer"
+}
 
 # Apply "my_analyzer" to the `title` field
 PUT /my_index/_mapping/my_type

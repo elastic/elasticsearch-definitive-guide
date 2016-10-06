@@ -170,9 +170,10 @@ After creating the index, use the `analyze` API to((("analyzers", "testing using
 
 [source,js]
 --------------------------------------------------
-GET /my_index/_analyze?analyzer=my_analyzer
+GET /my_index/_analyze
 {
-    "text": "The quick & brown fox"
+    "text": "The quick & brown fox",
+    "analyzer": "my_analyzer"
 }
 --------------------------------------------------
 // SENSE: 070_Index_Mgmt/20_Custom_analyzer.json
