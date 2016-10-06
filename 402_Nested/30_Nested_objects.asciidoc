@@ -47,8 +47,8 @@ GET /_search
   "query": {
     "bool": {
       "must": [
-        { "match": { "name": "Alice" }},
-        { "match": { "age":  28      }} <1>
+        { "match": { "comments.name": "Alice" }},
+        { "match": { "comments.age":  28      }} <1>
       ]
     }
   }
