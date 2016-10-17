@@ -1,15 +1,9 @@
 [[all-field]]
-==== Metadata: _all Field
+==== 元数据: _all 字段
 
-In <<search-lite>>, we introduced the `_all` field: a special field that
-indexes the ((("metadata, document", "_all field")))((("_all field", sortas="all field")))values from all other fields as one big string. The `query_string`
-query clause (and searches performed as `?q=john`) defaults to searching in
-the `_all` field if no other field is specified.
+在 <<search-lite>> 中，我们介绍了 `_all` 字段：一个把其它字段值((("metadata, document", "_all field")))((("_all field", sortas="all field")))当作一个大字符串来索引的特殊字段。 `query_string` 查询子句(搜索 `?q=john` )在没有指定字段时默认使用 `_all` 字段。
 
-The `_all` field is useful during the exploratory phase of a new application,
-while you are still unsure about the final structure that your documents will
-have. You can throw any query string at it and you have a good chance of
-finding the document you're after:
+`_all` 字段在新应用的探索阶段，当你还不清楚文档的最终结构时是比较有用的。你可以使用这个字段来做任何查询，并且有很大可能找到需要的文档：
 
 [source,js]
 --------------------------------------------------
@@ -22,24 +16,14 @@ GET /_search
 --------------------------------------------------
 
 
-As your application evolves and your search requirements become more exacting,
-you will find yourself using the `_all` field less and less. The `_all` field
-is a shotgun approach to search. By querying individual fields, you have more
-flexbility, power, and fine-grained control over which results are considered
-to be most relevant.
+随着应用的发展，搜索需求变得更加明确，你会发现自己越来越少使用 `_all` 字段。 `_all` 字段是搜索的应急之策。通过查询指定字段，你的查询更加灵活、强大，你也可以对相关性最高的搜索结果进行更细粒度的控制。
 
 [NOTE]
 ====
-One of the important factors taken into account by the
-<<relevance-intro,relevance algorithm>>
-is the length of the field: the shorter the field, the more important. A term
-that appears in a short `title` field is likely to be more important than the
-same term that appears somewhere in a long `content` field. This distinction
-between field lengths disappears in the `_all` field.
+<<relevance-intro,relevance algorithm>> 考虑的一个最重要的原则是字段的长度：字段越短越重要。 在较短的 `title` 字段中出现的短语可能比在较长的 `content` 字段中出现的短语更加重要。字段长度的区别在 `_all` 字段中不会出现。
 ====
 
-If you decide that you no longer need the `_all` field, you can disable it
-with this mapping:
+如果你不再需要 `_all` 字段，你可以通过下面的映射来禁用：
 
 [source,js]
 --------------------------------------------------
@@ -51,17 +35,9 @@ PUT /my_index/_mapping/my_type
 }
 --------------------------------------------------
 
+通过 `include_in_all` 设置来逐个控制字段是否要包含在 `_all` 字段中，((("include_in_all setting")))默认值是 `true`。在一个对象(或根对象)上设置 `include_in_all` 可以修改这个对象中的所有字段的默认行为。
 
-Inclusion in the `_all` field can be controlled on a field-by-field basis
-by using the `include_in_all` setting, ((("include_in_all setting")))which defaults to `true`.  Setting
-`include_in_all` on an object (or on the root object) changes the
-default for all fields within that object.
-
-You may find that you want to keep the `_all` field around to use
-as a catchall full-text field just for specific fields, such as
-`title`, `overview`, `summary`, and `tags`. Instead of disabling the `_all`
-field completely, disable `include_in_all` for all fields by default,
-and enable it only on the fields you choose:
+你可能想要保留 `_all` 字段作为一个只包含某些特定字段的全文字段，例如只包含 `title`，`overview`，`summary` 和 `tags`。 相对于完全禁用 `_all` 字段，你可以为所有字段默认禁用 `include_in_all` 选项，仅在你选择的字段上启用：
 
 [source,js]
 --------------------------------------------------
@@ -81,11 +57,7 @@ PUT /my_index/my_type/_mapping
 --------------------------------------------------
 
 
-Remember that the `_all` field is just((("analyzers", "configuring for all field"))) an analyzed `string` field.  It
-uses the default analyzer to analyze its values, regardless of which
-analyzer has been set on the fields where the values originate.  And
-like any `string` field, you can configure which analyzer the `_all`
-field should use:
+记住，`_all` 字段仅仅是一个((("analyzers", "configuring for all field"))) 经过分词的 `string` 字段。它使用默认分词器来分析它的值，不管这个值原本所在字段指定的分词器。就像所有 `string` 字段，你可以配置 `_all` 字段使用的分词器：
 
 [source,js]
 --------------------------------------------------
