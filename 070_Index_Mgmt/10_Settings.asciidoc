@@ -1,28 +1,21 @@
-=== Index Settings
+=== 索引设置
 
-There are many many knobs((("index settings"))) that you can twiddle to
-customize index behavior, which you can read about in the
-{ref}/index-modules.html[Index Modules reference documentation],
-but...
+你可以通过修改配置来((("index settings")))自定义索引行为，详细配置参照
+{ref}/index-modules.html[索引模块]
 
-TIP: Elasticsearch comes with good defaults. Don't twiddle these knobs until
-you understand what they do and why you should change them.
+TIP: Elasticsearch 提供了优化好的默认配置。 除非你理解这些配置的作用并且知道为什么要去修改，否则不要随意修改。
 
-Two of the most important((("shards", "number_of_shards index setting")))((("number_of_shards setting")))((("index settings", "number_of_shards"))) settings are as follows:
+下面是两个((("shards", "number_of_shards index setting")))((("number_of_shards setting")))((("index settings", "number_of_shards"))) 最重要的设置：
 
 `number_of_shards`::
 
-    The number of primary shards that an index should have,
-    which defaults to `5`.  This setting cannot be changed
-    after index creation.
+    每个索引的主分片数，默认值是 `5` 。这个配置在索引创建后不能修改。
 
 `number_of_replicas`::
 
-    The number of replica shards (copies) that each primary shard
-    should have, which defaults to `1`.  This setting can be changed
-    at any time on a live index.
+    每个主分片的副本数，默认值是 `1` 。对于活动的索引库，这个配置可以随时修改。
 
-For instance, we could create a small index--just((("index settings", "number_of_replicas")))((("replica shards", "number_of_replicas index setting"))) one primary shard--and no replica shards with the following request:
+例如，我们可以创建只有((("index settings", "number_of_replicas")))((("replica shards", "number_of_replicas index setting"))) 一个主分片，没有副本的小索引：
 
 [source,js]
 --------------------------------------------------
@@ -36,8 +29,8 @@ PUT /my_temp_index
 --------------------------------------------------
 // SENSE: 070_Index_Mgmt/10_Settings.json
 
-Later, we can change the number of replica shards dynamically using the
-`update-index-settings` API as((("update-index-settings API"))) follows:
+然后，我们可以用
+`update-index-settings` API ((("update-index-settings API"))) 动态修改副本数：
 
 [source,js]
 --------------------------------------------------
