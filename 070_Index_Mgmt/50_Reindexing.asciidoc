@@ -1,32 +1,24 @@
 [[reindex]]
-=== Reindexing Your Data
+=== 重新索引你的数据 
 
-Although you can add new types to an index, or add new fields to a type, you
-can't add new analyzers or make changes to existing fields.((("reindexing")))((("indexing", "reindexing your data")))  If you were to do
-so, the data that had already been indexed would be incorrect and your
-searches would no longer work as expected.
+尽管可以增加新的类型到索引中，或者增加新的字段到类型中，但是不能添加新的分析器或者对现有的字段做改动。
+ ((("reindexing")))((("indexing", "reindexing your data"))) 如果你那么做的话，结果就是那些已经被索引的数据就不正确，
+搜索也不能正常工作。
 
-The simplest way to apply these changes to your existing data is to
-reindex:  create a new index with the new settings and copy all of your
-documents from the old index to the new index.
+对现有数据的这类改变最简单的办法就是重新索引：用新的设置创建新的索引并把文档从旧的索引复制到新的索引。
 
-One of the advantages of the `_source` field is that you already have the
-whole document available to you in Elasticsearch itself. You don't have to
-rebuild your index from the database, which is usually much slower.
+字段 `_source` 的一个优点是在Elasticsearch中已经有整个文档。你不必从源数据中重建索引，而且那样通常比较慢。
 
-To reindex all of the documents from the old index efficiently,  use
-<<scroll,_scroll_>> to retrieve batches((("using in reindexing documents"))) of documents from the old index,
-and the <<bulk,`bulk` API>> to push them into the new index.
+为了有效的重新索引所有在旧的索引中的文档，用 <<scroll,_scroll_>> 从旧的索引检索批量文档 ((("using in reindexing documents"))) ，
+然后用 <<bulk,`bulk` API>> 把文档推送到新的索引中。
 
-Beginning with Elasticsearch v2.3.0, a {ref}/docs-reindex.html[Reindex API] has been introduced. It enables you
-to reindex your documents without requiring any plugin nor external tool.
+从Elasticsearch v2.3.0开始， {ref}/docs-reindex.html[Reindex API] 被引入。它能够对文档重建索引而不需要任何插件或外部工具。
 
-.Reindexing in Batches
+.批量重新索引
 ****
 
-You can run multiple reindexing jobs at the same time, but you obviously don't
-want their results to overlap.  Instead, break a big reindex down into smaller
-jobs by filtering on a date or timestamp field:
+同时并行运行多个重建索引任务，但是你显然不希望结果有重叠。正确的做法是按日期或者时间
+这样的字段作为过滤条件把大的重建索引分成小的任务：
 
 [source,js]
 --------------------------------------------------
@@ -46,11 +38,8 @@ GET /old_index/_search?scroll=1m
 --------------------------------------------------
 
 
-If you continue making changes to the old index, you will want to make
-sure that you include the newly added documents in your new index as well.
-This can be done by rerunning the reindex process, but again filtering
-on a date field to match only documents that have been added since the
-last reindex process started.
+如果旧的索引持续会有变化，你希望新的索引中也包括那些新加的文档。那就可以对新加的文档做重新索引，
+但还是要用日期类字段过滤来匹配那些新加的文档。
 
 ****
 
