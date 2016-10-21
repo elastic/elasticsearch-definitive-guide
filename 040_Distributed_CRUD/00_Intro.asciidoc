@@ -1,25 +1,21 @@
 [[distributed-docs]]
-== Distributed Document Store
+== 分布式文档存储
 
-In the preceding chapter, we looked at all the ways to put data into your index and
-then retrieve it.  But we glossed over many technical details surrounding how
-the data is distributed and fetched from the cluster.  This separation is done
-on purpose; you don't really need to know how data is distributed to work
-with Elasticsearch.  It just works.
+在前面的章节，我们介绍了如何索引和查询数据，不过我们忽略了很多底层的技术细节，
+例如文件是如何分布到集群的，又是如何从集群中获取的。
+Elasticsearch 本意就是隐藏这些底层细节，让我们好专注在业务开发中，所以其实你不必了解这么深入也无妨。
 
-In this chapter, we dive into those internal, technical details
-to help you understand how your data is stored in a distributed system.
+在这个章节中，我们将深入探索这些核心的技术细节，这能帮助你更好地理解数据如何被存储到这个分布式系统中。
 
-.Content Warning
+
+.注意
 ****
 
-The information presented in this chapter is for your interest. You are not required to
-understand and remember all the detail in order to use Elasticsearch. The
-options that are discussed are for advanced users only.
+这个章节包含了一些高级话题，上面也提到过，就算你不记住和理解所有的细节仍然能正常使用 Elasticsearch。
+如果你有兴趣的话，这个章节可以作为你的课外兴趣读物，扩展你的知识面。
 
-Read the section to gain a taste for how things work, and to know where the
-information is in case you need to refer to it in the future, but don't be
-overwhelmed by the details.
+如果你在阅读这个章节的时候感到很吃力，也不用担心。
+这个章节仅仅只是用来告诉你 Elasticsearch 是如何工作的，
+将来在工作中如果你需要用到这个章节提供的知识，可以再回过头来翻阅。
 
 ****
-
