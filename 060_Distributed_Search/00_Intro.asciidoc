@@ -1,34 +1,29 @@
 [[distributed-search]]
-== Distributed Search Execution
+== 执行分布式检索
 
-Before moving on, we are going to take a detour and talk about how search is
-executed in a distributed environment.((("distributed search execution")))  It is a bit more complicated than the
-basic _create-read-update-delete_ (CRUD) requests((("CRUD (create-read-update-delete) operations"))) that we discussed in
-<<distributed-docs>>.
+在继续之前，我们将绕道讨论一下在分布式环境中搜索是怎么执行的。
+((("distributed search execution"))) 这比我们在 <<distributed-docs>> 章节讨论的基本的 _增-删-改-查_ (CRUD)((("CRUD (create-read-update-delete) operations")))请求要复杂一些。
 
-.Content Warning
+
+.内容提示
 ****
 
-The information presented in this chapter is for your interest. You are not required to
-understand and remember all the detail in order to use Elasticsearch.
+你可以根据兴趣阅读本章内容。你并不需要为了使用 Elasticsearch 而理解和记住所有的细节。
 
-Read this chapter to gain a taste for how things work, and to know where the
-information is in case you need to refer to it in the future, but don't be
-overwhelmed by the detail.
+这章的阅读目的只为初步了解下工作原理，以便将来需要时可以及时找到这些知识，
+但是不要被细节所困扰。
 
 ****
 
-A CRUD operation deals with a single document that has a unique combination of
-`_index`, `_type`, and <<routing-value,`routing` values>> (which defaults to the
-document's `_id`). This means that we know exactly which shard in the cluster
-holds that document.
+一个 CRUD 操作只对单个文档进行处理，文档的唯一性由 `_index`, `_type`,
+和 <<routing-value,`routing` values>> （通常默认是该文档的 `_id` ）的组合来确定。
+这表示我们确切的知道集群中哪个分片含有此文档。
 
-Search requires a more complicated execution model because we don't know which
-documents will match the query: they could be on any shard in the cluster. A
-search request has to consult a copy of every shard in the index or indices
-we're interested in to see if they have any matching documents.
 
-But finding all matching documents is only half the story. Results from
-multiple shards must be combined into a single sorted list before the `search`
-API can return a ``page'' of results. For this reason, search is executed in a
-two-phase process called _query then fetch_.
+搜索需要一种更加复杂的执行模型因为我们不知道查询会命中哪些文档: 这些文档有可能在集群的任何分片上。
+一个搜索请求必须询问我们关注的索引（index or indices）的所有分片的某个副本来确定它们是否含有任何匹配的文档。
+
+
+但是找到所有的匹配文档仅仅完成事情的一半。
+在 `search` 接口返回一个 ``page`` 结果之前，多分片中的结果必须组合成单个排序列表。
+为此，搜索被执行成一个两阶段过程，我们称之为 _query then fetch_ 。
