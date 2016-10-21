@@ -1,25 +1,22 @@
-==== Metadata: Document Identity
+==== 元数据：文档标识
 
-There are four metadata fields ((("metadata, document", "identity")))associated with document identity:
+文档标识与四个元数据字段((("metadata, document", "identity")))相关：
 
 `_id`::
-   The string ID of the document
+   文档的 ID 字符串
 
 `_type`::
-   The type name of the document
+   文档的类型名
 
 `_index`::
-   The index where the document lives
+   文档所在的索引
 
 `_uid`::
-   The `_type` and `_id` concatenated together as `type#id`
+   `_type` 和 `_id` 连接在一起构造成 `type#id`
 
-By default, the `_uid` field is((("id field"))) stored (can be retrieved) and
-indexed (searchable).  The `_type` field((("type field")))((("index field")))((("uid field"))) is indexed but not stored,
-and the `_id` and `_index` fields are neither indexed nor stored, meaning
-they don't really exist.
+默认情况下， `_uid` 字段是被((("id field")))存储（可取回）和索引（可搜索）的。
+`_type` 字段((("type field")))((("index field")))((("uid field")))被索引但是没有存储，
+`_id` 和 `_index` 字段则既没有被索引也没有被存储，这意味着它们并不是真实存在的。
 
-In spite of this, you can query the `_id` field as though it were a real
-field.  Elasticsearch uses the `_uid` field to derive the `_id`. Although you
-can change the `index` and `store` settings for these fields, you almost
-never need to do so.
+尽管如此，你仍然可以像真实字段一样查询 `_id` 字段。Elasticsearch 使用 `_uid` 字段来派生出 `_id` 。
+虽然你可以修改这些字段的 `index` 和 `store` 设置，但是基本上不需要这么做。
