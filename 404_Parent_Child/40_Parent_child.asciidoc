@@ -1,54 +1,26 @@
 [[parent-child]]
-== Parent-Child Relationship
+== 父-子关系文档
 
-The _parent-child_ relationship is ((("relationships", "parent-child")))((("parent-child relationship")))similar in nature to the
-<<nested-objects,nested model>>: both allow you to associate one entity
-with another. ((("nested objects", "parent-child relationships versus")))The difference is that, with nested objects, all entities live
-within the same document while, with parent-child, the parent and children
-are completely separate documents.
+父-子关系文档 ((("relationships", "parent-child"))) ((("parent-child relationship"))) 在实质上类似于 <<nested-objects,nested model>> ：允许将一个对象实体和另外一个对象实体关联起来。((("nested objects", "parent-child relationships versus")))而这两种类型的主要区别是：在 <<nested-objects,`nested` objects>> 文档中，所有对象都是在同一个文档中，而在父-子关系文档中，父对象和子对象都是完全独立的文档。
 
-The parent-child functionality allows you to associate one document type with
-another, in a _one-to-many_ relationship--one parent to many children.((("one-to-many relationships")))   The
-advantages that parent-child has over <<nested-objects,`nested` objects>> are as follows:
+父-子关系的主要作用是允许把一个 type 的文档和另外一个 type 的文档关联起来，构成一对多的关系：一个父文档可以对应多个子文档 ((("one-to-many relationships"))) 。与 <<nested-objects,`nested` objects>> 相比，父-子关系的主要优势有：
 
-* The parent document can be updated without reindexing the children.
+* 更新父文档时，不会重新索引子文档。
+* 创建，修改或删除子文档时，不会影响父文档或其他子文档。这一点在这种场景下尤其有用：子文档数量较多，并且子文档创建和修改的频率高时。
+* 子文档可以作为搜索结果独立返回。
 
-* Child documents can be added, changed, or deleted without affecting either
-  the parent or other children. This is especially useful when child documents
-  are large in number and need to be added or changed frequently.
+Elasticsearch 维护了一个父文档和子文档的映射关系，得益于这个映射，父-子文档关联查询操作非常快。但是这个映射也对父-子文档关系有个限制条件：父文档和其所有子文档，都必须要存储在同一个分片中。
 
-* Child documents can be returned as the results of a search request.
-
-Elasticsearch maintains a map of which parents are associated with
-which children.  It is thanks to this map that query-time joins are fast, but
-it does place a limitation on the parent-child relationship: _the parent
-document and all of its children must live on the same shard_.
-
-The parent-child ID maps are stored in <<docvalues>>, which allows them to execute
-quickly when fully hot in memory, but scalable enough to spill to disk when
-the map is very large.
-
+父-子文档ID映射存储在 <<docvalues>> 中。当映射完全在内存中时， <<docvalues>> 提供对映射的快速处理能力，另一方面当映射非常大时，可以通过溢出到磁盘提供足够的扩展能力
 
 [[parent-child-mapping]]
-=== Parent-Child Mapping
+=== 父-子关系文档映射
 
-All that is needed in order to establish the parent-child relationship is to
-specify which document type should be the parent of a child type.((("mapping (types)", "parent-child")))((("parent-child relationship", "parent-child mapping")))  This must
-be done at index creation time, or with the `update-mapping` API before the
-child type has been created.
+建立父-子文档映射关系时只需要指定某一个文档 type 是另一个文档 type 的父亲。 ((("mapping (types)", "parent-child"))) ((("parent-child relationship", "parent-child mapping"))) 该关系可以在如下两个时间点设置：1）创建索引时；2）在子文档 type 创建之前更新父文档的 mapping。
 
-As an example, let's say that we have a company that has branches in many
-cities.  We would like to associate employees with the branch where they work.
-We need to be able to search for branches, individual employees, and employees
-who work for particular branches, so the nested model will not help.  We
-could, of course,
-use <<application-joins,application-side-joins>> or
-<<denormalization,data denormalization>> here instead, but for demonstration
-purposes we will use parent-child.
+举例说明，有一个公司在多个城市有分公司，并且每一个分公司下面都有很多员工。有这样的需求：按照分公司、员工的维度去搜索，并且把员工和他们工作的分公司联系起来。针对该需求，用嵌套模型是无法实现的。当然，如果使用 <<application-joins,application-side-joins>> 或者 <<denormalization,data denormalization>> 也是可以实现的，但是为了演示的目的，在这里我们使用父-子文档。
 
-All that we have to do is to tell Elasticsearch that the `employee` type has
-the `branch` document type as its `_parent`, which we can do when we create
-the index:
+我们需要告诉Elasticsearch，在创建员工 `employee` 文档 type 时，指定分公司 `branch` 的文档 type 为其父亲。
 
 [source,json]
 -------------------------
@@ -64,4 +36,4 @@ PUT /company
   }
 }
 -------------------------
-<1> Documents of type `employee` are children of type `branch`.
+<1> `employee` 文档 是 `branch` 文档的子文档。
