@@ -1,10 +1,7 @@
 [[has-child]]
-=== Finding Parents by Their Children
+=== 通过子文档查询父文档
 
-The `has_child` query and filter can be used to find parent documents based on
-the contents of their children.((("has_child query and filter")))((("parent-child relationship", "finding parents by their children")))  For instance, we could find all branches that
-have employees born after 1980 with a query like this:
-
+`has_child` 的查询和过滤可以通过子文档的内容来查询父文档。((("has_child query and filter")))((("parent-child relationship", "finding parents by their children")))例如，我们根据如下查询，可查出所有80后员工所在的分公司：
 [source,json]
 -------------------------
 GET /company/branch/_search
@@ -24,16 +21,10 @@ GET /company/branch/_search
 }
 -------------------------
 
-Like the <<nested-query,`nested` query>>, the `has_child` query could
-match several child documents,((("has_child query and filter", "query"))) each with a different relevance
-score. How these scores are reduced to a single score for the parent document
-depends on the `score_mode` parameter. The default setting is `none`, which
-ignores the child scores and assigns a score of `1.0` to the parents, but it
-also accepts `avg`, `min`, `max`, and `sum`.
+类似于 <<nested-query,`nested` query>> ，`has_child` 查询可以匹配多个子文档((("has_child query and filter", "query")))，并且每一个子文档的评分都不同。但是由于每一个子文档都带有评分，这些评分如何规约成父文档的总得分取决于 `score_mode` 这个参数。该参数有多种取值策略：默认为 `none` ，会忽略子文档的评分，并且会给父文档评分设置为 `1.0` ；
+除此以外还可以设置成 `avg` 、 `min` 、 `max` 和 `sum` 。
 
-The following query will return both `london` and `liverpool`, but `london`
-will get a better score because `Alice Smith` is a better match than
-`Barry Smith`:
+下面的查询将会同时返回 `london` 和 `liverpool` ，不过由于 `Alice Smith` 要比 `Barry Smith` 更加匹配查询条件，因此 `london` 会得到一个更高的评分。
 
 [source,json]
 -------------------------
@@ -53,19 +44,14 @@ GET /company/branch/_search
 }
 -------------------------
 
-TIP: The default `score_mode` of `none` is significantly faster than the other
-modes because Elasticsearch doesn't need to calculate the score for each child
-document. Set it to `avg`, `min`, `max`, or `sum` only if you care about the
-score.((("parent-child relationship", "finding parents by their children", "min_children and max_children")))
+TIP: `score_mode` 为默认的 `none` 时，会显著地比其模式要快，这是因为Elasticsearch不需要计算每一个子文档的评分。只有当你真正需要关心评分结果时，才需要为 `source_mode` 设值，例如设成 `avg` 、 `min` 、 `max` 或 `sum` 。((("parent-child relationship", "finding parents by their children", "min_children and max_children")))
 
 [[min-max-children]]
-==== min_children and max_children
+==== min_children 和 max_children
 
-The `has_child` query and filter both accept the `min_children` and
-`max_children` parameters,((("min_children parameter")))((("max_children parameter")))((("has_child query and filter", "min_children or max_children parameters"))) which will return the parent document only if the
-number of matching children is within the specified range.
+`has_child` 的查询和过滤都可以接受这两个参数：`min_children` 和 `max_children` 。 ((("min_children parameter")))((("max_children parameter")))((("has_child query and filter", "min_children or max_children parameters"))) 使用这两个参数时，只有当子文档数量在指定范围内时，才会返回父文档。
 
-This query will match only branches that have at least two employees:
+如下查询只会返回至少有两个雇员的分公司：
 
 [source,json]
 -------------------------
@@ -82,21 +68,14 @@ GET /company/branch/_search
   }
 }
 -------------------------
-<1> A branch must have at least two employees in order to match.
+<1> 至少有两个雇员的分公司才会符合查询条件。
 
-The performance of a `has_child` query or filter with the `min_children` or
-`max_children` parameters is much the same as a `has_child` query with scoring
-enabled.
+带有 `min_children` 和 `max_children` 参数的 `has_child` 查询或过滤，和允许评分的 `has_child` 查询的性能非常接近。
 
 .has_child Filter
 **************************
 
-The `has_child` filter works((("has_child query and filter", "filter"))) in the same way as the `has_child` query, except
-that it doesn't support the `score_mode` parameter. It can be used only in
-_filter context_&#x2014;such as inside a `filtered` query--and behaves
-like any other filter: it includes or excludes, but doesn't score.
+`has_child` 查询和过滤在运行机制上类似，((("has_child query and filter", "filter")))区别是 `has_child` 过滤不支持 `source_mode` 参数。`has_child` 过滤仅用于筛选内容--如内部的一个 `filtered` 查询--和其他过滤行为类似：包含或者排除，但没有进行评分。
 
-While the results of a `has_child` filter are not cached, the usual caching
-rules apply to the filter _inside_ the `has_child` filter.
-
+`has_child` 过滤的结果没有被缓存，但是 `has_child` 过滤内部的过滤方法适用于通常的缓存规则。
 **************************
