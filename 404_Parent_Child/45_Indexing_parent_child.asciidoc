@@ -1,8 +1,7 @@
 [[indexing-parent-child]]
-=== Indexing Parents and Children
+=== 构建父-子文档索引
 
-Indexing parent documents is no different from any other document. Parents
-don't need to know anything about their children:
+为父文档创建索引与为普通文档创建索引没有区别。父文档并不需要知道它有哪些子文档。
 
 [source,json]
 -------------------------
@@ -15,8 +14,7 @@ POST /company/branch/_bulk
 { "name": "Champs Élysées", "city": "Paris", "country": "France" }
 -------------------------
 
-When indexing child documents, you must specify the ID of the associated
-parent document:
+创建子文档时，用户必须要通过 `parent` 参数来指定该子文档的父文档 ID：
 
 [source,json]
 -------------------------
@@ -27,31 +25,19 @@ PUT /company/employee/1?parent=london <1>
   "hobby": "hiking"
 }
 -------------------------
-<1> This `employee` document is a child of the `london` branch.
+<1> 当前 `employee` 文档的父文档 ID 是 `london` 。
 
-This `parent` ID serves two purposes: it creates the link between the parent
-and the child, and it ensures that the child document is stored on the same
-shard as the parent.
+父文档 ID 有两个作用：创建了父文档和子文档之间的关系，并且保证了父文档和子文档都在同一个分片上。
 
-In <<routing-value>>, we explained how Elasticsearch uses a routing value,
-which defaults to the `_id` of the document, to decide which shard a document
-should belong to.  The routing value is plugged into this simple formula:
+在 <<routing-value>> 中，我们解释了 Elasticsearch 如何通过路由值来决定该文档属于哪一个分片，路由值默认为该文档的 `_id` 。分片路由的计算公式如下：
 
     shard = hash(routing) % number_of_primary_shards
 
-However, if a `parent` ID is specified, it is used as the routing value
-instead of the `_id`.  In other words, both the parent and the child use the
-same routing value--the `_id` of the parent--and so they are both stored
-on the same shard.
+如果指定了父文档的 ID，那么就会使用父文档的 ID 进行路由，而不会使用当前文档 `_id` 。也就是说，如果父文档和子文档都使用相同的值进行路由，那么父文档和子文档都会确定分布在同一个分片上。
 
-The `parent` ID needs to be specified on all single-document requests:
-when retrieving a child document with a `GET` request, or when indexing,
-updating, or deleting a child document.  Unlike a search request, which is
-forwarded to all shards in an index, these single-document requests are
-forwarded only to the shard that holds the document--if the `parent` ID is
-not specified, the request will probably be forwarded to the wrong shard.
+在执行单文档的请求时需要指定父文档的 ID，单文档请求包括：通过 `GET` 请求获取一个子文档；创建、更新或删除一个子文档。而执行搜索请求时是不需要指定父文档的ID，这是因为搜索请求是向一个索引中的所有分片发起请求，而单文档的操作是只会向存储该文档的分片发送请求。因此，如果操作单个子文档时不指定父文档的 ID，那么很有可能会把请求发送到错误的分片上。
 
-The `parent` ID should also be specified when using the `bulk` API:
+父文档的 ID 应该在 `bulk` API 中指定
 
 [source,json]
 -------------------------
@@ -64,8 +50,4 @@ POST /company/employee/_bulk
 { "name": "Adrien Grand", "dob": "1987-05-11", "hobby": "horses" }
 -------------------------
 
-WARNING: If you want to change the `parent` value of a child document, it is
-not sufficient to just reindex or update the child document--the new parent
-document may be on a different shard. Instead, you must first delete the old
-child, and then index the new child.
-
+WARNING: 如果你想要改变一个子文档的 `parent` 值，仅通过更新这个子文档是不够的，因为新的父文档有可能在另外一个分片上。因此，你必须要先把子文档删除，然后再重新索引这个子文档。
