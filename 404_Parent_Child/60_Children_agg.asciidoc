@@ -1,14 +1,10 @@
 [[children-agg]]
-=== Children Aggregation
+=== 子文档聚合
 
-Parent-child supports a
-http://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-children-aggregation.html[`children` aggregation]  as ((("aggregations", "children aggregation")))((("children aggregation")))((("parent-child relationship", "children aggregation")))a direct analog to the `nested` aggregation discussed in
-<<nested-aggregation>>.  A parent aggregation (the equivalent of
-`reverse_nested`) is not supported.
+在父-子文档中支持
+http://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-children-aggregation.html[子文档聚合]，这一点和((("aggregations", "children aggregation")))((("children aggregation")))((("parent-child relationship", "children aggregation"))) <<nested-aggregation>> 类似。但是，对于父文档的聚合查询是不支持的（和 `reverse_nested` 类似）。
 
-This example demonstrates how we could determine the favorite hobbies of our
-employees by country:
-
+我们通过下面的例子来演示按照国家维度查看最受雇员欢迎的业余爱好：
 [source,json]
 -------------------------
 GET /company/branch/_search
@@ -37,7 +33,6 @@ GET /company/branch/_search
   }
 }
 -------------------------
-<1> The `country` field in the `branch` documents.
-<2> The `children` aggregation joins the parent documents with
-    their associated children of type `employee`.
-<3> The `hobby` field from the `employee` child documents.
+<1> `country` 是 `branch` 文档的一个字段。
+<2> 子文档聚合查询通过 `employee` type 的子文档将其父文档聚合在一起。
+<3> `hobby` 是 `employee` 子文档的一个字段。
