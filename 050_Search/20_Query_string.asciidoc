@@ -1,9 +1,14 @@
 [[search-lite]]
 === Search _Lite_
 
-有两种搜索API的形式：一种精简查询-字符串版本在查询字符串中传递所有的参数，另一种功能全面的_request body_版本使用JSON格式并且使用一种名叫查询DSL的丰富搜索语言。
+There are two forms of the `search` API: a ``lite'' _query-string_ version
+that expects all its((("searching", "query string searches")))((("query strings", "searching with"))) parameters to be passed in the query string, and the full
+_request body_ version that expects a JSON request body and uses a
+rich search language called the query DSL.
 
-在命令行中查询-字符串搜索对运行特殊的查询是有益的。例如，查询在 `tweet` 类型中 `tweet` 字段包含 `elasticsearch` 单词的所有文档：
+The query-string search is useful for running ad hoc queries from the
+command line. For instance, this query finds all documents of type `tweet` that
+contain the word `elasticsearch` in the `tweet` field:
 
 [source,js]
 --------------------------------------------------
@@ -11,11 +16,13 @@ GET /_all/tweet/_search?q=tweet:elasticsearch
 --------------------------------------------------
 // SENSE: 050_Search/20_Query_string.json
 
-下一个查询在 `name` 字段中包含 `john` 并且在 `tweet` 字段中包含 `mary` 的文档。实际的查询就是这样
+The next query looks for `john` in the `name` field and `mary` in the
+`tweet` field. The actual query is just
 
     +name:john +tweet:mary
 
-但是查询-字符串参数所需要的百分比编码让它比实际上的更含义模糊：
+but the _percent encoding_ needed for query-string parameters makes it appear
+more cryptic than it really is:
 
 [source,js]
 --------------------------------------------------
@@ -24,12 +31,15 @@ GET /_search?q=%2Bname%3Ajohn+%2Btweet%3Amary
 // SENSE: 050_Search/20_Query_string.json
 
 
-`+` 前缀表示必须与查询条件匹配。类似地， `-` 前缀表示一定不与查询条件匹配。没有 `+` 或者 `-` 的所有条件是可选的--匹配的越多，文档就越相关。
+The `+` prefix indicates conditions that _must_ be satisfied for our query to
+match. Similarly a `-` prefix would indicate conditions that _must not_
+match.  All conditions without a `+` or `-` are optional--the more that match,
+the more relevant the document.
 
 [[all-field-intro]]
 ==== The _all Field
 
-这个简单搜索返回包含 `mary` 的所有文档：
+This simple search returns all documents that contain the word `mary`:
 
 [source,js]
 --------------------------------------------------
@@ -38,15 +48,19 @@ GET /_search?q=mary
 // SENSE: 050_Search/20_All_field.json
 
 
-之前的例子中，我们在 `tweet` 和 `name` 字段中搜索内容。然而，这个查询的结果在三个地方提到了 `mary` ：
+In the previous examples, we searched for words in the `tweet` or
+`name` fields. However, the results from this query mention `mary` in
+three fields:
 
 * A user whose name is Mary
 * Six tweets by Mary
 * One tweet directed at @mary
 
-Elasticsearch 是如何在三个不同的区域中查找到结果的呢？
+How has Elasticsearch managed to find results in three different fields?
 
-当你索引一个文档的时候，Elasticsearch 取出所有字段的值拼接成一个大的字符串，作为 `_all` 字段进行索引。例如，当我们索引这个文档时：
+When you index a document, Elasticsearch takes the string values of all of
+its fields and concatenates them into one big string, which it indexes as
+the special `_all` field.((("_all field", sortas="all field"))) For example, when we index this document:
 
 [source,js]
 --------------------------------------------------
@@ -59,7 +73,7 @@ Elasticsearch 是如何在三个不同的区域中查找到结果的呢？
 --------------------------------------------------
 
 
-这就好似增加了一个名叫 `_all` 的额外字段：
+it's as if we had added an extra field called `_all` with this value:
 
 [source,js]
 --------------------------------------------------
@@ -67,19 +81,24 @@ Elasticsearch 是如何在三个不同的区域中查找到结果的呢？
 --------------------------------------------------
 
 
-除非字段已经被指定，否则就使用 `_all` 字段进行搜索。
+The query-string search uses the `_all` field unless another
+field name has been specified.
 
-TIP: 在你刚开始使用 Elasticsearch 的时候， `_all` 字段是一个很实用的特征。之后，你会发现如果你在搜索的时候用指定字段来代替 `_all` 字段，对搜索出来的结果将有更好的控制。当 `_all` 字段对你不再有用的时候，你可以将它置为失效，向在 <<all_field>> 中解释的。
+TIP: The `_all` field is a useful feature while you are getting started with
+a new application. Later, you will find that you have more control over
+your search results if you query specific fields instead of the `_all`
+field.  When the `_all` field is no longer useful to you, you can
+disable it, as explained in <<all-field>>.
 
 [[query-string-query]]
 [role="pagebreak-before"]
-==== 更复杂的查询
+==== More Complicated Queries
 
-下面对tweents的查询，使用以下的条件：
+The next query searches for tweets, using the following criteria:
 
-* `name` 字段中包含 `mary` 或者 `john`
-* `date` 值大于 `2014-09-10`
-* +_all_+ 字段包含 `aggregations` 或者 `geo`
+* The `name` field contains `mary` or `john`
+* The `date` is greater than `2014-09-10`
+* The +_all+ field contains either of the words `aggregations` or `geo`
 
 [source,js]
 --------------------------------------------------
@@ -87,24 +106,39 @@ TIP: 在你刚开始使用 Elasticsearch 的时候， `_all` 字段是一个很�
 --------------------------------------------------
 // SENSE: 050_Search/20_All_field.json
 
-适当编码过的查询字符串看起来有点晦涩难读：
+As a properly encoded query string, this looks like the slightly less
+readable result:
 
 [source,js]
 --------------------------------------------------
 ?q=%2Bname%3A(mary+john)+%2Bdate%3A%3E2014-09-10+%2B(aggregations+geo)
 --------------------------------------------------
 
-从之前的例子中可以看出，这种简化的查询-字符串的效果是非常惊人的。在相关参考文档中做出了详细解释的查询语法，让我们可以简洁的表达很复杂的查询。这对于命令行随机查询和在开发阶段都是很好的。
+As you can see from the preceding examples, this _lite_ query-string search is
+surprisingly powerful.((("query strings", "syntax, reference for"))) Its query syntax, which is explained in detail in the
+{ref}/query-dsl-query-string-query.html#query-string-syntax[Query String Syntax]
+reference docs, allows us to express quite complex queries succinctly. This
+makes it great for throwaway queries from the command line or during
+development.
 
-然而，这种简洁的方式可能让排错变得模糊和困难。像 `-` ， `:` ， `/` 或者 `"` 不匹配这种易错的小语法问题将返回一个错误。
+However, you can also see that its terseness can make it cryptic and
+difficult to debug. And it's fragile--a slight syntax error in the query
+string, such as a misplaced `-`, `:`, `/`, or `"`, and it will return an error
+instead of results.
 
-字符串查询允许任何用户在索引的任意字段上运行既慢又重的查询，这些查询可能会暴露隐私信息或者将你的集群拖垮。
+Finally, the query-string search allows any user to run potentially slow, heavy
+queries on any field in your index, possibly exposing private information or
+even bringing your cluster to its knees!
 
 [TIP]
 ==================================================
-因为这些原因，我们不推荐直接向用户暴露查询-字符串，除非这些用户对于集群和数据是可以被信任的。
-
+For these reasons, we don't recommend exposing query-string searches directly to
+your users, unless they are power users who can be trusted with your data and
+with your cluster.
 ==================================================
 
-相反，我们经常在产品中更多的使用功能全面的 _request body_ 查询API。然而，在我们达到那种程度之前，我们首先需要了解数据在 Elasticsearch 中是如何索引的。
+Instead, in production we usually rely on the full-featured _request body_
+search API, which does all of this, plus a lot more. Before we get there,
+though, we first need to take a look at how our data is indexed in
+Elasticsearch.
 
