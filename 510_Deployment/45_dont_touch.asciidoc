@@ -1,4 +1,4 @@
-
+[[dont-touch-these-settings]]
 === 不要触碰这些配置！
 
 在 Elasticsearch 中有一些热点，人们可能不可避免的会碰到。((("deployment", "settings to leave unaltered"))) 我们理解的，所有的调整就是为了优化，但是这些调整，你真的不需要理会它。因为它们经常会被乱用，从而造成系统的不稳定或者糟糕的性能，甚至两者都有可能。

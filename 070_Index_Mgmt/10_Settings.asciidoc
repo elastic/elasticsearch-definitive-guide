@@ -1,3 +1,4 @@
+[[index-settings]]
 === 索引设置
 
 你可以通过修改配置来((("index settings")))自定义索引行为，详细配置参照
@@ -40,5 +41,3 @@ PUT /my_temp_index/_settings
 }
 --------------------------------------------------
 // SENSE: 070_Index_Mgmt/10_Settings.json
-
-
