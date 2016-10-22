@@ -1,14 +1,9 @@
 [[has-parent]]
-=== Finding Children by Their Parents
+=== 通过父文档查询子文档
 
-While a `nested` query can always ((("parent-child relationship", "finding children by their parents")))return only the root document as a result,
-parent and child documents are independent and each can be queried
-independently.  The `has_child` query allows us to return parents based on
-data in their children, and the `has_parent` query returns children based on
-data in their parents.((("has_parent query and filter", "query")))
+虽然 `nested` 查询只能返回最顶层的文档 ((("parent-child relationship", "finding children by their parents")))，但是父文档和子文档本身是彼此独立并且可被单独查询的。我们使用 `has_child` 语句可以基于子文档来查询父文档，使用 `has_parent` 语句可以基于子文档来查询父文档。 ((("has_parent query and filter", "query")))
 
-It looks very similar to the `has_child` query.  This example returns
-employees who work in the UK:
+`has_parent` 和 `has_child` 非常相似，下面的查询将会返回所有在 UK 工作的雇员：
 
 [source,json]
 -------------------------
@@ -26,19 +21,13 @@ GET /company/employee/_search
   }
 }
 -------------------------
-<1> Returns children who have parents of type `branch`
+<1> 返回父文档 `type` 是 `branch` 的所有子文档
 
-The `has_parent` query also supports the `score_mode`,((("score_mode parameter"))) but it accepts only two
-settings: `none` (the default) and `score`.  Each child can have only one
-parent, so there is no need to reduce multiple scores into a single score for
-the child.  The choice is simply between using the score (`score`) or not
-(`none`).
+`has_parent` 查询也支持 `score_mode` 这个参数，((("score_mode parameter")))但是该参数只支持两种值： `none` （默认）和 `score` 。每个子文档都只有一个父文档，因此这里不存在将多个评分规约为一个的情况， `score_mode` 的取值仅为 `score` 和 `none` 。
 
-.Non-scoring has_parent Query
+.不带评分的 has_parent 查询
 **************************
 
-When used in non-scoring mode (e.g. inside a `filter` clause), the `has_parent`
-query no longer supports the `score_mode` parameter.  Because it is merely
-including/excluding documents and not scoring, the `score_mode` parameter
-no longer applies.
+当 `has_parent` 查询用于非评分模式（比如 filter 查询语句）时， `score_mode` 参数就不再起作用了。因为这种模式只是简单地包含或排除文档，没有评分，那么 `score_mode` 参数也就没有意义了。
+
 **************************
