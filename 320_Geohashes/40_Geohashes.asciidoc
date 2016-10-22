@@ -1,34 +1,15 @@
 [[geohashes]]
 == Geohashes
 
-http://en.wikipedia.org/wiki/Geohash[Geohashes] are a way of encoding
-`lat/lon` points as strings.((("geohashes")))((("latitude/longitude pairs", "encoding lat/lon points as strings with geohashes")))((("strings", "geohash")))  The original intention was to have a
-URL-friendly way of specifying geolocations, but geohashes have turned out to
-be a useful way of indexing geo-points and geo-shapes in databases.
+http://en.wikipedia.org/wiki/Geohash[Geohashes] 是一种将经纬度坐标（ `lat/lon` ）编码成字符串的方式。((("geohashes")))((("latitude/longitude pairs", "encoding lat/lon points as strings with geohashes")))((("strings", "geohash")))这么做的初衷只是为了让地理位置在 url 上呈现的形式更加友好，但现在 geohashes 已经变成一种在数据库中有效索引地理坐标点和地理形状的方式。
 
-Geohashes divide the world into a grid of 32 cells--4 rows and 8 columns--each represented by a letter or number.  The `g` cell covers half of
-Greenland, all of Iceland, and most of Great Britian. Each cell can be further
-divided into another 32 cells, which can be divided into another 32 cells,
-and so on.  The `gc` cell covers Ireland and England, `gcp` covers most of
-London and part of Southern England, and `gcpuuz94k` is the entrance to
-Buckingham Palace, accurate to about 5 meters.
+Geohashes 把整个世界分为 32 个单元的格子 —— 4 行 8 列 —— 每一个格子都用一个字母或者数字标识。比如 `g` 这个单元覆盖了半个格林兰，冰岛的全部和大不列颠的大部分。每一个单元还可以进一步被分解成新的 32 个单元，这些单元又可以继续被分解成 32 个更小的单元，不断重复下去。 `gc` 这个单元覆盖了爱尔兰和英格兰， `gcp` 覆盖了伦敦的大部分和部分南英格兰， `gcpuuz94k` 是白金汉宫的入口，精确到约 5 米。
 
-In other words, the longer the geohash string, the more accurate it is.  If
-two geohashes share a prefix&#x2014; and `gcpuuz`&#x2014;then it implies that
-they are near each other.  The longer the shared prefix, the closer they
-are.
+换句话说， geohash 的长度越长，它的精度就越高。如果两个 geohashes 有一个共同的前缀&#x2014; `gcpuuz`&#x2014;就表示他们挨得很近。共同的前缀越长，距离就越近。
 
-That said, two locations that are right next to each other may have completely
-different geohashes. For instance, the
-http://en.wikipedia.org/wiki/Millennium_Dome[Millenium Dome] in London has
-geohash `u10hbp`, because it falls into the `u` cell, the next top-level cell
-to the east of the `g` cell.
+这也意味着，两个刚好相邻的位置，可能会有完全不同的 geohash 。比如，伦敦 http://en.wikipedia.org/wiki/Millennium_Dome[Millenium Dome] 的  geohash 是 `u10hbp` ，因为它落在了 `u` 这个单元里，而紧挨着它东边的最大的单元是 `g` 。
 
-Geo-points can index their associated geohashes automatically, but more
-important, they can also index all geohash _prefixes_. Indexing the location
-of the entrance to Buckingham Palace--latitude `51.501568` and longitude
-`-0.141257`&#x2014;would index all of the geohashes listed in the following table,
-along with  the approximate dimensions of each geohash cell:
+地理坐标点可以自动索引相关的 geohashes ，更重要的是，他们也可以索引所有的 geohashes _前缀_ 。如索引白金汉宫入口位置——纬度 `51.501568` ，经度 `-0.141257`&#x2014;将会索引下面表格中列出的所有 geohashes ，表格中也给出了各个 geohash 单元的近似尺寸：
 
 [cols="1m,1m,3d",options="header"]
 |=============================================
@@ -47,6 +28,5 @@ along with  the approximate dimensions of each geohash cell:
 |gcpuuz94kkp5   |12   | ~ 3.7cm x 1.8cm
 |=============================================
 
-The {ref}/query-dsl-geohash-cell-query.html[`geohash_cell` filter] can use
-these geohash prefixes((("geohash_cell filter")))((("filters", "geohash_cell"))) to find locations near a specified `lat/lon` point.
+{ref}/query-dsl-geohash-cell-query.html[`geohash单元` 过滤器] 可以使用这些 geohash 前缀((("geohash_cell filter")))((("filters", "geohash_cell")))来找出与指定坐标点（ `lat/lon` ）相邻的位置。
 
