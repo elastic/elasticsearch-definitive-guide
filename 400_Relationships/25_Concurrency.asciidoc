@@ -1,32 +1,22 @@
 [[denormalization-concurrency]]
-=== Denormalization and Concurrency
+=== 非规范化和并发
 
-Of course, data denormalization has downsides too.((("relationships", "denormalization and concurrency")))((("concurrency", "denormalization and")))((("denormalization", "and concurrency")))  The first disadvantage is
-that  the index will be bigger because the `_source` document for every
-blog post is bigger, and there are more indexed fields.  This usually isn't a
-huge problem.  The data written to disk is highly compressed, and disk space
-is cheap. Elasticsearch can happily cope with the extra data.
+当然，数据非规范化也有弊端。((("relationships", "denormalization and concurrency")))((("concurrency", "denormalization and")))((("denormalization", "and concurrency")))
+第一个缺点是索引会更大因为每个博客文章文档的 `_source` 将会更大，并且这里有很多的索引字段。这通常不是一个大问题。数据写到磁盘将会被高度压缩，而且磁盘已经很廉价了。Elasticsearch 可以愉快地应付这些额外的数据。
 
-The more important issue is that, if the user were to change his name, all
-of his blog posts would need to be updated too. Fortunately, users don't
-often change names.  Even if they did, it is unlikely that a user would have
-written more than a few thousand blog posts, so updating blog posts with
-the <<scroll,`scroll`>> and <<bulk,`bulk`>> APIs would take less than a
-second.
+更重要的问题是，如果用户改变了他的名字，他所有的博客文章也需要更新了。幸运的是，用户不经常更改名称。即使他们做了，
+用户也不可能写超过几千篇博客文章，所以更新博客文章通过 <<scroll,`scroll`>> 和 <<bulk,`bulk`>> APIs 大概耗费不到一秒。
 
-However, let's consider a more complex scenario in which changes are common, far
-reaching, and, most important, concurrent.((("files", "searching for files in a particular directory")))
 
-In this example, we are going to emulate a filesystem with directory trees in
-Elasticsearch, much like a filesystem on Linux: the root of the directory is
-`/`, and each directory can contain files and subdirectories.
+然而，让我们考虑一个更复杂的场景，其中的变化很常见，影响深远，而且非常重要，并发。
 
-We want to be able to search for files that live in a particular directory,
-the equivalent of this:
+在这个例子中，我们将在 Elasticsearch 模拟一个文件系统的目录树，非常类似 Linux 文件系统：根目录是 `/` ，每个目录可以包含文件和子目录。
+
+我们希望能够搜索到一个特定目录下的文件，等效于：
 
     grep "some text" /clinton/projects/elasticsearch/*
 
-This requires us to index the path of the directory where the file lives:
+这就要求我们索引文件所在目录的路径：
 
 [source,json]
 --------------------------
@@ -37,31 +27,27 @@ PUT /fs/file/1
   "contents": "Starting a new Elasticsearch project is easy..."
 }
 --------------------------
-<1> The filename
-<2> The full path to the directory holding the file
+<1> 文件名
+<2> 文件所在目录的全路径
 
 [NOTE]
 ==================================================
 
-Really, we should also index `directory` documents so we can list all
-files and subdirectories within a directory, but for brevity's sake, we will
-ignore that requirement.
+事实上，我们也应当索引 `directory` 文档，如此我们可以在目录内列出所有的文件和子目录，但为了简洁，我们将忽略这个需求。
 
 ==================================================
 
-We also want to be able to search for files that live anywhere in the
-directory tree below a particular directory, the equivalent of this:
+我们也希望能够搜索到一个特定目录下的目录树包含的的任何文件，相当于此：
 
     grep -r "some text" /clinton
 
-To support this, we need to index the path hierarchy:
+为了支持这一点，我们需要对路径层次结构进行索引：
 
 * `/clinton`
 * `/clinton/projects`
 * `/clinton/projects/elasticsearch`
 
-This hierarchy can be generated ((("path_hierarchy tokenizer")))automatically from the `path` field using the
-{ref}/analysis-pathhierarchy-tokenizer.html[`path_hierarchy` tokenizer]:
+这种层次结构能够通过 `path` 字段使用 {ref}/analysis-pathhierarchy-tokenizer.html[`path_hierarchy` tokenizer] 自动生成：
 
 [source,json]
 --------------------------
@@ -78,9 +64,9 @@ PUT /fs
   }
 }
 --------------------------
-<1> The custom `paths` analyzer uses the {ref}/analysis-pathhierarchy-tokenizer.html[`path_hierarchy` tokenizer] with its default settings. 
+<1> 自定义的 `paths` 分析器在默认设置中使用 {ref}/analysis-pathhierarchy-tokenizer.html[`path_hierarchy` tokenizer]。
 
-The mapping for the `file` type would look like this:
+`file` 类型的映射看起来如下所示：
 
 [source,json]
 --------------------------
@@ -104,13 +90,10 @@ PUT /fs/_mapping/file
   }
 }
 --------------------------
-<1> The `name` field will contain the exact name.
-<2> The `path` field will contain the exact directory name, while the `path.tree`
-    field will contain the path hierarchy.
+<1> `name` 字段将包含确切名称。
+<2> `path` 字段将包含确切的目录名称，而 `path.tree` 字段将包含路径层次结构。
 
-Once the index is set up and the files have been indexed, we can perform a
-search for files containing `elasticsearch` in just the
-`/clinton/projects/elasticsearch` directory like this:
+一旦索引建立并且文件已被编入索引，我们可以执行一个搜索，在 `/clinton/projects/elasticsearch` 目录中包含 `elasticsearch` 的文件，如下所示：
 
 [source,json]
 --------------------------
@@ -132,11 +115,9 @@ GET /fs/file/_search
   }
 }
 --------------------------
-<1> Find files in this directory only.
+<1> 仅在该目录中查找文件。
 
-Every file that lives in any subdirectory under `/clinton` will include the
-term `/clinton` in the `path.tree` field.  So we can search for all files in
-any subdirectory of `/clinton` as follows:
+所有在 `/clinton` 下面的任何子目录存放的文件将在 `path.tree` 字段中包含 `/clinton` 词项。所以我们能够搜索 `/clinton` 的任何子目录中的所有文件，如下所示：
 
 [source,json]
 --------------------------
@@ -158,14 +139,12 @@ GET /fs/file/_search
   }
 }
 --------------------------
-<1> Find files in this directory or in any of its subdirectories.
+<1> 在这个目录或其下任何子目录中查找文件。
 
-==== Renaming Files and Directories
+==== 重命名文件和目录
 
-So far, so good.((("optimistic concurrency control")))((("files", "renaming files and directories")))  Renaming a file is easy--a simple `update` or `index`
-request is all that is required.  You can even use
-<<optimistic-concurrency-control,optimistic concurrency control>> to
-ensure that your change doesn't conflict with the changes from another user:
+到目前为止一切顺利。((("optimistic concurrency control")))((("files", "renaming files and directories"))) 重命名一个文件很容易--所需要的只是一个简单的 `update` 或 `index` 请求。
+你甚至可以使用 <<optimistic-concurrency-control,optimistic concurrency control>> 确保你的变化不会与其他用户的变化发生冲突：
 
 [source,json]
 --------------------------
@@ -176,13 +155,8 @@ PUT /fs/file/1?version=2 <1>
   "contents": "Starting a new Elasticsearch project is easy..."
 }
 --------------------------
-<1> The `version` number ensures that the change is applied only if the
-    document in the index has this same version number.
+<1> `version` 编号确保该更改仅应用于该索引中具有此相同的版本号的文档。
 
-We can even rename a directory, but this means updating all of the files that
-exist anywhere in the path hierarchy beneath that directory.  This may be
-quick or slow, depending on how many files need to be updated.  All we would
-need to do is to use <<scroll,`scroll`>> to retrieve all the
-files, and the <<bulk,`bulk` API>> to update them.  The process isn't
-atomic, but all files will quickly move to their new home.
-
+我们甚至可以重命名一个目录，但这意味着更新所有存在于该目录下路径层次结构中的所有文件。
+这可能快速或缓慢，取决于有多少文件需要更新。我们所需要做的就是使用  <<scroll,`scroll`>> 来检索所有的文件，
+以及 <<bulk,`bulk` API>> 来更新它们。这个过程不是原子的，但是所有的文件将会迅速转移到他们的新存放位置。
