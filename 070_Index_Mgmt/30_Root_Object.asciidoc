@@ -1,38 +1,32 @@
 [[root-object]]
-=== The Root Object
+=== 根对象
 
-The uppermost level of a mapping is known ((("mapping (types)", "root object")))((("root object")))as the _root object_. It may
-contain the following:
+映射的最高一层被称为((("mapping (types)", "root object")))((("root object"))) _根对象_ ，它可能包含下面几项：
 
-* A _properties_ section, which lists the mapping for each field that a
-  document may contain
+* 一个 _properties_ 节点，列出了文档中可能包含的每个字段的映射
 
-* Various metadata fields, all of which start with an underscore, such
-  as `_type`, `_id`, and `_source`
+* 各种元数据字段，它们都以一个下划线开头，例如 `_type` 、 `_id` 和 `_source`
 
-* Settings, which control how the dynamic detection of new fields
-  is handled, such as `analyzer`, `dynamic_date_formats`, and
+* 设置项，控制如何动态处理新的字段，例如 `analyzer` 、 `dynamic_date_formats` 和
   `dynamic_templates`
 
-* Other settings, which can be applied both to the root object and to fields
-  of type `object`, such as `enabled`, `dynamic`, and `include_in_all`
+* 其他设置，可以同时应用在根对象和其他 `object` 类型的字段上，例如 `enabled` 、 `dynamic` 和 `include_in_all`
 
-==== Properties
+==== 属性
 
-We have already discussed the three most important settings for document
-fields or ((("root object", "properties")))((("properties", "important settings")))properties in <<core-fields>> and <<complex-core-fields>>:
+我们已经在 <<core-fields>> 和 <<complex-core-fields>> 章节中介绍过文档字段和属性的三个((("root object", "properties")))((("properties", "important settings")))最重要的设置：
 
  `type`::
-   The datatype that the field contains, such as `string` or `date`
+   字段的数据类型，例如 `string` 或 `date`
 
- `index`::      
-   Whether a field should be searchable as full text (`analyzed`), searchable as an exact value (`not_analyzed`), or not searchable at all (`no`)
+ `index`::
+   字段是否应当被当成全文来搜索（ `analyzed` ），或被当成一个准确的值（ `not_analyzed` ），还是完全不可被搜索（ `no` ）
 
- `analyzer`::    
-   Which `analyzer` to use for a full-text field, both at index time and at search time
+ `analyzer`::
+   确定在索引和搜索时全文字段使用的 `analyzer`
 
-We will discuss other field types such as `ip`, `geo_point`, and `geo_shape` in
-the appropriate sections later in the book.
+
+我们将在本书的后续部分讨论其他字段类型，例如 `ip` 、 `geo_point` 和 `geo_shape` 。
 
 include::31_Metadata_source.asciidoc[]
 
