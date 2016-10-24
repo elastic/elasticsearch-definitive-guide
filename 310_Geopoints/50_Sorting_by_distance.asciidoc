@@ -1,10 +1,9 @@
 [[sorting-by-distance]]
-=== Sorting by Distance
+=== 按距离排序
 
-Search results can be sorted by distance((("sorting", "by distance")))((("distance", "sorting search results by")))((("geo-points", "distance between, sorting search results by"))) from a point:
+检索结果可以按与指定点的距离排序((("sorting", "by distance")))((("distance", "sorting search results by")))((("geo-points", "distance between, sorting search results by")))：
 
-TIP: While you _can_ sort by distance, <<scoring-by-distance>> is usually a
-better solution.
+TIP: 当你 _可以_ 按距离排序时， <<scoring-by-distance>> 通常是一个更好的解决方案。
 
 [source,json]
 ----------------------------
@@ -44,15 +43,11 @@ GET /attractions/restaurant/_search
   ]
 }
 ----------------------------
-<1> Calculate the distance between the specified `lat/lon` point and the
-    geo-point in the `location` field of each document.
-<2> Return the distance in `km` in the `sort` keys for each result.
-<3> Use the faster but less accurate `plane` calculation.
+<1> 计算每个文档中 `location` 字段与指定的 `lat/lon` 点间的距离。 
+<2> 将距离以 `km` 为单位写入到每个返回结果的 `sort` 键中。
+<3> 使用快速但精度略差的 `plane` 计算方式。
 
-You may ask yourself: why do we specify the distance `unit`? For sorting, it
-doesn't matter whether we compare distances in miles, kilometers, or light
-years.  The reason is that the actual value used for sorting is returned with
-each result, in the `sort` element:
+你可能想问：为什么要制定距离的 `单位` 呢？用于排序的话，我们并不关心比较距离的尺度是英里、公里还是光年。 原因是，这个用于排序的值会设置在每个返回结果的 `sort` 元素中。
 
 [source,json]
 ----------------------------
@@ -76,34 +71,23 @@ each result, in the `sort` element:
      },
 ...
 ----------------------------
-<1> This restaurant is 0.084km from the location we specified.
+<1> 餐厅到我们指定的位置距离是 0.084km。
 
-You can set the `unit` to return these values in whatever form makes sense for
-your application.
+你可以通过设置 `单位` （ `unit` ）来让返回值的形式，匹配你应用中需要的。
 
 [TIP]
 ==================================================
 
-Geo-distance sorting can also handle multiple geo-points, both in the document
-and in the sort parameters.  Use the `sort_mode` to specify whether it should
-use the `min`, `max`, or `avg` distance between each combination of locations.
-This can be used to return ``friends nearest to my work and home locations.''
+地理距离排序可以对多个坐标点来使用，不管（这些坐标点）是在文档中还是排序参数中。使用 `sort_mode` 来指定是否需要使用位置集合的 `最小` （ `min` ） `最大` （ `max` ）或者 `平均` （ `avg` ）距离。 
+如此就可以返回 ``离我的工作地和家最近的朋友'' 这样的结果了。
 
 ==================================================
 
 [[scoring-by-distance]]
-==== Scoring by Distance
+==== 按距离打分
 
-It may be that distance is the only important factor in deciding the order in
-which results are returned, but more frequently we need to combine distance
-with other factors, such as full-text relevance, popularity, and price.
+有可能距离是决定返回结果排序的唯一重要因素，不过更常见的情况是距离会和其它因素，比如全文检索匹配度、流行程度或者价格一起决定排序结果。
 
-In these situations, we should reach for the
-<<function-score-query,`function_score` query>> that allows us to blend all
-of these factors into an overall score.  See <<decay-functions>> for an
-example that uses geo-distance to influence scoring.
+遇到这种场景你需要在 <<function-score-query,功能评分查询>> 中指定方式让我们把这些因子处理后得到一个综合分。 <<decay-functions>> 中有个一个例子就是介绍地理距离影响排序得分的。
 
-The other drawback of sorting by distance is performance: the distance has to
-be calculated for all matching documents.  The `function_score` query, on the
-other hand, can be executed during the <<rescore-api,`rescore` phase>>,
-limiting the number of calculations to just the top _n_ results.
+另外按距离排序还有个缺点就是性能：需要对每一个匹配到的文档都进行距离计算。而 `function_score` 查询，在 <<rescore-api,`rescore` 语句>> 中可以限制只对前 _n_ 个结果进行计算。
