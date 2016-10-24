@@ -1,14 +1,7 @@
-If you have made it this far in the book, hopefully you've learned a thing or
-two about Elasticsearch and are ready to((("deployment"))) deploy your cluster to production.((("clusters", "deployment", see="deployment")))
-This chapter is not meant to be an exhaustive guide to running your cluster
-in production, but it covers the key things to consider before putting
-your cluster live.
+如果你按照书中步骤做到了这一步，希望你已经学到了一两件关于 Elasticsearch 的事情并且准备把((("deployment")))你的集群部署到生产环境。((("clusters", "deployment", see="deployment"))) 这一章不是在生产中运行集群的详尽指南，但是它涵盖了集群上线之前需要考虑的关键事项。
 
-Three main areas are covered:
+主要包括三个方面：
 
-- Logistical considerations, such as hardware recommendations and deployment
-strategies
-- Configuration changes that are more suited to a production environment
-- Post-deployment considerations, such as security, maximizing indexing performance,
-and backups
-
+- 后勤方面的考虑，如硬件和部署策略的建议
+- 更适合于生产环境的配置更改
+- 部署后的考虑，例如安全，最大限度的索引性能和备份
