@@ -31,7 +31,7 @@ This filter translates the `lat/lon` point into a geohash of the appropriate
 length--in this example `dr5rsk`&#x2014;and looks for all locations that contain
 that exact term.
 
-However, the filter as written in the preceding example may not return all restaurants within 5km
+However, the filter as written in the preceding example may not return all restaurants within 2km
 of the specified point.  Remember that a geohash is just a rectangle, and the
 point may fall anywhere within that rectangle.  If the point happens to fall
 near the edge of a geohash cell, the filter may well exclude any
