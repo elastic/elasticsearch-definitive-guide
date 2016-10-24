@@ -1,21 +1,15 @@
 [[logging]]
-=== Logging
+=== 日志记录
 
-Elasticsearch emits a number of logs, which are placed in  `ES_HOME/logs`.
-The default logging level is `INFO`. ((("post-deployment", "logging")))((("logging", "Elasticsearch logging"))) It provides a moderate amount of information,
-but is designed to be rather light so that your logs are not enormous.
+Elasticsearch 会输出很多日志，都放在 `ES_HOME/logs` 目录下。默认的日志记录等级是 `INFO` 。((("post-deployment", "logging")))((("logging", "Elasticsearch logging")))它提供了适度的信息，但是又设计好了不至于让你的日志太过庞大。
 
-When debugging problems, particularly problems with node discovery (since this
-often depends on finicky network configurations), it can be helpful to bump
-up the logging level to `DEBUG`.
+当调试问题的时候，特别是节点发现相关的问题（因为这个经常依赖于各式过于繁琐的网络配置），提高日志记录等级到 `DEBUG` 是很有帮助的。
 
-You _could_ modify the `logging.yml` file and restart your nodes--but that is
-both tedious and leads to unnecessary downtime.  Instead, you can update logging
-levels through the `cluster-settings` API((("Cluster Settings API, updating logging levels"))) that we just learned about.
+你 _可以_ 修改 `logging.yml` 文件然后重启你的节点——但是这样做即繁琐还会导致不必要的宕机时间。作为替代，你可以通过 `cluster-settings` API 更新日志记录级别((("Cluster Settings API, updating logging levels")))，就像我们前面刚学过的那样。
 
-To do so, take the logger you are interested in and prepend `logger.` to it. You can refer to the root logger as `logger._root`.
+要实现这个更新，选择你感兴趣的日志器，然后在前面补上 `logger.` 。对根日志器你可以用 `logger._root` 来表示。
 
-Let's turn up the discovery logging:
+让我们调高节点发现的日志记录级别：
 
 [source,js]
 ----
@@ -27,24 +21,18 @@ PUT /_cluster/settings
 }
 ----
 
-While this setting is in effect, Elasticsearch will begin to emit `DEBUG`-level
-logs for the `discovery` module.
+设置失效，Elasticsearch 将开始输出 `discovery` 模块的 `DEBUG` 级别的日志。
 
-TIP: Avoid `TRACE`. It is extremely verbose, to the point where the logs
-are no longer useful.
+TIP: 避免使用 `TRACE` 。这个级别非常的详细，详细到日志反而不再有用了。
 
 [[slowlog]]
-==== Slowlog
+==== 慢日志
 
-There is another log called the _slowlog_.  The purpose of((("Slowlog"))) this log is to catch
-queries and indexing requests that take over a certain threshold of time.
-It is useful for hunting down user-generated queries that are particularly slow.
+还有另一个日志叫 _慢日志_ 。这个日志的目的((("Slowlog")))是捕获那些超过指定时间阈值的查询和索引请求。这个日志用来追踪由用户产生的很慢的请求很有用。
 
-By default, the slowlog is not enabled.  It can be enabled by defining the action
-(query, fetch, or index), the level that you want the event logged at (`WARN`, `DEBUG`,
-and so forth) and a time threshold.
+默认情况，慢日志是不开启的。要开启它，需要定义具体动作（query，fetch 还是 index），你期望的事件记录等级（ `WARN` 、 `DEBUG` 等），以及时间阈值。
 
-This is an index-level setting, which means it is applied to individual indices:
+这是一个索引级别的设置，也就是说可以独立应用给单个索引：
 
 [source,js]
 ----
@@ -55,16 +43,13 @@ PUT /my_index/_settings
     "index.indexing.slowlog.threshold.index.info": "5s" <3>
 }
 ----
-<1> Emit a `WARN` log when queries are slower than 10s.
-<2> Emit a `DEBUG` log when fetches are slower than 500ms.
-<3> Emit an `INFO` log when indexing takes longer than 5s.
+<1> 查询慢于 10 秒输出一个 `WARN` 日志。
+<2> 获取慢于 500 毫秒输出一个 `DEBUG` 日志。
+<3> 索引慢于 5 秒输出一个 `INFO` 日志。
 
-You can also define these thresholds in your `elasticsearch.yml` file.  Indices
-that do not have a threshold set will inherit whatever is configured in the
-static config.
+你也可以在 `elasticsearch.yml` 文件里定义这些阈值。没有阈值设置的索引会自动继承在静态配置文件里配置的参数。
 
-Once the thresholds are set, you can toggle the logging level like any other
-logger:
+一旦阈值设置过了，你可以和其他日志器一样切换日志记录等级：
 
 [source,js]
 ----
@@ -76,7 +61,7 @@ PUT /_cluster/settings
     }
 }
 ----
-<1> Set the search slowlog to `DEBUG` level.
-<2> Set the indexing slowlog to `WARN` level.
+<1> 设置搜索慢日志为 `DEBUG` 级别。
+<2> 设置索引慢日志为 `WARN` 级别。
 
 
