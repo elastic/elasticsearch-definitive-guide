@@ -1,14 +1,11 @@
-=== Most Important Queries
+[[most-important-queries]]
+=== 最重要的查询
 
-While Elasticsearch comes with many queries, you will use
-just a few frequently. We discuss them in much greater
-detail in <<search-in-depth>> but next we give you a quick introduction to
-the most important queries.
+虽然 Elastidsearch 自带了很多的查询，但经常用到的也就那么几个。我们将在 <<search-in-depth>> 章节详细讨论那些查询的细节，接下来我们对最重要的几个查询进行简单介绍。
 
-==== match_all Query
+==== match_all 查询
 
-The `match_all` query simply((("match_all query")))((("queries", "important"))) matches all documents. It is the default
-query that is used if no query has been specified:
+`match_all` 查询简单的((("match_all query")))((("queries", "important")))匹配所有文档。在没有指定查询方式时，它是默认的查询：
 
 [source,js]
 --------------------------------------------------
@@ -16,19 +13,13 @@ query that is used if no query has been specified:
 --------------------------------------------------
 // SENSE: 054_Query_DSL/70_Match_all_query.json
 
+它经常与 filter 结合使用--例如，检索收件箱里的所有邮件。所有邮件被认为具有相同的相关性，所以都将获得分值为 `1` 的中性 `_score`。 
 
-This query is frequently used in combination with a filter--for instance, to
-retrieve all emails in the inbox folder. All documents are considered to be
-equally relevant, so they all receive a neutral `_score` of `1`.
+==== match 查询
 
-==== match Query
+无论你在任何字段上进行的是全文搜索还是精确查询，`match` 查询是你可用的标准((("match query")))查询。 
 
-The `match` query should be the standard((("match query"))) query that you reach for whenever
-you want to query for a full-text or exact value in almost any field.
-
-If you run a `match` query against a full-text field, it will analyze
-the query string by using the correct analyzer for that field before executing
-the search:
+如果你在一个全文字段上使用 `match` 查询，在执行查询前，它将用正确的分析器去分析查询字符串：
 
 [source,js]
 --------------------------------------------------
@@ -36,9 +27,7 @@ the search:
 --------------------------------------------------
 // SENSE: 054_Query_DSL/70_Match_query.json
 
-If you use it on a field containing an exact value, ((("exact values", "searching for, match queries and")))such as a number, a date,
-a Boolean, or a `not_analyzed` string field, then it will search for that
-exact value:
+如果在一个精确值的字段上使用它，((("exact values", "searching for, match queries and")))例如数字、日期、布尔或者一个 `not_analyzed` 字符串字段，那么它将会精确匹配给定的值：
 
 [source,js]
 --------------------------------------------------
@@ -49,19 +38,13 @@ exact value:
 --------------------------------------------------
 // SENSE: 054_Query_DSL/70_Match_query.json
 
-TIP: For exact-value searches, you probably want to use a filter clause instead of a
-query, as a filter will be cached.  We'll see some filtering examples soon.
+TIP: 对于精确值的查询，你可能需要使用 filter 语句来取代 query，因为 filter 将会被缓存。接下来，我们将看到一些关于 filter 的例子。
 
-Unlike the query-string search that we showed in <<search-lite>>, the `match`
-query does not use a query syntax like `+user_id:2 +tweet:search`. It just
-looks for the words that are specified. This means that it is safe to expose
-to your users via a search field; you control what fields they can query, and
-it is not prone to throwing syntax errors.
+不像我们在 <<search-lite>> 章节介绍的字符串查询（query-string search）， `match` 查询不使用类似 `+user_id:2 +tweet:search` 的查询语法。它只是去查找给定的单词。这就意味着将查询字段暴露给你的用户是安全的；你需要控制那些允许被查询字段，不易于抛出语法异常。 
 
-==== multi_match Query
+==== multi_match 查询
 
-The `multi_match` query allows((("multi_match queries"))) to run the same `match` query on multiple
-fields:
+`multi_match` 查询可以((("multi_match queries")))在多个字段上执行相同的 `match` 查询：
 
 [source,js]
 --------------------------------------------------
@@ -75,10 +58,9 @@ fields:
 // SENSE: 054_Query_DSL/70_Multi_match_query.json
 
 
-==== range Query
+==== range 查询
 
-The `range` query allows you to find((("range query"))) numbers or dates that fall into
-a specified range:
+`range` 查询找出((("range query")))那些落在指定区间内的数字或者时间：
 
 [source,js]
 --------------------------------------------------
@@ -93,24 +75,23 @@ a specified range:
 --------------------------------------------------
 // SENSE: 054_Query_DSL/70_Range_filter.json
 
-The operators that it accepts are as follows:
+被允许的操作符如下：
 
  `gt`::
-   Greater than
+   大于
 
  `gte`::
-   Greater than or equal to
+   大于等于
 
  `lt`::
-   Less than
+   小于
 
  `lte`::
-   Less than or equal to
+   小于等于
 
-==== term Query
+==== term 查询
 
-The `term` query is used to search by((("query", "important")))((("term query"))) exact values, be they numbers, dates,
-Booleans, or `not_analyzed` exact-value string fields:
+`term` 查询被用于精确值((("query", "important")))((("term query")))匹配，这些精确值可能是数字、时间、布尔或者那些 `not_analyzed` 的字符串：
 
 [source,js]
 --------------------------------------------------
@@ -121,14 +102,11 @@ Booleans, or `not_analyzed` exact-value string fields:
 --------------------------------------------------
 // SENSE: 054_Query_DSL/70_Term_filter.json
 
-The `term` query performs no _analysis_ on the input text, so it will look for exactly
-the value that is supplied.
+`term` 查询对于输入的文本不 _分析_ ，所以它将给定的值进行精确查询。
 
-==== terms Query
+==== terms 查询
 
-The `terms` query is((("terms query"))) the same as the `term` query, but allows you
-to specify multiple values to match. If the field contains any of
-the specified values, the document matches:
+`terms` 查询((("terms query")))和 `term` 查询一样，但它允许你指定多值进行匹配。如果这个字段包含了指定值中的任何一个值，那么这个文档满足条件：
 
 [source,js]
 --------------------------------------------------
@@ -136,16 +114,11 @@ the specified values, the document matches:
 --------------------------------------------------
 // SENSE: 054_Query_DSL/70_Terms_filter.json
 
-Like the `term` query, no analysis is performed on the input text.  It is looking
-for exact matches (including differences in case, accents, spaces, etc).
+和 `term` 查询一样，`terms` 查询对于输入的文本不分析。它查询那些精确匹配的值（包括在大小写、重音、空格等方面的差异）。
 
+==== exists 查询和 missing 查询
 
-==== exists and missing Queries
-
-The `exists` and `missing` queries are ((("exists query")))((("missing query")))used to find documents in which the
-specified field either has one or more values (`exists`) or doesn't have any
-values (`missing`). It is similar in nature to `IS_NULL` (`missing`) and `NOT
-IS_NULL` (`exists`) in SQL:
+`exists` 查询和 `missing` 查询((("exists query")))((("missing query")))被用于查找那些指定字段中有值 (`exists`) 或无值 (`missing`) 的文档。这与SQL中的 `IS_NULL` (`missing`) 和 `NOT IS_NULL` (`exists`) 在本质上具有共性：
 
 [source,js]
 --------------------------------------------------
@@ -157,5 +130,4 @@ IS_NULL` (`exists`) in SQL:
 --------------------------------------------------
 // SENSE: 054_Query_DSL/70_Exists_filter.json
 
-These queries are frequently used to apply a condition only if a field is
-present, and to apply a different condition if it is missing.
+这些查询经常用于某个字段有值的情况和某个字段缺值的情况。
