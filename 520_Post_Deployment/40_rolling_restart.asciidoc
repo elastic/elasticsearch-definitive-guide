@@ -1,31 +1,17 @@
-[role="pagebreak-before"]
-=== Rolling Restarts
+[[_rolling_restarts]]
+=== 滚动重启
 
-There will come a time when you need to perform a rolling restart of your
-cluster--keeping the cluster online and operational, but taking nodes offline
-one at a time.((("rolling restart of your cluster")))((("clusters", "rolling restarts")))((("post-deployment", "rolling restarts")))
+总有一天你会需要做一次集群的滚动重启——保持集群在线和可操作，但是逐一把节点下线。((("rolling restart of your cluster")))((("clusters", "rolling restarts")))((("post-deployment", "rolling restarts")))
 
-The common reason is either an Elasticsearch version upgrade, or some kind of
-maintenance on the server itself (such as an OS update, or hardware).  Whatever the case,
-there is a particular method to perform a rolling restart.
+常见的原因：Elasticsearch 版本升级，或者服务器自身的一些维护操作（比如操作系统升级或者硬件相关）。不管哪种情况，都要有一种特别的方法来完成一次滚动重启。
 
-By nature, Elasticsearch wants your data to be fully replicated and evenly balanced.
-If you shut down a single node for maintenance, the cluster will
-immediately recognize the loss of a node and begin rebalancing.  This can be irritating
-if you know the node maintenance is short term, since the rebalancing of
-very large shards can take some time (think of trying to replicate 1TB--even
-on fast networks this is nontrivial).
+正常情况下，Elasticsearch 希望你的数据被完全的复制和均衡的分布。如果你手动关闭了一个节点，集群会立刻发现节点的丢失并开始再平衡。如果节点的维护是短期工作的话，这一点就很烦人了，因为大型分片的再平衡需要花费相当的时间（想想尝试复制 1TB 的数据——即便在高速网络上也是不一般的事情了）。
 
-What we want to do is tell Elasticsearch to hold off on rebalancing, because
-we have more knowledge about the state of the cluster due to external factors.
-The procedure is as follows:
+我们需要的是，告诉 Elasticsearch 推迟再平衡，因为对外部因子影响下的集群状态，我们自己更了解。操作流程如下：
 
-1. If possible, stop indexing new data.  This is not always possible, but will
-help speed up recovery time.
+1. 可能的话，停止索引新的数据。虽然不是每次都能真的做到，但是这一步可以帮助提高恢复速度。
 
-2. Disable shard allocation.  This prevents Elasticsearch from rebalancing
-missing shards until you tell it otherwise.  If you know the maintenance window will be
-short, this is a good idea.  You can disable allocation as follows:
+2. 禁止分片分配。这一步阻止 Elasticsearch 再平衡缺失的分片，直到你告诉它可以进行了。如果你知道维护窗口会很短，这个主意棒极了。你可以像下面这样禁止分配：
 +
 [source,js]
 ----
@@ -37,10 +23,10 @@ PUT /_cluster/settings
 }
 ----
 
-3. Shut down a single node.
-4. Perform a maintenance/upgrade.
-5. Restart the node, and confirm that it joins the cluster.
-6. Reenable shard allocation as follows:
+3. 关闭单个节点。
+4. 执行维护/升级。
+5. 重启节点，然后确认它加入到集群了。
+6. 用如下命令重启分片分配：
 +
 [source,js]
 ----
@@ -52,12 +38,10 @@ PUT /_cluster/settings
 }
 ----
 +
-Shard rebalancing may take some time.  Wait until the cluster has returned
+分片再平衡会花一些时间。一直等到集群变成 `绿色` 状态后再继续。
 to status `green` before continuing.
 
-7. Repeat steps 2 through 6 for the rest of your nodes.
+7. 重复第 2 到 6 步操作剩余节点。
 
-8. At this point you are safe to resume indexing (if you had previously stopped),
-but waiting until the cluster is fully balanced before resuming indexing will help
-to speed up the process.
+8. 到这步你可以安全的恢复索引了（如果你之前停止了的话），不过等待集群完全均衡后再恢复索引，也会有助于提高处理速度。
 
