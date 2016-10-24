@@ -1,78 +1,48 @@
-=== Queries and Filters
+[[queries-and-filters]]
+=== 查询与过滤（Queries and Filters）
 
-The  DSL((("DSL (Domain Specific Language)", "Query and Filter DSL"))) used by
-Elasticsearch has a single set of components called queries, which can be mixed
-and matched in endless combinations.  This single set of components can be used
-in two contexts: filtering context and query context.
+Elasticsearch 使用的查询语言（DSL）((("DSL (Domain Specific Language)", "Query and Filter DSL")))拥有一套查询组件，这些组件可以以无限组合的方式进行搭配。这套组件可以在以下两种情况下使用：过滤情况（filtering context）和查询情况（query context）。
 
-When used in _filtering context_, the query is said to be a "non-scoring" or "filtering"
-query.  That is, the query simply asks the question: "Does this document match?".
-The answer is always a simple, binary yes|no.
+当使用于 _过滤情况_ 时，查询被设置成一个“不评分”或者“过滤”查询。即，这个查询只是简单的问一个问题：“这篇文档是否匹配？”。回答也是非常的简单，yes 或者 no ，二者必居其一。 
 
-* Is the `created` date in the range `2013` - `2014`?
+* `created` 时间是否在 `2013` 与 `2014` 这个区间？
 
-* Does the `status` field contain the term `published`?
+* `status` 字段是否包含 `published` 这个单词？
 
-* Is the `lat_lon` field within `10km` of a specified point?
+*  `lat_lon` 字段表示的位置是否在指定点的 `10km` 范围内？
 
-When used in a _querying context_, the query becomes a "scoring" query.  Similar to
-its non-scoring sibling, this determines if a document matches.  But it also determines
-how _well_ does the document matches.
+当使用于 _查询情况_ 时，查询就变成了一个“评分”的查询。和不评分的查询类似，也要去判断这个文档是否匹配，同时它还需要判断这个文档匹配的有 _多好_（匹配程度如何）。
+此查询的典型用法是用于查找以下文档：
 
-A typical use for a query is to find documents:
+* 查找与 `full text search` 这个词语最佳匹配的文档
 
-* Best matching the words `full text search`
+* 包含 `run` 这个词，也能匹配 `runs` 、 `running` 、 `jog` 或者 `sprint`
 
-* Containing the word `run`, but maybe also matching `runs`, `running`,
-  `jog`, or `sprint`
+* 包含  `quick` 、 `brown` 和 `fox` 这几个词 &#x2014; 词之间离的越近，文档相关性越高
 
-* Containing the words `quick`, `brown`, and `fox`&#x2014;the closer together they
-  are, the more relevant the document
+* 标有 `lucene` 、 `search` 或者 `java` 标签 &#x2014; 标签越多，相关性越高
 
-* Tagged with `lucene`,  `search`, or `java`&#x2014;the more tags, the more
-  relevant the document
-
-A scoring query calculates how _relevant_ each document((("relevance", "calculation by queries"))) is to the
-query, and assigns it a relevance `_score`, which is later used to
-sort matching documents by relevance. This concept of relevance is
-well suited to full-text search, where there is seldom a completely
-``correct'' answer.
+一个评分查询计算每一个文档与此查询的 _相关程度_，同时将这个相关程度分配给表示相关性的字段 `_score`，并且按照相关性对匹配到的文档进行排序。这种相关性的概念是非常适合全文搜索的情况，因为全文搜索几乎没有完全 ``正确'' 的答案。 
 
 [NOTE]
 ====
-Historically, queries and filters were separate components in Elasticsearch.  Starting
-in Elasticsearch 2.0, filters were technically eliminated, and all queries gained
-the ability to become non-scoring.
+自 Elasticsearch 问世以来，查询与过滤（queries and filters）就独自成为 Elasticsearch 的组件。但从 Elasticsearch 2.0 开始，过滤（filters）已经从技术上被排除了，同时所有的查询（queries）拥有变成不评分查询的能力。
 
-However, for clarity and simplicity, we will use the term "filter" to mean a query which
-is used in a non-scoring, filtering context.  You can think of the terms "filter",
-"filtering query" and "non-scoring query" as being identical.
+然而，为了明确和简单，我们用 "filter" 这个词表示不评分、只过滤情况下的查询。你可以把 "filter" 、 "filtering query" 和 "non-scoring query" 这几个词视为相同的。
 
-Similarly, if the term "query" is used in isolation without a qualifier, we are
-referring to a "scoring query".
+相似的，如果单独地不加任何修饰词地使用 "query" 这个词，我们指的是 "scoring query" 。
 ====
 
-==== Performance Differences
+==== 性能差异
 
-Filtering queries are simple checks for set inclusion/exclusion, which make them
-very fast to compute.  There are various optimizations that can be leveraged
-when at least one of your filtering query is "sparse" (few matching documents),
-and frequently used non-scoring queries can be cached in memory for faster access.
+过滤查询（Filtering queries）只是简单的检查包含或者排除，这就使得计算起来非常快。考虑到至少有一个过滤查询（filtering query）的结果是 “稀少的”（很少匹配的文档），并且经常使用不评分查询（non-scoring queries），结果会被缓存到内存中以便快速读取，所以有各种各样的手段来优化查询结果。
 
-In contrast, scoring queries have to not only find((("queries", "performance, filters versus")))
-matching documents, but also calculate how relevant each document is, which typically makes
-them heavier than their non-scoring counterparts.  Also, query results are not cacheable.
+相反，评分查询（scoring queries）不仅仅要找出((("queries", "performance, filters versus")))匹配的文档，还要计算每个匹配文档的相关性，计算相关性使得它们比不评分查询费力的多。同时，查询结果并不缓存。
 
-Thanks to the inverted index, a simple scoring query that matches just a few documents
-may perform as well or better than a filter that spans millions
-of documents.  In general, however, a filter will outperform a
-scoring query.  And it will do so consistently.
+多亏倒排索引（inverted index），一个简单的评分查询在匹配少量文档时可能与一个涵盖百万文档的filter表现的一样好，甚至会更好。但是在一般情况下，一个filter 会比一个评分的query性能更优异，并且每次都表现的很稳定。
 
-The goal of filtering is to _reduce the number of documents that have to
-be examined by the scoring queries_.
+过滤（filtering）的目标是减少那些需要通过评分查询（scoring queries）进行检查的文档。
 
-==== When to Use Which
+==== 如何选择查询与过滤
 
-As a general rule, use((("filters", "when to use")))((("queries", "when to use")))
-query clauses for _full-text_ search or for any condition that should affect the
-_relevance score_, and use filters for everything else.
+通常的规则是，使用((("filters", "when to use")))((("queries", "when to use")))查询（query）语句来进行 _全文_ 搜索或者其它任何需要影响 _相关性得分_ 的搜索。除此以外的情况都使用过滤（filters)。
