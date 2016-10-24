@@ -1,8 +1,7 @@
-=== Validating Queries
+[[validating-queries]]
+=== 验证查询
 
-Queries can become quite complex and, especially((("validate query API")))((("queries", "validating"))) when combined with
-different analyzers and field mappings, can become a bit difficult to follow.
-The `validate-query` API can be used to check whether a query is valid.
+查询可以变得非常的复杂，尤其((("validate query API")))((("queries", "validating")))和不同的分析器与不同的字段映射结合时，理解起来就有点困难了。不过 `validate-query` API 可以用来验证查询是否合法。
 
 [source,js]
 --------------------------------------------------
@@ -18,8 +17,7 @@ GET /gb/tweet/_validate/query
 // SENSE: 054_Query_DSL/80_Validate_query.json
 
 
-The response to the preceding `validate` request tells us that the query is
-invalid:
+以上 `validate` 请求的应答告诉我们这个查询是不合法的： 
 
 [source,js]
 --------------------------------------------------
@@ -33,11 +31,10 @@ invalid:
 }
 --------------------------------------------------
 
+[[understanding-errors]]
+==== 理解错误信息
 
-==== Understanding Errors
-
-To find out ((("validate query API", "understanding errors")))why it is invalid, add the `explain` parameter((("explain parameter"))) to the query
-string:
+为了找出 ((("validate query API", "understanding errors"))) 查询不合法的原因，可以将 `explain` 参数((("explain parameter"))) 加到查询字符串中：
 
 [source,js]
 --------------------------------------------------
@@ -51,11 +48,9 @@ GET /gb/tweet/_validate/query?explain <1>
 }
 --------------------------------------------------
 // SENSE: 054_Query_DSL/80_Validate_query.json
-<1> The `explain` flag provides more information about why a query is
-    invalid.
+<1>  `explain` 参数可以提供更多关于查询不合法的信息。
 
-Apparently, we've mixed up the type of query (`match`) with the name
-of the field (`tweet`):
+很明显，我们将查询类型(`match`)与字段名称 (`tweet`)搞混了：
 
 [source,js]
 --------------------------------------------------
@@ -71,12 +66,10 @@ of the field (`tweet`):
 }
 --------------------------------------------------
 
+[[understanding-queries]]
+==== 理解查询语句
 
-==== Understanding Queries
-
-Using the `explain` parameter has the added advantage of returning
-a human-readable description of the (valid) query, which can be useful for
-understanding exactly how your query has been interpreted by Elasticsearch:
+对于合法查询，使用 `explain` 参数将返回可读的描述，这对准确理解 Elasticsearch 是如何解析你的 query 是非常有用的：
 
 [source,js]
 --------------------------------------------------
@@ -91,8 +84,7 @@ GET /_validate/query?explain
 --------------------------------------------------
 // SENSE: 054_Query_DSL/80_Understanding_queries.json
 
-An `explanation` is returned for each index ((("indices", "explanation for each index queried")))that we query, because each
-index can have different mappings and analyzers:
+我们查询的每一个 index ((("indices", "explanation for each index queried")))都会返回对应的 `explanation` ，因为每一个 index 都有自己的映射和分析器：
 
 [source,js]
 --------------------------------------------------
@@ -112,11 +104,6 @@ index can have different mappings and analyzers:
 --------------------------------------------------
 
 
-From the `explanation`, you can see how the `match` query for the query string
-`really powerful` has been rewritten as two single-term queries against
-the `tweet` field, one for each term.
+从 `explanation` 中可以看出，匹配 `really powerful` 的 `match` 查询被重写为两个针对 `tweet` 字段的 single-term 查询，一个single-term查询对应查询字符串分出来的一个term。
 
-Also, for the `us` index, the two terms are `really` and `powerful`, while
-for the `gb` index, the terms are `realli` and `power`. The reason
-for this is that we changed the `tweet` field in the `gb` index to use the
-`english` analyzer.
+当然，对于索引 `us` ，这两个 term 分别是 `really` 和 `powerful` ，而对于索引 `gb` ，term 则分别是 `realli` 和 `power` 。之所以出现这个情况，是由于我们将索引 `gb` 中 `tweet` 字段的分析器修改为 `english` 分析器。
