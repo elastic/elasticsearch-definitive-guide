@@ -1,48 +1,32 @@
 ifndef::es_build[= placeholder3]
 
 [[aggregations]]
-= Aggregations
+= 聚合
 
 [partintro]
 --
-Until this point, this book has been dedicated to search.((("searching", "search versus aggregations")))((("aggregations")))  With search,
-we have a query and we want to find a subset of documents that
-match the query.  We are looking for the proverbial needle(s) in the
-haystack.
+在这之前，本书致力于搜索。((("searching", "search versus aggregations")))((("aggregations")))  通过搜索，如果我们有一个查询并且希望找到匹配这个查询的文档集，就好比在大海捞针。
 
-With aggregations, we zoom out to get an overview of our data.  Instead of
-looking for individual documents, we want to analyze and summarize our complete
-set of data:
+通过聚合，我们会得到一个数据的概览。我们需要的是分析和总结全套的数据而不是寻找单个文档：
 
 // Popular manufacturers? Unusual clumps of needles in the haystack?
-- How many needles are in the haystack?
-- What is the average length of the needles?
-- What is the median length of the needles, broken down by manufacturer?
-- How many needles were added to the haystack each month?
+- 在大海里有多少针？
+- 针的平均长度是多少？
+- 按照针的制造商来划分，针的长度中位值是多少？
+- 每月加入到海中的针有多少？
 
-Aggregations can answer more subtle questions too:
+聚合也可以回答更加细微的问题：
 
-- What are your most popular needle manufacturers?
-- Are there any unusual or anomalous clumps of needles?
+- 你最受欢迎的针的制造商是什么？
+- 这里面有异常的针么？
 
-Aggregations allow us to ask sophisticated questions of our data.  And yet, while
-the functionality is completely different from search, it leverages the
-same data-structures.  This means aggregations execute quickly and are
-_near real-time_, just like search.
+聚合允许我们向数据提出一些复杂的问题。虽然功能完全不同于搜索，但它使用相同的数据结构。这意味着聚合的执行速度很快并且就像搜索一样几乎是实时的。
 
-This is extremely powerful for reporting and dashboards.  Instead of performing
-_rollups_ of your data (_that crusty Hadoop job that takes a week to run_),
-you can visualize your data in real time, allowing you to respond immediately.
-Your report changes as your data changes, rather than being pre-calculated, out of
-date and irrelevant.
+这对报告和仪表盘是非常强大的。你可以实时显示你的数据，让你立即回应，而不是对你的数据进行汇总（ _需要一周时间去运行的 Hadoop 任务_ ），您的报告随着你的数据变化而变化，而不是预先计算的、过时的和不相关的。
 
-Finally, aggregations operate alongside search requests.((("aggregations", "operating alongside search requests"))) This means you can
-both search/filter documents _and_ perform analytics at the same time, on the
-same data, in a single request.  And because aggregations are calculated in the
-context of a user's search, you're not just displaying a count of four-star hotels--you're displaying a count of four-star hotels that _match their search criteria_.
+最后，聚合和搜索是一起的。((("aggregations", "operating alongside search requests"))) 这意味着你可以在单个请求里同时对相同的数据进行搜索/过滤和分析。并且由于聚合是在用户搜索的上下文里计算的，你不只是显示四星酒店的数量，而是显示匹配查询条件的四星酒店的数量。
 
-Aggregations are so powerful that many companies have built large Elasticsearch
-clusters solely for analytics.
+聚合是如此强大以至于许多公司已经专门为数据分析建立了大型 Elasticsearch 集群。
 --
 
 include::301_Aggregation_Overview.asciidoc[]
