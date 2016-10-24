@@ -1,41 +1,25 @@
 [[combining-queries-together]]
-=== Combining queries together
+=== 组合多查询
 
-Real world search requests are never simple; they search multiple fields with
-various input text, and filter based on an array of criteria.  To build
-sophisticated search, you will need a way to combine multiple queries together
-into a single search request.
+现实的查询需求从来都没有那么简单；它们需要在多个字段上查询多种多样的文本，并且根据一系列的标准来过滤。为了构建类似的高级查询，你需要一种能够将多查询组合成单一查询的查询方法。
 
-To do that, you can use the `bool` query.  This query combines multiple queries
-together in user-defined boolean combinations. This query accepts the following parameters:
+你可以用 `bool` 查询来实现你的需求。这种查询将多查询组合在一起，成为用户自己想要的布尔查询。它接收以下参数：
 
 `must`::
-   Clauses that _must_ match for the document to be included.
+   文档 _必须_ 匹配这些条件才能被包含进来。
 
 `must_not`::
-   Clauses that _must not_ match for the document to be included.
+   文档 _必须不_ 匹配这些条件才能被包含进来。
 
 `should`::
-   If these clauses match, they increase the `_score`;
-                otherwise, they have no effect. They are simply used to refine
-                the relevance score for each document.
+   如果满足这些语句中的任意语句，将增加 `_score` ，否则，无任何影响。它们主要用于修正每个文档的相关性得分。
 
 `filter`::
-   Clauses that _must_ match, but are run in non-scoring, filtering mode.  These
-   clauses do not contribute to the score, instead they simply include/exclude
-   documents based on their criteria.
+   _必须_ 匹配，但它以不评分、过滤模式来进行。这些语句对评分没有贡献，只是根据过滤标准来排除或包含文档。
 
-Because this is the first query we've seen that contains other queries, we need
-to talk about how scores are combined.  Each sub-query clause will individually
-calculate a relevance score for the document.  Once these scores are calculated,
-the `bool` query will merge the scores together and return a single score representing
-the total score of the boolean operation.
+由于这是我们看到的第一个包含多个查询的查询，所以有必要讨论一下相关性得分是如何组合的。每一个子查询都独自地计算文档的相关性得分。一旦他们的得分被计算出来， `bool` 查询就将这些得分进行合并并且返回一个代表整个布尔操作的得分。
 
-The following query finds documents whose `title` field matches
-the query string `how to make millions` and that are not marked
-as `spam`.  If any documents are `starred` or are from 2014 onward,
-they will rank higher than they would have otherwise. Documents that
-match _both_ conditions will rank even higher:
+下面的查询用于查找 `title` 字段匹配 `how to make millions` 并且不被标识为 `spam` 的文档。那些被标识为 `starred` 或在2014之后的文档，将比另外那些文档拥有更高的排名。如果 _两者_ 都满足，那么它排名将更高：
 
 [source,js]
 --------------------------------------------------
@@ -52,14 +36,12 @@ match _both_ conditions will rank even higher:
 --------------------------------------------------
 // SENSE: 054_Query_DSL/70_Bool_query.json
 
-TIP: If there are no `must` clauses, at least one `should` clause has to
-match. However, if there is at least one `must` clause, no `should` clauses
-are required to match.
+TIP: 如果没有 `must` 语句，那么至少需要能够匹配其中的一条 `should` 语句。但，如果存在至少一条 `must` 语句，则对 `should` 语句的匹配没有要求。
 
-==== Adding a filtering query
+[[adding-a-filtering-query]]
+==== 增加带过滤器（filtering）的查询
 
-If we don't want the date of the document to affect scoring at all, we can re-arrange
-the previous example to use a `filter` clause:
+如果我们不想因为文档的时间而影响得分，可以用 `filter` 语句来重写前面的例子：
 
 [source,js]
 --------------------------------------------------
@@ -78,20 +60,13 @@ the previous example to use a `filter` clause:
 --------------------------------------------------
 // SENSE: 054_Query_DSL/70_Bool_query.json
 
-<1> The range query was moved out of the `should` clause and into a `filter` clause
+<1> range 查询已经从 `should` 语句中移到 `filter` 语句
 
-By moving the range query into the `filter` clause, we have converted it into a
-non-scoring query.  It will no longer contribute a score to the document's relevance
-ranking.  And because it is now a non-scoring query, it can use the variety of optimizations
-available to filters which should increase performance.
+通过将 range 查询移到 `filter` 语句中，我们将它转成不评分的查询，将不再影响文档的相关性排名。由于它现在是一个不评分的查询，可以使用各种对 filter 查询有效的优化手段来提升性能。
 
-Any query can be used in this manner.  Simply move a query into the
-`filter` clause of a `bool` query and it automatically converts to a non-scoring
-filter.
+所有查询都可以借鉴这种方式。将查询移到 `bool` 查询的 `filter` 语句中，这样它就自动的转成一个不评分的 filter 了。
 
-If you need to filter on many different criteria, the `bool` query itself can be
-used as a non-scoring query.  Simply place it inside the `filter` clause and
-continue building your boolean logic:
+如果你需要通过多个不同的标准来过滤你的文档，`bool` 查询本身也可以被用做不评分的查询。简单地将它放置到  `filter` 语句中并在内部构建布尔逻辑：
 
 [source,js]
 --------------------------------------------------
@@ -118,22 +93,16 @@ continue building your boolean logic:
 --------------------------------------------------
 // SENSE: 054_Query_DSL/70_Bool_query.json
 
-<1> By embedding a `bool` query in the `filter` clause, we can add boolean logic
-to our filtering criteria
+<1> 将 `bool` 查询包裹在 `filter` 语句中，我们可以在过滤标准中增加布尔逻辑
 
-By mixing and matching where Boolean queries are placed, we can flexibly encode
-both scoring and filtering logic in our search request.
+通过混合布尔查询，我们可以在我们的查询请求中灵活地编写 scoring 和 filtering 查询逻辑。
 
+[[constant_score-query]]
+==== constant_score 查询
 
-==== constant_score Query
+尽管没有 `bool` 查询使用这么频繁，`constant_score` 查询也是你工具箱里有用的查询工具。它将一个不变的常量评分应用于所有匹配的文档。它被经常用于你只需要执行一个 filter 而没有其它查询（例如，评分查询）的情况下。
 
-Although not used nearly as often as the `bool` query, the `constant_score` query is
-still useful to have in your toolbox.  The query applies a static, constant score to
-all matching documents.  It is predominantly used when you want to execute a filter
-and nothing else (e.g. no scoring queries).
-
-You can use this instead of a `bool` that only has filter clauses.  Performance
-will be identical, but it may aid in query simplicity/clarity.
+可以使用它来取代只有 filter 语句的 `bool` 查询。在性能上是完全相同的，但对于提高查询简洁性和清晰度有很大帮助。
 
 [source,js]
 --------------------------------------------------
@@ -147,6 +116,4 @@ will be identical, but it may aid in query simplicity/clarity.
 --------------------------------------------------
 // SENSE: 054_Query_DSL/70_bool_query.json
 
-<1> A `term` query is placed inside the `constant_score`, converting it to a
-non-scoring filter.  This method can be used in place of a `bool` query which only
-has a single filter
+<1>  `term` 查询被放置在 `constant_score` 中，转成不评分的 filter。这种方式可以用来取代只有 filter 语句的 `bool` 查询。
