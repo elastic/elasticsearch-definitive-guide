@@ -1,33 +1,22 @@
 [[backing-up-your-cluster]]
-=== Backing Up Your Cluster
+=== 备份你的集群
 
-As with any software that stores data, it is important to routinely back up your
-data. ((("clusters", "backing up")))((("post-deployment", "backing up your cluster")))((("backing up your cluster"))) Elasticsearch replicas provide high availability during runtime; they allow
-you to tolerate sporadic node loss without an interruption of service.
+使用无论哪个存储数据的软件，定期备份你的数据都是很重要的。((("clusters", "backing up")))((("post-deployment", "backing up your cluster")))((("backing up your cluster")))Elasticsearch 副本提供了高可靠性；它们让你可以容忍零星的节点丢失而不会中断服务。
 
-Replicas do not provide protection from catastrophic failure, however.  For that,
-you need a real backup of your cluster--a complete copy in case something goes
-wrong.
+但是，副本并不提供对灾难性故障的保护。对这种情况，你需要的是对集群真正的备份——在某些东西确实出问题的时候有一个完整的拷贝。
 
-To back up your cluster, you can use the `snapshot` API.((("snapshot-restore API")))  This will take the current
-state and data in your cluster and save it to a shared repository.  This
-backup process is "smart."  Your first snapshot will be a complete copy of data,
-but all subsequent snapshots will save the _delta_ between the existing
-snapshots and the new data.  Data is incrementally added and deleted as you snapshot
-data over time.  This means subsequent backups will be substantially
-faster since they are transmitting far less data.
+要备份你的集群，你可以使用 `snapshot` API。((("snapshot-restore API")))这个会拿到你集群里当前的状态和数据然后保存到一个共享仓库里。这个备份过程是"智能"的。你的第一个快照会是一个数据的完整拷贝，但是所有后续的快照会保留的是已存快照和新数据之间的差异。随着你不时的对数据进行快照，备份也在增量的添加和删除。这意味着后续备份会相当快速，因为它们只传输很小的数据量。
 
-To use this functionality, you must first create a repository to save data.
-There are several repository types that you may choose from:
+要使用这个功能，你必须首先创建一个保存数据的仓库。有多个仓库类型可以供你选择：
 
-- Shared filesystem, such as a NAS
+- 共享文件系统，比如 NAS
 - Amazon S3
-- HDFS (Hadoop Distributed File System)
+- HDFS (Hadoop 分布式文件系统)
 - Azure Cloud
 
-==== Creating the Repository
+==== 创建仓库
 
-Let's set up a shared ((("backing up your cluster", "creating the repository")))((("filesystem repository")))filesystem repository:
+让我部署一个共享((("backing up your cluster", "creating the repository")))((("filesystem repository")))文件系统仓库：
 
 [source,js]
 ----
@@ -39,28 +28,21 @@ PUT _snapshot/my_backup <1>
     }
 }
 ----
-<1> We provide a name for our repository, in this case it is called `my_backup`.
-<2> We specify that the type of the repository should be a shared filesystem.
-<3> And finally, we provide a mounted drive as the destination.
+<1> 给我们的仓库取一个名字，在本例它叫 `my_backup` 。
+<2> 我们指定仓库的类型应该是一个共享文件系统。
+<3> 最后，我们提供一个已挂载的设备作为目的地址。
 
-NOTE: The shared filesystem path must be accessible from all nodes in your
-cluster!
+注意：共享文件系统路径必须确保集群所有节点都可以访问到。
 
-This will create the repository and required metadata at the mount point.  There
-are also some other options that you may want to configure, depending on the
-performance profile of your nodes, network, and repository location:
+这步会在挂载点创建仓库和所需的元数据。还有一些其他的配置你可能想要配置的，这些取决于你的节点、网络的性能状况和仓库位置：
 
 `max_snapshot_bytes_per_sec`::
-    When snapshotting data into the repo, this controls
-the throttling of that process.  The default is `20mb` per second.
+    当快照数据进入仓库时，这个参数控制这个过程的限流情况。默认是每秒 `20mb` 。
 
 `max_restore_bytes_per_sec`::
-When restoring data from the repo, this controls
-how much the restore is throttled so that your network is not saturated.  The
-default is `20mb` per second.
+    当从仓库恢复数据时，这个参数控制什么时候恢复过程会被限流以保障你的网络不会被占满。默认是每秒 `20mb`。
 
-Let's assume we have a very fast network and are OK with extra traffic, so we
-can increase the defaults:
+假设我们有一个非常快的网络，而且对额外的流量也很 OK，那我们可以增加这些默认值：
 
 [source,js]
 ----
@@ -74,52 +56,41 @@ POST _snapshot/my_backup/ <1>
     }
 }
 ----
-<1> Note that we are using a `POST` instead of `PUT`.  This will update the settings
-of the existing repository.
-<2> Then add our new settings.
+<1> 注意我们用的是 `POST` 而不是 `PUT` 。这会更新已有仓库的设置。
+<2> 然后添加我们的新设置。
 
-==== Snapshotting All Open Indices
+==== 快照所有打开的索引
 
-A repository can contain multiple snapshots.((("indices", "open, snapshots on")))((("backing up your cluster", "snapshots on all open indexes")))  Each snapshot is associated with a
-certain set of indices (for example, all indices, some subset, or a single index).  When
-creating a snapshot, you specify which indices you are interested in and
-give the snapshot a unique name.
+一个仓库可以包含多个快照。((("indices", "open, snapshots on")))((("backing up your cluster", "snapshots on all open indexes")))每个快照跟一系列索引相关（比如所有索引，一部分索引，或者单个索引）。当创建快照的时候，你指定你感兴趣的索引然后给快照取一个唯一的名字。
 
-Let's start with the most basic snapshot command:
+让我们从最基础的快照命令开始：
 
 [source,js]
 ----
 PUT _snapshot/my_backup/snapshot_1
 ----
 
-This will back up all open indices into a snapshot named `snapshot_1`, under the
-`my_backup` repository.  This call will return immediately, and the snapshot will
-proceed in the background.
+这个会备份所有打开的索引到 `my_backup` 仓库下一个命名为 `snapshot_1` 的快照里。这个调用会立刻返回，然后快照会在后台运行。
 
 [TIP]
 ==================================================
 
-Usually you'll want your snapshots to proceed as a background process, but occasionally
-you may want to wait for completion in your script.  This can be accomplished by
-adding a `wait_for_completion` flag:
+通常你会希望你的快照作为后台进程运行，不过有时候你会希望在你的脚本中一直等待到完成。这可以通过添加一个 `wait_for_completion` 标记实现：
 
 [source,js]
 ----
 PUT _snapshot/my_backup/snapshot_1?wait_for_completion=true
 ----
 
-This will block the call until the snapshot has completed.  Note that large snapshots
-may take a long time to return!
+这个会阻塞调用直到快照完成。注意大型快照会花很长时间才返回。
 
 ==================================================
 
-==== Snapshotting Particular Indices
+==== 快照指定索引
 
-The default behavior is to back up all open indices.((("indices", "snapshotting particular")))((("backing up your cluster", "snapshotting particular indices")))  But say you are using Marvel,
-and don't really want to back up all the diagnostic `.marvel` indices.  You
-just don't have enough space to back up everything.
+默认行为是备份所有打开的索引。((("indices", "snapshotting particular")))((("backing up your cluster", "snapshotting particular indices")))不过如果你在用 Marvel，你不是真的想要把所有诊断相关的 `.marvel` 索引也备份起来。可能你就压根没那么大空间备份所有数据。
 
-In that case, you can specify which indices to back up when snapshotting your cluster:
+这种情况下，你可以在快照你的集群的时候指定备份哪些索引：
 
 [source,js]
 ----
@@ -129,24 +100,20 @@ PUT _snapshot/my_backup/snapshot_2
 }
 ----
 
-This snapshot command will now back up only `index1` and `index2`.
+这个快照命令现在只会备份 `index1` 和 `index2` 了。
 
-==== Listing Information About Snapshots
+==== 列出快照相关的信息
 
-Once you start accumulating snapshots in your repository, you may forget the details((("backing up your cluster", "listing information about snapshots")))
-relating to each--particularly when the snapshots are named based on time
-demarcations (for example, `backup_2014_10_28`).
+一旦你开始在你的仓库里积攒起快照了，你可能就慢慢忘记里面各自的细节了((("backing up your cluster", "listing information about snapshots")))——特别是快照按照时间划分命名的时候（比如， `backup_2014_10_28` ）。
 
-To obtain information about a single snapshot, simply issue a `GET` reguest against
-the repo and snapshot name:
+要获得单个快照的信息，直接对仓库和快照名发起一个 `GET` 请求：
 
 [source,js]
 ----
 GET _snapshot/my_backup/snapshot_2
 ----
 
-This will return a small response with various pieces of information regarding
-the snapshot:
+这个会返回一个小响应，包括快照相关的各种信息：
 
 [source,js]
 ----
@@ -176,63 +143,48 @@ the snapshot:
 }
 ----
 
-For a complete listing of all snapshots in a repository, use the `_all` placeholder
-instead of a snapshot name:
+要获取一个仓库中所有快照的完整列表，使用 `_all` 占位符替换掉具体的快照名称：
 
 [source,js]
 ----
 GET _snapshot/my_backup/_all
 ----
 
-==== Deleting Snapshots
+==== 删除快照
 
-Finally, we need a command to delete old snapshots that ((("backing up your cluster", "deleting old snapshots")))are no longer useful.
-This is simply a `DELETE` HTTP call to the repo/snapshot name:
+最后，我们需要一个命令来删除所有不再有用的旧快照((("backing up your cluster", "deleting old snapshots")))。这只要对仓库/快照名称发一个简单的 `DELETE` HTTP 调用：
 
 [source,js]
 ----
 DELETE _snapshot/my_backup/snapshot_2
 ----
 
-It is important to use the API to delete snapshots, and not some other mechanism
-(such as deleting by hand, or using automated cleanup tools on S3).  Because snapshots are
-incremental, it is possible that many snapshots are relying on old segments.
-The `delete` API understands what data is still in use by more recent snapshots,
-and will delete only unused segments.
+用 API 删除快照很重要，而不能用其他机制（比如手动删除，或者用 S3 上的自动清除工具）。因为快照是增量的，有可能很多快照依赖于过去的段。`delete` API 知道哪些数据还在被更多近期快照使用，然后会只删除不再被使用的段。
 
-If you do a manual file delete, however, you are at risk of seriously corrupting
-your backups because you are deleting data that is still in use.
+但是，如果你做了一次人工文件删除，你将会面临备份严重损坏的风险，因为你在删除的是可能还在使用中的数据。
 
 
-==== Monitoring Snapshot Progress
+==== 监控快照进度
 
-The `wait_for_completion` flag provides a rudimentary form of monitoring, but
-really isn't sufficient when snapshotting or restoring even moderately sized clusters.
+`wait_for_completion` 标记提供了一个监控的基础形式，但哪怕只是对一个中等规模的集群做快照恢复的时候，它都真的不够用。
 
-Two other APIs will give you more-detailed status about the
-state of the snapshotting.  First you can execute a `GET` to the snapshot ID,
-just as we did earlier get information about a particular snapshot:
+另外两个 API 会给你有关快照状态更详细的信息。首先你可以给快照 ID 执行一个 `GET`，就像我们之前获取一个特定快照的信息时做的那样：
 
 [source,js]
 ----
 GET _snapshot/my_backup/snapshot_3
 ----
 
-If the snapshot is still in progress when you call this, you'll see information
-about when it was started, how long it has been running, and so forth.  Note, however,
-that this API uses the same threadpool as the snapshot mechanism.  If you are
-snapshotting very large shards, the time between status updates can be quite large,
-since the API is competing for the same threadpool resources.
+如果你调用这个命令的时候快照还在进行中，你会看到它什么时候开始，运行了多久等等信息。不过要注意，这个 API 用的是快照机制相同的线程池。如果你在快照非常大的分片，状态更新的间隔会很大，因为 API 在竞争相同的线程池资源。
 
-A better option is to poll the `_status` API:
+更好的方案是拽取 `_status` API 数据：
 
 [source,js]
 ----
 GET _snapshot/my_backup/snapshot_3/_status
 ----
 
-The `_status` API returns immediately and gives a much more verbose output of
-statistics:
+`_status` API 立刻返回，然后给出详细的多的统计值输出：
 
 [source,js]
 ----
@@ -290,45 +242,38 @@ statistics:
                   },
                   ...
 ----
-<1> A snapshot that is currently running will show `IN_PROGRESS` as its status.
-<2> This particular snapshot has one shard still transferring (the other four have already completed).
+<1> 一个正在运行的快照会显示 `IN_PROGRESS` 作为状态。
+<2> 这个特定快照有一个分片还在传输（另外四个已经完成）。
 
-The response includes the overall status of the snapshot, but also drills down into
-per-index and per-shard statistics.  This gives you an incredibly detailed view
-of how the snapshot is progressing.  Shards can be in various states of completion:
+响应包括快照的总体状况，但也包括下钻到每个索引和每个分片的统计值。这个给你展示了有关快照进展的非常详细的视图。分片可以在不同的完成状态：
 
 `INITIALIZING`::
-    The shard is checking with the cluster state to see whether it can
-be snapshotted.  This is usually very fast.
+    分片在检查集群状态看看自己是否可以被快照。这个一般是非常快的。
 
 `STARTED`::
-    Data is being transferred to the repository.
+    数据正在被传输到仓库。
     
 `FINALIZING`::
-    Data transfer is complete; the shard is now sending snapshot metadata.
+    数据传输完成；分片现在在发送快照元数据。
     
 `DONE`::
-    Snapshot complete!
+    快照完成！
     
 `FAILED`::
-    An error was encountered during the snapshot process, and this shard/index/snapshot
-could not be completed.  Check your logs for more information.
+    快照处理的时候碰到了错误，这个分片/索引/快照不可能完成了。检查你的日志获取更多信息。
 
 
-==== Canceling a Snapshot
+==== 取消一个快照
 
-Finally, you may want to cancel a snapshot or restore.((("backing up your cluster", "canceling a snapshot")))  Since these are long-running
-processes, a typo or mistake when executing the operation could take a long time to
-resolve--and use up valuable resources at the same time.
+最后，你可能想取消一个快照或恢复。((("backing up your cluster", "canceling a snapshot")))因为它们是长期运行的进程，执行操作的时候一个笔误或者过错就会花很长时间来解决——而且同时还会耗尽有价值的资源。
 
-To cancel a snapshot, simply delete the snapshot while it is in progress:
+要取消一个快照，在他进行中的时候简单的删除快照就可以：
 
 [source,js]
 ----
 DELETE _snapshot/my_backup/snapshot_3
 ----
 
-This will halt the snapshot process. Then proceed to delete the half-completed
-snapshot from the repository.
+这个会中断快照进程。然后删除仓库里进行到一半的快照。
 
 
