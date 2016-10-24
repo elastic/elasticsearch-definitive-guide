@@ -1,24 +1,10 @@
+[[conclusion]]
+=== 集群是活着的、呼吸着的生命
 
-=== Clusters Are Living, Breathing Creatures
+一旦你的集群投入生产，你会发现他就开始了他自己的一生。((("clusters", "maintaining")))((("post-deployment", "clusters, rolling restarts and upgrades")))Elasticsearch 努力工作来保证集群自给自足而且 _真就在工作_ 。不过一个集群也还要有日常照料和投喂，比如日常备份和升级。
 
-Once you get a cluster into production, you'll find that it takes on a life of its
-own.  ((("clusters", "maintaining")))((("post-deployment", "clusters, rolling restarts and upgrades")))Elasticsearch works hard to make clusters self-sufficient and _just work_.
-But a cluster still requires routine care and feeding, such as routine backups 
-and upgrades.
+Elasticsearch 以非常快的速度发布新版本，进行错误修复和性能增强。保持你的集群采用最新版总是一个好主意。类似的，Lucene 持续在发现 JVM 自身的新的和令人惊讶的错误，这意味着你需要尽量保持你的 JVM 是最新的。
 
-Elasticsearch releases new versions with bug fixes and performance enhancements at 
-a very fast pace, and it is always a good idea to keep your cluster current.
-Similarly, Lucene continues to find new and exciting bugs in the JVM itself, which
-means you should always try to keep your JVM up-to-date.
+这意味着最好是拥有一个标准化的、日常的方案来操作你集群的滚动重启和升级。升级应该是一个日常程序，而不是一个需要好多个小时的精细规划下的年度『惨剧』。
 
-This means it is a good idea to have a standardized, routine way to perform rolling
-restarts and upgrades in your cluster.  Upgrading should be a routine process, 
-rather than a once-yearly fiasco that requires countless hours of precise planning.
-
-Similarly, it is important to have disaster recovery plans in place.  Take frequent
-snapshots of your cluster--and periodically _test_ those snapshots by performing
-a real recovery!  It is all too common for organizations to make routine backups but
-never test their recovery strategy.  Often you'll find a glaring deficiency
-the first time you perform a real recovery (such as users being unaware of which
-drive to mount).  It's better to work these bugs out of your process with 
-routine testing, rather than at 3 a.m. when there is a crisis.
+类似的，拥有一个灾备计划是很重要的。请对你的集群做频繁的快照——而且通过执行真实恢复的方式定期 _测试_ 这些快照！有些组织做日常备份却从不测试他们的恢复机制，这简直太常见了。通常你会在第一次演练真实恢复的时候发现明显的缺陷（比如用户不知道应该挂载哪个磁盘）。比起在凌晨 3 点真的发生危机的时候，在日常测试中暴露出这些问题总是更好的。
