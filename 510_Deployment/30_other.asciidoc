@@ -1,78 +1,46 @@
+[[_java_virtual_machine]]
+=== Java 虚拟机
 
-=== Java Virtual Machine
+你应该始终运行最新版本的 Java 虚拟机（ JVM ），
+除非 Elasticsearch 网站上另有说明。((("deployment", "Java Virtual Machine (JVM)")))((("JVM (Java Virtual Machine)")))((("Java Virtual Machine", see="JVM")))  Elasticsearch，
+特别是 Lucene，是一个高要求的软件。Lucene 的单元测试和集成测试经常暴露出 JVM 本身的 bug。这些 bug 的范围从轻微的麻烦到严重段错误，所以，最好尽可能的使用最新版本的 JVM。
 
-You should always run the most recent version of the Java Virtual Machine (JVM),
-unless otherwise stated on the Elasticsearch website.((("deployment", "Java Virtual Machine (JVM)")))((("JVM (Java Virtual Machine)")))((("Java Virtual Machine", see="JVM")))  Elasticsearch, and in
-particular Lucene, is a demanding piece of software.  The unit and integration
-tests from Lucene often expose bugs in the JVM itself.  These bugs range from
-mild annoyances to serious segfaults, so it is best to use the latest version
-of the JVM where possible.
+Java 8 强烈优先选择于 Java 7。不再支持 Java 6。Oracle 或者 OpenJDK 是可以接受的，它们在性能和稳定性也差不多。
 
-Java 8 is preferred over Java 7.  Java 6 is no longer supported.  Either Oracle or OpenJDK are acceptable. They are comparable in performance and stability.
+如果你的应用程序是用 Java 编写并正在使用传输客户端（注：Transport Client，下同）或节点客户端（注：Node Client，下同），请确保运行你应用程序的 JVM 和服务器的 JVM 是完全一样的。
+在 Elasticsearch 的几个地方，使用 Java 的本地序列化（ IP 地址、异常等等）。不幸的是，Oracle 的 JVM 在几个小版本之间有修改序列化格式，从而导致奇怪的错误。
+这种情况很少见，但最佳实践是客户端和服务器使用相同版本 JVM。
 
-If your application is written in Java and you are using the transport client
-or node client, make sure the JVM running your application is identical to the
-server JVM.  In few locations in Elasticsearch, Java's native serialization
-is used (IP addresses, exceptions, and so forth).  Unfortunately, Oracle has been known to
-change the serialization format between minor releases, leading to strange errors.
-This happens rarely, but it is best practice to keep the JVM versions identical
-between client and server.
-
-.Please Do Not Tweak JVM Settings
+.请不要调整 JVM 设置
 ****
-The JVM exposes dozens (hundreds even!) of settings, parameters, and configurations.((("JVM (Java Virtual Machine)", "avoiding custom configuration")))
-They allow you to tweak and tune almost every aspect of the JVM.
-
-When a knob is encountered, it is human nature to want to turn it.  We implore
-you to squash this desire and _not_ use custom JVM settings.  Elasticsearch is
-a complex piece of software, and the current JVM settings have been tuned
-over years of real-world usage.
-
-It is easy to start turning knobs, producing opaque effects that are hard to measure,
-and eventually detune your cluster into a slow, unstable mess.  When debugging
-clusters, the first step is often to remove all custom configurations.  About
-half the time, this alone restores stability and performance.
+JVM 暴露出几十个（甚至数百）的设置、参数和配置。((("JVM (Java Virtual Machine)", "avoiding custom configuration"))) 它们允许你进行微调 JVM 几乎是每一个方面。
+当遇到一个旋钮，要打开它是人的本性。我们恳求你压制这个本性，而 _不要_ 去调整 JVM 参数。Elasticsearch 是复杂的软件，并且我们根据多年的实际使用情况调整了当前 JVM 设置。
+它很容易开始转动旋钮，并产生难以衡量的、未知的影响，并最终使集群进入一个缓慢的、不稳定的混乱的效果。当调试集群时，第一步往往是去除所有的自定义配置。多数情况下，仅此就可以恢复稳定和性能。
 ****
 
-=== Transport Client Versus Node Client
+[[_transport_client_versus_node_client]]
+=== Transport Client 与 Node Client
 
-If you are using Java, you may wonder when to use the transport client versus the
-node client.((("Java", "clients for Elasticsearch")))((("clients")))((("node client", "versus transport client")))((("transport client", "versus node client")))  As discussed at the beginning of the book, the transport client
-acts as a communication layer between the cluster and your application.  It knows
-the API and can automatically round-robin between nodes, sniff the cluster for you,
-and more. But it is _external_ to the cluster, similar to the REST clients.
+如果你使用的是 Java，你可能想知道何时使用传输客户端（注：Transport Client，下同）与节点客户端（注：Node Client，下同）。((("Java", "clients for Elasticsearch")))((("clients")))((("node client", "versus transport client")))((("transport client", "versus node client"))) 在书的开头所述，
+传输客户端作为一个集群和应用程序之间的通信层。它知道 API 并能自动帮你在节点之间轮询，帮你嗅探集群等等。但它是集群 _外部的_ ，和 REST 客户端类似。
 
-The node client, on the other hand, is actually a node within the cluster (but
-does not hold data, and cannot become master).  Because it is a node, it knows
-the entire cluster state (where all the nodes reside, which shards live in which
-nodes, and so forth). This means it can execute APIs with one less network hop.
+另一方面，节点客户端，实际上是一个集群中的节点（但不保存数据，不能成为主节点）。因为它是一个节点，它知道整个集群状态（所有节点驻留，分片分布在哪些节点，等等）。
+这意味着它可以执行 APIs 但少了一个网络跃点。
 
-There are uses-cases for both clients:
+这里有两个客户端案例的使用情况：
 
-- The transport client is ideal if you want to decouple your application from the
-cluster.  For example, if your application quickly creates and destroys
-connections to the cluster, a transport client is much "lighter" than a node client,
-since it is not part of a cluster.
+- 如果要将应用程序和 Elasticsearch 集群进行解耦，传输客户端是一个理想的选择。例如，如果您的应用程序需要快速的创建和销毁到集群的连接，传输客户端比节点客户端”轻”，因为它不是一个集群的一部分。
 +
-Similarly, if you need to create thousands of connections, you don't want to
-have thousands of node clients join the cluster.  The TC will be a better choice.
+类似地，如果您需要创建成千上万的连接，你不想有成千上万节点加入集群。传输客户端（ TC ）将是一个更好的选择。
 
-- On the flipside, if you need only a few long-lived, persistent connection
-objects to the cluster, a node client can be a bit more efficient since it knows
-the cluster layout.  But it ties your application into the cluster, so it may
-pose problems from a firewall perspective.
+- 另一方面，如果你只需要有少数的、长期持久的对象连接到集群，客户端节点可以更高效，因为它知道集群的布局。但是它会使你的应用程序和集群耦合在一起，所以从防火墙的角度，它可能会构成问题。
 
-=== Configuration Management
+[[_configuration_management]]
+=== 配置管理
 
-If you use configuration management already (Puppet, Chef, Ansible), you can skip this tip.((("deployment", "configuration management")))((("configuration management")))
+如果你已经使用配置管理（ Puppet，Chef，Ansible），则可以跳过此提示。((("deployment", "configuration management")))((("configuration management")))
 
-If you don't use configuration management tools yet, you should!  Managing
-a handful of servers by `parallel-ssh` may work now, but it will become a nightmare
-as you grow your cluster.  It is almost impossible to edit 30 configuration files
-by hand without making a mistake.
+如果你没有使用配置管理工具，那么应该注意了！通过 `parallel-ssh` 管理少量服务器现在可能正常工作，但伴随着集群的增长它将成为一场噩梦。
+在不犯错误的情况下手动编辑 30 个配置文件几乎是不可能的。
 
-Configuration management tools help make your cluster consistent by automating
-the process of config changes.  It may take a little time to set up and learn,
-but it will pay itself off handsomely over time.
-
-
+配置管理工具通过自动化更改配置的过程保持集群的一致性。这可能需要一点时间来建立和学习，但它本身，随着时间的推移会有丰厚的回报。
