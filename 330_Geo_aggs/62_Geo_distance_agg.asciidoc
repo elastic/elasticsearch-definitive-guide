@@ -1,10 +1,7 @@
 [[geo-distance-agg]]
-=== Geo Distance Aggregation
+=== 地理距离聚合
 
-The `geo_distance` agg is useful((("geo_distance aggregation")))((("aggregations", "geo_distance"))) for searches such as
-to "find all pizza restaurants within 1km of me." The search results
-should, indeed, be limited to the 1km radius specified by the user, but we can
-add ``another result found within 2km'':
+`geo_distance` 聚合 ((("geo_distance aggregation")))((("aggregations", "geo_distance")))对一些搜索非常有用，例如找到所有距离我 1km 以内的披萨店。搜索结果应该也的确被限制在用户指定 1km 范围内，但是我们可以添加在 2km 范围内找到的其他结果：
 
 [source,json]
 ----------------------------
@@ -60,15 +57,12 @@ GET /attractions/restaurant/_search
   }
 }
 ----------------------------
-<1> The main query looks for restaurants with `pizza` in the name.
-<2> The bounding box filters these results down to just those in
-    the greater New York area.
-<3> The `geo_distance` agg counts the number of results within
-    1km of the user, and between 1km and 2km from the user.
-<4> Finally, the `post_filter` reduces the search results to just
-    those restaurants within 1km of the user.
+<1> 主查询查找名称中含有 `pizza` 的饭店。
+<2> `geo_bounding_box` 筛选那些只在纽约区域的结果。
+<3> `geo_distance` 聚合统计距离用户 1km 以内，1km 到 2km 的结果的数量。
+<4> 最后，`post_filter` 将结果缩小至那些在用户 1km 范围内的饭店。
 
-The response from ((("post filter", "geo_distance aggregation")))the preceding request is as follows:
+前面的请求 ((("post filter", "geo_distance aggregation"))) 响应如下：
 
 [source,json]
 ----------------------------
@@ -110,12 +104,7 @@ The response from ((("post filter", "geo_distance aggregation")))the preceding r
   }
 }
 ----------------------------
-<1> The `post_filter` has reduced the search hits to just the single
-    pizza restaurant within 1km of the user.
-<2> The aggregation includes the search result plus the other pizza
-    restaurant within 2km of the user.
+<1> `post_filter` 已经将搜索结果缩小至仅在用户 1km 范围以内的披萨店。   
+<2> 聚合包括搜索结果加上其他在用户 2km 范围以内的披萨店。
 
-In this example, we have counted the number of restaurants that fall
-into each concentric ring.  Of course, we could nest sub-aggregations under
-the `per_rings` aggregation to calculate the average price per ring, the
-maximum popularity, and more.
+在这个例子中，我们计算了落在每个同心环内的饭店数量。当然，我们可以在 `per_rings` 聚合下面嵌套子聚合来计算每个环的平均价格、最受欢迎程度，等等。
