@@ -1,23 +1,10 @@
 [[structured-search]]
-== Structured Search
+== 结构化搜索
 
-_Structured search_ is about interrogating ((("structured search")))data that has inherent structure.
-Dates, times, and numbers are all structured: they have a precise format
-that you can perform logical operations on.  Common operations include
-comparing ranges of numbers or dates, or determining which of two values is
-larger.
+_结构化搜索（Structured search）_ 是指有关探询那些具有内在结构((("structured search")))数据的过程。比如日期、时间和数字都是结构化的：它们有精确的格式，我们可以对这些格式进行逻辑操作。比较常见的操作包括比较数字或时间的范围，或判定两个值的大小。
 
-Text can be structured too.  A box of crayons has a discrete set of colors:
-`red`, `green`, `blue`.  A blog post may be tagged with keywords
-`distributed` and `search`.  Products in an ecommerce store have Universal
-Product Codes (UPCs) or some other identifier that requires strict and
-structured formatting.
+文本也可以是结构化的。如彩色笔可以有离散的颜色集合： `红（red）` 、 `绿（green）` 、 `蓝（blue）` 。一个博客可能被标记了关键词 `分布式（distributed）` 和 `搜索（search）` 。电商网站上的商品都有 UPCs（通用产品码 Universal Product Codes）或其他的唯一标识，它们都需要遵从严格规定的、结构化的格式。
 
-With structured search, the answer to your question is _always_ a yes or no;
-something either belongs in the set or it does not.  Structured search does
-not worry about document relevance or scoring; it simply includes or
-excludes documents.
+在结构化查询中，我们得到的结果 _总是_ 非是即否，要么存于集合之中，要么存在集合之外。结构化查询不关心文件的相关度或评分；它简单的对文档包括或排除处理。
 
-This should make sense logically.  A number can't be _more_ in a range than
-any other number that falls in the same range.  It is either in the range--or it isn't.  Similarly, for structured text, a value is either equal or it
-isn't. There is no concept of _more similar_.
+这在逻辑上是能说通的，因为一个数字不能比其他数字 _更_ 适合存于某个相同范围。结果只能是：存于范围之中，抑或反之。同样，对于结构化文本来说，一个值要么相等，要么不等。没有 _更似_ 这种概念。
