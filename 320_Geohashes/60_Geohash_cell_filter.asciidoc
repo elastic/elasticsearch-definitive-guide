@@ -1,9 +1,7 @@
 [[geohash-cell-query]]
-=== Geohash Cell Query
+=== Geohash 单元查询
 
-The `geohash_cell` query simply translates a `lat/lon` location((("geohash_cell query")))((("geohash_cell"))) into a
-geohash with the specified precision and finds all locations that contain
-that geohash--a very efficient query indeed.
+`geohash_cell` 查询做的事情非常简单：((("geohash_cell query")))((("geohash_cell"))) 把经纬度坐标位置根据指定精度转换成一个 geohash ，然后查找所有包含这个 geohash 的位置——这是非常高效的查询。
 
 [source,json]
 ----------------------------
@@ -24,21 +22,13 @@ GET /attractions/restaurant/_search
   }
 }
 ----------------------------
-<1> The `precision` cannot be more precise than that specified in the
-    `geohash_precision` mapping.
+<1> `precision` 字段设置的精度不能高于映射时 `geohash_precision` 字段指定的值。
 
-This query translates the `lat/lon` point into a geohash of the appropriate
-length--in this example `dr5rsk`&#x2014;and looks for all locations that contain
-that exact term.
+此查询将 `lat/lon` 坐标点转换成对应长度的 geohash —— 本例中为 `dr5rsk`&#x2014;然后查找所有包含这个短语的位置。
 
-However, the query as written in the preceding example may not return all restaurants within 5km
-of the specified point.  Remember that a geohash is just a rectangle, and the
-point may fall anywhere within that rectangle.  If the point happens to fall
-near the edge of a geohash cell, the filter may well exclude any
-restaurants in the adjacent cell.
+然而，如上例中的写法可能不会返回 5km 内所有的餐馆。要知道 geohash 实际上仅是个矩形，而指定的点可能位于这个矩形中的任何位置。有可能这个点刚好落在了 geohash 单元的边缘附近，但过滤器会排除那些落在相邻单元的餐馆。
 
-To fix that, we can tell the query to include the neigboring cells, by
-setting `neighbors` to((("neighbors setting (geohash_cell)"))) `true`:
+为了修复这个问题，我们可以通过设置 `neighbors`((("neighbors setting (geohash_cell)")))参数为 `true` ，让查询把周围的单元也包含进来：
 
 [source,json]
 ----------------------------
@@ -61,20 +51,11 @@ GET /attractions/restaurant/_search
 }
 ----------------------------
 
-<1> This query will look for the resolved geohash and all surrounding
-    geohashes.
+<1> 此查询将会寻找对应的 geohash 和包围它的 geohashes 。
+    
 
-Clearly, looking for a geohash with precision `2km` plus all the neighboring
-cells results in quite a large search area.  This query is not built for
-accuracy, but it is very efficient and can be used as a prefiltering step
-before applying a more accurate geo-filter.
+明显的， `2km` 精度的 geohash 加上周围的单元，最终导致一个范围极大的搜索区域。此查询不是为精度而生，但是它非常有效率，而且可以作为更高精度的地理位置过滤器的前置过滤器。
 
-TIP: Specifying the `precision` as a distance can be misleading. A `precision`
-of `2km` is converted to a geohash of length 6, which actually has dimensions
-of about 1.2km x 0.6km.  You may find it more understandable to specify an
-actual length such as `5` or `6`.
+TIP: 将 `precision` 参数设置为一个距离可能会有误导性。 `2km` 的  `precision` 会被转换成长度为 6 的 geohash 。实际上它的尺寸是约 1.2km x 0.6km。你可能会发现明确的设置长度为 `5` 或 `6` 会更容易理解。
 
-The other advantage that this query has over a `geo_bounding_box` query is
-that it supports multiple locations per field.((("latitude/longitude pairs", "multiple lat/lon points per field, geohash_cell")))
-The `lat_lon` option that we discussed in <<optimize-bounding-box>> is efficient,
-but only when there is a single `lat/lon` point per field.
+此查询的另一个优点是，相比 `geo_bounding_box` 查询，它支持一个字段中有多个坐标位置的情况。((("latitude/longitude pairs", "multiple lat/lon points per field, geohash_cell"))) 我们在 <<optimize-bounding-box>> 中讨论过，设置 `lat_lon` 选项也是一个很有效的方式，但是它只在每个字段只有单个坐标点的情况下有效。
