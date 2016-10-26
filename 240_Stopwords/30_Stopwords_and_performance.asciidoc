@@ -1,30 +1,18 @@
 [[stopwords-performance]]
-=== Stopwords and Performance
+=== 停用词与性能
 
-The biggest disadvantage of keeping stopwords is that of performance. When
-Elasticsearch performs a ((("stopwords", "performance and")))full-text search, it has to calculate the relevance
-`_score` on all matching documents in order to return the top 10 matches.
+保留停用词最大的缺点就影响搜索性能。使用 Elasticsearch 进行((("stopwords", "performance and")))全文搜索，它需要为所有匹配的文档计算相关度评分 `_score` 从而返回最相关的前 10 个文档。
 
-While most words typically occur in much fewer than 0.1% of all documents, a
-few words such as `the` may occur in almost all of them.  Imagine you have an
-index of one million documents.  A query for `quick brown fox` may match  fewer
-than 1,000 documents.  But a query for `the quick brown fox` has to score and
-sort almost all of the one million documents in your index, just in order to
-return the top 10!
+通常大多数的单词在所有文档中出现的频率低于0.1％，但是有少数词（例如 `the` ）几乎存在于所有的文档中。假设有一个索引含有100万个文档，查询 `quick brown fox` 词组，能够匹配上的可能少于1000个文档。但是如果查询 `the quick brown fox` 词组，几乎需要对索引中的100万个文档进行评分和排序，只是为了返回前 10 名最相关的文档。
 
-The problem is that `the quick brown fox` is really a query for `the OR quick
-OR brown OR fox`&#x2014;any document that contains nothing more than the almost
-meaningless term `the` is included in the result set.  What we need is a way of
-reducing the number of documents that need to be scored.
+问题的关键是 `the quick brown fox` 词组实际是查询 `the` 或 `quick` 或 `brown` 或 `fox`&#x2014; 任何文档即使它什么内容都没有而只包含 `the` 这个词也会被包括在结果集中。因此，我们需要找到一种降低待评分文档数量的方法。
 
 [[stopwords-and]]
-==== and Operator
+==== and 操作符 (and Operator)
 
-The easiest way to reduce the number of documents is simply to use the
-<<match-improving-precision,`and` operator>> with the `match` query, in order
-to make all ((("stopwords", "performance and", "using and operator")))((("and operator", "using with match query")))words required.
+我们想要减少待评分文档的数量，最简单的方式就是在<<match-improving-precision,`and` 操作符>> `match` 查询时使用 `and` 操作符，((("stopwords", "performance and", "using and operator")))((("and operator", "using with match query")))这样可以让所有词都是必须的。
 
-A `match` query like this:
+以下是 `match` 查询：
 
 [source,json]
 ---------------------------------
@@ -33,12 +21,12 @@ A `match` query like this:
         "text": {
             "query":    "the quick brown fox",
             "operator": "and"
-        }
+             }
     }
 }
 ---------------------------------
 
-is rewritten as a `bool` query like this:
+上述查询被重写为 `bool` 查询如下：
 
 [source,json]
 ---------------------------------
@@ -54,17 +42,11 @@ is rewritten as a `bool` query like this:
 }
 ---------------------------------
 
-The `bool` query is intelligent enough to execute each `term` query in the
-optimal order--it starts with the least frequent term.  Because all terms
-are required, only documents that contain the least frequent term can possibly
-match. Using the `and` operator greatly speeds up multiterm queries.
+`bool` 查询会智能的根据较优的顺序依次执行每个 `term` 查询：它会从最低频的词开始。因为所有词项都必须匹配，只要包含低频词的文档才有可能匹配。使用 `and` 操作符可以大大提升多词查询的速度。
 
-==== minimum_should_match
+==== 最少匹配数(minimum_should_match)
 
-In <<match-precision>>, we discussed using the `minimum_should_match` operator
-to trim the long tail of less-relevant results.((("stopwords", "performance and", "using minimum_should_match operator")))((("minimum_should_match parameter")))  It is useful for this purpose
-alone but, as a nice side effect, it offers a similar performance benefit to
-the `and` operator:
+在精度匹配<<match-precision>>的章节里面，我们讨论过使用 `minimum_should_match` 配置去掉结果中次相关的长尾。((("stopwords", "performance and", "using minimum_should_match operator")))((("minimum_should_match parameter")))虽然它只对这个目的奏效，但是也为我们从侧面带来一个好处，它提供 `and` 操作符相似的性能。
 
 [source,json]
 ---------------------------------
@@ -78,9 +60,6 @@ the `and` operator:
 }
 ---------------------------------
 
-In this example, at least three out of the four terms must match. This means
-that the only docs that need to be considered are those that contain either the least or second least frequent terms.
-
-This offers a huge performance gain over a simple query with the default `or`
-operator!  But we can do better yet...
+在上面这个示例中，四分之三的词都必须匹配，这意味着我们只需考虑那些包含最低频或次低频词的文档。
+相比默认使用 `or` 操作符的简单查询，这为我们带来了巨大的性能提升。不过我们有办法可以做得更好……
 
