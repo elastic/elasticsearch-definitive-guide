@@ -1,31 +1,23 @@
 [[using-stopwords]]
-=== Using Stopwords
+=== 使用停用词
 
-The removal of stopwords is ((("stopwords", "removal of")))handled by the
-{ref}/analysis-stop-tokenfilter.html[`stop` token filter] which can be used
-when ((("stop token filter")))creating a `custom` analyzer (see <<stop-token-filter>>).
-However, some out-of-the-box analyzers((("analyzers", "stop filter pre-integrated")))((("pattern analyzer", "stopwords and")))((("standard analyzer", "stop filter")))((("language analyzers", "stop filter pre-integrated"))) come with the `stop` filter pre-integrated:
+移除停用词的工作是由 `stop` 停用词过滤器完成的，可以通过创建自定义的分析器来使用它（参见 使用停用词过滤器{ref}/analysis-stop-tokenfilter.html[`stop` 停用词过滤器])。但是，也有一些自带的分析器预置使用停用词过滤器：
 
-{ref}/analysis-lang-analyzer.html[Language analyzers]::
+{ref}/analysis-lang-analyzer.html[语言分析器]::
 
-    Each language analyzer defaults to using the appropriate stopwords list
-    for that language. For instance, the `english` analyzer uses the
-    `_english_` stopwords list.
+    每个语言分析器默认使用与该语言相适的停用词列表，例如：`english` 英语分析器使用 `_english_` 停用词列表。
 
-{ref}/analysis-standard-analyzer.html[`standard` analyzer]::
+{ref}/analysis-standard-analyzer.html[`standard` 标准分析器]::
 
-    Defaults to the empty stopwords list: `_none_`, essentially disabling
-    stopwords.
+    默认使用空的停用词列表：`_none_` ，实际上是禁用了停用词。
 
-{ref}/analysis-pattern-analyzer.html[`pattern` analyzer]::
+{ref}/analysis-pattern-analyzer.html[`pattern` 模式分析器]::
 
-    Defaults to `_none_`, like the `standard` analyzer.
+    默认使用空的停用词列表：为 `_none_` ，与 `standard` 分析器类似。
 
-==== Stopwords and the Standard Analyzer
+==== 停用词和标准分析器（Stopwords and the Standard Analyzer）
 
-To use custom stopwords in conjunction with ((("standard analyzer", "stopwords and")))((("stopwords", "using with standard analyzer")))the `standard` analyzer, all we
-need to do is to create a configured version of the analyzer and pass in the
-list of `stopwords` that we require:
+为了让((("standard analyzer", "stopwords and")))标准分析器能与((("stopwords", "using with standard analyzer")))自定义停用词表连用，我们要做的只需创建一个分析器的配置好的版本，然后将停用词列表传入：
 
 [source,json]
 ---------------------------------
@@ -43,17 +35,16 @@ PUT /my_index
   }
 }
 ---------------------------------
-<1> This is a custom analyzer called `my_analyzer`.
-<2> This analyzer is the `standard` analyzer with some custom configuration.
-<3> The stopwords to filter out are `and` and `the`.
+<1> 自定义的分析器名称为 `my_analyzer` 。
+<2> 这个分析器是一个标准 `standard` 分析器，进行了一些自定义配置。
+<3> 过滤掉的停用词包括 `and` 和 `the` 。
 
-TIP: This same technique can be used to configure custom stopword lists for
-any of the language analyzers.
+TIP: 任何语言分析器都可以使用相同的方式配置自定义停用词。
 
 [[maintaining-positions]]
-==== Maintaining Positions
+==== 保持位置（Maintaining Positions）
 
-The output from the `analyze` API((("stopwords", "maintaining position of terms and"))) is quite interesting:
+`analyzer` API((("stopwords", "maintaining position of terms and")))的输出结果很有趣: 
 
 [source,json]
 ---------------------------------
@@ -77,46 +68,36 @@ The quick and the dead
          "start_offset": 18,
          "end_offset":   22,
          "type":         "<ALPHANUM>",
-         "position":     4 <1>
+         "position":     4 
       }
    ]
 }
 ---------------------------------
-<1> Note the `position` of each token.
+<1> `position` 标记每个词汇单元的位置。
 
-The stopwords have been filtered out, as expected, but the interesting part is
-that the `position` of the((("phrase matching", "stopwords and", "positions data"))) two remaining terms is unchanged: `quick` is the
-second word in the original sentence, and `dead` is the fifth. This is
-important for phrase queries--if the positions of each term had been
-adjusted, a phrase query for `quick dead` would have matched the preceding
-example incorrectly.
+停用词如我们期望被过滤掉了，但有趣的是两个词项的位置 `position` 没有变化：`quick` 是原句子的第二个词，`dead` 是第五个。这对短语查询十分重要，因为如果每个词项的位置被调整了，一个短语查询 `quick dead` 会与以上示例中的文档错误匹配。
 
 [[specifying-stopwords]]
-==== Specifying Stopwords
+==== 指定停用词（Specifying Stopwords）
 
-Stopwords can be passed inline, as we did in ((("stopwords", "specifying")))the previous example, by
-specifying an array:
+停用词可以以内联的方式传入，就像我们在前面的((("stopwords", "specifying")))例子中那样，通过指定数组:
 
 [source,json]
 ---------------------------------
 "stopwords": [ "and", "the" ]
 ---------------------------------
 
-The default stopword list for a particular language can be specified using the
-`_lang_` notation:
+特定语言的默认停用词，可以通过使用 `_lang_` 符号来指定:
 
 [source,json]
 ---------------------------------
 "stopwords": "_english_"
 ---------------------------------
 
-TIP: The predefined language-specific stopword((("languages", "predefined stopword lists for"))) lists available in
-Elasticsearch can be found in the
-{ref}/analysis-stop-tokenfilter.html[`stop` token filter] documentation.
+TIP: 
+Elasticsearch 中预定义的与语言相关的停用词列表可以在文档(("languages", "predefined stopword lists for"))){ref}/analysis-stop-tokenfilter.html[`stop` 停用词过滤器] 中找到。
 
-Stopwords can be disabled by ((("stopwords", "disabling")))specifying the special list: `_none_`.  For
-instance, to use the `english` analyzer((("english analyzer", "using without stopwords"))) without stopwords, you can do the
-following:
+停用词可以通过指定一个特殊列表 `_none_` 来禁用。例如，使用 `_english_` 分析器而不使用停用词，可以通过以下方式做到：
 
 [source,json]
 ---------------------------------
@@ -134,12 +115,10 @@ PUT /my_index
   }
 }
 ---------------------------------
-<1> The `my_english` analyzer is based on the `english` analyzer.
-<2> But stopwords are disabled.
+<1> `my_english` 分析器是基于 `english` 分析器。
+<2> 但禁用了停用词。
 
-Finally, stopwords can also be listed in a file with one word per line.  The
-file must be present on all nodes in the cluster, and the path can be
-specified((("stopwords_path parameter"))) with the `stopwords_path` parameter:
+最后，停用词还可以使用一行一个单词的格式保存在文件中。此文件必须在集群的所有节点上，并且通过 `stopwords_path` ((("stopwords_path parameter"))) 参数设置路径:
 
 [source,json]
 ---------------------------------
@@ -157,22 +136,18 @@ PUT /my_index
   }
 }
 ---------------------------------
-<1> The path to the stopwords file, relative to the Elasticsearch `config`
-    directory
+<1> 停用词文件的路径，该路径相对于 Elasticsearch 的 `config` 目录。
 
 [[stop-token-filter]]
-==== Using the stop Token Filter
+==== 使用停用词过滤器（Using the stop Token Filter）
 
-The {ref}/analysis-stop-tokenfilter.html[`stop` token filter] can be combined
-with a tokenizer((("stopwords", "using stop token filter")))((("stop token filter", "using in custom analyzer"))) and other token filters when you need to create a `custom`
-analyzer.  For instance, let's say that we wanted to ((("Spanish", "custom analyzer for")))((("light_spanish stemmer")))create a Spanish analyzer
-with the following:
+当你创建 `custom` 分析器时候，可以组合多个 {ref}/analysis-stop-tokenfilter.html[`stop` 停用词过滤器] 分词器((("stopwords", "using stop token filter")))((("stop token filter", "using in custom analyzer")))。例如：我们想要创建一个西班牙语((("Spanish", "custom analyzer for")))((("light_spanish stemmer")))的分析器:
 
-* A custom stopwords list
-* The `light_spanish` stemmer
-* The <<asciifolding-token-filter,`asciifolding` filter>> to remove diacritics
+* 自定义停用词列表
+* `light_spanish` 词干提取器
+* 在 `asciifolding` 词汇单元过滤器中除去附加符号
 
-We could set that up as follows:
+我们可以通过以下设置完成:
 
 [source,json]
 ---------------------------------
@@ -205,39 +180,24 @@ PUT /my_index
   }
 }
 ---------------------------------
-<1> The `stop` token filter takes the same `stopwords` and `stopwords_path`
-    parameters as the `standard` analyzer.
-<2> See <<algorithmic-stemmers>>.
-<3> The order of token filters is important, as explained next.
+<1> 停用词过滤器采用与 `standard` 分析器相同的参数 `stopwords` 和 `stopwords_path` 。
+<2> 参见 算法提取器（Algorithmic Stemmers）。
+<3> 过滤器的顺序非常重要，下面会进行解释。
 
-We have placed the `spanish_stop` filter after the `asciifolding` filter.((("asciifolding token filter", "in custom Spanish analyzer"))) This
-means that `esta`, `ésta`, and ++está++ will first have their diacritics
-removed to become just `esta`, which will then be removed as a stopword. If,
-instead, we wanted to remove `esta` and `ésta`, but not ++está++, we
-would have to put the `spanish_stop` filter _before_ the `asciifolding`
-filter, and specify both words in the stopwords list.
+我们将 `spanish_stop` 过滤器放置在 `asciifolding` 过滤器之后.这意味着以下三个词组 `esta` 、`ésta` 、`++está++` ，先通过 `asciifolding` 过滤器过滤掉特殊字符变成了 `esta` ，随后使用停用词过滤器会将 `esta` 去除。
+如果我们只想移除 `esta` 和 `ésta` ，但是 `++está++` 不想移除。必须将 `spanish_stop` 过滤器放置在 `asciifolding` 之前，并且需要在停用词中指定 `esta` 和 `ésta` 。
 
 [[updating-stopwords]]
-==== Updating Stopwords
+==== 更新停用词（Updating Stopwords）
 
-A few techniques can be used to update the list of stopwords
-used by an analyzer.((("analyzers", "stopwords list, updating")))((("stopwords", "updating list used by analyzers"))) Analyzers are instantiated at index creation time, when a
-node is restarted, or when a closed index is reopened.
+想要更新分析器的停用词列表有多种方式，((("analyzers", "stopwords list, updating")))((("stopwords", "updating list used by analyzers"))) 分析器在创建索引时，当集群节点重启时候，或者关闭的索引重新打开的时候。
 
-If you specify stopwords inline with the `stopwords` parameter, your
-only option is to close the index and update the analyzer configuration with the
-{ref}/indices-update-settings.html#update-settings-analysis[update index settings API], then reopen
-the index.
+如果你使用 `stopwords` 参数以内联方式指定停用词，那么你只能通过关闭索引，更新分析器的配置{ref}/indices-update-settings.html#update-settings-analysis[update index settings API]，然后在重新打开索引才能更新停用词。
 
-Updating stopwords is easier if you specify them in a file with the
-`stopwords_path` parameter.((("stopwords_path parameter")))  You can just update the file (on every node in
-the cluster) and then force the analyzers to be re-created by either of these actions:
+如果你使用 `stopwords_path` 参数指定停用词的文件路径((("stopwords_path parameter"))) ，那么更新停用词就简单了。你只需更新文件(在每一个集群节点上)，然后通过两者之中的任何一个操作来强制重新创建分析器:
 
-* Closing and reopening the index
-  (see {ref}/indices-open-close.html[open/close index]), or
-* Restarting each node in the cluster, one by one
+* 关闭和重新打开索引
+  (参考 {ref}/indices-open-close.html[索引的开与关])，
+* 一一重启集群下的每个节点。
 
-Of course, updating the stopwords list will not change any documents that have
-already been indexed. It will apply only to searches and to new or updated
-documents.  To apply the changes to existing documents, you will need to
-reindex your data. See <<reindex>>.
+当然，更新的停用词不会改变任何已经存在的索引。这些停用词的只适用于新的搜索或更新文档。如果要改变现有的文档，则需要重新索引数据。参加 <<reindex>> 。
