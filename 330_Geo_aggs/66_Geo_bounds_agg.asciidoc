@@ -1,14 +1,9 @@
 [[geo-bounds-agg]]
-=== Geo Bounds Aggregation
+=== 地理边界聚合
 
-In our <<geohash-grid-agg,previous example>>, we filtered our results by using a
-bounding box that covered the greater New York area.((("aggregations", "geo_bounds")))((("geo_bounds aggregation")))  However, our results
-were all located in downtown Manhattan.  When displaying a map for our user, it
-makes sense to zoom into the area of the map that contains the data; there
-is no point in showing lots of empty space.
+在我们<<geohash-grid-agg,之前的例子>>中，我们通过一个覆盖大纽约区的边框来过滤结果。((("aggregations", "geo_bounds")))((("geo_bounds aggregation"))) 然而，我们的结果全部都位于曼哈顿市中心。当为我们的用户显示一个地图的时候，放大包含数据的区域是有意义的；展示大量的空白空间是没有任何意义的。
 
-The `geo_bounds` aggregation does exactly this: it calculates the smallest
-bounding box that is needed to encapsulate all of the geo-points:
+`geo_bounds` 正好是这样的：它计算封装所有地理位置点需要的最小边界框：
 
 [source,json]
 ----------------------------
@@ -48,9 +43,9 @@ GET /attractions/restaurant/_search
   }
 }
 ----------------------------
-<1> The `geo_bounds` aggregation will calculate the smallest bounding box required to encapsulate all of the documents matching our query.
+<1> `geo_bounds` 聚合将计算封装所有匹配查询文档所需要的最小边界框。
 
-The response now includes a bounding box that we can use to zoom our map:
+响应现在包括了一个可以用来缩放地图的边界框。
 
 [source,json]
 ----------------------------
@@ -71,9 +66,7 @@ The response now includes a bounding box that we can use to zoom our map:
 ...
 ----------------------------
 
-In fact, we could even use the `geo_bounds` aggregation inside each geohash
-cell,((("geohash cells, geo_bounds aggregation in"))) in case the geo-points inside a cell are clustered in just a part of the
-cell:
+事实上，我们甚至可以在每一个 geohash 单元内部使用 `geo_bounds` 聚合，((("geohash cells, geo_bounds aggregation in"))) 以免一个单元内的地理位置点仅集中在单元的一部分上：
 
 [source,json]
 ----------------------------
@@ -115,9 +108,9 @@ GET /attractions/restaurant/_search
   }
 }
 ----------------------------
-<1> The `cell_bounds` sub-aggregation is calculated for every geohash cell.
+<1> `cell_bounds` 子聚合会为每个 geohash 单元计算边界框。
 
-Now the ((("cell_bounds aggregation")))points in each cell have a bounding box:
+现在在每个单元里的点((("cell_bounds aggregation")))有一个边界框。
 
 [source,json]
 ----------------------------
