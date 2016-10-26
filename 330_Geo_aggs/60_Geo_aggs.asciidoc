@@ -1,25 +1,18 @@
 [[geo-aggs]]
-== Geo Aggregations
+== 地理位置聚合
 
-Although filtering or scoring results by geolocation is useful,((("geo-aggregations")))((("aggregations", "geo"))) it is often more
-useful to be able to present information to the user on a map. A search may
-return way too many results to be able to display each geo-point individually,
-but geo-aggregations can be used to cluster geo-points into more manageable
-buckets.
+虽然按照地理位置对结果进行过滤或者打分很有用，((("geo-aggregations")))((("aggregations", "geo"))) 但是在地图上呈现信息给用户通常更加有用。一个查询可能会返回太多结果以至于不能单独地展现每一个地理坐标点，但是地理位置聚合可以用来将地理坐标聚集到更加容易管理的 buckets 中。
 
-Three aggregations work with fields of type `geo_point`:
+处理 `geo_point` 类型字段的三种聚合：
 
-<<geo-distance-agg,`geo_distance`>>::
+<<geo-distance-agg,`地理位置距离`>>::
 
-    Groups documents into concentric circles around a central point.
+	将文档按照距离围绕一个中心点来分组。
 
-<<geohash-grid-agg,`geohash_grid`>>::
+<<geohash-grid-agg,`geohash 网格`>>::
 
-    Groups documents by geohash cell, for display on a map.
+	将文档按照 geohash 范围来分组，用来显示在地图上。
 
-<<geo-bounds-agg,`geo_bounds`>>::
+<<geo-bounds-agg,`地理位置边界`>>::
 
-    Returns the `lat/lon` coordinates of a bounding box that would
-    encompass all of the geo-points. This is useful for choosing
-    the correct zoom level when displaying a map.
-
+	返回一个包含所有地理位置坐标点的边界的经纬度坐标，这对显示地图时缩放比例的选择非常有用。
