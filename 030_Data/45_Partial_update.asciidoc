@@ -172,7 +172,7 @@ by setting `ctx.op` to `delete`:
 --------------------------------------------------
 POST /website/blog/1/_update
 {
-   "script" : "ctx.op = ctx._source.views == count ? 'delete' : 'none'",
+   "script" : "ctx.op = ctx._source.views == params.count ? 'delete' : 'none'",
     "params" : {
         "count": 1
     }
