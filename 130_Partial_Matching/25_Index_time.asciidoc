@@ -1,16 +1,10 @@
-=== Index-Time Optimizations
+[[_index_time_optimizations]]
+=== 索引时优化
 
-All of the solutions we've talked about so far are implemented at
-_query time_. ((("index time optimizations")))((("partial matching", "index time optimizations")))They don't require any special mappings or indexing patterns;
-they simply work with the data that you've already indexed.
+到目前为止，所有谈论过的解决方案都是在 _查询时（query time）_ 实现的。((("index time optimizations")))((("partial matching", "index time optimizations")))这样做并不需要特殊的映射或特殊的索引模式，只是简单使用已经索引的数据。
 
-The flexibility of query-time operations comes at a cost: search performance.
-Sometimes it may make sense to move the cost away from the query.  In a real-
-time web application, an additional 100ms may be too much latency to tolerate.
+查询时的灵活性通常会以牺牲搜索性能为代价，有时候将这些消耗从查询过程中转移到别的地方是有意义的。在实时 web 应用中， 100 毫秒可能是一个难以忍受的巨大延迟。
 
-By preparing your data at index time, you can make your searches more flexible
-and improve performance. You still pay a price: increased index size and
-slightly slower indexing throughput, but it is a price you pay once at index
-time, instead of paying it on every query.
+可以通过在索引时处理数据提高搜索的灵活性以及提升系统性能。为此仍然需要付出应有的代价：增加的索引空间与变慢的索引能力，但这与每次查询都需要付出代价不同，索引时的代价只用付出一次。
 
-Your users will thank you.
+用户会感谢我们。
