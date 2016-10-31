@@ -1,11 +1,9 @@
-=== Tuning Best Fields Queries
+[[_tuning_best_fields_queries]]
+=== 最佳字段查询调优
 
-What would happen if the user((("multifield search", "best fields queries", "tuning")))((("best fields queries", "tuning"))) had searched instead for ``quick pets''?  Both
-documents contain the word `quick`, but only document 2 contains the word
-`pets`. Neither document contains _both words_ in the _same field_.
+当用户搜索 “quick pets” 时会发生什么呢？((("multifield search", "best fields queries", "tuning")))((("best fields queries", "tuning")))在前面的例子中，两个文档都包含词 `quick` ，但是只有文档 2 包含词 `pets` ，两个文档中都不具有同时包含 _两个词_ 的 _相同字段_ 。
 
-A simple `dis_max` query like the following would ((("dis_max (disjunction max) query")))((("relevance scores", "calculation in dis_max queries")))choose the single best
-matching field, and ignore the other:
+如下，一个简单的 `dis_max` 查询会采用单个最佳匹配字段，((("dis_max (disjunction max) query")))((("relevance scores", "calculation in dis_max queries")))而忽略其他的匹配：
 
 [source,js]
 --------------------------------------------------
@@ -45,17 +43,13 @@ matching field, and ignore the other:
    ]
 }
 --------------------------------------------------
-<1> Note that the scores are exactly the same.
+<1> 注意两个评分是完全相同的。
 
-We would probably expect documents that match on both the `title` field and
-the `body` field to rank higher than documents that match on just one field,
-but this isn't the case. Remember: the `dis_max` query simply uses the
-`_score` from the _single_ best-matching clause.
+我们可能期望同时匹配 `title` 和 `body` 字段的文档比只与一个字段匹配的文档的相关度更高，但事实并非如此，因为 `dis_max` 查询只会简单地使用 _单个_ 最佳匹配语句的评分 `_score` 作为整体评分。
 
-==== tie_breaker
+==== tie_breaker 参数
 
-It is possible, however, to((("dis_max (disjunction max) query", "using tie_breaker parameter")))((("relevance scores", "calculation in dis_max queries", "using tie_breaker parameter"))) also take the `_score` from the other matching
-clauses into account, by specifying ((("tie_breaker parameter")))the `tie_breaker` parameter:
+可以通过指定 `tie_breaker` ((("tie_breaker parameter")))这个参数将其他匹配语句的评分也考虑其中：((("dis_max (disjunction max) query", "using tie_breaker parameter")))((("relevance scores", "calculation in dis_max queries", "using tie_breaker parameter")))
 
 [source,js]
 --------------------------------------------------
@@ -73,7 +67,7 @@ clauses into account, by specifying ((("tie_breaker parameter")))the `tie_breake
 --------------------------------------------------
 // SENSE: 110_Multi_Field_Search/15_Best_fields.json
 
-This gives us the following results:
+结果如下：
 
 [source,js]
 --------------------------------------------------
@@ -98,25 +92,17 @@ This gives us the following results:
    ]
 }
 --------------------------------------------------
-<1> Document 2 now has a small lead over document 1.
+<1> 文档 2 的相关度比文档 1 略高。
 
-The `tie_breaker` parameter makes the `dis_max` query behave more like a
-halfway house between `dis_max` and `bool`. It changes the score calculation
-as follows:
+`tie_breaker` 参数提供了一种 `dis_max` 和 `bool` 之间的折中选择，它的评分方式如下：
 
-1. Take the `_score` of the best-matching clause.
-2. Multiply the score of each of the other matching clauses by the `tie_breaker`.
-3. Add them all together and normalize.
+1. 获得最佳匹配语句的评分 `_score` 。
+2. 将其他匹配语句的评分结果与 `tie_breaker` 相乘。
+3. 对以上评分求和并规范化。
 
-With the `tie_breaker`, all matching clauses count, but the best-matching
-clause counts most.
+有了 `tie_breaker` ，会考虑所有匹配语句，但最佳匹配语句依然占最终结果里的很大一部分。
 
 [NOTE]
 ====
-The `tie_breaker` can be a floating-point value between `0` and `1`, where `0`
-uses just the best-matching clause((("tie_breaker parameter", "value of"))) and `1` counts all matching clauses
-equally.  The exact value can be tuned based on your data and queries, but a
-reasonable value should be close to zero, (for example, `0.1 - 0.4`), in order not to
-overwhelm the best-matching nature of `dis_max`.
+`tie_breaker` 可以是 `0` 到 `1` 之间的浮点数，其中 `0` 代表使用 `dis_max` 最佳匹配语句的普通逻辑，((("tie_breaker parameter", "value of"))) `1` 表示所有匹配语句同等重要。最佳的精确值需要根据数据与查询调试得出，但是合理值应该与零接近（处于 `0.1 - 0.4` 之间），这样就不会颠覆 `dis_max` 最佳匹配性质的根本。
 ====
-
