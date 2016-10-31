@@ -1,22 +1,13 @@
-=== Query-Time Search-as-You-Type
+[[_query_time_search_as_you_type]]
+=== 查询时输入即搜索
 
-Leaving postcodes behind, let's take a look at how prefix matching can help
-with full-text queries. ((("partial matching", "query time search-as-you-type"))) Users have become accustomed to seeing search results
-before they have finished typing their query--so-called _instant search_, or
-_search-as-you-type_. ((("search-as-you-type")))((("instant search"))) Not only do users receive their search results in less
-time, but we can guide them toward results that actually exist in our index.
+把邮编的事情先放一边，让我们先看看前缀查询是如何在全文查询中起作用的。((("partial matching", "query time search-as-you-type")))用户已经渐渐习惯在输完查询内容之前，就能为他们展现搜索结果，这就是所谓的 _即时搜索（instant search）_ 或 _输入即搜索（search-as-you-type）_ 。((("search-as-you-type")))((("instant search")))不仅用户能在更短的时间内得到搜索结果，我们也能引导用户搜索索引中真实存在的结果。
 
-For instance, if a user types in `johnnie walker bl`, we would like to show results for Johnnie Walker Black Label and Johnnie Walker Blue
-Label before they can finish typing their query.
+例如，如果用户输入 `johnnie walker bl` ，我们希望在它们完成输入搜索条件前就能得到：Johnnie Walker Black Label 和 Johnnie Walker Blue Label 。
 
-As always, there are more ways than one to skin a cat! We will start by
-looking at the way that is simplest to implement.  You don't need to prepare your
-data in any way; you can implement _search-as-you-type_ at query time on any
-full-text field.
+生活总是这样，就像猫的花色远不只一种！我们希望能找到一种最简单的实现方式。并不需要对数据做任何准备，在查询时就能对任意的全文字段实现 _输入即搜索（search-as-you-type）_ 的查询。
 
-In <<phrase-matching>>, we introduced the `match_phrase` query, which matches
-all the specified words in the same positions relative to each other.  For-query time search-as-you-type, we can use a specialization of this query,
-called ((("prefix query", "match_phrase_prefix query")))((("match_phrase_prefix query")))the `match_phrase_prefix` query:
+在 <<phrase-matching,短语匹配>> 中，我们引入了 `match_phrase` 短语匹配查询，它匹配相对顺序一致的所有指定词语，对于查询时的输入即搜索，可以使用 `match_phrase` 的一种特殊形式，((("prefix query", "match_phrase_prefix query")))((("match_phrase_prefix query"))) `match_phrase_prefix` 查询：
 
 [source,js]
 --------------------------------------------------
@@ -28,21 +19,17 @@ called ((("prefix query", "match_phrase_prefix query")))((("match_phrase_prefix 
 --------------------------------------------------
 // SENSE: 130_Partial_Matching/20_Match_phrase_prefix.json
 
-This query behaves in the same way as the `match_phrase` query, except that it
-treats the last word in the query string as a prefix.  In other words, the
-preceding example would look for the following:
+这种查询的行为与 `match_phrase` 查询一致，不同的是它将查询字符串的最后一个词作为前缀使用，换句话说，可以将之前的例子看成如下这样：
 
 * `johnnie`
-* Followed by `walker`
-* Followed by words beginning with `bl`
+* 跟着 `walker`
+* 跟着以 `bl` 开始的词
 
-If you were to run this query through the `validate-query` API, it would
-produce this explanation:
+如果通过 `validate-query` API 运行这个查询查询，explanation 的解释结果为：
 
     "johnnie walker bl*"
 
-Like the `match_phrase` query, it accepts a `slop` parameter (see <<slop>>) to
-make the word order and relative positions ((("slop parameter", "match_prhase_prefix query")))((("match_phrase_prefix query", "slop parameter")))somewhat less rigid:
+与 `match_phrase` 一样，它也可以接受 `slop` 参数（参照 <<slop,slop>> ）让相对词序位置不那么严格：((("slop parameter", "match_prhase_prefix query")))((("match_phrase_prefix query", "slop parameter")))
 
 [source,js]
 --------------------------------------------------
@@ -57,21 +44,13 @@ make the word order and relative positions ((("slop parameter", "match_prhase_pr
 --------------------------------------------------
 // SENSE: 130_Partial_Matching/20_Match_phrase_prefix.json
 
-<1> Even though the words are in the wrong order, the query still matches
-    because we have set a high enough `slop` value to allow some flexibility
-    in word positions.
+<1> 尽管词语的顺序不正确，查询仍然能匹配，因为我们为它设置了足够高的 `slop` 值使匹配时的词序有更大的灵活性。
 
-However, it is always only the last word in the query string that is treated
-as a prefix.
+但是只有查询字符串的最后一个词才能当作前缀使用。
 
-Earlier, in <<prefix-query>>, we warned about the perils of the prefix--how
-`prefix` queries can be resource intensive.  The same is true in this
-case.((("match_phrase_prefix query", "caution with")))  A prefix of `a` could match hundreds of thousands of terms. Not only
-would matching on this many terms be resource intensive, but it would also not be
-useful to the user.
+在之前的 <<prefix-query,前缀查询>> 中，我们警告过使用前缀的风险，即 `prefix` 查询存在严重的资源消耗问题，短语查询的这种方式也同样如此。((("match_phrase_prefix query", "caution with")))前缀 `a` 可能会匹配成千上万的词，这不仅会消耗很多系统资源，而且结果的用处也不大。
 
-We can limit the impact ((("match_phrase_prefix query", "max_expansions")))((("max_expansions parameter")))of the prefix expansion by setting `max_expansions` to
-a reasonable number, such as 50:
+可以通过设置 `max_expansions` 参数来限制前缀扩展的影响，((("match_phrase_prefix query", "max_expansions")))((("max_expansions parameter")))一个合理的值是可能是 50 ：
 
 [source,js]
 --------------------------------------------------
@@ -86,11 +65,6 @@ a reasonable number, such as 50:
 --------------------------------------------------
 // SENSE: 130_Partial_Matching/20_Match_phrase_prefix.json
 
-The `max_expansions` parameter controls how many terms the prefix is allowed
-to match.  It will find the first term starting with `bl` and keep collecting
-terms (in alphabetical order) until it either runs out of terms with prefix
-`bl`, or it has more terms than `max_expansions`.
+参数 `max_expansions` 控制着可以与前缀匹配的词的数量，它会先查找第一个与前缀 `bl` 匹配的词，然后依次查找搜集与之匹配的词（按字母顺序），直到没有更多可匹配的词或当数量超过 `max_expansions` 时结束。
 
-Don't forget that we have to run this query every time the user types another
-character, so it needs to be fast.  If the first set of results isn't what users are after, they'll keep typing until they get the results that they want.
-
+不要忘记，当用户每多输入一个字符时，这个查询又会执行一遍，所以查询需要快，如果第一个结果集不是用户想要的，他们会继续输入直到能搜出满意的结果为止。
