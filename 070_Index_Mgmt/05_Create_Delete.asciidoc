@@ -1,9 +1,9 @@
-=== Creating an Index
+[[_creating_an_index]]
+=== 创建一个索引
 
-Until now, we have created a new index((("indices", "creating"))) by simply indexing a document into it. The index is created with the default settings, and new fields are added to the type mapping by using dynamic mapping. Now we need more control over the process: we want to ensure that the index has been created with the appropriate number of primary shards, and that analyzers and mappings are set up _before_ we index any data.
+到目前为止, 我们已经通过索引一篇文档创建了一个新的索引 ((("indices", "creating"))) 。这个索引采用的是默认的配置，新的字段通过动态映射的方式被添加到类型映射。现在我们需要对这个建立索引的过程做更多的控制：我们想要确保这个索引有数量适中的主分片，并且在我们索引任何数据 _之前_ ，分析器和映射已经被建立好。
 
-To do this, we have to create the index manually, passing in any settings or
-type mappings in the request body, as follows:
+为了达到这个目的，我们需要手动创建索引，在请求体里面传入设置或类型映射，如下所示：
 
 [source,js]
 --------------------------------------------------
@@ -19,9 +19,7 @@ PUT /my_index
 --------------------------------------------------
 
 
-In fact, if you want to, you ((("indices", "preventing automatic creation of")))can prevent the automatic creation of indices by
-adding the following setting to the `config/elasticsearch.yml` file on each
-node:
+如果你想禁止自动创建索引，你 ((("indices", "preventing automatic creation of"))) 可以通过在 `config/elasticsearch.yml` 的每个节点下添加下面的配置：
 
 [source,js]
 --------------------------------------------------
@@ -30,16 +28,12 @@ action.auto_create_index: false
 
 [NOTE]
 ====
-Later, we discuss how you can use <<index-templates>> to preconfigure
-automatically created indices. This is particularly useful when indexing log
-data: you log into an index whose name includes the date and, as midnight
-rolls over, a new properly configured index automatically springs into
-existence.
+我们会在之后讨论你怎么用 <<index-templates>> 来预配置开启自动创建索引。这在索引日志数据的时候尤其有用：你将日志数据索引在一个以日期结尾命名的索引上，子夜时分，一个预配置的新索引将会自动进行创建。
 ====
 
-=== Deleting an Index
+=== 删除一个索引
 
-To delete an index, use ((("HTTP methods", "DELETE")))((("DELETE method", "deleting indices")))((("indices", "deleting")))the following request:
+用以下的请求来 ((("HTTP methods", "DELETE")))((("DELETE method", "deleting indices")))((("indices", "deleting"))) 删除索引:
 
 [source,js]
 --------------------------------------------------
@@ -47,7 +41,7 @@ DELETE /my_index
 --------------------------------------------------
 
 
-You can delete multiple indices with this:
+你也可以这样删除多个索引：
 
 [source,js]
 --------------------------------------------------
@@ -56,7 +50,7 @@ DELETE /index_*
 --------------------------------------------------
 
 
-You can even delete _all_ indices with this:
+你甚至可以这样删除 _全部_ 索引：
 
 [source,js]
 --------------------------------------------------
@@ -66,15 +60,11 @@ DELETE /*
 
 [NOTE]
 ====
-For some, the ability to delete all your data with a single command is a very
-scary prospect.  If you want to eliminate the possibility of an accidental
-mass-deletion, you can set the following to true in your `elasticsearch.yml`:
+对一些人来说，能够用单个命令来删除所有数据可能会导致可怕的后果。如果你想要避免意外的大量删除, 你可以在你的 `elasticsearch.yml` 做如下配置：
 
 `action.destructive_requires_name: true`
 
-This restricts deletions to specific names, instead of allowing the special `_all`
-or wildcard options. You can also update this setting dynamically through the
-<<_changing_settings_dynamically, Cluster State API>>
+这个设置使删除只限于特定名称指向的数据, 而不允许通过指定 `_all` 或通配符来删除指定索引库。你同样可以通过 <<_changing_settings_dynamically, Cluster State API>> 动态的更新这个设置。
 
 
 ====
