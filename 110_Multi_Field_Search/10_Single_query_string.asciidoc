@@ -1,67 +1,43 @@
-=== Single Query String
+[[_single_query_string]]
+=== 单字符串查询
 
-The `bool` query is the mainstay of multiclause queries.((("multifield search", "single query string"))) It works well
-for many cases, especially when you are able to map different query strings to
-individual fields.
+`bool` 查询是多语句查询的主干。((("multifield search", "single query string")))它的适用场景很多，特别是当需要将不同查询字符串映射到不同字段的时候。
 
-The problem is that, these days, users expect to be able to type all of their
-search terms into a single field, and expect that the application will figure out how
-to give them the right results.  It is ironic that the multifield search form
-is known as _Advanced Search_&#x2014;it may appear advanced to the user, but it is
-much simpler to implement.
+问题在于，目前有些用户期望将所有的搜索项堆积到单个字段中，并期望应用程序能为他们提供正确的结果。有意思的是多字段搜索的表单通常被称为 _高级查询 （Advanced Search）_ —— 只是因为它对用户而言是高级的，而多字段搜索的实现却非常简单。
 
-There is no simple _one-size-fits-all_ approach to multiword, multifield
-queries.  To get the best results, you have to _know your data_ and know how
-to use the appropriate tools.
+对于多词（multiword）、多字段（multifield）查询来说，不存在简单的 _万能_ 方案。为了获得最好结果，需要 _了解我们的数据_ ，并了解如何使用合适的工具。
 
 [[know-your-data]]
-==== Know Your Data
+==== 了解我们的数据
 
-When your only user input is a single query string, you will encounter three scenarios frequently:
+当用户输入了单个字符串查询的时候，通常会遇到以下三种情形：
 
-Best fields::
+最佳字段::
 
-When searching for words that represent a concept, such as ``brown fox,'' the
-words mean more together than they do individually. Fields like the `title`
-and `body`, while related, can be considered to be in competition with each
-other. Documents should have as many words as possible in _the same field_,
-and the score should come from the _best-matching field_.
+当搜索词语具体概念的时候，比如 “brown fox” ，词组比各自独立的单词更有意义。像 `title` 和 `body` 这样的字段，尽管它们之间是相关的，但同时又彼此相互竞争。文档在 _相同字段_ 中包含的词越多越好，评分也来自于 _最匹配字段_ 。
 
-Most fields::
+多数字段::
 +
 --
-A common technique for fine-tuning relevance is to index the same data into
-multiple fields, each with its own analysis chain.
+为了对相关度进行微调，常用的一个技术就是将相同的数据索引到不同的字段，它们各自具有独立的分析链。
 
-The main field may contain words in their stemmed form, synonyms, and words
-stripped of their _diacritics_, or accents. It is used to match as many
-documents as possible.
+主字段可能包括它们的词源、同义词以及 _变音词_ 或口音词，被用来匹配尽可能多的文档。
 
-The same text could then be indexed in other fields to provide more-precise
-matching.  One field may contain the unstemmed version, another the original
-word with accents, and a third might use _shingles_ to provide information
-about <<proximity-matching,word proximity>>.
+相同的文本被索引到其他字段，以提供更精确的匹配。一个字段可以包括未经词干提取过的原词，另一个字段包括其他词源、口音，还有一个字段可以提供 <<proximity-matching,词语相似性>> 信息的瓦片词（shingles）。
 
-These other fields act as _signals_ to increase the relevance score of each
-matching document. The _more fields that match_, the better.
+其他字段是作为匹配每个文档时提高相关度评分的 _信号_ ， _匹配字段越多_ 则越好。
 --
 
-Cross fields::
+混合字段::
 +
 --
-For some entities, the identifying information is spread across multiple
-fields, each of which contains just a part of the whole:
+对于某些实体，我们需要在多个字段中确定其信息，单个字段都只能作为整体的一部分：
 
-* Person: `first_name` and `last_name`
-* Book: `title`, `author`, and `description`
-* Address:  `street`, `city`, `country`, and `postcode`
+* Person： `first_name` 和 `last_name` （人：名和姓）
+* Book： `title` 、 `author` 和 `description` （书：标题、作者、描述）
+* Address： `street` 、 `city` 、 `country` 和 `postcode` （地址：街道、市、国家和邮政编码）
 
-In this case, we want to find as many words as possible in _any_ of the listed
-fields. We need to search across multiple fields as if they were one big
-field.
+在这种情况下，我们希望在 _任何_ 这些列出的字段中找到尽可能多的词，这有如在一个大字段中进行搜索，这个大字段包括了所有列出的字段。
 --
 
-All of these are multiword, multifield queries, but each requires a
-different strategy. We will examine each strategy in turn in the rest of this
-chapter.
-
+上述所有都是多词、多字段查询，但每个具体查询都要求使用不同策略。本章后面的部分，我们会依次介绍每个策略。
