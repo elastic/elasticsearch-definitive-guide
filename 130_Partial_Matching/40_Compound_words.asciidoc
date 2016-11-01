@@ -1,44 +1,32 @@
 [[ngrams-compound-words]]
-=== Ngrams for Compound Words
+=== Ngrams 在复合词的应用
 
-Finally, let's take a look at how n-grams can be used to search languages with
-compound words. ((("languages", "using many compound words, indexing of")))((("n-grams", "using with compound words")))((("partial matching", "using n-grams for compound words")))((("German", "compound words in"))) German is famous for combining several small words into one
-massive compound word in order to capture precise or complex meanings. For
-example:
+最后，来看看 n-gram 是如何应用于搜索复合词的语言中的。((("languages", "using many compound words, indexing of")))((("n-grams", "using with compound words")))((("partial matching", "using n-grams for compound words")))((("German", "compound words in")))德语的特点是它可以将许多小词组合成一个庞大的复合词以表达它准确或复杂的意义。例如：
 
 _Aussprachewörterbuch_::
-    Pronunciation dictionary
+    发音字典（Pronunciation dictionary）
 
 _Militärgeschichte_::
-    Military history
+    战争史（Military history）
 
 _Weißkopfseeadler_::
-    White-headed sea eagle, or bald eagle
+    秃鹰（White-headed sea eagle, or bald eagle）
 
 _Weltgesundheitsorganisation_::
-    World Health Organization
+    世界卫生组织（World Health Organization）
 
 _Rindfleischetikettierungsüberwachungsaufgabenübertragungsgesetz_::
-    The law concerning the delegation of duties for the supervision of cattle
-    marking and the labeling of beef
+    法案考虑代理监管牛和牛肉的标记的职责（The law concerning the delegation of duties for the supervision of cattle marking and the labeling of beef）
 
-Somebody searching for ``Wörterbuch'' (dictionary) would probably expect to
-see ``Aussprachewörtebuch'' in the results list. Similarly, a search for
-``Adler'' (eagle) should include ``Weißkopfseeadler.''
+有些人希望在搜索 “Wörterbuch”（字典）的时候，能在结果中看到 “Aussprachewörtebuch”（发音字典）。同样，搜索 “Adler”（鹰）的时候，能将 “Weißkopfseeadler”（秃鹰）包括在结果中。
 
-One approach to indexing languages like this is to break compound words into
-their constituent parts using the {ref}/analysis-compound-word-tokenfilter.html[compound word token filter].
-However, the quality of the results depends on how good your compound-word
-dictionary is.
+处理这种语言的一种方式可以用
+{ref}/analysis-compound-word-tokenfilter.html[组合词 token 过滤器（compound word token filter）]
+将复合词拆分成各自部分，但这种方式的结果质量依赖于组合词字典的质量。
 
-Another approach is just to break all words into n-grams and to search for any
-matching fragments--the more fragments that match, the more relevant the
-document.
+另一种方式就是将所有的词用 n-gram 进行处理，然后搜索任何匹配的片段——能匹配的片段越多，文档的相关度越大。
 
-Given that an n-gram is a moving window on a word, an n-gram of any length
-will cover all of the word.  We want to choose a length that is long enough
-to be meaningful, but not so long that we produce far too many unique terms.
-A _trigram_ (length 3) is ((("trigrams")))probably a good starting point:
+假设某个 n-gram 是一个词上的滑动窗口，那么任何长度的 n-gram 都可以遍历这个词。我们既希望选择足够长的值让拆分的词项具有意义，又不至于因为太长而生成过多的唯一词。一个长度为 3 的 _trigram_ ((("trigrams")))可能是一个不错的开始：
 
 [source,js]
 --------------------------------------------------
@@ -79,10 +67,9 @@ PUT /my_index
 --------------------------------------------------
 // SENSE: 130_Partial_Matching/40_Compound_words.json
 
-<1> The `text` field uses the `trigrams` analyzer to index its contents as
-    n-grams of length 3.
+<1> `text` 字段用 `trigrams` 分析器索引它的内容，这里 n-gram 的长度是 3 。
 
-Testing the trigrams analyzer with the `analyze` API
+使用 `analyze` API 测试 trigram 分析器：
 
 [source,js]
 --------------------------------------------------
@@ -91,11 +78,11 @@ Weißkopfseeadler
 --------------------------------------------------
 // SENSE: 130_Partial_Matching/40_Compound_words.json
 
-returns these terms:
+返回以下词项：
 
     wei, eiß, ißk, ßko, kop, opf, pfs, fse, see, eea,ead, adl, dle, ler
 
-We can index our example compound words to test this approach:
+索引前述示例中的复合词来测试：
 
 [source,js]
 --------------------------------------------------
@@ -113,8 +100,7 @@ POST /my_index/my_type/_bulk
 --------------------------------------------------
 // SENSE: 130_Partial_Matching/40_Compound_words.json
 
-A search for ``Adler'' (eagle) becomes a query for the three terms `adl`, `dle`,
-and `ler`:
+“Adler”（鹰）的搜索转化为查询三个词 `adl` 、 `dle` 和 `ler` ：
 
 [source,js]
 --------------------------------------------------
@@ -129,7 +115,7 @@ GET /my_index/my_type/_search
 --------------------------------------------------
 // SENSE: 130_Partial_Matching/40_Compound_words.json
 
-which correctly matches ``Weißkopfsee-__adler__'':
+正好与 “Weißkopfsee-__adler__” 相匹配：
 
 [source,js]
 --------------------------------------------------
@@ -147,15 +133,9 @@ which correctly matches ``Weißkopfsee-__adler__'':
 --------------------------------------------------
 // SENSE: 130_Partial_Matching/40_Compound_words.json
 
-A similar query for ``Gesundheit'' (health) correctly matches
-``Welt-__gesundheit__-sorganisation,'' but it also matches
-``Militär-__ges__-chichte'' and
-``Rindfleischetikettierungsüberwachungsaufgabenübertragungs-__ges__-etz,''
-both of which also contain the trigram `ges`.
+类似查询 “Gesundheit”（健康）可以与 “Welt-gesundheit-sorganisation” 匹配，同时也能与 “Militär-__ges__-chichte” 和 “Rindfleischetikettierungsüberwachungsaufgabenübertragungs-__ges__-etz” 匹配，因为它们同时都有 trigram 生成的 `ges` ：
 
-Judicious use of the `minimum_should_match` parameter can remove these
-spurious results by requiring that a minimum number of trigrams must be
-present for a document to be considered a match:
+使用合适的 `minimum_should_match` 可以将这些奇怪的结果排除，只有当 trigram 最少匹配数满足要求时，文档才能被认为是匹配的：
 
 [source,js]
 --------------------------------------------------
@@ -173,12 +153,6 @@ GET /my_index/my_type/_search
 --------------------------------------------------
 // SENSE: 130_Partial_Matching/40_Compound_words.json
 
-This is a bit of a shotgun approach to full-text search and can result in a
-large inverted index, but it is an effective generic way of indexing languages
-that use many compound words or that don't use whitespace between words,
-such as Thai.
+这有点像全文搜索中霰弹枪式的策略，可能会导致倒排索引内容变多，尽管如此，在索引具有很多复合词的语言，或词之间没有空格的语言（如：泰语）时，它仍不失为一种通用且有效的方法。
 
-This technique is used to increase _recall_&#x2014;the number of relevant
-documents that a search returns.  It is usually used in combination with
-other techniques, such as shingles (see <<shingles>>) to improve precision and
-the relevance score of each document.
+这种技术可以用来提升 _召回率_ ——搜索结果中相关的文档数。它通常会与其他技术一起使用，例如 shingles（参见 <<shingles,shingles 瓦片词>> ），以提高精度和每个文档的相关度评分。
