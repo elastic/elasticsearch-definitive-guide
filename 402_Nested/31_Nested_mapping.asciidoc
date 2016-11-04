@@ -1,8 +1,7 @@
 [[nested-mapping]]
-=== Nested Object Mapping
+=== 嵌套对象映射
 
-Setting up a `nested` field is simple--where ((("mapping (types)", "nested object")))((("nested object mapping")))you would normally specify type
-`object`, make it type `nested` instead:
+设置一个字段为 `nested` 很简单 -- ((("mapping (types)", "nested object")))((("nested object mapping"))) 你只需要将字段类型 `object` 替换为 `nested` 即可：
 
 [source,json]
 --------------------------
@@ -26,9 +25,6 @@ PUT /my_index
   }
 }
 --------------------------
-<1> A `nested` field accepts the same parameters as a field of type `object`.
+<1> `nested` 字段类型的设置参数与 `object` 相同。
 
-That's all that is required.  Any `comments` objects would now be indexed as
-separate nested documents. See the
-{ref}/nested.html[`nested` type reference docs] for more.
-
+这就是需要设置的一切。至此，所有 `comments` 对象会被索引在独立的嵌套文档中。可以查看 {ref}/nested.html[`nested` 类型参考文档] 获取更多详细信息。
