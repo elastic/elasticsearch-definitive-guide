@@ -1,7 +1,7 @@
-=== Best Fields
+[[_best_fields]]
+=== 最佳字段
 
-Imagine that we have a website that allows ((("multifield search", "best fields queries")))((("best fields queries")))users to search blog posts, such
-as these two documents:
+假设有个网站允许用户搜索博客的内容，((("multifield search", "best fields queries")))((("best fields queries")))以下面两篇博客内容文档为例：
 
 [source,js]
 --------------------------------------------------
@@ -19,13 +19,9 @@ PUT /my_index/my_type/2
 --------------------------------------------------
 // SENSE: 110_Multi_Field_Search/15_Best_fields.json
 
-The user types in the words ``Brown fox'' and clicks Search.   We don't
-know ahead of time if the user's search terms will be found in the `title` or
-the `body` field of the post, but it is likely that the user is searching for
-related words.  To our eyes, document 2 appears to be the better match, as it
-contains both words that we are looking for.
+用户输入词组 “Brown fox” 然后点击搜索按钮。事先，我们并不知道用户的搜索项是会在 `title` 还是在 `body` 字段中被找到，但是，用户很有可能是想搜索相关的词组。用肉眼判断，文档 2 的匹配度更高，因为它同时包括要查找的两个词：
 
-Now we run the following `bool` query:
+现在运行以下 `bool` 查询：
 
 [source,js]
 --------------------------------------------------
@@ -42,7 +38,7 @@ Now we run the following `bool` query:
 --------------------------------------------------
 // SENSE: 110_Multi_Field_Search/15_Best_fields.json
 
-And we find that this query gives document 1 the higher score:
+但是我们发现查询的结果是文档 1 的评分更高：
 
 [source,js]
 --------------------------------------------------
@@ -68,34 +64,25 @@ And we find that this query gives document 1 the higher score:
 }
 --------------------------------------------------
 
-To understand why, think about how the `bool` query ((("bool query", "relevance score calculation")))((("relevance scores", "calculation in bool queries")))calculates its score:
+为了理解导致这样的原因，((("bool query", "relevance score calculation")))((("relevance scores", "calculation in bool queries")))需要回想一下 `bool` 是如何计算评分的：
 
-1. It runs both of the queries in the `should` clause.
-2. It adds their scores together.
-3. It multiplies the total by the number of matching clauses.
-4. It divides the result by the total number of clauses (two).
+1. 它会执行 `should` 语句中的两个查询。
+2. 加和两个查询的评分。
+3. 乘以匹配语句的总数。
+4. 除以所有语句总数（这里为：2）。
 
-Document 1 contains the word `brown` in both fields, so both `match` clauses
-are successful and have a score.  Document 2 contains both `brown` and
-`fox` in the `body` field but neither word in the `title` field. The high
-score from the `body` query is added to the zero score from the `title` query,
-and multiplied by one-half, resulting in a lower overall score than for document 1.
+文档 1 的两个字段都包含 `brown` 这个词，所以两个 `match` 语句都能成功匹配并且有一个评分。文档 2 的 `body` 字段同时包含 `brown` 和 `fox` 这两个词，但 `title` 字段没有包含任何词。这样， `body` 查询结果中的高分，加上 `title` 查询中的 0 分，然后乘以二分之一，就得到比文档 1 更低的整体评分。
 
-In this example, the `title` and `body` fields are competing with each other.
-We want to find the single _best-matching_ field.
+在本例中， `title` 和 `body` 字段是相互竞争的关系，所以就需要找到单个 _最佳匹配_ 的字段。
 
-What if, instead of combining the scores from each field, we used the score
-from the _best-matching_ field as the overall score for the query?  This would
-give preference to a single field that contains _both_ of the words we are
-looking for, rather than the same word repeated in different fields.
+如果不是简单将每个字段的评分结果加在一起，而是将 _最佳匹配_ 字段的评分作为查询的整体评分，结果会怎样？这样返回的结果可能是： _同时_ 包含 `brown` 和 `fox` 的单个字段比反复出现相同词语的多个不同字段有更高的相关度。
+
+
 
 [[dis-max-query]]
-==== dis_max Query
+==== dis_max 查询
 
-Instead of the `bool` query, we can use the  `dis_max` or _Disjunction Max
-Query_.  Disjunction means _or_((("dis_max (disjunction max) query"))) (while conjunction means _and_) so the
-Disjunction Max Query simply means _return documents that match any of these
-queries, and return the score of the best matching query_:
+不使用 `bool` 查询，可以使用 `dis_max` 即分离 _最大化查询（Disjunction Max Query）_ 。分离（Disjunction）的意思是 _或（or）_ ，这与可以把结合（conjunction）理解成 _与（and）_ 相对应。分离最大化查询（Disjunction Max Query）指的是： _将任何与任一查询匹配的文档作为结果返回，但只将最佳匹配的评分作为查询的评分结果返回_ ：
 
 [source,js]
 --------------------------------------------------
@@ -112,7 +99,7 @@ queries, and return the score of the best matching query_:
 --------------------------------------------------
 // SENSE: 110_Multi_Field_Search/15_Best_fields.json
 
-This produces the results that we want:
+得到我们想要的结果为：
 
 [source,js]
 --------------------------------------------------
@@ -137,4 +124,3 @@ This produces the results that we want:
   ]
 }
 --------------------------------------------------
-
