@@ -1,9 +1,7 @@
-=== How match Uses bool
+[[_how_match_uses_bool]]
+=== 如何使用布尔匹配
 
-By now, you have probably realized that <<match-multi-word,multiword `match`
-queries>> simply wrap((("match query", "use of bool query in multi-word searches")))((("bool query", "use by match query in multi-word searches")))((("full text search", "how match query uses bool query"))) the generated `term` queries in a `bool` query. With the
-default `or` operator, each `term` query is added as a `should` clause, so
-at least one clause must match. These two queries are equivalent:
+目前为止，可能已经意识到<<match-multi-word,多词 `match` 查询>>只是简单地将生成的 `term` 查询包裹((("match query", "use of bool query in multi-word searches")))((("bool query", "use by match query in multi-word searches")))((("full text search", "how match query uses bool query")))在一个 `bool` 查询中。如果使用默认的 `or` 操作符，每个 `term` 查询都被当作 `should` 语句，这样就要求必须至少匹配一条语句。以下两个查询是等价的：
 
 [source,js]
 --------------------------------------------------
@@ -24,8 +22,7 @@ at least one clause must match. These two queries are equivalent:
 }
 --------------------------------------------------
 
-With the `and` operator, all the `term` queries are added as `must` clauses,
-so _all_ clauses must match. These two queries are equivalent:
+如果使用 `and` 操作符，所有的 `term` 查询都被当作 `must` 语句，所以 _所有（all）_ 语句都必须匹配。以下两个查询是等价的：
 
 [source,js]
 --------------------------------------------------
@@ -51,8 +48,7 @@ so _all_ clauses must match. These two queries are equivalent:
 }
 --------------------------------------------------
 
-And if the `minimum_should_match` parameter is((("minimum_should_match parameter", "match query using bool query"))) specified, it is passed
-directly through to the `bool` query, making these two queries equivalent:
+如果指定参数 `minimum_should_match` ((("minimum_should_match parameter", "match query using bool query")))，它可以通过 `bool` 查询直接传递，使以下两个查询等价：
 
 [source,js]
 --------------------------------------------------
@@ -79,14 +75,7 @@ directly through to the `bool` query, making these two queries equivalent:
   }
 }
 --------------------------------------------------
-<1> Because there are only three clauses, the `minimum_should_match`
-    value of `75%` in the `match` query is rounded down to `2`.
-    At least two out of the three `should`  clauses must match.
+<1> 因为只有三条语句，`match` 查询的参数 `minimum_should_match` 值 75% 会被截断成 `2` 。即三条 `should` 语句中至少有两条必须匹配。
 
 
-Of course, we would normally write these types of queries by using the `match`
-query, but understanding how the `match` query works internally lets you take
-control of the process when you need to. Some things can't be
-done with a single `match` query, such as give more weight to some query terms
-than to others. We will look at an example of this in the next section.
-
+当然，我们通常将这些查询用 `match` 查询来表示，但是如果了解 `match` 内部的工作原理，我们就能根据自己的需要来控制查询过程。有些时候单个 `match` 查询无法满足需求，比如为某些查询条件分配更高的权重。我们会在下一小节中看到这个例子。
