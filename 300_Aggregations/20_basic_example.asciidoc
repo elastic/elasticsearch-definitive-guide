@@ -99,7 +99,7 @@ Let's execute that aggregation and take a look at the results:
       "hits": [] <1>
    },
    "aggregations": {
-      "colors": { <2>
+      "popular_colors": { <2>
          "buckets": [
             {
                "key": "red", <3>
