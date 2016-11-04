@@ -1,31 +1,18 @@
 ifndef::es_build[= placeholder1]
 
 [[search-in-depth]]
-= Search in Depth
+= 深入搜索
 
 [partintro]
 --
 
-In <<getting-started>> we covered the basic tools in just enough detail to
-allow you to start searching your data with Elasticsearch. ((("searching", "using Elasticsearch"))) It won't take
-long, though, before you find that you want more: more flexibility when matching
-user queries, more-accurate ranking of results, more-specific searches to
-cover different problem domains.
+在 <<getting-started, 入门指南>> 中涵盖了基本工具并对它们有足够详细的描述，这让我们能够开始用 Elasticsearch 搜索数据。((("searching", "using Elasticsearch")))用不了多长时间，就会发现我们想要的更多：希望查询匹配更灵活，排名结果更精确，不同问题域下搜索更具体。
 
-To move to the next level, it is not enough to just use the `match` query. You
-need to understand your data and how you want to be able to search it. The
-chapters in this part explain how to index and query your data to allow
-you to take advantage of word proximity, partial matching, fuzzy matching, and
-language awareness.
+想要进阶，只知道如何使用 `match` 查询是不够的，我们需要理解数据以及如何能够搜索到它们。本章会解释如何索引和查询我们的数据让我们能利用词的相似度（word proximity）、部分匹配（partial matching）、模糊匹配（fuzzy matching）以及语言感知（language awareness）这些优势。
 
-Understanding how each query contributes to the relevance `_score` will help
-you to tune your queries: to ensure that the documents you consider to be the
-best results appear on the first page, and to trim the ``long tail'' of barely
-relevant results.
+理解每个查询如何贡献相关度评分 `_score` 有助于调试我们的查询：确保我们认为的最佳匹配文档出现在结果首页，以及削减结果中几乎不相关的 “长尾（long tail）”。
 
-Search is not just about full-text search: a large portion of your data will
-be structured values like dates and numbers. We will start by explaining how
-to combine structured search((("structured search", "combining with full text search")))((("full text search", "combining with structured search"))) with full-text search in the most efficient way.
+搜索不仅仅是全文搜索：我们很大一部分数据都是结构化的，如日期和数字。((("structured search", "combining with full text search")))((("full text search", "combining with structured search")))我们会以说明结构化搜索与全文搜索最高效的结合方式开始本章的内容。
 
 --
 
@@ -40,5 +27,3 @@ include::120_Proximity_Matching.asciidoc[]
 include::130_Partial_Matching.asciidoc[]
 
 include::170_Relevance.asciidoc[]
-
-
