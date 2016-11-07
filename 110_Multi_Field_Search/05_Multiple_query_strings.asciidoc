@@ -1,11 +1,7 @@
 [[multi-query-strings]]
-=== Multiple Query Strings
+=== 多字符串查询
 
-The simplest multifield query to deal with is the ((("multifield search", "multiple query strings")))one where we can _map
-search terms to specific fields_. If we know that _War and Peace_ is the
-title, and Leo Tolstoy is the author, it is easy to write each of these
-conditions as a `match` clause ((("match clause, mapping search terms to specific fields")))((("bool query", "mapping search terms to specific fields in match clause")))and to combine them with a <<bool-query,`bool`
-query>>:
+最简单的多字段查询可以将搜索项映射到具体的字段。((("multifield search", "multiple query strings")))如果我们知道 _War and Peace_ 是标题，Leo Tolstoy 是作者，很容易就能把两个条件用 `match` 语句表示，((("match clause, mapping search terms to specific fields")))((("bool query", "mapping search terms to specific fields in match clause")))并将它们用 <<bool-query,`bool` 查询>> 组合起来：
 
 [source,js]
 --------------------------------------------------
@@ -23,15 +19,9 @@ GET /_search
 --------------------------------------------------
 // SENSE: 110_Multi_Field_Search/05_Multiple_query_strings.json
 
-The `bool` query takes a _more-matches-is-better_ approach, so the score from
-each `match` clause will be added together to provide the final `_score` for
-each document. Documents that match both clauses will score higher than
-documents that match just one clause.
+`bool` 查询采取 _more-matches-is-better_ 匹配越多越好的方式，所以每条 `match` 语句的评分结果会被加在一起，从而为每个文档提供最终的分数 `_score` 。能与两条语句同时匹配的文档比只与一条语句匹配的文档得分要高。
 
-Of course, you're not restricted to using just `match` clauses: the `bool`
-query can wrap any other query type, ((("bool query", "nested bool query in")))including other `bool` queries.  We could
-add a clause to specify that we prefer to see versions of the book that have
-been translated by specific translators:
+当然，并不是只能使用 `match` 语句：可以用 `bool` 查询来包裹组合任意其他类型的查询，((("bool query", "nested bool query in")))甚至包括其他的 `bool` 查询。我们可以在上面的示例中添加一条语句来指定译者版本的偏好：
 
 [source,js]
 --------------------------------------------------
@@ -56,29 +46,16 @@ GET /_search
 // SENSE: 110_Multi_Field_Search/05_Multiple_query_strings.json
 
 
-Why did we put the translator clauses inside a separate `bool` query?  All four
-`match` queries are `should` clauses, so why didn't we just put the translator
-clauses at the same level as the title and author clauses?
+为什么将译者条件语句放入另一个独立的 `bool` 查询中呢？所有的四个 `match` 查询都是 `should` 语句，所以为什么不将 translator 语句与其他如 title 、 author 这样的语句放在同一层呢？
 
-The answer lies in how the score is calculated.((("relevance scores", "calculation in bool queries")))  The `bool` query runs each
-`match` query, adds their scores together, then multiplies by the number of
-matching clauses, and divides by the total number of clauses. Each clause at
-the same level has the same weight. In the preceding query, the `bool` query
-containing the translator clauses counts for one-third of the total score. If we had
-put the translator clauses at the same level as title and author, they
-would have reduced the contribution of the title and author clauses to one-quarter each.
+答案在于评分的计算方式。((("relevance scores", "calculation in bool queries"))) `bool` 查询运行每个 `match` 查询，再把评分加在一起，然后将结果与所有匹配的语句数量相乘，最后除以所有的语句数量。处于同一层的每条语句具有相同的权重。在前面这个例子中，包含 translator 语句的 `bool` 查询，只占总评分的三分之一。如果将 translator 语句与 title 和 author 两条语句放入同一层，那么 title 和 author 语句只贡献四分之一评分。
 
 [[prioritising-clauses]]
-==== Prioritizing Clauses
+==== 语句的优先级
 
-It is likely that an even one-third split between clauses is not what we need for
-the preceding query. ((("multifield search", "multiple query strings", "prioritizing query clauses")))((("bool query", "prioritizing clauses"))) Probably we're more interested in the title and author
-clauses than we are in the translator clauses. We need to tune the query to
-make the title and author clauses relatively more important.
+前例中每条语句贡献三分之一评分的这种方式可能并不是我们想要的，((("multifield search", "multiple query strings", "prioritizing query clauses")))((("bool query", "prioritizing clauses")))我们可能对 title 和 author 两条语句更感兴趣，这样就需要调整查询，使 title 和 author 语句相对来说更重要。
 
-The simplest weapon in our tuning arsenal is the `boost` parameter. To
-increase the weight of the `title` and `author` fields, give ((("boost parameter", "using to prioritize query clauses")))((("weight", "using boost parameter to prioritize query clauses")))them a `boost`
-value higher than `1`:
+在武器库中，最容易使用的就是 `boost` 参数。为了提升 `title` 和 `author` 字段的权重，((("boost parameter", "using to prioritize query clauses")))((("weight", "using boost parameter to prioritize query clauses")))为它们分配的 `boost` 值大于 `1` ：
 
 [source,js]
 --------------------------------------------------
@@ -110,12 +87,7 @@ GET /_search
 --------------------------------------------------
 // SENSE: 110_Multi_Field_Search/05_Multiple_query_strings.json
 
-<1> The `title` and `author` clauses have a `boost` value of `2`.
-<2> The nested `bool` clause has the default `boost` of `1`.
+<1> `title` 和 `author` 语句的 `boost` 值为 `2` 。
+<2> 嵌套 `bool` 语句默认的 `boost` 值为 `1` 。
 
-The ``best'' value for the `boost` parameter is most easily determined by
-trial and error: set a `boost` value, run test queries, repeat. A reasonable
-range for `boost` lies between `1` and `10`, maybe `15`. Boosts higher than
-that have little more impact because scores are
-<<boost-normalization,normalized>>.
-
+要获取 `boost` 参数 “最佳” 值，较为简单的方式就是不断试错：设定 `boost` 值，运行测试查询，如此反复。 `boost` 值比较合理的区间处于 `1` 到 `10` 之间，当然也有可能是 `15` 。如果为 `boost` 指定比这更高的值，将不会对最终的评分结果产生更大影响，因为评分是被 <<boost-normalization,归一化的（normalized）>> 。
