@@ -1,88 +1,56 @@
 [[stopwords]]
-== Stopwords: Performance Versus Precision
+== 停用词: 性能与精度
 
-Back in the early days of information retrieval,((("stopwords", "performance versus precision")))  disk space and memory were
-limited to a tiny fraction of what we are accustomed to today. It was
-essential to make your index as small as possible.  Every kilobyte saved meant
-a significant improvement in performance. Stemming (see <<stemming>>) was
-important, not just for making searches broader and increasing retrieval in
-the same way that we use it today, but also as a tool for compressing index
-size.
+从早期的信息检索到如今，((("stopwords", "performance versus precision"))) 我们已习惯于磁盘空间和内存被限制为很小一部分，所以
+必须使你的索引尽可能小。 每个字节都意味着巨大的性能提升。  (查看 <<stemming>> ) 词干提取的重要性不仅是因为它让搜索的内容更广泛、让检索的能力更深入，还因为它是压缩索引空间的工具。
 
-Another way to reduce index size is simply to _index fewer words_.  For search
-purposes, some words are more important than others. A significant reduction
-in index size can be achieved by indexing only the more important terms.
+一种最简单的减少索引大小的方法就是 _索引更少的词_。 有些词要比其他词更重要，只索引那些更重要的词来可以大大减少索引的空间。
 
-So which terms can be left out? ((("term frequency", "high and low"))) We can divide terms roughly into two groups:
+那么哪些词条可以被过滤呢？((("term frequency", "high and low"))) 我们可以简单分为两组:
 
-Low-frequency terms::
+低频词（Low-frequency terms）::
 
-Words that appear in relatively few documents in the collection.  Because of their
-rarity,((("weight", "low frequency terms"))) they have a high value, or _weight_.
+在文档集合中相对出现较少的词，因为它们稀少，所以它们的权重值更高。
 
-High-frequency terms::
+高频词（High-frequency terms）::
 
-Common words that appear in many documents in the index, such as `the`, `and`, and
-`is`. These words  have a low weight and contribute little to the relevance
-score.
+在索引下的文档集合中出现较多的常用词，例如 `the`、`and`、和`is`。 这些词的权重小，对相关度评分影响不大。
 
 [TIP]
 ==================================================
 
-Of course, frequency is really a scale rather than just two points labeled
-_low_ and _high_. We just draw a line at some arbitrary point and say that any
-terms below that line are low frequency and above the line are high frequency.
+当然，频率实际上是个可以衡量的标尺而不是非 _高_ 即 _低_ 的标签。我们可以在标尺的任何位置选取一个标准，低于这个标准的属于低频词，高于它的属于高频词。
 
 ==================================================
 
-Which terms are low or high frequency depend on the documents themselves.  The
-word `and` may be a low-frequency term if all the documents are in Chinese.
-In a collection of documents about databases, the word `database` may be a
-high-frequency term with little value as a search term for that particular
-collection.
+词项到底是低频或是高频取决于它们所处的文档。单词 `and` 如果在所有都是中文的文档里可能是个低频词。在关于数据库的文档集合里，单词 `database` 可能是一个高频词项，它对搜索这个特定集合毫无帮助。
 
-That said, for any language there are words that occur very
-commonly and that seldom add value to a search.((("English", "stopwords")))  The default English
-stopwords used in Elasticsearch are as follows:
+每种语言都存在一些非常常见的单词，它们对搜索没有太大价值。在 Elasticsearch 中，英语默认的停用词为:
 
     a, an, and, are, as, at, be, but, by, for, if, in, into, is, it,
     no, not, of, on, or, such, that, the, their, then, there, these,
     they, this, to, was, will, with
 
-These _stopwords_ can usually be filtered out before indexing with little
-negative impact on retrieval. But is it a good idea to do so?
+这些 _停用词_ 通常在索引前就可以被过滤掉，同时对检索的负面影响不大。但是这样做真的是一个较好的解决方案？
 
 [[pros-cons-stopwords]]
 [float="true"]
-=== Pros and Cons of Stopwords
+=== 停用词的优点和缺点（Pros and Cons of Stopwords）
 
-We have more disk space, more RAM, and ((("stopwords", "pros and cons of")))better compression algorithms than
-existed back in the day. Excluding the preceding 33 common words from the index
-will save only about 4MB per million documents.  Using stopwords for the sake
-of reducing index size is no longer a valid reason. (However, there is one
-caveat to this statement, which we discuss in <<stopwords-phrases>>.)
+现在我们拥有更大的磁盘空间，更多内存，并且((("stopwords", "pros and cons of")))还有更好的压缩算法。
+将之前的 33 个常见词从索引中移除，每百万文档只能节省 4MB 空间。 所以使用停用词减少索引大小不再是一个有效的理由。
+(不过这种说法还有一点需要注意，我们在 <<stopwords-phrases>> 讨论。)
 
-On top of that, by removing words from the index, we are reducing our ability
-to perform certain types of searches.  Filtering out the words listed previously
-prevents us from doing the following:
+在此基础上，从索引里将这些词移除会使我们降低某种类型的搜索能力。将前面这些所列单词移除会让我们难以完成以下事情：
 
-* Distinguishing _happy_ from _not happy_.
-* Searching for the band The The.
-* Finding Shakespeare's quotation ``To be, or not to be''
-* Using the country code for Norway: `no`
+* 区分 _happy_ 和 _not happy_。
+* 搜索乐队名称 The The。
+* 查找莎士比亚的名句 ``To be, or not to be'' （生存还是毁灭)。
+* 使用挪威的国家代码: `no`。
 
-The primary advantage of removing stopwords is performance.  Imagine that we
-search an index with one million documents for the word `fox`.  Perhaps `fox`
-appears in only 20 of them, which means that Elastisearch has to calculate the
-relevance `_score` for 20 documents in order to return the top 10. Now, we
-change that to a search for `the OR fox`. The word `the` probably occurs in
-almost all the documents, which means that Elasticsearch has to calculate
-the `_score` for all one million documents.  This second query simply cannot
-perform as well as the first.
+移除停用词的最主要好处是性能，假设我们在个具有上百万文档的索引中搜索单词 `fox`。或许 `fox 只在其中 20 个文档中出现，也就是说 Elasticsearch 需要计算 20 个文档的相关度评分 `_score `从而排出前十。现在我们把搜索条件改为 `the OR fox`，几乎所有的文件都包含 `the` 这个词，也就是说 Elasticsearch 需要为所有一百万文档计算评分 `_score`。 由此可见第二个查询肯定没有第一个的结果好。
 
-Fortunately, there are techniques that we can use to keep common words
-searchable, while still maintaining good performance. First, we'll start with
-how to use stopwords.
+幸运的是，我们可以用来保持常用词搜索，同时还可以保持良好的性能。首先我们一块学习如何使用停用词。
 
 
 
