@@ -1,30 +1,21 @@
 [[source-field]]
-==== Metadata: _source Field
+==== 元数据: _source 字段
 
-By default, Elasticsearch ((("metadata, document", "_source field")))((("_source field", sortas="source field")))stores the JSON string representing the
-document body in the `_source` field. Like all stored fields, the `_source`
-field is compressed before being written to disk.
+默认地，Elasticsearch ((("metadata, document", "_source field")))((("_source field", sortas="source field"))) 在 `_source` 字段存储代表文档体的JSON字符串。和所有被存储的字段一样， `_source` 字段在被写入磁盘之前先会被压缩。
 
-This is almost always desired functionality because it means the following:
+这个字段的存储几乎总是我们想要的，因为它意味着下面的这些：
 
-* The full document is available directly from the search results--no need
-  for a separate round-trip to fetch the document from another data store.
+* 搜索结果包括了整个可用的文档——不需要额外的从另一个的数据仓库来取文档。
 
-* Partial `update` requests will not function without the `_source` field.
+* 如果没有 `_source` 字段，部分 `update` 请求不会生效。
 
-* When your mapping changes and you need to reindex your data, you can
-  do so directly from Elasticsearch instead of having to retrieve all of your
-  documents from another (usually slower) data store.
+* 当你的映射改变时，你需要重新索引你的数据，有了_source字段你可以直接从Elasticsearch这样做，而不必从另一个（通常是速度更慢的）数据仓库取回你的所有文档。
 
-* Individual fields can be extracted from the `_source` field and returned
-  in `get` or `search` requests when you don't need to see the whole document.
+* 当你不需要看到整个文档时，单个字段可以从 `_source` 字段提取和通过 `get` 或者 `search` 请求返回。
 
-* It is easier to debug queries, because you can see exactly what each document
-  contains, rather than having to guess their contents from a list of IDs.
+* 调试查询语句更加简单，因为你可以直接看到每个文档包括什么，而不是从一列id猜测它们的内容。
 
-That said, storing the `_source` field does use disk space.  If none of the
-preceding reasons is important to you, you can disable the `_source` field with
-the following mapping:
+然而，存储 `_source` 字段的确要使用磁盘空间。如果上面的原因对你来说没有一个是重要的，你可以用下面的映射禁用 `_source` 字段：
 
 [source,js]
 --------------------------------------------------
@@ -40,8 +31,7 @@ PUT /my_index
 }
 --------------------------------------------------
 
-In a search request, you can ask for only certain fields by specifying the
-`_source` parameter in the request body:
+在一个搜索请求里，你可以通过在请求体中指定 `_source` 参数，来达到只获取特定的字段的效果：
 
 [source,js]
 --------------------------------------------------
@@ -53,21 +43,14 @@ GET /_search
 --------------------------------------------------
 // SENSE: 070_Index_Mgmt/31_Source_field.json
 
-Values for these fields will be extracted from the `_source` field and
-returned instead of the full `_source`.
+这些字段的值会从 `_source` 字段被提取和返回，而不是返回整个 `_source` 。
 
-.Stored Fields
+.Stored Fields 被存储字段
 ****
 
-Besides indexing the values of a field, you ((("stored fields")))((("fields", "stored")))can also choose to `store` the
-original field value for later retrieval. Users with a Lucene background use
-stored fields to choose which fields they would like to be able to return in
-their search results. In fact, the `_source` field is a stored field.
+为了之后的检索，除了索引一个字段的值，你 ((("stored fields")))((("fields", "stored"))) 还可以选择 `存储` 原始字段值。有 Lucene 使用背景的用户使用被存储字段来选择他们想要在搜索结果里面返回的字段。事实上， `_source` 字段就是一个被存储的字段。
 
-In Elasticsearch, setting individual document fields to be stored is usually a
-false optimization. The whole document is already stored as the `_source`
-field. It is almost always better to just extract the fields that you need
-by using the `_source` parameter.
+在Elasticsearch中，对文档的个别字段设置存储的做法通常不是最优的。整个文档已经被存储为 `_source` 字段。使用 `_source` 参数提取你需要的字段总是更好的。
 
 ****
 
