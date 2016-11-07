@@ -1,13 +1,9 @@
 [[geopoints]]
-== Geo Points
+== 地理坐标点
 
-A _geo-point_ is a single latitude/longitude point on the Earth's surface.((("geo-points"))) Geo-points
-can be used to calculate distance from a point, to determine whether a point
-falls within a bounding box, or in aggregations.
+_地理坐标点_ 是指地球表面可以用经纬度描述的一个点。((("geo-points"))) 地理坐标点可以用来计算两个坐标间的距离，还可以判断一个坐标是否在一个区域中，或在聚合中。
 
-Geo-points cannot be automatically detected((("dynamic mapping", "geo-points and"))) with
-<<dynamic-mapping,dynamic mapping>>. Instead, `geo_point` fields should be
-mapped ((("mapping (types)", "geo-points")))explicitly:
+地理坐标点不能被动态映射((("dynamic mapping", "geo-points and")))（<<dynamic-mapping,dynamic mapping>>）自动检测，而是需要显式声明对应字段类型为 `geo-point` ((("mapping (types)", "geo-points")))：
 
 [source,json]
 -----------------------
@@ -30,11 +26,9 @@ PUT /attractions
 
 [[lat-lon-formats]]
 [float="true"]
-=== Lat/Lon Formats
+=== 经纬度坐标格式
 
-With the `location` field defined as a `geo_point`, we can proceed to index
-documents containing latitude/longitude pairs,((("geo-points", "location fields defined as, lat/lon formats")))((("location field, defined as geo-point")))((("latitude/longitude pairs", "lat/lon formats for geo-points")))((("arrays", "geo-point, lon/lat format")))((("strings", "geo-point, lat/lon format")))((("objects", "geo-point, lat/lon format"))) which can be formatted as
-strings, arrays, or objects:
+如上例，`location` 字段被声明为 `geo_point` 后，我们就可以索引包含了经纬度信息的文档了。((("geo-points", "location fields defined as, lat/lon formats")))((("location field, defined as geo-point")))((("latitude/longitude pairs", "lat/lon formats for geo-points")))((("arrays", "geo-point, lon/lat format")))((("strings", "geo-point, lat/lon format")))((("objects", "geo-point, lat/lon format")))经纬度信息的形式可以是字符串、数组或者对象：
 
 [role="pagebreak-before"]
 [source,json]
@@ -60,22 +54,18 @@ PUT /attractions/restaurant/3
   "location": [ -73.983, 40.719 ] <3>
 }
 -----------------------
-<1> A string representation, with `"lat,lon"`.
-<2> An object representation with `lat` and `lon` explicitly named.
-<3> An array representation with `[lon,lat]`.
+<1> 字符串形式以半角逗号分割，如 `"lat,lon"` 。
+<2> 对象形式显式命名为 `lat` 和 `lon` 。
+<3> 数组形式表示为 `[lon,lat]` 。
 
 [CAUTION]
 ========================
 
-Everybody gets caught at least once: string geo-points are
-`"latitude,longitude"`, while array geo-points are `[longitude,latitude]`&#x2014;the opposite order!
+可能所有人都至少一次踩过这个坑：地理坐标点用字符串形式表示时是纬度在前，经度在后（ `"latitude,longitude"` ），而数组形式表示时是经度在前，纬度在后（ `[longitude,latitude]` ）&#x2014;顺序刚好相反。
 
-Originally, both strings and arrays in Elasticsearch used latitude followed by
-longitude. However, it was decided early on to switch the order for arrays in
-order to conform with GeoJSON.
+其实，在 Elasticesearch 内部，不管字符串形式还是数组形式，都是经度在前，纬度在后。不过早期为了适配 GeoJSON 的格式规范，调整了数组形式的表示方式。
 
-The result is a bear trap that captures all unsuspecting users on their
-journey to full geolocation nirvana.
+因此，在使用地理位置的路上就出现了这么一个“捕熊器”，专坑那些不了解这个陷阱的使用者。
 
 ========================
 
