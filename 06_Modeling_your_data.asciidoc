@@ -2,32 +2,26 @@ ifndef::es_build[= placeholder6]
 
 [[modeling-your-data]]
 
-= Modeling Your Data
+= 数据建模
 
 [partintro]
 --
 
-Elasticsearch is a different kind of beast, especially if you come from the
-world of SQL.((("modeling your data")))  It comes with many benefits: performance, scale, near real-time
-search, and analytics across massive amounts of data. And it is easy to get
-going! Just download and start using it.
+Elasticsearch 是如此与众不同，特别是如果你来自 SQL 的世界。((("modeling your data")))
+Elasticsearch 有非常多的优点：高性能、可扩展、近实时搜索，并支持大数据量的数据分析。一切都很容易！
+只需下载并开始使用它。
 
-But it is not magic.  To get the most out of Elasticsearch, you need to
-understand how it works and how to make it work for your needs.
+但它不是魔法。为了充分利用 Elasticsearch，你需要了解它的工作机制，以及如何让它如你所需的进行工作。
 
-Handling relationships between entities is not as obvious as it is with a
-dedicated relational store.  The golden rule of a relational database--normalize your data--does not apply to Elasticsearch. In <<relations>>,
-<<nested-objects>>, and <<parent-child>> we discuss the pros and cons of
-the available approaches.
+和专用的关系型数据存储有所不同，Elasticsearch 并没有对处理实体之间的关系给出直接的方法。
+一个关系数据库的黄金法则是 --规范化你的数据（范式）-- 但这不适用于 Elasticsearch。
+在 <<relations>> 、 <<nested-objects>> 和 <<parent-child>> 我们讨论了这些提供的方法的优点和缺点。
 
-Then in <<scale>> we talk about the features that Elasticsearch offers
-that enable you to scale out quickly and flexibly.  Scale is not  one-size-fits-all.  You need to think about how data flows through your system, and
-design your model accordingly. Time-based data like log events or social
-network streams require a very different approach than more static collections
-of documents.
+然后在 <<scale>> 我们谈论 Elasticsearch 提供的快速、灵活的扩容能力。
+当然扩容并没有一个放之四海而皆准的方案。你需要考虑这些通过系统产生的数据流的具体特点，
+据此设计你的模型。例如日志事件或者社交网络流这些时间序列数据类型，和静态文档集合在处理模型上有着很大的不同。
 
-And finally, we talk about the one thing in Elasticsearch that doesn't scale.
-
+最后，我们聊一下 Elasticsearch 里面不能伸缩的一件事。
 --
 
 include::400_Relationships.asciidoc[]
@@ -37,5 +31,3 @@ include::402_Nested.asciidoc[]
 include::404_Parent_Child.asciidoc[]
 
 include::410_Scaling.asciidoc[]
-
-
