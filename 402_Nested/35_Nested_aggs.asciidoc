@@ -1,9 +1,7 @@
 [[nested-aggregation]]
-=== Nested Aggregations
+=== 嵌套聚合
 
-In the same way as we need to use the special `nested` query ((("aggregations", "nested")))((("nested aggregation")))to gain access to
-nested objects at search time, the dedicated `nested` aggregation allows us to
-aggregate fields in nested objects:
+在查询的时候，我们使用 `nested` 查询 ((("aggregations", "nested")))((("nested aggregation"))) 就可以获取嵌套对象的信息。同理， `nested` 聚合允许我们对嵌套对象里的字段进行聚合操作。
 
 [source,json]
 --------------------------
@@ -35,11 +33,11 @@ GET /my_index/blogpost/_search
   }
 }
 --------------------------
-<1> The `nested` aggregation ``steps down'' into the nested `comments` object.
-<2> Comments are bucketed into months based on the `comments.date` field.
-<3> The average number of stars is calculated for each bucket.
+<1> `nested` 聚合 ``进入'' 嵌套的 `comments` 对象。
+<2> comment对象根据 comments.date 字段的月份值被分到不同的桶。
+<3> 计算每个桶内star的平均数量。
 
-The results show that aggregation has happened at the nested document level:
+从下面的结果可以看出聚合是在嵌套文档层面进行的：
 
 [source,json]
 --------------------------
@@ -71,19 +69,16 @@ The results show that aggregation has happened at the nested document level:
 }
 ...
 --------------------------
-<1> There are a total of four `comments`: one in September and three in October.
+<1> 总共有4个 `comments` 对象 ：1个对象在9月的桶里，3个对象在10月的桶里。
 
 [[reverse-nested-aggregation]]
-==== reverse_nested Aggregation
+==== 逆向嵌套聚合
 
-A `nested` aggregation can access((("aggregations", "nested", "reverse_nested aggregation")))((("reverse_nested aggregation"))) only the fields within the nested document.
-It can't see fields in the root document or in a different nested document.
-However, we can _step out_ of the nested scope back into the parent with a
-`reverse_nested` aggregation.
+`nested` 聚合 ((("aggregations", "nested", "reverse_nested aggregation")))((("reverse_nested aggregation"))) 只能对嵌套文档的字段进行操作。
+根文档或者其他嵌套文档的字段对它是不可见的。
+然而，通过 `reverse_nested` 聚合，我们可以 _走出_ 嵌套层级，回到父级文档进行操作。
 
-For instance, we can find out which `tags` our commenters are interested in,
-based on the age of the commenter.  The `comment.age` is a nested field, while
-the `tags` are in the root document:
+例如，我们要基于评论者的年龄找出评论者感兴趣 `tags` 的分布。 `comment.age` 是一个嵌套字段，但 `tags` 在根文档中：
 
 [source,json]
 --------------------------
@@ -119,13 +114,12 @@ GET /my_index/blogpost/_search
   }
 }
 --------------------------
-<1> The `nested` agg steps down into the `comments` object.
-<2> The `histogram` agg groups on the `comments.age` field, in buckets
-    of 10 years.
-<3> The `reverse_nested` agg steps back up to the root document.
-<4> The `terms` agg counts popular terms per age group of the commenter.
+<1> `nested` 聚合进入 `comments` 对象。
+<2> `histogram` 聚合基于 `comments.age` 做分组，每10年一个分组。
+<3> `reverse_nested` 聚合退回根文档。
+<4> `terms` 聚合计算每个分组年龄段的评论者最常用的标签词。
 
-The abbreviated results show us the following:
+简略结果如下所示：
 
 [source,json]
 --------------------------
@@ -152,30 +146,20 @@ The abbreviated results show us the following:
            },
 ...
 --------------------------
-<1> There are four comments.
-<2> There are two comments by commenters between the ages of 20 and 30.
-<3> Two blog posts are associated with those comments.
-<4> The popular tags in those blog posts are `shares`, `cash`, and `equities`.
+<1> 一共有4条评论。
+<2> 在20岁到30岁之间总共有两条评论。
+<3> 这些评论包含在两篇博客文章中。
+<4> 在这些博客文章中最热门的标签是 `shares`、 `cash`、`equities`。
 
-==== When to Use Nested Objects
+==== 嵌套对象的使用时机
 
-Nested objects((("nested objects", "when to use"))) are useful when there is one main entity, like our `blogpost`,
-with a limited number of closely related but less important entities, such as
-comments.  It is useful to be able to find blog posts based on the content of
-the comments, and the `nested` query and filter provide for fast query-time
-joins.
+嵌套对象 ((("nested objects", "when to use"))) 在只有一个主要实体时非常有用，这个主要实体包含有限个紧密关联但又不是很重要的实体，例如我们的 `blogpost` 对象包含评论对象。
+在基于评论的内容查找博客文章时， `nested` 查询有很大的用处，并且可以提供更快的查询效率。
 
-The disadvantages of the nested model are as follows:
+嵌套模型的缺点如下：
 
-* To add, change, or delete  a nested document, the whole document must be
-  reindexed. This becomes more costly the more nested documents there are.
+* 当对嵌套文档做增加、修改或者删除时，整个文档都要重新被索引。嵌套文档越多，这带来的成本就越大。
 
-* Search requests return the whole document, not just the matching nested
-  documents. Although there are plans afoot to support returning the best
- -matching nested documents with the root document, this is not yet supported.
+* 查询结果返回的是整个文档，而不仅仅是匹配的嵌套文档。尽管目前有计划支持只返回根文档中最佳匹配的嵌套文档，但目前还不支持。
 
-Sometimes you need a complete separation between the main document and its
-associated entities.  This separation is provided by the _parent-child
-relationship_.
-
-
+有时你需要在主文档和其关联实体之间做一个完整的隔离设计。这个隔离是由 _父子关联_ 提供的。
