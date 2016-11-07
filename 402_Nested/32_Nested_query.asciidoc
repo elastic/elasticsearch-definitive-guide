@@ -1,9 +1,7 @@
 [[nested-query]]
-=== Querying a Nested Object
+=== 嵌套对象查询
 
-Because nested objects ((("nested objects", "querying")))are indexed as separate hidden documents, we can't
-query them directly. ((("queries", "nested"))) Instead, we have to use the
-{ref}/query-dsl-nested-query.html[`nested` query] to  access them:
+由于嵌套对象 ((("nested objects", "querying"))) 被索引在独立隐藏的文档中，我们无法直接查询它们。 ((("queries", "nested"))) 相应地，我们必须使用 {ref}/query-dsl-nested-query.html[ `nested` 查询] 去获取它们：
 
 [source,json]
 --------------------------
@@ -12,7 +10,7 @@ GET /my_index/blogpost/_search
   "query": {
     "bool": {
       "must": [
-        { 
+        {
           "match": {
             "title": "eggs" <1>
           }
@@ -23,14 +21,14 @@ GET /my_index/blogpost/_search
             "query": {
               "bool": {
                 "must": [ <3>
-                  { 
-                    "match": { 
-                      "comments.name": "john" 
+                  {
+                    "match": {
+                      "comments.name": "john"
                     }
                   },
-                  { 
+                  {
                     "match": {
-                      "comments.age": 28     
+                      "comments.age": 28
                     }
                   }
                 ]
@@ -41,30 +39,20 @@ GET /my_index/blogpost/_search
       ]
 }}}
 --------------------------
-<1> The `title` clause operates on the root document.
-<2> The `nested` clause ``steps down'' into the nested `comments` field.
-    It no longer has access to fields in the root document, nor fields in
-    any other nested document.
-<3> The `comments.name` and `comments.age` clauses operate on the same nested
-    document.
+<1> `title` 子句是查询根文档的。
+<2> `nested` 子句作用于嵌套字段 `comments` 。在此查询中，既不能查询根文档字段，也不能查询其他嵌套文档。
+<3> `comments.name` 和 `comments.age` 子句操作在同一个嵌套文档中。
 
 [TIP]
 ==================================================
 
-A `nested` field can contain other `nested` fields.  Similarly, a `nested`
-query can contain other `nested` queries. The nesting hierarchy is applied
-as you would expect.
+`nested` 字段可以包含其他的 `nested` 字段。同样地，`nested` 查询也可以包含其他的 `nested` 查询。而嵌套的层次会按照你所期待的被应用。
 
 ==================================================
 
-Of course, a `nested` query could match several nested documents.
-Each matching nested document would have its own relevance score, but these
-multiple scores need to be reduced to a single score that can be applied to
-the root document.
+`nested` 查询肯定可以匹配到多个嵌套的文档。每一个匹配的嵌套文档都有自己的相关度得分，但是这众多的分数最终需要汇聚为可供根文档使用的一个分数。
 
-By default, it averages the scores of the matching nested documents. This can
-be controlled by setting the `score_mode` parameter to `avg`, `max`, `sum`, or
-even `none` (in which case the root document gets a constant score of `1.0`).
+默认情况下，根文档的分数是这些嵌套文档分数的平均值。可以通过设置 score_mode 参数来控制这个得分策略，相关策略有 `avg` (平均值), `max` (最大值), `sum` (加和) 和 `none` (直接返回 `1.0` 常数值分数)。
 
 [source,json]
 --------------------------
@@ -74,7 +62,7 @@ GET /my_index/blogpost/_search
     "bool": {
       "must": [
         {
-          "match": { 
+          "match": {
             "title": "eggs"
           }
         },
@@ -85,14 +73,14 @@ GET /my_index/blogpost/_search
             "query": {
               "bool": {
                 "must": [
-                  { 
+                  {
                     "match": {
-                      "comments.name": "john" 
+                      "comments.name": "john"
                     }
                   },
                   {
                     "match": {
-                      "comments.age": 28     
+                      "comments.age": 28
                     }
                   }
                 ]
@@ -105,13 +93,11 @@ GET /my_index/blogpost/_search
   }
 }
 --------------------------
-<1> Give the root document the `_score` from the best-matching
-    nested document.
+<1> 返回最优匹配嵌套文档的 `_score` 给根文档使用。
 
 [NOTE]
 ====
-If placed inside the `filter` clause of a Boolean query, a `nested` query behaves
-much like a `nested` query, except that it doesn't accept the `score_mode`
-parameter.  Because it is being used as a non-scoring query -- it includes or excludes,
-but doesn't score --  a `score_mode` doesn't make sense since there is nothing to score.
+
+如果 `nested` 查询放在一个布尔查询的 `filter` 子句中，其表现就像一个 `nested` 查询，只是 `score_mode` 参数不再生效。因为它被用于不打分的查询中 -- 只是符合或不符合条件，不必打分 -- 那么 `score_mode` 就没有任何意义，因为根本就没有要打分的地方。
+
 ====
