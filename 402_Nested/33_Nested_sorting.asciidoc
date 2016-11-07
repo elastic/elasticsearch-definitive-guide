@@ -1,9 +1,7 @@
 [[nested-sorting]]
-=== Sorting by Nested Fields
+=== 使用嵌套字段排序
 
-It is possible to sort by the value of a nested field, even though the value
-exists in a separate nested document. ((("nested fields, sorting by")))((("sorting", "by nested fields"))) To make the result more
-interesting, we will add another record:
+尽管嵌套字段的值存储于独立的嵌套文档中，但依然有方法按照嵌套字段的值排序。 ((("nested fields, sorting by")))((("sorting", "by nested fields"))) 让我们添加另一个记录，以使得结果更有意思：
 
 [source,json]
 --------------------------
@@ -31,9 +29,7 @@ PUT /my_index/blogpost/2
 }
 --------------------------
 
-Imagine that we want to retrieve blog posts that received comments in October,
-ordered by the lowest number of `stars` that each blog post received. The
-search request would look like this:
+假如我们想要查询在10月份收到评论的博客文章，并且按照 `stars` 数的最小值来由小到大排序，那么查询语句如下：
 
 [source,json]
 --------------------------
@@ -69,17 +65,10 @@ GET /_search
   }
 }
 --------------------------
-<1> The `nested` query limits the results to blog posts that received a
-    comment in October.
-<2> Results are sorted in ascending (`asc`) order by the lowest value (`min`)
-    in the `comment.stars` field in any matching comments.
-<3> The `nested_path` and `nested_filter` in the sort clause are the same as the `nested` query in
-    the main `query` clause. The reason is explained next.
+<1> 此处的 `nested` 查询将结果限定为在10月份收到过评论的博客文章。
+<2> 结果按照匹配的评论中 `comment.stars` 字段的最小值 (`min`) 来由小到大 (`asc`) 排序。
+<3> 排序子句中的 `nested_path` 和 `nested_filter` 和 `query` 子句中的 `nested` 查询相同，原因在下面有解释。
 
-Why do we need to repeat the query conditions in the `nested_path` and `nested_filter`?  The
-reason is that sorting happens after the query has been executed. The query
-matches blog posts that received comments in October, but it returns
-blog post documents as the result. If we didn't include the `nested_filter`
-clause, we would end up sorting based on any comments that the blog post has
-ever received, not just those received in October.
-
+我们为什么要用 nested_path 和 nested_filter 重复查询条件呢？原因在于，排序发生在查询执行之后。
+查询条件限定了只在10月份收到评论的博客文档，但返回整个博客文档。如果我们不在排序子句中加入 `nested_filter` ，
+那么我们对博客文档的排序将基于博客文档的所有评论，而不是仅仅在10月份接收到的评论。
