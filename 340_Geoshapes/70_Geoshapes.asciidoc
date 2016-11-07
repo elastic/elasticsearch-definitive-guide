@@ -1,44 +1,31 @@
 [[geo-shapes]]
-== Geo Shapes
+== 地理形状
 
-Geo-shapes use a completely different approach than geo-points.((("geo-shapes"))) A circle on a
-computer screen does not consist of a perfect continuous line. Instead it is
-drawn by coloring adjacent pixels as an approximation of a circle. Geo-shapes
-work in much the same way.
+地理形状（ Geo-shapes ）使用一种与地理坐标点完全不同的方法。((("geo-shapes")))我们在计算机屏幕上看到的圆形并不是由完美的连续的线组成的。而是用一个个连续的着色像素点画出的一个近似圆。地理形状的工作方式就与此相似。
 
-Complex shapes--such as points, lines, polygons, multipolygons, and polygons with
-holes,--are ``painted'' onto a grid of geohash cells, and the shape is
-converted into a list of the ((("geohashes", "in geo-shapes")))geohashes of all the cells that it touches.
+复杂的形状——比如点集、线、多边形、多多边形、中空多边形——都是通过 geohash 单元 ``画出来'' 的，((("geohashes", "in geo-shapes")))这些形状会转化为一个被它所覆盖到的 geohash 的集合。
 
 [NOTE]
 ====
-Actually, two types of grids can be used with geo-shapes:
-geohashes, which we have already discussed and which are the default encoding,
-and _quad trees_.  ((("quad trees")))Quad trees are similar to geohashes except that there are
-only four cells at each level, instead of 32.  The difference comes down to a
-choice of encoding.
+实际上，两种类型的网格可以被用于 geo-shapes：默认使用我们之前讨论过的 geohash ，另外还有一种是 _四叉树_ 。((("quad trees")))四叉树与 geohash 类似，除了四叉树每个层级只有 4 个单元，而不是 32 。这种不同取决于编码方式的选择。                                                                                                                                                                                                        
+
 ====
 
-All of the geohashes that compose a shape are indexed as if they were terms.
-With this information in the index, it is easy to determine whether one shape
-intersects with another, as they will share the same geohash terms.
+组成一个形状的 geohash 都作为一个单元被索引在一起。有了这些信息，通过查看是否有相同的 geohash 单元，就可以很轻易地检查两个形状是否有交集。
 
-That is the extent of what you can do with geo-shapes: determine the
-relationship between a query shape and a shape in the index.  The `relation`
-can be ((("relation parameter (geo-shapes)")))one of the following:
+geo-shapes 有以下作用：判断查询的形状与索引的形状的关系；这些 `关系` ((("relation parameter (geo-shapes)")))可能是以下之一：
 
 `intersects`::
 
-    The query shape overlaps with the indexed shape (default).
+    查询的形状与索引的形状有重叠（默认）。
 
 `disjoint`::
 
-    The query shape does _not_ overlap at all with the indexed shape.
+    查询的形状与索引的形状完全 _不_ 重叠。 
 
 `within`::
 
-    The indexed shape is entirely within the query shape.
+    索引的形状完全被包含在查询的形状中。
 
-Geo-shapes cannot be used to caculate distance, cannot be used for
-sorting or scoring, and cannot be used in aggregations.
+Geo-shapes 不能用于计算距离、排序、打分以及聚合。
 
