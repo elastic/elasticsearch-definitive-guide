@@ -1,56 +1,22 @@
 [[relevance-is-broken]]
-=== Relevance Is Broken!
+=== 被破坏的相关度！
 
-Before we move on to discussing more-complex queries in
-<<multi-field-search>>, let's make a quick detour to explain why we
-<<match-test-data,created our test index>> with just one primary shard.
+在讨论更复杂的 <<multi-field-search,多字段搜索>> 之前，让我们先快速解释一下为什么只在主分片上 <<match-test-data,创建测试索引>> 。
 
-Every now and again a new user opens an issue claiming that sorting by
-relevance((("relevance", "differences in IDF producing incorrect results"))) is broken and offering a short reproduction: the user indexes a few
-documents, runs a simple query, and finds apparently less-relevant results
-appearing above more-relevant results.
+用户会时不时的抱怨无法按相关度排序并提供简短的重现步骤：((("relevance", "differences in IDF producing incorrect results")))用户索引了一些文档，运行一个简单的查询，然后发现明显低相关度的结果出现在高相关度结果之上。
 
-To understand why this happens, let's imagine that we create an index with two
-primary shards and we index ten documents, six of which contain the word `foo`.
-It may happen that shard 1 contains three of the `foo` documents and shard
-2 contains the other three.  In other words, our documents are well distributed.
+为了理解为什么会这样，可以设想，我们在两个主分片上创建了索引和总共 10 个文档，其中 6 个文档有单词 `foo` 。可能是分片 1 有其中 3 个 `foo` 文档，而分片 2 有其中另外 3 个文档，换句话说，所有文档是均匀分布存储的。
 
-In <<relevance-intro>>, we described the default similarity algorithm used in
-Elasticsearch, ((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm")))called _term frequency / inverse document frequency_ or TF/IDF.
-Term frequency counts the number of times a term appears within the field we are
-querying in the current document.  The more times it appears, the more
-relevant is this document. The _inverse document frequency_ takes((("inverse document frequency")))((("IDF", see="inverse document frequency"))) into account
-how often a term appears as a percentage of _all the documents in the index_.
-The more frequently the term appears, the less weight it has.
+在 <<relevance-intro,什么是相关度？>>中，我们描述了 Elasticsearch 默认使用的相似度算法，((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm")))这个算法叫做 _词频/逆向文档频率_ 或 TF/IDF 。词频是计算某个词在当前被查询文档里某个字段中出现的频率，出现的频率越高，文档越相关。 _逆向文档频率_ 将 _某个词在索引内所有文档出现的百分数_ 考虑在内，((("inverse document frequency")))((("IDF", see="inverse document frequency")))出现的频率越高，它的权重就越低。
 
-However, for performance reasons, Elasticsearch doesn't calculate the IDF
-across all documents in the index.((("shards", "local inverse document frequency (IDF)"))) Instead, each shard calculates a local IDF
-for the documents contained _in that shard_.
+但是由于性能原因， Elasticsearch 不会计算索引内所有文档的 IDF 。((("shards", "local inverse document frequency (IDF)")))相反，每个分片会根据 _该分片_ 内的所有文档计算一个本地 IDF 。
 
-Because our documents are well distributed, the IDF for both shards will be
-the same.  Now imagine instead that five of the `foo` documents are on shard 1,
-and the sixth document is on shard 2.  In this scenario, the term `foo` is
-very common on one shard (and so of little importance), but rare on the other
-shard (and so much more important). These differences in IDF can produce
-incorrect results.
+因为文档是均匀分布存储的，两个分片的 IDF 是相同的。相反，设想如果有 5 个 `foo` 文档存于分片 1 ，而第 6 个文档存于分片 2 ，在这种场景下， `foo` 在一个分片里非常普通（所以不那么重要），但是在另一个分片里非常出现很少（所以会显得更重要）。这些 IDF 之间的差异会导致不正确的结果。
 
-In practice, this is not a problem. The differences between local and  global
-IDF diminish the more documents that you add to the index. With real-world
-volumes of data, the local IDFs soon even out. The problem is not that
-relevance is broken but that there is too little data.
+在实际应用中，这并不是一个问题，本地和全局的 IDF 的差异会随着索引里文档数的增多渐渐消失，在真实世界的数据量下，局部的 IDF 会被迅速均化，所以上述问题并不是相关度被破坏所导致的，而是由于数据太少。
 
-For testing purposes, there are two ways we can work around this issue. The
-first is to create an index with one primary shard, as we did in the section
-introducing the <<match-query,`match` query>>. If you have only one shard, then
-the local IDF _is_ the global IDF.
+为了测试，我们可以通过两种方式解决这个问题。第一种是只在主分片上创建索引，正如 <<match-query,`match` 查询>> 里介绍的那样，如果只有一个分片，那么本地的 IDF _就是_ 全局的 IDF。
 
-The second workaround is to add `?search_type=dfs_query_then_fetch` to your
-search requests. The `dfs` stands((("search_type", "dfs_query_then_fetch")))((("dfs_query_then_fetch search type")))((("DFS (Distributed Frequency Search)"))) for _Distributed Frequency Search_, and it
-tells Elasticsearch to first retrieve the local IDF from each shard in order
-to calculate the global IDF across the whole index.
+第二个方式就是在搜索请求后添加 `?search_type=dfs_query_then_fetch` ， `dfs` 是指 _分布式频率搜索（Distributed Frequency Search）_ ，((("search_type", "dfs_query_then_fetch")))((("dfs_query_then_fetch search type")))((("DFS (Distributed Frequency Search)"))) 它告诉 Elasticsearch ，先分别获得每个分片本地的 IDF ，然后根据结果再计算整个索引的全局 IDF 。
 
-TIP: Don't use `dfs_query_then_fetch` in production.  It really isn't
-required. Just having enough data will ensure that your term frequencies are
-well distributed. There is no reason to add this extra DFS step to every query
-that you run.
-
+TIP: 不要在生产环境上使用 `dfs_query_then_fetch` 。完全没有必要。只要有足够的数据就能保证词频是均匀分布的。没有理由给每个查询额外加上 DFS 这步。
