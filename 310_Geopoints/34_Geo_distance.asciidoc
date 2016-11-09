@@ -1,8 +1,7 @@
 [[geo-distance]]
-=== Geo Distance Filter
+=== 地理距离过滤器
 
-The `geo_distance` filter draws a circle around the specified location and
-finds all documents((("geo_distance filter")))((("filtering", "by geo-points", "geo_distance filter"))) that have a geo-point within that circle:
+地理距离过滤器（ `geo_distance` ）以给定位置为圆心画一个圆，来找出那些地理坐标落在其中的文档((("geo_distance filter")))((("filtering", "by geo-points", "geo_distance filter")))：
 
 [source,json]
 ---------------------
@@ -23,48 +22,32 @@ GET /attractions/restaurant/_search
   }
 }
 ---------------------
-<1> Find all `location` fields within `1km` of the specified point.
-    See {ref}/common-options.html#distance-units[Distance Units] for
-    a list of the accepted units.
-<2> The central point can be specified as a string, an array, or (as in this
-    example) an object. See <<lat-lon-formats>>.
+<1> 找出所有与指定点距离在 `1km` 内的 `location` 字段。访问 {ref}/common-options.html#distance-units[Distance Units] 查看所支持的距离表示单位。
+<2> 中心点可以表示为字符串，数组或者（如示例中的）对象。详见 <<lat-lon-formats>>。
 
-A geo-distance calculation is expensive.  To optimize performance,
-Elasticsearch draws a box around the circle and first uses the less expensive
-bounding-box calculation to exclude as many documents as it can.  It runs
-the geo-distance calculation on only those points that fall within the bounding
-box.
+地理距离过滤器计算代价昂贵。为了优化性能，Elasticsearch 先画一个矩形框来围住整个圆形，这样就可以先用消耗较少的盒模型计算方式来排除掉尽可能多的文档。
+然后只对落在盒模型内的这部分点用地理距离计算方式处理。
 
-TIP: Do your users really require an accurate circular filter to be applied to
-their results?((("geo_bounding_box filter", "using instead of geo_distance"))) Using a rectangular <<geo-bounding-box,bounding box>> is much
-more efficient than geo-distance and will usually serve their purposes just as
-well.
+TIP: 你需要判断你的用户，是否需要如此精确的使用圆模型来做距离过滤？((("geo_bounding_box filter", "using instead of geo_distance")))通常使用矩形模型 <<geo-bounding-box,bounding box>> 是比地理距离更高效的方式，并且往往也能满足应用需求。
 
-==== Faster Geo-Distance Calculations
+==== 更快的地理距离计算
 
-The distance between two points can be calculated using algorithms,
-which trade performance for accuracy:((("distance", "calculating")))((("geo_distance filter", "faster geo_distance calculations")))
+两点间的距离计算，有多种牺牲性能换取精度的算法：((("distance", "calculating")))((("geo_distance filter", "faster geo_distance calculations")))
 
 `arc`::
 
-The slowest but most accurate is the `arc` calculation, which treats the world
-as a sphere.((("arc distance calculation")))  Accuracy is still limited because the world isn't really a sphere.
+最慢但最精确的是 `arc` 计算方式，这种方式把世界当作球体来处理。((("arc distance calculation")))不过这种方式的精度有限，因为这个世界并不是完全的球体。
 
 `plane`::
 
-The `plane` calculation, which((("plane distance calculation"))) treats the world as if it were flat, is faster
-but less accurate. It is most accurate at the equator and becomes less
-accurate toward the poles.
+`plane` 计算方式((("plane distance calculation")))把地球当成是平坦的，这种方式快一些但是精度略逊。在赤道附近的位置精度最好，而靠近两极则变差。
 
 `sloppy_arc`::
 
-So called because it uses the `SloppyMath` Lucene class to trade accuracy for speed,((("sloppy_arc distance calculation")))
-the `sloppy_arc` calculation uses the
-http://en.wikipedia.org/wiki/Haversine_formula[Haversine formula] to calculate
-distance.((("Haversine formula (for distance)"))) It is four to five times as fast as `arc`, and distances are 99.9% accurate.
-This is the default calculation.
+如此命名，是因为它使用了 Lucene 的 `SloppyMath` 类。这是一种用精度换取速度的计算方式，((("sloppy_arc distance calculation")))
+它使用 http://en.wikipedia.org/wiki/Haversine_formula[Haversine formula] 来计算距离。((("Haversine formula (for distance)")))它比 `arc` 计算方式快 4 到 5 倍，并且距离精度达 99.9%。这也是默认的计算方式。
 
-You can specify a different calculation as follows:
+你可以参考下例来指定不同的计算方式：
 
 [source,json]
 ---------------------
@@ -86,22 +69,16 @@ GET /attractions/restaurant/_search
   }
 }
 ---------------------
-<1> Use the faster but less accurate `plane` calculation.
+<1> 使用更快但精度稍差的 `plane` 计算方法。
 
-TIP: Will your users really care if a restaurant is a few meters outside their specified radius? While some geo applications require great accuracy,
-less-accurate but faster calculations will suit the majority of use cases just
-fine.
+TIP: 你的用户真的会在意一个餐馆落在指定圆形区域数米之外吗？一些地理位置相关的应用会有较高的精度要求；但大部分实际应用场景中，使用精度较低但响应更快的计算方式可能更好。
 
 [[geo-distance-range]]
-==== geo_distance_range Filter
+==== 地理距离区间过滤器
 
-The only difference between the `geo_distance` and `geo_distance_range`
-filters((("geo_distance_range filter")))((("filtering", "by geo-points", "geo_distance_range filter")))((("range filters", "geo_distance_range filter"))) is that the latter has a doughnut shape and excludes documents within
-the central hole.
+`geo_distance` 和 `geo_distance_range` 过滤器((("geo_distance_range filter")))((("filtering", "by geo-points", "geo_distance_range filter")))((("range filters", "geo_distance_range filter")))的唯一差别在于后者是一个环状的，它会排除掉落在内圈中的那部分文档。
 
-Instead of specifying a single `distance` from the center, you specify a
-minimum distance (with `gt` or `gte`)  and maximum distance (with `lt` or
-`lte`), just like a `range` filter:
+指定到中心点的距离也可以换一种表示方式：指定一个最小距离（使用 `gt` 或者 `gte` ）和最大距离（使用 `lt` 和 `lte` ），就像使用 `range` 过滤器一样：
 
 [source,json]
 ---------------------
@@ -123,7 +100,4 @@ GET /attractions/restaurant/_search
   }
 }
 ---------------------
-<1> Matches locations that are at least `1km` from the center, and less than
-    `2km` from the center.
-
-
+<1> 匹配那些距离中心点大于等于 `1km` 而小于 `2km` 的位置。
