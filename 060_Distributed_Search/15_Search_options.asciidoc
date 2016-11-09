@@ -1,54 +1,41 @@
-=== Search Options
+[[_search_options]]
+=== 搜索选项
 
-A few ((("search options")))optional query-string parameters can influence the search process.
+有几个 ((("search options"))) 查询参数可以影响搜索过程。
 
-==== preference
+==== 偏好
 
-The `preference` parameter allows((("preference parameter")))((("search options", "preference"))) you to control which shards or nodes are
-used to handle the search request. It accepts values such as `_primary`,
-`_primary_first`, `_local`, `_only_node:xyz`, `_prefer_node:xyz`, and
-`_shards:2,3`, which are explained in detail on the
+偏好这个参数 `preference` 允许 ((("preference parameter")))((("search options", "preference"))) 用来控制由哪些分片或节点来处理搜索请求。 它接受像 `_primary`,
+`_primary_first`, `_local`, `_only_node:xyz`, `_prefer_node:xyz`, 和 
+`_shards:2,3` 这样的值, 这些值的在
 {ref}/search-request-preference.html[search `preference`]
-documentation page.
+文档页面被详细解释。
 
-However, the most generally useful value is some arbitrary string, to avoid
-the _bouncing results_ problem.((("bouncing results problem")))
+但是最有用的值是某些随机字符串，它可以避免 _bouncing results_ 问题。 ((("bouncing results problem")))
 
 [[bouncing-results]]
 .Bouncing Results
 ****
 
-Imagine that you are sorting your results by a `timestamp` field, and
-two documents have the same timestamp.  Because search requests are
-round-robined between all available shard copies, these two documents may be
-returned in one order when the request is served by the primary, and in
-another order when served by the replica.
+想象一下有两个文档有同样值的时间戳字段，搜索结果用 `timestamp` 字段来排序。 
+由于搜索请求是在所有有效的分片副本间轮询的，那就有可能如果主分片处理请求两个文档是一种顺序，
+而副本分片处理请求又是另一种顺序。
 
-This is known as the _bouncing results_ problem: every time the user refreshes
-the page, the results appear in a different order. The problem can be avoided by always using the same shards for the same user,
-which can be done by setting the `preference` parameter to an arbitrary string
-like the user's session ID.
+这就是所谓的 _bouncing results_ 问题: 每次用户刷新页面，搜索结果表现是不同的顺序。 
+这种问题可以通过让同一个用户一直使用同样的节点处理来避免，
+可以设置 `preference` 参数为一个特定的任意值比如用户会话ID来解决。
 
 ****
 
-==== timeout
+==== 超时问题
 
-By default, shards process all the data they have before returning a response to
-the coordinating node, which will in turn merge these responses to build the
-final response.
+通常分片处理完它所有的数据后再把结果返回给协同节点，协同节点把收到的所有结果合并为最终结果。
 
-This means that the time it takes to run a search request is the sum of the time
-it takes to process the slowest shard and the time it takes to merge responses.
-If one node is having trouble, it could slow down the response to all search
-requests.
+这意味着花费的时间是最慢分片的处理时间加结果合并的时间。如果有一个节点有问题，就会导致所有的响应缓慢。
 
-The `timeout` parameter tells((("timeout parameter"))) shards how long they
-are allowed to process data before returning a response to the coordinating
-node. If there was not enough time to process all data, results for this shard
-will be partial, even possibly empty.
+参数 `timeout` 告诉 ((("timeout parameter"))) 分片允许处理数据的最大时间。如果没有足够的时间处理所有数据，这个分片的结果可以是部分的，甚至是空数据。
 
-The response to a search request will indicate whether any shards returned a
-partial response with the `timed_out` property:
+搜索的返回结果会用属性 `timed_out` 标明分片是否返回的是部分结果：
 
 [source,js]
 --------------------------------------------------
@@ -56,52 +43,40 @@ partial response with the `timed_out` property:
     "timed_out":     true,  <1>
     ...
 --------------------------------------------------
-<1> The search request timed out.
+<1> 这个搜索请求超时了。
 
 [WARNING]
 ====
-It's important to know that the timeout is still a best-effort operation; it's
-possible for the query to surpass the allotted timeout.  There are two reasons for
-this behavior:
+超时仍然是一个最有效的操作，知道这一点很重要； 很可能查询会超过设定的超时时间。这种行为有两个原因：
 
-1. Timeout checks are performed on a per-document basis.  However, some query types
-have a significant amount of work that must be performed *before* documents are evaluated.
-This "setup" phase does not consult the timeout, and so very long setup times can cause
-the overall latency to shoot past the timeout.
-2. Because the time is once per document, a very long query can execute on a single
-document and it won't timeout until the next document is evaluated.  This also means
-poorly written scripts (e.g. ones with infinite loops) will be allowed to execute
-forever.
+1. 超时检查是基于每文档做的。 但是某些查询类型有大量的工作在文档评估之前需要完成。 这种 "setup" 阶段并不考虑超时设置，所以太长的建立时间会导致超过超时时间的整体延迟。
+
+2. 因为时间检查是基于每个文档的，一次长时间查询在单个文档上执行并且在下个文档被评估之前不会超时。 这也意味着差的脚本（比如带无限循环的脚本）将会永远执行下去。
 ====
 
 [[search-routing]]
-==== routing
+==== 路由 
 
-In <<routing-value>>, we explained how a custom `routing` parameter((("search options", "routing")))((("routing parameter"))) could be
-provided at index time to ensure that all related documents, such as the
-documents belonging to a single user, are stored on a single shard.  At search
-time, instead of searching on all the shards of an index, you can specify
-one or more `routing` values to limit the search to just those shards:
+在 <<routing-value>> 中, 我们解释过如何定制参数 `routing` ((("search options", "routing")))((("routing parameter"))) 
+，它能够在索引时提供来确保相关的文档，比如属于某个用户的文档被存储在某个分片上。
+在搜索的时候，不用搜索索引的所有分片，而是通过指定几个 `routing` 值来限定只搜索几个相关的分片：
 
 [source,js]
 --------------------------------------------------
 GET /_search?routing=user_1,user2
 --------------------------------------------------
 
-This technique comes in handy when designing very large search systems, and we
-discuss it in detail in <<scale>>.
+这个技术在设计大规模搜索系统时就会派上用场，我们在 <<scale>> 中详细讨论它。
 
 [[search-type]]
-==== search_type
+==== 搜索类型 
 
-The default search type is `query_then_fetch` ((("query_then_fetch search type")))((("search options", "search_type")))((("search_type"))). In some cases, you might want to explicitly set the `search_type`
-to `dfs_query_then_fetch` to improve the accuracy of relevance scoring:
+缺省的搜索类型是 `query_then_fetch` ((("query_then_fetch search type")))((("search options", "search_type")))((("search_type")))。 在某些情况下，你可能想明确设置 `search_type` 为 `dfs_query_then_fetch` 来改善相关性精确度：
 
 [source,js]
 --------------------------------------------------
 GET /_search?search_type=dfs_query_then_fetch
 --------------------------------------------------
 
-The `dfs_query_then_fetch` search type has a prequery phase that fetches the term
-frequencies from all involved shards to calculate global term
-frequencies. We discuss this further in <<relevance-is-broken>>.
+搜索类型 `dfs_query_then_fetch` 有预查询阶段，这个阶段可以从所有相关分片获取词频来计算全局词频。
+我们在 <<relevance-is-broken>> 会再讨论它。
