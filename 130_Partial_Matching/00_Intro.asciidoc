@@ -1,18 +1,11 @@
 [[partial-matching]]
-== Partial Matching
+== 部分匹配
 
-A keen observer will notice  that all the queries so far in this book have
-operated on whole terms.((("partial matching")))  To match something, the smallest unit had to be a
-single term. You can find only terms that exist in the inverted index.
+敏锐的读者会注意，目前为止本书介绍的所有查询都是针对整个词的操作。((("partial matching")))为了能匹配，只能查找倒排索引中存在的词，最小的单元为单个词。
 
-But what happens if you want to match parts of a term but not the whole thing?
-_Partial matching_ allows users to specify a portion of the term they are
-looking for and find any words that contain that fragment.
+但如果想匹配部分而不是全部的词该怎么办？ _部分匹配_ 允许用户指定查找词的一部分并找出所有包含这部分片段的词。
 
-The requirement to match on part of a term is less common in the full-text
-search-engine world than you might think.  If you have come from an SQL
-background, you likely have, at some stage of your career,
-implemented a _poor man's full-text search_ using SQL constructs like this:
+与想象的不太一样，对词进行部分匹配的需求在全文搜索引擎领域并不常见，但是如果读者有 SQL 方面的背景，可能会在某个时候实现一个 _低效的全文搜索_ 用下面的 SQL 语句对全文进行搜索：
 
 [source,js]
 --------------------------------------------------
@@ -21,25 +14,16 @@ implemented a _poor man's full-text search_ using SQL constructs like this:
       AND text LIKE "%fox%" <1>
 --------------------------------------------------
 
-<1> `*fox*` would match ``fox'' and ``foxes.''
+<1> `*fox*` 会与 “fox” 和 “foxes” 匹配。
 
-Of course, with Elasticsearch, we have the analysis process and the inverted
-index that remove the need for such brute-force techniques. To handle the
-case of matching both ``fox'' and ``foxes,'' we could simply use a stemmer to
-index words in their root form.  There is no need to match partial terms.
+当然， Elasticsearch 提供分析过程，倒排索引让我们不需要使用这种粗笨的技术。为了能应对同时匹配 “fox” 和 “foxes” 的情况，只需简单的将它们的词干作为索引形式，没有必要做部分匹配。
 
-That said, on some occasions partial matching can be useful.
-Common use ((("partial matching", "common use cases")))cases include the following:
+也就是说，在某些情况下部分匹配会比较有用，((("partial matching", "common use cases")))常见的应用如下：
 
-* Matching postal codes, product serial numbers, or other `not_analyzed` values
-  that start with a particular prefix or match a wildcard pattern
-  or even a regular expression
+* 匹配邮编、产品序列号或其他 `not_analyzed` 未分析值，这些值可以是以某个特定前缀开始，也可以是与某种模式匹配的，甚至可以是与某个正则式相匹配的。
 
-* _search-as-you-type_&#x2014;displaying the most likely results before the
-  user has finished typing the search terms
+* _输入即搜索（search-as-you-type）_ ——在用户键入搜索词过程的同时就呈现最可能的结果。
 
-* Matching in languages like German or Dutch, which contain long compound
-  words, like _Weltgesundheitsorganisation_ (World Health Organization)
+* 匹配如德语或荷兰语这样有长组合词的语言，如： _Weltgesundheitsorganisation_ （世界卫生组织，英文 World Health Organization）。
 
-We will start by examining prefix matching on exact-value `not_analyzed`
-fields.
+本章始于检验 `not_analyzed` 精确值字段的前缀匹配。
