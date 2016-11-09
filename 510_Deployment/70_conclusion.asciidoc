@@ -1,17 +1,9 @@
+[[_revisit_this_list_before_production]]
+=== 在生产之前，重温这个列表
 
-=== Revisit This List Before Production
+在你进入生产之前，你可能阅读了本节。本章中涉及的细节非常好，一般是可以知道的，但关键是，正确部署到生产环境之前需要重温这个列表。
 
-You are likely reading this section before you go into production.  
-The details covered in this chapter are good to be generally aware of, but it is 
-critical to revisit this entire list right before deploying to production.
+一些问题会简单地阻止你(如：可用的文件描述符太少)。因为他们很快显现出来，这些都是容易调试的。
+其他的一些问题，如脑裂和内存设置，只有在糟糕的事情发生之后才可见。在这一点上，解决办法往往是凌乱和繁琐的。
 
-Some of the topics will simply stop you cold (such as too few available file
-descriptors).  These are easy enough to debug because they are quickly apparent.
-Other issues, such as split brains and memory settings, are visible only after
-something bad happens.  At that point, the resolution is often messy and tedious.
-
-It is much better to proactively prevent these situations from occurring by configuring
-your cluster appropriately _before_ disaster strikes.  So if you are going to
-dog-ear (or bookmark) one section from the entire book, this chapter would be
-a good candidate.  The week before deploying to production, simply flip through
-the list presented here and check off all the recommendations.
+在灾难发生 _之前_ ，通过适当配置集群来主动阻止这些情况发生，是更好的选择。所以如果你想要从整本书的一个部分折角（或保存书签），本章将是一个很好的选择。在部署到生产环境的前一周，简单地浏览这里给出的列表，并检查所有的建议。
