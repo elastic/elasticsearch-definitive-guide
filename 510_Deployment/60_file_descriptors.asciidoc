@@ -1,21 +1,14 @@
+[[_file_descriptors_and_mmap]]
+=== 文件描述符和 MMap
 
-=== File Descriptors and MMap 
+Lucene 使用了 _大量的_ 文件。((("deployment", "file descriptors and MMap"))) 同时，Elasticsearch 在节点和 HTTP 客户端之间进行通信也使用了大量的套接字（注：sockets）。
+所有这一切都需要足够的文件描述符。((("file descriptors")))
 
-Lucene uses a _very_ large number of files. ((("deployment", "file descriptors and MMap"))) At the same time, Elasticsearch
-uses a large number of sockets to communicate between nodes and HTTP clients.
-All of this requires available file descriptors.((("file descriptors")))
+可悲的是，许多现代的 Linux 发行版本，每个进程默认允许一个微不足道的 1024 文件描述符。这对一个小的 Elasticsearch 节点来说实在是太 _低_ 了，更不用说一个处理数以百计索引的节点。
 
-Sadly, many modern Linux distributions ship with a paltry 1,024 file descriptors
-allowed per process.  This is _far_ too low for even a small Elasticsearch
-node, let alone one that is handling hundreds of indices.
+你应该增加你的文件描述符，设置一个很大的值，如 64,000。这个过程困难得让人恼火，它高度依赖于你的特定操作系统和分布。请参考你操作系统文档来确定如何最好地修改允许的文件描述符数量。
 
-You should increase your file descriptor count to something very large, such as
-64,000.  This process is irritatingly difficult and highly dependent on your
-particular OS and distribution.  Consult the documentation for your OS to determine
-how best to change the allowed file descriptor count.
-
-Once you think you've changed it, check Elasticsearch to make sure it really does
-have enough file descriptors:
+一旦你认为已经改变了它，检查 Elasticsearch，以确保它的真的起作用并且有足够的文件描述符：
 
 [source,js]
 ----
@@ -42,20 +35,13 @@ GET /_nodes/process
    }
 }
 ----
-<1> The `max_file_descriptors` field shows the number of available descriptors that
-the Elasticsearch process can access.
+<1> `max_file_descriptors` 字段显示 Elasticsearch 进程可以访问的可用文件描述符数量。
 
-Elasticsearch also uses a mix of NioFS and MMapFS ((("MMapFS")))for the various files.  Ensure
-that you configure the maximum map count so that there is ample virtual memory available for 
-mmapped files.  This can be set temporarily:
+Elasticsearch 对各种文件混合使用了 NioFs（ 注：非阻塞文件系统）和 MMapFs((("MMapFS"))) （ 注：内存映射文件系统）。请确保你配置的最大映射数量，以便有足够的虚拟内存可用于 mmapped 文件。这可以暂时设置：
 
 [source,js]
 ----
 sysctl -w vm.max_map_count=262144
 ----
 
-Or you can set it permanently by modifying `vm.max_map_count` setting in your `/etc/sysctl.conf`.
-
-
-
-
+或者你可以在 `/etc/sysctl.conf` 通过修改 `vm.max_map_count` 永久设置它。
