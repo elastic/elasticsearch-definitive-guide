@@ -1,11 +1,9 @@
-=== Exact-Value Fields
+[[_exact_value_fields]]
+=== Exact-Value 精确值字段
 
-The final topic that we should touch on before leaving multifield queries is
-that of exact-value `not_analyzed` fields. ((("not_analyzed fields", "exact value, in multi-field queries")))((("multifield search", "exact value fields")))((("exact values", "exact value not_analyzed fields in multifield search")))((("analyzed fields", "avoiding mixing with not analyzed fields in multi_match queries"))) It is not useful to mix
-`not_analyzed` fields with `analyzed` fields in `multi_match` queries.
+在结束多字段查询这个话题之前，我们最后要讨论的是精确值 `not_analyzed` 未分析字段。((("not_analyzed fields", "exact value, in multi-field queries")))((("multifield search", "exact value fields")))((("exact values", "exact value not_analyzed fields in multifield search")))((("analyzed fields", "avoiding mixing with not analyzed fields in multi_match queries")))将 `not_analyzed` 字段与 `multi_match` 中 `analyzed` 字段混在一起没有多大用处。
 
-The reason for this can be demonstrated easily by looking at a query
-explanation.  Imagine that we have set the `title` field to be `not_analyzed`:
+原因可以通过查看查询的 explanation 解释得到，设想将 `title` 字段设置成 `not_analyzed` ：
 
 [source,js]
 --------------------------------------------------
@@ -22,8 +20,7 @@ GET /_validate/query?explain
 --------------------------------------------------
 // SENSE: 110_Multi_Field_Search/55_Not_analyzed.json
 
-Because the `title` field is not analyzed, it searches that field for a single
-term consisting of the whole query string!
+因为 `title` 字段是未分析过的，Elasticsearch 会将 “peter smith” 这个完整的字符串作为查询条件来搜索！
 
     title:peter smith
     (
@@ -31,6 +28,4 @@ term consisting of the whole query string!
         blended("smith", fields: [first_name, last_name])
     )
 
-That term clearly does not exist in the inverted index of the `title` field,
-and can never be found. Avoid using `not_analyzed` fields in `multi_match`
-queries.
+显然这个项不在 `title` 的倒排索引中，所以需要在 `multi_match` 查询中避免使用 `not_analyzed` 字段。
