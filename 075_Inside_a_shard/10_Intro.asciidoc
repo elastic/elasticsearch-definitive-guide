@@ -1,31 +1,20 @@
 [[inside-a-shard]]
-== Inside a Shard
+== 分片内部原理
 
-In <<distributed-cluster>>, we introduced the _shard_, and described((("shards"))) it as a
-low-level _worker unit_. But what exactly _is_ a shard and how does it work?
-In this chapter, we answer these questions:
+在 <<distributed-cluster>>, 我们介绍了 _分片_, 并将它((("shards"))) 描述成最小的 _工作单元_。但是究竟什么 _是_ 一个分片，它是如何工作的？
+在这个章节，我们回答以下问题:
 
-* Why is search _near_ real-time?
-* Why are document CRUD (create-read-update-delete) operations _real-time_?
-* How does Elasticsearch ensure that the changes you make are durable, that
-  they won't be lost if there is a power failure?
-* Why does deleting documents not free up space immediately?
-* What do the `refresh`, `flush`, and `optimize` APIs do, and when should
-  you use them?
+* 为什么搜索是 _近_ 实时的？
+* 为什么文档的 CRUD (创建-读取-更新-删除) 操作是 _实时_ 的?
+* Elasticsearch 是怎样保证更新被持久化在断电时也不丢失数据?
+* 为什么删除文档不会立刻释放空间？
+* `refresh`, `flush`, 和 `optimize` API 都做了什么, 你什么情况下应该是用他们？
 
-The easiest way to understand how a shard functions today is to start with a
-history lesson. We will look at the problems that needed to be solved in order
-to provide a distributed durable data store with near real-time search and
-analytics.
+最简单的理解一个分片如何工作的方式是上一堂历史课。 我们将要审视提供一个带近实时搜索和分析的 分布式持久化数据存储需要解决的问题。
 
-.Content Warning
+.内容警告
 ****
 
-The information presented in this chapter is for your interest. You are not required to
-understand and remember all the detail in order to use Elasticsearch. Read
-this chapter to gain a taste for how things work, and to know where the
-information is in case you need to refer to it in the future, but don't be
-overwhelmed by the detail.
+本章展示的这些信息仅供您兴趣阅读。为了使用 Elasticsearch 您并不需要理解和记忆所有的细节。 读这个章节是为了了解工作机制，并且为了将来您需要这些信息时，知道这些信息在哪里。但是不要被这些细节所累。
 
 ****
-
