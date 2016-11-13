@@ -1,18 +1,15 @@
 [[match-query]]
-=== The match Query
+=== 匹配查询
 
-The `match` query is the _go-to_ query--the first query that you should
-reach for whenever you need to query any field.((("match query")))((("full text search", "match query"))) It is a high-level _full-text
-query_, meaning that it knows how to deal with both full-text fields and exact-value fields.
+匹配查询 `match` 是个 _核心_ 查询。当我们需要查询某个字段时，首先就要使用到这个查询。((("match query")))((("full text search", "match query")))它是一个高级 _全文查询_ ，这表示它既能处理全文字段，又能处理精确字段。
 
-That said, the main use case for the `match` query is for full-text search. So
-let's take a look at how full-text search works with a simple example.
+这就是说， `match` 查询主要的应用场景就是进行全文搜索，我们以下面一个简单例子来说明全文搜索是如何工作的：
 
 [[match-test-data]]
-==== Index Some Data
+==== 索引一些数据
 
-First, we'll create a new index and index some((("full text search", "match query", "indexing data"))) documents using the
-<<bulk,`bulk` API>>:
+首先，我们使用 <<bulk,`bulk` API>> 创建一些新的文档和索引：((("full text search", "match query", "indexing data")))
+
 
 [source,js]
 --------------------------------------------------
@@ -33,14 +30,12 @@ POST /my_index/my_type/_bulk
 --------------------------------------------------
 // SENSE: 100_Full_Text_Search/05_Match_query.json
 
-<1> Delete the index in case it already exists.
-<2> Later, in <<relevance-is-broken>>, we explain why
-    we created this index with only one primary shard.
+<1> 删除已有的索引。
+<2> 稍后，我们会在 <<relevance-is-broken, 被破坏的相关性！>> 中解释只为这个索引分配一个主分片的原因。
 
-==== A Single-Word Query
+==== 单个词查询
 
-Our first example explains what((("full text search", "match query", "single word query")))((("match query", "single word query"))) happens when we use the `match` query to
-search within a full-text field for a single word:
+我们用第一个示例来解释使用 `match` 查询搜索全文字段中的单个词：((("full text search", "match query", "single word query")))((("match query", "single word query")))
 
 [source,js]
 --------------------------------------------------
@@ -55,35 +50,26 @@ GET /my_index/my_type/_search
 --------------------------------------------------
 // SENSE: 100_Full_Text_Search/05_Match_query.json
 
-Elasticsearch executes the preceding `match` query((("analysis", "in single term match query"))) as follows:
+Elasticsearch 执行上面这个 `match` 查询的步骤是：((("analysis", "in single term match query")))
 
-1. _Check the field type_.
+
+1. _检查字段类型_ 。
 +
-The `title` field is a full-text (`analyzed`) `string` field, which means that
-the query string should be analyzed too.
+标题 `title` 字段是一个 `string` 类型（ `analyzed` ）已分析的全文字段，这意味着查询字符串本身也应该被分析。
 
-2. _Analyze the query string_.
+2. _分析查询字符串_ 。
 +
-The query string `QUICK!` is passed through the standard analyzer, which
-results in the single term `quick`. Because we have just a single term,
-the `match` query can be executed as a single low-level `term` query.
+将查询的字符串 `QUICK!` 传入标准分析器中，输出的结果是单个项 `quick` 。因为只有一个单词项，所以 `match` 查询执行的是单个底层 `term` 查询。
 
-3. _Find matching docs_.
+3. _查找匹配文档_ 。
 +
-The `term` query looks up `quick` in the inverted index and retrieves the
-list of documents that contain that term--in this case, documents 1, 2, and
-3.
+用 `term` 查询在倒排索引中查找 `quick` 然后获取一组包含该项的文档，本例的结果是文档：1、2 和 3 。
 
-4. _Score each doc_.
+4. _为每个文档评分_ 。
 +
-The `term` query calculates the relevance `_score` for each matching document,
-by combining the((("relevance scores", "calculating for single term match query results"))) term frequency (how often `quick` appears in the `title`
-field of each document), with the inverse document frequency (how often
-`quick` appears in the `title` field in _all_ documents in the index), and the
-length of each field (shorter fields are considered more relevant).
-See <<relevance-intro>>.
+用 `term` 查询计算每个文档相关度评分 `_score` ，这是种将((("relevance scores", "calculating for single term match query results")))词频（term frequency，即词 `quick` 在相关文档的 `title` 字段中出现的频率）和反向文档频率（inverse document frequency，即词 `quick` 在所有文档的 `title` 字段中出现的频率），以及字段的长度（即字段越短相关度越高）相结合的计算方式。参见 <<relevance-intro, 相关性的介绍>> 。
 
-This process gives us the following (abbreviated) results:
+这个过程给我们以下（经缩减）结果：
 
 [source,js]
 --------------------------------------------------
@@ -111,6 +97,5 @@ This process gives us the following (abbreviated) results:
  }
 ]
 --------------------------------------------------
-<1> Document 1 is most relevant because its `title` field is short, which means 
-    that `quick` represents a large portion of its content.
-<2> Document 3 is more relevant than document 2 because `quick` appears twice.
+<1> 文档 1 最相关，因为它的 `title` 字段更短，即 `quick` 占据内容的一大部分。
+<2> 文档 3 比 文档 2 更具相关性，因为在文档 2 中 `quick` 出现了两次。
