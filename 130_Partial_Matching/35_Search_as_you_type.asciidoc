@@ -1,13 +1,11 @@
-=== Index-Time Search-as-You-Type
+[[_index_time_search_as_you_type]]
+=== 索引时输入即搜索
 
-The first step to setting up index-time search-as-you-type is to((("search-as-you-type", "index time")))((("partial matching", "index time search-as-you-type"))) define our
-analysis chain, which we discussed  in <<configuring-analyzers>>, but we will
-go over the steps again here.
+设置索引时输入即搜索的第一步是需要定义好分析链，((("search-as-you-type", "index time")))((("partial matching", "index time search-as-you-type")))我们已在 <<configuring-analyzers,配置分析器>> 中讨论过，这里会对这些步骤再次说明。
 
-==== Preparing the Index
+==== 准备索引
 
-The first step is to configure a ((("partial matching", "index time search-as-you-type", "preparing the index")))custom `edge_ngram` token filter,((("edge_ngram token filter"))) which we
-will call the `autocomplete_filter`:
+第一步需要配置一个自定义的 `edge_ngram` token 过滤器，((("edge_ngram token filter")))称为 `autocomplete_filter` ：
 
 [source,js]
 --------------------------------------------------
@@ -22,12 +20,9 @@ will call the `autocomplete_filter`:
 }
 --------------------------------------------------
 
-This configuration says that, for any term that this token filter receives,
-it should produce an n-gram anchored to the start of the word of minimum
-length 1 and maximum length 20.
+这个配置的意思是：对于这个 token 过滤器接收的任意词项，过滤器会为之生成一个最小固定值为 1 ，最大为 20 的 n-gram 。
 
-Then we need to use this token filter in a custom analyzer,((("analyzers", "autocomplete custom analyzer"))) which we will call
-the `autocomplete` analyzer:
+然后会在一个自定义分析器 `autocomplete` 中使用上面这个 token 过滤器：((("analyzers", "autocomplete custom analyzer")))
 
 [source,js]
 --------------------------------------------------
@@ -44,14 +39,11 @@ the `autocomplete` analyzer:
     }
 }
 --------------------------------------------------
-<1> Our custom edge-ngram token filter
+<1> 自定义的 edge-ngram token 过滤器。
 
-This analyzer will tokenize a string into individual terms by using the
-`standard` tokenizer, lowercase each term, and then produce edge n-grams of each
-term, thanks to our `autocomplete_filter`.
+这个分析器使用 `standard` 分词器将字符串拆分为独立的词，并且将它们都变成小写形式，然后为每个词生成一个边界 n-gram，这要感谢 `autocomplete_filter` 起的作用。
 
-The full request to create the index and instantiate the token filter and
-analyzer looks like this:
+创建索引、实例化 token 过滤器和分析器的完整示例如下：
 
 [source,js]
 --------------------------------------------------
@@ -83,25 +75,20 @@ PUT /my_index
 --------------------------------------------------
 // SENSE: 130_Partial_Matching/35_Search_as_you_type.json
 
-<1> See <<relevance-is-broken>>.
-<2> First we define our custom token filter.
-<3> Then we use it in an analyzer.
+<1> 参考 <<relevance-is-broken,被破坏的相关度>> 。
+<2> 首先自定义 token 过滤器。
+<3> 然后在分析器中使用它。
 
-You can test this new analyzer to make sure it is behaving correctly by using
-the `analyze` API:
+可以拿 `analyze` API 测试这个新的分析器确保它行为正确：
 
 [source,js]
 --------------------------------------------------
-GET /my_index/_analyze
-{
-  "analyzer": "autocomplete",
-  "text": "quick brown"
-}
+GET /my_index/_analyze?analyzer=autocomplete
+quick brown
 --------------------------------------------------
 // SENSE: 130_Partial_Matching/35_Search_as_you_type.json
 
-The results show us that the analyzer is working correctly. It returns these
-terms:
+结果表明分析器能正确工作，并返回以下词：
 
 * `q`
 * `qu`
@@ -114,8 +101,7 @@ terms:
 * `brow`
 * `brown`
 
-To use the analyzer, we need to apply it to a field, which we can do
-with((("update-mapping API, applying custom autocomplete analyzer to a field"))) the `update-mapping` API:
+可以用 `update-mapping` API 将这个分析器应用到具体字段：((("update-mapping API, applying custom autocomplete analyzer to a field")))
 
 [source,js]
 --------------------------------------------------
@@ -133,7 +119,7 @@ PUT /my_index/_mapping/my_type
 --------------------------------------------------
 // SENSE: 130_Partial_Matching/35_Search_as_you_type.json
 
-Now, we can index some test documents:
+现在创建一些测试文档：
 
 [source,js]
 --------------------------------------------------
@@ -145,9 +131,9 @@ POST /my_index/my_type/_bulk
 --------------------------------------------------
 // SENSE: 130_Partial_Matching/35_Search_as_you_type.json
 
-==== Querying the Field
+==== 查询字段
 
-If you test out a query for ``brown fo'' by using ((("partial matching", "index time search-as-you-type", "querying the field")))a simple `match` query
+如果使用简单 `match` 查询测试查询 “brown fo” ：((("partial matching", "index time search-as-you-type", "querying the field")))
 
 [source,js]
 --------------------------------------------------
@@ -162,8 +148,7 @@ GET /my_index/my_type/_search
 --------------------------------------------------
 // SENSE: 130_Partial_Matching/35_Search_as_you_type.json
 
-you will see that _both_ documents match, even though the `Yellow furballs`
-doc contains neither `brown` nor `fo`:
+可以看到两个文档同时 _都能_ 匹配，尽管 `Yellow furballs` 这个文档并不包含 `brown` 和 `fo` ：
 
 [source,js]
 --------------------------------------------------
@@ -188,7 +173,7 @@ doc contains neither `brown` nor `fo`:
 }
 --------------------------------------------------
 
-As always, the `validate-query` API shines some light:
+如往常一样， `validate-query` API 总能提供一些线索：
 
 [source,js]
 --------------------------------------------------
@@ -203,22 +188,13 @@ GET /my_index/my_type/_validate/query?explain
 --------------------------------------------------
 // SENSE: 130_Partial_Matching/35_Search_as_you_type.json
 
-The `explanation` shows us that the query is looking for edge n-grams of every
-word in the query string:
+`explanation` 表明查询会查找边界 n-grams 里的每个词：
 
     name:b name:br name:bro name:brow name:brown name:f name:fo
 
-The `name:f` condition is satisfied by the second document because
-`furballs` has been indexed as `f`, `fu`, `fur`, and so forth.  In retrospect, this
-is not surprising.  The same `autocomplete` analyzer is being applied both at
-index time and at search time, which in most situations is the right thing to
-do. This is one of the few occasions when it makes sense to break this rule.
+`name:f` 条件可以满足第二个文档，因为 `furballs` 是以 `f` 、 `fu` 、 `fur` 形式索引的。回过头看这并不令人惊讶，相同的 `autocomplete` 分析器同时被应用于索引时和搜索时，这在大多数情况下是正确的，只有在少数场景下才需要改变这种行为。
 
-We want to ensure that our inverted index contains edge n-grams of every word,
-but we want to match only the full words that the user has entered (`brown` and `fo`). ((("analyzers", "changing search analyzer from index analyzer"))) We can do this by using the `autocomplete` analyzer at
-index time and the `standard` analyzer at search time.  One way to change the
-search analyzer is just to specify it in the query:
-
+我们需要保证倒排索引表中包含边界 n-grams 的每个词，但是我们只想匹配用户输入的完整词组（ `brown` 和 `fo` ），((("analyzers", "changing search analyzer from index analyzer")))可以通过在索引时使用 `autocomplete` 分析器，并在搜索时使用 `standard` 标准分析器来实现这种想法，只要改变查询使用的搜索分析器 `analyzer` 参数即可：
 
 [source,js]
 --------------------------------------------------
@@ -236,13 +212,9 @@ GET /my_index/my_type/_search
 --------------------------------------------------
 // SENSE: 130_Partial_Matching/35_Search_as_you_type.json
 
-<1> This overrides the `analyzer` setting on the `name` field.
+<1> 覆盖了 `name` 字段 `analyzer` 的设置。
 
-Alternatively, we can specify ((("search_analyzer parameter")))((("analyzer parameter")))the `analyzer` and `search_analyzer` in
-the mapping for the `name` field itself. Because we want to change only the
-`search_analyzer`, we can update the existing mapping without having to
-reindex our data:
-
+换种方式，我们可以在映射中，((("search_analyzer parameter")))((("index_analyzer parameter")))为 `name` 字段分别指定 `index_analyzer` 和 `search_analyzer` 。因为我们只想改变 `search_analyzer` ，这里只要更新现有的映射而不用对数据重新创建索引：
 
 [source,js]
 --------------------------------------------------
@@ -252,7 +224,7 @@ PUT /my_index/my_type/_mapping
         "properties": {
             "name": {
                 "type":            "string",
-                "analyzer":  "autocomplete", <1>
+                "index_analyzer":  "autocomplete", <1>
                 "search_analyzer": "standard" <2>
             }
         }
@@ -261,74 +233,44 @@ PUT /my_index/my_type/_mapping
 --------------------------------------------------
 // SENSE: 130_Partial_Matching/35_Search_as_you_type.json
 
-<1> Use the `autocomplete` analyzer at index time to produce edge n-grams of
-    every term.
+<1> 在索引时，使用 `autocomplete` 分析器生成边界 n-grams 的每个词。
 
-<2> Use the `standard` analyzer at search time to search only on the terms
-    that the user has entered.
+<2> 在搜索时，使用 `standard` 分析器只搜索用户输入的词。
 
 
-If we were to repeat the `validate-query` request, it would now give us this
-explanation:
+如果再次请求 `validate-query` API ，当前的解释为：
 
     name:brown name:fo
 
-Repeating our query correctly returns just the `Brown foxes`
-document.
+再次执行查询就能正确返回 `Brown foxes` 这个文档。
 
-Because most of the work has been done at index time, all this query needs to
-do is to look up the two terms `brown` and `fo`, which is much more efficient
-than the `match_phrase_prefix` approach of having to find all terms beginning
-with `fo`.
+因为大多数工作是在索引时完成的，所有的查询只要查找 `brown` 和 `fo` 这两个词，这比使用 `match_phrase_prefix` 查找所有以 `fo` 开始的词的方式要高效许多。
 
-.Completion Suggester
+.补全提示（Completion Suggester）
 *************************************************
 
-Using edge n-grams for search-as-you-type is easy to set up, flexible, and
-fast.  However, sometimes it is not fast enough.  Latency matters, especially
-when you are trying to provide instant feedback.  Sometimes the fastest way of
-searching is not to search at all.
+使用边界 n-grams 进行输入即搜索（search-as-you-type）的查询设置简单、灵活且快速，但有时候它并不够快，特别是当试图立刻获得反馈时，延迟的问题就会凸显，很多时候不搜索才是最快的搜索方式。
 
-The {ref}/search-suggesters-completion.html[completion suggester] in
-Elasticsearch((("completion suggester"))) takes a completely different approach.  You feed it a list
-of all possible completions, and it builds them into a _finite state
-transducer_, an((("Finite State Transducer"))) optimized data structure that resembles a big graph.  To
-search for suggestions, Elasticsearch starts at the beginning of the graph and
-moves character by character along the matching path. Once it has run out of
-user input, it looks at all possible endings of the  current path to produce a
-list of suggestions.
+Elasticsearch ((("completion suggester")))里的 {ref}/search-suggesters-completion.html[completion suggester] 采用与上面完全不同的方式，需要为搜索条件生成一个所有可能完成的词列表，然后将它们置入一个 _有限状态机（finite state transducer）_ 内，((("Finite State Transducer")))这是个经优化的图结构。为了搜索建议提示，Elasticsearch 从图的开始处顺着匹配路径一个字符一个字符地进行匹配，一旦它处于用户输入的末尾，Elasticsearch 就会查找所有可能结束的当前路径，然后生成一个建议列表。
 
-This data structure lives in memory and makes prefix lookups extremely fast,
-much faster than any term-based query could be.  It is an excellent match for
-autocompletion of names and brands, whose words are usually organized in a
-common order: ``Johnny Rotten'' rather than ``Rotten Johnny.''
+本数据结构存于内存中，能使前缀查找非常快，比任何一种基于词的查询都要快很多，这对名字或品牌的自动补全非常适用，因为这些词通常是以普通顺序组织的：用 “Johnny Rotten” 而不是 “Rotten Johnny” 。
 
-When word order is less predictable, edge n-grams can be a better solution
-than the completion suggester.  This particular cat may be skinned in myriad
-ways.
+当词序不是那么容易被预见时，边界 n-grams 比完成建议者（Completion Suggester）更合适。即使说不是所有猫都是一个花色，那这只猫的花色也是相当特殊的。
 
 *************************************************
 
-==== Edge n-grams and Postcodes
+==== 边界 n-grams 与邮编
 
-The edge n-gram approach can((("postcodes (UK), partial matching with", "using edge n-grams")))((("edge n-grams", "and postcodes"))) also be used for structured data, such as the
-postcodes example from <<prefix-query,earlier in this chapter>>.  Of course,
-the `postcode` field would need to be `analyzed` instead of `not_analyzed`, but
-you could use the `keyword` tokenizer((("keyword tokenizer", "using for values treated as not_analyzed")))((("not_analyzed fields", "using keyword tokenizer with"))) to treat the postcodes as if they were
-`not_analyzed`.
+边界 n-gram 的方式可以用来查询结构化的数据，((("postcodes (UK), partial matching with", "using edge n-grams")))((("edge n-grams", "and postcodes")))比如 <<prefix-query,本章之前示例>> 中的邮编（postcode）。当然 `postcode` 字段需要 `analyzed` 而不是 `not_analyzed` ，不过可以用 `keyword` 分词器来处理它，就好像他们是 `not_analyzed` 的一样。((("keyword tokenizer", "using for values treated as not_analyzed")))((("not_analyzed fields", "using keyword tokenizer with")))
 
 [TIP]
 ==================================================
 
-The `keyword` tokenizer is the no-operation tokenizer, the tokenizer that does
-nothing.  Whatever string it receives as input, it emits exactly the same
-string as a single token.  It can therefore be used for values that we would
-normally treat as `not_analyzed` but that require some other analysis
-transformation such as lowercasing.
+`keyword` 分词器是一个非操作型分词器，这个分词器不做任何事情，它接收的任何字符串都会被原样发出，因此它可以用来处理 `not_analyzed` 的字段值，但这也需要其他的一些分析转换，如将字母转换成小写。
 
 ==================================================
 
-This example uses the `keyword` tokenizer to convert the postcode string into a token stream, so that we can use the edge n-gram token filter:
+下面示例使用 `keyword` 分词器将邮编转换成 token 流，这样就能使用边界 n-gram token 过滤器：
 
 [source,js]
 --------------------------------------------------
@@ -355,7 +297,5 @@ This example uses the `keyword` tokenizer to convert the postcode string into a 
 --------------------------------------------------
 // SENSE: 130_Partial_Matching/35_Postcodes.json
 
-<1> The `postcode_index` analyzer would use the `postcode_filter`
-    to turn postcodes into edge n-grams.
-<2> The `postcode_search` analyzer would treat search terms as
-    if they were `not_analyzed`.
+<1> `postcode_index` 分析器使用 `postcode_filter` 将邮编转换成边界 n-gram 形式。
+<2> `postcode_search` 分析器可以将搜索词看成 `not_analyzed` 未分析的。
