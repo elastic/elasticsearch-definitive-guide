@@ -1,40 +1,23 @@
+[[_closing_thoughts]]
+== 总结
 
-== Closing Thoughts
+本小节涵盖了许多基本理论以及很多深入的技术问题。聚合给 Elasticsearch 带来了难以言喻的强大能力和灵活性。桶与度量的嵌套能力，基数与百分位数的快速估算能力，定位信息中统计异常的能力，
+所有的这些都在近乎实时的情况下操作的，而且全文搜索是并行的，它们改变了很多企业的游戏规则。
 
-This section covered a lot of ground, and a lot of deeply technical issues.
-Aggregations bring a power and flexibility to Elasticsearch that is hard to
-overstate. The ability to nest buckets and metrics, to quickly approximate
-cardinality and percentiles, to find statistical anomalies in your data, all
-while operating on near-real-time data and in parallel to full-text search--these are game-changers to many organizations.
+聚合是这样一种功能特性：一旦我们开始使用它，我们就能找到很多其他的可用场景。实时报表与分析对于很多组织来说都是核心功能（无论是应用于商业智能还是服务器日志）。
 
-It is a feature that, once you start using it, you'll find dozens
-of other candidate uses.  Real-time reporting and analytics is central to many
- organizations (be it over business intelligence or server logs).
+Elasticsearch 默认给 _所有_ 字段都会激活 doc values，所以在一些搜索场景大大的节省了内存使用量，但是需要注意的是只有不分词的 string 类型的字段才能使用这种特性。
 
-Elasticsearch has made great strides in becoming more memory friendly by defaulting
-to doc values for _most_ fields, but the necessity of fielddata for string fields
-means you must remain vigilant.
+内存的管理形式可以有多种形式，这取决于我们特定的应用场景：
 
-The management of this memory can take several forms, depending on your
-particular use-case:
+- 在规划时，组织好数据，使聚合运行在 `not_analyzed` 字符串而不是 `analyzed` 字符串，这样可以有效的利用 doc values 。
+- 在测试时，验证分析链不会在之后的聚合计算中创建高基数字段。
+- 在搜索时，合理利用近似聚合和数据过滤。
+- 在节点层，设置硬内存大小以及动态的断熔限制。
+- 在应用层，通过监控集群内存的使用情况和 Full GC 的发生频率，来调整是否需要给集群资源添加更多的机器节点
 
-- During the planning stage, attempt to organize your data so that aggregations are
-run on `not_analyzed` strings instead of analyzed so that doc values may be leveraged.
-- While testing, verify that analysis chains are not creating high cardinality
-fields which are later aggregated on
-- At search time, by utilizing approximate aggregations and data filtering
-- At a node level, by setting hard memory and dynamic circuit-breaker limits
-- At an operations level, by monitoring memory usage and controlling slow garbage-collection cycles,
-potentially by adding more nodes to the cluster
+大多数实施会应用到以上一种或几种方法。确切的组合方式与我们特定的系统环境高度相关。
 
-Most deployments will use one or more of the preceding methods.  The exact combination
-is highly dependent on your particular environment.
+无论采取何种方式，对于现有的选择进行评估，并同时创建短期和长期计划，都十分重要。先决定当前内存的使用情况和需要做的事情（如果有），通过评估数据增长速度，来决定未来半年或者一年的集群的规划，使用何种方式来扩展。
 
-Whatever the path you take, it is important to assess the available options and
-create both a short- and long-term plan.  Decide how your memory situation exists
-today and what (if anything) needs to be done.  Then decide what will happen in
-six months or one year as your data grows. What methods will you use to continue
-scaling?
-
-It is better to plan out these life cycles of your cluster ahead of time, rather
-than panicking at 3 a.m. because your cluster is at 90% heap utilization.
+最好在建立集群之前就计划好这些内容，而不是在我们集群堆内存使用 90% 的时候再临时抱佛脚。
