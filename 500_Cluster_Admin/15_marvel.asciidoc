@@ -1,27 +1,13 @@
 [[marvel]]
-=== Marvel for Monitoring
+=== Marvel 监控
 
-https://www.elastic.co/guide/en/marvel/current/index.html[Marvel] enables 
-you to easily monitor Elasticsearch through Kibana. You can view your 
-cluster’s health and performance in real time as well as analyze 
-past cluster, index, and node metrics. 
+https://www.elastic.co/guide/en/marvel/current/index.html[Marvel] 让你可以很简单的通过 Kibana 监控 Elasticsearch。你可以实时查看你的集群健康状态和性能，也可以分析过去的集群、索引和节点指标。
 
-While you can access a large number of statistics through the APIs described 
-in this chapter, they only show you what's going on at a single point in time.
-Knowing memory usage at this instant is helpful, but knowing
-memory usage _over time_ is much more useful. Marvel queries and aggregates 
-the metrics so you can visualize your cluster's 
-behavior over time, which makes it easy to spot trends. 
+虽然你可以通过本章介绍的 API 查看大量的指标数据，但是它们展示的都是当前时间点的即时情况。了解这个瞬间的内存占用比当然很有用，但是了解内存占用比 _随时间轴的趋势_ 更加有用。Marvel 会查询并聚合这些数据，你可以通过可视化效果看到自己集群随时间的变化，这样可以很容易的发现发展的趋势。
 
-As your cluster grows, the output from the stats APIs can get truly hairy.
-Once you have a dozen nodes, let alone a hundred, reading through stacks of JSON
-becomes very tedious. Marvel lets your explore the data interactively and
-makes it easy to zero in on what's going on with particular nodes or indices.
+随着你集群规模的发展，统计 API 的输出内容会复杂得让人完全没法看。当你有一大把节点，比如说一百个，再阅读这个输出的 JSON 就非常乏味了。而 Marvel 可以让你交互式的探索这些数据，更容易于集中关注特定节点或者索引上发生了什么。
 
-Marvel uses the same stats APIs that are available to you--it does not expose 
-any statistics that you can't access through the APIs.  However, Marvel greatly 
-simplifies the collection and visualization of those statistics.
+Marvel 使用公开的 API，和你自己能找到的一样 -- 它没有暴露任何你通过 API 访问不到的统计信息。但是，Marvel 极大的简化了这些统计信息的采集和可视化工作。
 
-Marvel is free to use (even in production!), so you should definitely try it out!
-For installation instructions, see 
-https://www.elastic.co/guide/en/marvel/current/getting-started.html[Getting Started with Marvel].
+Marvel 可以免费使用（包括生产环境上！），所以你现在就开始用起来吧！安装介绍，参阅 
+https://www.elastic.co/guide/en/marvel/current/getting-started.html[Marvel 入门]。
