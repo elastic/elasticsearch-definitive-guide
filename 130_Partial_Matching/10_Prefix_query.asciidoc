@@ -1,8 +1,7 @@
 [[prefix-query]]
-=== prefix Query
+=== prefix 前缀查询
 
-To find all postcodes beginning with `W1`, we could use a ((("prefix query")))((("postcodes (UK), partial matching with", "prefix query")))simple `prefix`
-query:
+为了找到所有以 `W1` 开始的邮编，可以使用简单的 `prefix` 查询：((("prefix query")))((("postcodes (UK), partial matching with", "prefix query")))
 
 [source,js]
 --------------------------------------------------
@@ -17,31 +16,20 @@ GET /my_index/address/_search
 --------------------------------------------------
 // SENSE: 130_Partial_Matching/10_Prefix_query.json
 
-The `prefix` query is a low-level query that works at the term level.  It
-doesn't analyze the query string before searching. It assumes that you have
-passed it the exact prefix that you want to find.
+`prefix` 查询是一个词级别的底层的查询，它不会在搜索之前分析查询字符串，它假定传入前缀就正是要查找的前缀。
 
 [TIP]
 ==================================================
 
-By default, the `prefix` query does no relevance scoring.  It just finds
-matching documents and gives them all a score of `1`.  Really, it behaves more
-like a filter than a query.  The only practical difference between the
-`prefix` query and the `prefix` filter is that the filter can be cached.
+默认状态下， `prefix` 查询不做相关度评分计算，它只是将所有匹配的文档返回，并为每条结果赋予评分值 `1` 。它的行为更像是过滤器而不是查询。 `prefix` 查询和 `prefix` 过滤器这两者实际的区别就是过滤器是可以被缓存的，而查询不行。
 
 ==================================================
 
 
-Previously, we said that ``you can find only terms that exist in the inverted
-index,'' but we haven't done anything special to index these postcodes; each
-postcode is simply indexed as the exact value specified in each document.  So
-how does the `prefix` query work?
+之前已经提过：“只能在倒排索引中找到存在的词”，但我们并没有对这些邮编的索引进行特殊处理，每个邮编还是以它们精确值的方式存在于每个文档的索引中，那么 `prefix` 查询是如何工作的呢？
 
 [role="pagebreak-after"]
-Remember that the inverted index consists((("inverted index", "for postcodes"))) of a sorted list of unique terms (in
-this case, postcodes).  For each term, it lists the IDs of the documents
-containing that term in the _postings list_.  The inverted index for our
-example documents looks something like this:
+回想倒排索引包含了一个有序的唯一词列表（本例是邮编）。((("inverted index", "for postcodes")))对于每个词，倒排索引都会将包含词的文档 ID 列入 _倒排表（postings list）_ 。与示例对应的倒排索引是：
 
     Term:          Doc IDs:
     -------------------------
@@ -52,27 +40,17 @@ example documents looks something like this:
     "WC1N 1LZ"   |  4
     -------------------------
 
-To support prefix matching on the fly, the query does the following:
+为了支持前缀匹配，查询会做以下事情：
 
-1. Skips through the terms list to find the first term beginning with `W1`.
-2. Collects the associated document IDs.
-3. Moves to the next term.
-4. If that term also begins with `W1`, the query repeats from step 2; otherwise, we're finished.
+1. 扫描词列表并查找到第一个以 `W1` 开始的词。
+2. 搜集关联的文档 ID 。
+3. 移动到下一个词。
+4. 如果这个词也是以 `W1` 开头，查询跳回到第二步再重复执行，直到下一个词不以 `W1` 为止。
 
-While this works fine for our small example, imagine that our inverted index
-contains a million postcodes beginning with `W1`. The prefix query
-would need to visit all one million terms in order to calculate the result!
+这对于小的例子当然可以正常工作，但是如果倒排索引中有数以百万的邮编都是以 `W1` 开头时，前缀查询则需要访问每个词然后计算结果！
 
-And the shorter the prefix, the more terms need to be visited. If we were to
-look for the prefix `W` instead of `W1`, perhaps we would match 10 million
-terms instead of just one million.
+前缀越短所需访问的词越多。如果我们要以 `W` 作为前缀而不是 `W1` ，那么就可能需要做千万次的匹配。
 
-CAUTION: The `prefix` query or filter are useful for ad hoc prefix matching, but
-should be used with care. ((("prefix query", "caution with"))) They can be used freely on fields with a small
-number of terms, but they scale poorly and can put your cluster under a lot of
-strain.  Try to limit their impact on your cluster by using a long prefix;
-this reduces the number of terms that need to be visited.
+CAUTION: `prefix` 查询或过滤对于一些特定的匹配是有效的，但使用方式还是应当注意。((("prefix query", "caution with")))当字段中词的集合很小时，可以放心使用，但是它的伸缩性并不好，会对我们的集群带来很多压力。可以使用较长的前缀来限制这种影响，减少需要访问的量。
 
-Later in this chapter, we present an alternative index-time solution that
-makes prefix matching much more efficient.  But first, we'll take a look at
-two related queries: the `wildcard` and `regexp` queries.
+本章后面会介绍另一个索引时的解决方案，这个方案能使前缀匹配更高效，不过在此之前，需要先看看两个相关的查询： `wildcard` 和 `regexp` （模糊和正则）。
