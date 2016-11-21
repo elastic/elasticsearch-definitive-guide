@@ -1,8 +1,7 @@
 [[changing-similarities]]
-=== Changing Similarities
+=== 更改相似度
 
-The similarity algorithm can be set on a per-field basis.((("relevance", "controlling", "changing similarities")))((("similarity algorithms", "changing on a per-field basis")))  It's just a matter
-of specifying the chosen algorithm ((("mapping (types)", "specifying similarity algorithm")))in the field's mapping:
+相似度算法可以按字段指定，((("relevance", "controlling", "changing similarities")))((("similarity algorithms", "changing on a per-field basis")))只需在映射中为不同字段选定即可：((("mapping (types)", "specifying similarity algorithm")))
 
 [source,json]
 ------------------------------
@@ -23,16 +22,14 @@ PUT /my_index
   }
 }
 ------------------------------
-<1> The `title` field uses BM25 similarity.
-<2> The `body` field uses the default similarity (see <<practical-scoring-function>>).
+<1> `title` 字段使用 BM25 相似度算法。
+<2> `body` 字段用默认相似度算法（参见 <<practical-scoring-function,实用评分函数>>）。
 
-Currently, it is not possible to change the `similarity` mapping for an
-existing field.  You would need to reindex your data in order to do that.
+目前，Elasticsearch 不支持更改已有字段的相似度算法 `similarity` 映射，只能通过为数据重新建立索引来达到目的。
 
-==== Configuring BM25
+==== 配置 BM25
 
-Configuring a similarity is much ((("similarity algorithms", "configuring custom similarities")))((("BM25", "configuring")))like configuring an analyzer. Custom
-similarities can be specified when creating an index. For instance:
+配置相似度算法和配置分析器很相似，((("similarity algorithms", "configuring custom similarities")))((("BM25", "configuring")))自定义相似度算法可以在创建索引时指定，例如：
 
 [source,json]
 ------------------------------
@@ -62,16 +59,9 @@ PUT /my_index
   }
 }
 ------------------------------
-<1> Create a custom similarity called `my_bm25`, based on the built-in `BM25` similarity.
-<2> Disable field-length normalization. See <<bm25-tunability>>.
-<3> Field `title` uses the custom similarity `my_bm25`.
-<4> Field `body` uses the built-in similarity `BM25`.
+<1> 创建一个基于内置 `BM25` ，名为 `my_bm25` 的自定义相似度算法。
+<2> 禁用字段长度规范化（field-length normalization）。参见 <<bm25-tunability,调试 BM25>> 。
+<3> `title` 字段使用自定义相似度算法 `my_bm25` 。
+<4> 字段 `body` 使用内置相似度算法 `BM25` 。
 
-TIP: A custom similarity can be updated by closing the index, updating the index settings,
-     and reopening the index.  This allows you to experiment with different configurations
-     without having to reindex your documents.
-
-
-
-
-
+TIP: 自定义的相似度算法可以通过关闭索引，更新索引设置，开启索引这个过程进行更新。这样可以无须重建索引又能试验不同的相似度算法配置。
