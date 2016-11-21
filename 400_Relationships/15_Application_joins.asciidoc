@@ -1,9 +1,8 @@
 [[application-joins]]
-=== Application-side Joins
+=== 应用层联接
 
-We can (partly) emulate a relational((("relationships", "application-side joins")))((("application-side joins"))) database by implementing joins in our
-application. ((("joins", "application-side")))For instance, let's say we are indexing users and their
-blog posts.  In the relational world, we would do something like this:
+我们通过在我们的应用程序中实现联接可以（部分）模拟关系((("relationships", "application-side joins")))((("application-side joins")))数据库。
+((("joins", "application-side")))例如，比方说我们正在对用户和他们的博客文章进行索引。在关系世界中，我们会这样来操作：
 
 [source,json]
 --------------------------------
@@ -21,11 +20,10 @@ PUT /my_index/blogpost/2 <1>
   "user":     1 <2>
 }
 --------------------------------
-<1> The `index`, `type`, and `id` of each document together function as a primary key.
-<2> The `blogpost` links to the user by storing the user's `id`.  The `index`
-    and `type` aren't required as they are hardcoded in our application.
+<1> 每个文档的 `index`, `type`, 和 `id` 一起构造成主键。
+<2> `blogpost` 通过用户的 `id` 链接到用户。`index` 和 `type` 并不需要因为在我们的应用程序中已经硬编码。
 
-Finding blog posts by user with ID `1` is easy:
+通过用户的 ID `1` 可以很容易的找到博客帖子。
 
 [source,json]
 --------------------------------
@@ -41,9 +39,8 @@ GET /my_index/blogpost/_search
 }
 --------------------------------
 
-To find blogposts by a user called John, we would need to run two queries:
-the first would look up all users called John in order to find their IDs,
-and the second would pass those IDs in a query similar to the preceding one:
+为了找到用户叫做 John 的博客帖子，我们需要运行两次查询：
+第一次会查找所有叫做 John 的用户从而获取他们的 ID 集合，接着第二次会将这些 ID 集合放到类似于前面一个例子的查询：
 
 [source,json]
 --------------------------------
@@ -67,23 +64,11 @@ GET /my_index/blogpost/_search
   }
 }
 --------------------------------
-<1> The values in the `terms` filter would be populated with the results from
-    the first query.
+<1> 执行第一个查询得到的结果将填充到 `terms` 过滤器中。
 
-The main advantage of application-side joins is that the data is normalized.
-Changing the user's name has to happen in only one place: the `user` document.
-The disadvantage is that you have to run extra queries in order to join documents at search time.
+应用层联接的主要优点是可以对数据进行标准化处理。只能在 `user` 文档中修改用户的名称。缺点是，为了在搜索时联接文档，必须运行额外的查询。
 
-In this example, there was only one user who matched our first query, but in
-the real world we could easily have millions of users named John.
-Including all of their IDs in the second query would make for a very large
-query, and one that has to do millions of term lookups.
+在这个例子中，只有一个用户匹配我们的第一个查询，但在现实世界中，我们可以很轻易的遇到数以百万计的叫做 John 的用户。
+包含所有这些用户的 IDs 会产生一个非常大的查询，这是一个数百万词项的查找。
 
-This approach is suitable when the first entity (the `user` in this example)
-has a small number of documents and, preferably, they seldom change. This
-would allow the application to cache the results and avoid running the first
-query often.
-
-
-
-
+这种方法适用于第一个实体（例如，在这个例子中 `user` ）只有少量的文档记录的情况，并且最好它们很少改变。这将允许应用程序对结果进行缓存，并避免经常运行第一次查询。
