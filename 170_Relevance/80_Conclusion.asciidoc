@@ -1,40 +1,17 @@
 
 [[relevance-conclusion]]
-=== Relevance Tuning Is the Last 10%
+=== 调试相关度是最后 10% 要做的事情
 
-In this chapter, we looked at a how Lucene generates scores based on TF/IDF. 
-Understanding the score-generation process((("relevance", "controlling", "tuning relevance"))) is critical so you can
-tune, modulate, attenuate, and manipulate the score for your particular
-business domain.
+本章介绍了 Lucene 是如何基于 TF/IDF 生成评分的。理解评分过程是非常重要的，((("relevance", "controlling", "tuning relevance")))这样就可以根据具体的业务对评分结果进行调试、调节、减弱和定制。
 
-In practice, simple combinations of queries will get you good search results. 
-But to get _great_ search results, you'll often have to start tinkering with
-the previously mentioned tuning methods.
+实践中，简单的查询组合就能提供很好的搜索结果，但是为了获得 _具有成效_ 的搜索结果，就必须反复推敲修改前面介绍的这些调试方法。
 
-Often, applying a boost on a strategic field or rearranging a query to 
-emphasize a particular clause will be sufficient to make your results great.
-Sometimes you'll need more-invasive changes.  This is usually the case if your
-scoring requirements diverge heavily from Lucene's word-based TF/IDF model (for example, you
-want to score based on time or distance).
+通常，经过对策略字段应用权重提升，或通过对查询语句结构的调整来强调某个句子的重要性这些方法，就足以获得良好的结果。有时，如果 Lucene 基于词的 TF/IDF 模型不再满足评分需求（例如希望基于时间或距离来评分），则需要更具侵略性的调整。
 
-With that said, relevancy tuning is a rabbit hole that you can easily fall into 
-and never emerge.  The concept of _most relevant_ is a nebulous target to hit, and
-different people often have different ideas about document ranking.  It is easy 
-to get into a cycle of constant fiddling without any apparent progress.
+除此之外，相关度的调试就有如兔子洞，一旦跳进去就很难再出来。 _最相关_ 这个概念是一个难以触及的模糊目标，通常不同人对文档排序又有着不同的想法，这很容易使人陷入持续反复调整而没有明显进展的怪圈。
 
-We encourage you to avoid this (very tempting) behavior and instead properly
-instrument your search results.  Monitor how often your users click the top
-result, the top 10, and the first page; how often they execute a secondary query
-without selecting a result first; how often they click a result and immediately
-go back to the search results, and so forth.
+我们强烈建议不要陷入这种怪圈，而要监控测量搜索结果。监控用户点击最顶端结果的频次，这可以是前 10 个文档，也可以是第一页的；用户不查看首次搜索的结果而直接执行第二次查询的频次；用户来回点击并查看搜索结果的频次，等等诸如此类的信息。
 
-These are all indicators of how relevant your search results are to the user.
-If your query is returning highly relevant results, users will select one of
-the top-five results, find what they want, and leave.  Irrelevant results cause
-users to click around and try new search queries.
+这些都是用来评价搜索结果与用户之间相关程度的指标。如果查询能返回高相关的文档，用户会选择前五中的一个，得到想要的结果，然后离开。不相关的结果会让用户来回点击并尝试新的搜索条件。
 
-Once you have instrumentation in place, tuning your query is simple.  Make a change,
-monitor its effect on your users, and repeat as necessary.  The tools outlined in this
-chapter are just that: tools.  You have to use them appropriately to propel
-your search results into the _great_ category, and the only way to do that is with
-strong measurement of user behavior.
+一旦有了这些监控手段，想要调试查询就并不复杂，稍作调整，监控用户的行为改变并做适当反复尝试。本章介绍的一些工具就只是工具而已，要想物尽其用并将搜索结果提高到 _极高的_ 水平，唯一途径就是需要具备能评价度量用户行为的强大能力。
