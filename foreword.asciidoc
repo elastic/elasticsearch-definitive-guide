@@ -1,22 +1,27 @@
 [[foreword_id]]
 [preface]
-== Foreword
+== 序言
 
-One of the most nerve-wracking periods when releasing the first version of an open source project occurs when the IRC channel is created. You are all alone, eagerly hoping and wishing for the first user to come along. I still vividly remember those days. 
+我仍然清晰地记得那个日子，我发布了这个开源项目第一个版本并在 IRC 聊天室创建一个频道，在那个最紧张的时刻，独自一人，急切地希望和盼望着第一个用户的到来。
 
-One of the first users that jumped on IRC was Clint, and how excited was I. Well... for a brief period, until I found out that Clint was actually a Perl user, no less working on a website that dealt with obituaries. I remember asking myself why couldn't we get someone from a more "hyped" community, like Ruby or Python (at the time), and a slightly nicer use case.
+第一个跳进 IRC 频道的用户就是 Clint（克林顿），当时我好兴奋。好吧... 过了一会直到我发现 Clint 实际上是 Perl 用户啦，还是跟死亡讣告网站打交道。
+我记得（当时）问自己为什么他不是来自于更“主流”的社区，像 Ruby 或 Python，亦或是一个稍微好点的使用案例。
 
-How wrong I was. Clint ended up being instrumental to the success of Elasticsearch. He was the first user to roll out Elasticsearch into production (version 0.4 no less!), and the interaction with Clint was pivotal during the early days in shaping Elasticsearch into what it is today. Clint has a unique insight into what is simple, and he is very rarely wrong, which has a huge impact on various usability aspects of Elasticsearch, from management, to API design, to day-to-day usability features. It was a no brainer for us to reach out to Clint and ask if he would join our company immediately after we formed it.
+我真是大错特错！Clint 最终对 Elasticsearch 的成功起到了重要作用。他是第一个把 Elasticsearch 扔到生产环境中的人（还是 0.4 的版本！），初期与 Clint 的互动对于塑造 Elasticsearch
+成今天的样子非常关键。对于什么是简单，Clint 有独特的见解并且他很少出错，这对 Elasticsearch 从管理、API 设计和日常使用等各个方面的易用性上面产生了很大的影响。
+所以我们公司成立后不久，我们想也没想立即就联系 Clint 问他是否愿意加入我们。
 
-Another one of the first things we did when we formed the company was offer public training. It's hard to express how nervous we were about whether or not people would even sign up for it. 
+当我们成立公司时，我们做的第一件事就是提供公开培训。很难表达我们当时有多么紧张和担心是否真的有人会报名。
 
-We were wrong. 
+但我们错了。
 
-The trainings were and still are a rave success with waiting lists in all major cities. One of the people who caught our eye was a young fellow, Zach, who came to one of our trainings. We knew about Zach from his blog posts about using Elasticsearch (and secretly envied his ability to explain complex concepts in a very simple manner) and from a PHP client he wrote for the software. What we found out was that Zach had actually paid to attend the Elasticsearch training out of his own pocket! You can't really ask for more than that, and we reached out to Zach and asked if he would join our company as well.
+培训到现在依然很成功，很多主要城市都还有大量的人等待参加。参加培训的人之中，有一个年轻的家伙吸引了我们注意，他的名字叫 Zach。
+我们知道他有很多关于 Elasticsearch 的博客（并暗自嫉妒他用非常简单的方式来阐述复杂概念的能力），他还编写了一个 PHP 的客户端。
+然后我们发现 Zach 他还是自讨腰包来参加我们的培训！你真的不能要求更多，于是我们找到 Zach，问他是否愿意加入我们的公司。
 
-Both Clint and Zach are pivotal to the success of Elasticsearch. They are wonderful communicators who can explain Elasticsearch from its high-level simplicity, to its (and Apache Lucene's) low-level internal complexities. It's a unique skill that we dearly cherish here at Elastic. Clint is also responsible for the Elasticsearch Perl client, while Zach is responsible for the PHP one -  both wonderful pieces of code.
+Clint 和 Zach 是 Elasticsearch 能否成功的关键。他们是完美的解说家，从简单的上层应用到复杂的（Apache Lucene 的）底层逻辑。这真是一个独特的技能，在 Elastic 我们深深珍惜。
+Clint 还负责 Elasticsearch Perl 客户端，而 Zach 则负责 PHP，都是精彩的代码。
 
-And last, both play an instrumental role in most of what happens daily with the Elasticsearch project itself. One of the main reasons why Elasticsearch is so popular is its ability to communicate empathy to its users, and Clint and Zach are both part of the group that makes this a reality.
+最后，两位在 Elasticsearch 项目每天都在发生的大多数事情中也扮演着重要的角色。Elasticsearch 如此受欢迎的主要原因之一就是拥有与用户沟通产生共鸣的能力，Clint 和 Zach 都是这个集体的一份子，这让一切成为可能。
 
 _Shay Banon_
-
