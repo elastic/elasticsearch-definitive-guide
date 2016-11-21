@@ -1,11 +1,9 @@
-=== wildcard and regexp Queries
+[[_wildcard_and_regexp_queries]]
+=== 通配符与正则表达式查询
 
-The `wildcard` query is a low-level, term-based query ((("wildcard query")))((("partial matching", "wildcard and regexp queries")))similar in nature to the
-`prefix` query, but it allows you to specify a pattern instead of just a prefix.
-It uses the standard shell wildcards: `?` matches any character, and `*`
-matches zero or more characters.((("postcodes (UK), partial matching with", "wildcard queries")))
+与 `prefix` 前缀查询的特性类似， `wildcard` 通配符查询也是一种底层基于词的查询，((("wildcard query")))((("partial matching", "wildcard and regexp queries")))与前缀查询不同的是它允许指定匹配的正则式。它使用标准的 shell 通配符查询： `?` 匹配任意字符， `*` 匹配 0 或多个字符。((("postcodes (UK), partial matching with", "wildcard queries")))
 
-This query would match the documents containing `W1F 7HW` and `W2F 8HW`:
+这个查询会匹配包含 `W1F 7HW` 和 `W2F 8HW` 的文档：
 
 [source,js]
 --------------------------------------------------
@@ -20,14 +18,9 @@ GET /my_index/address/_search
 --------------------------------------------------
 // SENSE: 130_Partial_Matching/15_Wildcard_regexp.json
 
-<1> The `?` matches the `1` and the `2`, while the `*` matches the space
-    and the `7` and `8`.
+<1> `?` 匹配 `1` 和 `2` ， `*` 与空格及 `7` 和 `8` 匹配。
 
-Imagine now that you want to match all postcodes just in the `W` area.  A
-prefix match would also include postcodes starting with `WC`, and you would
-have a similar problem with a wildcard match.  We want to match only postcodes
-that begin with a `W`, followed by a number.((("postcodes (UK), partial matching with", "regexp query")))((("regexp query")))  The `regexp` query allows you to
-write these more complicated patterns:
+设想如果现在只想匹配 `W` 区域的所有邮编，前缀匹配也会包括以 `WC` 开头的所有邮编，与通配符匹配碰到的问题类似，如果想匹配只以 `W` 开始并跟随一个数字的所有邮编，((("postcodes (UK), partial matching with", "regexp query")))((("regexp query"))) `regexp` 正则式查询允许写出这样更复杂的模式：
 
 [source,js]
 --------------------------------------------------
@@ -42,47 +35,36 @@ GET /my_index/address/_search
 --------------------------------------------------
 // SENSE: 130_Partial_Matching/15_Wildcard_regexp.json
 
-<1> The regular expression says that the term must begin with a `W`, followed
-    by any number from 0 to 9, followed by one or more other characters.
+<1> 这个正则表达式要求词必须以 `W` 开头，紧跟 0 至 9 之间的任何一个数字，然后接一或多个其他字符。
 
-The `wildcard` and `regexp` queries work in exactly the same way as the
-`prefix` query.  They also have to scan the list of terms in the inverted
-index to find all matching terms, and gather document IDs term by term.  The
-only difference between them and the `prefix` query is that they support more-complex patterns.
+`wildcard` 和 `regexp` 查询的工作方式与 `prefix` 查询完全一样，它们也需要扫描倒排索引中的词列表才能找到所有匹配的词，然后依次获取每个词相关的文档 ID ，与 `prefix` 查询的唯一不同是：它们能支持更为复杂的匹配模式。
 
-This means that the same caveats apply.  Running these queries on a field with
-many unique terms can be resource intensive indeed.  Avoid using a
-pattern that starts with a wildcard (for example, `*foo` or, as a regexp, `.*foo`).
+这也意味着需要同样注意前缀查询存在性能问题，对有很多唯一词的字段执行这些查询可能会消耗非常多的资源，所以要避免使用左通配这样的模式匹配（如： `*foo` 或 `.*foo` 这样的正则式）。
 
-Whereas prefix matching can be made more efficient by preparing your data at
-index time, wildcard and regular expression matching can be done only
-at query time. These queries have their place but should be used sparingly.
+数据在索引时的预处理有助于提高前缀匹配的效率，而通配符和正则表达式查询只能在查询时完成，尽管这些查询有其应用场景，但使用仍需谨慎。
 
 [CAUTION]
 =================================================
 
-The `prefix`, `wildcard`, and `regexp` queries operate on terms. If you use
-them to query an `analyzed` field, they will examine each term in the
-field, not the field as a whole.((("prefix query", "on analyzed fields")))((("wildcard query", "on analyzed fields")))((("regexp query", "on analyzed fields")))((("analyzed fields", "prefix, wildcard, and regexp queries on")))
+`prefix` 、 `wildcard` 和 `regexp` 查询是基于词操作的，如果用它们来查询 `analyzed` 字段，它们会检查字段里面的每个词，而不是将字段作为整体来处理。((("prefix query", "on analyzed fields")))((("wildcard query", "on analyzed fields")))((("regexp query", "on analyzed fields")))((("analyzed fields", "prefix, wildcard, and regexp queries on")))
 
-For instance, let's say that our `title` field contains ``Quick brown fox''
-which produces the terms `quick`, `brown`, and `fox`.
+比方说包含 “Quick brown fox” （快速的棕色狐狸）的 `title` 字段会生成词： `quick` 、 `brown` 和 `fox` 。
 
-This query would match:
+会匹配以下这个查询：
 
 [source,json]
 --------------------------------------------------
 { "regexp": { "title": "br.*" }}
 --------------------------------------------------
 
-But neither of these queries would match:
+但是不会匹配以下两个查询：
 
 [source,json]
 --------------------------------------------------
 { "regexp": { "title": "Qu.*" }} <1>
 { "regexp": { "title": "quick br*" }} <2>
 --------------------------------------------------
-<1> The term in the index is `quick`, not `Quick`.
-<2> `quick` and `brown` are separate terms.
+<1> 在索引里的词是 `quick` 而不是 `Quick` 。
+<2> `quick` 和 `brown` 在词表中是分开的。
 
 =================================================
