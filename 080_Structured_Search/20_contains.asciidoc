@@ -1,12 +1,8 @@
-==== Contains, but Does Not Equal
+==== 包含，而不是相等
 
-It is important to understand that `term` and `terms` are _contains_ operations,
-not _equals_.((("structured search", "contains, but does not equal")))
-((("terms query", "contains, but does not equal")))((("term query", "contains, but does not equal")))
-What does that mean?
+一定要了解 `term` 和 `terms` 是 _包含（contains）_ 操作，而非 _等值（equals）_ （判断）。((("structured search", "contains, but does not equal")))((("terms query", "contains, but does not equal")))((("query", "contains, but does not equal")))  如何理解这句话呢？
 
-If you have a term query for `{ "term" : { "tags" : "search" } }`, it will match
-_both_ of the following documents:
+如果我们有一个 term（词项）过滤器 `{ "term" : { "tags" : "search" } }` ，它会与以下两个文档 _同时_ 匹配：
 
 [source,js]
 --------------------------------------------------
@@ -14,11 +10,9 @@ _both_ of the following documents:
 { "tags" : ["search", "open_source"] } <1>
 --------------------------------------------------
 
-<1> This document is returned, even though it has terms other than `search`.
+<1> 尽管第二个文档包含除 `search` 以外的其他词，它还是被匹配并作为结果返回。
 
-Recall how the `term` query works: it checks the inverted index for all
-documents that contain a term, and then constructs a bitset.  In our simple
-example, we have the following inverted index:
+回忆一下 `term` 查询是如何工作的？ Elasticsearch 会在倒排索引中查找包括某 term 的所有文档，然后构造一个 bitset 。在我们的例子中，倒排索引表如下：
 
 [width="50%",frame="topbot"]
 |==========================
@@ -27,29 +21,17 @@ example, we have the following inverted index:
 |`search`      | `1`,`2`
 |==========================
 
-When a `term` query is executed for the token `search`, it goes straight to the
-corresponding entry in the inverted index and extracts the associated doc IDs.
-As you can see, both document 1 and document 2 contain the token in the inverted index.
-Therefore, they are both returned as a result.
+当 `term` 查询匹配标记 `search` 时，它直接在倒排索引中找到记录并获取相关的文档 ID，如倒排索引所示，这里文档 1 和文档 2 均包含该标记，所以两个文档会同时作为结果返回。
 
 [NOTE]
 ====
-The nature of an inverted index also means that entire field equality is rather
-difficult to calculate.  How would you determine whether a particular document
-contains _only_ your request term?  You would have to find the term in
-the inverted index, extract the document IDs, and then scan _every row in the
-inverted index_, looking for those IDs to see whether a doc has any other terms.
+由于倒排索引表自身的特性，整个字段是否相等会难以计算，如果确定某个特定文档是否 _只（only）_ 包含我们想要查找的词呢？首先我们需要在倒排索引中找到相关的记录并获取文档 ID，然后再扫描 _倒排索引中的每行记录_ ，查看它们是否包含其他的 terms 。
 
-As you might imagine, that would be tremendously inefficient and expensive.
-For that reason, `term` and `terms` are _must contain_ operations, not
-_must equal exactly_.
+可以想象，这样不仅低效，而且代价高昂。正因如此， `term` 和 `terms` 是 _必须包含（must contain）_ 操作，而不是 _必须精确相等（must equal exactly）_ 。
 ====
 
-==== Equals Exactly
-If you do want that behavior--entire field equality--the best way to
-accomplish it involves indexing a secondary field. ((("structured search", "equals exactly")))
-In this field, you index the number of values that your field contains.  Using
-our two previous documents, we now include a field that maintains the number of tags:
+==== 精确相等
+如果一定期望得到我们前面说的那种行为（即整个字段完全相等），最好的方式是增加并索引另一个字段，((("structured search", "equals exactly"))) 这个字段用以存储该字段包含词项的数量，同样以上面提到的两个文档为例，现在我们包括了一个维护标签数的新字段：
 
 [source,js]
 --------------------------------------------------
@@ -58,8 +40,7 @@ our two previous documents, we now include a field that maintains the number of 
 --------------------------------------------------
 // SENSE: 080_Structured_Search/20_Exact.json
 
-Once you have the count information indexed, you can construct a `constant_score`
-that enforces the appropriate number of terms:
+一旦增加这个用来索引项 term 数目信息的字段，我们就可以构造一个 `constant_score` 查询，来确保结果中的文档所包含的词项数量与要求是一致的：
 
 [source,js]
 --------------------------------------------------
@@ -81,8 +62,7 @@ GET /my_index/my_type/_search
 --------------------------------------------------
 // SENSE: 080_Structured_Search/20_Exact.json
 
-<1> Find all documents that have the term `search`.
-<2> But make sure the document has only one tag.
+<1> 查找所有包含 term `search` 的文档。
+<2> 确保文档只有一个标签。
 
-This query will now match only the document that has a single tag that is
-`search`, rather than any document that contains `search`.
+这个查询现在只会匹配具有单个标签 `search` 的文档，而不是任意一个包含 `search` 的文档。
