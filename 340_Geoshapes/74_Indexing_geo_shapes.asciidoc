@@ -1,15 +1,12 @@
 [[indexing-geo-shapes]]
-=== Indexing Geo Shapes
+=== 索引地理形状
 
-Shapes are represented using http://geojson.org/[GeoJSON], a simple open
-standard for encoding two-dimensional shapes in JSON.((("JSON", "shapes in (GeoJSON)")))((("shapes", see="geo-shapes")))((("GeoJSON")))((("geo-shapes", "indexing")))  Each shape definition
-contains the type of shape&#x2014;`point`, `line`, `polygon`, `envelope`,&#x2014;and one or more arrays of longitude/latitude points.
+地理形状通过 http://geojson.org/[GeoJSON] 来表示，这是一种开放的使用 JSON 实现的二维形状编码方式。((("JSON", "shapes in (GeoJSON)")))((("shapes", see="geo-shapes")))((("GeoJSON")))((("geo-shapes", "indexing"))) 
+每个形状都包含了形状类型&#x2014; `point`, `line`, `polygon`, `envelope` &#x2014;和一个或多个经纬度点集合的数组。
 
-CAUTION: In GeoJSON, coordinates are always written as _longitude_  followed
-by _latitude_.((("longitude/latitude coordinates in GeoJSON")))
+CAUTION: 在 GeoJSON 里，经纬度表示方式通常是 _纬度_ 在前， _经度_ 在后。((("longitude/latitude coordinates in GeoJSON")))
 
-For instance, we can index a polygon representing Dam Square in Amsterdam as
-follows:
+如，我们用一个多边形来索引阿姆斯特丹达姆广场：
 
 [source,json]
 -----------------------
@@ -31,24 +28,20 @@ PUT /attractions/landmark/dam_square
     }
 }
 -----------------------
-<1> The `type` parameter indicates the type of shape that the coordinates
-    represent.
-<2> The list of `lon/lat` points that describe the polygon.
+<1> `type` 参数指明了经纬度坐标集表示的形状类型。
+<2> `lon/lat` 列表描述了多边形的形状。
 
-The excess of square brackets in the example may look confusing, but the
-GeoJSON syntax is quite simple:
+上例中大量的方括号可能看起来让人困惑，不过实际上 GeoJSON 的语法非常简单：
 
-1. Each `lon/lat` point is represented as an array:
+1. 用一个数组表示 `经纬度` 坐标点：
 +
     [lon,lat]
 
-2. A list of points is wrapped in an array to represent a polygon:
+2. 一组坐标点放到一个数组来表示一个多边形：
 +
     [[lon,lat],[lon,lat], ... ]
 
-3. A shape of type `polygon` can optionally contain several polygons; the
-   first represents the polygon proper, while any subsequent polygons represent
-   holes in the first:
+3. 一个多边形（ `polygon` ）形状可以包含多个多边形；第一个表示多边形的外轮廓，后续的多边形表示第一个多边形内部的空洞：
 +
     [
       [[lon,lat],[lon,lat], ... ],  # main polygon
@@ -56,6 +49,5 @@ GeoJSON syntax is quite simple:
       ...
     ]
 
-See the {ref}/geo-shape.html[Geo-shape mapping documentation] for
-more details about the supported shapes.
+参见 {ref}/geo-shape.html[Geo-shape mapping documentation] 了解更多支持的形状。
 
