@@ -1,8 +1,7 @@
 [[mapping-geo-shapes]]
-=== Mapping Geo Shapes
+=== 映射地理形状
 
-Like fields of type `geo_point`, geo-shapes((("mapping (types)", "geo-shapes")))((("geo-shapes", "mapping"))) have to be mapped explicitly
-before they can be used:
+与 `geo_point` 类型的字段相似， 地理形状((("mapping (types)", "geo-shapes")))((("geo-shapes", "mapping")))也必须在使用前明确映射：
 
 [source,json]
 -----------------------
@@ -23,41 +22,25 @@ PUT /attractions
 }
 -----------------------
 
-There are two important settings that you should consider changing `precision` and `distance_error_pct`.
+你需要考虑修改两个非常重要的设置： `精度` 和 `距离误差` 。
 
-==== precision
+==== 精度
 
-The `precision` parameter ((("geo-shapes", "precision")))((("precision parameter, geo-shapes")))controls the maximum length of the geohashes that
-are generated.  It defaults to a precision of `9`, which equates to a
-<<geohashes,geohash>> with dimensions of about 5m x 5m. That is probably far
-more precise than you need.
+`精度` （ `precision` ）参数 ((("geo-shapes", "precision")))((("precision parameter, geo-shapes")))用来控制生成的 geohash 的最大长度。默认精度为 `9` ，等同于尺寸在 5m x 5m 的<<geohashes,geohash>> 。这个精度可能比你需要的精确得多。
 
-The lower the precision, the fewer terms that will be indexed and the faster
-the search will be.  But of course, the lower the precision, the less accurate are
-your geo-shapes.  Consider just how accurate you need your shapes to be--even one or two levels of precision can represent a significant savings.
+精度越低，需要索引的单元就越少，检索时也会更快。当然，精度越低，地理形状的准确性就越差。你需要考虑自己的地理形状所需要的精度——即使减少1-2个等级的精度也能带来明显的消耗缩减收益。
 
-You can specify precisions by using distances--for example, `50m` or `2km`&#x2014;but
-ultimately these distances are converted to the same levels as described in
-<<geohashes>>.
+你可以使用距离来指定精度 —— 如 `50m` 或 `2km`&#x2014;不过这些距离最终也会转换成对应的<<geohashes>>等级。
 
-==== distance_error_pct
+==== 距离误差
 
-When indexing a polygon, the big central continuous part can be represented
-cheaply by a short geohash.((("distance_error_pct (geo-shapes)")))((("geo-shapes", "distance_error_pct parameter")))  It is the edges that matter. Edges require much
-smaller geohashes to represent them with any accuracy.
+当索引一个多边形时，中间连续区域很容易用一个短 geohash 来表示。((("distance_error_pct (geo-shapes)")))((("geo-shapes", "distance_error_pct parameter")))麻烦的是边缘部分，这些地方需要使用更精细的 geohashes 才能表示。
 
-If you're indexing a small landmark, you want the edges to be quite accurate.
-It wouldn't be good to have one monument overlapping with the next.  When
-indexing an entire country, you don't need quite as much precision. Fifty
-meters here or there isn't likely to start any wars.
+当你在索引一个小地标时，你会希望它的边界比较精确。让这些纪念碑一个叠着一个可不好。当索引整个国家时，你就不需要这么高的精度了。误差个50米左右也不可能引发战争。
 
-The `distance_error_pct` specifies the maximum allowable error based on the
-size of the shape.  It defaults to `0.025`, or 2.5%. In other words, big shapes
-(like countries) are allowed to have fuzzier edges than small shapes (like
-monuments).
+`距离误差` 指定地理形状可以接受的最大错误率。它的默认值是 `0.025` ， 即 2.5% 。也就是说，大的地理形状（比如国家）相比小的地理形状（比如纪念碑）来说，容许更加模糊的边界。
 
-The default of `0.025` is a good starting point, but the more error that is
-allowed, the fewer terms that are required to index a shape.
+`0.025` 是一个不错的初始值。不过如果我们容许更大的错误率，对应地理形状需要索引的单元就越少。
 
 
 
