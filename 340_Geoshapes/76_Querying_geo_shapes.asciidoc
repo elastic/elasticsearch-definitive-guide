@@ -1,10 +1,9 @@
 [[querying-geo-shapes]]
-=== Querying Geo Shapes
+=== 查询地理形状
 
-The unusual thing ((("geo-shapes", "querying")))about the {ref}/query-dsl-geo-shape-query.html[`geo_shape` query] is that it allows us to query and filter using shapes, rather than just points.
+((("geo-shapes", "querying"))) {ref}/query-dsl-geo-shape-query.html[`geo_shape` 查询]不寻常的地方在于，它允许我们使用形状来做查询，而不仅仅是坐标点。
 
-For instance, if our user steps out of the central train station in Amsterdam,
-we could find all landmarks within a 1km radius with a query like this:
+举个例子，当我们的用户刚刚迈出阿姆斯特丹中央火车站时，我们可以用如下方式，查询出方圆 1km 内的所有地标：
 
 [source,json]
 -----------------------
@@ -26,20 +25,14 @@ GET /attractions/landmark/_search
   }
 }
 -----------------------
-<1> The query looks at geo-shapes in the `location` field.
-<2> The `shape` key indicates that the shape is specified inline in the query.
-<3> The shape is a circle, with a radius of 1km.
-<4> This point is situated at the entrance of the central train station in
-    Amsterdam.
+<1> 查询使用 `location` 字段中的地理形状。
+<2> 查询中的形状是由 `shape` 键对应的内容表示。
+<3> 形状是一个半径为 1km 的圆形。
+<4> 安姆斯特丹中央火车站入口的坐标点。
 
-By default, the query (or filter--do the same job) looks for indexed
-shapes that intersect with the query shape. ((("relation parameter (geo-shapes)", "disjoint or within"))) The `relation` parameter can be
-set to `disjoint` to find indexed shapes that don't intersect with the query
-shape, or `within` to find indexed shapes that are completely contained by the
-query shape.
+默认的，查询（或者过滤器 —— 工作方式相同）会从已索引的形状中寻找与指定形状有交集的部分。((("relation parameter (geo-shapes)", "disjoint or within")))此外，可以把 `relation` 字段设置为 `disjoint` 来查找与指定形状不相交的部分，或者设置为 `within` 来查找完全落在查询形状中的。
 
-For instance, we could find all landmarks in the center of Amsterdam with this
-query:
+举个例子，我们可以查找阿姆斯特丹中心区域所有的地标：
 
 [source,json]
 -----------------------
@@ -70,6 +63,6 @@ GET /attractions/landmark/_search
   }
 }
 -----------------------
-<1> Match only indexed shapes that are completely within the query shape.
-<2> This polygon represents the center of Amsterdam.
+<1> 只匹配完全落在查询形状中的已索引的形状。
+<2> 这个多边形表示安姆斯特丹中心区域。
 
