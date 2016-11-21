@@ -31,6 +31,7 @@ action.auto_create_index: false
 我们会在之后讨论你怎么用 <<index-templates>> 来预配置开启自动创建索引。这在索引日志数据的时候尤其有用：你将日志数据索引在一个以日期结尾命名的索引上，子夜时分，一个预配置的新索引将会自动进行创建。
 ====
 
+[[_deleting_an_index]]
 === 删除一个索引
 
 用以下的请求来 ((("HTTP methods", "DELETE")))((("DELETE method", "deleting indices")))((("indices", "deleting"))) 删除索引:
