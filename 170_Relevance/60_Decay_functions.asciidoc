@@ -1,75 +1,45 @@
 [[decay-functions]]
-=== The Closer, The Better
+=== 越近越好
 
-Many variables could influence the user's choice of vacation
-home.((("relevance", "controlling", "using decay functions")))  Maybe she would like to be close to the center of town, but perhaps
-would be willing to settle for a place that is a bit farther from the
-center if the price is low enough.  Perhaps the reverse is true: she would be
-willing to pay more for the best location.
+很多变量都可以影响用户对于度假屋的选择，((("relevance", "controlling", "using decay functions")))也许用户希望离市中心近点，但如果价格足够便宜，也有可能选择一个更远的住处，也有可能反过来是正确的：愿意为最好的位置付更多的价钱。
 
-If we were to add a filter that excluded any vacation homes farther than 1
-kilometer from the center, or any vacation homes that cost more than £100 a
-night, we might exclude results that the user would consider to be a good
-compromise.
+如果我们添加过滤器排除所有市中心方圆 1 千米以外的度假屋，或排除所有每晚价格超过 £100 英镑的，我们可能会将用户愿意考虑妥协的那些选择排除在外。
 
-The `function_score` query gives ((("function_score query", "decay functions")))((("decay functions")))us the ability to trade off one sliding scale
-(like location) against another sliding scale (like price), with a group of
-functions known as the _decay functions_.
+`function_score` 查询会提供一组 _衰减函数（decay functions）_ ，((("function_score query", "decay functions")))((("decay functions")))让我们有能力在两个滑动标准，如地点和价格，之间权衡。
 
-The three decay functions--called `linear`, `exp`, and `gauss`&#x2014;operate on numeric fields, date fields, or lat/lon geo-points.((("linear function")))((("exp (exponential) function")))((("gauss (Gaussian) function")))  All three take
-the same parameters:
+有三种衰减函数—— `linear` 、 `exp` 和 `gauss` （线性、指数和高斯函数），它们可以操作数值、时间以及经纬度地理坐标点这样的字段。((("linear function")))((("exp (exponential) function")))((("gauss (Gaussian) function")))所有三个函数都能接受以下参数：
 
 `origin`::
-    The _central point_, or the best possible value for the field.
-    Documents that fall at the `origin` will get a full `_score` of `1.0`.
+    _中心点_ 或字段可能的最佳值，落在原点 `origin` 上的文档评分 `_score` 为满分 `1.0` 。
 
 `scale`::
-    The rate of decay--how quickly the `_score` should drop the further from
-    the `origin` that a document lies (for example, every £10 or every 100 meters).
+    衰减率，即一个文档从原点 `origin` 下落时，评分 `_score` 改变的速度。（例如，每 £10 欧元或每 100 米）。
 
 `decay`::
-    The `_score` that a document at `scale` distance from the `origin` should
-    receive. Defaults to `0.5`.
+    从原点 `origin` 衰减到 `scale` 所得的评分 `_score` ，默认值为 `0.5` 。
 
 `offset`::
-    Setting a nonzero `offset` expands the central point to cover a range
-    of values instead of just the single point specified by the `origin`. All
-    values in the range `-offset <= origin <= +offset` will receive the full
-    `_score` of `1.0`.
+    以原点 `origin` 为中心点，为其设置一个非零的偏移量 `offset` 覆盖一个范围，而不只是单个原点。在范围 `-offset <= origin <= +offset` 内的所有评分 `_score` 都是 `1.0` 。
 
-The only difference between these three functions is the shape of the decay
-curve. The difference is most easily illustrated with a graph (see <<img-decay-functions>>).
+这三个函数的唯一区别就是它们衰减曲线的形状，用图来说明会更为直观（参见 <<img-decay-functions>> ）。
 
 [[img-decay-functions]]
-.Decay function curves
-image::images/elas_1705.png["The curves of the decay functions"]
+.衰减函数曲线
+image::images/elas_1705.png["衰减函数曲线"]
 
-The curves shown in <<img-decay-functions>> all have their `origin`&#x2014;the
-central point--set to `40`.  The `offset` is `5`, meaning that all values in
-the range `40 - 5 <= value <= 40 + 5` are treated as though they were at the
-`origin`&#x2014;they all get the full score of `1.0`.
+图 <<img-decay-functions>> 中所有曲线的原点 `origin` （即中心点）的值都是 `40` ， `offset` 是 `5` ，也就是在范围 `40 - 5 <= value <= 40 + 5` 内的所有值都会被当作原点 `origin` 处理——所有这些点的评分都是满分 `1.0` 。
 
-Outside this range, the score starts to decay.  The rate of decay is
-determined by the `scale` (which in this example is set to `5`), and the
-`decay` (which is set to the default of `0.5`). The result is that all three
-curves return a score of `0.5` at `origin +/- (offset + scale)`, or at points
-`30` and `50`.
+在此范围之外，评分开始衰减，衰减率由 `scale` 值（此例中的值为 `5` ）和 衰减值 `decay` （此例中为默认值 `0.5` ）共同决定。结果是所有三个曲线在 `origin +/- (offset + scale)` 处的评分都是 `0.5` ，即点 `30` 和 `50` 处。
 
-The difference between `linear`, `exp`, and `gauss` is the shape of the curve at other points in the range:
+`linear` 、 `exp` 和 `gauss` （线性、指数和高斯）函数三者之间的区别在于范围（ `origin +/- (offset + scale)` ）之外的曲线形状：
 
-* The `linear` funtion is just a straight line. Once the line hits zero,
-  all values outside the line will return a score of `0.0`.
-* The `exp` (exponential) function decays rapidly, then slows down.
-* The `gauss` (Gaussian) function is bell-shaped--it decays slowly, then
-  rapidly, then slows down again.
+* `linear` 线性函数是条直线，一旦直线与横轴 0 相交，所有其他值的评分都是 `0.0` 。
+* `exp` 指数函数是先剧烈衰减然后变缓。
+* `gauss` 高斯函数是钟形的——它的衰减速率是先缓慢，然后变快，最后又放缓。
 
-Which curve you choose depends entirely on how quickly you want the `_score`
-to decay, the further a value is from the `origin`.
+选择曲线的依据完全由期望评分 `_score` 的衰减速率来决定，即距原点 `origin` 的值。
 
-To return to our example: our user would prefer to rent a vacation home close
-to the center of London (`{ "lat": 51.50, "lon": 0.12}`) and to pay no more
-than £100 a night, but our user considers price to be more important than
-distance. ((("gauss (Gaussian) function", "in function_score query")))  We could write this query as follows:
+回到我们的例子：用户希望租一个离伦敦市中心近（ `{ "lat": 51.50, "lon": 0.12}` ）且每晚不超过 £100 英镑的度假屋，而且与距离相比，((("gauss (Gaussian) function", "in function_score query")))我们的用户对价格更为敏感，这样查询可以写成：
 
 [source,json]
 ----------------------------------
@@ -102,38 +72,27 @@ GET /_search
   }
 }
 ----------------------------------
-<1> The `location` field is mapped as a `geo_point`.
-<2> The `price` field is numeric.
-<3> See <<Understanding-the-price-Clause>> for the reason that `origin` is `50` instead of `100`.
-<4> The `price` clause has twice the weight of the `location` clause.
+<1> `location` 字段以地理坐标点 `geo_point` 映射。
+<2> `price` 字段是数值。
+<3> 参见 <<Understanding-the-price-Clause,理解价格语句>> ，理解 `origin` 为什么是 `50` 而不是 `100` 。
+<4> `price` 语句是 `location` 语句权重的两倍。
 
-The `location` clause is((("location clause, Gaussian function example"))) easy to understand:
+`location` 语句可以简单理解为：((("location clause, Gaussian function example")))
 
-* We have specified an `origin` that corresponds to the center of London.
-* Any location within `2km` of the `origin` receives the full score of `1.0`.
-* Locations `5km` (`offset + scale`) from the centre receive a score
-of `0.5`.
+* 以伦敦市中作为原点 `origin` 。
+* 所有距原点 `origin` `2km` 范围内的位置的评分是 `1.0` 。
+* 距中心 `5km` （ `offset + scale` ）的位置的评分是 `0.5` 。
 
 [[Understanding-the-price-Clause]]
-=== Understanding the price Clause
+=== 理解 price 价格语句
 
-The `price` clause is a little trickier.((("price clause (Gaussian function example)")))  The user's preferred price is
-anything up to £100, but this example sets the origin to £50.  Prices can't be
-negative, but the lower they are, the better.  Really, any price between £0 and
-£100 should be considered optimal.
+`price` 语句使用了一个小技巧：((("price clause (Gaussian function example)")))用户希望选择 £100 英镑以下的度假屋，但是例子中的原点被设置成 £50 英镑，价格不能为负，但肯定是越低越好，所以 £0 到 £100 英镑内的所有价格都认为是比较好的。
 
-If we were to set the `origin` to £100, then prices below £100 would receive a
-lower score. Instead, we set both the `origin` and the `offset` to £50.  That
-way, the score decays only for any prices above £100 (`origin + offset`).
+如果我们将原点 `origin` 被设置成 £100 英镑，那么低于 £100 英镑的度假屋的评分会变低，与其这样不如将原点 `origin` 和偏移量 `offset` 同时设置成 £50 英镑，这样就能使只有在价格高于 £100 英镑（ `origin + offset` ）时评分才会变低。
 
 [TIP]
 ==================================================
 
-The `weight` parameter can be used to increase or decrease the contribution of
-individual clauses. ((("weight parameter (in function_score query)"))) The `weight`, which defaults to `1.0`, is multiplied by
-the score from each clause before the scores are combined with the specified
-`score_mode`.
+`weight` 参数可以被用来调整每个语句的贡献度，((("weight parameter (in function_score query)")))权重 `weight` 的默认值是 `1.0` 。这个值会先与每个句子的评分相乘，然后再通过 `score_mode` 的设置方式合并。
 
 ==================================================
-
-
