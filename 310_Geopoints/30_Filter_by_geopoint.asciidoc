@@ -1,43 +1,31 @@
 [[filter-by-geopoint]]
-=== Filtering by Geo Point
+=== 通过地理坐标点过滤
 
-Four geo-point filters ((("geo-points", "filtering by")))((("filtering", "by geo-points")))can be used to include or exclude documents by
-geolocation:
+有四种地理坐标点相关的过滤器((("geo-points", "filtering by")))((("filtering", "by geo-points")))可以用来选中或者排除文档：
 
 <<geo-bounding-box,`geo_bounding_box`>>::
 
-    Find geo-points that fall within the specified rectangle.
+    找出落在指定矩形框中的点。
 
 <<geo-distance,`geo_distance`>>::
 
-    Find geo-points within the specified distance of a central point.
+    找出与指定位置在给定距离内的点。
 
 <<geo-distance-range,`geo_distance_range`>>::
 
-    Find geo-points within a specified minimum and maximum distance from a
-    central point.
+    找出与指定点距离在给定最小距离和最大距离之间的点。
 
 `geo_polygon`::
 
-    Find geo-points that fall within the specified polygon. _This filter is
-    very expensive_. If you find yourself wanting to use it, you should be
-    looking at <<geo-shapes,geo-shapes>> instead.
+    找出落在多边形中的点。 _这个过滤器使用代价很大_ 。当你觉得自己需要使用它，最好先看看 <<geo-shapes,geo-shapes>> 。
 
-Each filter performs a slightly different calculation to check whether a point
-falls into the containing area, but the process is similar.  The requested area
-is converted into a range of quad/geohash prefix tokens and used to search the
-inverted index for documents who share the same tokens.
+这些过滤器判断点是否落在指定区域时的计算方法稍有不同，但过程类似。指定的区域被转换成一系列以quad/geohash为前缀的tokens，并被用来在倒排索引中搜索拥有相同tokens的文档。
 
 [TIP]
 ============================
 
-Geo-filters are relatively expensive -- they should be used on as few documents as
-possible. First remove as many documents as you can with cheaper filters, like
-`term` or `range` filters, and apply the geo-filters last.
+地理坐标过滤器使用代价昂贵 -- 所以最好在文档集合尽可能少的场景下使用。你可以先使用那些简单快捷的过滤器，比如 `term` 或 `range` ，来过滤掉尽可能多的文档，最后才交给地理坐标过滤器处理。
 
-The <<bool-filter,`bool` filter>> will do this for you automatically.((("bool filter", "applying cheaper filters before geo-filters"))) First it
-applies any bitset-based filters (see <<filter-caching>>) to exclude as many
-documents as it can as cheaply as possible.  Then it applies the more
-expensive geo or script filters to each remaining document in turn.
+布尔型过滤器 <<bool-filter,`bool` filter>> 会自动帮你做这件事。((("bool filter", "applying cheaper filters before geo-filters")))它会优先让那些基于“bitset”的简单过滤器(见 <<filter-caching>> )来过滤掉尽可能多的文档，然后依次才是更昂贵的地理坐标过滤器或者脚本类的过滤器。
 
 ============================
