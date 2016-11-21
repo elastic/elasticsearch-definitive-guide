@@ -1,11 +1,10 @@
 [[fuzzy-query]]
-=== Fuzzy Query
+=== 模糊查询
 
-The {ref}/query-dsl-fuzzy-query.html[`fuzzy` query] is ((("typoes and misspellings", "fuzzy query")))((("fuzzy queries")))the fuzzy equivalent of
-the `term` query. You will seldom use it directly yourself, but understanding
-how it works will help you to use fuzziness in the higher-level `match` query.
+{ref}/query-dsl-fuzzy-query.html[`fuzzy` 查询]是((("typoes and misspellings", "fuzzy query")))((("fuzzy queries"))) `term` 查询的模糊等价。
+也许你很少直接使用它，但是理解它是如何工作的，可以帮助你在更高级别的 `match` 查询中使用模糊性。
 
-To understand how it works, we will first index some documents:
+为了解它是如何运作的，我们首先索引一些文档：
 
 [source,json]
 -----------------------------------
@@ -18,7 +17,7 @@ POST /my_index/my_type/_bulk
 { "text": "I wasn't surprised."}
 -----------------------------------
 
-Now we can run a `fuzzy` query for the term `surprize`:
+现在我们可以为词 `surprize` 运行一个 `fuzzy` 查询：
 
 [source,json]
 -----------------------------------
@@ -32,13 +31,11 @@ GET /my_index/my_type/_search
 }
 -----------------------------------
 
-The `fuzzy` query is a term-level query, so it doesn't do any analysis.  It
-takes a single term and finds all terms in the term dictionary that are
-within the specified `fuzziness`. The default `fuzziness` is `AUTO`.
+`fuzzy` 查询是一个词项级别的查询，所以它不做任何分析。它通过某个词项以及指定的 `fuzziness` 查找到词典中所有的词项。
+`fuzziness` 默认设置为 `AUTO` 。
 
-In our example, `surprize` is within an edit distance of 2 from both
-`surprise` and `surprised`, so documents 1 and 3 match. We could reduce the
-matches to just `surprise` with the following query:
+在我们的例子中， `surprise` 比较 `surprise` 和 `surprised` 都在编辑距离 2 以内，
+所以文档 1 和 3 匹配。通过以下查询，我们可以减少匹配度到仅匹配 `surprise` ：
 
 [source,json]
 -----------------------------------
@@ -55,34 +52,28 @@ GET /my_index/my_type/_search
 }
 -----------------------------------
 
-==== Improving Performance
+==== 提高性能
 
-The `fuzzy` query works by taking the original term and building a
-_Levenshtein automaton_&#x2014;like a((("fuzzy queries", "improving performance")))((("Levenshtein automation"))) big graph representing all the strings
-that are within the specified edit distance of the original string.
 
-The fuzzy query then uses the automaton to step efficiently through all of the terms
-in the term dictionary to see if they match.  Once it has collected all of the
-matching terms that exist in the term dictionary, it can compute the list of
-matching documents.
+`fuzzy` 查询的工作原理是给定原始词项及构造一个 _编辑自动机_&#x2014;((("fuzzy queries", "improving performance")))((("Levenshtein automation")))
+像表示所有原始字符串指定编辑距离的字符串的一个大图表。
 
-Of course, depending on the type of data stored in the index, a fuzzy query
-with an edit distance of 2 can match a very large number of terms and
-perform very badly. Two parameters can be used to limit the
-performance impact:
+
+然后模糊查询使用这个自动机依次高效遍历词典中的所有词项以确定是否匹配。
+一旦收集了词典中存在的所有匹配项，就可以计算匹配文档列表。
+
+当然，根据存储在索引中的数据类型，一个编辑距离 2 的模糊查询能够匹配一个非常大数量的词项同时执行效率会非常糟糕。
+下面两个参数可以用来限制对性能的影响：
+
 
 `prefix_length`::
 
-The number of initial characters((("prefix_length parameter"))) that will not be ``fuzzified.''  Most
-spelling errors occur toward the end of the word, not toward the beginning.
-By using a `prefix_length` of `3`, for example, you can signficantly reduce
-the number of matching terms.
+((("prefix_length parameter")))不能被 ``模糊化'' 的初始字符数。
+大部分的拼写错误发生在词的结尾，而不是词的开始。
+例如通过将 `prefix_length` 设置为 `3` ，你可能够显著降低匹配的词项数量。
 
 `max_expansions`::
 
-If a fuzzy query expands to three or four fuzzy options,((("max_expansions parameter"))) the new options may be
-meaningful.  If it produces 1,000 options, they are essentially
-meaningless.  Use `max_expansions` to limit the total number of options that
-will be produced. The fuzzy query will collect matching terms until it
-runs out of terms or reaches the `max_expansions` limit.
-
+如果一个模糊查询扩展了三个或四个模糊选项，((("max_expansions parameter"))) 这些新的模糊选项也许是有意义的。如
+果它产生 1000 个模糊选项，那么就基本没有意义了。
+设置 `max_expansions` 用来限制将产生的模糊选项的总数量。模糊查询将收集匹配词项直到达到 `max_expansions` 的限制。
