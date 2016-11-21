@@ -1,60 +1,48 @@
 [[concurrency-solutions]]
-=== Solving Concurrency Issues
+=== 解决并发问题
 
-The problem comes when we want to allow more than one person to rename files
-or directories _at the same time_. ((("concurrency", "solving concurrency issues")))((("relationships", "solving concurrency issues"))) Imagine that you rename the `/clinton`
-directory, which contains hundreds of thousands of files.  Meanwhile, another
-user renames the single file `/clinton/projects/elasticsearch/README.txt`.
-That user's change, although it started after yours, will probably finish more
-quickly.
+当我们允许多个人 _同时_ 重命名文件或目录时，问题就来了。((("concurrency", "solving concurrency issues")))((("relationships", "solving concurrency issues")))
+设想一下，你正在对一个包含了成百上千文件的目录 `/clinton` 进行重命名操作。
+同时，另一个用户对这个目录下的单个文件 `/clinton/projects/elasticsearch/README.txt` 进行重命名操作。
+这个用户的修改操作，尽管在你的操作后开始，但可能会更快的完成。
 
-One of two things will happen:
 
-*   You have decided to use `version` numbers, in which case your mass rename
-    will fail with a version conflict when it hits the renamed
-    `README.txt` file.
+以下有两种情况可能出现：
 
-*   You didn't use versioning, and your changes will overwrite the changes from
-    the other user.
+*   你决定使用 `version` （版本）号，在这种情况下，当与 `README.txt` 文件重命名的版本号产生冲突时，你的批量重命名操作将会失败。
 
-The problem is that Elasticsearch does not support
-http://en.wikipedia.org/wiki/ACID_transactions[ACID transactions].((("ACID transactions")))  Changes to
-individual documents are ACIDic, but not changes involving multiple documents.
+*   你没有使用版本控制，你的变更将覆盖其他用户的变更。
 
-If your main data store is a relational database, and Elasticsearch is simply
-being used as a search engine((("relational databases", "Elasticsearch used with"))) or as a way to improve performance, make
-your changes in the database first and replicate those changes to
-Elasticsearch after they have succeeded. This way, you benefit from the ACID
-transactions available in the database, and all changes to Elasticsearch happen
-in the right order. Concurrency is dealt with in the relational database.
+问题的原因是 Elasticsearch 不支持 http://en.wikipedia.org/wiki/ACID_transactions[ACID 事务]。
+((("ACID transactions"))) 对单个文件的变更是 ACIDic 的，但包含多个文档的变更不支持。
 
-If you are not using a relational store, these concurrency issues need to
-be dealt with at the Elasticsearch level.  The following are three practical
-solutions using Elasticsearch, all of which involve some form of locking:
+如果你的主要数据存储是关系数据库，并且 Elasticsearch 仅仅作为一个搜索引擎((("relational databases", "Elasticsearch used with")))
+或一种提升性能的方法，可以首先在数据库中执行变更动作，然后在完成后将这些变更复制到 Elasticsearch。
+通过这种方式，你将受益于数据库 ACID 事务支持，并且在 Elasticsearch 中以正确的顺序产生变更。
+并发在关系数据库中得到了处理。
 
-* Global Locking
-* Document Locking
-* Tree Locking
+如果你不使用关系型存储，这些并发问题就需要在 Elasticsearch 的事务水准进行处理。
+以下是三个切实可行的使用 Elasticsearch 的解决方案，它们都涉及某种形式的锁：
+
+* 全局锁
+* 文档锁
+* 树锁
 
 [TIP]
 ==================================================
 
-The solutions described in this section could also be implemented by applying the same
-principles while using an external system instead of Elasticsearch.
+当使用一个外部系统替代 Elasticsearch 时，本节中所描述的解决方案可以通过相同的原则来实现。
 
 ==================================================
 
 [[global-lock]]
-==== Global Locking
+==== 全局锁
 
-We can avoid concurrency issues completely by allowing only one process to
-make changes at any time.((("locking", "global lock")))((("global lock")))  Most changes will involve only a few files and will
-complete very quickly.  A rename of a top-level directory may block all other
-changes for longer, but these are likely to be much less frequent.
+通过在任何时间只允许一个进程来进行变更动作，我们可以完全避免并发问题。((("locking", "global lock")))((("global lock")))
+大多数的变更只涉及少量文件，会很快完成。一个顶级目录的重命名操作会对其他变更造成较长时间的阻塞，但可能很少这样做。
 
-Because document-level changes in Elasticsearch are ACIDic, we can use the
-existence or absence of a document as a global lock.  To request a
-lock, we try to `create` the global-lock document:
+因为在 Elasticsearch 文档级别的变更支持 ACIDic，我们可以使用一个文档是否存在的状态作为一个全局锁。
+为了请求得到锁，我们尝试 `create` 全局锁文档：
 
 [source,json]
 --------------------------
@@ -62,28 +50,24 @@ PUT /fs/lock/global/_create
 {}
 --------------------------
 
-If this `create` request fails with a conflict exception,
-another process has already been granted the global lock and we will have to
-try again later.  If it succeeds, we are now the proud owners of the
-global lock and we can continue with our changes.  Once we are finished, we
-must release the lock by deleting the global lock document:
+如果这个 `create` 请求因冲突异常而失败，说明另一个进程已被授予全局锁，我们将不得不稍后再试。
+如果请求成功了，我们自豪的成为全局锁的主人，然后可以继续完成我们的变更。一旦完成，我们就必须通过删除全局锁文档来释放锁：
+
 
 [source,json]
 --------------------------
 DELETE /fs/lock/global
 --------------------------
 
-Depending on how frequent changes are, and how long they take, a global lock
-could restrict the performance of a system significantly.  We can increase
-parallelism by making our locking more fine-grained.
+根据变更的频繁程度以及时间消耗，一个全局锁能对系统造成大幅度的性能限制。
+我们可以通过让我们的锁更细粒度的方式来增加并行度。
 
 [[document-locking]]
-==== Document Locking
+==== 文档锁
 
-Instead of locking the whole filesystem, we could lock individual documents
-by using the same technique as previously described.((("locking", "document locking")))((("document locking")))  
-We can use a <<scroll,scrolled search>> to retrieve all documents that would be affected by the change and 
-create a lock file for each one:
+我们可以使用前面描述相同的方法技术来锁定个体文档，而不是锁定整个文件系统。
+((("locking", "document locking")))((("document locking")))
+我们可以使用 <<scroll,scrolled search>> 检索所有的文档，这些文档会被变更影响因此每一个文档都创建了一个锁文件：
 
 [source,json]
 --------------------------
@@ -93,18 +77,13 @@ PUT /fs/lock/_bulk
 { "create": { "_id": 2}}
 { "process_id": 123    }
 --------------------------
-<1> The ID of the `lock` document would be the same as the ID of  the file
-    that should be locked.
-<2> The `process_id` is a unique ID that represents the process that
-    wants to perform the changes.
+<1> `lock` 文档的 ID 将与应被锁定的文件的 ID 相同。
+<2> `process_id` 代表要执行变更进程的唯一 ID。
 
-If some files are already locked, parts of the `bulk` request will fail and we
-will have to try again.
+如果一些文件已被锁定，部分的 `bulk` 请求将失败，我们将不得不再次尝试。
 
-Of course, if we try to lock _all_ of the files again, the `create` statements
-that we used previously will fail for any file that is already locked by us!
-Instead of a simple `create` statement, we need an `update` request with an
-`upsert` parameter and this `script`:
+当然，如果我们试图再次锁定 _所有_ 的文件， 我们前面使用的 `create` 语句将会失败，因为所有文件都已被我们锁定！
+我们需要一个 `update` 请求带 `upsert` 参数以及下面这个 `script` ，而不是一个简单的 `create` 语句：
 
 [source,groovy]
 --------------------------
@@ -113,19 +92,18 @@ if ( ctx._source.process_id != process_id ) { <1>
 }
 ctx.op = 'noop'; <3>
 --------------------------
-<1> `process_id` is a parameter that we pass into the script.
-<2> `assert false` will throw an exception, causing the update to fail.
-<3> Changing the `op` from `update` to `noop` prevents the update request
-    from making any changes, but still returns success.
+<1> `process_id` 是传递到脚本的一个参数。
+<2> `assert false` 将引发异常，导致更新失败。
+<3> 将 `op` 从 `update` 更新到 `noop` 防止更新请求作出任何改变，但仍返回成功。
 
-The full `update` request looks like this:
+完整的 `update` 请求如下所示：
 
 [source,json]
 --------------------------
 POST /fs/lock/1/_update
 {
   "upsert": { "process_id": 123 },
-  "script": "if ( ctx._source.process_id != process_id ) 
+  "script": "if ( ctx._source.process_id != process_id )
   { assert false }; ctx.op = 'noop';"
   "params": {
     "process_id": 123
@@ -133,17 +111,14 @@ POST /fs/lock/1/_update
 }
 --------------------------
 
-If the document doesn't already exist, the `upsert` document is inserted--much 
-the same as the previous `create` request.  However, if the
-document _does_ exist, the script looks at the `process_id` stored in the
-document.  If the `process_id` matches, no update is performed (`noop`) but the
-script returns successfully.  If it is different, `assert false` throws an exception
-and you know that the lock has failed.
+如果文档并不存在， `upsert` 文档将会被插入--和前面 `create` 请求相同。
+但是，如果该文件 _确实_ 存在，该脚本会查看存储在文档上的 `process_id` 。
+如果 `process_id` 匹配，更新不会执行（ `noop` ）但脚本会返回成功。
+如果两者并不匹配， `assert false` 抛出一个异常，你也知道了获取锁的尝试已经失败。
 
-Once all locks have been successfully created, you can proceed with your changes.
+一旦所有锁已成功创建，你就可以继续进行你的变更。
 
-Afterward, you must release all of the locks, which you can do by
-retrieving all of the locked documents and performing a bulk delete:
+之后，你必须释放所有的锁，通过检索所有的锁文档并进行批量删除，可以完成锁的释放：
 
 
 [source,json]
@@ -161,34 +136,27 @@ GET /fs/lock/_search?scroll=1m <2>
 }
 
 PUT /fs/lock/_bulk
-{ "delete": { "_id": 1}} 
+{ "delete": { "_id": 1}}
 { "delete": { "_id": 2}}
 --------------------------
-<1> The `refresh` call ensures that all `lock` documents are visible to
-    the search request.
-<2> You can use a <<scroll,`scroll`>> query when you need to retrieve large 
-numbers of results with a single search request.
+<1> `refresh` 调用确保所有 `lock` 文档对搜索请求可见。
+<2> 当你需要在单次搜索请求返回大量的检索结果集时，你可以使用 <<scroll,`scroll`>> 查询。
 
-Document-level locking enables fine-grained access control, but creating lock
-files for millions of documents can be expensive.  In some cases, 
-you can achieve fine-grained locking with much less work, as shown in the
-following directory tree scenario. 
+文档级锁可以实现细粒度的访问控制，但是为数百万文档创建锁文件开销也很大。
+在某些情况下，你可以用少得多的工作量实现细粒度的锁定，如以下目录树场景中所示。
 
 [[tree-locking]]
-==== Tree Locking
+==== 树锁
 
-Rather than locking every involved document as in the previous example, we
-could lock just part of the directory tree.((("locking", "tree locking")))  We will need exclusive access
-to the file or directory that we want to rename, which can be achieved with an
-_exclusive lock_ document:
+在前面的例子中，我们可以锁定的目录树的一部分，而不是锁定每一个涉及的文档。((("locking", "tree locking")))
+我们将需要独占访问我们要重命名的文件或目录，它可以通过 _独占锁_ 文档来实现：
 
 [source,json]
 --------------------------
 { "lock_type": "exclusive" }
 --------------------------
 
-And we need shared locks on any parent directories, with a _shared lock_
-document:
+同时我们需要共享锁定所有的父目录，通过 _共享锁_ 文档：
 
 [source,json]
 --------------------------
@@ -197,14 +165,12 @@ document:
   "lock_count": 1 <1>
 }
 --------------------------
-<1> The `lock_count` records the number of processes that hold a shared lock.
+<1> `lock_count` 记录持有共享锁进程的数量。
 
-A process that wants to rename `/clinton/projects/elasticsearch/README.txt`
-needs an _exclusive_ lock on that file, and a _shared_ lock on `/clinton`,
-`/clinton/projects`, and `/clinton/projects/elasticsearch`.
+对 `/clinton/projects/elasticsearch/README.txt` 进行重命名的进程需要在这个文件上有 _独占锁_ ，
+以及在 `/clinton` 、 `/clinton/projects` 和 `/clinton/projects/elasticsearch` 目录有 _共享锁_ 。
 
-A simple `create` request will suffice for the exclusive lock, but the shared
-lock needs a scripted update to implement some extra logic:
+一个简单的 `create` 请求将满足独占锁的要求，但共享锁需要脚本的更新来实现一些额外的逻辑：
 
 [source,groovy]
 --------------------------
@@ -213,13 +179,11 @@ if (ctx._source.lock_type == 'exclusive') {
 }
 ctx._source.lock_count++ <2>
 --------------------------
-<1> If the `lock_type` is `exclusive`, the `assert` statement will throw
-    an exception, causing the update request to fail.
-<2> Otherwise, we increment the `lock_count`.
+<1> 如果 `lock_type` 是 `exclusive` （独占）的，`assert` 语句将抛出一个异常，导致更新请求失败。
+<2> 否则，我们对 `lock_count` 进行增量处理。
 
-This script handles the case where the `lock` document already exists, but we
-will also need an `upsert` document to handle the case where it doesn't exist
-yet. The full update request is as follows:
+这个脚本处理了 `lock` 文档已经存在的情况，但我们还需要一个用来处理的文档还不存在情况的 `upsert` 文档。
+完整的更新请求如下：
 
 [source,json]
 --------------------------
@@ -229,16 +193,14 @@ POST /fs/lock/%2Fclinton/_update <1>
     "lock_type":  "shared",
     "lock_count": 1
   },
-  "script": "if (ctx._source.lock_type == 'exclusive') 
+  "script": "if (ctx._source.lock_type == 'exclusive')
   { assert false }; ctx._source.lock_count++"
 }
 --------------------------
-<1> The ID of the document is `/clinton`, which is URL-encoded to `%2fclinton`.
-<2> The `upsert` document will be inserted if the document does not already
-    exist.
+<1> 文档的 ID 是 `/clinton` ，经过URL编码后成为 `%2fclinton` 。
+<2> `upsert` 文档如果不存在，则会被插入。
 
-Once we succeed in gaining a shared lock on all of the parent directories, we
-try to `create` an exclusive lock on the file itself:
+一旦我们成功地在所有的父目录中获得一个共享锁，我们尝试在文件本身 `create` 一个独占锁：
 
 [source,json]
 --------------------------
@@ -246,8 +208,7 @@ PUT /fs/lock/%2Fclinton%2fprojects%2felasticsearch%2fREADME.txt/_create
 { "lock_type": "exclusive" }
 --------------------------
 
-Now, if somebody else wants to rename the `/clinton` directory, they would
-have to gain an exclusive lock on that path:
+现在，如果有其他人想要重新命名 `/clinton` 目录，他们将不得不在这条路径上获得一个独占锁：
 
 [source,json]
 --------------------------
@@ -255,17 +216,15 @@ PUT /fs/lock/%2Fclinton/_create
 { "lock_type": "exclusive" }
 --------------------------
 
-This request would fail because a `lock` document with the same ID already
-exists. The other user would have to wait until our operation is done and we
-have released our locks. The exclusive lock can just be deleted:
+这个请求将失败，因为一个具有相同 ID 的 `lock` 文档已经存在。
+另一个用户将不得不等待我们的操作完成以及释放我们的锁。独占锁只能这样被删除：
 
 [source,json]
 --------------------------
 DELETE /fs/lock/%2Fclinton%2fprojects%2felasticsearch%2fREADME.txt
 --------------------------
 
-The shared locks need another script that decrements the `lock_count` and, if
-the count drops to zero, deletes the `lock` document:
+共享锁需要另一个脚本对 `lock_count` 递减，如果计数下降到零，删除 `lock` 文档：
 
 [source,groovy]
 --------------------------
@@ -273,11 +232,9 @@ if (--ctx._source.lock_count == 0) {
   ctx.op = 'delete' <1>
 }
 --------------------------
-<1> Once the `lock_count` reaches `0`, the `ctx.op` is changed from `update`
-    to `delete`.
+<1> 一旦 `lock_count` 达到0， `ctx.op` 会从 `update` 被修改成  `delete` 。
 
-This update request would need to be run for each parent directory in reverse
-order, from longest to shortest:
+此更新请求将为每级父目录由下至上的执行，从最长路径到最短路径：
 
 [source,json]
 --------------------------
@@ -287,28 +244,21 @@ POST /fs/lock/%2Fclinton%2fprojects%2felasticsearch/_update
 }
 --------------------------
 
-Tree locking gives us fine-grained concurrency control with the minimum of
-effort. Of course, it is not applicable to every situation--the data model
-must have some sort of access path like the directory tree for it to work.
+树锁用最小的代价提供了细粒度的并发控制。当然，它不适用于所有的情况--数据模型必须有类似于目录树的顺序访问路径才能使用。
 
 [NOTE]
 =====================================
 
-None of the three options--global, document, or tree locking--deals with
-the thorniest problem associated with locking: what happens if the process
-holding the lock dies?
+这三个方案--全局、文档或树锁--都没有处理锁最棘手的问题：如果持有锁的进程死了怎么办？
 
-The unexpected death of a process leaves us with two problems:
+一个进程的意外死亡给我们留下了2个问题：
 
-* How do we know that we can release the locks held by the dead process?
-* How do we clean up the change that the dead process did not manage to complete?
+* 我们如何知道我们可以释放的死亡进程中所持有的锁？
+* 我们如何清理死去的进程没有完成的变更？
 
-These topics are beyond the scope of this book, but you will need to give them
-some thought  if you decide to use locking.
+这些主题超出了本书的范围，但是如果你决定使用锁，你需要给对他们进行一些思考。
 
 =====================================
 
-While denormalization is a good choice for many projects, the need for locking
-schemes can make for complicated implementations. Instead, Elasticsearch
-provides two models that help us deal with related entities:
-_nested objects_ and _parent-child relationships_.
+当非规范化成为很多项目的一个很好的选择，采用锁方案的需求会带来复杂的实现逻辑。
+作为替代方案，Elasticsearch 提供两个模型帮助我们处理相关联的实体： _嵌套的对象_ 和 _父子关系_ 。
