@@ -1,16 +1,11 @@
-==== Then Scale Some More
+==== 更多的扩容
 
-But what if we want to scale our search to more than six nodes?
+但是如果我们想要扩容超过6个节点怎么办呢？
 
-The number of primary shards is fixed at the moment an((("indices", "fixed number of primary shards")))((("primary shards", "fixed number in an index"))) index is created.
-Effectively, that number defines the maximum amount of data that can be
-_stored_ in the index.  (The actual number depends on your data, your hardware
-and your use case.) However, read requests--searches or document retrieval--can be handled by a primary _or_ a replica shard, so the more copies of
-data that you have, the more search throughput you can handle.
+主分片的数目在索引创建时((("indices", "fixed number of primary shards")))((("primary shards", "fixed number in an index")))就已经确定了下来。实际上，这个数目定义了这个索引能够 _存储_ 的最大数据量。（实际大小取决于你的数据、硬件和使用场景。）
+但是，读操作——搜索和返回数据——可以同时被主分片 _或_ 副本分片所处理，所以当你拥有越多的副本分片时，也将拥有越高的吞吐量。
 
-The number of ((("scaling", "increasing number of replica shards")))replica shards can be changed dynamically on a live cluster,
-allowing us to scale up or down as demand requires. Let's increase the number
-of replicas from the default of `1` to `2`:
+在运行中的集群上是可以动态调整副本分片数目的((("scaling", "increasing number of replica shards")))，我们可以按需伸缩集群。让我们把副本数从默认的 `1` 增加到 `2` ：
 
 [source,js]
 --------------------------------------------------
@@ -21,26 +16,21 @@ PUT /blogs/_settings
 --------------------------------------------------
 // SENSE: 020_Distributed_Cluster/30_Replicas.json
 
-As can be seen in <<cluster-three-nodes-two-replicas>>, the `blogs` index now
-has nine shards: three primaries and six replicas. This means that we can scale out to
-a total of nine nodes, again with one shard per node. This would allow us to
-_triple_ search performance compared to our original three-node cluster.
+
+如<<cluster-three-nodes-two-replicas>>所示， `blogs` 索引现在拥有9个分片：3个主分片和6个副本分片。
+这意味着我们可以将集群扩容到9个节点，每个节点上一个分片。相比原来3个节点时，集群搜索性能可以提升 _3_ 倍。
 
 [[cluster-three-nodes-two-replicas]]
-.Increasing the `number_of_replicas` to 2
-image::images/elas_0205.png["A three-node cluster with two replica shards"]
+.将参数 `number_of_replicas` 调大到 2
+image::images/elas_0205.png["拥有2份副本分片3个节点的集群"]
 
 
 [NOTE]
 ===================================================
 
-Of course, just having more replica shards on the same number of nodes doesn't
-increase our performance at all because each shard has access to a smaller
-fraction of its node's resources.  You need to add hardware to increase
-throughput.
+当然，如果只是在相同节点数目的集群上增加更多的副本分片并不能提高性能，因为每个分片从节点上获得的资源会变少。
+你需要增加更多的硬件资源来提升吞吐量。
 
-But these extra replicas do mean that we have more redundancy: with the node
-configuration above, we can now afford to lose two nodes without losing any
-data.
+但是更多的副本分片数提高了数据冗余量：按照上面的节点配置，我们可以在失去2个节点的情况下不丢失任何数据。
 
 ===================================================
