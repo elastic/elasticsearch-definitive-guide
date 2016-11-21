@@ -1,63 +1,36 @@
-=== Fetch Phase
+[[_fetch_phase]]
+=== 取回阶段（Fetch Phase）
 
-The query phase identifies which documents satisfy((("distributed search execution", "fetch phase")))((("fetch phase of distributed search"))) the search request, but we
-still need to retrieve the documents themselves. This is the job of the fetch
-phase, shown in <<img-distrib-fetch>>.
+查询阶段标识哪些文档满足((("distributed search execution", "fetch phase")))((("fetch phase of distributed search")))搜索请求，但是我们仍然需要取回这些文档。这是取回阶段的任务, 正如 <<img-distrib-fetch>> 所展示的。
 
 [[img-distrib-fetch]]
-.Fetch phase of distributed search
-image::images/elas_0902.png["Fetch Phase of distributed search"]
+.分布式搜索的取回阶段
+image::images/elas_0902.png["分布式搜索的取回阶段"]
 
-The distributed phase consists of the following steps:
+分布式阶段由以下步骤构成：
 
-1. The coordinating node identifies which documents need to be fetched and
-   issues a multi `GET` request to the relevant shards.
+1. 协调节点辨别出哪些文档需要被取回并向相关的分片提交多个 `GET` 请求。
 
-2. Each shard loads the documents and _enriches_ them, if required, and then
-   returns the documents to the coordinating node.
+2. 每个分片加载并 _丰富_ 文档，如果有需要的话，接着返回文档给协调节点。
 
-3. Once all documents have been fetched, the coordinating node returns the
-   results to the client.
+3. 一旦所有的文档都被取回了，协调节点返回结果给客户端。
 
-The coordinating node first decides which documents _actually_ need to be
-fetched. For instance, if our query specified `{ "from": 90, "size": 10 }`,
-the first 90 results would be discarded and only the next 10 results would
-need to be retrieved. These documents may come from one, some, or all of the
-shards involved in the original search request.
+协调节点首先决定哪些文档 _确实_ 需要被取回。例如，如果我们的查询指定了 `{ "from": 90, "size": 10 }` ，最初的90个结果会被丢弃，只有从第91个开始的10个结果需要被取回。这些文档可能来自和最初搜索请求有关的一个、多个甚至全部分片。
 
-The coordinating node builds a <<distrib-multi-doc,multi-get request>> for
-each shard that holds a pertinent document and sends the request to the same
-shard copy that handled the query phase.
+协调节点给持有相关文档的每个分片创建一个 <<distrib-multi-doc,multi-get request>> ，并发送请求给同样处理查询阶段的分片副本。
 
-The shard loads the document bodies--the `_source` field--and, if
-requested, enriches the results with metadata and
-<<highlighting-intro,search snippet highlighting>>.
-Once the coordinating node receives all results, it assembles them into a
-single response that it returns to the client.
+分片加载文档体-- `_source` 字段--如果有需要，用元数据和 <<highlighting-intro,search snippet highlighting>> 丰富结果文档。
+一旦协调节点接收到所有的结果文档，它就组装这些结果为单个响应返回给客户端。
 
-.Deep Pagination
+.深分页（Deep Pagination）
 ****
 
-The query-then-fetch process supports pagination with the `from` and `size`
-parameters, but _within limits_. ((("size parameter")))((("from parameter")))((("pagination", "supported by query-then-fetch process")))((("deep paging, problems with"))) Remember that each shard must build a priority
-queue of length `from + size`, all of which need to be passed back to
-the coordinating node. And the coordinating node needs to sort through
-`number_of_shards * (from + size)` documents in order to find the correct
-`size` documents.
+先查后取的过程支持用 `from` 和 `size` 参数分页，但是这是 _有限制的_ 。 ((("size parameter")))((("from parameter")))((("pagination", "supported by query-then-fetch process")))((("deep paging, problems with")))要记住需要传递信息给协调节点的每个分片必须先创建一个 `from + size` 长度的队列，协调节点需要根据 `number_of_shards * (from + size)` 排序文档，来找到被包含在 `size` 里的文档。
 
-Depending on the size of your documents, the number of shards, and the
-hardware you are using, paging 10,000 to 50,000 results (1,000 to 5,000 pages)
-deep should be perfectly doable. But with big-enough `from` values, the
-sorting process can become very heavy indeed, using vast amounts of CPU,
-memory, and bandwidth.  For this reason, we strongly advise against deep paging.
+取决于你的文档的大小，分片的数量和你使用的硬件，给 10,000 到 50,000 的结果文档深分页（ 1,000 到 5,000 页）是完全可行的。但是使用足够大的 `from` 值，排序过程可能会变得非常沉重，使用大量的CPU、内存和带宽。因为这个原因，我们强烈建议你不要使用深分页。
 
-In practice, ``deep pagers'' are seldom human anyway.  A human will stop
-paging after two  or three pages and will change the search criteria. The
-culprits are usually bots or web spiders that tirelessly keep fetching page
-after page until your servers crumble at the knees.
+实际上， ``深分页'' 很少符合人的行为。当2到3页过去以后，人会停止翻页，并且改变搜索标准。会不知疲倦地一页一页的获取网页直到你的服务崩溃的罪魁祸首一般是机器人或者web spider。
 
-If you _do_ need to fetch large numbers of docs from your cluster, you can
-do so efficiently by disabling sorting with the `scroll` query,
-which we discuss <<scroll,later in this chapter>>.
+如果你 _确实_ 需要从你的集群取回大量的文档，你可以通过用 `scroll` 查询禁用排序使这个取回行为更有效率，我们会在 <<scroll,later in this chapter>> 进行讨论。
 
 ****
