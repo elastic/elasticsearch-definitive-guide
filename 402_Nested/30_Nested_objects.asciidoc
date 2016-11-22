@@ -1,11 +1,7 @@
 [[nested-objects]]
-== Nested Objects
+== 嵌套对象
 
-Given the fact that creating, deleting, and updating a single document in
-Elasticsearch is atomic, it makes sense to store closely related entities
-within the same document.((("nested objects")))((("objects", "nested")))  For instance, we could store an order and all of
-its order lines in one document, or we could store a blog post and all of its
-comments together, by passing an array of `comments`:
+由于在 Elasticsearch 中单个文档的增删改都是原子性操作,那么将相关实体数据都存储在同一文档中也就理所当然。((("nested objects")))((("objects", "nested"))) 比如说,我们可以将订单及其明细数据存储在一个文档中。又比如,我们可以将一篇博客文章的评论以一个 `comments` 数组的形式和博客文章放在一起：
 
 [source,json]
 --------------------------
@@ -32,13 +28,11 @@ PUT /my_index/blogpost/1
   ]
 }
 --------------------------
-<1> If we rely on <<dynamic-mapping,dynamic mapping>>, the `comments`
-    field will be autocreated as an `object` field.
+<1> 如果我们依赖<<dynamic-mapping,字段自动映射>>,那么 `comments` 字段会自动映射为 `object` 类型。
 
-Because all of the content is in the same document, there is no need to join
-blog posts and comments at query time, so searches perform well.
+由于所有的信息都在一个文档中,当我们查询时就没有必要去联合文章和评论文档,查询效率就很高。
 
-The problem is that the preceding document would match a query like this:
+但是当我们使用如下查询时,上面的文档也会被当做是符合条件的结果：
 
 [source,json]
 --------------------------
@@ -54,11 +48,11 @@ GET /_search
   }
 }
 --------------------------
-<1> Alice is 31, not 28!
+<1> Alice实际是31岁,不是28!
 
-The reason for this cross-object matching, as discussed in <<object-arrays>>,
-is that our beautifully structured JSON document((("documents")))((("JSON documents"))) is flattened into a simple
-key-value format in the index that looks like this:
+正如我们在 <<object-arrays,对象数组>> 中讨论的一样,出现上面这种问题的原因是 JSON 格式的文档被处理成如下的扁平式键值对的结构。
+
+
 
 [source,json]
 --------------------------
@@ -74,13 +68,10 @@ key-value format in the index that looks like this:
 }
 --------------------------
 
-The correlation between `Alice` and `31`, or between `John` and `2014-09-01`, has been irretrievably lost.  While fields of type `object` (see
-<<inner-objects>>) are useful for storing a _single_ object, they are useless,
-from a search point of view, for storing an array of objects.
+`Alice` 和 31 、 `John` 和 `2014-09-01` 之间的相关性信息不再存在。虽然 `object` 类型 (参见 <<inner-objects,内部对象>>) 在存储 _单一对象_ 时非常有用,但对于对象数组的搜索而言,毫无用处。
 
-This is the problem that _nested objects_ are designed to solve.  By mapping
-the `comments` field as type `nested` instead of type `object`, each nested
-object is indexed as a _hidden separate document_, something like this:
+_嵌套对象_ 就是来解决这个问题的。将 `comments` 字段类型设置为 `nested` 而不是 `object` 后,每一个嵌套对象都会被索引为一个 _隐藏的独立文档_ ,举例如下:
+
 
 [source,json]
 --------------------------
@@ -104,20 +95,12 @@ object is indexed as a _hidden separate document_, something like this:
   "tags":             [ cash, shares ]
 }
 --------------------------
-<1> First `nested` object
-<2> Second `nested` object
-<3> The _root_  or parent document
+<1> 第一个 `嵌套文档`
+<2> 第二个 `嵌套文档`
+<3> _根文档_ 或者也可称为父文档
 
-By indexing each nested object separately, the fields within the object
-maintain their relationships. We can run queries that will match only if the
-match occurs within the same nested object.
+在独立索引每一个嵌套对象后,对象中每个字段的相关性得以保留。我们查询时,也仅仅返回那些真正符合条件的文档。
 
-Not only that, because of the way that nested objects are indexed, joining the
-nested documents to the root document at query time is fast--almost as fast
-as if they were a single document.
+不仅如此,由于嵌套文档直接存储在文档内部,查询时嵌套文档和根文档联合成本很低,速度和单独存储几乎一样。
 
-These extra nested documents are hidden; we can't access them directly.  To
-update, add, or remove a nested object, we have to reindex the whole document.
-It's important to note that, the result returned by a search request is not the nested object
-alone; it is the whole document.
-
+嵌套文档是隐藏存储的,我们不能直接获取。如果要增删改一个嵌套对象,我们必须把整个文档重新索引才可以。值得注意的是,查询的时候返回的是整个文档,而不是嵌套文档本身。
