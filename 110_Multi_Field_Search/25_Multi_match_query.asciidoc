@@ -1,19 +1,14 @@
 [[multi-match-query]]
-=== multi_match Query
+=== multi_match 查询
 
-The `multi_match` query provides ((("multifield search", "multi_match query")))((("multi_match queries")))((("match query", "multi_match queries"))) a convenient shorthand way of running
-the same query against multiple fields.
+`multi_match` 查询为能在多个字段上反复执行相同查询提供了一种便捷方式。((("multifield search", "multi_match query")))((("multi_match queries")))((("match query", "multi_match queries")))
 
 [NOTE]
 ====
-There are several types of `multi_match` query, three of which just
-happen to coincide with the three scenarios that we listed in
-<<know-your-data>>:  `best_fields`, `most_fields`, and `cross_fields`.
+`multi_match` 多匹配查询的类型有多种，其中的三种恰巧与 <<know-your-data,了解我们的数据>> 中介绍的三个场景对应，即： `best_fields` 、 `most_fields` 和 `cross_fields` （最佳字段、多数字段、跨字段）。
 ====
 
-By default, this query runs as type `best_fields`, which means((("best fields queries", "multi-match queries")))((("dis_max (disjunction max) query", "multi_match query wrapped in"))) that it generates a
-`match` query for each field and wraps them in a `dis_max` query. This
-`dis_max` query
+默认情况下，查询的类型是 `best_fields` ，((("best fields queries", "multi-match queries")))((("dis_max (disjunction max) query", "multi_match query wrapped in")))这表示它会为每个字段生成一个 `match` 查询，然后将它们组合到 `dis_max` 查询的内部，如下：
 
 [source,js]
 --------------------------------------------------
@@ -42,7 +37,7 @@ By default, this query runs as type `best_fields`, which means((("best fields qu
 }
 --------------------------------------------------
 
-could be rewritten more concisely with `multi_match` as follows:
+上面这个查询用 `multi_match` 重写成更简洁的形式：
 
 [source,js]
 --------------------------------------------------
@@ -58,15 +53,12 @@ could be rewritten more concisely with `multi_match` as follows:
 --------------------------------------------------
 // SENSE: 110_Multi_Field_Search/25_Best_fields.json
 
-<1> The `best_fields` type is the default and can be left out.
-<2> Parameters like `minimum_should_match` or `operator` are passed through to
-    the generated `match` queries.
+<1> `best_fields` 类型是默认值，可以不指定。
+<2> 如 `minimum_should_match` 或 `operator` 这样的参数会被传递到生成的 `match` 查询中。
 
-==== Using Wildcards in Field Names
+==== 查询字段名称的模糊匹配
 
-Field names can be specified with wildcards: any field that matches the
-wildcard pattern((("multi_match queries", "wildcards in field names")))((("wildcards in field names")))((("fields", "wildcards in field names"))) will be included in the search. You could match on the
-`book_title`, `chapter_title`, and `section_title` fields, with the following:
+字段名称可以用模糊匹配的方式给出：任何与模糊模式正则匹配的字段都会被包括在搜索条件中，((("multi_match queries", "wildcards in field names")))((("wildcards in field names")))((("fields", "wildcards in field names")))例如可以使用以下方式同时匹配 `book_title` 、 `chapter_title` 和 `section_title` （书名、章名、节名）这三个字段：
 
 [source,js]
 --------------------------------------------------
@@ -78,10 +70,9 @@ wildcard pattern((("multi_match queries", "wildcards in field names")))((("wildc
 }
 --------------------------------------------------
 
-==== Boosting Individual Fields
+==== 提升单个字段的权重
 
-Individual fields can be boosted by using the caret (`^`) syntax: just add
-`^boost` after the field((("multi_match queries", "boosting individual fields")))((("boost parameter", "boosting individual fields in multi_match queries"))) name, where `boost` is a floating-point number:
+可以使用 `^` 字符语法为单个字段提升权重，在字段名称的末尾添加 `^boost` ，((("multi_match queries", "boosting individual fields")))((("boost parameter", "boosting individual fields in multi_match queries")))其中 `boost` 是一个浮点数：
 
 [source,js]
 --------------------------------------------------
@@ -93,5 +84,4 @@ Individual fields can be boosted by using the caret (`^`) syntax: just add
 }
 --------------------------------------------------
 
-<1> The `chapter_title` field has a `boost` of `2`, while the `book_title` and
-    `section_title` fields have a default boost of `1`.
+<1> `chapter_title` 这个字段的 `boost` 值为 `2` ，而其他两个字段 `book_title` 和 `section_title` 字段的默认 boost 值为 `1` 。
