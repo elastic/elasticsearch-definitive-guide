@@ -1,22 +1,19 @@
 [[field-centric]]
-=== Field-Centric Queries
+=== 字段中心式查询
 
-All three of the preceding problems stem from  ((("field-centric queries")))((("multifield search", "field-centric queries, problems with")))((("most fields queries", "problems with field-centric queries")))`most_fields` being
-_field-centric_ rather than _term-centric_: it looks for the  most matching
-_fields_, when really what we're interested is the most matching _terms_.
+以上三个源于((("field-centric queries")))((("multifield search", "field-centric queries, problems with")))((("most fields queries", "problems with field-centric queries"))) `most_fields` 的问题都因为它是 _字段中心式（field-centric）_ 而不是 _词中心式（term-centric）_ 的：当真正感兴趣的是匹配词的时候，它为我们查找的是最匹配的 _字段_ 。
 
 
-NOTE: The `best_fields` type is also field-centric((("best fields queries", "problems with field-centric queries"))) and suffers from similar problems.
+NOTE: `best_fields` 类型也是字段中心式的，((("best fields queries", "problems with field-centric queries")))它也存在类似的问题。
 
 
-First we'll look at why these problems exist, and then how we can combat them.
+首先查看这些问题存在的原因，再想如何解决它们。
 
-==== Problem 1: Matching the Same Word in Multiple Fields
+==== 问题 1 ：在多个字段中匹配相同的词
 
-Think about how the `most_fields` query is executed: Elasticsearch generates a
-separate `match` query for each field and then wraps these match queries in an outer `bool` query.
+回想一下 `most_fields` 查询是如何执行的：Elasticsearch 为每个字段生成独立的 `match` 查询，再用 `bool` 查询将他们包起来。
 
-We can see this by passing our query through the `validate-query` API:
+可以通过 `validate-query` API 查看：
 
 [source,js]
 --------------------------------------------------
@@ -33,7 +30,7 @@ GET /_validate/query?explain
 --------------------------------------------------
 // SENSE: 110_Multi_Field_Search/40_Entity_search_problems.json
 
-which yields this `explanation`:
+生成 `explanation` 解释：
 
     (street:poland   street:street   street:w1v)
     (city:poland     city:street     city:w1v)
@@ -41,15 +38,12 @@ which yields this `explanation`:
     (postcode:poland postcode:street postcode:w1v)
 
 
-You can see that a document matching just the word `poland` in _two_ fields
-could score higher than a document matching `poland` and `street` in one
-field.
+可以发现， _两个_ 字段都与 `poland` 匹配的文档要比一个字段同时匹配 `poland` 与 `street` 文档的评分高。
 
-==== Problem 2: Trimming the Long Tail
 
-In <<match-precision>>, we talked about((("and operator", "most fields and best fields queries and")))((("minimum_should_match parameter", "most fields and best fields queries"))) using the `and` operator or the
-`minimum_should_match` parameter to trim the long tail of almost irrelevant
-results. Perhaps we could try this:
+==== 问题 2 ：剪掉长尾
+
+在 <<match-precision,匹配精度>> 中，我们讨论过使用 `and` 操作符或设置 `minimum_should_match` 参数来消除结果中几乎不相关的长尾，或许可以尝试以下方式：
 
 [source,js]
 --------------------------------------------------
@@ -66,48 +60,34 @@ results. Perhaps we could try this:
 --------------------------------------------------
 // SENSE: 110_Multi_Field_Search/40_Entity_search_problems.json
 
-<1> All terms must be present.
+<1> 所有词必须呈现。
 
-However, with `best_fields` or `most_fields`, these parameters are passed down
-to the generated `match` queries. The `explanation` for this query shows the
-following:
+但是对于 `best_fields` 或 `most_fields` 这些参数会在 `match` 查询生成时被传入，这个查询的 `explanation` 解释如下：
 
     (+street:poland   +street:street   +street:w1v)
     (+city:poland     +city:street     +city:w1v)
     (+country:poland  +country:street  +country:w1v)
     (+postcode:poland +postcode:street +postcode:w1v)
 
-In other words, using the `and` operator means that all words must exist _in
-the same field_, which is clearly wrong! It is unlikely that any documents
-would match this query.
+换句话说，使用 `and` 操作符要求所有词都必须存在于 _相同字段_ ，这显然是不对的！可能就不存在能与这个查询匹配的文档。
 
-==== Problem 3: Term Frequencies
+==== 问题 3 ：词频
 
-In <<relevance-intro>>, we explained that the default similarity algorithm
-used to calculate the relevance score ((("term frequency", "problems with field-centric queries")))for each term is TF/IDF:
+在 <<relevance-intro,什么是相关>> 中，我们解释过每个词默认使用 TF/IDF 相似度算法计算相关度评分：((("term frequency", "problems with field-centric queries")))
 
-Term frequency::
+词频::
 
-    The more often a term appears in a field in a single document, the more
-    relevant the document.
+    一个词在单个文档的某个字段中出现的频率越高，这个文档的相关度就越高。
 
-Inverse document frequency::
+逆向文档频率::
 
-    The more often a term appears in a field in all documents in the index,
-    the less relevant is that term.
+    一个词在所有文档某个字段索引中出现的频率越高，这个词的相关度就越低。
 
-When searching against multiple fields, TF/IDF can((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm", "surprising results when searching against multiple fields"))) introduce some surprising
-results.
+当搜索多个字段时，TF/IDF ((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm", "surprising results when searching against multiple fields")))会带来某些令人意外的结果。
 
-Consider our example of searching for ``Peter Smith'' using the `first_name`
-and `last_name` fields.((("inverse document frequency", "field-centric queries and")))  Peter is a common first name and Smith is a common
-last name--both will have low IDFs.  But what if we have another person in
-the index whose name is Smith Williams?  Smith as a first name is very
-uncommon and so will have a high IDF!
+想想用字段 `first_name` 和 `last_name` 查询 “Peter Smith” 的例子，((("inverse document frequency", "field-centric queries and"))) Peter 是个平常的名 Smith 也是平常的姓，这两者都具有较低的 IDF 值。但当索引中有另外一个人的名字是 “Smith Williams” 时，姓 Smith 就会非常的不平常，以致它有一个较高的 IDF 值！
 
-A simple query like the following may well return Smith Williams above
-Peter Smith in spite of the fact that the second person is a better match
-than the first.
+下面这个简单的查询可能会在结果中将 “Smith Williams” 置于 “Peter Smith” 之上，尽管事实上是第二个人比第一个人更为匹配。
 
 [source,js]
 --------------------------------------------------
@@ -123,15 +103,11 @@ than the first.
 --------------------------------------------------
 // SENSE: 110_Multi_Field_Search/40_Bad_frequencies.json
 
-The high IDF of `smith` in the first name field can overwhelm the two low IDFs
-of `peter` as a first name and `smith` as a last name.
+这里的问题是 `smith` 在名字段中具有高 IDF ，它会削弱 “Peter” 作为名和 “Smith” 作为姓时低 IDF 的所起作用。
 
-==== Solution
+==== 解决方案
 
-These problems only exist because we are dealing with multiple fields. If we
-were to combine all of these fields into a single field, the problems would
-vanish. We could achieve this by adding a `full_name` field to our `person`
-document:
+存在这些问题仅仅是因为我们在处理着多个字段，如果将所有这些字段组合成单个字段，问题就会消失。可以为 `person` 文档添加 `full_name` 字段来解决这个问题：
 
 [source,js]
 --------------------------------------------------
@@ -142,17 +118,12 @@ document:
 }
 --------------------------------------------------
 
-When querying just the `full_name` field:
+当查询 `full_name` 字段时：
 
-* Documents with more matching words would trump documents with the same word
-  repeated.
+* 具有更多匹配词的文档会比只有一个重复匹配词的文档更重要。
 
-* The `minimum_should_match` and `operator` parameters would function as
-  expected.
+* `minimum_should_match` 和 `operator` 参数会像期望那样工作。
 
-* The inverse document frequencies for first and last names would be combined
-  so it wouldn't matter whether Smith were a first or last name anymore.
+* 姓和名的逆向文档频率被合并，所以 Smith 到底是作为姓还是作为名出现，都会变得无关紧要。
 
-While this would work, we don't like having to store redundant data.  Instead,
-Elasticsearch offers us two solutions--one at index time and one at search
-time--which we discuss next.
+这么做当然是可行的，但我们并不太喜欢存储冗余数据。取而代之的是 Elasticsearch 可以提供两个解决方案——一个在索引时，而另一个是在搜索时——随后会讨论它们。
