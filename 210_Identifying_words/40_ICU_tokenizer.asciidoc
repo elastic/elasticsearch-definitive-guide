@@ -1,15 +1,12 @@
 [[icu-tokenizer]]
-=== icu_tokenizer
+=== icu_分词器
 
-The `icu_tokenizer` uses the same Unicode Text Segmentation algorithm as the
-`standard` tokenizer,((("words", "identifying", "using icu_tokenizer")))((("Unicode Text Segmentation algorithm")))((("icu_tokenizer"))) but adds better support for some Asian languages by
-using a dictionary-based approach to identify words in Thai, Lao, Chinese,
-Japanese, and Korean, and using custom rules to break Myanmar and Khmer text
-into syllables.
 
-For instance, compare the tokens ((("standard tokenizer", "icu_tokenizer versus")))produced by the `standard` and
-`icu_tokenizers`, respectively, when tokenizing ``Hello. I am from Bangkok.'' in
-Thai:
+`icu_分词器` 和 `标准分词器` 使用同样的 Unicode 文本分段算法，((("words", "identifying", "using icu_tokenizer")))((("Unicode Text Segmentation algorithm")))((("icu_tokenizer")))
+只是为了更好的支持亚洲语，添加了泰语、老挝语、中文、日文、和韩文基于词典的词汇识别方法，并且可以使用自定义规则将缅甸语和柬埔寨语文本拆分成音节。
+
+
+例如，分别比较((("standard tokenizer", "icu_tokenizer versus"))) `标准分词器` 和 `icu_分词器` 在分词泰语中的 `'Hello. I am from Bangkok.'` 产生的词汇单元：
 
 [source,js]
 --------------------------------------------------
@@ -17,10 +14,9 @@ GET /_analyze?tokenizer=standard
 สวัสดี ผมมาจากกรุงเทพฯ
 --------------------------------------------------
 
-The `standard` tokenizer produces two tokens, one for each sentence: `สวัสดี`,
-`ผมมาจากกรุงเทพฯ`.  That is useful only if you want to search for the whole
-sentence ``I am from Bangkok.'', but not if you want to search for just
-``Bangkok.''
+
+
+`标准分词器` 产生了两个词汇单元，每个句子一个： `สวัสดี` ， `ผมมาจากกรุงเทพฯ` 。这个只是你想搜索整个句子 `'I am from Bangkok.'` 的时候有用，但是如果你仅想搜索 `'Bangkok.'` 则不行。
 
 [source,js]
 --------------------------------------------------
@@ -28,28 +24,21 @@ GET /_analyze?tokenizer=icu_tokenizer
 สวัสดี ผมมาจากกรุงเทพฯ
 --------------------------------------------------
 
-The `icu_tokenizer`, on the other hand, is able to break up the text into the
-individual words (`สวัสดี`, `ผม`, `มา`, `จาก`, `กรุงเทพฯ)`, making them
-easier to search.
 
-In contrast, the `standard` tokenizer ``over-tokenizes'' Chinese and Japanese
-text, often breaking up whole words into single characters. Because there
-are no spaces between words, it can be difficult to tell whether consecutive
-characters are separate words or form a single word.  For instance:
+相反， `icu_分词器` 可以把文本分成独立的单词（ `สวัสดี` ， `ผม` ， `มา` ， `จาก` ， `กรุงเทพฯ` ），这使得文档更容易被搜索到。
 
-* 向 means _facing_, 日 means _sun_, and 葵 means _hollyhock_. When
-  written together, 向日葵 means _sunflower_.
 
-* 五 means _five_ or _fifth_, 月 means _month_, and 雨 means _rain_.
-  The first two characters written together as 五月 mean _the month
-  of May_, and adding the third character, 五月雨 means
-  _continuous rain_. When combined with a fourth character, 式,
-  meaning _style_, the word 五月雨式 becomes an adjective for anything
-  consecutive or unrelenting.
+相较而言, `标准分词器` 分词中文和日文的时候“过度分词”了，经常将一个完整的词拆分为独立的字符，因为单词之间并没有空格，很难区分连续的字符是间隔的单词还是一个句子中的单字：
 
-Although each character may be a word in its own right, tokens are more
-meaningful when they retain the bigger original concept instead of just the
-component parts:
+* 向的意思是 _facing_ （面对）， 日的意思是 _sun_ （太阳），葵的意思是 _hollyhock_ （蜀葵）。当写在一起的时候, 向日葵的意思是 _sunflower_ （向日葵）。
+
+* 五的意思是 _five_ （五）或者  _fifth_ （第五）， 月的意思是 _month_ （月份），雨的意思是 _rain_ （下雨）。
+  第一个和第二个字符写在一起成了五月，意思是 _the month of May_（一年中的五月）， 然而添加上第三个字符, 五月雨的意思是
+  _continuous rain_ （连续不断的下雨,梅雨）。当在合并第四个字符， 式，
+  意思是 _style_ （样式），五月雨式这个单词则成了一种不屈不挠持续不断的东西的形容词。
+
+
+虽然每个字符本身可以是一个单词，但使词汇单元保持更大的原始概念比使其仅作为一个词组的一部分要有意义的多：
 
 [source,js]
 --------------------------------------------------
@@ -60,15 +49,10 @@ GET /_analyze?tokenizer=icu_tokenizer
 向日葵
 --------------------------------------------------
 
-The `standard` tokenizer in the preceding example would emit each character
-as a separate token: `向`, `日`, `葵`. The `icu_tokenizer` would
-emit the single token `向日葵` (sunflower).
 
-Another difference between the `standard` tokenizer and the `icu_tokenizer` is
-that the latter will break a word containing characters written in different
-scripts (for example, `βeta`) into separate tokens&#x2014;`β`, `eta`&#x2014;while the
-former will emit the word as a single token: `βeta`.
+
+`标准分词器` 在前面的例子中将每个字符输出为单独的词汇单元： `向` ， `日` ， `葵` 。 `icu_分词器` 会输出单个词汇单元 `向日葵` （sunflower） 。
 
 
 
-
+`标准分词器` 和 `icu_分词器` 的另一个不同的地方是后者会将不同书写方式的字符（例如，`βeta` ）拆分成独立的词汇单元 &#x2014; `β` 和 `eta`&#x2014; ，而前者则会输出单个词汇单元： `βeta` 。
