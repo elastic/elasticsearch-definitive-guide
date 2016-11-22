@@ -1,22 +1,14 @@
 [[custom-dynamic-mapping]]
-=== Customizing Dynamic Mapping
+=== 自定义动态映射
 
-If you know that you are going to be adding new fields on the fly,
-you probably want to leave dynamic mapping enabled.((("dynamic mapping", "custom")))((("mapping (types)", "dynamic", "custom")))  At times, though,
-the dynamic mapping ``rules'' can be a bit blunt.  Fortunately, there
-are settings that you can use to customize these rules to better
-suit your data.
+如果你想在运行时增加新的字段，你可能会启用动态映射。((("dynamic mapping", "custom")))((("mapping (types)", "dynamic", "custom")))然而，有时候，动态映射 `规则` 可能不太智能。幸运的是，我们可以通过设置去自定义这些规则，以便更好的适用于你的数据。
 
 [[date-detection]]
-==== date_detection
+==== 日期检测
 
-When Elasticsearch encounters a new string field, it checks to see if the
-string contains a recognizable date, like `2014-01-01`.((("date_detection setting")))((("dynamic mapping", "custom", "date_detection setting"))) If it looks
-like a date, the field is added as type `date`. Otherwise, it is
-added as type `string`.
+当 Elasticsearch 遇到一个新的字符串字段时，它会检测这个字段是否包含一个可识别的日期，比如 `2014-01-01` 。((("date_detection setting")))((("dynamic mapping", "custom", "date_detection setting")))如果它像日期，这个字段就会被作为 `date` 类型添加。否则，它会被作为 `string` 类型添加。
 
-Sometimes this behavior can lead to problems.  Imagine that you index
-a document like this:
+有些时候这个行为可能导致一些问题。想象下，你有如下这样的一个文档：
 
 [source,js]
 --------------------------------------------------
@@ -24,9 +16,7 @@ a document like this:
 --------------------------------------------------
 
 
-Assuming that this is the first time that the `note` field has been seen,
-it will be added as a `date` field.  But what if the next document looks
-like this:
+假设这是第一次识别 `note` 字段，它会被添加为 `date` 字段。但是如果下一个文档像这样：
 
 [source,js]
 --------------------------------------------------
@@ -34,12 +24,9 @@ like this:
 --------------------------------------------------
 
 
-This clearly isn't a date, but it is too late.  The field is already
-a date field and so this ``malformed date'' will cause an exception to be
-thrown.
+这显然不是一个日期，但为时已晚。这个字段已经是一个日期类型，这个 `不合法的日期` 将会造成一个异常。
 
-Date detection can be turned off by setting `date_detection` to `false`
-on the ((("root object", "date_detection setting")))root object:
+日期检测可以通过在根对象上设置 `date_detection` 为 `false` ((("root object", "date_detection setting")))来关闭：
 
 [source,js]
 --------------------------------------------------
@@ -54,36 +41,26 @@ PUT /my_index
 --------------------------------------------------
 
 
-With this mapping in place, a string will always be a `string`.  If you need
-a `date` field, you have to add it manually.
+使用这个映射，字符串将始终作为 `string` 类型。如果你需要一个 `date` 字段，你必须手动添加。
 
 [NOTE]
 ====
-Elasticsearch's idea of which strings look like dates can be altered
-with the {ref}/dynamic-field-mapping.html#date-detection[`dynamic_date_formats` setting].
+Elasticsearch 判断字符串为日期的规则可以通过 {ref}/dynamic-field-mapping.html#date-detection[`dynamic_date_formats` setting] 来设置。
 ====
 
 [[dynamic-templates]]
-==== dynamic_templates
+==== 动态模板
 
-With `dynamic_templates`, you can take complete control ((("dynamic_templates setting")))((("dynamic mapping", "custom", "dynamic_templates setting")))over the
-mapping that is generated for newly detected fields. You
-can even apply a different mapping depending on the field name
-or datatype.
+使用 `dynamic_templates` ，你可以完全控制((("dynamic_templates setting")))((("dynamic mapping", "custom", "dynamic_templates setting")))新检测生成字段的映射。你甚至可以通过字段名称或数据类型来应用不同的映射。
 
-Each template has a name, which ((("templates", "dynamic_templates setting")))you can use to describe what the template
-does, a `mapping` to specify the mapping that should be applied, and
-at least one parameter (such as `match`) to define which fields the template
-should apply to.
+每个模板都有一个名称，((("templates", "dynamic_templates setting")))你可以用来描述这个模板的用途， 一个 `mapping` 来指定映射应该怎样使用，以及至少一个参数 (如 `match`) 来定义这个模板适用于哪个字段。
 
-Templates are checked in order; the first template that matches is
-applied. For instance, we could specify two templates for `string` fields:
+模板按照顺序来检测；第一个匹配的模板会被启用。例如，我们给 `string` 类型字段定义两个模板：
 
-* `es`: Field names ending in `_es` should use the `spanish` analyzer.
-* `en`: All others should use the `english` analyzer.
+* `es` ：以 `_es` 结尾的字段名需要使用 `spanish` 分词器。
+* `en` ：所有其他字段使用 `english` 分词器。
 
-We put the `es` template first, because it is more specific than the
-catchall `en` template, which matches all string fields:
+我们将 `es` 模板放在第一位，因为它比匹配所有字符串字段的 `en` 模板更特殊：
 
 [source,js]
 --------------------------------------------------
@@ -113,16 +90,12 @@ PUT /my_index
 --------------------------------------------------
 // SENSE: 070_Index_Mgmt/40_Custom_dynamic_mapping.json
 
-<1> Match string fields whose name ends in `_es`.
-<2> Match all other string fields.
+<1> 匹配字段名以 `_es` 结尾的字段。
+<2> 匹配其他所有字符串类型字段。
 
-The `match_mapping_type`  allows ((("match_mapping_type setting")))you to apply the template only
-to fields of the specified type, as detected by the standard dynamic
-mapping rules, (for example `string` or `long`).
+`match_mapping_type` 允许((("match_mapping_type setting")))你应用模板到特定类型的字段上，就像有标准动态映射规则检测的一样， (例如 `string` 或 `long`)。
 
-The `match` parameter matches just the field name, and the `path_match`
-parameter((("path_map parameter"))) matches the full path to a field in an object, so
-the pattern `address.*.name` would match a field like this:
+`match` 参数只匹配字段名称， `path_match` 参数((("path_map parameter")))匹配字段在对象上的完整路径，所以 `address.*.name` 将匹配这样的字段：
 
 [source,js]
 --------------------------------------------------
@@ -136,8 +109,6 @@ the pattern `address.*.name` would match a field like this:
 --------------------------------------------------
 
 
-The `unmatch` and `path_unmatch` patterns((("unmatch pattern")))((("path_unmap pattern"))) can be used to exclude fields
-that would otherwise match.
+`unmatch` 和 `path_unmatch`((("unmatch pattern")))((("path_unmap pattern")))将被用于未被匹配的字段。
 
-More configuration options can be found in the
-{ref}/dynamic-mapping.html[dynamic mapping documentation].
+更多的配置选项见 {ref}/dynamic-mapping.html[动态映射文档] 。
