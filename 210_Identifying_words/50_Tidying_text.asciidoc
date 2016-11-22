@@ -1,17 +1,13 @@
 [[char-filters]]
-=== Tidying Up Input Text
+=== 整理输入文本
 
-Tokenizers produce the best results when the input text is clean, valid
-text, where _valid_ means that it follows the punctuation rules that the
-Unicode algorithm expects.((("text", "tidying up text input for tokenizers")))((("words", "identifying", "tidying up text input")))  Quite often, though, the text we need to process
-is anything but clean. Cleaning it up before tokenization improves the quality
-of the output.
 
-==== Tokenizing HTML
+当输入文本是干净的时候分词器提供最佳分词结果，有效文本，这里 _有效_ 指的是遵从 Unicode 算法期望的标点符号规则((("text", "tidying up text input for tokenizers")))((("words", "identifying", "tidying up text input")))。
+然而很多时候，我们需要处理的文本会是除了干净文本之外的任何文本。在分词之前整理文本会提升输出结果的质量。
 
-Passing HTML through the `standard` tokenizer or the `icu_tokenizer` produces
-poor results.((("HTML, tokenizing")))  These tokenizers just don't know what to do with the HTML tags.
-For example:
+==== HTML 分词
+
+将 HTML 通过 `标准分词器` 或 `icu_分词器` 分词将产生糟糕的结果((("HTML, tokenizing")))。这些分词器不知道如何处理 HTML 标签。例如：
 
 [source,js]
 --------------------------------------------------
@@ -19,18 +15,14 @@ GET /_analyze?tokenizer=standard
 <p>Some d&eacute;j&agrave; vu <a href="http://somedomain.com>">website</a>
 --------------------------------------------------
 
-The `standard` tokenizer((("standard tokenizer", "tokenizing HTML"))) confuses HTML tags and entities, and emits the
-following tokens: `p`, `Some`, `d`, `eacute`, `j`, `agrave`, `vu`, `a`,
-`href`, `http`, `somedomain.com`, `website`, `a`.  Clearly not what was
-intended!
+`标准分词器` ((("standard tokenizer", "tokenizing HTML")))会混淆 HTML 标签和实体，并且输出以下词汇单元： `p` 、 `Some` 、 `d` 、 `eacute` 、 `j` 、 `agrave` 、 `vu` 、 `a` 、
+`href` 、 `http` 、 `somedomain.com` 、 `website` 、 `a` 。这些词汇单元显然不知所云！
 
-_Character filters_ can be added to an analyzer to ((("character filters")))preprocess the text
-_before_ it is passed to the tokenizer.  In this case, we can use the
-`html_strip` character filter((("analyzers", "adding character filters to")))((("html_strip character filter"))) to remove HTML tags and to decode HTML entities
-such as `&eacute;` into the corresponding Unicode characters.
 
-Character filters can be tested out via the `analyze` API by specifying them
-in the query string:
+_字符过滤器_ 可以添加进分析器中，在将文本传给分词器之前预处理该文本。在这种情况下，我们可以用 `html_strip` 字符过滤器((("analyzers", "adding character filters to")))((("html_strip character filter")))移除 HTML 标签并编码 HTML 实体如 `&eacute;` 为一致的 Unicode 字符。
+
+
+字符过滤器可以通过 `analyze` API 进行测试，这需要在查询字符串中指明它们：
 
 [source,js]
 --------------------------------------------------
@@ -38,8 +30,7 @@ GET /_analyze?tokenizer=standard&char_filters=html_strip
 <p>Some d&eacute;j&agrave; vu <a href="http://somedomain.com>">website</a>
 --------------------------------------------------
 
-To use them as part of the analyzer, they should be added to a `custom`
-analyzer definition:
+想将它们作为分析器的一部分使用，需要把它们添加到 `custom` 类型的自定义分析器里：
 
 [source,js]
 --------------------------------------------------
@@ -58,7 +49,8 @@ PUT /my_index
 }
 --------------------------------------------------
 
-Once created, our new `my_html_analyzer` can be tested with the `analyze` API:
+
+一旦自定义分析器创建好之后， 我们新的 `my_html_analyzer` 就可以用 `analyze` API 测试：
 
 [source,js]
 --------------------------------------------------
@@ -66,53 +58,52 @@ GET /my_index/_analyze?analyzer=my_html_analyzer
 <p>Some d&eacute;j&agrave; vu <a href="http://somedomain.com>">website</a>
 --------------------------------------------------
 
-This emits the tokens that we expect: `Some`, ++déjà++, `vu`, `website`.
 
-==== Tidying Up Punctuation
+这次输出的词汇单元才是我们期望的： `Some` ， ++déjà++ ， `vu` ， `website` 。
 
-The `standard` tokenizer and `icu_tokenizer` both understand that an
-apostrophe _within_ a word should be treated as part of the word, while single
-quotes that _surround_ a word should not.((("standard tokenizer", "handling of punctuation")))((("icu_tokenizer", "handling of punctuation")))((("punctuation", "tokenizers&#x27; handling of"))) Tokenizing the text `You're my 'favorite'`. would correctly emit the tokens `You're, my, favorite`.
+==== 整理标点符号
 
-Unfortunately,((("apostrophes"))) Unicode lists a few characters that are sometimes used
-as apostrophes:
 
-`U+0027`:: 
-      Apostrophe (`'`)&#x2014;the original ASCII character
-      
-`U+2018`:: 
-      Left single-quotation mark (`‘`)&#x2014;opening quote when single-quoting
-      
-`U+2019`:: 
-      Right single-quotation mark (`’`)&#x2014;closing quote when single-quoting, but also the  preferred character to use as an apostrophe
+`标准分词器` 和 `icu_分词器` 都能理解单词中的撇号应当被视为单词的一部分，然而包围单词的单引号在不应该。((("standard tokenizer", "handling of punctuation")))((("icu_tokenizer", "handling of punctuation")))((("punctuation", "tokenizers&#x27; handling of")))分词文本  `You're my 'favorite'` ，
+会被输出正确的词汇单元 `You're ， my ， favorite` 。
 
-Both tokenizers treat these three characters as an apostrophe (and thus as
-part of the word) when they appear within a word. Then there are another three
-apostrophe-like characters:
 
-`U+201B`:: 
-      Single high-reversed-9 quotation mark (`‛`)&#x2014;same as `U+2018` but differs in appearance
-      
-`U+0091`:: 
-      Left single-quotation mark in ISO-8859-1&#x2014;should not be used in Unicode
-      
-`U+0092`:: 
-      Right single-quotation mark in ISO-8859-1&#x2014;should not be used in Unicode
 
-Both tokenizers treat these three characters as word boundaries--a place to
-break text into tokens.((("quotation marks"))) Unfortunately, some publishers use `U+201B` as a
-stylized way to write names like `M‛coy`, and the second two characters may well
-be produced by your word processor, depending on its age.
+不幸的是，((("apostrophes"))) Unicode 列出了一些有时会被用为撇号的字符：
 
-Even when using the ``acceptable'' quotation marks, a word written with a
-single right quotation mark&#x2014;`You’re`&#x2014;is not the same as the word written
-with an apostrophe&#x2014;`You're`&#x2014;which means that a query for one variant
-will not find the other.
+`U+0027`::
+      撇号标记为 (`'`)&#x2014; 原始 ASCII 符号
 
-Fortunately, it is possible to sort out this mess with the `mapping` character
-filter,((("character filters", "mapping character filter")))((("mapping character filter"))) which allows us to replace all instances of one character with
-another.  In this case, we will replace all apostrophe variants with the
-simple `U+0027` apostrophe:
+`U+2018`::
+      左单引号标记为 (`‘`)&#x2014; 当单引用时作为一个引用的开始
+
+`U+2019`::
+      右单引号标记为 (`’`)&#x2014; 当单引用时座位一个引用的结束，也是撇号的首选字符。
+
+
+当这三个字符出现在单词中间的时候， `标准分词器` 和 `icu_分词器` 都会将这三个字符视为撇号（这会被视为单词的一部分）。
+然而还有另外三个长得很像撇号的字符：
+
+`U+201B`::
+      Single high-reversed-9 （高反单引号）标记为  (`‛`)&#x2014; 跟 `U+2018` 一样，但是外观上有区别
+
+
+`U+0091`::
+      ISO-8859-1 中的左单引号 &#x2014; 不会被用于 Unicode 中
+
+`U+0092`::
+      ISO-8859-1 中的右单引号 &#x2014; 不会被用于 Unicode 中
+
+
+`标准分词器` 和 `icu_分词器` 把这三个字符视为单词的分界线 -- 一个将文本拆分为词汇单元的位置。((("quotation marks")))不幸的是，一些出版社用 `U+201B` 作为名字的典型书写方式例如 `M‛coy` ，
+第二个俩字符或许可以被你的文字处理软件打出来，这取决于这款软件的年纪。
+
+
+即使在使用可以“接受”的引号标记时，一个用单引号书写的词 &#x2014; `You’re` &#x2014; 也和一个用撇号书写的词 &#x2014; `You're` &#x2014; 不一样，这意味着搜索其中的一个变体将会找不到另一个。
+
+
+幸运的是，可以用 `mapping` 对这些混乱的字符进行分类，((("character filters", "mapping character filter")))((("mapping character filter")))
+该过滤器可以运行我们用另一个字符替换所有实例中的一个字符。这种情况下，我们可以简单的用 `U+0027` 替换所有的撇号变体：
 
 [source,js]
 --------------------------------------------------
@@ -142,15 +133,14 @@ PUT /my_index
   }
 }
 --------------------------------------------------
-<1> We define a custom `char_filter` called `quotes` that
-    maps all apostrophe variants to a simple apostrophe.
-<2> For clarity, we have used the JSON Unicode escape syntax
-    for each character, but we could just have used the
-    characters themselves: `"‘=>'"`.
-<3> We use our custom `quotes` character filter to create
-    a new analyzer called `quotes_analyzer`.
+<1> 我们自定义了一个 `char_filter` （字符过滤器）叫做 `quotes` ，提供所有撇号变体到简单撇号的映射。
 
-As always, we test the analyzer after creating it:
+<2> 为了更清晰，我们使用每个字符的 JSON Unicode 转义语句，当然我们也可以使用他们本身字符表示： `"‘=>'"` 。
+
+
+<3> 我们用自定义的 `quotes` 字符过滤器创建一个新的分析器叫做 `quotes_analyzer` 。
+
+像以前一样，我们需要在创建了分析器后测试它：
 
 [source,js]
 --------------------------------------------------
@@ -158,8 +148,6 @@ GET /my_index/_analyze?analyzer=quotes_analyzer
 You’re my ‘favorite’ M‛Coy
 --------------------------------------------------
 
-This example returns the following tokens, with all of the in-word
-quotation marks replaced by apostrophes: `You're`, `my`, `favorite`, `M'Coy`.
+这个例子返回如下词汇单元，其中所有的单词中的引号标记都被替换为了撇号： `You're`, `my`, `favorite`, `M'Coy` 。
 
-The more effort that you put into ensuring that the tokenizer receives good-quality input, the better your search results will be.
-
+投入更多的努力确保你的分词器接收到高质量的输入，你的搜索结果质量也将会更好。
