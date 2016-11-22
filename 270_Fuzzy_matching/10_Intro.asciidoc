@@ -1,29 +1,18 @@
 [[fuzzy-matching]]
-== Typoes and Mispelings
+== 拼写错误
 
-We expect a query on structured data like dates and prices to return only
-documents that match exactly. ((("typoes and misspellings", "fuzzy matching")))((("fuzzy matching"))) However, good full-text search shouldn't have the
-same restriction. Instead, we can widen the net to include words that _may_
-match, but use the relevance score to push the better matches to the top
-of the result set.
+我们期望在类似时间和价格的结构化数据上执行一个查询来返回精确匹配的文档。((("typoes and misspellings", "fuzzy matching")))((("fuzzy matching")))
+然而，好的全文检索不应该是完全相同的限定逻辑。
+相反，我们可以扩大范围以包括 _可能_ 的匹配，而根据相关性得分将更好的匹配推到结果集的顶部。
 
-In fact, full-text search ((("full text search", "fuzzy matching")))that only matches exactly will probably frustrate
-your users. Wouldn't you expect a search for ``quick brown fox'' to match a
-document containing ``fast brown foxes,'' ``Johnny Walker'' to match
-``Johnnie Walker,'' or ``Arnold Shcwarzenneger'' to match ``Arnold
-Schwarzenegger''?
+事实上，只能完全匹配的全文搜索可能会困扰你的用户。
+难道不希望在搜索 `quick brown fox` 时匹配一个包含  `fast brown foxes` 的文档，
+搜索 `Johnny Walker` 同时匹配 `Johnnie Walker` ，搜索 `Arnold Shcwarzenneger` 同时匹配 `Arnold Schwarzenegger` ?
 
-If documents exist that _do_ contain exactly what the user has queried,
-they should appear at the top of the result set, but weaker matches can be
-included further down the list.  If no documents match exactly, at least we
-can show the user potential matches; they may even be what the user
-originally intended!
+如果存在完全符合用户查询的文档，他们应该出现在结果集的顶部，而较弱的匹配可以被包含在列表的后面。
+如果没有精确匹配的文档，至少我们可以显示有可能匹配用户要求的文档，它们甚至可能是用户最初想要的！
 
-We have already looked at diacritic-free matching in <<token-normalization>>,
-word stemming in <<stemming>>, and synonyms in <<synonyms>>, but all of those
-approaches presuppose that words are spelled correctly, or that there is only
-one way to spell each word.
+我们已经在 <<token-normalization>> 看过自由变音匹配， <<stemming>> 中的词干， <<synonyms>> 中的同义词，
+但所有这些方法假定单词拼写正确，或者每个单词拼写只有唯一的方法。
 
-Fuzzy matching allows for query-time matching of misspelled words, while
-phonetic token filters at index time can be used for _sounds-like_ matching.
-
+Fuzzy matching 允许查询时匹配错误拼写的单词，而语音语汇单元过滤器可以在索引时用来进行 _近似读音_ 匹配。
