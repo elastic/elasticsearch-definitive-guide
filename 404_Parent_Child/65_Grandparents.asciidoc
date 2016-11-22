@@ -1,11 +1,10 @@
 [[grandparents]]
-=== Grandparents and Grandchildren
+=== 祖辈与孙辈关系
 
-The parent-child relationship can extend across more than one generation--grandchildren can ((("parent-child relationship", "grandparents and grandchildren")))((("grandparents and grandchildren")))have grandparents--but it requires an extra step to ensure
-that documents from all generations are indexed on the same shard.
+父子关系可以延展到更多代关系，比如生活中孙辈与祖辈的关系((("parent-child relationship", "grandparents and grandchildren")))((("grandparents and grandchildren"))) &#x2014; 唯一的要求是满足这些关系的文档必须在同一个分片上被索引。
 
-Let's change our previous example to make the `country` type a parent of the
-`branch` type:
+
+让我们把上一个例子中的 `country` 类型设定为 `branch` 类型的父辈：
 
 [source,json]
 -------------------------
@@ -26,11 +25,10 @@ PUT /company
   }
 }
 -------------------------
-<1> `branch` is a child of `country`.
-<2> `employee` is a child of `branch`.
+<1> `branch` 是 `country` 的子辈。
+<2> `employee` 是 `branch` 的子辈。
 
-Countries and branches have a simple parent-child relationship, so we use the
-same process as we used in <<indexing-parent-child>>:
+country 和 branch 之间是一层简单的父子关系，所以我们的 <<indexing-parent-child,操作步骤>> 与之前保持一致：
 
 [source,json]
 -------------------------
@@ -49,9 +47,7 @@ POST /company/branch/_bulk
 { "name": "Champs Élysées" }
 -------------------------
 
-The `parent` ID has ensured that each `branch` document is routed to the same
-shard as its parent `country` document.  However, look what would happen if we
-were to use the same technique with the `employee` grandchildren:
+`parent` ID 使得每一个 `branch` 文档被路由到与其父文档 `country` 相同的分片上进行操作。然而，当我们使用相同的方法来操作 `employee` 这个孙辈文档时，会发生什么呢？
 
 [source,json]
 -------------------------
@@ -63,14 +59,9 @@ PUT /company/employee/1?parent=london
 }
 -------------------------
 
-The shard routing of the employee document would be decided by the parent ID&#x2014;`london`&#x2014;but the `london` document was routed to a shard by _its own_
-parent ID&#x2014;`uk`.  It is very likely that the grandchild would end up on
-a different shard from its parent and grandparent, which would prevent the
-same-shard parent-child mapping from functioning.
+employee 文档的路由依赖其父文档 ID &#x2014; 也就是 `london` &#x2014; 但是 `london` 文档的路由却依赖 _其本身的_ 父文档 ID &#x2014; 也就是 `uk` 。此种情况下，孙辈文档很有可能最终和父辈、祖辈文档不在同一分片上，导致不满足祖辈和孙辈文档必须在同一个分片上被索引的要求。
 
-Instead, we need to add an extra `routing` parameter, set to the ID of the
-grandparent, to ensure that all three generations are indexed on the same
-shard.  The indexing request should look like this:
+解决方案是添加一个额外的 `routing` 参数，将其设置为祖辈的文档 ID ，以此来保证三代文档路由到同一个分片上。索引请求如下所示：
 
 [source,json]
 -------------------------
@@ -81,16 +72,13 @@ PUT /company/employee/1?parent=london&routing=uk <1>
   "hobby": "hiking"
 }
 -------------------------
-<1> The `routing` value overrides the `parent` value.
+<1> `routing` 的值会取代 `parent` 的值作为路由选择。
 
-The `parent` parameter is still used to link the employee document with its
-parent, but the `routing` parameter ensures that it is stored on the same
-shard as its parent and grandparent. The `routing` value needs to be provided
-for all single-document requests.
+`parent` 参数的值仍然可以标识 employee 文档与其父文档的关系，但是 `routing` 参数保证该文档被存储到其父辈和祖辈的分片上。`routing` 值在所有的文档请求中都要添加。
 
-Querying and aggregating across generations works, as long as you step through
-each generation. For instance, to find countries where employees enjoy hiking,
-we need to join countries with branches, and branches with employees:
+
+联合多代文档进行查询和聚合是可行的，只需要一代代的进行设定即可。例如，我们要找到喜欢远足的雇佣者的城市，此时需要联合 country 和 branch，以及 branch 和 employee：
+
 
 [source,json]
 -------------------------
@@ -113,4 +101,3 @@ GET /company/country/_search
   }
 }
 -------------------------
-
