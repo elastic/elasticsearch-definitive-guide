@@ -1,13 +1,11 @@
 [[query-scoring]]
-=== Manipulating Relevance with Query Structure
+=== 使用查询结构修改相关度
 
-The Elasticsearch query DSL is immensely flexible.((("relevance", "controlling", "manipulating relevance with query structure")))((("queries", "manipulating relevance with query structure")))  You can move individual
-query clauses up and down the query hierarchy to make a clause more or less
-important.  For instance, imagine the following query:
+Elasticsearch 的查询表达式相当灵活，((("relevance", "controlling", "manipulating relevance with query structure")))((("queries", "manipulating relevance with query structure")))可以通过调整查询结构中查询语句的所处层次，从而或多或少改变其重要性，比如，设想下面这个查询：
 
     quick OR brown OR red OR fox
 
-We could write this as a `bool` query with ((("bool query", "manipulating relevance with query structure")))all terms at the same level:
+可以将所有词都放在 `bool` 查询的同一层中：((("bool query", "manipulating relevance with query structure")))
 
 [source,json]
 ------------------------------
@@ -26,18 +24,13 @@ GET /_search
 }
 ------------------------------
 
-But this query might score a document that contains `quick`, `red`, and
-`brown` the same as another document that contains `quick`, `red`, and `fox`.
-_Red_ and _brown_ are synonyms and we probably only need one of them to match.
-Perhaps we really want to express the query as follows:
+这个查询可能最终给包含 `quick` 、 `red` 和 `brown` 的文档评分与包含 `quick` 、 `red` 、 `fox` 文档的评分相同，这里 _Red_ 和 _brown_ 是同义词，可能只需要保留其中一个，而我们真正要表达的意思是想做以下查询：
 
     quick OR (brown OR red) OR fox
 
-According to standard Boolean logic, this is exactly the same as the original
-query, but as we have already seen in <<bool-query,Combining Queries>>, a `bool` query does not concern itself only with whether a document matches, but also with how
-_well_ it matches.
+根据标准的布尔逻辑，这与原始的查询是完全一样的，但是我们已经在 <<bool-query,组合查询（Combining Queries）>> 中看到， `bool` 查询不关心文档匹配的 _程度_ ，只关心是否能匹配。
 
-A better way to write this query is as follows:
+上述查询有个更好的方式：
 
 [source,json]
 ------------------------------
@@ -62,13 +55,6 @@ GET /_search
 }
 ------------------------------
 
-Now, `red` and `brown` compete with each other at their own level, and `quick`,
-`fox`, and `red OR brown` are the top-level competitive terms.
+现在， `red` 和 `brown` 处于相互竞争的层次， `quick` 、 `fox` 以及 `red OR brown` 则是处于顶层且相互竞争的词。
 
-We have already discussed how the <<match-query,`match`>>,
-<<multi-match-query,`multi_match`>>, <<term-vs-full-text,`term`>>,
-<<bool-query,`bool`>>, and  <<dis-max-query,`dis_max`>> queries can be used
-to manipulate scoring. In the rest of this chapter, we present
-three other scoring-related queries: the `boosting` query, the
-`constant_score` query, and the `function_score` query.
-
+我们已经讨论过如何使用 <<match-query,`match`>> 、<<multi-match-query,`multi_match`>> 、<<term-vs-full-text,`term`>> 、<<bool-query,`bool`>> 和 <<dis-max-query,`dis_max`>> 查询修改相关度评分。本章后面的内容会介绍另外三个与相关度评分有关的查询： `boosting` 查询、 `constant_score` 查询和 `function_score` 查询。
