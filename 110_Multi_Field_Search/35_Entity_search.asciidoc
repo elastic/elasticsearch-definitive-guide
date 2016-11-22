@@ -1,8 +1,7 @@
-=== Cross-fields Entity Search
+[[_cross_fields_entity_search]]
+=== 跨字段实体搜索
 
-Now we come to a common pattern: cross-fields entity search. ((("cross-fields entity search")))((("multifield search", "cross-fields entity search"))) With entities
-like `person`, `product`, or `address`, the identifying information is spread
-across several fields.  We may have a `person` indexed as follows:
+现在讨论一种普遍的搜索模式：跨字段实体搜索（cross-fields entity search）。((("cross-fields entity search")))((("multifield search", "cross-fields entity search")))在如 `person` 、 `product` 或 `address` （人、产品或地址）这样的实体中，需要使用多个字段来唯一标识它的信息。 `person` 实体可能是这样索引的：
 
 [source,js]
 --------------------------------------------------
@@ -12,7 +11,7 @@ across several fields.  We may have a `person` indexed as follows:
 }
 --------------------------------------------------
 
-Or an address like this:
+或地址：
 
 [source,js]
 --------------------------------------------------
@@ -24,21 +23,13 @@ Or an address like this:
 }
 --------------------------------------------------
 
-This sounds a lot like the example we described in <<multi-query-strings>>,
-but there is a big difference between these two scenarios.  In
-<<multi-query-strings>>, we used a separate query string for each field. In
-this scenario, we want to search across multiple fields with a _single_ query
-string.
+这与之前描述的 <<multi-query-strings,多字符串查询>> 很像，但这存在着巨大的区别。在 <<multi-query-strings,多字符串查询>> 中，我们为每个字段使用不同的字符串，在本例中，我们想使用 _单个_ 字符串在多个字段中进行搜索。
 
-Our user might search for the person ``Peter Smith'' or for the address
-``Poland Street W1V.'' Each of those words appears in a different field, so
-using a `dis_max` / `best_fields` query to find the _single_ best-matching
-field is clearly the wrong approach.
+我们的用户可能想搜索 “Peter Smith” 这个人，或 “Poland Street W1V” 这个地址，这些词出现在不同的字段中，所以如果使用 `dis_max` 或 `best_fields` 查询去查找 _单个_ 最佳匹配字段显然是个错误的方式。
 
-==== A Naive Approach
+==== 简单的方式
 
-Really, we want to query each field in turn and add up the scores of every
-field that matches, which sounds like a job for the `bool` query:
+依次查询每个字段并将每个字段的匹配评分结果相加，听起来真像是 `bool` 查询：
 
 [source,js]
 --------------------------------------------------
@@ -56,9 +47,7 @@ field that matches, which sounds like a job for the `bool` query:
 }
 --------------------------------------------------
 
-Repeating the query string for every field soon becomes tedious. We can use
-the `multi_match` query instead, ((("most fields queries", "problems for entity search")))((("multi_match queries", "most_fields type")))and set the `type` to `most_fields` to tell it to
-combine the scores of all matching fields:
+为每个字段重复查询字符串会使查询瞬间变得冗长，可以采用 `multi_match` 查询，((("most fields queries", "problems for entity search")))((("multi_match queries", "most_fields type")))将 `type` 设置成 `most_fields` 然后告诉 Elasticsearch 合并所有匹配字段的评分：
 
 [source,js]
 --------------------------------------------------
@@ -73,19 +62,12 @@ combine the scores of all matching fields:
 }
 --------------------------------------------------
 
-==== Problems with the most_fields Approach
+==== most_fields 方式的问题
 
-The `most_fields` approach to entity search has some problems that are not
-immediately obvious:
+用 `most_fields` 这种方式搜索也存在某些问题，这些问题并不会马上显现：
 
-* It is designed to find the most fields matching _any_ words, rather than to
-  find the most matching words _across all fields_.
+* 它是为多数字段匹配 _任意_ 词设计的，而不是在 _所有字段_ 中找到最匹配的。
 
-* It can't use the `operator` or `minimum_should_match` parameters
-  to reduce the long tail of less-relevant results.
+* 它不能使用 `operator` 或 `minimum_should_match` 参数来降低次相关结果造成的长尾效应。
 
-* Term frequencies are different in each field and could interfere with each
-  other to produce badly ordered results.
-
-
-
+* 词频对于每个字段是不一样的，而且它们之间的相互影响会导致不好的排序结果。
