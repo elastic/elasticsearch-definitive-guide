@@ -1,26 +1,21 @@
 [[symbol-synonyms]]
-=== Symbol Synonyms
+=== 符号同义词
 
-The final part of this chapter is devoted to symbol synonyms, which are
-unlike the synonyms((("symbol synonyms")))((("synonyms", "symbol"))) we have discussed until now.  _Symbol synonyms_ are
-string aliases used to represent symbols that would otherwise be removed
-during tokenization.
+最后一节内容我们来阐述下怎么对符号进行同义词处理，这和我们前面讲的同义词((("symbol synonyms")))((("synonyms", "symbol")))处理不太一样。
+ _符号同义词_ 是用别名来表示这个符号，以防止它在分词过程中被误认为是不重要的标点符号而被移除。
 
-While most punctuation is seldom important for full-text search, character
-combinations like emoticons((("emoticons"))) may be very signficant, even changing the meaning
-of the text.  Compare these:
+虽然绝大多数情况下，符号对于全文搜索而言都无关紧要，但是字符组合而成的表情，((("emoticons")))或许又会是很有意义的东西，甚至有时候会改变整个句子的含义，对比一下这两句话：
 
 [role="pagebreak-before"]
-* I am thrilled to be at work on Sunday.
-* I am thrilled to be at work on Sunday :(
+* 我很高兴能在星期天工作。
+* 我很高兴能在星期天工作 :( （注：难过的表情）
 
-The `standard` tokenizer would simply strip out the emoticon in the second
-sentence, conflating two sentences that have quite different intent.
+`标准` （注：standard）分词器或许会简单地消除掉第二个句子里的字符表情，致使两个原本意思相去甚远的句子变得相同。
 
-We can use the
-{ref}/analysis-mapping-charfilter.html[`mapping` character filter]
-to replace emoticons((("mapping character filter", "replacing emoticons with symbol synonyms")))((("emoticons", "replacing with symbol synonyms"))) with symbol synonyms like `emoticon_happy` and
-`emoticon_sad` before the text is passed to the tokenizer:
+我们可以先使用
+{ref}/analysis-mapping-charfilter.html[`映射`]字符过滤器，在文本被递交给分词器处理之前，
+把字符表情替换成((("mapping character filter", "replacing emoticons with symbol synonyms")))((("emoticons", "replacing with symbol synonyms")))符号同义词 `emoticon_happy` 或者
+`emoticon_sad` ：
 
 [source,json]
 --------------------------------------
@@ -52,16 +47,11 @@ PUT /my_index
 GET /my_index/_analyze?analyzer=my_emoticons
 I am :) not :( <2>
 --------------------------------------
-<1> The `mappings` filter replaces the characters to the left of `=>`
-    with those to the right.
-<2> Emits tokens `i`, `am`, `emoticon_happy`, `not`, `emoticon_sad`.
+<1>  `映射` 过滤器把字符从 `=>` 左边的格式转变成右边的样子。
+<2> 输出： `i` 、 `am` 、 `emoticon_happy` 、 `not` 、 `emoticon_sad` 。
 
-It is unlikely that anybody would ever search for `emoticon_happy`, but
-ensuring that important symbols like emoticons are included in the index can
-be helpful when doing sentiment analysis.  Of course, we could equally
-have used real words, like `happy` and `sad`.
+很少有人会搜 `emoticon_happy` 这个词，但是确保类似字符表情的这类重要符号被存储到索引中是非常好的做法，在进行情感分析的时候会很有用。当然，我们也可以用真实的词汇来处理符号同义词，比如： `happy` 或者 `sad` 。
 
-TIP: The `mapping` character filter is useful for simple replacements of exact
-character sequences. ((("mapping character filter", "replacements of exact character sequences")))For more-flexible pattern matching, you can use regular
-expressions with the
-{ref}/analysis-pattern-replace-charfilter.html[`pattern_replace` character filter].
+提示： `映射` 字符过滤器是个非常有用的过滤器，它可以用来对一些已有的字词进行替换操作，
+((("mapping character filter", "replacements of exact character sequences")))你如果想要采用更灵活的正则表达式去替换字词的话，那你可以使用
+{ref}/analysis-pattern-replace-charfilter.html[ `pattern_replace` ]字符过滤器。
