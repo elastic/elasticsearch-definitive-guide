@@ -1,53 +1,42 @@
 [[fuzziness]]
-=== Fuzziness
+=== 模糊性
 
-_Fuzzy matching_ treats two words that are ``fuzzily'' similar as if they were
-the same word.((("typoes and misspellings", "fuzziness, defining"))) First, we need to define what((("fuzziness"))) we mean by _fuzziness_.
+_模糊匹配_ 对待 “模糊” 相似的两个词似乎是同一个词。((("typoes and misspellings", "fuzziness, defining")))首先，我们需要对我们所说的  _模糊性_ ((("fuzziness")))进行定义。
 
-In 1965, Vladimir Levenshtein developed the
-http://en.wikipedia.org/wiki/Levenshtein_distance[Levenshtein distance], which
-measures ((("Levenshtein distance")))the number of single-character edits required to transform
-one word into the other. He proposed three types of one-character edits:
+在1965年，Vladimir Levenshtein 开发出了 http://en.wikipedia.org/wiki/Levenshtein_distance[Levenshtein distance]，
+用来度量从一个单词转换到另一个单词需要多少次单字符编辑。他提出了三种类型的单字符编辑：
 
-* _Substitution_ of one character for another: _f_ox -> _b_ox
+* 一个字符 _替换_ 另一个字符： _f_ox -> _b_ox
 
-* _Insertion_ of a new character: sic -> sic_k_
+* _插入_ 一个新的字符：sic -> sic_k_
 
-* _Deletion_ of a character:: b_l_ack -> back
+* _删除_ 一个字符：b_l_ack -> back
 
 http://en.wikipedia.org/wiki/Frederick_J._Damerau[Frederick Damerau]
-later expanded these operations ((("Damerau, Frederick J.")))to include one more:
+后来在这些操作基础上做了一个扩展：
 
-* _Transposition_ of two adjacent characters: _st_ar -> _ts_ar
+* 相邻两个字符的 _换位_ ： _st_ar -> _ts_ar
 
-For example, to convert the word `bieber` into `beaver` requires the
-following steps:
+举个例子，将单词 `bieber` 转换成 `beaver` 需要下面几个步骤：
 
-1. Substitute `v` for `b`: bie_b_er -> bie_v_er
-2. Substitute `a` for `i`: b_i_ever -> b_a_ever
-3. Transpose `a` and `e`:  b_ae_ver -> b_ea_ver
+1. 把 `b` 替换成 `v` ：bie_b_er -> bie_v_er
+2. 把 `i` 替换成 `a` ：b_i_ever -> b_a_ ever
+3. 把 `e` 和 `a` 进行换位：b_ae_ver -> b_ea_ver
 
-These three steps represent a
-https://en.wikipedia.org/wiki/Damerau–Levenshtein_distance[Damerau-Levenshtein edit distance]
-of 3.
+这三个步骤表示 https://en.wikipedia.org/wiki/Damerau–Levenshtein_distance[Damerau-Levenshtein edit distance] 编辑距离为 3 。
 
-Clearly, `bieber` is a long way from `beaver`&#x2014;they are too far apart to be
-considered a simple misspelling.  Damerau observed that 80% of human
-misspellings have an edit distance of 1. In other words, 80% of misspellings
-could be corrected with a _single edit_ to the original string.
+显然，从 `beaver` 转换成 `bieber` 是一个很长的过程&#x2014;他们相距甚远而不能视为一个简单的拼写错误。
+Damerau 发现 80% 的拼写错误编辑距离为 1 。换句话说， 80% 的拼写错误可以对原始字符串用 _单次编辑_ 进行修正。
 
-Elasticsearch supports a maximum edit distance, specified with the `fuzziness`
-parameter, of 2.
+Elasticsearch 指定了 `fuzziness` 参数支持对最大编辑距离的配置，默认为 ２ 。
 
-Of course, the impact that a single edit has on a string depends on the
-length of the string.  Two edits to the word `hat` can produce `mad`, so
-allowing two edits on a string of length 3 is overkill. The `fuzziness`
-parameter can be set to `AUTO`, which results in the following maximum edit distances:
+当然，单次编辑对字符串的影响取决于字符串的长度。对单词 `hat` 两次编辑能够产生  `mad` ，
+所以对一个只有 3 个字符长度的字符串允许两次编辑显然太多了。
+ `fuzziness` 参数可以被设置为 `AUTO` ，这将导致以下的最大编辑距离：
 
-* `0` for strings of one or two characters
-* `1` for strings of three, four, or five characters
-* `2` for strings of more than five characters
+* 字符串只有 1 到 2 个字符时是 `0`
+* 字符串有 3 、 4 或者 5 个字符时是 `1`
+* 字符串大于 5 个字符时是 `2`
 
-Of course, you may find that an edit distance of `2` is still overkill, and
-returns results that don't appear to be related. You may get better results,
-and better performance, with a maximum `fuzziness` of `1`.
+当然，你可能会发现编辑距离 `2` 仍然是太多了，返回的结果似乎并不相关。
+把最大 `fuzziness` 设置为 `1` ，你可以得到更好的结果和更好的性能。
