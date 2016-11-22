@@ -1,39 +1,19 @@
 [[routing-value]]
-=== Routing a Document to a Shard
+=== 路由一个文档到一个分片中
 
-When you index a document, it is stored on a single primary shard.((("shards", "routing a document to")))((("documents", "routing a document to a shard")))((("routing a document to a shard"))) How does
-Elasticsearch know which shard a document belongs to?  When we create a new
-document, how does it know whether it should store that document on shard 1 or
-shard 2?
+当索引一个文档的时候，文档会被存储到一个主分片中。 ((("shards", "routing a document to")))((("documents", "routing a document to a shard")))((("routing a document to a shard"))) Elasticsearch 如何知道一个文档应该存放到哪个分片中呢？当我们创建文档时，它如何决定这个文档应当被存储在分片 `1` 还是分片 `2` 中呢？
 
-The process can't be random, since we may need to retrieve the document in the
-future. In fact, it is determined by a simple formula:
+首先这肯定不会是随机的，否则将来要获取文档的时候我们就不知道从何处寻找了。实际上，这个过程是根据下面这个公式决定的：
 
     shard = hash(routing) % number_of_primary_shards
 
-The `routing` value is an arbitrary string, which defaults to the document's
-`_id` but can also be set to a custom value. This `routing` string is passed
-through a hashing function to generate a number, which is divided by the
-number of primary shards in the index to return the _remainder_. The remainder
-will always be in the range `0` to `number_of_primary_shards - 1`, and gives
-us the number of the shard where a particular document lives.
+`routing` 是一个可变值，默认是文档的 `_id` ，也可以设置成一个自定义的值。 `routing` 通过 hash 函数生成一个数字，然后这个数字再除以 `number_of_primary_shards` （主分片的数量）后得到 *余数* 。这个分布在 `0` 到 `number_of_primary_shards-1` 之间的余数，就是我们所寻求的文档所在分片的位置。
 
-This explains why the number of primary shards((("primary shards", "fixed number of, routing and"))) can be set only when an index
-is created and never changed:  if the number of primary shards ever changed in
-the future, all previous routing values would be invalid and documents would
-never be found.
+这就解释了为什么我们要在创建索引的时候就确定好主分片的数量 ((("primary shards", "fixed number of, routing and"))) 并且永远不会改变这个数量：因为如果数量变化了，那么所有之前路由的值都会无效，文档也再也找不到了。
 
 [NOTE]
 ====
-Users sometimes think that having a fixed number of primary shards makes it
-difficult to scale out an index later.  In reality, there are techniques
-that make it easy to scale out as and when you need. We talk more about these
-in <<scale>>.
+你可能觉得由于 Elasticsearch 主分片数量是固定的会使索引难以进行扩容。实际上当你需要时有很多技巧可以轻松实现扩容。我们将会在<<scale>>一章中提到更多有关水平扩展的内容。
 ====
 
-All document APIs (`get`, `index`, `delete`, `bulk`, `update`, and `mget`)
-accept a `routing` parameter ((("routing parameter")))that can be used to customize the document-to-
-shard mapping. A custom routing value could be used to ensure that all related
-documents--for instance, all the documents belonging to the same user--are
-stored on the same shard. We discuss in detail why you may want to do this in
-<<scale>>.
+所有的文档 API（ `get` 、 `index` 、 `delete` 、 `bulk` 、 `update` 以及 `mget` ）都接受一个叫做 `routing` 的路由参数 ((("routing parameter"))) ，通过这个参数我们可以自定义文档到分片的映射。一个自定义的路由参数可以用来确保所有相关的文档——例如所有属于同一个用户的文档——都被存储到同一个分片中。我们也会在<<scale>>这一章中详细讨论为什么会有这样一种需求。
