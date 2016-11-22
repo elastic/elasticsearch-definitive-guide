@@ -1,28 +1,24 @@
 [[identifying-words]]
-== Identifying Words
+== 词汇识别
 
-A word in English is relatively simple to spot: words are separated by
-whitespace or (some) punctuation.((("languages", "identifyig words")))((("words", "identifying"))) Even in English, though, there can be
-controversy: is _you're_ one word or two? What about _o'clock_,
-_cooperate_, _half-baked_, or _eyewitness_?
 
-Languages like German or Dutch combine individual words to create longer
-compound words like _Weißkopfseeadler_ (white-headed sea eagle), but in order
-to be able to return `Weißkopfseeadler` as a result for the query `Adler`
-(eagle), we need to understand how to break up compound words into their
-constituent parts.
+英语单词相对而言比较容易辨认：单词之间都是以空格或者（一些）标点隔开。((("languages", "identifyig words")))((("words", "identifying")))
+然而即使在英语词汇中也会有一些争议： _you're_ 是一个单词还是两个？ _o'clock_ ， _cooperate_ ， _half-baked_ ，或者 _eyewitness_ 这些呢？
 
-Asian languages are even more complex: some have no whitespace between words,
-sentences, or even paragraphs.((("Asian languages", "identifying words"))) Some words can be represented by a single
-character, but the same single character, when placed next to other
-characters, can form just one part of a longer word with a quite different
-meaning.
 
-It should be obvious that there is no silver-bullet analyzer that will
-miraculously deal with all human languages. Elasticsearch ships with dedicated
-analyzers for many languages, and more language-specific analyzers are
-available as plug-ins.
 
-However, not all languages have dedicated analyzers, and sometimes you won't
-even be sure which language(s) you are dealing with.  For these situations, we
-need good standard tools that do a reasonable job regardless of language.
+德语或者荷兰语把独立的单词合并起来创造一个长的合成词如 _Weißkopfseeadler_ (white-headed sea eagle) ,
+但是为了在查询 `Adler` (eagle)的时候返回查询 `Weißkopfseeadler` 的结果，我们需要懂得怎么将合并词拆成词组。
+
+
+
+亚洲的语言更复杂：很多语言在单词，句子，甚至段落之间没有空格。((("Asian languages", "identifying words")))
+有些词可以用一个字来表达，但是同样的字在另一个字旁边的时候就是不同意思的长词的一部分。
+
+
+
+显而易见的是没有能够奇迹般处理所有人类语言的万能分析器，Elasticsearch 为很多语言提供了专用的分析器，
+其他特殊语言的分析器以插件的形式提供。
+
+
+然而并不是所有语言都有专用分析器，而且有时候你甚至无法确定处理的是什么语言。这种情况，我们需要一些忽略语言也能合理工作的标准工具包。
