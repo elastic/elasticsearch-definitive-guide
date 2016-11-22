@@ -1,39 +1,33 @@
-=== Add Failover
+[[_add_failover]]
+=== 添加故障转移
 
-Running a single node means that you have a single point of failure--there
-is no redundancy.((("failover, adding"))) Fortunately, all we need to do to protect ourselves from data
-loss is to start another node.
+当集群中只有一个节点在运行时，意味着会有一个单点故障问题——没有冗余。
+幸运的是，我们只需再启动一个节点即可防止数据丢失。
 
-.Starting a Second Node
+.启动第二个节点
 ***************************************
 
-To test what happens when you add a second((("nodes", "starting a second node"))) node, you can start a new node
-in exactly the same way as you started the first one (see
-<<running-elasticsearch>>), and from the same directory. Multiple nodes can
-share the same directory.
+为了测试第二个节点启动后的情况，你可以在同一个目录内，完全依照启动第一个节点的方式来启动一个新节点（参考<<running-elasticsearch>>）。多个节点可以共享同一个目录。
 
-When you run a second node on the same machine, it automatically discovers 
-and joins the cluster as long as it has the same `cluster.name` as the first node. 
-However, for nodes running on different machines
-to join the same cluster, you need to configure a list of unicast hosts the nodes can contact
-to join the cluster. For more information, see <<unicast, Prefer Unicast over Multicast>>.
+当你在同一台机器上启动了第二个节点时，只要它和第一个节点有同样的 `cluster.name` 配置，它就会自动发现集群并加入到其中。
+但是在不同机器上启动节点的时候，为了加入到同一集群，你需要配置一个可连接到的单播主机列表。
+详细信息请查看<<unicast>>
 
 ***************************************
 
-If we start a second node, our cluster would look like <<cluster-two-nodes>>.
+如果启动了第二个节点，我们的集群将会如<<cluster-two-nodes>>所示。
+
 
 [[cluster-two-nodes]]
-.A two-node cluster--all primary and replica shards are allocated
-image::images/elas_0203.png["A two-node cluster"]
+.拥有两个节点的集群——所有主分片和副本分片都已被分配
+image::images/elas_0203.png["拥有两个节点的集群"]
 
-The((("clusters", "two-node cluster"))) second node has joined the cluster, and three _replica shards_ have ((("replica shards", "allocated to second node")))been
-allocated to it--one for each primary shard.  That means that we can lose
-either node, and all of our data will be intact.
+当第二个节点加入到集群后，3个 _副本分片_ 将会分配到这个节点上——每个主分片对应一个副本分片。
+这意味着当集群内任何一个节点出现问题时，我们的数据都完好无损。
 
-Any newly indexed document will first be stored on a primary shard, and then copied in parallel to the associated replica shard(s). This ensures that our document can be retrieved from a primary shard or from any of its replicas.
+所有新近被索引的文档都将会保存在主分片上，然后被并行的复制到对应的副本分片上。这就保证了我们既可以从主分片又可以从副本分片上获得文档。
 
-The `cluster-health` now ((("cluster health", "checking after adding second node")))shows a status of `green`, which means that all six
-shards (all three primary shards and all three replica shards) are active:
+`cluster-health` 现在展示的状态为 `green` ，这表示所有6个分片（包括3个主分片和3个副本分片）都在正常运行。
 
 [source,js]
 --------------------------------------------------
@@ -55,6 +49,6 @@ shards (all three primary shards and all three replica shards) are active:
   "active_shards_percent_as_number": 100
 }
 --------------------------------------------------
-<1> Cluster `status` is `green`.
+<1> 集群 `status` 值为 `green` 。
 
-Our cluster is not only fully functional, but also _always available_.
+我们的集群现在不仅仅是正常运行的，并且还处于 _始终可用_ 的状态。
