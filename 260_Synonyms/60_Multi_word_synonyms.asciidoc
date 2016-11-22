@@ -1,13 +1,10 @@
 [[multi-word-synonyms]]
-=== Multiword Synonyms and Phrase Queries
+=== 多词同义词和短语查询
 
-So far, synonyms appear to be quite straightforward. Unfortunately, this is
-where things start to go wrong.((("synonyms", "multiword, and phrase queries")))((("phrase matching", "multiword synonyms and"))) For <<phrase-matching,phrase queries>> to
-function correctly, Elasticsearch needs to know the position that each term
-occupies in the original text. Multiword synonyms can play havoc with term
-positions, especially when the injected synonyms are of differing lengths.
+至此，同义词看上去还挺简单的。然而不幸的是，复杂的部分才刚刚开始。((("synonyms", "multiword, and phrase queries")))((("phrase matching", "multiword synonyms and"))) 为了能使 <<phrase-matching,短语查询>> 正常工作，
+Elasticsearch 需要知道每个词在初始文本中的位置。多词同义词会严重破坏词的位置信息，尤其当新增的同义词标记长度各不相同的时候。
 
-To demonstrate, we'll create a synonym token filter that uses this rule:
+我们创建一个同义词语汇单元过滤器，然后使用下面这样的同义词规则：
 
     "usa,united states,u s a,united states of america"
 
@@ -42,7 +39,7 @@ GET /my_index/_analyze?analyzer=my_synonyms&text=
 The United States is wealthy
 -----------------------------------
 
-The tokens emitted by the `analyze` request look like this:
+`解析器` 会输出下面这样的结果：
 
 [source,text]
 -----------------------------------
@@ -53,22 +50,20 @@ Pos 4:  (is,a,of)
 Pos 5:  (wealthy,america)
 -----------------------------------
 
-If we were to index a document analyzed with synonyms as above, and then run a
-phrase query without synonyms, we'd have some surprising results.  These
-phrases would not match:
+如果你用上面这个同义词语汇单元过滤器索引一个文档，然后执行一个短语查询，那你就会得到惊人的结果，下面这些短语都不会匹配成功：
 
 * The usa is wealthy
 * The united states of america is wealthy
 * The U.S.A. is wealthy
 
-However, these phrases would:
+但是这些短语会：
 
 * United states is wealthy
 * Usa states of wealthy
 * The U.S. of wealthy
 * U.S. is america
 
-If we were to use synonyms at query time instead, we would see even more-bizarre matches. Look at the output of this `validate-query` request:
+如果你是在查询阶段使同义词，那你就会看到更加诡异的匹配结果。看下这个 `validate-query` 查询：
 
 [source,json]
 -----------------------------------
@@ -85,27 +80,24 @@ GET /my_index/_validate/query?explain
 }
 -----------------------------------
 
-The explanation is as follows:
+查询关键字会被同义词语汇单元过滤器处理成类似这样的信息：
 
     "(usa united u united) (is states s states) (wealthy a of) america"
 
-This would match documents containg `u is of america` but wouldn't match any
-document that didn't contain the term `america`.
+这会匹配包含有 `u is of america` 的文档，但是匹配不出任何含有 `america` 的文档。
 
 [TIP]
 ==================================================
 
-Multiword synonyms ((("highlighting searches", "multiword synonyms and")))affect highlighting in a similar way.  A query for `USA`
-could end up returning a highlighted snippet such as: ``The _United States
-is wealthy_''.
+多词同义((("highlighting searches", "multiword synonyms and")))对高亮匹配结果也会造成影响。一个针对 `USA` 的查询，返回的结果可能却高亮了： The _United States is wealthy_  。
 
 ==================================================
 
-==== Use Simple Contraction for Phrase Queries
+==== 使用简单收缩进行短语查询
 
-The way to avoid this mess is to use <<synonyms-contraction,simple contraction>>
-to inject a single((("synonyms", "multiword, and phrase queries", "using simple contraction")))((("phrase matching", "multiword synonyms and", "using simple contraction")))((("simple contraction (synonyms)", "using for phrase queries"))) term that represents all synonyms, and to use the same
-synonym token filter at query time:
+避免这种混乱的方法是使用 <<synonyms-contraction,简单收缩>>，
+用单个词项((("synonyms", "multiword, and phrase queries", "using simple contraction")))((("phrase matching", "multiword synonyms and", "using simple contraction")))((("simple contraction (synonyms)", "using for phrase queries")))表示所有的同义词，
+然后在查询阶段，就只需要针对这单个词进行查询了：
 
 [source,json]
 -----------------------------------
@@ -138,7 +130,7 @@ GET /my_index/_analyze?analyzer=my_synonyms
 The United States is wealthy
 -----------------------------------
 
-The result of the preceding `analyze` request looks much more sane:
+上面那个查询信息就会被处理成类似下面这样：
 
 [source,text]
 -----------------------------------
@@ -148,35 +140,22 @@ Pos 3:  (is)
 Pos 5:  (wealthy)
 -----------------------------------
 
-And repeating the `validate-query` request that we made previously yields a simple,
-sane explanation:
+现在我们再次执行我们之前做过的那个 `validate-query` 查询，就会输出一个简单又合理的结果：
 
     "usa is wealthy"
 
-The downside of this approach is that, by reducing `united states of america`
-down to the single term `usa`, you can't use the same field to find just the
-word `united` or `states`. You would need to use a separate field with a
-different analysis chain for that purpose.
+这个方法的缺点是，因为把 `united states of america` 转换成了同义词 `usa`, 你就不能使用 `united states of america` 去搜索出 `united` 或者 `states` 。
+你需要使用一个额外的字段并用另一个解析器链来达到这个目的。
 
-==== Synonyms and the query_string Query
+==== 同义词与 query_string 查询
 
-We have tried to avoid discussing the `query_string` query ((("query strings", "synonyms and")))((("synonyms", "multiword, and query string queries")))because we don't
-recommend using it.  In <<query-string-query, "More-Complicated Queries">>, we said that, because the
-`query_string` query supports a terse mini _search-syntax_, it could
-frequently lead to surprising results or even syntax errors.
+本书很少谈论到 `query_string` 查询，((("query strings", "synonyms and")))((("synonyms", "multiword, and query string queries")))因为真心不推荐你用它。
+在 <<query-string-query, 复杂查询>> 一节中有提到，由于 `query_string` 查询支持一个精简的 _查询语法_ ，因此，可能这会导致它搜出一些出人意料的结果或者甚至是含有语法错误的结果。
 
-One of the gotchas of this query involves multiword synonyms. To
-support its search-syntax, it has to parse the query string to recognize
-special operators like `AND`, `OR`, `+`, `-`, `field:`, and so forth.  (See the full
-{ref}/query-dsl-query-string-query.html#query-string-syntax[`query_string` syntax]
-for more information.)
+这种查询方式存在不少问题，而其中之一便与多词同义有关。为了支持它的查询语法，你必须用指定的、该语法所能识别的操作符号来标示，比如 `AND` 、 `OR` 、 `+` 、 `-` 、 `field:` 等等。
+(更多相关内容参阅 {ref}/query-dsl-query-string-query.html#query-string-syntax[`query_string` 语法] 。)
 
-As part of this parsing process, it breaks up the query string on whitespace,
-and passes each word that it finds to the relevant analyzer separately. This
-means that your synonym analyzer will never receive a multiword synonym.
-Instead of seeing `United States` as a single string, the analyzer will
-receive `United` and `States` separately.
+而在这种语法的解析过程中，解析动作会把查询文本在空格符处作切分，然后分别把每个切分出来的词传递给相关性解析器。
+这也即意味着你的同义词解析器永远都不可能收到类似 `United States` 这样的多个单词组成的同义词。由于不会把 `United States` 作为一个原子性的文本，所以同义词解析器的输入信息永远都是两个被切分开的词 `United` 和 `States` 。
 
-Fortunately, the trustworthy `match` query supports no such syntax, and
-multiword synonyms will be passed to the analyzer in their entirety.
-
+所幸， `match` 查询相比而言就可靠得多了，因为它不支持上述语法，所以多个字组成的同义词不会被切分开，而是会完整地交给解析器处理。
