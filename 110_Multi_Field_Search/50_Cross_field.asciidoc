@@ -1,15 +1,9 @@
-=== cross-fields Queries
+[[_cross_fields_queries]]
+=== cross-fields 跨字段查询
 
-The custom `_all` approach is a good solution, as long as you thought
-about setting it up before you indexed your((("multifield search", "cross-fields queries")))((("cross-fields queries"))) documents. However, Elasticsearch
-also provides a search-time solution to the problem: the `multi_match` query
-with type `cross_fields`.((("multi_match queries", "cross_fields type")))
-The `cross_fields` type takes a term-centric approach, quite different from the
-field-centric approach taken by `best_fields` and `most_fields`. It treats all
-of the fields as one big field, and looks for _each term_ in _any field_.
+自定义 `_all` 的方式是一个好的解决方案，只需在索引文档前为其设置好映射。((("multifield search", "cross-fields queries")))((("cross-fields queries")))不过， Elasticsearch 还在搜索时提供了相应的解决方案：使用 `cross_fields` 类型进行 `multi_match` 查询。 `cross_fields` 使用词中心式（term-centric）的查询方式，这与 `best_fields` 和 `most_fields` 使用字段中心式（field-centric）的查询方式非常不同，它将所有字段当成一个大字段，并在 _每个字段_ 中查找 _每个词_ 。
 
-To illustrate the difference between field-centric and term-centric queries,
-look at ((("field-centric queries", "differences between term-centric queries and")))((("most fields queries", "explanation for field-centric approach")))the `explanation` for this field-centric `most_fields` query:
+为了说明字段中心式（field-centric）与词中心式（term-centric）这两种查询方式的不同，((("field-centric queries", "differences between term-centric queries and")))((("most fields queries", "explanation for field-centric approach")))先看看以下字段中心式的 `most_fields` 查询的 `explanation` 解释：
 
 [source,js]
 --------------------------------------------------
@@ -27,29 +21,23 @@ GET /_validate/query?explain
 --------------------------------------------------
 // SENSE: 110_Multi_Field_Search/50_Cross_field.json
 
-<1> All terms are required.
+<1> 所有词都是必须的。
 
-For a document to match, both `peter` and `smith` must appear in the same
-field, either the `first_name` field or the `last_name` field:
+对于匹配的文档， `peter` 和 `smith` 都必须同时出现在相同字段中，要么是 `first_name` 字段，要么 `last_name` 字段：
 
     (+first_name:peter +first_name:smith)
     (+last_name:peter  +last_name:smith)
 
-A _term-centric_ approach would use this logic instead:
+_词中心式_ 会使用以下逻辑：
 
     +(first_name:peter last_name:peter)
     +(first_name:smith last_name:smith)
 
-In other words, the term `peter` must appear in either field, and the term
-`smith` must appear in either field.
+换句话说，词 `peter` 和 `smith` 都必须出现，但是可以出现在任意字段中。
 
-The `cross_fields` type first analyzes the query string to produce a list of
-terms, and then it searches for each term in any field. That difference alone
-solves two of the three problems that we listed in <<field-centric>>, leaving
-us just with the issue of differing inverse document frequencies.
+`cross_fields` 类型首先分析查询字符串并生成一个词列表，然后它从所有字段中依次搜索每个词。这种不同的搜索方式很自然的解决了 <<field-centric,字段中心式>> 查询三个问题中的二个。剩下的问题是逆向文档频率不同。
 
-Fortunately, the `cross_fields` type solves this too, as can be seen from this
-`validate-query` request:
+幸运的是 `cross_fields` 类型也能解决这个问题，通过 `validate-query` 可以看到：
 
 [source,js]
 --------------------------------------------------
@@ -67,29 +55,20 @@ GET /_validate/query?explain
 --------------------------------------------------
 // SENSE: 110_Multi_Field_Search/50_Cross_field.json
 
-<1> Use `cross_fields` term-centric matching.
+<1> 用 `cross_fields` 词中心式匹配。
 
-It solves the term-frequency problem by _blending_ inverse document
-frequencies across fields: ((("cross-fields queries", "blending inverse document frequencies across fields")))((("inverse document frequency", "blending across fields in cross-fields queries")))
+它通过 _混合_ 不同字段逆向索引文档频率的方式解决了词频的问题：((("cross-fields queries", "blending inverse document frequencies across fields")))((("inverse document frequency", "blending across fields in cross-fields queries")))
 
     +blended("peter", fields: [first_name, last_name])
     +blended("smith", fields: [first_name, last_name])
 
-In other words, it looks up the IDF of `smith` in both the `first_name` and
-the `last_name` fields and uses the minimum of the two as the IDF for both
-fields.  The fact that `smith` is a common last name means that it will be
-treated as a common first name too.
+换句话说，它会同时在 `first_name` 和 `last_name` 两个字段中查找 `smith` 的 IDF ，然后用两者的最小值作为两个字段的 IDF 。结果实际上就是 `smith` 会被认为既是个平常的姓，也是平常的名。
 
 [NOTE]
 ==================================================
-For the `cross_fields` query type to work optimally, all fields should have
-the same analyzer.((("analyzers", "in cross-fields queries")))((("cross-fields queries", "analyzers in")))  Fields that share an analyzer are grouped together as
-blended fields.
+为了让 `cross_fields` 查询以最优方式工作，所有的字段都须使用相同的分析器，((("analyzers", "in cross-fields queries")))((("cross-fields queries", "analyzers in")))具有相同分析器的字段会被分组在一起作为混合字段使用。
 
-If you include fields with a different analysis chain, they will be  added to
-the query in the same way as for `best_fields`.  For instance, if we added the
-`title` field to the preceding query (assuming it uses a different analyzer), the
-explanation would be as follows:
+如果包括了不同分析链的字段，它们会以 `best_fields` 的相同方式被加入到查询结果中。例如：我们将 `title` 字段加到之前的查询中（假设它们使用的是不同的分析器）， explanation 的解释结果如下：
 
     (+title:peter +title:smith)
     (
@@ -97,20 +76,15 @@ explanation would be as follows:
       +blended("smith", fields: [first_name, last_name])
     )
 
-This is particularly important when using the `minimum_should_match` and
-`operator` parameters.
+当在使用 `minimum_should_match` 和 `operator` 参数时，这点尤为重要。
+
 ==================================================
 
-==== Per-Field Boosting
+==== 按字段提高权重
 
-One of the advantages of using the `cross_fields` query over
-<<custom-all,custom `_all` fields>> is that you ((("cross-fields queries", "per-field boosting")))((("boosting", "per-field boosting in cross-fields queries")))can boost individual
-fields at query time.
+采用 `cross_fields` 查询与 <<custom-all,自定义 `_all` 字段>> 相比，其中一个优势就是它可以在搜索时为单个字段提升权重。((("cross-fields queries", "per-field boosting")))((("boosting", "per-field boosting in cross-fields queries")))
 
-For fields of equal value like `first_name` and `last_name`, this generally
-isn't required, but if you were searching for books using the `title` and
-`description` fields, you might want to give more weight to the `title` field.
-This can be done as described before with the caret (`^`) syntax:
+这对像 `first_name` 和 `last_name` 具有相同值的字段并不是必须的，但如果要用 `title` 和 `description` 字段搜索图书，可能希望为 `title` 分配更多的权重，这同样可以使用前面介绍过的 `^` 符号语法来实现：
 
 [source,js]
 --------------------------------------------------
@@ -126,11 +100,6 @@ GET /books/_search
 }
 --------------------------------------------------
 
-<1> The `title` field has a boost of `2`, while the `description` field
-    has the default boost of `1`.
+<1> `title` 字段的权重提升值为 `2` ， `description` 字段的权重提升值默认为 `1` 。
 
-The advantage of being able to boost individual fields should be weighed
-against the cost of querying multiple fields instead of querying a single
-custom `_all` field. Use whichever of the two solutions that delivers the most
-bang for your buck.
-
+自定义单字段查询是否能够优于多字段查询，取决于在多字段查询与单字段自定义 `_all` 之间代价的权衡，即哪种解决方案会带来更大的性能优化就选择哪一种。
