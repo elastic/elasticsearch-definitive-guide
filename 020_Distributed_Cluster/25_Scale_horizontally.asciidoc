@@ -1,22 +1,15 @@
-=== Scale Horizontally
+[[_scale_horizontally]]
+=== 水平扩容
 
-What about scaling as the demand for our application grows?((("scaling", "horizontally")))((("clusters", "three-node cluster")))((("primary shards", "in three-node cluster"))) If we start a
-third node, our cluster reorganizes itself to look like
-<<cluster-three-nodes>>.
+怎样为我们的正在增长中的应用程序按需扩容呢？((("scaling", "horizontally")))((("clusters", "three-node cluster")))((("primary shards", "in three-node cluster")))
+当启动了第三个节点，我们的集群将会看起来如<<cluster-three-nodes>>所示。
 
 [[cluster-three-nodes]]
-.A three-node cluster--shards have been reallocated to spread the load
-image::images/elas_0204.png["A three-node cluster"]
+.拥有三个节点的集群——为了分散负载而对分片进行重新分配
+image::images/elas_0204.png["拥有三个节点的集群"]
 
-One shard each from `Node 1` and `Node 2` have moved to the new
-`Node 3`, and we have two shards per node, instead of three.
-This means that the hardware resources (CPU, RAM, I/O) of each node
-are being shared among fewer shards, allowing each shard to perform
-better.
+`Node 1` 和 `Node 2` 上各有一个分片被迁移到了新的 `Node 3` 节点，现在每个节点上都拥有2个分片，而不是之前的3个。
+这表示每个节点的硬件资源（CPU, RAM, I/O）将被更少的分片所共享，每个分片的性能将会得到提升。
 
-A shard is a fully fledged search engine in its own right, and is
-capable of using all of the resources of a single node.  With our
-total of six shards (three primaries and three replicas), our index is capable
-of scaling out to a maximum of six nodes, with one shard on each node
-and each shard having access to 100% of its node's resources.
-
+分片是一个功能完整的搜索引擎，它拥有使用一个节点上的所有资源的能力。
+我们这个拥有6个分片（3个主分片和3个副本分片）的索引可以最大扩容到6个节点，每个节点上存在一个分片，并且每个分片拥有所在节点的全部资源。
