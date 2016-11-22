@@ -1,41 +1,30 @@
-=== Coping with Failure
-
-We've said that Elasticsearch can cope when nodes fail, so let's go
-ahead and try it out. ((("shards", "horizontal scaling and safety of data")))((("failure of nodes, coping with")))((("master node", "killing and replacing")))((("nodes", "failure of")))((("clusters", "coping with failure of nodes")))If we kill the first node, our cluster looks like
-<<cluster-post-kill>>.
+[[_coping_with_failure]]
+=== 应对故障
+我们之前说过 Elasticsearch 可以应对节点故障，接下来让我们尝试下这个功能。
+((("shards", "horizontal scaling and safety of data")))((("failure of nodes, coping with")))((("master node", "killing and replacing")))((("nodes", "failure of")))((("clusters", "coping with failure of nodes")))
+如果我们关闭第一个节点，这时集群的状态为<<cluster-post-kill>>
 
 [[cluster-post-kill]]
-.Cluster after killing one node
-image::images/elas_0206.png["The cluster after killing one node"]
+.关闭了一个节点后的集群
+image::images/elas_0206.png["关闭了一个节点后的集群"]
 
-The node we killed was the master node. A cluster must have a master node in
-order to function correctly, so the first thing that happened was that the
-nodes elected a new master: `Node 2`.
+我们关闭的节点是一个主节点。而集群必须拥有一个主节点来保证正常工作，所以发生的第一件事情就是选举一个新的主节点： `Node 2` 。
 
-Primary shards `1` and `2` were lost when we killed `Node 1`, and our index
-cannot function properly if it is missing primary shards.((("primary shards", "node failure and"))) If we had checked
-the cluster health at this point, we would have seen status `red`: not all
-primary shards are active!
+在我们关闭 `Node 1` 的同时也失去了主分片 `1` 和 `2` ，并且在缺失主分片的时候索引也不能正常工作。
+((("primary shards", "node failure and")))
+如果此时来检查集群的状况，我们看到的状态将会为 `red` ：不是所有主分片都在正常工作。
 
-Fortunately, a complete copy of the two lost primary shards exists on other
-nodes, so the first thing that the new master node did was to promote the
-replicas of these shards on `Node 2` and `Node 3` to be primaries, putting us
-back into cluster health `yellow`.  This promotion process was instantaneous,
-like the flick of a switch.
+幸运的是，在其它节点上存在着这两个主分片的完整副本，
+所以新的主节点立即将这些分片在 `Node 2` 和 `Node 3` 上对应的副本分片提升为主分片，
+此时集群的状态将会为 `yellow` 。
+这个提升主分片的过程是瞬间发生的，如同按下一个开关一般。
 
-So why is our cluster health `yellow` and not `green`? We have all three primary
-shards, but we specified that we wanted two replicas of each primary, and
-currently only one replica is assigned. This prevents us from reaching
-`green`, but we're not too worried here: were we to kill `Node 2` as well, our
-application could _still_ keep running without data loss, because `Node 3`
-contains a copy of every shard.
+为什么我们集群状态是 `yellow` 而不是 `green` 呢？
+虽然我们拥有所有的三个主分片，但是同时设置了每个主分片需要对应2份副本分片，而此时只存在一份副本分片。
+所以集群不能为 `green` 的状态，不过我们不必过于担心：如果我们同样关闭了 `Node 2` ，我们的程序 _依然_ 可以保持在不丢任何数据的情况下运行，因为 `Node 3` 为每一个分片都保留着一份副本。
 
-If we restart `Node 1`, the cluster would be able to allocate the missing
-replica shards, resulting in a state similar to the one described in
-<<cluster-three-nodes-two-replicas>>.  If `Node 1` still has copies of the old
-shards, it will try to reuse them, copying over from the primary shard
-only the files that have changed in the meantime.
+如果我们重新启动 `Node 1` ，集群可以将缺失的副本分片再次进行分配，那么集群的状态也将如<<cluster-three-nodes-two-replicas>>所示。
+如果 `Node 1` 依然拥有着之前的分片，它将尝试去重用它们，同时仅从主分片复制发生了修改的数据文件。
 
-By now, you should have a reasonable idea of how shards allow Elasticsearch to
-scale horizontally and to ensure that your data is safe. Later we will examine
-the life cycle of a shard in more detail.
+到目前为止，你应该对分片如何使得 Elasticsearch 进行水平扩容以及数据保障等知识有了一定了解。
+接下来我们将讲述关于分片生命周期的更多细节。
