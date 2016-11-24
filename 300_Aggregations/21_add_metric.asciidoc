@@ -20,7 +20,7 @@ GET /cars/transactions/_search
    "aggs": {
       "colors": {
          "terms": {
-            "field": "color"
+            "field": "color.keyword"
          },
          "aggs": { <1>
             "avg_price": { <2>
@@ -53,6 +53,7 @@ and what field we want the average to be calculated on (`price`):
 ...
    "aggregations": {
       "colors": {
+         ...
          "buckets": [
             {
                "key": "red",
