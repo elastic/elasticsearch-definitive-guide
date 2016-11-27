@@ -1,12 +1,9 @@
 [[practical-scoring-function]]
-=== Lucene's Practical Scoring Function
+=== Lucene 的实用评分函数
 
-For multiterm queries, Lucene takes((("relevance", "controlling", "Lucene&#x27;s practical scoring function", id="ix_relcontPCF", range="startofrange")))((("Boolean Model"))) the <<boolean-model,Boolean model>>,
-<<tfidf,TF/IDF>>, and the <<vector-space-model,vector space model>> and
-combines ((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm")))((("Vector Space Model"))) them in a single efficient package that collects matching
-documents and scores them as it goes.
+对于多词查询，((("relevance", "controlling", "Lucene&#x27;s practical scoring function", id="ix_relcontPCF", range="startofrange")))((("Boolean Model"))) Lucene 使用 <<boolean-model,布尔模型（Boolean model）>> 、 <<tfidf,TF/IDF>> 以及 <<vector-space-model,向量空间模型（vector space model）>> ，然后将它们组合到单个高效的包里以收集匹配文档并进行评分计算。
 
-A multiterm query like
+一个多词查询
 
 [source,json]
 ------------------------------
@@ -20,7 +17,7 @@ GET /my_index/doc/_search
 }
 ------------------------------
 
-is rewritten internally to look like this:
+会在内部被重写为：
 
 [source,json]
 ------------------------------
@@ -37,15 +34,9 @@ GET /my_index/doc/_search
 }
 ------------------------------
 
-The `bool` query implements the Boolean model and, in this example, will
-include only documents that contain either the term `quick` or the term `fox` or
-both.
+`bool` 查询实现了布尔模型，在这个例子中，它会将包括词 `quick` 和 `fox` 或两者兼有的文档作为查询结果。
 
-As soon as a document matches a query, Lucene calculates its score for that
-query, combining the scores of each matching term.  The formula used for
-scoring is called the _practical scoring function_.((("practical scoring function"))) It looks intimidating, but
-don't be put off--most of the components you already know. It introduces a
-few new elements that we discuss next.
+只要一个文档与查询匹配，Lucene 就会为查询计算评分，然后合并每个匹配词的评分结果。这里使用的评分计算公式叫做 _实用评分函数（practical scoring function）_ 。((("practical scoring function")))看似很高大上，但是别被吓到——多数的组件都已经介绍过，下一步会讨论它引入的一些新元素。
 
 ................................
 score(q,d)  =  <1>
@@ -59,84 +50,60 @@ score(q,d)  =  <1>
             ) (t in q)    <4>
 ................................
 
-<1> `score(q,d)` is the relevance score of document `d` for query `q`.
-<2> `queryNorm(q)` is the <<query-norm,_query normalization_ factor>> (new).
-<3> `coord(q,d)` is the <<coord,_coordination_ factor>> (new).
-<4> The sum of the weights for each term `t` in the query `q` for document `d`.
-<5> `tf(t in d)` is the <<tf,term frequency>> for term `t` in document `d`.
-<6> `idf(t)` is the <<idf,inverse document frequency>> for term `t`.
-<7> `t.getBoost()` is the <<query-time-boosting,_boost_>>  that has been
-    applied to the query (new).
-<8> `norm(t,d)` is the <<field-norm,field-length norm>>, combined with the
-    <<index-boost,index-time field-level boost>>, if any. (new).
+<1> `score(q,d)` 是文档 `d` 与查询 `q` 的相关度评分。
+<2> `queryNorm(q)` 是 <<query-norm,_查询归一化_ 因子>> （新）。
+<3> `coord(q,d)` 是 <<coord,_协调_ 因子>> （新）。
+<4> 查询 `q` 中每个词 `t` 对于文档 `d` 的权重和。
+<5> `tf(t in d)` 是词 `t` 在文档 `d` 中的 <<tf,词频>> 。
+<6> `idf(t)` 是词 `t` 的 <<idf,逆向文档频率>> 。
+<7> `t.getBoost()` 是查询中使用的 <<query-time-boosting,_boost_>>（新）。
+<8> `norm(t,d)` 是 <<field-norm,字段长度归一值>> ，与 <<index-boost,索引时字段层 boost>> （如果存在）的和（新）。
 
-You should recognize `score`, `tf`, and `idf`. The  `queryNorm`, `coord`,
-`t.getBoost`, and `norm` are new.
+上节已介绍过 `score` 、 `tf` 和 `idf` 。现在来介绍 `queryNorm` 、 `coord` 、 `t.getBoost` 和 `norm` 。
 
-We will talk more about <<query-time-boosting,query-time boosting>>  later in
-this chapter, but first let's get query normalization, coordination, and
-index-time field-level boosting out of the way.
+我们会在本章后面继续探讨 <<query-time-boosting,查询时的权重提升>> 的问题，但是首先需要了解查询归一化、协调和索引时字段层面的权重提升等概念。
 
 [[query-norm]]
-==== Query Normalization Factor
+==== 查询归一因子
 
-The _query normalization factor_ (`queryNorm`) is ((("practical scoring function", "query normalization factor")))((("query normalization factor")))((("normalization", "query normalization factor")))an attempt to _normalize_ a
-query so that the results from one query may be compared with the results of
-another.
+_查询归一因子_ （ `queryNorm` ）试图将查询 _归一化_ ，((("practical scoring function", "query normalization factor")))((("query normalization factor")))((("normalization", "query normalization factor")))这样就能将两个不同的查询结果相比较。
 
 [TIP]
 ==================================================
 
-Even though the intent of the query norm is to make results from different
-queries comparable, it doesn't work very well. The only purpose of
-the relevance `_score` is to sort the results of the current query in the
-correct order. You should not try to compare the relevance scores from
-different queries.
+尽管查询归一值的目的是为了使查询结果之间能够相互比较，但是它并不十分有效，因为相关度评分 `_score` 的目的是为了将当前查询的结果进行排序，比较不同查询结果的相关度评分没有太大意义。
 
 ==================================================
 
-This factor is calculated at the beginning of the query. The actual
-calculation depends on the queries involved, but a typical implementation is as follows:
+这个因子是在查询过程的最前面计算的，具体的计算依赖于具体查询，一个典型的实现如下：
 
 ..........................
 queryNorm = 1 / √sumOfSquaredWeights <1>
 ..........................
-<1> The `sumOfSquaredWeights` is calculated by adding together the IDF of each
-    term in the query, squared.
+<1> `sumOfSquaredWeights` 是查询里每个词的 IDF 的平方和。
 
-TIP: The same query normalization factor is applied to every document, and you
-have no way of changing it. For all intents and purposes, it can be ignored.
-
+TIP: 相同查询归一化因子会被应用到每个文档，不能被更改，总而言之，可以被忽略。
 
 [[coord]]
-==== Query Coordination
+==== 查询协调
 
-The _coordination factor_ (`coord`) is used to((("coordination factor (coord)")))((("query coordination")))((("practical scoring function", "coordination factor"))) reward documents that contain a
-higher percentage of the query terms. The more query terms that appear in
-the document, the greater the chances that the document is a good match for
-the query.
+_协调因子_ （ `coord` ）((("coordination factor (coord)")))((("query coordination")))((("practical scoring function", "coordination factor")))可以为那些查询词包含度高的文档提供奖励，文档里出现的查询词越多，它越有机会成为好的匹配结果。
 
-Imagine that we have a query for `quick brown fox`, and that the
-weight for each term is 1.5.  Without the coordination factor, the score would
-just be the sum of the weights of the terms in a document. For instance:
+设想查询 `quick brown fox` ，每个词的权重都是 1.5 。如果没有协调因子，最终评分会是文档里所有词权重的总和。例如：
 
-* Document with `fox` -> score: 1.5
-* Document with `quick fox` -> score: 3.0
-* Document with `quick brown fox` -> score: 4.5
+* 文档里有 `fox` -> 评分： 1.5
+* 文档里有 `quick fox` -> 评分： 3.0
+* 文档里有 `quick brown fox` -> 评分： 4.5
 
-The coordination factor multiplies the score by the number of matching terms
-in the document, and divides it by the total number of terms in the query.
-With the coordination factor, the scores would be as follows:
+协调因子将评分与文档里匹配词的数量相乘，然后除以查询里所有词的数量，如果使用协调因子，评分会变成：
 
-* Document with `fox` -> score: `1.5 * 1 / 3` = 0.5
-* Document with `quick fox` -> score: `3.0 * 2 / 3` = 2.0
-* Document with `quick brown fox` -> score: `4.5 * 3 / 3` = 4.5
+* 文档里有 `fox` -> 评分： `1.5 * 1 / 3` = 0.5
+* 文档里有 `quick fox` -> 评分： `3.0 * 2 / 3` = 2.0
+* 文档里有 `quick brown fox` -> 评分： `4.5 * 3 / 3` = 4.5
 
-The coordination factor results in the document that contains all three terms
-being much more relevant than the document that contains just two of them.
+协调因子能使包含所有三个词的文档比只包含两个词的文档评分要高出很多。
 
-Remember that the query for `quick brown fox` is rewritten into a `bool` query
-like this:
+回想将查询 `quick brown fox` 重写成 `bool` 查询的形式：
 
 [source,json]
 -------------------------------
@@ -154,19 +121,9 @@ GET /_search
 }
 -------------------------------
 
-The `bool` query uses query coordination by default for all `should` clauses,
-but it does allow you to disable coordination.  Why might you want to do this?
-Well, usually the answer is, you don't.  Query coordination is usually a good
-thing.  When you use a `bool` query to wrap several high-level queries like
-the `match` query, it also makes sense to leave coordination enabled. The more
-clauses that match, the higher the degree of overlap between your search
-request and the documents that are returned.
+`bool` 查询默认会对所有 `should` 语句使用协调功能，不过也可以将其禁用。为什么要这样做？通常的回答是——无须这样。查询协调通常是件好事，当使用 `bool` 查询将多个高级查询如 `match` 查询包裹的时候，让协调功能开启是有意义的，匹配的语句越多，查询请求与返回文档间的重叠度就越高。
 
-However, in some advanced use cases, it might make sense to disable
-coordination.  Imagine that you are looking for the synonyms `jump`, `leap`, and
-`hop`.  You don't care how many of these synonyms are present, as they all
-represent the same concept. In fact, only one of the synonyms is likely to be
-present.  This would be a good case for disabling the coordination factor:
+但在某些高级应用中，将协调功能关闭可能更好。设想正在查找同义词 `jump` 、 `leap` 和 `hop` 时，并不关心会出现多少个同义词，因为它们都表示相同的意思，实际上，只有其中一个同义词会出现，这是不使用协调因子的一个好例子：
 
 [source,json]
 -------------------------------
@@ -185,49 +142,28 @@ GET /_search
 }
 -------------------------------
 
-When you use synonyms (see <<synonyms>>), this is exactly what
-happens internally: the rewritten query disables coordination for the
-synonyms. ((("synonyms", "query coordination and")))  Most use cases for disabling coordination are handled
-automatically; you don't need to worry about it.
-
+当使用同义词的时候（参照： <<synonyms,同义词>> ），Lucene 内部是这样的：重写的查询会禁用同义词的协调功能。((("synonyms", "query coordination and")))大多数禁用操作的应用场景是自动处理的，无须为此担心。
 
 [[index-boost]]
-==== Index-Time Field-Level Boosting
+==== 索引时字段层权重提升
 
-We will talk about _boosting_ a field--making it ((("indexing", "field-level index time boosts")))((("boosting", "index time field-level boosting")))((("practical scoring function", "index time field-level boosting")))more important than other
-fields--at query time in <<query-time-boosting>>.  It is also possible
-to apply a boost to a field at index time.  Actually, this boost is applied to
-every term in the field, rather than to the field itself.
+我们会讨论 <<query-time-boosting,查询时的权重提升>>，让字段 _权重提升_ 就是让某个字段比其他字段更重要。((("indexing", "field-level index time boosts")))((("boosting", "index time field-level boosting")))((("practical scoring function", "index time field-level boosting")))当然在索引时也能做到如此。实际上，权重的提升会被应用到字段的每个词，而不是字段本身。
 
-To store this boost value in the index without using more space
-than necessary, this field-level index-time boost is combined with the ((("field-length norm")))field-length norm (see  <<field-norm>>) and stored in the index as a single byte.
-This is the value returned by `norm(t,d)` in the preceding formula.
+将提升值存储在索引中无须更多空间，这个字段层索引时的提升值与字段长度归一值（参见 <<field-norm,字段长度归一值>> ）((("field-length norm")))一起作为单个字节存于索引， `norm(t,d)` 是前面公式的返回值。
 
 [WARNING]
 =========================================
 
-We strongly recommend against using field-level index-time boosts for a few
-reasons:
+我们不建议在建立索引时对字段提升权重，有以下原因：
 
-*  Combining the boost with the field-length norm and storing it in a single
-    byte means that the field-length norm loses precision. The result is that
-    Elasticsearch is unable to distinguish between a field containing three words
-    and a field containing five words.
+*  将提升值与字段长度归一值合在单个字节中存储会丢失字段长度归一值的精度，这样会导致 Elasticsearch 不知如何区分包含三个词的字段和包含五个词的字段。
 
-*  To change an index-time boost, you have to reindex all your documents.
-    A query-time boost, on the other hand, can be changed with every query.
+*  要想改变索引时的提升值，就必须重新为所有文档建立索引，与此不同的是，查询时的提升值可以随着每次查询的不同而更改。
 
-*  If a field with an index-time boost has multiple values, the boost is
-    multiplied by itself for every value, dramatically increasing
-    the weight for that field.
+*  如果一个索引时权重提升的字段有多个值，提升值会按照每个值来自乘，这会导致该字段的权重急剧上升。
 
-<<query-time-boosting,Query-time boosting>> is a much simpler, cleaner, more
-flexible option.
+<<query-time-boosting,查询时赋予权重>> 是更为简单、清楚、灵活的选择。
 
 =========================================
 
-With query normalization, coordination, and index-time boosting out of the way,
-we can now move on to the most useful tool for influencing the relevance
-calculation: query-time boosting.((("relevance", "controlling", "Lucene&#x27;s practical scoring function", range="endofrange", startref="ix_relcontPCF")))
-
-
+了解了查询归一化、协同和索引时权重提升这些方式后，可以进一步了解相关度计算最有用的工具：查询时的权重提升。((("relevance", "controlling", "Lucene&#x27;s practical scoring function", range="endofrange", startref="ix_relcontPCF")))
