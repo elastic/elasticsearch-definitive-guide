@@ -1,12 +1,11 @@
 [[top-hits]]
-=== Field Collapsing
+=== 字段折叠
 
-A common requirement is the need to present search results grouped by a particular
-field. ((("field collapsing")))((("relationships", "field collapsing")))We might want to return the most relevant blog posts _grouped_ by the
-user's name. ((("terms aggregation")))((("aggregations", "field collapsing"))) Grouping by name implies the need for a `terms` aggregation.  To
-be able to group on the user's _whole_ name, the name field should be
-available in its original `not_analyzed` form, as explained in
-<<aggregations-and-analysis>>:
+一个普遍的需求是需要通过特定字段进行分组。((("field collapsing")))((("relationships", "field collapsing")))例如我们需要按照用户名称 _分组_ 返回最相关的博客文章。
+((("terms aggregation")))((("aggregations", "field collapsing")))按照用户名分组意味着进行 `terms` 聚合。
+为能够按照用户 _整体_ 名称进行分组，名称字段应保持 `not_analyzed` 的形式，
+具体说明参考 <<aggregations-and-analysis>>：
+
 
 [source,json]
 --------------------------------
@@ -29,11 +28,11 @@ PUT /my_index/_mapping/blogpost
   }
 }
 --------------------------------
-<1> The `user.name` field will be used for full-text search.
-<2> The `user.name.raw` field will be used for grouping with the `terms`
-    aggregation.
+<1> `user.name` 字段将用来进行全文检索。
+<2> `user.name.raw` 字段将用来通过 `terms` 聚合进行分组。
 
-Then add some data:
+
+然后添加一些数据:
 
 [source,json]
 --------------------------------
@@ -72,13 +71,12 @@ PUT /my_index/blogpost/4
 }
 --------------------------------
 
-Now we can run a query looking for blog posts about `relationships`, by users
-called `John`, and group the results by user, thanks to the
-{ref}/search-aggregations-metrics-top-hits-aggregation.html[`top_hits` aggregation]:
+现在我们来查询标题包含 `relationships` 并且作者名包含 `John` 的博客，查询结果再按作者名分组，感谢 {ref}/search-aggregations-metrics-top-hits-aggregation.html[`top_hits` aggregation]
+提供了按照用户进行分组的功能：
 
 [source,json]
 --------------------------------
-GET /my_index/blogpost/_search 
+GET /my_index/blogpost/_search
 {
   "size" : 0, <1>
   "query": { <2>
@@ -103,17 +101,13 @@ GET /my_index/blogpost/_search
   }
 }
 --------------------------------
-<1> The blog posts that we are interested in are returned under the
-    `blogposts` aggregation, so we can disable the usual search `hits` by
-    setting the `size` to 0.
-<2> The `query` returns blog posts about `relationships` by users named `John`.
-<3> The `terms` aggregation creates a bucket for each `user.name.raw` value.
-<4> The `top_score` aggregation orders the terms in the `users` aggregation
-    by the top-scoring document in each bucket.
-<5> The `top_hits` aggregation returns just the `title` field of the five most
-    relevant blog posts for each user.
+<1> 我们感兴趣的博客文章是通过 `blogposts` 聚合返回的，所以我们可以通过将 `size` 设置成 0 来禁止 `hits` 常规搜索。
+<2> `query` 返回通过 `relationships` 查找名称为 `John` 的用户的博客文章。
+<3> `terms` 聚合为每一个 `user.name.raw` 创建一个桶。
+<4> `top_score` 聚合对通过 `users` 聚合得到的每一个桶按照文档评分对词项进行排序。
+<5> `top_hits` 聚合仅为每个用户返回五个最相关的博客文章的 `title` 字段。
 
-The abbreviated response is shown here:
+这里显示简短响应结果：
 
 [source,json]
 --------------------------------
@@ -152,19 +146,11 @@ The abbreviated response is shown here:
         },
 ...
 --------------------------------
-<1> The `hits` array is empty because we set `size` to 0.
-<2> There is a bucket for each user who appeared in the top results.
-<3> Under each user bucket there is a `blogposts.hits` array containing
-    the top results for that user.
-<4> The user buckets are sorted by the user's most relevant blog post.
+<1> 因为我们设置 `size` 为 0 ，所以 `hits` 数组是空的。
+<2> 在顶层查询结果中出现的每一个用户都会有一个对应的桶。
+<3> 在每个用户桶下面都会有一个 `blogposts.hits` 数组包含针对这个用户的顶层查询结果。
+<4> 用户桶按照每个用户最相关的博客文章进行排序。
 
-Using the `top_hits` aggregation is the((("top_hits aggregation"))) equivalent of running a query to
-return the names of the users with the most relevant blog posts, and then running
-the same query for each user, to get their best blog posts. But it is much more
-efficient.
+使用 `top_hits` 聚合((("top_hits aggregation")))等效执行一个查询返回这些用户的名字和他们最相关的博客文章，然后为每一个用户执行相同的查询，以获得最好的博客。但前者的效率要好很多。
 
-The top hits returned in each bucket are the result of running a light
-_mini-query_ based on the original main query.  The mini-query supports the
-usual features that you would expect from search such as highlighting and
-pagination.
-
+每一个桶返回的顶层查询命中结果是基于最初主查询进行的一个轻量 _迷你查询_ 结果集。这个迷你查询提供了一些你期望的常用特性，例如高亮显示以及分页功能。
