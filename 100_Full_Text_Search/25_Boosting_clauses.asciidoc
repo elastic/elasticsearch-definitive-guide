@@ -1,18 +1,11 @@
-=== Boosting Query Clauses
+[[_boosting_query_clauses]]
+=== 查询语句提升权重
 
-Of course, the `bool` query isn't restricted ((("full text search", "boosting query clauses")))to combining simple one-word
-`match` queries. It can combine any other query, including other `bool`
-queries.((("relevance scores", "controlling weight of query clauses")))  It is commonly used to fine-tune the relevance `_score` for each
-document by combining the scores from several distinct queries.
+当然 `bool` 查询不仅限于组合简单的单个词 `match` 查询，((("full text search", "boosting query clauses")))它可以组合任意其他的查询，以及其他 `bool` 查询。((("relevance scores", "controlling weight of query clauses")))普遍的用法是通过汇总多个独立查询的分数，从而达到为每个文档微调其相关度评分 `_score` 的目的。
 
-Imagine that we want to search for documents((("bool query", "boosting weight of query clauses")))((("weight", "controlling for query clauses"))) about "full-text search,"  but we
-want to give more _weight_ to documents that also mention "Elasticsearch" or
-"Lucene." By _more weight_, we mean that documents mentioning
-"Elasticsearch" or "Lucene" will receive a higher relevance `_score` than
-those that don't, which means that they will appear higher in the list of
-results.
+假设想要查询关于 “full-text search（全文搜索）” 的文档，((("bool query", "boosting weight of query clauses")))((("weight", "controlling for query clauses")))但我们希望为提及 “Elasticsearch” 或 “Lucene” 的文档给予更高的 _权重_ ，这里 _更高权重_ 是指如果文档中出现 “Elasticsearch” 或 “Lucene” ，它们会比没有的出现这些词的文档获得更高的相关度评分 `_score` ，也就是说，它们会出现在结果集的更上面。
 
-A simple `bool` _query_ allows us to write this fairly complex logic as follows:
+一个简单的 `bool` _查询_ 允许我们写出如下这种非常复杂的逻辑：
 
 [source,js]
 --------------------------------------------------
@@ -38,20 +31,14 @@ GET /_search
 --------------------------------------------------
 // SENSE: 100_Full_Text_Search/25_Boost.json
 
-<1> The `content` field must contain all of the words `full`, `text`, and `search`.
-<2> If the `content` field also contains `Elasticsearch` or `Lucene`,
-    the document will receive a higher `_score`.
+<1> `content` 字段必须包含 `full` 、 `text` 和 `search` 所有三个词。
+<2> 如果 `content` 字段也包含 `Elasticsearch` 或 `Lucene` ，文档会获得更高的评分 `_score` 。
 
-The more `should` clauses that match, the more relevant the document.  So far,
-so good.
+`should` 语句匹配得越多表示文档的相关度越高。目前为止还挺好。
 
-But what if we want to give more weight to the docs that contain `Lucene` and
-even more weight to the docs containing `Elasticsearch`?
+但是如果我们想让包含 `Lucene` 的有更高的权重，并且包含 `Elasticsearch` 的语句比 `Lucene` 的权重更高，该如何处理?
 
-We can control ((("boost parameter")))the relative weight of any query clause by specifying a `boost`
-value, which defaults to `1`. A `boost` value greater than `1` increases the
-relative weight of that clause.  So we could  rewrite the preceding query as
-follows:
+我们可以通过指定 `boost` ((("boost parameter")))来控制任何查询语句的相对的权重， `boost` 的默认值为 `1` ，大于 `1` 会提升一个语句的相对权重。所以下面重写之前的查询：
 
 [source,js]
 --------------------------------------------------
@@ -87,30 +74,18 @@ GET /_search
 --------------------------------------------------
 // SENSE: 100_Full_Text_Search/25_Boost.json
 
-<1> These clauses use the default `boost` of `1`.
-<2> This clause is the most important, as it has the highest `boost`.
-<3> This clause is more important than the default, but not as important
-    as the `Elasticsearch` clause.
+<1> 这些语句使用默认的 `boost` 值 `1` 。
+<2> 这条语句更为重要，因为它有最高的 `boost` 值。
+<3> 这条语句比使用默认值的更重要，但它的重要性不及 `Elasticsearch` 语句。
 
 [NOTE]
 [[boost-normalization]]
 ====
-The `boost` parameter is used to increase((("boost parameter", "score normalied after boost applied"))) the relative weight of a clause
-(with a `boost` greater than `1`) or decrease the relative weight (with a
-`boost` between `0` and `1`), but the increase or decrease is not linear. In
-other words, a `boost` of `2` does not result in double the `_score`.
+`boost` ((("boost parameter", "score normalied after boost applied")))参数被用来提升一个语句的相对权重（ `boost` 值大于 `1` ）或降低相对权重（ `boost` 值处于 `0` 到 `1` 之间），但是这种提升或降低并不是线性的，换句话说，如果一个 `boost` 值为 `2` ，并不能获得两倍的评分 `_score` 。
 
-Instead, the new `_score` is _normalized_ after((("normalization", "score normalied after boost applied"))) the boost is applied. Each
-type of query has its own normalization algorithm, and the details are beyond
-the scope of this book. Suffice to say that a higher `boost` value results in
-a higher `_score`.
+相反，新的评分 `_score` 会在应用权重提升之后被 _归一化_ ，每种类型的查询都有自己的归一算法，细节超出了本书的范围，所以不作介绍。简单的说，更高的 `boost` 值为我们带来更高的评分 `_score` 。
 
-If you are implementing your own scoring model not based on TF/IDF and you
-need more control over the boosting process, you can use the
-<<function-score-query,`function_score` query>> to((("function_score query"))) manipulate a document's
-boost without the normalization step.
+如果不基于 TF/IDF 要实现自己的评分模型，我们就需要对权重提升的过程能有更多控制，可以使用 <<function-score-query,`function_score` 查询>>操纵一个文档的权重提升方式而跳过归一化这一步骤。
 ====
 
-We present other ways of combining queries in the next chapter,
-<<multi-field-search>>. But first, let's take a look at the other important
-feature of queries: text analysis.
+更多的组合查询方式会在下章<<multi-field-search, 多字段搜索>>中介绍，但在此之前，让我们先看另外一个重要的查询特性：文本分析（text analysis）。
