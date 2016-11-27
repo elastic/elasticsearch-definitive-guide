@@ -1,25 +1,13 @@
 [[random-scoring]]
-=== Random Scoring
+=== 随机评分
 
-You may have been wondering what _consistently random scoring_ is, or why
-you would ever want to use it.((("consistently random scoring")))((("relevance", "controlling", "random scoring")))  The previous example provides a good use case.
-All results from the previous example would receive a final `_score` of 1, 2,
-3, 4, or 5. Maybe there are only a few homes that score 5, but presumably
-there would be a lot of homes scoring 2 or 3.
+你可能会想知道 _一致随机评分（consistently random scoring）_ 是什么，又为什么会使用它。((("consistently random scoring")))((("relevance", "controlling", "random scoring")))之前的例子是个很好的应用场景，前例中所有的结果都会返回 1 、 2 、 3 、 4 或 5 这样的最终评分 `_score` ，可能只有少数房子的评分是 5 分，而有大量房子的评分是 2 或 3 。
 
-As the owner of the website, you want to give your advertisers as much
-exposure as possible.  With the current query, results with the same `_score`
-would be returned in the same order every time.  It would be good to introduce
-some randomness here, to ensure that all documents in a single score level
-get a similar amount of exposure.
+作为网站的所有者，总会希望让广告有更高的展现率。在当前查询下，有相同评分 `_score` 的文档会每次都以相同次序出现，为了提高展现率，在此引入一些随机性可能会是个好主意，这能保证有相同评分的文档都能有均等相似的展现机率。
 
-We want every user to see a different random order, but we want the same user
-to see the same order when clicking on page 2, 3, and so forth.  This is what is
-meant by _consistently random_.
+我们想让每个用户看到不同的随机次序，但也同时希望如果是同一用户翻页浏览时，结果的相对次序能始终保持一致。这种行为被称为 _一致随机（consistently random）_ 。
 
-The `random_score` function, which((("function_score query", "random_score function")))((("random_score function"))) outputs a number between 0 and 1, will
-produce consistently random results when it is provided with the same `seed`
-value, such as a user's session ID:
+`random_score` 函数会输出一个 0 到 1 之间的数，((("function_score query", "random_score function")))((("random_score function")))当种子 `seed` 值相同时，生成的随机结果是一致的，例如，将用户的会话 ID 作为 seed ：
 
 [source,json]
 --------------------------------
@@ -54,13 +42,7 @@ GET /_search
   }
 }
 --------------------------------
-<1> The `random_score` clause doesn't have any `filter`, so it will
-    be applied to all documents.
-<2> Pass the user's session ID as the `seed`, to make randomization
-    consistent for that user. The same `seed` will result in the
-    same randomization.
+<1> `random_score` 语句没有任何过滤器 `filter` ，所以会被应用到所有文档。
+<2> 将用户的会话 ID 作为种子 `seed` ，让该用户的随机始终保持一致，相同的种子 `seed` 会产生相同的随机结果。
 
-Of course, if you index new documents that match the query, the order of
-results will change regardless of whether you use consistent randomization or
-not.
-
+当然，如果增加了与查询匹配的新文档，无论是否使用一致随机，其结果顺序都会发生变化。
