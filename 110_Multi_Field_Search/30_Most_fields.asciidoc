@@ -1,61 +1,31 @@
 [[most-fields]]
-=== Most Fields
+=== 多数字段
 
-Full-text search is a battle between _recall_&#x2014;returning all the
-documents that are ((("most fields queries")))((("multifield search", "most fields queries")))relevant--and _precision_&#x2014;not returning irrelevant
-documents.  The goal is to present the user with the most relevant documents
-on the first page of results.
+全文搜索被称作是 _召回率（Recall）_ 与 _精确率（Precision）_ 的战场： _召回率_ ——返回结果中的所有文档都是相关的；((("most fields queries")))((("multifield search", "most fields queries"))) _精确率_ ——返回结果中没有不相关的文档。目的是在结果的第一页中为用户呈现最为相关的文档。
 
-To improve recall, we cast((("recall", "improving in full text searches"))) the net wide--we include not only
-documents that match the user's search terms exactly, but also
-documents that we believe to be pertinent to the query.  If a user searches
-for ``quick brown fox,'' a document that contains `fast foxes` may well be
-a reasonable result to return.
+为了提高召回率的效果，我们扩大搜索范围((("recall", "improving in full text searches")))——不仅返回与用户搜索词精确匹配的文档，还会返回我们认为与查询相关的所有文档。如果一个用户搜索 “quick brown box” ，一个包含词语 `fast foxes` 的文档被认为是非常合理的返回结果。
 
-If the only pertinent document that we have is the one containing `fast
-foxes`, it will appear at the top of the results list.  But of course, if
-we have 100 documents that contain the words `quick brown fox`, then the
-`fast foxes` document may be considered less relevant, and we would want to
-push it further down the list.  After including many potential matches, we
-need to ensure that the best ones rise to the top.
+如果包含词语 `fast foxes` 的文档是能找到的唯一相关文档，那么它会出现在结果列表的最上面，但是，如果有 100 个文档都出现了词语 `quick brown fox` ，那么这个包含词语 `fast foxes` 的文档当然会被认为是次相关的，它可能处于返回结果列表更下面的某个地方。当包含了很多潜在匹配之后，我们需要将最匹配的几个置于结果列表的顶部。
 
-A common technique for fine-tuning full-text relevance((("relevance", "fine-tuning full text relevance"))) is to index the same
-text in multiple ways, each of which provides a different relevance _signal_. The main field would contain terms in their broadest-matching form to match as
-many documents as possible.  For instance, we could do the following:
+提高全文相关性精度的常用方式是为同一文本建立多种方式的索引，((("relevance", "fine-tuning full text relevance")))每种方式都提供了一个不同的相关度信号 _signal_ 。主字段会包括最广匹配（broadest-matching）形式的词去尽可能的匹配更多的文档。举个例子，我们可以进行以下操作：
 
-*   Use a stemmer to index `jumps`, `jumping`, and `jumped` as their root
-    form: `jump`.  Then it doesn't matter if the user searches for
-    `jumped`; we could still match documents containing `jumping`.
+*   使用词干提取来索引 `jumps` 、 `jumping` 和 `jumped` 样的词，将 `jump` 作为它们的词根形式。这样即使用户搜索 `jumped` ，也还是能找到包含 `jumping` 的匹配的文档。
 
-*   Include synonyms like `jump`, `leap`, and `hop`.
+*   将同义词包括其中，如 `jump` 、 `leap` 和 `hop` 。
 
-*   Remove diacritics, or accents: for example, `ésta`, `está`, and `esta` would
-    all be indexed without accents as `esta`.
+*   移除变音或口音词：如 `ésta` 、 `está` 和 `esta` 都会以无变音形式 `esta` 来索引。
 
-However, if we have two documents, one of which contains `jumped` and the
-other `jumping`, the user would probably expect the first document to rank
-higher, as it contains exactly what was typed in.
+尽管如此，如果我们有两个文档，其中一个包含词 `jumped` ，另一个包含词 `jumping` ，用户很可能期望前者能排的更高，因为它正好与输入的搜索条件一致。
 
-We can achieve this by indexing the same text in other fields to provide more-precise matching.  One field may contain the unstemmed version, another the
-original word with diacritics, and a third might use _shingles_ to provide
-information about <<proximity-matching,word proximity>>. These other fields
-act as _signals_ that increase the relevance score of each matching document.
-The more fields that match, the better.
+为了达到目的，我们可以将相同的文本索引到其他字段从而提供更为精确的匹配。一个字段可能是为词干未提取过的版本，另一个字段可能是变音过的原始词，第三个可能使用 _shingles_ 提供 <<proximity-matching,词语相似性>> 信息。这些其他的字段作为提高每个文档的相关度评分的信号 _signals_ ，能匹配字段的越多越好。
 
-A document is included in the results list if it matches the broad-matching
-main field. If it also matches the _signal_ fields, it gets extra
-points and is pushed up the results list.
+一个文档如果与广度匹配的主字段相匹配，那么它会出现在结果列表中。如果文档同时又与 _signal_ 信号字段匹配，那么它会获得额外加分，系统会提升它在结果列表中的位置。
 
-We discuss synonyms, word proximity, partial-matching and other potential
-signals later in the book, but we will use the simple example of stemmed and
-unstemmed fields to illustrate this technique.
+我们会在本书稍后对同义词、词相似性、部分匹配以及其他潜在的信号进行讨论，但这里只使用词干已提取（stemmed）和未提取（unstemmed）的字段作为简单例子来说明这种技术。
 
-==== Multifield Mapping
+==== 多字段映射
 
-The first thing to do is to set up our ((("most fields queries", "multifield mapping")))((("mapping (types)", "multifield mapping")))field to be indexed twice: once in a
-stemmed form and once in an unstemmed form.  To do this, we will use 
-_multifields_, which we introduced in <<multi-fields>>:
-
+首先要做的事情就是对我们的字段索引两次：((("most fields queries", "multifield mapping")))((("mapping (types)", "multifield mapping")))一次使用词干模式以及一次非词干模式。为了做到这点，采用 _multifields_ 来实现，已经在 <<multi-fields,multifields>> 有所介绍：
 
 [source,js]
 --------------------------------------------------
@@ -84,11 +54,11 @@ PUT /my_index
 --------------------------------------------------
 // SENSE: 110_Multi_Field_Search/30_Most_fields.json
 
-<1> See <<relevance-is-broken>>.
-<2> The `title` field is stemmed by the `english` analyzer.
-<3> The `title.std` field uses the `standard` analyzer and so is not stemmed.
+<1> 参考 <<relevance-is-broken,被破坏的相关度>>.
+<2> `title` 字段使用 `english` 英语分析器来提取词干。
+<3> `title.std` 字段使用 `standard` 标准分析器，所以没有词干提取。
 
-Next we index some documents:
+接着索引一些文档：
 
 [source,js]
 --------------------------------------------------
@@ -100,7 +70,7 @@ PUT /my_index/my_type/2
 --------------------------------------------------
 // SENSE: 110_Multi_Field_Search/30_Most_fields.json
 
-Here is a simple `match` query on the `title` field for `jumping rabbits`:
+这里用一个简单 `match` 查询 `title` 标题字段是否包含 `jumping rabbits` （跳跃的兔子）：
 
 [source,js]
 --------------------------------------------------
@@ -115,9 +85,7 @@ GET /my_index/_search
 --------------------------------------------------
 // SENSE: 110_Multi_Field_Search/30_Most_fields.json
 
-This becomes a query for the two stemmed terms `jump` and `rabbit`, thanks to the
-`english` analyzer. The `title` field of both documents contains both of those
-terms, so both documents receive the same score:
+因为有了 `english` 分析器，这个查询是在查找以 `jump` 和 `rabbit` 这两个被提取词的文档。两个文档的 `title` 字段都同时包括这两个词，所以两个文档得到的评分也相同：
 
 [source,js]
 --------------------------------------------------
@@ -141,10 +109,7 @@ terms, so both documents receive the same score:
 }
 --------------------------------------------------
 
-If we were to query just the `title.std` field, then only document 2 would
-match.  However, if we were to query both fields and to _combine_ their scores
-by using the `bool` query, then both documents would match (thanks to the `title`
-field) and document 2 would score higher (thanks to the `title.std` field):
+如果只是查询 `title.std` 字段，那么只有文档 2 是匹配的。尽管如此，如果同时查询两个字段，然后使用 `bool` 查询将评分结果 _合并_ ，那么两个文档都是匹配的（ `title` 字段的作用），而且文档 2 的相关度评分更高（ `title.std` 字段的作用）：
 
 [source,js]
 --------------------------------------------------
@@ -161,9 +126,7 @@ GET /my_index/_search
 --------------------------------------------------
 // SENSE: 110_Multi_Field_Search/30_Most_fields.json
 
-<1>  We want to combine the scores from all matching fields, so we use the
-     `most_fields` type.  This causes the `multi_match` query to wrap the two
-     field-clauses in a `bool` query instead of a `dis_max` query.
+<1>  我们希望将所有匹配字段的评分合并起来，所以使用 `most_fields` 类型。这让 `multi_match` 查询用 `bool` 查询将两个字段语句包在里面，而不是使用 `dis_max` 查询。
 
 [source,js]
 --------------------------------------------------
@@ -186,16 +149,11 @@ GET /my_index/_search
   ]
 }
 --------------------------------------------------
-<1> Document 2 now scores much higher than document 1.
+<1> 文档 2 现在的评分要比文档 1 高。
 
-We are using the broad-matching `title` field to include as many documents as
-possible--to increase recall--but we use the `title.std` field as a
-_signal_ to push the most relevant results to the top.
+用广度匹配字段 `title` 包括尽可能多的文档——以提升召回率——同时又使用字段 `title.std` 作为 _信号_ 将相关度更高的文档置于结果顶部。
 
-The contribution of each field to the final score can be controlled by
-specifying custom `boost` values. For instance, we could boost the `title`
-field to make it the most important field, thus reducing the effect of any
-other signal fields:
+每个字段对于最终评分的贡献可以通过自定义值 `boost` 来控制。比如，使 `title` 字段更为重要，这样同时也降低了其他信号字段的作用：
 
 [source,js]
 --------------------------------------------------
@@ -212,6 +170,4 @@ GET /my_index/_search
 --------------------------------------------------
 // SENSE: 110_Multi_Field_Search/30_Most_fields.json
 
-<1> The `boost` value of `10` on the `title` field makes that field relatively
-    much more important than the `title.std` field.
-
+<1> `title` 字段的 `boost` 的值为 `10` 使它比 `title.std` 更重要。
