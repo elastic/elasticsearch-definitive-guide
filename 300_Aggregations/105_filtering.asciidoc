@@ -1,21 +1,13 @@
+[[_fielddata_filtering]]
+=== Fielddata 的过滤
 
-=== Fielddata Filtering
+设想我们正在运行一个网站允许用户收听他们喜欢的歌曲。((("fielddata", "filtering")))((("aggregations", "fielddata", "filtering")))
+为了让他们可以更容易的管理自己的音乐库，用户可以为歌曲设置任何他们喜欢的标签，这样我们就会有很多歌曲被附上 `rock（摇滚）` 、 `hiphop（嘻哈）` 和 `electronica（电音）` ，但也会有些歌曲被附上 `my_16th_birthday_favorite_anthem` 这样的标签。
 
-Imagine that you are running a website that allows users to listen to their
-favorite songs.((("fielddata", "filtering")))((("aggregations", "fielddata", "filtering")))  To make it easier for them to manage their music library,
-users can tag songs with whatever tags make sense to them.  You will end up
-with a lot of tracks tagged with `rock`, `hiphop`, and `electronica`, but
-also with some tracks tagged with `my_16th_birthday_favorite_anthem`.
+现在设想我们想要为用户展示每首歌曲最受欢迎的三个标签，很有可能 `rock` 这样的标签会排在三个中的最前面，而 `my_16th_birthday_favorite_anthem` 则不太可能得到评级。
+尽管如此，为了计算最受欢迎的标签，我们必须强制将这些一次性使用的项加载到内存中。
 
-Now imagine that you want to show users the most popular three tags for each
-song.  It is highly likely that tags like `rock` will show up in the top
-three, but `my_16th_birthday_favorite_anthem` is very unlikely to make the
-grade.  However, in order to calculate the most popular tags, you have been
-forced to load all of these one-off terms into memory.
-
-Thanks to fielddata filtering, we can take control of this situation.  We
-_know_ that we're interested in only the most popular terms, so we can simply
-avoid loading any terms that fall into the less interesting long tail:
+感谢 fielddata 过滤，我们可以控制这种状况。我们 _知道_ 自己只对最流行的项感兴趣，所以我们可以简单地避免加载那些不太有意思的长尾项：
 
 [source,js]
 ----
@@ -36,47 +28,25 @@ PUT /music/_mapping/song
   }
 }
 ----
-<1> The `fielddata` key allows us to configure how fielddata is handled for this field.
-<2> The `frequency` filter allows us to filter fielddata loading based on term frequencies.((("term frequency", "fielddata filtering based on")))
-<3> Load only terms that occur in at least 1% of documents in this segment.
-<4> Ignore any segments that have fewer than 500 documents.
+<1> `fielddata` 关键字允许我们配置 fielddata 处理该字段的方式。
+<2> `frequency` 过滤器允许我们基于项频率过滤加载 fielddata。((("term frequency", "fielddata filtering based on")))
+<3> 只加载那些至少在本段文档中出现 1% 的项。
+<4> 忽略任何文档个数小于 500 的段。
 
-With this mapping in place, only terms that appear in at least 1% of the
-documents _in that segment_ will be loaded into memory. You can also specify a
-`max` term frequency, which could be used to exclude terms that are _too_
-common, such as <<stopwords,stopwords>>.
+有了这个映射，只有那些至少在 _本段_ 文档中出现超过 1% 的项才会被加载到内存中。我们也可以指定一个 `最大` 词频，它可以被用来排除 _常用_ 项，比如 <<stopwords,停用词>> 。
 
-Term frequencies, in this case, are calculated per segment.  This is a
-limitation of the implementation: fielddata is loaded per segment, and at
-that point the only term frequencies that are visible are the frequencies for
-that segment.  However, this limitation has interesting properties: it
-allows newly popular terms to rise to the top quickly.
+这种情况下，词频是按照段来计算的。这是实现的一个限制：fielddata 是按段来加载的，所以可见的词频只是该段内的频率。但是，这个限制也有些有趣的特性：它可以让受欢迎的新项迅速提升到顶部。
 
-Let's say that a new genre of song becomes popular one day.  You would like to
-include the tag for this new genre in the most popular list, but if you were
-relying on term frequencies calculated across the whole index, you would have
-to wait for the new tag to become as popular as `rock` and `electronica`.
-Because of the way frequency filtering is implemented, the newly added tag
-will quickly show up as a high-frequency tag within new segments, so will
-quickly float to the top.
+比如一个新风格的歌曲在一夜之间受大众欢迎，我们可能想要将这种新风格的歌曲标签包括在最受欢迎列表中，但如果我们倚赖对索引做完整的计算获取词频，我们就必须等到新标签变得像 `rock` 和 `electronica` ）一样流行。
+由于频度过滤的实现方式，新加的标签会很快作为高频标签出现在新段内，也当然会迅速上升到顶部。
 
-The `min_segment_size` parameter tells Elasticsearch to ignore segments below
-a certain size.((("min_segment_size parameter")))  If a segment holds only a few documents, the term frequencies
-are too coarse to have any meaning.  Small segments will soon be merged into
-bigger segments, which will then be big enough to take into account.
+`min_segment_size` 参数要求 Elasticsearch 忽略某个大小以下的段。((("min_segment_size parameter"))) 如果一个段内只有少量文档，它的词频会非常粗略没有任何意义。
+小的分段会很快被合并到更大的分段中，某一刻超过这个限制，将会被纳入计算。
 
 [TIP]
 ====
-Filtering terms by frequency is not the only option. You can also decide to
-load only those terms that match a regular expression.  For instance, you
-could use a `regex` filter ((("regex filtering")))on tweets to load only hashtags into memory --
-terms the start with a `#`.  This assumes that you are using an analyzer that
-preserves punctuation, like the `whitespace` analyzer.
+通过频次来过滤项并不是唯一的选择，我们也可以使用正则式来决定只加载那些匹配的项。例如，我们可以用 `regex` 过滤器 ((("regex filtering"))) 处理 twitte 上的消息只将以 `#` 号开始的标签加载到内存中。
+这假设我们使用的分析器会保留标点符号，像 `whitespace` 分析器。
 ====
 
-Fielddata filtering can have a _massive_ impact on memory usage.  The
-trade-off is fairly obvious: you are essentially ignoring data.  But for many
-applications, the trade-off is reasonable since the data is not being used
-anyway.  The memory savings is often more important than including a large and
-relatively useless long tail of terms.
-
+Fielddata 过滤对内存使用有 _巨大的_ 影响，权衡也是显而易见的：我们实际上是在忽略数据。但对于很多应用，这种权衡是合理的，因为这些数据根本就没有被使用到。内存的节省通常要比包括一个大量而无用的长尾项更为重要。
