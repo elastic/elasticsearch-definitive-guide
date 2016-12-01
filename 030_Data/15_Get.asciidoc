@@ -1,8 +1,7 @@
 [[get-doc]]
-=== Retrieving a Document
+=== 取回一个文档
 
-To get the document ((("documents", "retrieving")))out of Elasticsearch, we use the same `_index`,
-`_type`, and `_id`, but the HTTP verb ((("HTTP methods", "GET")))changes to `GET`:
+为了从 Elasticsearch 中检索出文档((("documents", "retrieving")))，我们仍然使用相同的 `_index` , `_type` , 和  `_id` ，但是 HTTP 谓词((("HTTP methods", "GET")))更改为 `GET` :
 
 [source,sh]
 --------------------------------------------------
@@ -11,9 +10,7 @@ GET /website/blog/123?pretty
 
 // SENSE: 030_Data/15_Get_document.json
 
-The response includes the by-now-familiar metadata elements, plus ((("_source field", sortas="source field")))the `_source`
-field, which contains the original JSON document that we sent to Elasticsearch
-when we indexed it:
+响应体包括目前已经熟悉了的元数据元素，再加上 ((("_source field", sortas="source field"))) `_source` 字段，这个字段包含我们索引数据时发送给 Elasticsearch 的原始 JSON 文档：
 
 [source,js]
 --------------------------------------------------
@@ -31,21 +28,15 @@ when we indexed it:
 }
 --------------------------------------------------
 
-[NOTE]
+[注意事项]
 ====
-Adding `pretty` to the query-string parameters for any request,((("query strings", "adding pretty"))) as in the
-preceding example, causes Elasticsearch to _pretty-print_ the((("pretty-printing JSON response"))) JSON response to
-make it more readable. The `_source` field, however, isn't pretty-printed.
-Instead we get back exactly the same JSON string that we passed in.
+在请求的查询串参数中加上 `pretty` 参数，((("query strings", "adding pretty")))正如前面的例子中看到的，这将会调用 Elasticsearch 的 _pretty-print_ 功能，该功能((("pretty-printing JSON response"))) 使得 JSON 响应体更加可读。但是， `_source` 字段不能被格式化打印出来。相反，我们得到的 `_source` 字段中的 JSON 串，刚好是和我们传给它的一样。
 ====
 
-The response to the +GET+ request includes `{"found": true}`. This confirms that
-the document was found.  ((("documents", "requesting non-existent document")))If we were to request a document that doesn't exist,
-we would still get a JSON response, but `found` would be set to `false`.
++GET+ 请求的响应体包括 `{"found": true}` ，这证实了文档已经被找到。 ((("documents", "requesting non-existent document")))如果我们请求一个不存在的文档，我们仍旧会得到一个 JSON 响应体，但是  `found` 将会是 `false` 。
+此外， HTTP 响应码将会是 `404 Not Found` ，而不是 `200 OK` 。
 
-Also, the HTTP response code would be `404 Not Found` instead of `200 OK`.
-We can see this by passing the `-i` argument to `curl`, which((("curl command", "-i argument"))) causes it to
-display the response headers:
+我们可以通过传递 `-i` 参数给 `curl` 命令，该参数((("curl command", "-i argument")))能够显示响应的头部：
 
 [source,sh]
 --------------------------------------------------
@@ -53,7 +44,7 @@ curl -i -XGET http://localhost:9200/website/blog/124?pretty
 --------------------------------------------------
 
 
-The response now looks like this:
+显示响应头部的响应体现在类似这样：
 
 [source,js]
 --------------------------------------------------
@@ -69,12 +60,9 @@ Content-Length: 83
 }
 --------------------------------------------------
 
-==== Retrieving Part of a Document
+==== 返回文档的一部分
 
-By default, a `GET` request((("documents", "retrieving part of"))) will return the whole document, as stored in the
-`_source` field. But perhaps all you are interested in is the `title` field.
-Individual fields can be ((("fields", "returning individual document fields")))((("_source field", sortas="source field")))requested by using the `_source` parameter. Multiple
-fields can be specified in a comma-separated list:
+默认情况下， `GET` 请求((("documents", "retrieving part of")))会返回整个文档，这个文档正如存储在 `_source` 字段中的一样。但是也许你只对其中的 `title` 字段感兴趣。单个字段能用((("fields", "returning individual document fields")))((("_source field", sortas="source field"))) `_source` 参数请求得到，多个字段也能使用逗号分隔的列表来指定。
 
 [source,sh]
 --------------------------------------------------
@@ -83,8 +71,7 @@ GET /website/blog/123?_source=title,text
 // SENSE: 030_Data/15_Get_document.json
 
 
-The  `_source` field now contains just the fields that we requested and has
-filtered out the `date` field:
+该 `_source` 字段现在包含的只是我们请求的那些字段，并且已经将 `date` 字段过滤掉了。
 
 [source,js]
 --------------------------------------------------
@@ -101,8 +88,7 @@ filtered out the `date` field:
 }
 --------------------------------------------------
 
-Or if you want _just_ the `_source` field without any metadata, you can use
-the `_source` endpoint:
+或者，如果你只想得到 `_source` 字段，不需要任何元数据，你能使用 `_source` 端点：
 
 [source,sh]
 --------------------------------------------------
@@ -110,7 +96,7 @@ GET /website/blog/123/_source
 --------------------------------------------------
 // SENSE: 030_Data/15_Get_document.json
 
-which returns just the following:
+那么返回的的内容如下所示：
 
 [source,js]
 --------------------------------------------------
