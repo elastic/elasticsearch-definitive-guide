@@ -1,69 +1,42 @@
 [[scoring-theory]]
-=== Theory Behind Relevance Scoring
+=== 相关度评分背后的理论
 
-Lucene (and thus Elasticsearch) uses the
-http://en.wikipedia.org/wiki/Standard_Boolean_model[_Boolean model_]
-to find matching documents,((("relevance scores", "theory behind", id="ix_relscore", range="startofrange")))((("Boolean Model"))) and a formula called the
-<<practical-scoring-function,_practical scoring function_>>
-to calculate relevance.  This formula borrows concepts from
-http://en.wikipedia.org/wiki/Tfidf[_term frequency/inverse document frequency_] and the
-http://en.wikipedia.org/wiki/Vector_space_model[_vector space model_]
-but adds more-modern features like a coordination factor, field length
-normalization, and term or query clause boosting.
+Lucene（或 Elasticsearch）使用 http://en.wikipedia.org/wiki/Standard_Boolean_model[_布尔模型（Boolean model）_] 查找匹配文档，((("relevance scores", "theory behind", id="ix_relscore", range="startofrange")))((("Boolean Model")))并用一个名为 <<practical-scoring-function,_实用评分函数（practical scoring function）_>> 的公式来计算相关度。这个公式借鉴了 http://en.wikipedia.org/wiki/Tfidf[_词频/逆向文档频率（term frequency/inverse document frequency）_] 和 http://en.wikipedia.org/wiki/Vector_space_model[_向量空间模型（vector space model）_]，同时也加入了一些现代的新特性，如协调因子（coordination factor），字段长度归一化（field length normalization），以及词或查询语句权重提升。
 
 [NOTE]
 ====
-Don't be alarmed!  These concepts are not as complicated as the names make
-them appear. While this section mentions algorithms, formulae, and mathematical
-models, it is intended for consumption by mere humans.  Understanding the
-algorithms themselves is not as important as understanding the factors that
-influence the outcome.
+不要紧张！这些概念并没有像它们字面看起来那么复杂，尽管本小节提到了算法、公式和数学模型，但内容还是让人容易理解的，与理解算法本身相比，了解这些因素如何影响结果更为重要。
 ====
 
 [[boolean-model]]
-==== Boolean Model
+==== 布尔模型
 
-The _Boolean model_ simply applies the `AND`, `OR`, and `NOT` conditions
-expressed in the query to find all the documents that match.((("and operator")))((("not operator")))((("or operator"))) A query for
+_布尔模型（Boolean Model）_ 只是在查询中使用 `AND` 、 `OR` 和 `NOT` （与、或和非）这样的条件来查找匹配的文档，((("and operator")))((("not operator")))((("or operator")))以下查询：
 
     full AND text AND search AND (elasticsearch OR lucene)
 
-will include only documents that contain all of the terms `full`, `text`, and
-`search`, and either `elasticsearch` or `lucene`.
+会将所有包括词 `full` 、 `text` 和 `search` ，以及 `elasticsearch` 或 `lucene` 的文档作为结果集。
 
-This process is simple and fast.  It is used to exclude any documents that
-cannot possibly match the query.
+这个过程简单且快速，它将所有可能不匹配的文档排除在外。
 
 [[tfidf]]
-==== Term Frequency/Inverse Document Frequency (TF/IDF)
+==== 词频/逆向文档频率（TF/IDF）
 
-Once we have a list of matching documents, they need to be ranked by
-relevance.((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm"))) Not all documents will contain all the terms, and some terms are
-more important than others. The relevance score of the whole document
-depends (in part) on the _weight_ of each query term that appears in
-that document.
+当匹配到一组文档后，需要根据相关度排序这些文档，((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm")))不是所有的文档都包含所有词，有些词比其他的词更重要。一个文档的相关度评分部分取决于每个查询词在文档中的 _权重_ 。
 
-The weight of a term is determined by three factors, which we already
-introduced in <<relevance-intro>>. The formulae are included for interest's
-sake, but you are not required to remember them.
+词的权重由三个因素决定，在 <<relevance-intro,什么是相关>> 中已经有所介绍，有兴趣可以了解下面的公式，但并不要求记住。
 
 [[tf]]
-===== Term frequency
+===== 词频
 
-How often does the term appear in this document?((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm", "term frequency"))) The more often, the
-_higher_ the weight.  A field containing five mentions of the same term is
-more likely to be relevant than a field containing just one mention.
-The term frequency is calculated as follows:
+词在文档中出现的频度是多少？((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm", "term frequency")))频度越高，权重 _越高_ 。 5 次提到同一词的字段比只提到 1 次的更相关。词频的计算方式如下：
 
 ..........................
 tf(t in d) = √frequency <1>
 ..........................
-<1> The term frequency (`tf`) for term `t` in document `d` is the square root
-    of the number of times the term appears in the document.
+<1> 词 `t` 在文档 `d` 的词频（ `tf` ）是该词在文档中出现次数的平方根。
 
-If you don't care about how often a term appears in a field, and all you care
-about is that the term is present, then you can disable term frequencies in
-the field mapping:
+如果不在意词在某个字段中出现的频次，而只在意是否出现过，则可以在字段映射中禁用词频统计：
 
 [source,json]
 --------------------------
@@ -81,47 +54,29 @@ PUT /my_index
   }
 }
 --------------------------
-<1> Setting `index_options` to `docs` will disable term frequencies and term
-    positions. A field with this mapping will not count how many times a term
-    appears, and will not be usable for phrase or proximity queries.
-    Exact-value `not_analyzed` string fields use this setting by default.
+<1> 将参数 `index_options` 设置为 `docs` 可以禁用词频统计及词频位置，这个映射的字段不会计算词的出现次数，对于短语或近似查询也不可用。要求精确查询的 `not_analyzed` 字符串字段会默认使用该设置。
 
 [[idf]]
-===== Inverse document frequency
+===== 逆向文档频率
 
-How often does the term appear in all documents in the collection?  The more
-often, the _lower_ the weight.((("inverse document frequency")))((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm", "inverse document frequency"))) Common terms like `and` or `the` contribute
-little to relevance, as they appear in most documents, while uncommon terms
-like `elastic` or `hippopotamus` help us zoom in on the most interesting
-documents. The inverse document frequency is calculated as follows:
+词在集合所有文档里出现的频率是多少？频次越高，权重 _越低_ 。((("inverse document frequency")))((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm", "inverse document frequency")))常用词如 `and` 或 `the` 对相关度贡献很少，因为它们在多数文档中都会出现，一些不常见词如 `elastic` 或 `hippopotamus` 可以帮助我们快速缩小范围找到感兴趣的文档。逆向文档频率的计算公式如下：
 
 ..........................
 idf(t) = 1 + log ( numDocs / (docFreq + 1)) <1>
 ..........................
-<1> The inverse document frequency (`idf`) of term `t` is the
-    logarithm of the number of documents in the index, divided by
-    the number of documents that contain the term.
-
+<1> 词 `t` 的逆向文档频率（ `idf` ）是：索引中文档数量除以所有包含该词的文档数，然后求其对数。
 
 [[field-norm]]
-===== Field-length norm
+===== 字段长度归一值
 
-How long is the field?  ((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm", "field-length norm")))((("field-length norm")))The shorter the field, the _higher_ the weight. If a
-term appears in a short field, such as a `title` field, it is more likely that
-the content of that field is _about_ the term than if the same term appears
-in a much bigger `body` field. The field length norm is calculated as follows:
+字段的长度是多少？((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm", "field-length norm")))((("field-length norm")))字段越短，字段的权重 _越高_ 。如果词出现在类似标题 `title` 这样的字段，要比它出现在内容 `body` 这样的字段中的相关度更高。字段长度的归一值公式如下：
 
 ..........................
 norm(d) = 1 / √numTerms <1>
 ..........................
-<1> The field-length norm (`norm`) is the inverse square root of the number of terms
-    in the field.
+<1> 字段长度归一值（ `norm` ）是字段中词数平方根的倒数。
 
-While the field-length ((("string fields", "field-length norm")))norm is important for full-text search, many other
-fields don't need norms. Norms consume approximately 1 byte per `string` field
-per document in the index, whether or not a document contains the field.  Exact-value `not_analyzed` string fields have norms disabled by default,
-but you can use the field mapping to disable norms on `analyzed` fields as
-well:
+字段长度的归一值对全文搜索非常重要，((("string fields", "field-length norm")))许多其他字段不需要有归一值。无论文档是否包括这个字段，索引中每个文档的每个 `string` 字段都大约占用 1 个 byte 的空间。对于 `not_analyzed` 字符串字段的归一值默认是禁用的，而对于 `analyzed` 字段也可以通过修改字段映射禁用归一值：
 
 [source,json]
 --------------------------
@@ -139,31 +94,22 @@ PUT /my_index
   }
 }
 --------------------------
-<1> This field will not take the field-length norm into account.  A long field
-    and a short field will be scored as if they were the same length.
+<1> 这个字段不会将字段长度归一值考虑在内，长字段和短字段会以相同长度计算评分。
 
-For use cases such as logging, norms are not useful.  All you care about is
-whether a field contains a particular error code or a particular browser
-identifier. The length of the field does not affect the outcome.  Disabling
-norms can save a significant amount of memory.
+对于有些应用场景如日志，归一值不是很有用，要关心的只是字段是否包含特殊的错误码或者特定的浏览器唯一标识符。字段的长度对结果没有影响，禁用归一值可以节省大量内存空间。
 
-===== Putting it together
+===== 结合使用
 
-These three factors--term frequency, inverse document frequency, and field-length norm--are calculated and stored at index time.((("weight", "calculation of")))  Together, they are
-used to calculate the _weight_ of a single term in a particular document.
+以下三个因素——词频（term frequency）、逆向文档频率（inverse document frequency）和字段长度归一值（field-length norm）——是在索引时计算并存储的。((("weight", "calculation of")))最后将它们结合在一起计算单个词在特定文档中的 _权重_ 。
 
 [TIP]
 ==================================================
 
-When we refer to _documents_ in the preceding formulae, we are actually talking about
-a field within a document.  Each field has its own inverted index and thus,
-for TF/IDF purposes, the value of the field is the value of the document.
+前面公式中提到的 _文档_ 实际上是指文档里的某个字段，每个字段都有它自己的倒排索引，因此字段的 TF/IDF 值就是文档的 TF/IDF 值。
 
 ==================================================
 
-When we run a simple `term` query with `explain` set to `true` (see
-<<explain>>), you will see that the only factors involved in calculating the
-score are the ones explained in the preceding sections:
+当用 `explain` 查看一个简单的 `term` 查询时（参见 <<explain,explain>> ），可以发现与计算相关度评分的因子就是前面章节介绍的这些：
 
 [role="pagebreak-before"]
 [source,json]
@@ -181,7 +127,7 @@ GET /my_index/doc/_search?explain
 }
 ----------------------------
 
-The (abbreviated) `explanation` from the preceding request is as follows:
+以上请求（简化）的 `explanation` 解释如下：
 
 .......................................................
 weight(text:fox in 0) [PerFieldSimilarity]:  0.15342641 <1>
@@ -192,93 +138,62 @@ result of:
         idf(docFreq=1, maxDocs=1):           0.30685282 <3>
         fieldNorm(doc=0):                    0.5 <4>
 .......................................................
-<1> The final `score` for term `fox` in field `text` in the document with internal
-    Lucene doc ID `0`.
-<2> The term `fox` appears once in the `text` field in this document.
-<3> The inverse document frequency of `fox` in the `text` field in all
-    documents in this index.
-<4> The field-length normalization factor for this field.
+<1> 词 `fox` 在文档的内部 Lucene doc ID 为 `0` ，字段是 `text` 里的最终评分。
+<2> 词 `fox` 在该文档 `text` 字段中只出现了一次。
+<3> `fox` 在所有文档 `text` 字段索引的逆向文档频率。
+<4> 该字段的字段长度归一值。
 
-Of course, queries usually consist of more than one term, so we need a
-way of combining the weights of multiple terms.  For this, we turn to the
-vector space model.
-
+当然，查询通常不止一个词，所以需要一种合并多词权重的方式——向量空间模型（vector space model）。
 
 [[vector-space-model]]
-==== Vector Space Model
+==== 向量空间模型
 
-The _vector space model_ provides a way of ((("Vector Space Model")))comparing a multiterm query
-against a document. The output is a single score that represents how well the
-document matches the query.  In order to do this, the model represents both the document
-and the query as _vectors_.
+_向量空间模型（vector space model）_ 提供一种比较多词查询的方式，((("Vector Space Model")))单个评分代表文档与查询的匹配程度，为了做到这点，这个模型将文档和查询都以 _向量（vectors）_ 的形式表示：
 
-A vector is really just a one-dimensional array containing numbers, for example:
+向量实际上就是包含多个数的一维数组，例如：
 
     [1,2,5,22,3,8]
 
-In the vector space((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm", "in Vector Space Model"))) model, each number in the vector is((("weight", "calculation of", "in Vector Space Model"))) the _weight_ of a term,
-as calculated with <<tfidf,term frequency/inverse document frequency>>.
+在向量空间模型里，((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm", "in Vector Space Model")))向量空间模型里的每个数字都代表一个词的 _权重_ ，与 <<tfidf,词频/逆向文档频率（term frequency/inverse document frequency）>> 计算方式类似。
 
 [TIP]
 ==================================================
 
-While TF/IDF is the default way of calculating term weights for the vector
-space model, it is not the only way.  Other models like Okapi-BM25 exist and
-are available in Elasticsearch.  TF/IDF is the default because it is a
-simple, efficient algorithm that produces high-quality search results and
-has stood the test of time.
+尽管 TF/IDF 是向量空间模型计算词权重的默认方式，但不是唯一方式。Elasticsearch 还有其他模型如 Okapi-BM25 。TF/IDF 是默认的因为它是个经检验过的简单又高效的算法，可以提供高质量的搜索结果。
 
 ==================================================
 
-Imagine that we have a query for ``happy hippopotamus.''  A common word like
-`happy` will have a low weight, while an uncommon term like `hippopotamus`
-will have a high weight. Let's assume that `happy` has a weight of 2 and
-`hippopotamus` has a weight of 5.  We can plot this simple two-dimensional
-vector&#x2014;`[2,5]`&#x2014;as a line on a graph starting at point (0,0) and
-ending at point (2,5), as shown in <<img-vector-query>>.
+设想如果查询 “happy hippopotamus” ，常见词 `happy` 的权重较低，不常见词 `hippopotamus` 权重较高，假设 `happy` 的权重是 2 ， `hippopotamus` 的权重是 5 ，可以将这个二维向量—— `[2,5]` ——在坐标系下作条直线，线的起点是 (0,0) 终点是 (2,5) ，如图 <<img-vector-query>> 。
 
 [[img-vector-query]]
-.A two-dimensional query vector for ``happy hippopotamus'' represented
-image::images/elas_17in01.png["The query vector plotted on a graph"]
+.表示 “happy hippopotamus” 的二维查询向量
+image::images/elas_17in01.png["查询向量绘点图"]
 
-Now, imagine we have three documents:
+现在，设想我们有三个文档：
 
-1. I am _happy_ in summer.
-2. After Christmas I'm a _hippopotamus_.
-3. The _happy hippopotamus_ helped Harry.
+1. I am _happy_ in summer 。
+2. After Christmas I'm a _hippopotamus_ 。
+3. The _happy hippopotamus_ helped Harry 。
 
-We can create a similar vector for each document, consisting of the weight of
-each query term&#x2014;`happy` and `hippopotamus`&#x2014;that appears in the
-document, and plot these vectors on the same graph, as shown in <<img-vector-docs>>:
+可以为每个文档都创建包括每个查询词—— `happy` 和 `hippopotamus` ——权重的向量，然后将这些向量置入同一个坐标系中，如图 <<img-vector-docs>> ：
 
-* Document 1: `(happy,____________)`&#x2014;`[2,0]`
-* Document 2: `( ___ ,hippopotamus)`&#x2014;`[0,5]`
-* Document 3: `(happy,hippopotamus)`&#x2014;`[2,5]`
+* 文档 1： `(happy,____________)` —— `[2,0]`
+* 文档 2： `( ___ ,hippopotamus)` —— `[0,5]`
+* 文档 3： `(happy,hippopotamus)` —— `[2,5]`
 
 [[img-vector-docs]]
-.Query and document vectors for ``happy hippopotamus''
-image::images/elas_17in02.png["The query and document vectors plotted on a graph"]
+.“happy hippopotamus” 查询及文档向量
+image::images/elas_17in02.png["查询及文档向量绘点图"]
 
-The nice thing about vectors is that they can be compared. By measuring the
-angle between the query vector and the document vector, it is possible to
-assign a relevance score to each document. The angle between document 1 and
-the query is large, so it is of low relevance.  Document 2 is closer to the
-query, meaning that it is reasonably relevant, and document 3 is a perfect
-match.
+向量之间是可以比较的，只要测量查询向量和文档向量之间的角度就可以得到每个文档的相关度，文档 1 与查询之间的角度最大，所以相关度低；文档 2 与查询间的角度较小，所以更相关；文档 3 与查询的角度正好吻合，完全匹配。
 
 [TIP]
 ==================================================
 
-In practice, only two-dimensional vectors (queries with two terms) can  be
-plotted easily on a graph. Fortunately, _linear algebra_&#x2014;the branch of
-mathematics that deals with vectors--provides tools to compare the
-angle between multidimensional vectors, which means that we can apply the
-same principles explained above to queries that consist of many terms.
+在实际中，只有二维向量（两个词的查询）可以在平面上表示，幸运的是， _线性代数_ ——作为数学中处理向量的一个分支——为我们提供了计算两个多维向量间角度工具，这意味着可以使用如上同样的方式来解释多个词的查询。
 
-You can read more about how to compare two vectors by using http://en.wikipedia.org/wiki/Cosine_similarity[_cosine similarity_].
+关于比较两个向量的更多信息可以参考 http://en.wikipedia.org/wiki/Cosine_similarity[_余弦近似度（cosine similarity）_]。
 
 ==================================================
 
-Now that we have talked about the theoretical basis of scoring, we can move on
-to see how scoring is implemented in Lucene.((("relevance scores", "theory behind", range="endofrange", startref="ix_relscore")))
-
+现在已经讲完评分计算的基本理论，我们可以继续了解 Lucene 是如何实现评分计算的。((("relevance scores", "theory behind", range="endofrange", startref="ix_relscore")))
