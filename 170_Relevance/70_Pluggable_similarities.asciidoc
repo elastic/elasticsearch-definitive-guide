@@ -1,103 +1,53 @@
 [[pluggable-similarites]]
-=== Pluggable Similarity Algorithms
+=== 可插拔的相似度算法
 
-Before we move on from relevance and scoring, we will finish this chapter with
-a more advanced subject: pluggable similarity algorithms.((("similarity algorithms", "pluggable")))((("relevance", "controlling", "using pluggable similarity algorithms"))) While Elasticsearch
-uses the <<practical-scoring-function>> as its default similarity algorithm,
-it supports other algorithms out of the box, which are listed
-in the {ref}/index-modules-similarity.html#configuration[Similarity Modules] documentation.
+在进一步讨论相关度和评分之前，我们会以一个更高级的话题结束本章节的内容：可插拔的相似度算法（Pluggable Similarity Algorithms）。((("similarity algorithms", "pluggable")))((("relevance", "controlling", "using pluggable similarity algorithms"))) Elasticsearch 将 <<practical-scoring-function,实用评分算法>> 作为默认相似度算法，它也能够支持其他的一些算法，这些算法可以参考
+{ref}/index-modules-similarity.html#configuration[相似度模块] 文档。
 
 [[bm25]]
 ==== Okapi BM25
 
-The most interesting competitor to TF/IDF and the vector space model is called
-http://en.wikipedia.org/wiki/Okapi_BM25[_Okapi BM25_], which is considered to
-be a _state-of-the-art_ ranking function.((("BM25")))((("Okapi BM25", see="BM25"))) BM25 originates from the
-http://en.wikipedia.org/wiki/Probabilistic_relevance_model[probabilistic relevance model],
-rather than the vector space model, yet((("probabalistic relevance model"))) the algorithm has a lot in common with
-Lucene's practical scoring function.
+能与 TF/IDF 和向量空间模型媲美的就是 http://en.wikipedia.org/wiki/Okapi_BM25[_Okapi BM25_] ，它被认为是 _当今最先进的_ 排序函数。((("BM25")))((("Okapi BM25", see="BM25"))) BM25 源自 http://en.wikipedia.org/wiki/Probabilistic_relevance_model[概率相关模型（probabilistic relevance model）] ，((("probabalistic relevance model")))而不是向量空间模型，但这个算法也和 Lucene 的实用评分函数有很多共通之处。
 
-Both use term frequency, inverse document frequency, and field-length
-normalization, but the definition of each of these factors is a little
-different.  Rather than explaining the BM25 formula in detail, we will focus
-on the practical advantages that BM25 offers.
+BM25 同样使用词频、逆向文档频率以及字段长归一化，但是每个因子的定义都有细微区别。与其详细解释 BM25 公式，倒不如将关注点放在 BM25 所能带来的实际好处上。
 
 [[bm25-saturation]]
-===== Term-frequency saturation
+===== 词频饱和度
 
-Both TF/IDF and BM25 use <<idf,inverse document frequency>> to distinguish
-between common (low value) words and uncommon (high value) words.((("inverse document frequency", "use by TF/IDF and BM25")))  Both also
-recognize (see <<tf>>) that the more often a word appears in a document, the
-more likely is it that the document is relevant for that word.
+TF/IDF 和 BM25 同样使用 <<idf,逆向文档频率>> 来区分普通词（不重要）和非普通词（重要），((("inverse document frequency", "use by TF/IDF and BM25")))同样认为（参见 <<tf,词频>> ）文档里的某个词出现次数越频繁，文档与这个词就越相关。
 
-However, common words occur commonly. ((("BM25", "term frequency saturation"))) The fact that a common word appears
-many times in one document is offset by the fact that the word appears many
-times in _all_ documents.
+不幸的是，普通词随处可见，((("BM25", "term frequency saturation")))实际上一个普通词在同一个文档中大量出现的作用会由于该词在 _所有_ 文档中的大量出现而被抵消掉。
 
-However, TF/IDF was designed in an era when it was standard practice to
-remove the _most_ common words (or _stopwords_, see <<stopwords>>) from the
-index altogether.((("stopwords", "removal from index"))) The algorithm didn't need to worry about an upper limit for
-term frequency because the most frequent terms had already been removed.
+曾经有个时期，将 _最_ 普通的词（或 _停用词_ ，参见 <<stopwords,停用词>>）从索引中移除被认为是一种标准实践，((("stopwords", "removal from index")))TF/IDF 正是在这种背景下诞生的。TF/IDF 没有考虑词频上限的问题，因为高频停用词已经被移除了。
 
-In Elasticsearch, the `standard` analyzer--the default for `string` fields--doesn't remove stopwords because, even though they are words of little
-value, they do still have some value.  The result is that, for very long
-documents, the sheer number of occurrences of words like `the` and `and` can
-artificially boost their weight.
+Elasticsearch 的 `standard` 标准分析器（ `string` 字段默认使用）不会移除停用词，因为尽管这些词的重要性很低，但也不是毫无用处。这导致：在一个相当长的文档中，像 `the` 和 `and` 这样词出现的数量会高得离谱，以致它们的权重被人为放大。
 
-BM25, on the other hand, does have an upper limit.  Terms that appear 5 to 10
-times in a document have a significantly larger impact on relevance than terms
-that appear just once or twice.  However, as can be seen in <<img-bm25-saturation>>, terms that appear 20 times in a
-document have almost the same impact as terms that appear a thousand times or
-more.
+另一方面，BM25 有一个上限，文档里出现 5 到 10 次的词会比那些只出现一两次的对相关度有着显著影响。但是如图 <<img-bm25-saturation,TF/IDF 与 BM25 的词频饱和度>> 所见，文档中出现 20 次的词几乎与那些出现上千次的词有着相同的影响。
 
-This is known as _nonlinear term-frequency saturation_.
+这就是 _非线性词频饱和度（nonlinear term-frequency saturation）_ 。
 
 [[img-bm25-saturation]]
-.Term frequency saturation for TF/IDF and BM25
-image::images/elas_1706.png[Term frequency saturation for TF/IDF and BM25]
+.TF/IDF 与 BM25 的词频饱和度
+image::images/elas_1706.png[TF/IDF 与 BM25 的词频饱和度]
 
 [[bm25-normalization]]
-===== Field-length normalization
+===== 字段长度归一化（Field-length normalization）
 
-In <<field-norm>>, we said that Lucene considers shorter fields to have
-more weight than longer fields: the frequency of a term in a field is offset
-by the length of the field.  However, the practical scoring function treats
-all fields in the same way.  It will treat all `title` fields (because they
-are short) as more important than all `body` fields (because they are long).
+在 <<field-norm,字段长归一化>> 中，我们提到过 Lucene 会认为较短字段比较长字段更重要：字段某个词的频度所带来的重要性会被这个字段长度抵消，但是实际的评分函数会将所有字段以同等方式对待。它认为所有较短的 `title` 字段比所有较长的 `body` 字段更重要。
 
-BM25 also considers shorter fields to have more weight than longer fields, but
-it considers each field separately by taking the average length of the field
-into account. It can distinguish between a short `title` field and a `long`
-title field.
+BM25 当然也认为较短字段应该有更多的权重，但是它会分别考虑每个字段内容的平均长度，这样就能区分短 `title` 字段和 `长` title 字段。
 
-CAUTION: In <<query-time-boosting>>, we said that the `title` field has a
-_natural_ boost over the `body` field because of its length.  This natural
-boost disappears with BM25 as differences in field length apply only within a
-single field.
+CAUTION: 在 <<query-time-boosting,查询时权重提升>> 中，已经说过 `title` 字段因为其长度比 `body` 字段 _自然_ 有更高的权重提升值。由于字段长度的差异只能应用于单字段，这种自然的权重提升会在使用 BM25 时消失。
 
 [[bm25-tunability]]
-===== Tuning BM25
+===== BM25 调优
 
-One of the nice features of BM25 is that, unlike TF/IDF, it has two parameters
-that allow it to be tuned:
+不像 TF/IDF ，BM25 有一个比较好的特性就是它提供了两个可调参数：
 
 `k1`::
-    This parameter controls how quickly an increase in term frequency results
-    in term-frequency saturation.  The default value is `1.2`. Lower values
-    result in quicker saturation, and higher values in slower saturation.
+    这个参数控制着词频结果在词频饱和度中的上升速度。默认值为 `1.2` 。值越小饱和度变化越快，值越大饱和度变化越慢。
 
 `b`::
-    This parameter controls how much effect field-length normalization should
-    have. A value of `0.0` disables normalization completely, and a value of
-    `1.0` normalizes fully. The default is `0.75`.
+    这个参数控制着字段长归一值所起的作用， `0.0` 会禁用归一化， `1.0` 会启用完全归一化。默认值为 `0.75` 。
 
-
-The practicalities of tuning BM25 are another matter. The default values for
-`k1` and `b` should be suitable for most document collections, but the
-optimal values really depend on the collection.  Finding good values for your
-collection is a matter of adjusting, checking, and adjusting again.
-
-
-
-
-
+在实践中，调试 BM25 是另外一回事， `k1` 和 `b` 的默认值适用于绝大多数文档集合，但最优值还是会因为文档集不同而有所区别，为了找到文档集合的最优值，就必须对参数进行反复修改验证。
