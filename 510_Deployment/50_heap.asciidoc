@@ -200,7 +200,7 @@ For most Linux systems, this is configured using the `sysctl` value:
 
 [source,bash]
 ----
-vm.swappiness = 1 <1>
+vm.swappiness=1 <1>
 ----
 <1> A `swappiness` of `1` is better than `0`, since on some kernel versions a `swappiness`
 of `0` can invoke the OOM-killer.
