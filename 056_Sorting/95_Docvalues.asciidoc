@@ -1,44 +1,26 @@
 [[docvalues-intro]]
-=== Doc Values Intro
+=== Doc Values 介绍
 
-Our final topic in this chapter is about an internal aspect of Elasticsearch.
-While we don't demonstrate any new techniques here, doc values are an
-important topic that we will refer to repeatedly, and is something that you
-should be aware of.((("docvalues")))
+本章的最后一个话题是关于 Elasticsearch 内部的一些运行情况。在这里我们先不介绍新的知识点，所以我们应该意识到，Doc Values 是我们需要反复提到的一个重要话题。((("docvalues")))
 
-When you sort on a field, Elasticsearch needs access to the value of that
-field for every document that matches the query.((("inverted index", "sorting and")))  The inverted index, which
-performs very well when searching, is not the ideal structure for sorting on
-field values:
+当你对一个字段进行排序时，Elasticsearch 需要访问每个匹配到的文档得到相关的值。倒排索引的检索性能是非常快的，但是在字段值排序时却不是理想的结构。
 
-* When searching, we need to be able to map a term to a list of documents.
+* 在搜索的时候，我们能通过搜索关键词快速得到结果集。
 
-* When sorting, we need to map a document to its terms. In other words, we
-  need to ``uninvert'' the inverted index.
+* 当排序的时候，我们需要倒排索引里面某个字段值的集合。换句话说，我们需要  ``倒置`` 倒排索引。
 
-This ``uninverted'' structure is often called a ``column-store'' in other systems.
-Essentially, it stores all the values for a single field together in a single
-column of data, which makes it very efficient for operations like sorting.
+``倒置`` 结构在其他系统中经常被称作 ``列存储`` 。实质上，它将所有单字段的值存储在单数据列中，这使得对其进行操作是十分高效的，例如排序。
 
-In Elasticsearch, this column-store is known as _doc values_, and is enabled
-by default. Doc values are created at index-time: when a field is indexed, Elasticsearch
-adds the tokens to the inverted index for search.  But it also extracts the terms
-and adds them to the columnar doc values.
+在 Elasticsearch 中，doc values 就是一种列式存储结构，默认情况下每个字段的 doc values 都是激活的，doc values 是在索引时创建的，当字段索引时，Elasticsearch 为了能够快速检索，会把字段的值加入倒排索引中，同时它也会存储该字段的 doc values。
 
-Doc values are used in several places in Elasticsearch:
+Elasticsearch 中的 doc vaules 常被应用到以下场景：
 
-* Sorting on a field
-* Aggregations on a field
-* Certain filters (for example, geolocation filters)
-* Scripts that refer to fields
+* 对一个字段进行排序
+* 对一个字段进行聚合
+* 某些过滤，比如地理位置过滤
+* 某些与字段相关的脚本计算
 
-Because doc values are serialized to disk, we can leverage the OS to help keep
-access fast.  When the "working set" is smaller than the available memory on a node,
-the OS will naturally keep all the doc values hot in memory, leading to very fast
-access.  When the "working set" is much larger than available memory, the OS will
-naturally start to page doc-values on/off disk without running into the dreaded
-OutOfMemory exception.
+因为文档值被序列化到磁盘，我们可以依靠操作系统的帮助来快速访问。当 `working set` 远小于节点的可用内存，系统会自动将所有的文档值保存在内存中，使得其读写十分高速；
+当其远大于可用内存，操作系统会自动把 doc values 加载到系统的页缓存中，从而避免了 jvm 堆内存溢出异常。
 
-We'll talk about doc values in much greater depth later.  For now, all you need
-to know is that sorting (and some other operations) happen on a parallel data
-structure which is built at index-time.
+我们稍后会深入讨论 doc values。现在所有你需要知道的是排序发生在索引时建立的平行数据结构中。
