@@ -1,59 +1,27 @@
 [[significant-terms]]
-== Significant Terms
+== 通过聚合发现异常指标
 
-The `significant_terms` (SigTerms) aggregation((("significant_terms aggregation")))((("aggregations", "Significant Terms"))) is rather different from the rest of the
-aggregations.  All the aggregations we have seen so far are essentially simple math
-operations.  By combining the various building blocks, you can build sophisticated
-aggregations and reports about your data.
+`significant_terms` （SigTerms）聚合((("significant_terms aggregation")))((("aggregations", "Significant Terms"))) 与其他聚合都不相同。
+目前为止我们看到的所有聚合在本质上都是简单的数学计算。将不同这些构造块相互组合在一起，我们可以创建复杂的聚合以及数据报表。
 
-`significant_terms` has a different agenda. To some, it may even look a bit like
-machine learning. ((("terms", "uncommonly common, finding with SigTerms aggregation"))) The `significant_terms` aggregation finds _uncommonly common_ terms
-in your data-set.
+`significant_terms` 有着不同的工作机制。对有些人来说，它甚至看起来有点像机器学习。((("terms", "uncommonly common, finding with SigTerms aggregation"))) `significant_terms` 聚合可以在你数据集中找到一些 _异常_ 的指标。
 
-What do we mean by _uncommonly common_?  These are terms that are statistically
-unusual -- data that appears more frequently than the background rate would
-suggest.  These statistical anomalies are usually indicative of something
-interesting in your data.
+如何解释这些 _不常见_ 的行为？ 这些异常的数据指标通常比我们预估出现的频次要更频繁，这些统计上的异常指标通常象征着数据里的某些有趣信息。
 
-For example, imagine you are in charge of detecting and tracking down credit
-card fraud.  Customers call and complain about unusual transactions appearing
-on their credit card -- their account has been compromised.  These transactions
-are just symptoms of a larger problem.  Somewhere in the recent past,
-a merchant has either knowingly stolen the customers' credit card information,
-or has unknowingly been compromised themselves.
+例如，假设我们负责检测和跟踪信用卡欺诈，客户打电话过来抱怨他们信用卡出现异常交易，它们的帐户已经被盗用。这些交易信息只是更严重问题的症状。在最近的某些地区，一些商家有意的盗取客户的信用卡信息，或者它们自己的信息无意中也被盗取。
 
-Your job is to find the _common point of compromise_.  If you have 100 customers
-complaining of unusual transactions, those customers likely share a single merchant--and it is this merchant that is likely the source of
-blame.
+我们的任务是找到 _危害的共同点_ ，如果我们有 100 个客户抱怨交易异常，他们很有可能都属于同一个商户，而这家商户有可能就是罪魁祸首。
 
-Of course, it is a little more nuanced than just finding a merchant that all
-customers share.  For example, many of the customers will have large merchants
-like Amazon in their recent transaction history.  We can rule out Amazon, however,
-since many uncompromised credit cards also have Amazon as a recent merchant.
+当然，这里面还有一些特例。例如，很多客户在它们近期交易历史记录中会有很大的商户如亚马逊，我们可以将亚马逊排除在外，然而，在最近一些有问题的信用卡的商家里面也有亚马逊。
 
-This is an example of a _commonly common_ merchant.  Everyone, whether compromised
-or not, shares the merchant.  This makes it of little interest to us.
+这是一个 _普通的共同_ 商户的例子。每个人都共享这个商户，无论有没有遭受危害。我们对它并不感兴趣。
 
-On the opposite end of the spectrum, you have tiny merchants such as the corner
-drug store.  These are _commonly uncommon_&#x2014;only one or two customers have
-transactions from the merchant.  We can rule these out as well.  Since all of
-the compromised cards did not interact with the merchant, we can be sure it was
-not to blame for the security breach.
+相反，我们有一些很小商户比如街角的一家药店，它们属于 _普通但不寻常_ 的情况，只有一两个客户有交易记录。我们同样可以将这些商户排除，因为所有受到危害的信用卡都没有与这些商户发生过交易，我们可以肯定它们不是安全漏洞的责任方。
 
-What we want are _uncommonly common_ merchants.  These are merchants that every
-compromised card shares, but that are not well represented in the background
-noise of uncompromised cards.  These merchants are statistical anomalies; they
-appear more frequently than they should.  It is highly likely that these
-uncommonly common merchants are to blame.
+我们真正想要的是 _不普通的共同_ 商户。所有受到危害的信用卡都与它们发生过交易，但是在未受危害的背景噪声下，它们并不明显。这些商户属于统计异常，它们比应该出现的频率要高。这些不普通的共同商户很有可能就是需要调查的。
 
-`significant_terms` aggregation does just this.  It analyzes your data and finds
-terms that appear with a frequency that is statistically anomalous compared
-to the background data.
+`significant_terms` 聚合就是做这些事情。它分析统计你的数据并通过对比正常数据找到可能有异常频次的指标。
 
-What you _do_ with this statistical anomaly depends on the data.  With the credit
-card data, you might be looking for fraud.  With ecommerce, you might be looking
-for an unidentified demographic so you can market to them more efficiently.
-If you are analyzing logs, you might find one server that throws a certain type of error
-more often than it should.  The applications of `significant_terms` is nearly endless.
-
-
+暴露的异常指标 _代表什么_ 依赖的你数据。对于信用卡数据，我们可能会想找出信用卡欺诈。
+对于电商数据，我们可能会想找出未被识别的人口信息，从而进行更高效的市场推广。
+如果我们正在分析日志，我们可能会发现一个服务器会抛出比它本应抛出的更多异常。 `significant_terms` 的应用还远不止这些。
