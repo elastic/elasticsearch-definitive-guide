@@ -1,43 +1,30 @@
+[[_looking_at_time]]
+== 按时间统计
 
-== Looking at Time
+如果搜索是在 Elasticsearch 中使用频率最高的，那么构建按时间统计的 date_histogram 紧随其后。((("date histograms, building")))((("histograms", "building date histograms")))((("aggregations", "building date histograms from")))  为什么你会想用 date_histogram 呢？
 
-If search is the most popular activity in Elasticsearch, building date
-histograms must be the second most popular.((("date histograms, building")))((("histograms", "building date histograms")))((("aggregations", "building date histograms from")))  Why would you want to use a date
-histogram?
+假设你的数据带时间戳。((("time, analytics over", id="ix_timeanalyze")))  无论是什么数据（Apache
+事件日志、股票买卖交易时间、棒球运动时间）只要带有时间戳都可以进行 date_histogram 分析。当你的数据有时间戳，你总是想在 _时间_ 维度上构建指标分析：
 
-Imagine your data has a timestamp.((("time, analytics over", id="ix_timeanalyze")))  It doesn't matter what the data is--Apache
-log events, stock buy/sell transaction dates, baseball game times--anything with a timestamp can benefit from the date histogram.  When you have
-a timestamp, you often want to build metrics that are expressed _over time_:
+- 今年每月销售多少台汽车？
+- 这只股票最近 12 小时的价格是多少？
+- 我们网站上周每小时的平均响应延迟时间是多少？
 
-- How many cars sold each month this year?
-- What was the price of this stock for the last 12 hours?
-- What was the average latency of our website every hour in the last week?
+虽然通常的 histogram 都是条形图，但 date_histogram 倾向于转换成线状图以展示时间序列。((("analytics", "over time"))) 许多公司用 Elasticsearch _仅仅_ 只是为了分析时间序列数据。 `date_histogram` 分析是它们最基本的需要。
 
-While regular histograms are often represented as bar charts, date histograms
-tend to be converted into line graphs representing time series.((("analytics", "over time")))  Many
-companies use Elasticsearch _solely_ for analytics over time series data.  The `date_histogram` bucket is their bread and butter.
-
-The `date_histogram` bucket works((("buckets", "date_histogram"))) similarly to the regular `histogram`.  Rather
-than building buckets based on a numeric field representing numeric ranges,
-it builds buckets based on time ranges.  Each bucket is therefore defined as a
-certain calendar size (for example, `1 month` or `2.5 days`).
+`date_histogram` 与((("buckets", "date_histogram"))) 通常的 `histogram` 类似。  但不是在代表数值范围的数值字段上构建 buckets，而是在时间范围上构建 buckets。 因此每一个 bucket 都被定义成一个特定的日期大小 (比如， `1个月` 或 `2.5 天` )。
 
 [role="pagebreak-before"]
-.Can a Regular Histogram Work with Dates?
+.可以用通常的 histogram 进行时间分析吗？
 ****
-Technically, yes.((("histogram bucket", "dates and")))  A regular `histogram` bucket will work with dates.  However,
-it is not calendar-aware.  With the `date_histogram`, you can specify intervals
-such as `1 month`, which knows that February is shorter than December.  The
-`date_histogram` also has the advantage of being able to work with time zones,
-which allows you to customize graphs to the time zone of the user, not the server.
+从技术上来讲，是可以的。((("histogram bucket", "dates and")))  通常的 `histogram` bucket（桶）是可以处理日期的。 但是它不能自动识别日期。 而用 `date_histogram` ，你可以指定时间段如 `1 个月` ，它能聪明地知道 2 月的天数比 12 月少。
+`date_histogram` 还具有另外一个优势，即能合理地处理时区，这可以使你用客户端的时区进行图标定制，而不是用服务器端时区。
 
-The regular histogram will interpret dates as numbers, which means you must specify
-intervals in terms of milliseconds.  And the aggregation doesn't know about
-calendar intervals, which makes it largely useless for dates.
+通常的 histogram 会把日期看做是数字，这意味着你必须以微秒为单位指明时间间隔。另外聚合并不知道日历时间间隔，使得它对于日期而言几乎没什么用处。
 ****
 
-Our first example ((("line charts, building from aggregations")))will build a simple line chart to answer this question:
-how many cars were sold each month?
+我们的第一个例子((("line charts, building from aggregations")))将构建一个简单的折线图来回答如下问题：
+每月销售多少台汽车？
 
 [source,js]
 --------------------------------------------------
@@ -56,18 +43,13 @@ GET /cars/transactions/_search
 }
 --------------------------------------------------
 // SENSE: 300_Aggregations/35_date_histogram.json
-<1> The interval is requested in calendar terminology (for example, one month per bucket).
+<1> 时间间隔要求是日历术语 (如每个 bucket 1 个月)。
 // "pretty"-> "readable by humans". mention that otherwise get back ms-since-epoch?
-<2> We provide a date format so that bucket keys are pretty.
+<2> 我们提供日期格式以便 buckets 的键值便于阅读。
 
-Our query has a single aggregation, which builds a bucket
-per month.  This will give us the number of cars sold in each month.  An additional
-`format` parameter is provided so the buckets have "pretty" keys.  Internally,
-dates are simply represented as a numeric value.  This tends to make UI designers
-grumpy, however, so a prettier format can be specified using common date formatting.
+我们的查询只有一个聚合，每月构建一个 bucket。这样我们可以得到每个月销售的汽车数量。 另外还提供了一个额外的 `format` 参数以便 buckets 有 "好看的" 键值。 然而在内部，日期仍然是被简单表示成数值。这可能会使得 UI 设计者抱怨，因此可以提供常用的日期格式进行格式化以更方便阅读。
 
-The response is both expected and a little surprising (see if you can spot
-the surprise):
+结果既符合预期又有一点出人意料（看看你是否能找到意外之处）：
 
 [source,js]
 --------------------------------------------------
@@ -116,24 +98,18 @@ the surprise):
 }
 --------------------------------------------------
 
-The aggregation is represented in full.  As you can see, we have buckets
-that represent months, a count of docs in each month, and our pretty `key_as_string`.
+聚合结果已经完全展示了。正如你所见，我们有代表月份的 buckets，每个月的文档数目，以及美化后的 `key_as_string` 。
 
 [[_returning_empty_buckets]]
-=== Returning Empty Buckets
+=== 返回空 Buckets
 
-Notice something odd about that last response?
+注意到结果末尾处的奇怪之处了吗？
 
-Yep, that's right.((("aggregations", "returning empty buckets")))((("buckets", "empty, returning")))  We are missing a few months!  By default, the `date_histogram`
-(and `histogram` too) returns only buckets that have a nonzero
-document count.
+是的，结果没错。((("aggregations", "returning empty buckets")))((("buckets", "empty, returning"))) 我们的结果少了一些月份！ `date_histogram` （和 `histogram` 一样）默认只会返回文档数目非零的 buckets。
 
-This means your histogram will be a minimal response.  Often, this is not the
-behavior you want.  For many applications, you would like to dump the
-response directly into a graphing library without doing any post-processing.
+这意味着你的 histogram 总是返回最少结果。通常，你并不想要这样。对于很多应用，你可能想直接把结果导入到图形库中，而不想做任何后期加工。
 
-Essentially, we want buckets even if they have a count of zero. We can set two
-additional parameters that will provide this behavior:
+事实上，即使 buckets 中没有文档我们也想返回。可以通过设置两个额外参数来实现这种效果：
 
 [source,js]
 --------------------------------------------------
@@ -157,36 +133,26 @@ GET /cars/transactions/_search
 }
 --------------------------------------------------
 // SENSE: 300_Aggregations/35_date_histogram.json
-<1> This parameter forces empty buckets to be returned.
-<2> This parameter forces the entire year to be returned.
+<1> 这个参数强制返回空 buckets。
+<2> 这个参数强制返回整年。
 
-The two additional parameters will force the response to return all months in the
-year, regardless of their doc count.((("min_doc_count parameter")))  The `min_doc_count` is very understandable:
-it forces buckets to be returned even if they are empty.
+这两个参数会强制返回一年中所有月份的结果，而不考虑结果中的文档数目。((("min_doc_count parameter"))) `min_doc_count` 非常容易理解：它强制返回所有 buckets，即使 buckets 可能为空。
 
-The `extended_bounds` parameter requires a little explanation.((("extended_bounds parameter")))  The `min_doc_count`
-parameter forces empty buckets to be returned, but by default Elasticsearch will return only buckets that are between the minimum and maximum value in your data.
+`extended_bounds` 参数需要一点解释。((("extended_bounds parameter")))  `min_doc_count` 参数强制返回空 buckets，但是 Elasticsearch 默认只返回你的数据中最小值和最大值之间的 buckets。
 
-So if your data falls between April and July, you'll have buckets
-representing only those months (empty or otherwise).  To get the full year, we need
-to tell  Elasticsearch that we want buckets even if they fall _before_ the
-minimum value or _after_ the maximum value.
+因此如果你的数据只落在了 4 月和 7 月之间，那么你只能得到这些月份的 buckets（可能为空也可能不为空）。因此为了得到全年数据，我们需要告诉 Elasticsearch 我们想要全部 buckets，
+即便那些 buckets 可能落在最小日期 _之前_ 或 最大日期 _之后_ 。
 
-The `extended_bounds` parameter does just that.  Once you add those two settings,
-you'll get a response that is easy to plug straight into your graphing libraries
-and give you a graph like <<date-histo-ts1>>.
+`extended_bounds` 参数正是如此。一旦你加上了这两个设置，你可以把得到的结果轻易地直接插入到你的图形库中，从而得到类似 <<date-histo-ts1>> 的图表。
 
 [[date-histo-ts1]]
-.Cars sold over time
-image::images/elas_29in01.png["Cars sold over time"]
+.汽车销售时间图
+image::images/elas_29in01.png["汽车销售时间图"]
 
-=== Extended Example
+=== 扩展例子
 
-Just as we've seen a dozen times already, buckets can be nested in buckets for
-more-sophisticated behavior.((("buckets", "nested in other buckets", "extended example")))((("aggregations", "extended example")))  For illustration, we'll build an aggregation
-that shows the total sum of prices for all makes, listed by quarter.  Let's also
-calculate the sum of prices per individual make per quarter, so we can see
-which car type is bringing in the most money to our business:
+正如我们已经见过很多次，buckets 可以嵌套进 buckets 中从而得到更复杂的分析。((("buckets", "nested in other buckets", "extended example")))((("aggregations", "extended example")))
+作为例子，我们构建聚合以便按季度展示所有汽车品牌总销售额。同时按季度、按每个汽车品牌计算销售总额，以便可以找出哪种品牌最赚钱：
 
 [source,js]
 --------------------------------------------------
@@ -225,11 +191,11 @@ GET /cars/transactions/_search
 }
 --------------------------------------------------
 // SENSE: 300_Aggregations/35_date_histogram.json
-<1> Note that we changed the interval from `month` to `quarter`.
-<2> Calculate the sum per make.
-<3> And the total sum of all makes combined together.
+<1> 注意我们把时间间隔从 `month` 改成了 `quarter` 。
+<2> 计算每种品牌的总销售金额。
+<3> 也计算所有全部品牌的汇总销售金额。
 
-This returns a (heavily truncated) response:
+得到的结果（截去了一大部分）如下：
 
 [source,js]
 --------------------------------------------------
@@ -268,27 +234,23 @@ This returns a (heavily truncated) response:
 }
 --------------------------------------------------
 
-We can take this response and put it into a graph, ((("line charts, building from aggregations")))((("bar charts, building from aggregations")))showing a line chart for
-total sale price, and a bar chart for each individual make (per quarter), as shown in <<date-histo-ts2>>.
+我们把结果绘成图，((("line charts, building from aggregations")))((("bar charts, building from aggregations")))得到如 <<date-histo-ts2>> 所示的总销售额的折线图和每个品牌（每季度）的柱状图。
+
 
 [[date-histo-ts2]]
-.Sales per quarter, with distribution per make
-image::images/elas_29in02.png["Sales per quarter, with distribution per make"]
+.按品牌分布的每季度销售额
+image::images/elas_29in02.png["按品牌分布的每季度销售额"]
 
-=== The Sky's the Limit
+=== 潜力无穷
 
-These were obviously simple examples, but the sky really is the limit
-when it comes to charting aggregations. ((("dashboards", "building from aggregations")))((("Kibana", "dashboard in"))) For example, <<kibana-img>> shows a dashboard in
-Kibana built with a variety of aggregations.
+这些很明显都是简单例子，但图表聚合其实是潜力无穷的。((("dashboards", "building from aggregations")))((("Kibana", "dashboard in"))) 如 <<kibana-img>> 展示了 Kibana 中用各种聚合构建的面板。
+
 
 [[kibana-img]]
-.Kibana--a real time analytics dashboard built with aggregations
-image::images/elas_29in03.png["Kibana - a real time analytics dashboard built with aggregations"]
+.Kibana--用聚合构建的实时分析面板
+image::images/elas_29in03.png["Kibana--用聚合构建的实时分析面板"]
 
-Because of the real-time nature of aggregations, dashboards like this are easy to query,
-manipulate, and interact with.  This makes them ideal for nontechnical employees
-and analysts who need to analyze the data but cannot build a Hadoop job.
+因为聚合的实时性，类似这样的面板很容易查询、操作和交互。这使得它们成为需要分析数据又不会构建 Hadoop 作业的非技术人员的理想工具。
 
-To build powerful dashboards like Kibana, however, you'll likely need some of
-the more advanced concepts such as scoping, filtering, and sorting aggregations.
+当然，为了构建类似 Kibana 这样的强大面板，你可能需要更深的知识，比如基于范围、过滤以及排序的聚合。
 ((("time, analytics over", startref ="ix_timeanalyze")))
