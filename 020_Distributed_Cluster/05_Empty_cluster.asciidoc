@@ -1,29 +1,21 @@
-=== An Empty Cluster
+[[_an-empty-cluster]]
+=== 空集群
 
-If we start a single node, with no data and no ((("empty cluster")))((("clusters", "empty")))indices, our cluster looks like
-<<img-cluster>>.
+如果我们启动了一个单独的节点，里面不包含任何的数据和((("empty cluster")))((("clusters", "empty")))索引，那我们的集群看起来就是一个
+<<img-cluster>>。
 
 [[img-cluster]]
-.A cluster with one empty node
-image::images/elas_0201.png["A cluster with one empty node"]
+.包含空内容节点的集群
+image::images/elas_0201.png["包含空内容节点的集群"]
 
-A _node_ is a running instance of ((("nodes", "in clusters")))Elasticsearch, while a _cluster_ consists of
-one or more nodes with the same `cluster.name` that are working together to
-share their data and workload. As nodes are added to or removed from the
-cluster, the cluster reorganizes itself to spread the data evenly.
+一个运行中的 Elasticsearch 实例称为一个((("nodes", "in clusters")))节点，而集群是由一个或者多个拥有相同 `cluster.name` 配置的节点组成，
+它们共同承担数据和负载的压力。当有节点加入集群中或者从集群中移除节点时，集群将会重新平均分布所有的数据。
 
-One node in the cluster is elected to be the _master_ node, which((("master node"))) is in charge
-of managing cluster-wide changes like creating or deleting an index, or adding
-or removing a node from the cluster.  The master node does not need to be
-involved in document-level changes or searches, which means that having just
-one master node will not become a bottleneck as traffic grows. Any node can
-become the master. Our example cluster has only one node, so it performs the
-master role.
+当一个节点被选举成为 _主_ 节点时， 它((("master node")))将负责管理集群范围内的所有变更，例如增加、删除索引，或者增加、删除节点等。
+而主节点并不需要涉及到文档级别的变更和搜索等操作，所以当集群只拥有一个主节点的情况下，即使流量的增加它也不会成为瓶颈。
+任何节点都可以成为主节点。我们的示例集群就只有一个节点，所以它同时也成为了主节点。
 
-As users, we can talk to _any node in the cluster_, including the master node.
-Every node knows where each document lives and can forward our request
-directly to the nodes that hold the data we are interested in. Whichever node
-we talk to manages the process of gathering the response from the node or
-nodes holding the data and returning the final response to the client. It is
-all managed transparently by Elasticsearch.
-
+作为用户，我们可以将请求发送到 _集群中的任何节点_ ，包括主节点。
+每个节点都知道任意文档所处的位置，并且能够将我们的请求直接转发到存储我们所需文档的节点。
+无论我们将请求发送到哪个节点，它都能负责从各个包含我们所需文档的节点收集回数据，并将最终结果返回給客户端。
+Elasticsearch 对这一切的管理都是透明的。
