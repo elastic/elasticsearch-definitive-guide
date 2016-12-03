@@ -1,39 +1,29 @@
 [[preload-fielddata]]
-=== Preloading Fielddata
+=== 预加载 fielddata（Preloading Fielddata）
 
-The default behavior of Elasticsearch is to ((("fielddata", "pre-loading")))load in-memory fielddata _lazily_.
-The first time Elasticsearch encounters a query that needs fielddata for a
-particular field, it will load that entire field into memory for each segment
-in the index.
+Elasticsearch 加载内存 fielddata 的默认行为是 _延迟_ 加载 ((("fielddata", "pre-loading")))。
+当 Elasticsearch 第一次查询某个字段时，它将会完整加载这个字段所有 Segment 中的倒排索引到内存中，以便于以后的查询能够获取更好的性能。
 
-For small segments, this requires a negligible amount of time.  But if you
-have a few 5 GB segments and need to load 10 GB of fielddata into memory, this
-process could take tens of seconds.  Users accustomed to subsecond response
-times would all of a sudden be hit by an apparently unresponsive website.
+对于小索引段来说，这个过程的需要的时间可以忽略。但如果我们有一些 5 GB 的索引段，并希望加载 10 GB 的 fielddata 到内存中，这个过程可能会要数十秒。
+已经习惯亚秒响应的用户很难会接受停顿数秒卡着没反应的网站。
 
-There are three methods to combat this latency spike:
+有三种方式可以解决这个延时高峰：
 
-- Eagerly load fielddata
-- Eagerly load global ordinals
-- Prepopulate caches with warmers
+- 预加载 fielddata
+- 预加载全局序号
+- 缓存预热
 
-All are variations on the same concept: preload the fielddata so that there is
-no latency spike when the user needs to execute a search.
+所有的变化都基于同一概念：预加载 fielddata ，这样在用户进行搜索时就不会碰到延迟高峰。
 
 [[eager-fielddata]]
-==== Eagerly Loading Fielddata
+==== 预加载 fielddata（Eagerly Loading Fielddata）
 
-The first tool is called _eager loading_ (as opposed ((("eager loading", "of fielddata")))to the default lazy
-loading). As new segments are created (by refreshing, flushing, or merging),
-fields with eager loading enabled will have their per-segment fielddata
-preloaded _before_ the segment becomes visible to search.
+第一个工具称为 _预加载_ （与默认的 ((("eager loading", "of fielddata"))) 延迟加载相对）。随着新分段的创建（通过刷新、写入或合并等方式），
+启动字段预加载可以使那些对搜索不可见的分段里的 fielddata _提前_ 加载。
 
-This means that the first query to hit the segment will not need to trigger
-fielddata loading, as the in-memory cache has already been populated. This
-prevents your users from experiencing the _cold cache_ latency spike.
+这就意味着首次命中分段的查询不需要促发 fielddata 的加载，因为 fielddata 已经被载入到内存。避免了用户遇到搜索卡顿的情形。
 
-Eager loading is enabled on a per-field basis, so you can control which fields
-are pre-loaded:
+预加载是按字段启用的，所以我们可以控制具体哪个字段可以预先加载：
 
 [source,js]
 ----
@@ -47,36 +37,27 @@ PUT /music/_mapping/_song
   }
 }
 ----
-<1> By setting `fielddata.loading: eager`, we tell Elasticsearch to preload
-this field's contents into memory.
+<1> 设置 `fielddata.loading: eager` 可以告诉 Elasticsearch 预先将此字段的内容载入内存中。
 
-Fielddata loading can be set to `lazy` or `eager` on existing fields, using
-the `update-mapping` API.
+Fielddata 的载入可以使用 `update-mapping` API 对已有字段设置 `lazy` 或 `eager` 两种模式。
 
 [WARNING]
 ====
 
-Eager loading simply shifts the cost of loading fielddata.  Instead of paying
-at query time, you pay at refresh time.
+预加载只是简单的将载入 fielddata 的代价转移到索引刷新的时候，而不是查询时，从而大大提高了搜索体验。
 
-Large segments will take longer to refresh than small segments.  Usually,
-large segments are created by merging smaller segments that are already
-visible to search, so the slower refresh time is not important.
+体积大的索引段会比体积小的索引段需要更长的刷新时间。通常，体积大的索引段是由那些已经对查询可见的小分段合并而成的，所以较慢的刷新时间也不是很重要。
 
 ====
 
 [[global-ordinals]]
-==== Global Ordinals
+==== 全局序号（Global Ordinals）
 
-One of the techniques used to reduce the memory usage of string
-fielddata is ((("ordinals")))called _ordinals_.
+有种可以用来降低字符串 fielddata 内存使用的技术叫做((("ordinals"))) _序号_ 。
 
-Imagine that we have a billion documents, each of which has a `status` field.
-There are only three statuses: `status_pending`, `status_published`,
-`status_deleted`. If we were to hold the full string status in memory for
-every document, we would use 14 to 16 bytes per document, or about 15 GB.
+设想我们有十亿文档，每个文档都有自己的 `status`  状态字段，状态总共有三种： `status_pending` 、 `status_published` 、 `status_deleted` 。如果我们为每个文档都保留其状态的完整字符串形式，那么每个文档就需要使用 14 到 16 字节，或总共 15 GB。
 
-Instead, we can identify the three unique strings, sort them, and number them: 0, 1, 2.
+取而代之的是我们可以指定三个不同的字符串，对其排序、编号：0，1，2。
 
     Ordinal | Term
     -------------------
@@ -84,9 +65,7 @@ Instead, we can identify the three unique strings, sort them, and number them: 0
     1       | status_pending
     2       | status_published
 
-The original strings are stored only once in the ordinals list, and each
-document just uses the numbered ordinal to point to the value that it
-contains.
+序号字符串在序号列表中只存储一次，每个文档只要使用数值编号的序号来替代它原始的值。
 
     Doc     | Ordinal
     -------------------------
@@ -95,52 +74,30 @@ contains.
     2       | 2  # published
     3       | 0  # deleted
 
-This reduces memory usage from 15 GB to less than 1 GB!
+这样可以将内存使用从 15 GB 降到 1 GB 以下！
 
-But there is a problem. Remember that fielddata caches are _per segment_.  If
-one segment contains only two statuses&#x2014;`status_deleted` and
-`status_published`&#x2014;then the resulting ordinals (0 and 1) will not be the
-same as the ordinals for a segment that contains all three statuses.
+但这里有个问题，记得 fielddata 是按分 _段_ 来缓存的。如果一个分段只包含两个状态（ `status_deleted` 和 `status_published` ）。那么结果中的序号（0 和 1）就会与包含所有三个状态的分段不一样。
 
-If we try to run a `terms` aggregation on the `status` field, we need to
-aggregate on the actual string values, which means that we need to identify
-the same values across all segments.  A naive way of doing this would be to
-run the aggregation on each segment, return the string values from each
-segment, and then reduce them into an overall result.  While this would work,
-it would be slow and CPU intensive.
+如果我们尝试对 `status` 字段运行 `terms` 聚合，我们需要对实际字符串的值进行聚合，也就是说我们需要识别所有分段中相同的值。一个简单粗暴的方式就是对每个分段执行聚合操作，返回每个分段的字符串值，再将它们归纳得出完整的结果。
+尽管这样做可行，但会很慢而且大量消耗 CPU。
 
-Instead, we use a structure called _global ordinals_. ((("global ordinals"))) Global ordinals are a
-small in-memory data structure built on top of fielddata.  Unique values are
-identified _across all segments_ and stored in an ordinals list like the one
-we have already described.
+取而代之的是使用一个被称为 _全局序号_ 的结构。((("global ordinals"))) 全局序号是一个构建在 fielddata 之上的数据结构，它只占用少量内存。唯一值是 _跨所有分段_ 识别的，然后将它们存入一个序号列表中，正如我们描述过的那样。
 
-Now, our `terms` aggregation can just aggregate on the global ordinals, and
-the conversion from ordinal to actual string value happens only once at the
-end of the aggregation. This increases performance of aggregations (and
-sorting) by a factor of three or four.
+现在， `terms` 聚合可以对全局序号进行聚合操作，将序号转换成真实字符串值的过程只会在聚合结束时发生一次。这会将聚合（和排序）的性能提高三到四倍。
 
-===== Building global ordinals
+===== 构建全局序号（Building global ordinals）
 
-Of course, nothing in life is free. ((("global ordinals", "building"))) Global ordinals cross all segments in an
-index, so if a new segment is added or an old segment is deleted, the global
-ordinals need to be rebuilt.  Rebuilding requires reading every unique term in
-every segment.  The higher the cardinality--the more unique terms that exist--the longer this process takes.
+当然，天下没有免费的晚餐。 ((("global ordinals", "building"))) 全局序号分布在索引的所有段中，所以如果新增或删除一个分段时，需要对全局序号进行重建。
+重建需要读取每个分段的每个唯一项，基数越高（即存在更多的唯一项）这个过程会越长。
 
-Global ordinals are built on top of in-memory fielddata and doc values.  In
-fact, they are one of the major reasons that doc values perform as well as
-they do.
+全局序号是构建在内存 fielddata 和 doc values 之上的。实际上，它们正是 doc values 性能表现不错的一个主要原因。
 
-Like fielddata loading, global ordinals are built lazily, by default.  The
-first request that requires fielddata to hit an index will trigger the
-building of global ordinals. Depending on the cardinality of the field, this
-can result in a significant latency spike for your users.  Once global
-ordinals have been rebuilt, they will be reused until the segments in the index
-change: after a refresh, a flush, or a merge.
+和 fielddata 加载一样，全局序号默认也是延迟构建的。首个需要访问索引内 fielddata 的请求会促发全局序号的构建。由于字段的基数不同，这会导致给用户带来显著延迟这一糟糕结果。一旦全局序号发生重建，仍会使用旧的全局序号，直到索引中的分段产生变化：在刷新、写入或合并之后。
 
 [[eager-global-ordinals]]
-===== Eager global ordinals
+===== 预构建全局序号（Eager global ordinals）
 
-Individual string fields((("eager loading", "of global ordinals")))((("global ordinals", "eager"))) can be configured to prebuild global ordinals eagerly:
+单个字符串字段((("eager loading", "of global ordinals")))((("global ordinals", "eager"))) 可以通过配置预先构建全局序号：
 
 [source,js]
 ----
@@ -154,21 +111,18 @@ PUT /music/_mapping/_song
   }
 }
 ----
-<1> Setting `eager_global_ordinals` also implies loading fielddata eagerly.
+<1> 设置 `eager_global_ordinals` 也暗示着 fielddata 是预加载的。
 
-Just like the eager preloading of fielddata, eager global ordinals are built
-before a new segment becomes visible to search.
+正如 fielddata 的预加载一样，预构建全局序号发生在新分段对于搜索可见之前。
 
 [NOTE]
 =========================
-Ordinals are only built and used for strings.  Numerical data (integers, geopoints,
-dates, etc) doesn't need an ordinal mapping, since the value itself acts as an
-intrinsic ordinal mapping.
+序号的构建只被应用于字符串。数值信息（integers（整数）、geopoints（地理经纬度）、dates（日期）等等）不需要使用序号映射，因为这些值自己本质上就是序号映射。
 
-Therefore, you can only enable eager global ordinals for string fields.
+因此，我们只能为字符串字段预构建其全局序号。
 =========================
 
-Doc values can also have their global ordinals built eagerly:
+也可以对 Doc values 进行全局序号预构建：
 
 [source,js]
 ----
@@ -183,43 +137,27 @@ PUT /music/_mapping/_song
   }
 }
 ----
-<1> In this case, fielddata is not loaded into memory, but doc values are
-    loaded into the filesystem cache.
+<1> 这种情况下，fielddata 没有载入到内存中，而是 doc values 被载入到文件系统缓存中。
 
-Unlike fielddata preloading, eager building of global ordinals can have an
-impact on the _real-time_ aspect of your data.  For very high cardinality
-fields, building global ordinals can delay a refresh by several seconds.  The
-choice is between paying the cost on each refresh, or on the first query after
-a refresh.  If you index often and query seldom, it is probably better to pay
-the price at query time instead of on every refresh.
-
+与 fielddata 预加载不一样，预建全局序号会对数据的 _实时性_ 产生影响，构建一个高基数的全局序号会使一个刷新延时数秒。
+选择在于是每次刷新时付出代价，还是在刷新后的第一次查询时。如果经常索引而查询较少，那么在查询时付出代价要比每次刷新时要好。如果写大于读，那么在选择在查询时重建全局序号将会是一个更好的选择。
 
 [TIP]
 ====
 
-Make your global ordinals pay for themselves. If you have very high
-cardinality fields that take seconds to rebuild, increase the
-`refresh_interval` so that global ordinals remain valid for longer.  This will
-also reduce CPU usage, as you will need to rebuild global ordinals less often.
+针对实际场景优化全局序号的重建频次。如果我们有高基数字段需要花数秒钟重建，增加 `refresh_interval` 的刷新的时间从而可以使我们的全局序号保留更长的有效期，这也会节省 CPU 资源，因为我们重建的频次下降了。
 
 ====
 
 [[index-warmers]]
-==== Index Warmers
+==== 索引预热器（Index Warmers）
 
-Finally, we come to _index warmers_.  Warmers((("index warmers"))) predate eager fielddata loading
-and eager global ordinals, but they still serve a purpose. An index warmer
-allows you to specify a query and aggregations that should be run before a new
-segment is made visible to search. The idea is to prepopulate, or _warm_,
-caches so your users never see a spike in latency.
+最后我们谈谈 _索引预热器_ 。预热器早于 ((("index warmers"))) fielddata 预加载和全局序号预加载之前出现，它们仍然尤其存在的理由。一个索引预热器允许我们指定一个查询和聚合须要在新分片对于搜索可见之前执行。
+这个想法是通过预先填充或 _预热缓存_ 让用户永远无法遇到延迟的波峰。
 
-Originally, the most important use for warmers was to make sure that fielddata
-was pre-loaded, as this is usually the most costly step.  This is now better
-controlled with the techniques we discussed previously.  However, warmers can
-be used to prebuild filter caches, and can still be used to preload fielddata
-should you so choose.
+原来，预热器最重要的用法是确保 fielddata 被预先加载，因为这通常是最耗时的一步。现在可以通过前面讨论的那些技术来更好的控制它，但是预热器还是可以用来预建过滤器缓存，当然我们也还是能选择用它来预加载 fielddata。
 
-Let's register a warmer and then talk about what's happening:
+让我们注册一个预热器然后解释发生了什么：
 
 [source,js]
 ----
@@ -248,34 +186,23 @@ PUT /music/_warmer/warmer_1 <1>
   }
 }
 ----
-<1> Warmers are associated with an index (`music`) and are registered using
-the `_warmer` endpoint and a unique ID (`warmer_1`).
-<2> The three most popular music genres are pre-warmed to help encourage caching.
-<3> The fielddata and global ordinals for the `price` field will be preloaded.
+<1> 预热器被关联到索引（ `music` ）上，使用接入口 `_warmer` 以及 ID （ `warmer_1` ）。
+<2> 为三种最受欢迎的曲风预建过滤器缓存。
+<3> 字段 price 的 fielddata 和全局序号会被预加载。
 
-Warmers are registered against a specific index.((("warmers", see="index warmers")))  Each warmer is given a
-unique ID, because you can have multiple warmers per index.
+预热器是根据具体索引注册的，((("warmers", see="index warmers"))) 每个预热器都有唯一的 ID ，因为每个索引可能有多个预热器。
 
-Then you just specify a query, any query.  It can include queries, filters,
-aggregations, sort values, scripts--literally any valid query DSL.  The
-point is to register queries that are representative of the traffic that your
-users will generate, so that appropriate caches can be prepopulated.
+然后我们可以指定查询，任何查询。它可以包括查询、过滤器、聚合、排序值、脚本，任何有效的查询表达式都毫不夸张。
+这里的目的是想注册那些可以代表用户产生流量压力的查询，从而将合适的内容载入缓存。
 
-When a new segment is created, Elasticsearch will _literally_ execute the queries
-registered in your warmers.  The act of executing these queries will force
-caches to be loaded.  Only after all warmers have been executed will the segment
-be made visible to search.
+当新建一个分段时，Elasticsearch 将会执行注册在预热器中的查询。执行这些查询会强制加载缓存，只有在所有预热器执行完，这个分段才会对搜索可见。
 
 [WARNING]
 ====
-Similar to eager loading, warmers shift the cost of cold caches to refresh time.
-When registering warmers, it is important to be judicious.  You _could_ add
-thousands of warmers to make sure every cache is populated--but that will
-drastically increase the time it takes for new segments to be made searchable.
+与预加载类似，预热器只是将冷缓存的代价转移到刷新的时候。当注册预热器时，做出明智的决定十分重要。
+为了确保每个缓存都被读入，我们 _可以_ 加入上千的预热器，但这也会使新分段对于搜索可见的时间急剧上升。
 
-In practice, select a handful of queries that represent the majority of your
-user's queries and register those.
+实际中，我们会选择少量代表大多数用户的查询，然后注册它们。
 ====
 
-Some administrative details (such as getting existing warmers and deleting warmers) that have been omitted from this explanation.  Refer to the {ref}/indices-warmers.html[warmers documentation] for the rest
-of the details.
+有些管理的细节（比如获得已有预热器和删除预热器）没有在本小节提到，剩下的详细内容可以参考 {ref}/indices-warmers.html[预热器文档（warmers documentation）] 。
