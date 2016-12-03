@@ -1,36 +1,29 @@
 [[configuring-language-analyzers]]
-=== Configuring Language Analyzers
+=== 配置语言分析器
 
-While the language analyzers can be used out of the box without any
-configuration, most of them ((("english analyzer", "configuring")))((("language analyzers", "configuring")))do allow you to control aspects of their
-behavior, specifically:
+语言分析器都不需要任何配置，开箱即用， ((("english analyzer", "configuring")))
+((("language analyzers", "configuring")))它们中的大多数都允许你控制它们的各方面行为，具体来说：
 
 [[stem-exclusion]]
-Stem-word exclusion::
+词干提取排除::
 +
-Imagine, for instance, that users searching for((("language analyzers", "configuring", "stem word exclusion")))((("stemming words", "stem word exclusion, configuring"))) the ``World Health
-Organization'' are instead getting results for ``organ health.'' The reason
-for this confusion is that both ``organ'' and ``organization'' are stemmed to
-the same root word: `organ`. Often this isn't a problem, but in this
-particular collection of documents, this leads to confusing results. We would
-like to prevent the words `organization` and `organizations` from being
-stemmed.
+想象下某个场景，用户们想要搜索((("language analyzers", "configuring", "stem word exclusion")))((("stemming words", "stem word exclusion, configuring"))) `World Health Organization` 的结果，
+但是却被替换为搜索 `organ health` 的结果。有这个困惑是因为 `organ` 和 `organization` 有相同的词根： `organ` 。
+通常这不是什么问题，但是在一些特殊的文档中就会导致有歧义的结果，所以我们希望防止单词 `organization` 和 `organizations` 被缩减为词干。
 
-Custom stopwords::
 
-The default list of stopwords((("stopwords", "configuring for language analyzers"))) used in English are as follows:
+自定义停用词::
+
+英语中默认的停用词列表如下：((("stopwords", "configuring for language analyzers")))
 +
     a, an, and, are, as, at, be, but, by, for, if, in, into, is, it,
     no, not, of, on, or, such, that, the, their, then, there, these,
     they, this, to, was, will, with
 +
-The unusual thing about `no` and `not` is that they invert the meaning of the
-words that follow them. Perhaps we decide that these two words are important
-and that we shouldn't treat them as stopwords.
 
-To customize the behavior of the `english` analyzer, we need to
-create a custom analyzer that uses the `english` analyzer as its base but
-adds some configuration:
+关于单词 `no` 和 `not` 有点特别，这俩词会反转跟在它们后面的词汇的含义。或许我们应该认为这两个词很重要，不应该把他们看成停用词。
+
+为了自定义 `english` （英语）分词器的行为，我们需要基于 `english` （英语）分析器创建一个自定义分析器，然后添加一些配置：
 
 [source,js]
 --------------------------------------------------
@@ -57,10 +50,8 @@ PUT /my_index
 GET /my_index/_analyze?analyzer=my_english <3>
 The World Health Organization does not sell organs.
 --------------------------------------------------
-<1> Prevents `organization` and `organizations` from being stemmed
-<2> Specifies a custom list of stopwords
-<3> Emits tokens `world`, `health`, `organization`, `does`, `not`, `sell`, `organ`
+<1> 防止 `organization` 和 `organizations` 被缩减为词干
+<2> 指定一个自定义停用词列表
+<3> 切词为 `world` 、 `health` 、 `organization` 、 `does` 、 `not` 、 `sell` 、 `organ`
 
-We discuss stemming and stopwords in much more detail in <<stemming>> and
-<<stopwords>>, respectively.
-
+我们在 <<stemming>> 和 <<stopwords>> 中分别详细讨论了词干提取和停用词。
