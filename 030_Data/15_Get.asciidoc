@@ -28,7 +28,7 @@ GET /website/blog/123?pretty
 }
 --------------------------------------------------
 
-[注意事项]
+[NOTE]
 ====
 在请求的查询串参数中加上 `pretty` 参数，((("query strings", "adding pretty")))正如前面的例子中看到的，这将会调用 Elasticsearch 的 _pretty-print_ 功能，该功能((("pretty-printing JSON response"))) 使得 JSON 响应体更加可读。但是， `_source` 字段不能被格式化打印出来。相反，我们得到的 `_source` 字段中的 JSON 串，刚好是和我们传给它的一样。
 ====
