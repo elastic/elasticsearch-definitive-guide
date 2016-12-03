@@ -1,24 +1,16 @@
 [[replica-shards]]
-=== Replica Shards
+=== 副本分片
 
-Up until now we have spoken only about primary shards, but we have another
-tool in our belt: replica shards.((("scaling", "replica shards")))((("shards", "replica")))((("replica shards")))  The main purpose of replicas is for
-failover, as discussed in <<distributed-cluster>>: if the node holding a
-primary shard dies, a replica is promoted to the role of primary.
+目前为止我们只讨论过主分片，但我们身边还有另一个工具：副本分片。((("scaling", "replica shards")))((("shards", "replica")))((("replica shards")))
+副本分片的主要目的就是为了故障转移，正如在 <<distributed-cluster>> 中讨论的：如果持有主分片的节点挂掉了，一个副本分片就会晋升为主分片的角色。
 
-At index time, a replica shard does the same amount of work as the primary
-shard.  New documents are first indexed on the primary and then on any
-replicas.  Increasing the number of replicas does not change the capacity of
-the index.
+在索引写入时，副本分片做着与主分片相同的工作。新文档首先被索引进主分片然后再同步到其它所有的副本分片。增加副本数并不会增加索引容量。
 
-However, replica shards can serve read requests.  If, as is often the case,
-your index is search heavy, you can increase search performance by increasing
-the number of replicas, but only if you also _add extra hardware_.
 
-Let's return to our example of an index with two primary shards.  We increased
-capacity of the index by adding a second node. Adding more nodes would not
-help us to add indexing capacity, but we could take advantage of the extra
-hardware at search time by increasing the number of replicas:
+无论如何，副本分片可以服务于读请求，如果你的索引也如常见的那样是偏向查询使用的，那你可以通过增加副本的数目来提升查询性能，但也要为此 _增加额外的硬件资源_。
+
+让我们回到那个有着两个主分片索引的例子。我通过增加第二个节点来提升索引容量。
+增加额外的节点不会帮助我们提升索引写入能力，但我们可以通过增加副本数在搜索时利用额外的硬件：
 
 [source,json]
 -----------------------
@@ -28,21 +20,18 @@ PUT /my_index/_settings
 }
 -----------------------
 
-Having two primary shards, plus a replica of each primary, would give us a
-total of four shards: one for each node, as shown in <<img-four-nodes>>.
+拥有两个主分片，加上每个主分片的一个副本，总共给予我们四个分片：每个节点一个，如图所示 <<img-four-nodes>>。
 
 [[img-four-nodes]]
-.An index with two primary shards and one replica can scale out across four nodes
-image::images/elas_4403.png["An index with two primary shards and one replica can scale out across four nodes"]
+.一个拥有两个主分片一份副本的索引可以在四个节点中横向扩展
+image::images/elas_4403.png["一个拥有两个主分片一份副本的索引可以在四个节点中横向扩展"]
 
-==== Balancing Load with Replicas
+==== 通过副本进行负载均衡
 
-Search performance depends on the response times of the slowest node, so it is a good idea to try to balance out the load across all nodes.((("replica shards", "balancing load with")))((("load balancing with replica shards"))) If we
-added just one extra node instead of two, we would end up with two nodes having one shard each, and one node doing double the work with two shards.
+搜索性能取决于最慢的节点的响应时间，所以尝试均衡所有节点的负载是一个好想法。((("replica shards", "balancing load with")))((("load balancing with replica shards")))
+如果我们只是增加一个节点而不是两个，最终我们会有两个节点各持有一个分片，而另一个持有两个分片做着两倍的工作。
 
-We can even things out by adjusting the number of replicas.  By allocating two
-replicas instead of one, we end up with a total of six shards, which can be
-evenly divided between three nodes, as shown in <<img-three-nodes>>:
+我们可以通过调整副本数量来平衡这些。通过分配两份副本而不是一个，最终我们会拥有六个分片，刚好可以平均分给三个节点，如图所示 <<img-three-nodes>>：
 
 [source,json]
 -----------------------
@@ -52,14 +41,10 @@ PUT /my_index/_settings
 }
 -----------------------
 
-As a bonus, we have also increased our availability.  We can now afford to
-lose two nodes and still have a copy of all our data.
+作为奖励，我们同时提升了我们的可用性。我们可以容忍丢失两个节点而仍然保持一份完整数据的拷贝。
 
 [[img-three-nodes]]
-.Adjust the number of replicas to balance the load between nodes
-image::images/elas_4404.png["Adjust the number of replicas to balance the load between nodes"]
+.通过调整副本数来均衡节点负载
+image::images/elas_4404.png["通过调整副本数来均衡节点负载"]
 
-NOTE: The fact that node 3 holds two replicas and no primaries is not
-important.  Replicas and primaries do the same amount of work; they just play
-slightly different roles.  There is no need to ensure that primaries are
-distributed evenly across all nodes.
+NOTE: 事实上节点 3 持有两个副本分片，然而没有主分片并不重要。副本分片与主分片做着相同的工作；它们只是扮演着略微不同的角色。没有必要确保主分片均匀地分布在所有节点中。
