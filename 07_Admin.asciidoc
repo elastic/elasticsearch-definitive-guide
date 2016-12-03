@@ -2,24 +2,17 @@ ifndef::es_build[= placeholder7]
 
 
 [[administration]]
-= Administration, Monitoring, and Deployment
+= 管理、监控和部署
 
 [partintro]
 --
-The majority of this book is aimed at building applications by using Elasticsearch
-as the backend.  This section is a little different.  Here, you will learn
-how to manage Elasticsearch itself.  Elasticsearch is a complex piece of
-software, with many moving parts.  Many APIs are designed
-to help you manage your Elasticsearch deployment.
+本书大部分介绍了使用 Elasticsearch 作为后端创建应用程序。本章节稍微不同。在这里，你将学习到如何管理 Elasticsearch 自身。Elasticsearch 是一个复杂的软件，有许多可移动组件，大量的 API 设计用来帮助管理你的 Elasticsearch 部署。
 
-In this chapter, we cover three main topics:
+在这个章节，我们涵盖三个主题：
 
-- Monitoring your cluster's vital statistics, understanding which behaviors are normal and which
-should be cause for alarm, and interpreting various stats provided by Elasticsearch
-- Deploying your cluster to production, including best practices and important
-configuration that should (or should not!) be changed
-- Performing post-deployment logistics, such as a rolling restart or backup of
-your cluster
+- 根据监控你的集群重要数据的统计，去了解哪些行为是正常的，哪些应该引起警告，并解释 Elasticsearch 提供的各种统计信息。
+- 部署你的集群到生产环境，包括最佳实践和应该（或不应该！）修改的重要配置。
+- 部署后的维护，如 Rolling Restart 或备份你的集群
 --
 
 include::500_Cluster_Admin.asciidoc[]
@@ -27,5 +20,3 @@ include::500_Cluster_Admin.asciidoc[]
 include::510_Deployment.asciidoc[]
 
 include::520_Post_Deployment.asciidoc[]
-
-
