@@ -6,7 +6,7 @@ ifndef::es_build[= placeholder1]
 [partintro]
 --
 
-在 <<getting-started, 入门指南>> 中涵盖了基本工具并对它们有足够详细的描述，这让我们能够开始用 Elasticsearch 搜索数据。((("searching", "using Elasticsearch")))用不了多长时间，就会发现我们想要的更多：希望查询匹配更灵活，排名结果更精确，不同问题域下搜索更具体。
+在 <<getting-started, 基础入门>> 中涵盖了基本工具并对它们有足够详细的描述，这让我们能够开始用 Elasticsearch 搜索数据。((("searching", "using Elasticsearch")))用不了多长时间，就会发现我们想要的更多：希望查询匹配更灵活，排名结果更精确，不同问题域下搜索更具体。
 
 想要进阶，只知道如何使用 `match` 查询是不够的，我们需要理解数据以及如何能够搜索到它们。本章会解释如何索引和查询我们的数据让我们能利用词的相似度（word proximity）、部分匹配（partial matching）、模糊匹配（fuzzy matching）以及语言感知（language awareness）这些优势。
 
