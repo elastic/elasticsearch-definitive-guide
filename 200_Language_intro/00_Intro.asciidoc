@@ -1,48 +1,45 @@
 [[language-intro]]
-== Getting Started with Languages
+== 开始处理各种语言
 
-Elasticsearch ships with a collection of language analyzers that provide
-good, basic, out-of-the-box ((("language analyzers")))((("languages", "getting started with")))support for many of the world's most common
-languages:
 
-Arabic, Armenian, Basque, Brazilian, Bulgarian, Catalan, Chinese,
-Czech, Danish, Dutch, English, Finnish, French, Galician, German, Greek,
-Hindi, Hungarian, Indonesian, Irish, Italian, Japanese, Korean, Kurdish, 
-Norwegian, Persian, Portuguese, Romanian, Russian, Spanish, Swedish, 
-Turkish, and Thai.
 
-These analyzers typically((("language analyzers", "roles performed by"))) perform four roles:
+Elasticsearch 为很多世界流行语言提供良好的、简单的、开箱即用的语言分析器集合：
 
-* Tokenize text into individual words:
+阿拉伯语、亚美尼亚语、巴斯克语、巴西语、保加利亚语、加泰罗尼亚语、中文、捷克语、丹麦、荷兰语、英语、芬兰语、法语、加里西亚语、德语、希腊语、北印度语、匈牙利语、印度尼西亚、爱尔兰语、意大利语、日语、韩国语、库尔德语、挪威语、波斯语、葡萄牙语、罗马尼亚语、俄语、西班牙语、瑞典语、土耳其语和泰语。
+
+
+这些分析器((("language analyzers"， "roles performed by")))承担以下四种角色：
+
+* 文本拆分为单词：
 +
-`The quick brown foxes` -> [`The`, `quick`, `brown`, `foxes`]
+`The quick brown foxes` -> [ `The`, `quick`, `brown`, `foxes`]
 
-* Lowercase tokens:
+* 大写转小写：
 +
 `The` -> `the`
 
-* Remove common _stopwords_:
+* 移除常用的 _停用词_：
 +
-&#91;`The`, `quick`, `brown`, `foxes`] -> [`quick`, `brown`, `foxes`]
+&#91; `The`, `quick`, `brown`, `foxes`] -> [ `quick`, `brown`, `foxes`]
 
-* Stem tokens to their root form:
+* 将变型词（例如复数词，过去式）转化为词根：
 +
 `foxes` -> `fox`
 
-Each analyzer may also apply other transformations specific to its language in
-order to make words from that((("language analyzers", "other transformations specific to the language"))) language more searchable:
 
-* The `english` analyzer ((("english analyzer")))removes the possessive `'s`:
+
+为了更好的搜索性，每个语言的分析器提供了该语言词汇的具体转换规则：
+
+* `英语` 分析器移除了所有格 `'s`
 +
 `John's` -> `john`
 
-* The `french` analyzer ((("french analyzer")))removes _elisions_ like `l'` and `qu'` and
-  _diacritics_ like `¨` or `^`:
+
+* `法语` 分析器移除了 _元音省略_ 例如 `l'` 和 `qu'` 和 _变音符号_ 例如 `¨` 或  `^` ：
 +
 `l'église` -> `eglis`
 
-* The `german` analyzer normalizes((("german analyzer"))) terms, replacing `ä` and `ae` with `a`, or
-  `ß` with `ss`, among others:
+* `德语` 分析器规范化了((("german analyzer")))切词， 将切词中的 `ä` 和 `ae` 替换为 `a` ， 或将
+  `ß` 替换为 `ss` ：
 +
 `äußerst` -> `ausserst`
-
