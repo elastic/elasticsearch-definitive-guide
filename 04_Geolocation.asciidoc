@@ -1,36 +1,20 @@
 ifndef::es_build[= placeholder4]
 
 [[geoloc]]
-= Geolocation
+= 地理位置
 
 [partintro]
 --
-Gone are the days when we wander around a city with paper maps. Thanks to
-smartphones, we now know exactly ((("geolocation")))where we are all the time, and we expect
-websites to use that information.  I'm not interested in restaurants in
-Greater London--I want to know about restaurants within a 5-minute walk of my
-current location.
+我们拿着纸质地图漫步城市的日子一去不返了。得益于智能手机，我们现在总是可以知道 ((("geolocation")))自己所处的准确位置，也预料到网站会使用这些信息。我想知道从当前位置步行 5 分钟内可到的那些餐馆，对伦敦更大范围内的其他餐馆并不感兴趣。
 
-But geolocation is only one part of the puzzle.  The beauty of Elasticsearch
-is that it allows you to combine geolocation with full-text search, structured
-search, and analytics.
+但地理位置功能仅仅是 Elasticsearch 的冰山一角，Elasticsearch 的妙处在于，它让你可以把地理位置、全文搜索、结构化搜索和分析结合到一起。
 
-For instance: show me restaurants that mention _vitello tonnato_, are within a 5-minute walk, and are open at 11 p.m., and then rank them by a combination of user
-rating, distance, and price. Another example: show me a map of vacation rental
-properties available in August throughout the city, and calculate the average
-price per zone.
+例如：告诉我提到 _vitello tonnato_ 这种食物、步行 5 分钟内可到、且晚上 11 点还营业的餐厅，然后结合用户评价、距离、价格排序。另一个例子：给我展示一幅整个城市8月份可用假期出租物业的地图，并计算出每个区域的平均价格。
 
-Elasticsearch offers two ways of ((("Elasticsearch", "representing geolocations")))representing geolocations: latitude-longitude
-points using the `geo_point` field type,((("geo_point field type"))) and complex shapes defined in
-http://en.wikipedia.org/wiki/GeoJSON[GeoJSON], using the `geo_shape` field
-type.((("geo_shape field type")))
+Elasticsearch 提供了 ((("Elasticsearch", "representing geolocations")))两种表示地理位置的方式：用纬度－经度表示的坐标点使用 `geo_point` 字段类型，((("geo_point field type"))) 以
+http://en.wikipedia.org/wiki/GeoJSON[GeoJSON] 格式定义的复杂地理形状，使用 `geo_shape` 字段类型。((("geo_shape field type")))
 
-_Geo-points_ allow you to find points within a certain distance of another
-point, to calculate distances between two points for sorting or relevance
-scoring, or to aggregate into a grid to display on a map.  _Geo-shapes_, on the
-other hand, are used purely for filtering.  They can be used to decide whether
-two shapes overlap, or whether one shape completely contains other
-shapes.
+_Geo-points_ 允许你找到距离另一个坐标点一定范围内的坐标点、计算出两点之间的距离来排序或进行相关性打分、或者聚合到显示在地图上的一个网格。另一方面，_Geo-shapes_ 纯粹是用来过滤的。它们可以用来判断两个地理形状是否有重合或者某个地理形状是否完全包含了其他地理形状。
 
 --
 
@@ -41,6 +25,3 @@ include::320_Geohashes.asciidoc[]
 include::330_Geo_aggs.asciidoc[]
 
 include::340_Geoshapes.asciidoc[]
-
-
-
