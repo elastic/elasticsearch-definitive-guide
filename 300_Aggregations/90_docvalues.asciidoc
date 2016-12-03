@@ -1,17 +1,12 @@
 [[docvalues]]
 === Doc Values
 
-Aggregations work via a data structure known as _doc values_ (briefly introduced
-in <<docvalues-intro>>).  ((("docvalues")))((("docvalues")))Doc values
-are what make aggregations fast, efficient and memory-friendly, so it is useful
-to understand how they work.
+聚合使用一个叫 _doc values_ 的数据结构（在 <<docvalues-intro>> 里简单介绍）。((("docvalues")))((("docvalues"))) Doc values 可以使聚合更快、更高效并且内存友好，所以理解它的工作方式十分有益。
 
-Doc values exists because inverted indices are efficient for only certain operations.
-The inverted index excels((("inverted index", "doc values versus"))) at finding documents that contain a term.  It does not
-perform well in the opposite direction: determining which terms exist in a single
-document. Aggregations need this secondary access pattern.
+Doc values 的存在是因为倒排索引只对某些操作是高效的。
+倒排索引的优势 ((("inverted index", "doc values versus"))) 在于查找包含某个项的文档，而对于从另外一个方向的相反操作并不高效，即：确定哪些项是否存在单个文档里，聚合需要这种次级的访问模式。
 
-Consider the following inverted index:
+对于以下倒排索引：
 
     Term      Doc_1   Doc_2   Doc_3
     ------------------------------------
@@ -30,8 +25,7 @@ Consider the following inverted index:
     the     |   X   |       |   X
     ------------------------------------
 
-If we want to compile a complete list of terms in any document that mentions
-+brown+, we might build a query like so:
+如果我们想要获得所有包含 +brown+ 的文档的词的完整列表，我们会创建如下查询：
 
 [source,js]
 ----
@@ -52,21 +46,12 @@ GET /my_index/_search
 }
 ----
 
-The query portion is easy and efficient.  The inverted index is sorted by
-terms, so first we find +brown+ in the terms list, and then scan across all the
-columns to see which documents contain +brown+.  We can very quickly see that
-`Doc_1` and `Doc_2` contain the token +brown+.
+查询部分简单又高效。倒排索引是根据项来排序的，所以我们首先在词项列表中找到 +brown+ ，然后扫描所有列，找到包含 +brown+ 的文档。我们可以快速看到 `Doc_1` 和 `Doc_2` 包含 +brown+ 这个 token。
 
-Then, for the aggregation portion, we need to find all the unique terms in
-`Doc_1`  and `Doc_2`.((("aggregations", "doc values", "using instead of inverted index")))  Trying to do this with the inverted index would be a
-very expensive process: we would have to iterate over every term in the index
-and collect tokens from `Doc_1`  and `Doc_2` columns.  This would be slow
-and scale poorly: as the number of terms and  documents grows, so would the
-execution time.
+然后，对于聚合部分，我们需要找到 `Doc_1` 和 `Doc_2` 里所有唯一的词项。((("aggregations", "doc values", "using instead of inverted index"))) 用倒排索引做这件事情代价很高：
+我们会迭代索引里的每个词项并收集 `Doc_1` 和 `Doc_2` 列里面 token。这很慢而且难以扩展：随着词项和文档的数量增加，执行时间也会增加。
 
-Doc values addresses this problem by inverting the relationship. While the
-inverted index maps terms to the documents containing the term, doc values
-maps documents to the terms contained by the document:
+Doc values 通过转置两者间的关系来解决这个问题。倒排索引将词项映射到包含它们的文档，doc values 将文档映射到它们包含的词项：
 
     Doc      Terms
     -----------------------------------------------------------------
@@ -75,20 +60,14 @@ maps documents to the terms contained by the document:
     Doc_3 | dog, dogs, fox, jumped, over, quick, the
     -----------------------------------------------------------------
 
-Once the data has been uninverted, it is trivial to collect the unique tokens from
-`Doc_1` and `Doc_2`.  Go to the rows for each document, collect all the terms, and
-take the union of the two sets.
+当数据被转置之后，想要收集到 `Doc_1` 和 `Doc_2` 的唯一 token 会非常容易。获得每个文档行，获取所有的词项，然后求两个集合的并集。
 
-Thus, search and aggregations are closely intertwined.  Search finds documents
-by using the inverted index.  Aggregations collect and aggregate values from
-doc values.
+因此，搜索和聚合是相互紧密缠绕的。搜索使用倒排索引查找文档，聚合操作收集和聚合 doc values 里的数据。
 
 [NOTE]
 ==================================================
 
-Doc values are not just used for aggregations.((("doc values", "uses other than aggregations")))  They are required for any
-operation that must look up the value contained in a specific document.
-Besides aggregations, this includes sorting, scripts that access field
-values and parent-child relationships (see <<parent-child>>).
+Doc values 不仅可以用于聚合。((("doc values", "uses other than aggregations"))) 任何需要查找某个文档包含的值的操作都必须使用它。
+除了聚合，还包括排序，访问字段值的脚本，父子关系处理（参见 <<parent-child>> ）。
 
 ==================================================
