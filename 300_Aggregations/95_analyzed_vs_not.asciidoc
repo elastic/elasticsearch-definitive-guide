@@ -1,16 +1,13 @@
 
 [[aggregations-and-analysis]]
-=== Aggregations and Analysis
+=== 聚合与分析
 
-Some aggregations, such as the `terms` bucket, operate((("analysis", "aggregations and")))((("aggregations", "and analysis"))) on string fields.  And
-string fields may be either `analyzed` or `not_analyzed`, which begs the question:
-how does analysis affect aggregations?((("strings", "analyzed or not_analyzed string fields")))((("not_analyzed fields")))((("analyzed fields")))
+有些聚合，比如 `terms` 桶，((("analysis", "aggregations and")))((("aggregations", "and analysis"))) 操作字符串字段。字符串字段可能是 `analyzed` 或者 `not_analyzed` ，
+那么问题来了，分析是怎么影响聚合的呢？((("strings", "analyzed or not_analyzed string fields")))((("not_analyzed fields")))((("analyzed fields")))
 
-The answer is "a lot," for two reasons: analysis affects the tokens used in the aggregation,
-and doc values _do not work_ with analyzed strings.
+答案是影响“很多”，有两个原因：分析影响聚合中使用的 tokens ，并且 doc values _不能使用于_ 分析字符串。
 
-Let's tackle the first problem: how the generation of analyzed tokens affects
-aggregations. First, let's index some documents representing various states in the US:
+让我们解决第一个问题：分析 tokens 的产生如何影响聚合。首先索引一些代表美国各个州的文档：
 
 [source,js]
 ----
@@ -27,8 +24,8 @@ POST /agg_analysis/data/_bulk
 { "state" : "New York" }
 ----
 
-We want to build a list of unique states in our dataset, complete with counts.
-Simple--let's use a `terms` bucket:
+我们希望创建一个数据集里各个州的唯一列表，并且计数。
+简单，让我们使用 `terms` 桶：
 
 [source,js]
 ----
@@ -45,7 +42,7 @@ GET /agg_analysis/data/_search
 }
 ----
 
-This gives us these results:
+得到结果：
 
 [source,js]
 ----
@@ -76,22 +73,13 @@ This gives us these results:
 }
 ----
 
-Oh dear, that's not at all what we want!  Instead of counting states, the aggregation
-is counting individual words.  The underlying reason is simple: aggregations
-are built from the inverted index, and the inverted index is _post-analysis_.
+宝贝儿，这完全不是我们想要的！没有对州名计数，聚合计算了每个词的数目。背后的原因很简单：聚合是基于倒排索引创建的，倒排索引是 后置分析（ _post-analysis_ ）的。
 
-When we added those documents to Elasticsearch, the string `"New York"` was
-analyzed/tokenized into `["new", "york"]`.  These individual tokens were then
-used to populate aggregation counts, and ultimately we see counts for `new` instead of
-`New York`.
+当我们把这些文档加入到 Elasticsearch 中时，字符串 `"New York"` 被分析/分析成 `["new", "york"]` 。这些单独的 tokens ，都被用来填充聚合计数，所以我们最终看到 `new` 的数量而不是 `New York` 。
 
-This is obviously not the behavior that we wanted, but luckily it is easily
-corrected.
+这显然不是我们想要的行为，但幸运的是很容易修正它。
 
-We need to define a multifield for +state+ and set it to `not_analyzed`.  This
-will prevent `New York` from being analyzed, which means it will stay a single
-token in the aggregation.  Let's try the whole process over, but this time
-specify a _raw_ multifield:
+我们需要为 +state+ 定义 multifield 并且设置成 `not_analyzed` 。这样可以防止 `New York` 被分析，也意味着在聚合过程中它会以单个 token 的形式存在。让我们尝试完整的过程，但这次指定一个 _raw_ multifield：
 
 [source,js]
 ----
@@ -139,10 +127,10 @@ GET /agg_analysis/data/_search
   }
 }
 ----
-<1> This time we explicitly map the +state+ field and include a `not_analyzed` sub-field.
-<2> The aggregation is run on +state.raw+ instead of +state+.
+<1> 这次我们显式映射 +state+ 字段并包括一个 `not_analyzed` 辅字段。
+<2> 聚合针对 +state.raw+ 字段而不是 +state+ 。
 
-Now when we run our aggregation, we get results that make sense:
+现在运行聚合，我们得到了合理的结果：
 
 [source,js]
 ----
@@ -169,50 +157,31 @@ Now when we run our aggregation, we get results that make sense:
 }
 ----
 
-In practice, this kind of problem is easy to spot.  Your aggregations
-will simply return strange buckets, and you'll remember the analysis issue.
-It is a generalization, but there are not many instances where you want to use
-an analyzed  field in an aggregation.  When in doubt, add a multifield so
-you have the option for both.((("analyzed fields", "aggregations and")))
+在实际中，这样的问题很容易被察觉，我们的聚合会返回一些奇怪的桶，我们会记住分析的问题。
+总之，很少有在聚合中使用分析字段的实例。当我们疑惑时，只要增加一个 multifield 就能有两种选择。((("analyzed fields", "aggregations and")))
 
-==== Analyzed strings and Fielddata
+==== 分析字符串和 Fielddata（Analyzed strings and Fielddata）
 
-While the first problem relates to how data is aggregated and displayed to your
-user, the second problem is largely technical and behind the scenes.
+当第一个问题涉及如何聚合数据并显示给用户，第二个问题主要是技术和幕后。
 
-Doc values do not support `analyzed` string fields because they are not very efficient
-at representing multi-valued strings.  Doc values are most efficient
-when each document has one or several tokens, but not thousands as in the case
-of large, analyzed strings (imagine a PDF body, which may be several megabytes
-and have thousands of unique tokens).
+Doc values 不支持 `analyzed` 字符串字段，因为它们不能很有效的表示多值字符串。 Doc values 最有效的是，当每个文档都有一个或几个 tokens 时，
+但不是无数的，分析字符串（想象一个 PDF ，可能有几兆字节并有数以千计的独特 tokens）。
 
-For that reason, doc values are not generated for `analyzed` strings.  Yet these fields
-can still be used in aggregations.  How is that possible?
+出于这个原因，doc values 不生成分析的字符串，然而，这些字段仍然可以使用聚合，那怎么可能呢？
 
-The answer is a data structure known as _fielddata_.  Unlike doc values, fielddata
-is built and managed 100% in memory, living inside the JVM heap.  That means
-it is inherently less scalable and has a lot of edge-cases to watch out for.
-The rest of this chapter are addressing the challenges of fielddata in the context
-of `analyzed` strings
+答案是一种被称为 _fielddata_ 的数据结构。与 doc values 不同，fielddata 构建和管理 100% 在内存中，常驻于 JVM 内存堆。这意味着它本质上是不可扩展的，有很多边缘情况下要提防。
+本章的其余部分是解决在分析字符串上下文中 fielddata 的挑战。
 
-NOTE: Historically, fielddata was the default for _all_ fields, but Elasticsearch
-has been migrating towards doc values to reduce the chance of OOM.
-Analyzed strings are the last holdout where fielddata is still used.  The goal is to
-eventually build a serialized data structure similar to doc values which can handle
-highly dimensional analyzed strings, obsoleting fielddata once and for all.
+NOTE: 从历史上看，fielddata 是 _所有_ 字段的默认设置。但是 Elasticsearch 已迁移到 doc values 以减少 OOM 的几率。分析的字符串是仍然使用 fielddata 的最后一块阵地。
+最终目标是建立一个序列化的数据结构类似于 doc values ，可以处理高维度的分析字符串，逐步淘汰 fielddata。
 
 
-==== High-Cardinality Memory Implications
+==== 高基数内存的影响（High-Cardinality Memory Implications）
 
-There is another reason to avoid aggregating analyzed fields: high-cardinality
-fields consume a large amount of memory when loaded into fielddata.((("memory usage", "high-cardinality fields")))((("cardinality", "high-cardinality fields, memory use issues")))  The
-analysis process often (although not always) generates a large number of tokens,
-many of  which are unique.  This increases the overall cardinality of the field
-and contributes to more memory pressure.((("analysis", "high-cardinality fields, memory use issues")))
+避免分析字段的另外一个原因就是：高基数字段在加载到 fielddata 时会消耗大量内存。((("memory usage", "high-cardinality fields")))((("cardinality", "high-cardinality fields, memory use issues"))) 分析的过程会经常（尽管不总是这样）生成大量的 token，这些 token 大多都是唯一的。
+这会增加字段的整体基数并且带来更大的内存压力。((("analysis", "high-cardinality fields, memory use issues")))
 
-Some types of analysis are _extremely_ unfriendly with regards to memory.
-Consider an n-gram analysis process.((("n-grams", "memory use issues associated with")))  The term +New York+ might be n-grammed into
-the following tokens:
+有些类型的分析对于内存来说 _极度_ 不友好，想想 n-gram 的分析过程，((("n-grams", "memory use issues associated with"))) +New York+ 会被 n-gram 分析成以下 token：
 
 - `ne`
 - `ew`
@@ -222,13 +191,9 @@ the following tokens:
 - `or`
 - `rk`
 
-You can imagine how the n-gramming process creates a huge number of unique tokens,
-especially when analyzing paragraphs of text.  When these are loaded into memory,
-you can easily exhaust your heap space.
+可以想象 n-gram 的过程是如何生成大量唯一 token 的，特别是在分析成段文本的时候。当这些数据加载到内存中，会轻而易举的将我们堆空间消耗殆尽。
 
-So, before aggregating string fields, assess the situation:
+因此，在聚合字符串字段之前，请评估情况：
 
-- Is it a `not_analyzed` field?  If yes, the field will use doc values and be memory-friendly
-- Otherwise, this is an `analyzed` field.  It will use fielddata and live in-memory.
-Does this field have a very large cardinality caused by ngrams, shingles, etc? If yes,
-it may be very memory unfriendly.
+- 这是一个 `not_analyzed` 字段吗？如果是，可以通过 doc values 节省内存 。
+- 否则，这是一个 `analyzed` 字段，它将使用 fielddata 并加载到内存中。这个字段因为 ngrams 有一个非常大的基数？如果是，这对于内存来说极度不友好。
