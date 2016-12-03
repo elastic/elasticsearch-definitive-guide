@@ -1,8 +1,7 @@
 [[overallocation]]
-=== Shard Overallocation
+=== 分片预分配
 
-A shard lives on a single node,((("scaling", "shard overallocation")))((("shards", "overallocation of"))) but a node can hold multiple shards. Imagine
-that we created our index with two primary shards instead of one:
+一个分片存在于单个节点，((("scaling", "shard overallocation")))((("shards", "overallocation of")))但一个节点可以持有多个分片。想象一下我们创建拥有两个主分片的索引而不是一个：
 
 [source,json]
 ----------------------------
@@ -14,55 +13,38 @@ PUT /my_index
   }
 }
 ----------------------------
-<1> Create an index with two primary shards and zero replica shards.
+<1> 创建拥有两个主分片无副本分片的索引。
 
-With a single node, both shards would be assigned to the same node. From the
-point of view of our application, everything functions as it did before.  The
-application communicates with the index, not the shards, and there is still
-only one index.
+当只有一个节点时，两个分片都将被分配至相同的节点。
+从我们应用程序的角度来看，一切都和之前一样运作着。应用程序和索引进行通讯，而不是分片，现在还是只有一个索引。
 
-This time, when we add a second node, Elasticsearch will automatically move
-one shard from the first node to the second node, as depicted in <<img-two-shard>>. Once the relocation has
-finished, each shard will have access to twice the computing power that it had
-before.
+这时，我们加入第二个节点，Elasticsearch 会自动将其中一个分片移动至第二个节点，如 <<img-two-shard>> 描绘的那样，
+当重新分配完成后，每个分片都将接近至两倍于之前的计算能力。
 
 [[img-two-shard]]
-.An index with two shards can take advantage of a second node
-image::images/elas_4402.png["An index with two shards can take advantage of a second node"]
+.一个拥有两个分片的索引可以利用第二个节点
+image::images/elas_4402.png["一个拥有两个分片的索引可以利用第二个节点"]
 
-We have been able to double our capacity by simply copying a shard across the
-network to the new node. The best part is, we achieved this with zero
-downtime.  All indexing and search requests continued to function normally
-while the shard was being moved.
+我们已经可以通过简单地将一个分片通过网络复制到一个新的节点来加倍我们的处理能力。
+最棒的是，我们零停机地做到了这一点。在分片移动过程中，所有的索引搜索请求均在正常运行。
 
-A new index in Elasticsearch is allotted five primary shards by default.  That
-means that we can spread that index out over a maximum of five nodes, with one
-shard on each node.  That's a lot of capacity, and it happens without you
-having to think about it at all!
+在 Elasticsearch 中新添加的索引默认被指定了五个主分片。
+这意味着我们最多可以将那个索引分散到五个节点上，每个节点一个分片。
+它具有很高的处理能力，还未等你去思考这一切就已经做到了！
 
-.Shard Splitting
+.分片分裂
 ****************************
 
-Users often ask why Elasticsearch doesn't support _shard-splitting_&#x2014;the
-ability to split each shard into two or more pieces. ((("shard splitting"))) The reason is that
-shard-splitting is a bad idea:
+用户经常在问，为什么 Elasticsearch 不支持 _分片分裂（shard-splitting）_&#x2014; 将每个分片分裂为两个或更多部分的能力。((("shard splitting")))
+原因就是分片分裂是一个糟糕的想法：
 
-* Splitting a shard is almost equivalent to reindexing your data. It's a much
-  heavier process than just copying a shard from one node to another.
+* 分裂一个分片几乎等于重新索引你的数据。它是一个比仅仅将分片从一个节点复制到另一个节点更重量级的操作。
 
-* Splitting is exponential. You start with one shard, then split into two, and then
-  four, eight, sixteen, and so on. Splitting doesn't allow you to increase capacity
-  by just 50%.
+* 分裂是指数的。起初你你有一个分片，然后分裂为两个，然后四个，八个，十六个，等等。分裂并不会刚好地把你的处理能力提升 50%。
 
-* Shard splitting requires you to have enough capacity to hold a second copy
-  of your index. Usually, by the time you realize that you need to scale out,
-  you don't have enough free space left to perform the split.
+* 分片分裂需要你拥有足够的能力支撑另一份索引的拷贝。通常来说，当你意识到你需要横向扩展时，你已经没有足够的剩余空间来做分裂了。
 
-In a way, Elasticsearch does support shard splitting.  You can always reindex
-your data to a new index with the appropriate number of shards (see
-<<reindex>>).  It is still a more intensive process than moving shards around,
-and still requires enough free space to complete, but at least you can control
-the number of shards in the new index.
+Elasticsearch 通过另一种方式来支持分片分裂。你总是可以把你的数据重新索引至一个拥有适当分片个数的新索引（参阅 <<reindex>>）。
+和移动分片比起来这依然是一个更加密集的操作，依然需要足够的剩余空间来完成，但至少你可以控制新索引的分片个数了。
 
 ****************************
-
