@@ -1,36 +1,20 @@
 [[filter-caching]]
-=== All About Caching
+=== 关于缓存
 
-Earlier in this chapter (<<_internal_filter_operation>>), we briefly discussed
-how non-scoring queries are calculated.((("structured search", "caching of query results")))
-((("caching", "bitsets representing documents matching queries")))((("bitsets, caching of")))
-((("queries", "bitsets representing documents matching, caching of")))  At their
-heart is a bitset representing which documents match the filter.  When Elasticsearch
-determines a bitset is likely to be reused in the future, it will be cached directly
-in memory for later use.  Once cached, these bitsets can be reused _wherever_
-the same query is used, without having to reevaluate the entire query again.
+在本章前面（<<_internal_filter_operation, 过滤器的内部操作>>）中，我们已经简单介绍滤器是如何计算的。((("structured search", "caching of filter results")))((("caching", "bitsets representing documents matching filters")))((("bitsets, caching of")))((("filters", "bitsets representing documents matching, caching of")))其核心实际是采用一个 bitset 记录与过滤器匹配的文档。Elasticsearch 积极地把这些 bitset 缓存起来以备随后使用。一旦缓存成功，bitset 可以复用 _任何_ 已使用过的相同过滤器，而无需再次计算整个过滤器。
 
-These cached bitsets are ``smart'': they are updated incrementally. As you
-index new documents, only those new documents need to be added to the existing
-bitsets, rather than having to recompute the entire cached filter over and
-over. Filters are real-time like the rest of the system; you don't need to
-worry about cache expiry.
+这些 bitsets 缓存是“智能”的：它们以增量方式更新。当我们索引新文档时，只需将那些新文档加入已有 bitset，而不是对整个缓存一遍又一遍的重复计算。和系统其他部分一样，过滤器是实时的，我们无需担心缓存过期问题。
 
-==== Independent Query Caching
+==== 独立的过滤器缓存
 
-The bitsets belonging to a query component are independent from the rest of the
-search request.  This means that, once cached, a query can be reused in multiple
-search requests.  It is not dependent on the "context" of the surrounding query.
-This allows caching to accelerate the most frequently used portions of your queries,
-without wasting overhead on the less frequent / more volatile portions.
+属于一个查询组件的 bitsets 是独立于它所属搜索请求其他部分的。这就意味着，一旦被缓存，一个查询可以被用作多个搜索请求。bitsets 并不依赖于它所存在的查询上下文。这样使得缓存可以加速查询中经常使用的部分，从而降低较少、易变的部分所带来的消耗。
 
-Similarly, if a single search request reuses the same non-scoring query, it's
-cached bitset can be reused for all instances inside the single search request.
+同样，如果单个请求重用相同的非评分查询，它缓存的 bitset 可以被单个搜索里的所有实例所重用。
 
-Let's look at this example query, which looks for emails that are either of the following:
+让我们看看下面例子中的查询，它查找满足以下任意一个条件的电子邮件：
 
-* In the inbox and have not been read
-* _Not_ in the inbox but have been marked as important
+* 在收件箱中，且没有被读过的
+* _不在_ 收件箱中，但被标注重要的
 
 [source,js]
 --------------------------------------------------
@@ -62,45 +46,20 @@ GET /inbox/emails/_search
     }
 }
 --------------------------------------------------
-<1> These two queries are identical and will use the same bitset.
+<1> 两个过滤器是相同的，所以会使用同一 bitset 。
 
-Even though one of the inbox clauses is a `must` clause and the other is a
-`must_not` clause, the two clauses themselves are identical. If this particular
-`term` query was previously cached, both instances would benefit from the cached
-representation despite being used in different styles of boolean logic.
+尽管其中一个收件箱的条件是 `must` 语句，另一个是 `must_not` 语句，但他们两者是完全相同的。这意味着在第一个语句执行后， bitset 就会被计算然后缓存起来供另一个使用。当再次执行这个查询时，收件箱的这个过滤器已经被缓存了，所以两个语句都会使用已缓存的 bitset 。
 
-This ties in nicely with the composability of the query DSL.  It is easy to
-move filtering queries around, or reuse the same query in multiple places within the
-search request.  This isn't just convenient to the developer--it has direct
-performance benefits.
+这点与查询表达式（query DSL）的可组合性结合得很好。它易被移动到表达式的任何地方，或者在同一查询中的多个位置复用。这不仅能方便开发者，而且对提升性能有直接的益处。
 
-==== Autocaching Behavior
+==== 自动缓存行为
 
-In older versions of Elasticsearch, the default behavior was to cache everything
-that was cacheable.  This often meant the system cached bitsets too aggressively
-and performance suffered due to thrashing the cache.  In addition, many filters
-are very fast to evaluate, but substantially slower to cache (and reuse from cache).
-These filters don't make sense to cache, since you'd be better off just re-executing
-the filter again.
+在 Elasticsearch 的较早版本中，默认的行为是缓存一切可以缓存的对象。这也通常意味着系统缓存 bitsets 太富侵略性，从而因为清理缓存带来性能压力。不仅如此，尽管很多过滤器都很容易被评价，但本质上是慢于缓存的（以及从缓存中复用）。缓存这些过滤器的意义不大，因为可以简单地再次执行过滤器。
 
-Inspecting the inverted index is very fast and most query components are rare.
-Consider a `term` filter on a `"user_id"` field:  if you have millions of users,
-any particular user ID will only occur rarely.  It isn't profitable to cache
-the bitsets for this filter, as the cached result will likely be evicted
-from the cache before it is used again.
+检查一个倒排是非常快的，然后绝大多数查询组件却很少使用它。例如 `term` 过滤字段 `"user_id"` ：如果有上百万的用户，每个具体的用户 ID 出现的概率都很小。那么为这个过滤器缓存 bitsets 就不是很合算，因为缓存的结果很可能在重用之前就被剔除了。
 
-This type of cache churn can have serious effects on performance.  What's worse,
-it is difficult for developers to identify which components exhibit good cache
-behavior and which are useless.
+这种缓存的扰动对性能有着严重的影响。更严重的是，它让开发者难以区分有良好表现的缓存以及无用缓存。
 
-To address this, Elasticsearch caches queries automatically based on usage frequency.
-If a non-scoring query has been used a few times (dependent on the query type) in the last 256 queries,
-the query is a candidate for caching.  However, not all segments are guaranteed
-to cache the bitset.  Only segments that hold more than 10,000 documents (or 3%
-of the total documents, whichever is larger) will cache the bitset.  Because
-small segments are fast to search and merged out quickly, it doesn't make sense
-to cache bitsets here.
+为了解决问题，Elasticsearch 会基于使用频次自动缓存查询。如果一个非评分查询在最近的 256 词查询中被使用过（次数取决于查询类型），那么这个查询就会作为缓存的候选。但是，并不是所有的片段都能保证缓存 bitset 。只有那些文档数量超过 10,000 （或超过总文档数量的 3% )才会缓存 bitset 。因为小的片段可以很快的进行搜索和合并，这里缓存的意义不大。
 
-Once cached, a non-scoring bitset will remain in the cache until it is evicted.
-Eviction is done on an LRU basis: the least-recently used filter will be evicted
-once the cache is full.
+一旦缓存了，非评分计算的 bitset 会一直驻留在缓存中直到它被剔除。剔除规则是基于 LRU 的：一旦缓存满了，最近最少使用的过滤器会被剔除。
