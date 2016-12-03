@@ -1,16 +1,13 @@
 [[shard-scale]]
-=== The Unit of Scale
+=== 扩容的单元
 
-In <<dynamic-indices>>, we explained that a shard is a _Lucene index_ and that
-an Elasticsearch index is a collection of shards.((("scaling", "shard as unit of scale"))) Your application talks to an
-index, and Elasticsearch routes your requests to the appropriate shards.
+在 <<dynamic-indices>>，我们介绍了一个分片即一个 _Lucene 索引_ ，一个 Elasticsearch 索引即一系列分片的集合。((("scaling", "shard as unit of scale")))
+你的应用程序与索引进行交互，Elasticsearch 帮助你将请求路由至相应的分片。
 
-A shard is the _unit of scale_. ((("shards", "as unit of scale"))) The smallest index you can have is one with a
-single shard. This may be more than sufficient for your needs--a single
-shard can hold a lot of data--but it limits your ability to scale.
+一个分片即为 _扩容的单元_ 。((("shards", "as unit of scale")))一个最小的索引拥有一个分片。
+这可能已经完全满足你的需求了 -- 单个分片即可存储大量的数据 -- 但这限制了你的可扩展性。
 
-Imagine that our cluster consists of one node, and in our cluster we have one
-index, which has only one shard:
+想象一下我们的集群由一个节点组成，在集群内我们拥有一个索引，这个索引只含一个分片：
 
 [source,json]
 ----------------------------
@@ -22,35 +19,31 @@ PUT /my_index
   }
 }
 ----------------------------
-<1> Create an index with one primary shard and zero replica shards.
+<1> 创建一个拥有 1 主分片 0 个副本分片的索引.
 
-This setup may be small, but it serves our current needs and is cheap to run.
+这个设置值也许很小，但它满足我们当前的需求而且运行代价低。
 
 [NOTE]
 ==================================================
 
-At the moment we are talking about only _primary_ shards.((("primary shards")))  We discuss
-_replica_ shards in <<replica-shards>>.
+当前我们只讨论 _主_ 分片。((("primary shards")))我们将在 <<replica-shards>> 讨论 _副本_ 分片。
 
 ==================================================
 
-One glorious day, the Internet discovers us, and a single node just can't keep up with
-the traffic.  We decide to add a second node, as per <<img-one-shard>>. What happens?
+在美好的一天，互联网发现了我们，一个节点再也承受不了我们的流量。
+我们决定根据 <<img-one-shard>> 添加一个节点。这将会发生什么呢？
 
 [[img-one-shard]]
-.An index with one shard has no scale factor
-image::images/elas_4401.png["An index with one shard has no scale factor"]
+.一个只有一个分片的索引无扩容因子
+image::images/elas_4401.png["一个只有一个分片的索引无扩容因子"]
 
-The answer is: nothing.  Because we have only one shard, there is nothing to
-put on the second node. We can't increase the number of shards in the index,
-because the number of shards is an important element in the algorithm used to
-<<routing-value,route documents to shards>>:
+答案是：什么都不会发生。因为我们只有一个分片，已经没有什么可以放在第二个节点上的了。
+我们不能增加索引的分片数因为它是 <<routing-value,route documents to shards>> 算法中的重要元素：
 
     shard = hash(routing) % number_of_primary_shards
 
-Our only option now is to reindex our data into a new, bigger index that has
-more shards, but that will take time that we can ill afford.  By planning
-ahead, we could have avoided this problem completely by _overallocating_.
+我们当前的选择只有一个就是将数据重新索引至一个拥有更多分片的一个更大的索引，但这样做将消耗的时间是我们无法提供的。
+通过事先规划，我们可以使用 _预分配_ 的方式来完全避免这个问题。
 
 
 
