@@ -1,45 +1,32 @@
 [[capacity-planning]]
-=== Capacity Planning
+=== 容量规划
 
-If 1 shard is too few and 1,000 shards are too many, how do I know how many
-shards I need?((("shards", "determining number you need")))((("capacity planning")))((("scaling", "capacity planning"))) This is a question that is impossible to answer in the general case. There are
-just too many variables:  the hardware that you use, the size and complexity
-of your documents, how you index and analyze those documents, the types of
-queries that you run, the aggregations that you perform, how you model your
-data, and more.
+如果一个分片太少而 1000 个又太多，那么我怎么知道我需要多少分片呢？((("shards", "determining number you need")))((("capacity planning")))((("scaling", "capacity planning")))
+一般情况下这是一个无法回答的问题。因为实在有太多相关的因素了：你使用的硬件、文档的大小和复杂度、文档的索引分析方式、运行的查询类型、执行的聚合以及你的数据模型等等。
 
-Fortunately, it is an easy question to answer in the specific case--yours:
+幸运的是，在特定场景下这是一个容易回答的问题，尤其是你自己的场景：
 
-1.  Create a cluster consisting of a single server, with the hardware that you
-    are considering using in production.
+1.  基于你准备用于生产环境的硬件创建一个拥有单个节点的集群。
 
-2.  Create an index with the same settings and analyzers that you plan to use
-    in production, but with only one primary shard and no replicas.
+2.  创建一个和你准备用于生产环境相同配置和分析器的索引，但让它只有一个主分片无副本分片。
 
-3.  Fill it with real documents (or as close to real as you can get).
+3.  索引实际的文档（或者尽可能接近实际）。
 
-4.  Run real queries and aggregations (or as close to real as you can get).
+4.  运行实际的查询和聚合（或者尽可能接近实际）。
 
-Essentially, you want to replicate real-world usage and to push this single
-shard until it ``breaks.''  Even the definition of _breaks_ depends on you:
-some users require that all responses return within 50ms; others are quite
-happy to wait for 5 seconds.
+基本来说，你需要复制真实环境的使用方式并将它们全部压缩到单个分片上直到它``挂掉。''
+实际上 _挂掉_ 的定义也取决于你：一些用户需要所有响应在 50 毫秒内返回；另一些则乐于等上 5 秒钟。
 
-Once you define the capacity of a single shard, it is easy to extrapolate that
-number to your whole index.  Take the total amount of data that you need to
-index, plus some extra for future growth, and divide by the capacity of a
-single shard.  The result is the number of primary shards that you will need.
+一旦你定义好了单个分片的容量，很容易就可以推算出整个索引的分片数。
+用你需要索引的数据总数加上一部分预期的增长，除以单个分片的容量，结果就是你需要的主分片个数。
 
 [TIP]
 ================================
 
-Capacity planning should not be your first step.
+容量规划不应当作为你的第一步。
 
-First look for ways to optimize how you are using Elasticsearch.  Perhaps you
-have inefficient queries, not enough RAM, or you have left swap enabled?
+先看看有没有办法优化你对 Elasticsearch 的使用方式。也许你有低效的查询，缺少足够的内存，又或者你开启了 swap？
 
-We have seen new users who, frustrated by initial performance, immediately
-start trying to tune the garbage collector or adjust the number of threads,
-instead of tackling the simple problems like removing wildcard queries.
+我们见过一些新手对于初始性能感到沮丧，立即就着手调优垃圾回收又或者是线程数，而不是处理简单问题例如去掉通配符查询。
 
 ================================
