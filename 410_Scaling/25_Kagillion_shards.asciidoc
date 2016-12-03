@@ -1,47 +1,36 @@
 [[kagillion-shards]]
-=== Kagillion Shards
+=== 海量分片
 
-The first thing that new users do when they learn about
-<<overallocation,shard overallocation>> is((("scaling", "shard overallocation", "limiting")))((("shards", "overallocation of", "limiting"))) to say to themselves:
+当新手们在了解过 <<overallocation,分片预分配>> 之后做的第一件事就是对自己说：((("scaling", "shard overallocation", "limiting")))((("shards", "overallocation of", "limiting")))
 
-[quote, A new user]
+[quote, 一个新手的话]
 _______________________________
 [role="alignmeright"]
-I don't know how big this is going to be, and I can't change the index size
-later on, so to be on the safe side, I'll just give this index 1,000 shards...
+我不知道这个索引将来会变得多大，并且过后我也不能更改索引的大小，所以为了保险起见，还是给它设为 1000 个分片吧...
 
 _______________________________
 
-One thousand shards--really? And you don't think that, perhaps, between now
-and the time you need to buy _one thousand nodes_, that you may need to
-rethink your data model once or twice and have to reindex?
+一千个分片——当真？在你买来 _一千个节点_ 之前，你不觉得你可能需要再三思考你的数据模型然后将它们重新索引吗？
 
-A shard is not free.  Remember:
+一个分片并不是没有代价的。记住：
 
-*   A shard is a Lucene index under the covers, which uses file handles,
-    memory, and CPU cycles.
+*   一个分片的底层即为一个 Lucene 索引，会消耗一定文件句柄、内存、以及 CPU 运转。
 
-*   Every search request needs to hit a copy of every shard in the index.
-    That's fine if every shard is sitting on a different node, but not if many
-    shards have to compete for the same resources.
+*   每一个搜索请求都需要命中索引中的每一个分片，如果每一个分片都处于不同的节点还好，
+    但如果多个分片都需要在同一个节点上竞争使用相同的资源就有些糟糕了。
 
-*   Term statistics, used to calculate relevance, are per shard.  Having a small
-    amount of data in many shards leads to poor relevance.
+*   用于计算相关度的词项统计信息是基于分片的。如果有许多分片，每一个都只有很少的数据会导致很低的相关度。
 
 [TIP]
 ===============================
 
-A little overallocation is good. A kagillion shards is bad. It is difficult to
-define what constitutes too many shards, as it depends on their size and how
-they are being used. A hundred shards that are seldom used may be fine, while
-two shards experiencing very heavy usage could be too many. Monitor your nodes
-to ensure that they have enough spare capacity to deal with exceptional
-conditions.
+适当的预分配是好的。但上千个分片就有些糟糕。我们很难去定义分片是否过多了，这取决于它们的大小以及如何去使用它们。
+一百个分片但很少使用还好，两个分片但非常频繁地使用有可能就有点多了。
+监控你的节点保证它们留有足够的空闲资源来处理一些特殊情况。
 
 ===============================
 
-Scaling out should be done in phases.  Build in enough capacity to get to the
-next phase. Once you get to the next phase, you have time to think about the
-changes you need to make to reach the phase after that.
+横向扩展应当分阶段进行。为下一阶段准备好足够的资源。
+只有当你进入到下一个阶段，你才有时间思考需要作出哪些改变来达到这个阶段。
 
 
