@@ -1,77 +1,50 @@
 [[intro]]
-== You Know, for Search...
+== 你知道的, 为了搜索...
 
-Elasticsearch is an open-source search engine built on top of
-https://lucene.apache.org/core/[Apache Lucene(TM)], a full-text search-engine
-library.((("Apache Lucene")))((("Lucene")))  Lucene is arguably the most advanced, high-performance, and fully featured
-search engine library in existence today--both open source and proprietary.
+Elasticsearch 是一个开源的搜索引擎，建立在一个全文搜索引擎库 https://lucene.apache.org/core/[Apache Lucene(TM)] 基础之上。
+((("Apache Lucene")))((("Lucene"))) Lucene 可能是目前存在的，不论开源还是私有的，拥有最先进，高性能和全功能搜索引擎功能的库。
 
-But Lucene is just a library. To leverage its power, you need to work in Java
-and to integrate Lucene directly with your application. Worse, you will likely
-require a degree in information retrieval to understand how it works.  Lucene
-is _very_ complex.
+但是 Lucene 仅仅只是一个库。为了利用它，你需要编写 java 程序，并在你的 java 程序里面直接集成 Lucene 包。
+更坏的情况是，你需要对信息检索有一定程度的理解才能明白 Lucene 是怎么工作的。Lucene 是 _很_ 复杂的。
 
-Elasticsearch is also written in Java((("Java"))) and uses Lucene internally for all of
-its indexing and searching, but it aims to make full-text search easy by hiding
-the complexities of Lucene behind a simple, coherent, RESTful API.
+Elasticsearch 也是使用 Java 编写的，它的内部使用 Lucene 做索引与搜索，但是它的目标是使全文检索变得简单，
+通过隐藏 Lucene 的复杂性，取而代之的提供一套简单一致的 RESTful API。
 
-However, Elasticsearch is much more than just Lucene and much more than
-``just'' full-text search.((("Elasticsearch", "capabilities"))) It can also be described as follows:
+然而，Elasticsearch 不仅仅是 Lucene，并且也不仅仅只是一个全文搜索引擎。((("Elasticsearch", "capabilities")))
+它可以被下面这样准确的形容：
 
-* A distributed real-time document store where _every field_ is indexed and
-  searchable
-* A distributed search engine with real-time analytics
-* Capable of scaling to hundreds of servers and petabytes of structured
-  and unstructured data
+* 一个分布式的实时文档存储，_每个字段_ 可以被索引与搜索
+* 一个分布式实时分析搜索引擎
+* 能胜任上百个服务节点的扩展，并支持 PB 级别的结构化或者非结构化数据
 
-And it packages up all this functionality into a standalone server that
-your application can talk to via a simple RESTful API, using a web client from
-your favorite programming language, or even from the command line.
+Elasticsearch 将所有的功能打包成一个单独的服务，这样你可以通过程序去访问它提供的简单的 RESTful API 服务，
+不论你是使用自己喜欢的编程语言还是直接使用命令行（去充当这个客户端）。
 
-It is easy to get started with Elasticsearch. It ships with sensible defaults
-and hides complicated search theory away from beginners. It _just works_,
-right out of the box. With minimal understanding, you can soon become
-productive.((("Elasticsearch", "installing")))
+就 Elasticsearch 而言，起步很简单。对于初学者来说，它预设了一些适当的默认值，并隐藏了复杂的搜索理论知识。
+它 _开箱即用_ 。只需最少的理解，你很快就能具有生产力。((("Elasticsearch", "installing")))
 
-As your knowledge grows, you can leverage more of Elasticsearch's advanced
-features. The entire engine is configurable and flexible. Pick and choose
-from the advanced features to tailor Elasticsearch to your problem domain.
+随着你知识的积累，你可以利用 Elasticsearch 更多的高级特性，它的整个引擎是可配置并且灵活的。
+从众多高级特性中，挑选恰当去修饰的 Elasticsearch，使它能解决你本地遇到的问题。
 
-You can ((("Apache 2 license"))) download, use, and modify Elasticsearch free of charge. 
-It is available under the http://www.apache.org/licenses/LICENSE-2.0.html[Apache 2 license],
-one of the most flexible open source licenses available. The source is hosted on GitHub
-at https://github.com/elastic/elasticsearch[github.com/elastic/elasticsearch]. See
-https://github.com/elastic/elasticsearch/blob/master/CONTRIBUTING.md[Contributing to 
-Elasticsearch] if you would like to join our amazing community of contributors!
+你可以((("Apache 2 license")))免费下载，使用，修改 Elasticsearch。它在 http://www.apache.org/licenses/LICENSE-2.0.html[Apache 2 license] 协议下发布的，
+这是众多灵活的开源协议之一。Elasticsearch 的源码被托管在 Github 上 https://github.com/elastic/elasticsearch[github.com/elastic/elasticsearch]。
+如果你想加入我们这个令人惊奇的 contributors 社区，看这里 https://github.com/elastic/elasticsearch/blob/master/CONTRIBUTING.md[Contributing to Elasticsearch]。
 
-If you have any questions related to Elasticsearch, including specific features, 
-language clients and plugins, join the conversation at 
-https://discuss.elastic.co[discuss.elastic.co]. 
+如果你对 Elasticsearch 有任何相关的问题，包括特定的特性(specific features)、语言客户端(language clients)、插件(plugins)，可以在这里 https://discuss.elastic.co[discuss.elastic.co] 加入讨论。
 
-.The Mists of Time
+.回忆时光
 ***************************************
+许多年前，一个刚结婚的名叫 Shay Banon 的失业开发者，跟着他的妻子去了伦敦，他的妻子在那里学习厨师。
+在寻找一个赚钱的工作的时候，为了给他的妻子做一个食谱搜索引擎，他开始使用 Lucene 的一个早期版本。
 
-Many years ago, a newly married unemployed developer called Shay Banon
-followed his wife to London, where she was studying to be a chef. While looking
-for gainful employment, he started playing with an early version of Lucene,
-with the intent of building his wife a recipe search engine.
+直接使用 Lucene 是很难的，因此 Shay 开始做一个抽象层，Java 开发者使用它可以很简单的给他们的程序添加搜索功能。
+他发布了他的第一个开源项目 Compass。
 
-Working directly with Lucene can be tricky, so Shay started work on an
-abstraction layer to make it easier for Java programmers to add search to
-their applications.  He released this as his first open source project, called
-Compass.
+后来 Shay 获得了一份工作，主要是高性能，分布式环境下的内存数据网格。这个对于高性能，实时，分布式搜索引擎的需求尤为突出，
+他决定重写 Compass，把它变为一个独立的服务并取名 Elasticsearch。
 
-Later Shay took a job working in a high-performance, distributed environment
-with in-memory data grids.  The need for a high-performance, real-time,
-distributed search engine was obvious, and he decided to rewrite the Compass
-libraries as a standalone server called Elasticsearch.
+第一个公开版本在2010年2月发布，从此以后，Elasticsearch 已经成为了 Github 上最活跃的项目之一，他拥有超过300名 contributors(目前736名 contributors )。
+一家公司已经开始围绕 Elasticsearch 提供商业服务，并开发新的特性，但是，Elasticsearch 将永远开源并对所有人可用。
 
-The first public release came out in February 2010.  Since then, Elasticsearch
-has become one of the most popular projects on GitHub with commits from over
-300 contributors.  A company has formed around Elasticsearch to provide
-commercial support and to develop new features, but Elasticsearch is, and
-forever will be, open source and available to all.
-
-Shay's wife is still waiting for the recipe search...
-
+据说，Shay 的妻子还在等着她的食谱搜索引擎...
 ***************************************
