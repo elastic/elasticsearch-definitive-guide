@@ -1,14 +1,9 @@
 [[custom-all]]
-=== Custom _all Fields
+=== 自定义 _all 字段
 
-In <<all-field>>, we explained that the special `_all` field indexes the values
-from all other fields as one big string.((("_all field", sortas="all field")))((("multifield search", "custom _all fields"))) Having all fields indexed into one
-field is not terribly flexible, though.  It would be nice to have one custom
-`_all` field for the person's name, and another custom `_all` field for the
-address.
+在 <<all-field,all-field>> 字段中，我们解释过 `_all` 字段的索引方式是将所有其他字段的值作为一个大字符串索引的。((("_all field", sortas="all field")))((("multifield search", "custom _all fields")))然而这么做并不十分灵活，为了灵活我们可以给人名添加一个自定义 `_all` 字段，再为地址添加另一个 `_all` 字段。
 
-Elasticsearch provides us with this functionality via the `copy_to` parameter
-in a field ((("copy_to parameter")))((("mapping (types)", "copy_to parameter")))mapping:
+Elasticsearch 在字段映射中为我们提供 `copy_to` ((("copy_to parameter")))((("mapping (types)", "copy_to parameter")))参数来实现这个功能：
 
 [source,js]
 --------------------------------------------------
@@ -35,28 +30,19 @@ PUT /my_index
 --------------------------------------------------
 // SENSE: 110_Multi_Field_Search/45_Custom_all.json
 
-<1> The values in the `first_name` and `last_name` fields
-    are also copied to the `full_name` field.
+<1> `first_name` 和 `last_name` 字段中的值会被复制到 `full_name` 字段。
 
-With this mapping in place, we can query the `first_name` field for first
-names, the `last_name` field for last name, or the `full_name` field for first
-and last names.
+有了这个映射，我们可以用 `first_name` 来查询名，用 `last_name` 来查询姓，或者直接使用 `full_name` 查询整个姓名。
 
-Mappings of the `first_name` and `last_name` fields have no bearing
-on how the `full_name` field is indexed. The `full_name` field copies the
-string values from the other two fields, then indexes them according to the
-mapping of the `full_name` field only.
+`first_name` 和 `last_name` 的映射并不影响 `full_name` 如何被索引， `full_name` 将两个字段的内容复制到本地，然后根据 `full_name` 的映射自行索引。
 
 [WARNING]
 ====
-The `copy_to` setting will not work on a <<multi-fields,multi-field>>. If you attempt
-to configure your mapping this way, Elasticsearch will throw an exception.
+`copy_to` 设置对<<multi-fields,multi-field>>无效。如果尝试这样配置映射，Elasticsearch 会抛异常。
 
-Why?  Multi-fields are simply indexing the "main" field a different way; they don't
-have their own source.  Which means there is no source to `copy_to` a different
-field.
+为什么呢？多字段只是以不同方式简单索引“主”字段；它们没有自己的数据源。也就是说没有可供 `copy_to` 到另一字段的数据源。
 
-You can easily `copy_to` the "main" field to achieve the same effect:
+只要对“主”字段 `copy_to` 就能轻而易举的达到相同的效果：
 
 [source,js]
 --------------------------------------------------
@@ -83,5 +69,5 @@ PUT /my_index
     }
 }
 --------------------------------------------------
-<1> `copy_to` is placed on the "main" field rather than the multi-field
+<1> `copy_to` 是针对“主”字段，而不是多字段的
 ====
