@@ -1,210 +1,149 @@
+[[_limiting_memory_usage]]
+=== 限制内存使用（Limiting Memory Usage）
 
-=== Limiting Memory Usage
+一旦分析字符串被加载到 fielddata ，他们会一直在那里，直到被驱逐（或者节点崩溃）。由于这个原因，留意内存的使用情况，了解它是如何以及何时加载的，怎样限制对集群的影响是很重要的。
 
-Once analyzed strings have been loaded into fielddata, they will sit there until
-evicted (or your node crashes).  For that reason it is important to keep an eye on this
-memory usage, understand how and when it loads, and how you can limit the impact on your cluster.
+Fielddata 是 _延迟_ 加载。如果你从来没有聚合一个分析字符串，就不会加载 fielddata 到内存中。此外，fielddata 是基于字段加载的，
+这意味着只有很活跃地使用字段才会增加 fielddata 的负担。
 
-Fielddata is loaded _lazily_.  If you never aggregate on an analyzed string, you'll
-never load fielddata into memory.  Furthermore, fielddata is loaded on a per-field basis,
-meaning only actively used fields will incur the "fielddata tax".
+然而，这里有一个令人惊讶的地方。假设你的查询是高度选择性和只返回命中的 100 个结果。大多数人认为 fielddata 只加载 100 个文档。
 
-However, there is a subtle surprise lurking here.  Suppose your query is highly selective and
-only returns 100 hits.  Most people assume fielddata is only loaded for those
-100 documents.
+实际情况是，fielddata 会加载索引中（针对该特定字段的） *所有的* 文档，而不管查询的特异性。逻辑是这样：如果查询会访问文档 X、Y 和 Z，那很有可能会在下一个查询中访问其他文档。
 
-In reality, fielddata will be loaded for *all* documents in that index (for that
-particular field), regardless of the query's specificity. The logic is:
-if you need access to documents X, Y, and Z for this query, you
-will probably need access to other documents in the next query.
+与 doc values 不同，fielddata 结构不会在索引时创建。相反，它是在查询运行时，动态填充。这可能是一个比较复杂的操作，可能需要一些时间。
+将所有的信息一次加载，再将其维持在内存中的方式要比反复只加载一个 fielddata 的部分代价要低。
 
-Unlike doc values,
-the fielddata structure is not created at index time.  Instead, it is populated
-on-the-fly when the query is run.  This is a potentially non-trivial operation and
-can take some time.  It is cheaper to load all the values once, and keep them in
-memory, than load only a portion of the total fielddata repeatedly.
+JVM 堆 ((("JVM (Java Virtual Machine)", "heap usage, fielddata and"))) 是有限资源的，应该被合理利用。
+限制 fielddata 对堆使用的影响有多套机制，这些限制方式非常重要，因为堆栈的乱用会导致节点不稳定（感谢缓慢的垃圾回收机制），甚至导致节点宕机（通常伴随 OutOfMemory 异常）。
 
-The JVM heap ((("JVM (Java Virtual Machine)", "heap usage, fielddata and")))is a limited resource that should be used wisely. A number of
-mechanisms exist to limit the impact of fielddata on heap usage. These limits
-are important because abuse of the heap will cause node instability (thanks to
-slow garbage collections) or even node death (with an OutOfMemory exception).
-
-.Choosing a Heap Size
+.选择堆大小（Choosing a Heap Size）
 ******************************************
 
-There are two rules to apply when setting ((("heap", rules for setting size of")))the Elasticsearch heap size, with
-the `$ES_HEAP_SIZE` environment variable:
+在设置 Elasticsearch 堆大小时需要通过 ((("heap", rules for setting size of"))) `$ES_HEAP_SIZE` 环境变量应用两个规则：
 
-No more than 50% of available RAM::
-Lucene makes good use of the filesystem caches, which are managed by the
-kernel. Without enough filesystem cache space, performance will suffer.
-Furthermore, the more memory dedicated to the heap means less available
-for all your other fields using doc values.
+不要超过可用 RAM 的 50% ::
+Lucene 能很好利用文件系统的缓存，它是通过系统内核管理的。如果没有足够的文件系统缓存空间，性能会收到影响。
+此外，专用于堆的内存越多意味着其他所有使用 doc values 的字段内存越少。
 
-No more than 32 GB::
-If the heap is less than 32 GB, the JVM can use compressed pointers, which
-saves a lot of memory: 4 bytes per pointer instead of 8 bytes.
+不要超过 32 GB ::
+如果堆大小小于 32 GB，JVM 可以利用指针压缩，这可以大大降低内存的使用：每个指针 4 字节而不是 8 字节。
 
-For a longer and more complete discussion of heap sizing, see <<heap-sizing>>
+更详细和更完整的堆大小讨论，请参阅 <<heap-sizing>>
 
 ******************************************
 
 [[fielddata-size]]
-==== Fielddata Size
+==== Fielddata的大小（Fielddata Size）
 
-The `indices.fielddata.cache.size` controls how much heap space is allocated
-to fielddata.((("fielddata", "size")))((("aggregations", "limiting memory usage", "fielddata size")))
-As you are issuing queries, aggregations on analyzed strings will load into fielddata
-if the field wasn't previously loaded. If the resulting fielddata size would
-exceed the specified `size`, other values will be evicted in order to make space.
+`indices.fielddata.cache.size`  控制为 fielddata 分配的堆空间大小。((("fielddata", "size")))((("aggregations", "limiting memory usage", "fielddata size")))
+当你发起一个查询，分析字符串的聚合将会被加载到 fielddata，如果这些字符串之前没有被加载过。如果结果中 fielddata 大小超过了指定 `大小` ，其他的值将会被回收从而获得空间。
 
-By default, this setting is _unbounded_&#x2014;Elasticsearch will never evict data
-from fielddata.
+默认情况下，设置都是 _unbounded_ ，Elasticsearch 永远都不会从 fielddata 中回收数据。
 
-This default was chosen deliberately: fielddata is not a transient cache. It
-is an in-memory data structure that must be accessible for fast execution, and
-it is expensive to build. If you have to reload data for every request,
-performance is going to be awful.
+这个默认设置是刻意选择的：fielddata 不是临时缓存。它是驻留内存里的数据结构，必须可以快速执行访问，而且构建它的代价十分高昂。如果每个请求都重载数据，性能会十分糟糕。
 
-A bounded size forces the data structure to evict data.  We will look at when
-to set this value, but first a warning:
+一个有界的大小会强制数据结构回收数据。我们会看何时应该设置这个值，但请首先阅读以下警告：
 
 [WARNING]
 =======================================
-This setting is a safeguard, not a solution for insufficient memory.
+这个设置是一个安全卫士，而非内存不足的解决方案。
 
-If you don't have enough memory to keep your fielddata resident in memory,
-Elasticsearch will constantly have to reload data from disk, and evict other
-data to make space. Evictions cause heavy disk I/O  and generate a large
-amount of garbage in memory, which must be garbage collected later on.
+如果没有足够空间可以将 fielddata 保留在内存中，Elasticsearch 就会时刻从磁盘重载数据，并回收其他数据以获得更多空间。内存的回收机制会导致重度磁盘I/O，并且在内存中生成很多垃圾，这些垃圾必须在晚些时候被回收掉。
 
 =======================================
 
-Imagine that you are indexing logs, using a new index every day.  Normally you
-are interested in data from only the last day or two.  Although you keep older
-indices around, you seldom need to query them.  However, with the default
-settings, the fielddata from the old indices is never evicted! fielddata
-will just keep on growing until you trip the fielddata circuit breaker (see
-<<circuit-breaker>>), which will prevent you from loading any more
-fielddata.
+设想我们正在对日志进行索引，每天使用一个新的索引。通常我们只对过去一两天的数据感兴趣，尽管我们会保留老的索引，但我们很少需要查询它们。不过如果采用默认设置，旧索引的 fielddata 永远不会从缓存中回收！
+fieldata 会保持增长直到 fielddata 发生断熔（请参阅 <<circuit-breaker>>），这样我们就无法载入更多的 fielddata。
 
-At that point, you're stuck. While you can still run queries that access
-fielddata from the old indices, you can't load any new values.  Instead, we
-should evict old values to make space for the new values.
+这个时候，我们被困在了死胡同。但我们仍然可以访问旧索引中的 fielddata，也无法加载任何新的值。相反，我们应该回收旧的数据，并为新值获得更多空间。
 
-To prevent this scenario, place an upper limit on the fielddata by adding this
-setting to the `config/elasticsearch.yml` file:
+为了防止发生这样的事情，可以通过在 `config/elasticsearch.yml` 文件中增加配置为 fielddata 设置一个上限：
 
 [source,yaml]
 -----------------------------
 indices.fielddata.cache.size:  20% <1>
 -----------------------------
-<1> Can be set to a percentage of the heap size, or a concrete
-    value like `5gb`
+<1> 可以设置堆大小的百分比，也可以是某个值，例如： `5gb` 。
 
-With this setting in place, the least recently used fielddata will be evicted
-to make space for newly loaded data.((("fielddata", "expiry")))
+有了这个设置，最久未使用（LRU）的 fielddata 会被回收为新数据腾出空间。((("fielddata", "expiry")))
 
 [WARNING]
 ====
-There is another setting that you may see online:  `indices.fielddata.cache.expire`.
+可能发现在线文档有另外一个设置： `indices.fielddata.cache.expire` 。
 
-We beg that you _never_ use this setting!  It will likely be deprecated in the
-future.
+这个设置 _永远都不会_ 被使用！它很有可能在不久的将来被弃用。
 
-This setting tells Elasticsearch to evict values from fielddata if they are older
-than `expire`, whether the values are being used or not.
+这个设置要求 Elasticsearch 回收那些 `过期` 的 fielddata，不管这些值有没有被用到。
 
-This is _terrible_ for performance.  Evictions are costly, and this effectively
-_schedules_ evictions on purpose, for no real gain.
+这对性能是件 _很糟糕_ 的事情。回收会有消耗性能，它刻意的安排回收方式，而没能获得任何回报。
 
-There isn't a good reason to use this setting; we literally cannot theory-craft
-a hypothetically useful situation. It exists only for backward compatibility at
-the moment.  We mention the setting in this book only since, sadly, it has been
-recommended in various articles on the Internet as a good performance tip.
+没有理由使用这个设置：我们不能从理论上假设一个有用的情形。目前，它的存在只是为了向前兼容。我们只在很有以前提到过这个设置，但不幸的是网上各种文章都将其作为一种性能调优的小窍门来推荐。
 
-It is not. Never use it!
+它不是。永远不要使用！
 ====
 
 [[monitoring-fielddata]]
-==== Monitoring fielddata
+==== 监控 fielddata（Monitoring fielddata）
 
-It is important to keep a close watch on how much memory((("fielddata", "monitoring")))((("aggregations", "limiting memory usage", "moitoring fielddata"))) is being used by
-fielddata, and whether any data is being evicted.  High eviction counts can
-indicate a serious resource issue and a reason for poor performance.
+无论是仔细监控 fielddata 的内存使用情况，((("fielddata", "monitoring")))((("aggregations", "limiting memory usage", "moitoring fielddata"))) 还是看有无数据被回收都十分重要。高的回收数可以预示严重的资源问题以及性能不佳的原因。
 
-Fielddata usage can be monitored:
+Fielddata 的使用可以被监控：
 
-* per-index using the http://www.elastic.co/guide/en/elasticsearch/reference/current/indices-stats.html[`indices-stats` API]:
+* 按索引使用 http://www.elastic.co/guide/en/elasticsearch/reference/current/indices-stats.html[`indices-stats` API] ：
 +
 [source,json]
 -------------------------------
 GET /_stats/fielddata?fields=*
 -------------------------------
 
-* per-node using the {ref}/cluster-nodes-stats.html[`nodes-stats` API]:
+* 按节点使用 {ref}/cluster-nodes-stats.html[`nodes-stats` API] ：
 +
 [source,json]
 -------------------------------
 GET /_nodes/stats/indices/fielddata?fields=*
 -------------------------------
 
-* Or even per-index per-node:
+* 按索引节点：
 
 [source,json]
 -------------------------------
 GET /_nodes/stats/indices/fielddata?level=indices&fields=*
 -------------------------------
 
-By setting `?fields=*`, the memory usage is broken down for each field.
-
+使用设置 `?fields=*` ，可以将内存使用分配到每个字段。
 
 [[circuit-breaker]]
-==== Circuit Breaker
+==== 断路器（Circuit Breaker）
 
-An astute reader might have noticed a problem with the fielddata size settings.
-fielddata size is checked _after_ the data is loaded.((("aggregations", "limiting memory usage", "fielddata circuit breaker")))  What happens if a query
-arrives that tries to load more into fielddata than available memory?  The
-answer is ugly: you would get an OutOfMemoryException.((("OutOfMemoryException")))((("circuit breakers")))
 
-Elasticsearch includes a _fielddata circuit breaker_ that is designed to deal
-with this situation.((("fielddata circuit breaker")))  The circuit breaker estimates the memory requirements of
-a query by introspecting the fields involved (their type, cardinality, size,
-and so forth). It then checks to see whether loading the required fielddata would push
-the total fielddata size over the configured percentage of the heap.
+机敏的读者可能已经发现 fielddata 大小设置的一个问题。fielddata 大小是在数据加载 _之后_ 检查的。((("aggregations", "limiting memory usage", "fielddata circuit breaker")))
+如果一个查询试图加载比可用内存更多的信息到 fielddata 中会发生什么？答案很丑陋：我们会碰到 OutOfMemoryException 。((("OutOfMemoryException")))((("circuit breakers")))
 
-If the estimated query size is larger than the limit, the circuit breaker is
-_tripped_ and the query will be aborted and return an exception.  This happens
-_before_ data is loaded, which means that you won't hit an
-OutOfMemoryException.
+Elasticsearch 包括一个 _fielddata 断熔器_ ，这个设计就是为了处理上述情况。((("fielddata circuit breaker")))
+断熔器通过内部检查（字段的类型、基数、大小等等）来估算一个查询需要的内存。它然后检查要求加载的 fielddata 是否会导致 fielddata 的总量超过堆的配置比例。
 
-.Available Circuit Breakers
+如果估算查询的大小超出限制，就会 _触发_ 断路器，查询会被中止并返回异常。这都发生在数据加载 _之前_ ，也就意味着不会引起 OutOfMemoryException 。
+
+.可用的断路器（Available Circuit Breakers）
 ***************************************
 
-Elasticsearch has a family of circuit breakers, all of which work to ensure
-that memory limits are not exceeded:
+Elasticsearch 有一系列的断路器，它们都能保证内存不会超出限制：
 
 `indices.breaker.fielddata.limit`::
 
-    The `fielddata` circuit breaker limits the size of fielddata to 60% of the
-    heap, by default.
+    `fielddata` 断路器默认设置堆的 60% 作为 fielddata 大小的上限。
 
 `indices.breaker.request.limit`::
 
-    The `request` circuit breaker estimates the size of structures required to
-    complete other parts of a request, such as creating aggregation buckets,
-    and limits them to 40% of the heap, by default.
+    `request` 断路器估算需要完成其他请求部分的结构大小，例如创建一个聚合桶，默认限制是堆内存的 40%。
 
 `indices.breaker.total.limit`::
 
-    The `total` circuit breaker wraps the `request` and `fielddata` circuit
-    breakers to ensure that the combination of the two doesn't use more than
-    70% of the heap by default.
+    `total` 揉合 `request` 和 `fielddata` 断路器保证两者组合起来不会使用超过堆内存的 70%。
 
 ***************************************
 
-The circuit breaker limits can be specified in the `config/elasticsearch.yml`
-file, or can be updated dynamically on a live cluster:
+断路器的限制可以在文件 `config/elasticsearch.yml` 中指定，可以动态更新一个正在运行的集群：
 
 [source,js]
 ----
@@ -215,37 +154,21 @@ PUT /_cluster/settings
   }
 }
 ----
-<1> The limit is a percentage of the heap.
+<1> 这个限制是按对内存的百分比设置的。
 
+最好为断路器设置一个相对保守点的值。 记住 fielddata 需要与 `request` 断路器共享堆内存、索引缓冲内存和过滤器缓存。Lucene 的数据被用来构造索引，以及各种其他临时的数据结构。
+正因如此，它默认值非常保守，只有 60% 。过于乐观的设置可能会引起潜在的堆栈溢出（OOM）异常，这会使整个节点宕掉。
 
-It is best to configure the circuit breaker with a relatively conservative
-value. Remember that fielddata needs to share the heap with the `request`
-circuit breaker, the indexing memory buffer, the filter cache, Lucene data
-structures for open indices, and various other transient data structures. For
-this reason, it defaults to a fairly conservative 60%.  Overly optimistic
-settings can cause potential OOM exceptions, which will take down an entire
-node.
-
-On the other hand, an overly conservative value will simply return a query
-exception that can be handled by your application.  An exception is better
-than a crash. These exceptions should also encourage you to reassess your
-query: why _does_ a single query need more than 60% of the heap?
+另一方面，过度保守的值只会返回查询异常，应用程序可以对异常做相应处理。异常比服务器崩溃要好。这些异常应该也能促进我们对查询进行重新评估：为什么单个查询需要超过堆内存的 60% 之多？
 
 [TIP]
 ==================================================
 
-In <<fielddata-size>>, we spoke about adding a limit to the size of fielddata,
-to ensure that old unused fielddata can be evicted.  The relationship between
-`indices.fielddata.cache.size` and `indices.breaker.fielddata.limit` is an
-important one.  If the circuit-breaker limit is lower than the cache size, no data will ever be evicted.  In order for it to work properly, the
-circuit breaker limit _must_ be higher than the cache size.
+在 <<fielddata-size>> 中，我们提过关于给 fielddata 的大小加一个限制，从而确保旧的无用 fielddata 被回收的方法。 `indices.fielddata.cache.size` 和 `indices.breaker.fielddata.limit` 之间的关系非常重要。
+如果断路器的限制低于缓存大小，没有数据会被回收。为了能正常工作，断路器的限制 _必须_ 要比缓存大小要高。
 
 ==================================================
 
-It is important to note that the circuit breaker compares estimated query size
-against the total heap size, _not_ against the actual amount of heap memory
-used.  This is done for a variety of technical reasons (for example, the heap may look
-full but is actually just garbage waiting to be collected, which is hard to
-estimate properly). But as the end user, this means the setting needs to be
-conservative, since it is comparing against total heap, not _free_ heap.
+值得注意的是：断路器是根据总堆内存大小估算查询大小的，而 _非_ 根据实际堆内存的使用情况。
+这是由于各种技术原因造成的（例如，堆可能看上去是满的但实际上可能只是在等待垃圾回收，这使我们难以进行合理的估算）。但作为终端用户，这意味着设置需要保守，因为它是根据总堆内存必要的，而 _不是_ 可用堆内存。
 ((("memory usage", "limiting for aggregations", startref ="ix_memagg")))
