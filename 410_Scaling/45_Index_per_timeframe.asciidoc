@@ -1,56 +1,35 @@
 [[time-based]]
-=== Time-Based Data
+=== 基于时间的数据
 
-One of the most common use cases for Elasticsearch is for logging,((("logging", "using Elasticsearch for")))((("time-based data")))((("scaling", "time-based data and"))) so common
-in fact that Elasticsearch provides an integrated((("ELK stack"))) logging platform called the
-_ELK stack_&#x2014;Elasticsearch, Logstash, and Kibana--to make the process easy.
+Elasticsearch 的常用案例之一便是日志记录，((("logging", "using Elasticsearch for")))((("time-based data")))((("scaling", "time-based data and")))
+它实在太常见了以至于 Elasticsearch 提供了一个集成的日志平台叫做((("ELK stack"))) _ELK stack_&#x2014; Elasticsearch，Logstash，以及 Kibana ——来让这项工作变得简单。
 
-https://www.elastic.co/guide/en/logstash/current/index.html[Logstash] collects, parses, and
-enriches logs before indexing them into Elasticsearch.((("Logstash")))  Elasticsearch acts as
-a centralized logging server, and
-https://www.elastic.co/guide/en/kibana/current/index.html[Kibana] is a((("Kibana"))) graphic frontend
-that makes it easy to query and visualize what is happening across your
-network in near real-time.
+https://www.elastic.co/guide/en/logstash/current/index.html[Logstash] 采集、解析日志并在将它们写入Elasticsearch之前格式化。((("Logstash")))
+Elasticsearch 扮演了一个集中式的日志服务角色，
+https://www.elastic.co/guide/en/kibana/current/index.html[Kibana] 是一个 ((("Kibana"))) 图形化前端可以很容易地实时查询以及可视化你的网络变化。
 
-Most traditional use cases for search engines involve a relatively static
-collection of documents that grows slowly. Searches look for the most relevant
-documents, regardless of when they were created.
+搜索引擎中大多数使用场景都是增长缓慢相对稳定的文档集合。搜索查找最相关的文档，而不关心它是何时创建的。
 
-Logging--and other time-based data streams such as social-network activity--are very different in nature. ((("social-network activity"))) The number of documents in the index grows
-rapidly, often accelerating with time.  Documents are almost never updated,
-and searches mostly target the most recent documents.  As documents age, they
-lose value.
+日志——以及其他基于时间的数据流例如社交网络活动——实际上有很大不同。((("social-network activity"))) 索引中文档数量迅速增长，通常随时间加速。
+文档几乎不会更新，基本以最近文档为搜索目标。随着时间推移，文档逐渐失去价值。
 
-We need to adapt our index design to function with the flow of time-based
-data.
+我们需要调整索引设计使其能够工作于这种基于时间的数据流。
 
 [[index-per-timeframe]]
-==== Index per Time Frame
+==== 按时间范围索引
 
-If we were to have one big index for documents of this type, we would soon run
-out of space. Logging events just keep on coming, without pause or
-interruption. We could delete the old events with a <<scroll,`scroll`>> 
-query and bulk delete,  but this approach is _very inefficient_.  When you delete a
-document, it is only _marked_ as deleted (see <<deletes-and-updates>>). It won't
-be physically deleted until the segment containing it is merged away.
+如果我们为此种类型的文档建立一个超大索引，我们可能会很快耗尽存储空间。日志事件会不断的进来，不会停顿也不会中断。
+我们可以使用 <<scroll,`scroll`>> 查询和批量删除来删除旧的事件。但这种方法 _非常低效_ 。当你删除一个文档，它只会被 _标记_ 为被删除（参见 <<deletes-and-updates>>）。
+在包含它的段被合并之前不会被物理删除。
 
-Instead, use an _index per time frame_. ((("indices", "index per-timeframe")))You could start out with an index per
-year (`logs_2014`) or per month (`logs_2014-10`).  Perhaps, when your
-website gets really busy, you need to switch to an index per day
-(`logs_2014-10-24`).  Purging old data is easy: just delete old indices.
+替代方案是，我们使用一个 _时间范围索引_((("indices", "index per-timeframe")))。你可以着手于一个按年的索引 (`logs_2014`) 或按月的索引 (`logs_2014-10`) 。
+也许当你的网页变得十分繁忙时，你需要切换到一个按天的索引 (`logs_2014-10-24`) 。删除旧数据十分简单：只需要删除旧的索引。
 
-This approach has the advantage of allowing you to scale as and when you need
-to.  You don't have to make any difficult decisions up front.  Every day is a
-new opportunity to change your indexing time frames to suit the current demand.
-Apply the same logic to how big you make each index.  Perhaps all you need is
-one primary shard per week initially.  Later, maybe you need five primary shards
-per day.  It doesn't matter--you can adjust to new circumstances at any
-time.
+这种方法有这样的优点，允许你在需要的时候进行扩容。你不需要预先做任何艰难的决定。每天都是一个新的机会来调整你的索引时间范围来适应当前需求。
+应用相同的逻辑到决定每个索引的大小上。起初也许你需要的仅仅是每周一个主分片。过一阵子，也许你需要每天五个主分片。这都不重要——任何时间你都可以调整到新的环境。
 
-Aliases can help make switching indices more transparent.((("aliases, index")))  For indexing,
-you can point `logs_current` to the index currently accepting new log events,
-and for searching, update `last_3_months` to point to all indices for the
-previous three months:
+别名可以帮助我们更加透明地在索引间切换。((("aliases, index"))) 当创建索引时，你可以将 `logs_current` 指向当前索引来接收新的日志事件，
+当检索时，更新 `last_3_months` 来指向所有最近三个月的索引：
 
 [source,json]
 -------------------------
@@ -64,5 +43,5 @@ POST /_aliases
   ]
 }
 -------------------------
-<1> Switch `logs_current` from September to October.
-<2> Add October to `last_3_months` and remove July.
+<1> 将 `logs_current` 由九月切换至十月。
+<2> 将十月添加到 `last_3_months` 并且删掉七月。
