@@ -2,53 +2,38 @@ ifndef::es_build[= placeholder0]
 
 [[getting-started]]
 [role="pagenumrestart"]
-= Getting Started
+= 基础入门
 
 [partintro]
 --
-_Elasticsearch_ is a real-time distributed search and analytics engine. It
-allows you((("Elasticsearch", "defined"))) to explore your data at a speed and at a scale never before
-possible. It is used for full-text search, structured search, analytics, and all three
-in combination:
+_Elasticsearch_ 是一个实时的分布式搜索分析引擎，((("Elasticsearch", "defined")))它能让你以一个之前从未有过的速度和规模，去探索你的数据。
+它被用作全文检索、结构化搜索、分析以及这三个功能的组合：
 
-*   Wikipedia uses Elasticsearch to provide full-text search with highlighted
-    search snippets, and _search-as-you-type_ and _did-you-mean_ suggestions.
+*   Wikipedia 使用 Elasticsearch 提供带有高亮片段的全文搜索，还有 _search-as-you-type_ 和 _did-you-mean_ 的建议。
 
-*   _The Guardian_ uses Elasticsearch to combine visitor logs with social
-   -network data to provide real-time feedback to its editors about the
-    public's response to new articles.
+*   _卫报_ 使用 Elasticsearch 将网络社交数据结合到访客日志中，实时的给它的编辑们提供公众对于新文章的反馈。
 
-*   Stack Overflow combines full-text search with geolocation queries and uses
-    _more-like-this_ to find related questions and answers.
+*   Stack Overflow 将地理位置查询融入全文检索中去，并且使用 _more-like-this_ 接口去查找相关的问题与答案。
 
-*   GitHub uses Elasticsearch to query 130 billion lines of code.
+*   GitHub 使用 Elasticsearch 对1300亿行代码进行查询。
 
-But Elasticsearch is not just for mega-corporations. It has enabled many
-startups like Datadog and Klout to prototype ideas and to turn them into
-scalable solutions. Elasticsearch can run on your laptop, or scale out to
-hundreds of servers and petabytes of data.
+然而 Elasticsearch 不仅仅为巨头公司服务。它也帮助了很多初创公司，像 Datadog 和 Klout，
+帮助他们将想法用原型实现，并转化为可扩展的解决方案。Elasticsearch 能运行在你的笔记本电脑上，或者扩展到上百台服务器上去处理PB级数据。
 
-No individual part of Elasticsearch is new or revolutionary.((("full text search"))) Full-text search
-has been done before, as have analytics systems((("distributed databases")))((("analytics systems"))) and distributed databases. The
-revolution is the combination of these individually useful parts into a
-single, coherent, real-time application. It has a low barrier to entry for the
-new user, but can keep pace with you as your skills and needs grow.
+Elasticsearch 中没有一个单独的组件是全新的或者是革命性的。((("full text search")))全文搜索很久之前就已经可以做到了，
+就像早就出现了的分析系统((("distributed databases")))((("analytics systems")))和分布式数据库。
+革命性的成果在于将这些单独的，有用的组件融合到一个单一的、一致的、实时的应用中。它对于初学者而言有一个较低的门槛，
+而当你的技能提升或需求增加时，它也始终能满足你的需求。
 
-If you are picking up this book, it is because you have data, and there is no
-point in having data unless you plan to _do something_ with it.
+如果你现在打开这本书，是因为你拥有数据。除非你准备使用它 _做些什么_ ，否则拥有这些数据将没有意义。
 
-Unfortunately, most databases are astonishingly inept at extracting actionable
-knowledge from your data.((("databases", "ineptness at extracting actionable data"))) Sure, they can filter by timestamp or exact values,
-but can they perform full-text search, handle synonyms, and score documents by
-relevance?  Can they generate analytics and aggregations from the same data?
-Most important, can they do this in real time without big batch-processing
-jobs?
+不幸的是，大部分数据库在从你的数据中提取可用知识时出乎意料的低效。((("databases", "ineptness at extracting actionable data")))
+当然，你可以通过时间戳或精确值进行过滤，但是它们能够进行全文检索、处理同义词、通过相关性给文档评分么？
+它们从同样的数据中生成分析与聚合数据吗？最重要的是，它们能实时地做到上面的那些而不经过大型批处理的任务么？
 
-This is what sets Elasticsearch apart: Elasticsearch encourages you to explore
-and utilize your data, rather than letting it rot in a warehouse because it is
-too difficult to query.
+这就是 Elasticsearch 脱颖而出的地方：Elasticsearch 鼓励你去探索与利用数据，而不是因为查询数据太困难，就让它们烂在数据仓库里面。
 
-Elasticsearch is your new best friend.
+Elasticsearch 将成为你最好的朋友。
 --
 
 include::010_Intro.asciidoc[]
@@ -72,5 +57,3 @@ include::060_Distributed_Search.asciidoc[]
 include::070_Index_Mgmt.asciidoc[]
 
 include::075_Inside_a_shard.asciidoc[]
-
-
