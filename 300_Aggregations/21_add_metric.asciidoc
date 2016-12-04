@@ -1,16 +1,13 @@
 
-=== Adding a Metric to the Mix
+=== 添加度量指标
 
-The previous example told us the number of documents in each bucket, which is
-useful.  ((("aggregations", "basic example", "adding a metric")))But often, our applications require more-sophisticated metrics about
-the documents.((("metrics", "adding to basic aggregation (example)"))) For example, what is the average price of cars in each bucket?
+前面的例子告诉我们每个桶里面的文档数量，这很有用。((("aggregations", "basic example", "adding a metric")))但通常，我们的应用需要提供更复杂的文档度量。
+((("metrics", "adding to basic aggregation (example)")))例如，每种颜色汽车的平均价格是多少？
 
-To get this information, we need to tell Elasticsearch which metrics to calculate,
-and on which fields. ((("buckets", "nesting metrics in"))) This requires _nesting_ metrics inside the buckets.
-Metrics will calculate mathematical statistics based on the values of documents
-within a bucket.
+为了获取更多信息，我们需要告诉 Elasticsearch 使用哪个字段，计算何种度量。((("buckets", "nesting metrics in"))) 这需要将度量 _嵌套_ 在桶内，
+度量会基于桶内的文档计算统计结果。
 
-Let's go ahead and add ((("average metric")))an `average` metric to our car example:
+让我们继续为汽车的例子加入 ((("average metric"))) `average` 平均度量：
 
 [source,js]
 --------------------------------------------------
@@ -34,18 +31,13 @@ GET /cars/transactions/_search
 }
 --------------------------------------------------
 // SENSE: 300_Aggregations/20_basic_example.json
-<1> We add a new `aggs` level to hold the metric.
-<2> We then give the metric a name: `avg_price`.
-<3> And finally, we define it as an `avg` metric over the `price` field.
+<1> 为度量新增 `aggs` 层。
+<2> 为度量指定名字： `avg_price` 。
+<3> 最后，为 `price` 字段定义 `avg` 度量。
 
-As you can see, we took the previous example and tacked on a new `aggs` level.
-This new aggregation level allows us to nest the `avg` metric inside the
-`terms` bucket.  Effectively, this means we will generate an average for each
-color.
+正如所见，我们用前面的例子加入了新的 `aggs` 层。这个新的聚合层让我们可以将 `avg` 度量嵌套置于 `terms` 桶内。实际上，这就为每个颜色生成了平均价格。
 
-Just like the `colors` example, we need to name our metric (`avg_price`) so we
-can retrieve the values later.  Finally, we specify the metric itself (`avg`)
-and what field we want the average to be calculated on (`price`):
+正如 `颜色` 的例子，我们需要给度量起一个名字（ `avg_price` ）这样可以稍后根据名字获取它的值。最后，我们指定度量本身（ `avg` ）以及我们想要计算平均值的字段（ `price` ）：
 
 [source,js]
 --------------------------------------------------
@@ -81,9 +73,6 @@ and what field we want the average to be calculated on (`price`):
 ...
 }
 --------------------------------------------------
-<1> New `avg_price` element in response
+<1> 响应中的新字段 `avg_price` 。
 
-Although the response has changed minimally, the data we get out of it has grown
-substantially.  Before, we knew there were four red cars.  Now we know that the
-average price of red cars is $32,500.  This is something that you can plug directly
-into reports or graphs.
+尽管响应只发生很小改变，实际上我们获得的数据是增长了。之前，我们知道有四辆红色的车，现在，红色车的平均价格是 $32，500 美元。这个信息可以直接显示在报表或者图形中。
