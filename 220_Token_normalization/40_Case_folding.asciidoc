@@ -1,37 +1,26 @@
 [[case-folding]]
-=== Unicode Case Folding
+=== Unicode 大小写折叠(Case Folding)
 
-Humans are nothing if not inventive,((("tokens", "normalizing", "Unicode case folding")))((("Unicode", "case folding"))) and human language reflects that.
-Changing the case of a word seems like such a simple task, until you have to
-deal with multiple languages.
+人类没有创造力的话就不会是人类，((("tokens", "normalizing", "Unicode case folding")))((("Unicode", "case folding"))) 而人类的语言就恰恰反映了这一点。
 
-Take, for example, the lowercase German letter `ß`.  Converting that to upper
-case gives you `SS`, which converted back to lowercase gives you `ss`. Or consider the
-Greek letter `ς` (sigma, when used at the end of a word).  Converting it to
-uppercase results in `Σ`, which converted back to lowercase, gives you `σ`.
+处理一个单词的大小写看起来是一个简单的任务，除非遇到需要处理多语言的情况。
 
-The whole point of lowercasing terms is to make them _more_ likely to match,
-not less!  In Unicode, this job is done by case folding rather((("case folding"))) than by lowercasing.  _Case folding_ is the act of converting words into a  (usually lowercase) form that does not necessarily result in the correct spelling, but does
-allow case-insensitive comparisons.
+那就举一个例子：转换小写德国单词 `ß`。把它转换成大写是 `SS`，然后在转换成小写就成了 `ss`。还有一个例子：转换希腊字母 `ς` (sigma, 在单词末尾使用)。把它转换成大写是 `Σ`，然后再转换成小写就成了 `σ`。
 
-For instance, the letter `ß`, which is already lowercase, is _folded_ to
-`ss`. Similarly, the lowercase `ς` is folded to `σ`, to make `σ`, `ς`, and `Σ`
-comparable, no matter where the letter appears in a word.((("nfkc_cf normalization form")))((("icu_normalizer token filter", "nfkc_cf normalization form")))
+把词条小写的核心是让他们看起来更像，而不是更不像。在Unicode中，这个工作是大小写折叠(case folding)((("case folding")))来完成的，而不是小写化(lowercasing)。  _大小写折叠_ (_Case folding_) 把单词转换到一种(通常是小写)形式，是让写法不会影响单词的比较，所以拼写不需要完全正确。
 
-The default normalization form that the `icu_normalizer` token filter uses
-is `nfkc_cf`. Like the `nfkc` form, this does the following:
+例如：单词 `ß`，已经是小写形式了，会被_折叠_(_folded_)成 `ss`。类似的小写的 `ς` 被折叠成 `σ`，这样的话，无论 `σ`， `ς`， 和 `Σ`出现在哪里， 他们就都可以比较了。((("nfkc_cf normalization form")))((("icu_normalizer token filter", "nfkc_cf normalization form")))
 
-* _Composes_ characters into the shortest byte representation
-* Uses _compatibility_ mode to convert characters like `ﬃ` into the simpler
-  `ffi`
+ `icu_normalizer` 语汇单元过滤器默认的归一化(normalization)模式是 `nfkc_cf`。它像 `nfkc` 模式一样：
 
-But it also does this:
+* _组合_ (_Composes_) 字符用最短的字节来表示。
+* 用 _兼容_ (_compatibility_）模式，把像 `ﬃ` 的字符转换成简单的 `ffi`
 
-* _Case-folds_ characters into a form suitable for case comparison
+但是，也会这样做：
 
-In other words, `nfkc_cf` is the equivalent of the `lowercase` token filter,
-but suitable for use with all languages.((("lowercase token filter", "nfkc_cf normalization form and"))) The _on-steroids_ equivalent of the
-`standard` analyzer would be the following:
+* _大小写折叠_ (_Case-folds_) 字符成一种适合比较的形式
+
+换句话说， `nfkc_cf`等价于 `lowercase` 语汇单元过滤器(token filters)，但是却适用于所有的语言。((("lowercase token filter", "nfkc_cf normalization form and"))) _on-steroids_ 等价于 `standard` 分析器，例如：
 
 [source,js]
 --------------------------------------------------
@@ -49,11 +38,9 @@ PUT /my_index
   }
 }
 --------------------------------------------------
-<1> The `icu_normalizer` defaults to the `nfkc_cf` form.
+<1>  `icu_normalizer` 默认是 `nfkc_cf` 模式.
 
-We can compare the results of running `Weißkopfseeadler` and
-`WEISSKOPFSEEADLER` (the uppercase equivalent) through the `standard`
-analyzer and through our Unicode-aware analyzer:
+我们来比较 `Weißkopfseeadler`和 `WEISSKOPFSEEADLER`(大写形式) 分别通过 `standard`分析器和我们的Unicode自识别(Unicode-aware)分析器处理得到的结果：
 
 [source,js]
 --------------------------------------------------
@@ -63,10 +50,8 @@ Weißkopfseeadler WEISSKOPFSEEADLER
 GET /my_index/_analyze?analyzer=my_lowercaser <2>
 Weißkopfseeadler WEISSKOPFSEEADLER
 --------------------------------------------------
-<1> Emits tokens `weißkopfseeadler`, `weisskopfseeadler`
-<2> Emits tokens `weisskopfseeadler`, `weisskopfseeadler`
+<1> 得到的词元(token)是 `weißkopfseeadler`, `weisskopfseeadler`
+<2> 得到的词元(token)是 `weisskopfseeadler`, `weisskopfseeadler`
 
-The `standard` analyzer emits two different, incomparable tokens, while our
-custom analyzer produces tokens that are comparable, regardless of the
-original case.
+ `standard`分析器得到了两个不同且不可比较的词元(token)，而我们定制化的分析器得到了两个相同但是不符合原意的词元(token)。
 

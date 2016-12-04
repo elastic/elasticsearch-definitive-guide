@@ -1,16 +1,8 @@
 [[asciifolding-token-filter]]
-=== You Have an Accent
+=== 如果有口音 You Have an Accent
 
-English uses diacritics (like `´`, `^`, and `¨`) only for imported words--like `rôle`, ++déjà++, and `däis`&#x2014;but usually they are optional. ((("diacritics")))((("tokens", "normalizing", "diacritics"))) Other
-languages require diacritics in order to be correct.  Of course, just because
-words are spelled correctly in your index doesn't mean that the user will
-search for the correct spelling.
-
-It is often useful to strip diacritics from words, allowing `rôle` to match
-`role`, and vice versa. With Western languages, this can be done with the
-`asciifolding` character filter.((("asciifolding character filter")))  Actually, it does more than just strip
-diacritics.  It tries to convert many Unicode characters into a simpler ASCII
-representation:
+英语用变音符号(例如 `´`, `^`, 和 `¨`) 来强调单词—​例如 `rôle`, ++déjà++, 和 `däis` —​但是是否使用他们通常是可选的. ((("diacritics")))((("tokens", "normalizing", "diacritics"))) 其他语言则通过变音符号来区分单词。当然，只是因为在你的索引中拼写正确的单词并不意味着用户将搜索正确的拼写。
+去掉变音符号通常是有用的，让 `rôle` 对应 `role`, 或者反过来。 对于西方语言，可以用 `asciifolding` 字符过滤器来实现这个功能。((("asciifolding character filter")))  实际上，它不仅仅能去掉变音符号。它会把Unicode字符转化为ASCII来表示:
 
 * `ß` => `ss`
 * `æ` => `ae`
@@ -20,8 +12,7 @@ representation:
 * `❷` => `2`
 * `⁶` => `6`
 
-Like the `lowercase` filter, the `asciifolding` filter doesn't require any
-configuration but can be included directly in a `custom` analyzer:
+像 `lowercase` 过滤器一样,  `asciifolding` 不需要任何配置，可以被 `custom` 分析器直接使用:
 
 [source,js]
 --------------------------------------------------
@@ -42,37 +33,33 @@ PUT /my_index
 GET /my_index?analyzer=folding
 My œsophagus caused a débâcle <1>
 --------------------------------------------------
-<1> Emits `my`, `oesophagus`, `caused`, `a`, `debacle`
+<1> 得到的词元 `my`, `oesophagus`, `caused`, `a`, `debacle`
 
-==== Retaining Meaning
+==== 保留原意
 
-Of course, when you strip diacritical marks from a word, you lose meaning.
-For instance, consider((("diacritics", "stripping, meaning loss from"))) these three ((("Spanish", "stripping diacritics, meaning loss from")))Spanish words:
+理所当然的，去掉变音符号会丢失原意。
+例如, 参考((("diacritics", "stripping, meaning loss from"))) 这三个 ((("Spanish", "stripping diacritics, meaning loss from")))西班牙单词:
 
 `esta`::    
-      Feminine form of the adjective _this_, as in _esta silla_ (this chair) or _esta_ (this one).
+      形容词 _this_ 的阴性形式, 例如 _esta silla_ (this chair) 和 _esta_ (this one).
 
 `ésta`::    
-      An archaic form of `esta`.
+      `esta` 的古代用法.
 
 `está`::    
-      The third-person form of the verb _estar_ (to be), as in _está feliz_ (he is happy).
+      动词 _estar_ (to be) 的第三人称形式, 例如 _está feliz_ (he is happy).
 
-While we would like to conflate the first two forms, they differ in meaning
-from the third form, which we would like to keep separate.  Similarly:
+通常我们会合并前两个形式的单词，而去区分和他们不相同的第三个形式的单词。类似的:
 
 `sé`::      
-      The first person form of the verb _saber_ (to know) as in _Yo sé_  (I know).
+      动词 _saber_ (to know) 的第一人称形式 例如 _Yo sé_  (I know).
 
 `se`::      
-      The third-person reflexive pronoun used with many verbs, such as _se sabe_ (it is known).
+      与许多动词使用的第三人称反身代词, 例如 _se sabe_ (it is known).
 
-Unfortunately, there is no easy way to separate words that should have
-their diacritics removed from words that shouldn't.  And it is quite likely
-that your users won't know either.
+不幸的是，没有简单的方法，去区分哪些词应该保留变音符号和哪些词应该去掉变音符号。而且很有可能，你的用户也不知道.
 
-Instead, we index the text twice: once in the original form and once with
-diacritics ((("indexing", "text with diacritics removed")))removed:
+相反， 我们对文本做两次索引: 一次用原文形式，一次用去掉变音符号的形式((("indexing", "text with diacritics removed"))):
 
 [source,js]
 --------------------------------------------------
@@ -92,13 +79,10 @@ PUT /my_index/_mapping/my_type
   }
 }
 --------------------------------------------------
-<1> The `title` field uses the `standard` analyzer and will contain
-    the original word with diacritics in place.
-<2> The `title.folded` field uses the `folding` analyzer, which strips
-    the diacritical marks.((("folding analyzer")))
+<1> 在 `title` 字段用 `standard` 分析器，会保留原文的变音符号.
+<2> 在 `title.folded` 字段用 `folding` 分析器，会去掉变音符号((("folding analyzer")))
 
-You can test the field mappings by using the `analyze` API on the sentence
-_Esta está loca_ (This woman is crazy):
+你可以使用 `analyze` API 分析 _Esta está loca_ (This woman is crazy)这个句子，来验证字段映射:
 
 [source,js]
 --------------------------------------------------
@@ -108,10 +92,10 @@ Esta está loca
 GET /my_index/_analyze?field=title.folded <2>
 Esta está loca
 --------------------------------------------------
-<1> Emits `esta`, `está`, `loca`
-<2> Emits `esta`, `esta`, `loca`
+<1> 得到的词元 `esta`, `está`, `loca`
+<2> 得到的词元 `esta`, `esta`, `loca`
 
-Let's index some documents to test it out:
+可以用更多的文档来测试:
 
 [source,js]
 --------------------------------------------------
@@ -122,8 +106,7 @@ PUT /my_index/my_type/2
 { "title": "Está loca!" }
 --------------------------------------------------
 
-Now we can search across both fields, using the `multi_match` query in
-<<most-fields,`most_fields` mode>> to combine the scores from each field:
+现在，我们可以通过联合所有的字段来搜索。在`multi_match`查询中通过 <<most-fields,`most_fields` mode>> 模式来联合所有字段的结果:
 
 
 [source,js]
@@ -140,8 +123,7 @@ GET /my_index/_search
 }
 --------------------------------------------------
 
-Running this query through the `validate-query` API helps to explain how the
-query is executed:
+通过 `validate-query` API 来执行这个查询可以帮助你理解查询是如何执行的:
 
 [source,js]
 --------------------------------------------------
@@ -157,42 +139,28 @@ GET /my_index/_validate/query?explain
 }
 --------------------------------------------------
 
-The `multi-match` query searches for the original form of the word (`está`) in the `title` field,
-and the form without diacritics `esta` in the `title.folded` field:
+`multi-match` 查询会搜索在 `title` 字段中原文形式的单词 (`está`)，和在 `title.folded` 字段中去掉变音符号形式的单词 `esta`:
 
     (title:está        title:loca       )
     (title.folded:esta title.folded:loca)
 
-It doesn't matter whether the user searches for `esta` or `está`; both
-documents will match because the form without diacritics exists in the the
-`title.folded` field.  However, only the original form exists in the `title`
-field. This extra match will push the document containing the original form of
-the word to the top of the results list.
+无论用户搜索的是 `esta` 还是 `está`; 两个文档都会被匹配，因为去掉变音符号形式的单词在
+`title.folded` 字段中。然而，只有原文形式的单词在 `title` 字段中。此额外匹配会把包含原文形式单词的文档排在结果列表前面。
 
-We use the `title.folded` field to  _widen the net_ in order to match more
-documents, and use the original `title` field to push the most relevant
-document to the top. This same technique can be used wherever an analyzer is
-used, to increase matches at the expense of meaning.
-
+我们用 `title.folded` 字段来 _扩大我们的网_ (_widen the net_)来匹配更多的文档，然后用原文形式的 `title` 字段来把关联度最高的文档排在最前面。在可以为了匹配数量牺牲文本原意的情况下，这个技术可以被用在任何分析器里。
 [TIP]
 =================================================
 
-The `asciifolding` filter does have an option called `preserve_original` that
-allows you to index the((("asciifolding character filter", "preserve_original option"))) original token and the folded token in the same
-position in the same field.  With this option enabled, you would end up with
-something like this:
+`asciifolding` 过滤器有一个叫做 `preserve_original` 的选项可以让你这样来做索引((("asciifolding character filter", "preserve_original option")))，把词的原文词元(original token)和处理--折叠后的词元(folded token)放在同一个字段的同一个位置。开启了这个选项，结果会像这样:
 
     Position 1     Position 2
     --------------------------
     (ésta,esta)    loca
     --------------------------
 
-While this appears to be a nice way to save space, it does mean that you have
-no way of saying, ``Give me an exact match on the original word.''  Mixing
-tokens with and without diacritics can also end up interfering with term-frequency counts, resulting in less-reliable relevance calcuations.
+虽然这个是节约空间的好办法，但是也意味着没有办法再说“给我精确匹配的原文词元”(Give me an exact match on the original word)。包含去掉和不去掉变音符号的词元，会导致不可靠的相关性评分。
 
-As a rule, it is cleaner to index each field variant into a separate field,
-as we have done in this section.
+所以，正如我们这一章做的，把每个字段的不同形式分开到不同的字段会让索引更清晰。
 
 =================================================
 

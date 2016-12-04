@@ -1,20 +1,11 @@
 [[character-folding]]
-=== Unicode Character Folding
+=== Unicode 字符折叠 (Character Folding)
 
-In the same way as the `lowercase` token filter is a good starting point for
-many languages((("Unicode", "character folding")))((("tokens", "normalizing", "Unicode character folding"))) but falls short when exposed to the entire tower of Babel, so
-the <<asciifolding-token-filter,`asciifolding` token filter>> requires a more
-effective Unicode _character-folding_ counterpart((("character folding"))) for dealing with the many
-languages of the world.((("asciifolding token filter")))
+ 在多语言((("Unicode", "character folding")))((("tokens", "normalizing", "Unicode character folding")))处理中，`lowercase` 语汇单元过滤器(token filters)是一个很好的开始。但是作为对比的话，也只是对于整个巴别塔的惊鸿一瞥。所以 <<asciifolding-token-filter,`asciifolding` token filter>> 需要更有效的Unicode _字符折叠_ (_character-folding_)工具来处理全世界的各种语言。((("asciifolding token filter")))
 
-The `icu_folding` token filter (provided by the <<icu-plugin,`icu` plug-in>>)
-does the same job as the `asciifolding` filter, ((("icu_folding token filter")))but extends the transformation
-to scripts that are not ASCII-based, such as Greek, Hebrew, Han, conversion
-of numbers in other scripts into their Latin equivalents, plus various other
-numeric, symbolic, and punctuation transformations.
+ `icu_folding` 语汇单元过滤器(token filters) (provided by the <<icu-plugin,`icu` plug-in>>)的功能和 `asciifolding` 过滤器一样， ((("icu_folding token filter")))但是它扩展到了非ASCII编码的语言，例如：希腊语，希伯来语，汉语。它把这些语言都转换对应拉丁文字，甚至包含它们的各种各样的计数符号，象形符号和标点符号。
 
-The `icu_folding` token filter applies Unicode normalization and case folding
-from `nfkc_cf` automatically,((("nfkc_cf normalization form"))) so the `icu_normalizer` is not required:
+ `icu_folding` 语汇单元过滤器(token filters)自动使用 `nfkc_cf` 模式来进行大小写折叠和Unicode归一化(normalization)，所以不需要使用 `icu_normalizer` ：
 
 [source,js]
 --------------------------------------------------
@@ -35,16 +26,10 @@ PUT /my_index
 GET /my_index/_analyze?analyzer=my_folder
 ١٢٣٤٥ <1>
 --------------------------------------------------
-<1> The Arabic numerals `١٢٣٤٥` are folded to their Latin equivalent: `12345`.
+<1> 阿拉伯数字 `١٢٣٤٥` 被折叠成等价的拉丁数字: `12345`.
 
-If there are particular characters that you would like to protect from
-folding, you can use a
-http://icu-project.org/apiref/icu4j/com/ibm/icu/text/UnicodeSet.html[_UnicodeSet_]
-(much like a character class in regular expressions) to specify which Unicode
-characters may be folded.  For instance, to exclude the Swedish letters `å`,
-`ä`, `ö`, ++Å++, `Ä`, and `Ö` from folding, you would specify a character class
-representing all Unicode characters, except for those letters: `[^åäöÅÄÖ]`
-(`^` means _everything except_).((("swedish_folding filter")))((("swedish analyzer")))
+如果你有指定的字符不想被折叠，你可以使用 http://icu-project.org/apiref/icu4j/com/ibm/icu/text/UnicodeSet.html[_UnicodeSet_](像字符的正则表达式) 来指定哪些Unicode才可以被折叠。例如：瑞典单词 `å`,`ä`, `ö`, ++Å++, `Ä`, 和 `Ö` 不能被折叠，你就可以设定为： `[^åäöÅÄÖ]` (`^` 表示 _不包含_)。这样就会对于所有的Unicode字符生效。((("swedish_folding filter")))((("swedish analyzer")))
+
 
 [source,js]
 --------------------------------------------------
@@ -68,11 +53,5 @@ PUT /my_index
   }
 }
 --------------------------------------------------
-<1> The `swedish_folding` token filter customizes the
-    `icu_folding` token filter to exclude Swedish letters,
-    both uppercase and lowercase.
-<2> The `swedish` analyzer first tokenizes words, then folds
-    each token by using the `swedish_folding` filter, and then
-    lowercases each token in case it includes some of
-    the uppercase excluded letters: ++Å++, `Ä`, or `Ö`.
-
+<1>  `swedish_folding`语汇单元过滤器(token filters) 定制了 `icu_folding`语汇单元过滤器(token filters)来不处理那些大写和小写的瑞典单词。
+<2>  `swedish` 分析器首先分词，然后用`swedish_folding`语汇单元过滤器来折叠单词，最后把他们走转换为小写，除了被排除在外的单词： ++Å++, `Ä`, 或者 `Ö`。 

@@ -1,50 +1,31 @@
 [[unicode-normalization]]
-=== Living in a Unicode World
+=== Unicode的世界
 
-When Elasticsearch compares one token with another, it does so at the byte
-level. ((("Unicode", "token normalization and")))((("tokens", "normalizing", "Unicode and")))In other words, for two tokens to be considered the same, they need to
-consist of exactly the same bytes.  Unicode, however, allows you to write the
-same letter in different ways.
+当Elasticsearch在比较词元(token)的时候，它是进行字节(byte)级别的比较。 ((("Unicode", "token normalization and")))((("tokens", "normalizing", "Unicode and")))换句话说，如果两个词元(token)被判定为相同的话，他们必须是相同的字节(byte)组成的。然而，Unicode允许你用不同的字节来写相同的字符。
 
-For instance, what's the difference between _&#x00e9;_ and _e&#769;_? It
-depends on who you ask. According to Elasticsearch, the first one consists of
-the two bytes `0xC3 0xA9`, and the second one consists of three bytes, `0x65
-0xCC 0x81`.
+例如， _&#x00e9;_ 和 _e&#769;_ 的不同是什么？这取决于你问谁。对于Elasticsearch，第一个是由 `0xC3 0xA9` 这两个字节组成的，第二个是由 `0x65
+0xCC 0x81` 这三个字节组成的。
 
-According to Unicode, the differences in how they are represented as bytes is
-irrelevant, and they are the same letter. The first one is the single letter
-`é`, while the second is a plain `e` combined with an acute accent +´+.
+对于Unicode，他们的差异和他们的怎么组成没有关系，所以他们是相同的。第一个是单个单词 `é` ，第二个是一个简单 `e` 和重音符 +´+。
 
-If you get your data from more than one source, it may happen that you have
-the same  letters encoded in different ways, which may result in one form of
-++déjà++ not matching another!
+如果你的数据有多个来源，就会有可能发生这种状况：因为相同的单词使用了不同的编码，导致一个形式的 ++déjà++ 不能和它的其他形式进行匹配。
 
-Fortunately, a solution is at hand.  There are four Unicode _normalization
-forms_, all of which convert Unicode characters into a standard format, making
-all characters((("Unicode", "normalization forms"))) comparable at a byte level: `nfc`, `nfd`, `nfkc`, `nfkd`.((("nfkd normalization form")))((("nfkc normalization form")))((("nfd normalization form")))((("nfc normalization form")))
+幸运的是，这里就有解决办法。这里有4种Unicode _归一化形式_ (_normalization forms_) : `nfc`, `nfd`, `nfkc`, `nfkd`，它们都把Unicode字符转换成对应标准格式，把所有的字符((("Unicode", "normalization forms"))) 进行字节(byte)级别的比较。((("nfkd normalization form")))((("nfkc normalization form")))((("nfd normalization form")))((("nfc normalization form")))
 
-.Unicode Normalization Forms
+.Unicode归一化形式 (Normalization Forms)
 ********************************************
 
-The _composed_ forms&#x2014;`nfc` and `nfkc`&#x2014;represent characters in the fewest
-bytes possible.((("composed forms (Unicode normalization)")))  So `é` is represented as the single letter `é`.  The
-_decomposed_ forms&#x2014;`nfd` and `nfkd`&#x2014;represent characters by their
-constituent parts, that is `e` + `´`.((("decomposed forms (Unicode normalization)")))
+ _组合_ (_composed_) 模式—`nfc` 和 `nfkc`—用尽可能少的字节(byte)来代表字符。 ((("composed forms (Unicode normalization)"))) 所以用 `é` 来代表单个字母 `é` 。  _分解_ （_decomposed_） 模式—`nfd` and `nfkd`—用字符的每一部分来代表字符。所以 `é` 分解为 `e` 和 `´`。 ((("decomposed forms (Unicode normalization)")))
 
-The _canonical_ forms&#x2014;`nfc` and `nfd`&#x2014;represent ligatures like `ﬃ` or
-`œ` as a single character,((("canonical forms (Unicode normalization)"))) while the _compatibility_ forms&#x2014;`nfkc` and
-`nfkd`&#x2014;break down these composed characters into a simpler multiletter
-equivalent: `f` + `f` + `i` or `o` + `e`.
+_规范_ (_canonical_) 模式—`nfc` 和 `nfd`&—把连字作为单个字符，例如 `ﬃ` 或者 `œ` 。((("canonical forms (Unicode normalization)"))) _兼容_ (_compatibility_) 模式—`nfkc` 和
+`nfkd`—将这些组合的字符分解成简单字符的等价物，例如： `f` + `f` + `i` 或者 `o` + `e`.
 
 ********************************************
 
-It doesn't really matter which normalization form you choose, as long as all
-your text is in the same form.  That way, the same tokens consist of the
-same bytes.  That said, the _compatibility_ forms ((("compatibility forms (Unicode normalization)")))allow you to compare
-ligatures like `ﬃ` with their simpler representation, `ffi`.
+无论你选择哪一个归一化(normalization)模式，只要你的文本只用一种模式，那你的同一个词元(token)就会由相同的字节(byte)组成。例如，_兼容_ (_compatibility_) 模式 ((("compatibility forms (Unicode normalization)"))) 可以用连词 `ﬃ` 的简化形式 `ffi`来进行对比。
 
-You can use the `icu_normalizer` token filter to ((("icu_normalizer token filter")))ensure that all of your
-tokens are in the same form:
+你可以使用 `icu_normalizer` 语汇单元过滤器(token filters) ((("icu_normalizer token filter"))) 来保证你的所有词元(token)是相同模式：
+
 
 [source,js]
 --------------------------------------------------
@@ -68,23 +49,17 @@ PUT /my_index
   }
 }
 --------------------------------------------------
-<1> Normalize all tokens into the `nfkc` normalization form.
+<1> 用 `nfkc` 归一化(normalization)模式来归一化(Normalize)所有词元(token).
 
 [TIP]
 ==================================================
 
-Besides the `icu_normalizer` token filter mentioned previously, there is also an
-`icu_normalizer` _character_ filter, which((("icu_normalizer character filter"))) does the same job as the token
-filter, but does so before the text reaches the tokenizer.  When using the
-`standard` tokenizer or `icu_tokenizer`, this doesn't really matter.  These
-tokenizers know how to deal with all forms of Unicode correctly.
+包括刚才提到过的 `icu_normalizer` 语汇单元过滤器(token filters)在内，这里还有 `icu_normalizer`  _字符_ 过滤器(_character_ filters)。虽然它和语汇单元过滤器做相同的工作，但是会在文本到达过滤器之前做。到底是用`standard` 过滤器，还是 `icu_tokenizer` 过滤器，其实并不重要。因为过滤器知道怎么来正确处理所有的模式。
 
-However, if you plan on using a different tokenizer, such as the `ngram`,
-`edge_ngram`, or `pattern` tokenizers, it would make sense to use the
-`icu_normalizer` character filter in preference to the token filter.
+但是，如果你使用不同的分词器，例如： `ngram`, `edge_ngram`, 或者 `pattern` 分词器，那么在语汇单元过滤器(token filters)之前使用 `icu_normalizer`  字符过滤器就变得有意义了。
+
 
 ==================================================
 
-Usually, though, you will want to not only normalize the byte order of tokens,
-but also lowercase them. This can be done with `icu_normalizer`, using
-the custom normalization form `nfkc_cf`, which we discuss in the next section.
+通常来说，你不仅仅想要归一化(normalize)词元(token)的字节(byte)规则，还需要把他们转成小写字母。这个可以通过 `icu_normalizer` 和定制的归一化(normalization)的模式 `nfkc_cf` 来实现。下一节我们会具体讲这个。
+

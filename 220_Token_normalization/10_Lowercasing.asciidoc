@@ -1,24 +1,17 @@
 [[lowercase-token-filter]]
-=== In That Case
-
-The most frequently used token filter is the `lowercase` filter, which does
-exactly what you would expect; it transforms ((("tokens", "normalizing", "lowercase filter")))((("lowercase token filter")))each token into its lowercase
-form:
-
+=== 这个列子
+ 
+用的最多的语汇单元过滤器(token filters)是 `lowercase` 过滤器，它的功能正和你期望的一样；它将每个词元(token)转换为小写形式：
 [source,js]
 --------------------------------------------------
 GET /_analyze?tokenizer=standard&filters=lowercase
 The QUICK Brown FOX! <1>
 --------------------------------------------------
-<1> Emits tokens `the`, `quick`, `brown`, `fox`
+<1> 得到的词元(token)是 `the`, `quick`, `brown`, `fox`
 
-It doesn't matter whether users search for `fox` or `FOX`, as long as the same
-analysis process is applied at query time and at search time. The `lowercase`
-filter will transform a query for `FOX` into a query for `fox`, which is the
-same  token that we have stored in our inverted index.
+只要查询和检索的分析过程是一样的，不管用户搜索 `fox` 还是 `FOX` 都能得到一样的搜索结果。`lowercase` 过滤器会将查询 `FOX` 的请求转换为查询 `fox` 的请求， `fox` 和我们在倒排索引中存储的是同一个词元(token)。
 
-To use token filters as part of the analysis process, we ((("analyzers", "using token filters")))((("token filters", "using with analyzers")))can create a `custom`
-analyzer:
+为了在分析过程中使用 token 过滤器((("token filters", "using with analyzers")))，我们可以创建一个 `custom` 分析器((("analyzers", "using token filters")))：
 
 [source,js]
 --------------------------------------------------
@@ -37,12 +30,12 @@ PUT /my_index
 }
 --------------------------------------------------
 
-And we can test it out with the `analyze` API:
+我们可以通过 `analyze` API 来验证:
 
 [source,js]
 --------------------------------------------------
 GET /my_index/_analyze?analyzer=my_lowercaser
 The QUICK Brown FOX! <1>
 --------------------------------------------------
-<1> Emits tokens `the`, `quick`, `brown`, `fox`
+<1> 得到的词元是 `the`, `quick`, `brown`, `fox`
 
