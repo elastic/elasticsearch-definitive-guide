@@ -1,18 +1,16 @@
 [[aggs-high-level]]
-== High-Level Concepts
 
-Like the query DSL, ((("aggregations", "high-level concepts")))aggregations have a _composable_ syntax: independent units
-of functionality can be mixed and matched to provide the custom behavior that
-you need. This means that there are only a few basic concepts to learn, but
-nearly limitless combinations of those basic components.
+== 高阶概念
 
-To master aggregations, you need to understand only two main concepts:
+类似于 DSL 查询表达式，((("聚合", "高阶概念")))聚合也有 _可组合_ 的语法：独立单元的功能可以被混合起来提供你需要的自定义行为。这意味着只需要学习很少的基本概念，就可以得到几乎无尽的组合。
 
-_Buckets_:: Collections of documents that meet a criterion
-_Metrics_:: Statistics calculated on the documents in a bucket
+要掌握聚合，你只需要明白两个主要的概念：
 
-That's it!  Every aggregation is simply a combination of one or more buckets
-and zero or more metrics. To translate into rough SQL terms:
+ _桶（Buckets）_ :: 满足特定条件的文档的集合
+
+ _指标（Metrics）_ :: 对桶内的文档进行统计计算
+
+这就是全部了！每个聚合都是一个或者多个桶和零个或者多个指标的组合。翻译成粗略的SQL语句来解释吧：
 
 [source,sql]
 --------------------------------------------------
@@ -20,68 +18,53 @@ SELECT COUNT(color) <1>
 FROM table
 GROUP BY color <2>
 --------------------------------------------------
-<1> `COUNT(color)` is equivalent to a metric.
-<2> `GROUP BY color` is equivalent to a bucket.
+<1> `COUNT(color)` 相当于指标。
 
-Buckets are conceptually similar to grouping in SQL, while metrics are similar
-to `COUNT()`, `SUM()`, `MAX()`, and so forth.
+<2> `GROUP BY color` 相当于桶。
+
+桶在概念上类似于 SQL 的分组（GROUP BY），而指标则类似于 `COUNT()` 、 `SUM()` 、 `MAX()` 等统计方法。
 
 
-Let's dig into both of these concepts((("aggregations", "high-level concepts", "buckets")))((("buckets"))) and see what they entail.
+让我们深入这两个概念((("aggregations", "high-level concepts", "buckets")))((("buckets"))) 并且了解和这两个概念相关的东西。
 
 [role="pagebreak-before"]
-=== Buckets
+[[_buckets]]
+=== 桶
 
-A _bucket_ is simply a collection of documents that meet certain criteria:
+_桶_ 简单来说就是满足特定条件的文档的集合：
 
-- An employee would land in either the _male_ or _female_ bucket.
-- The city of Albany would land in the _New York_ state bucket.
-- The date 2014-10-28 would land within the _October_ bucket.
+- 一个雇员属于 _男性_ 桶或者 _女性_ 桶
 
-As aggregations are executed, the values inside each document are evaluated to
-determine whether they match a bucket's criteria.  If they match, the document is placed
-inside the bucket and the aggregation continues.
+- 奥尔巴尼属于 _纽约_ 桶
 
-Buckets can also be nested inside other buckets, giving you a hierarchy or
-conditional partitioning scheme.  For example, Cincinnati would be placed inside
-the Ohio state bucket, and the _entire_ Ohio bucket would be placed inside the
-USA country bucket.
+- 日期2014-10-28属于 _十月_ 桶
 
-Elasticsearch has a variety of buckets, which allow you to
-partition documents in many ways (by hour, by most-popular terms, by
-age ranges, by geographical location, and more).  But fundamentally they all operate
-on the same principle: partitioning documents based on criteria.
+当聚合开始被执行，每个文档里面的值通过计算来决定符合哪个桶的条件。如果匹配到，文档将放入相应的桶并接着进行聚合操作。
 
-=== Metrics
+桶也可以被嵌套在其他桶里面，提供层次化的或者有条件的划分方案。例如，辛辛那提会被放入俄亥俄州这个桶，而 _整个_ 俄亥俄州桶会被放入美国这个桶。
 
-Buckets allow us to partition documents into useful subsets,((("aggregations", "high-level concepts", "metrics")))((("metrics"))) but ultimately what
-we want is some kind of metric calculated on those documents in each bucket.
-Bucketing is the means to an end: it provides a way to group documents in a way
-that you can calculate interesting metrics.
+Elasticsearch 有很多种类型的桶，能让你通过很多种方式来划分文档（时间、最受欢迎的词、年龄区间、地理位置等等）。其实根本上都是通过同样的原理进行操作：基于条件来划分文档。
 
-Most _metrics_ are simple mathematical operations (for example, min, mean, max, and sum)
-that are calculated using the document values.  In practical terms, metrics allow
-you to calculate quantities such as the average salary, or the maximum sale price,
-or the 95th percentile for query latency.
+[[_metrics]]
+=== 指标
 
-=== Combining the Two
+桶能让我们划分文档到有意义的集合，((("aggregations", "high-level concepts", "metrics")))((("metrics")))但是最终我们需要的是对这些桶内的文档进行一些指标的计算。分桶是一种达到目的的手段：它提供了一种给文档分组的方法来让我们可以计算感兴趣的指标。
 
-An _aggregation_ is a combination of buckets and metrics.((("aggregations", "high-level concepts", "combining buckets and metrics")))((("buckets", "combining with metrics")))((("metrics", "combining with buckets")))  An aggregation may have
-a single bucket, or a single metric, or one of each.  It may even have multiple
-buckets nested inside other buckets. For example, we can partition documents by which country they belong to (a bucket), and
-then calculate the average salary per country (a metric).
+大多数 _指标_ 是简单的数学运算（例如最小值、平均值、最大值，还有汇总），这些是通过文档的值来计算。在实践中，指标能让你计算像平均薪资、最高出售价格、95%的查询延迟这样的数据。
 
-Because buckets can be nested, we can derive a much more complex aggregation:
+[[_combining_the_two]]
+=== 桶和指标的组合
 
-1. Partition documents by country (bucket).
-2. Then partition each country bucket by gender (bucket).
-3. Then partition each gender bucket by age ranges (bucket).
-4. Finally, calculate the average salary for each age range (metric)
+_聚合_ 是由桶和指标组成的。((("aggregations", "high-level concepts", "combining buckets and metrics")))((("buckets", "combining with metrics")))((("metrics", "combining with buckets"))) 聚合可能只有一个桶，可能只有一个指标，或者可能两个都有。也有可能有一些桶嵌套在其他桶里面。例如，我们可以通过所属国家来划分文档（桶），然后计算每个国家的平均薪酬（指标）。
 
-This will give you the average salary per `<country, gender, age>` combination.  All in
-one request and with one pass over the data!
+由于桶可以被嵌套，我们可以实现非常多并且非常复杂的聚合：
 
+1.通过国家划分文档（桶）
 
+2.然后通过性别划分每个国家（桶）
 
+3.然后通过年龄区间划分每种性别（桶）
 
+4.最后，为每个年龄区间计算平均薪酬（指标）
 
+最后将告诉你每个 `<国家, 性别, 年龄>` 组合的平均薪酬。所有的这些都在一个请求内完成并且只遍历一次数据！
