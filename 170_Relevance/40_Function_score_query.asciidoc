@@ -1,50 +1,31 @@
 [[function-score-query]]
-=== function_score Query
+=== function_score 查询
 
-The {ref}/query-dsl-function-score-query.html[`function_score` query] is the
-ultimate tool for taking control of the scoring process.((("function_score query")))((("relevance", "controlling", "function_score query")))  It allows you to
-apply a function to each document that matches the main query in order to
-alter or completely replace the original query `_score`.
+{ref}/query-dsl-function-score-query.html[`function_score` 查询]
+是用来控制评分过程的终极武器，它允许为每个与主查询匹配的文档应用一个函数，((("function_score query")))((("relevance", "controlling", "function_score query")))以达到改变甚至完全替换原始查询评分 `_score` 的目的。
 
-In fact, you can apply different functions to _subsets_ of the main result set by
-using filters, which gives you the best of both worlds: efficient scoring with
-cacheable filters.
+实际上，也能用过滤器对结果的 _子集_ 应用不同的函数，这样一箭双雕：既能高效评分，又能利用过滤器缓存。
 
-It supports several predefined functions out of the box:
+Elasticsearch 预定义了一些函数：
 
 `weight`::
 
-    Apply a simple boost to each document without the boost being
-    normalized: a `weight` of `2` results in `2 * _score`.
+    为每个文档应用一个简单而不被规范化的权重提升值：当 `weight` 为 `2` 时，最终结果为 `2 * _score` 。
 
 `field_value_factor`::
 
-    Use the value of a field in the document to alter the `_score`,  such as
-    factoring in a `popularity` count or number of `votes`.
+    使用这个值来修改 `_score` ，如将 `popularity` 或 `votes` （受欢迎或赞）作为考虑因素。
 
 `random_score`::
 
-    Use consistently random scoring to sort results differently for every user,
-    while maintaining the same sort order for a single user.
+    为每个用户都使用一个不同的随机评分对结果排序，但对某一具体用户来说，看到的顺序始终是一致的。
 
-_Decay functions_&#x2014;`linear`, `exp`, `gauss`::
+_衰减函数_ —— `linear` 、 `exp` 、 `gauss`::
 
-    Incorporate sliding-scale values like `publish_date`, `geo_location`, or
-    `price` into the `_score` to prefer recently published documents, documents
-    near a latitude/longitude (lat/lon) point, or documents near a specified price point.
+    将浮动值结合到评分 `_score` 中，例如结合 `publish_date` 获得最近发布的文档，结合 `geo_location` 获得更接近某个具体经纬度（lat/lon）地点的文档，结合 `price` 获得更接近某个特定价格的文档。
 
 `script_score`::
 
-    Use a custom script to take complete control of the scoring logic. If your
-    needs extend beyond those of the functions in this list, write a custom
-    script to implement the logic that you need.
+    如果需求超出以上范围时，用自定义脚本可以完全控制评分计算，实现所需逻辑。
 
-Without the `function_score` query, we would not be able to combine the score
-from a full-text query with a factor like recency. We would have to sort
-either by `_score` or by `date`; the effect of one would obliterate the
-effect of the other. This query allows you to blend the two together: to still
-sort by full-text relevance, but giving extra weight to recently published
-documents, or popular documents, or products that are near the user's price
-point. As you can imagine, a query that supports all of this can look fairly
-complex.  We'll start with a simple use case and work our way up the
-complexity ladder.
+如果没有 `function_score` 查询，就不能将全文查询与最新发生这种因子结合在一起评分，而不得不根据评分 `_score` 或时间 `date` 进行排序；这会相互影响抵消两种排序各自的效果。这个查询可以使两个效果融合：可以仍然根据全文相关度进行排序，但也会同时考虑最新发布文档、流行文档、或接近用户希望价格的产品。正如所设想的，查询要考虑所有这些因素会非常复杂，让我们先从简单的例子开始，然后顺着梯子慢慢向上爬，增加复杂度。
