@@ -1,10 +1,9 @@
-=== Ranges
+[[_ranges]]
+=== 范围
 
-When dealing with numbers in this chapter, we have so far searched for only
-exact numbers. ((("structured search", "ranges"))) In practice,  filtering on ranges is often more useful.  For
-example, you might want to find all products with a price greater than $20 and less than $40.
+本章到目前为止，对于数字，只介绍如何处理精确值查询。((("structured search", "ranges")))实际上，对数字范围进行过滤有时会更有用。例如，我们可能想要查找所有价格大于 $20 且小于 $40 美元的产品。
 
-In SQL terms, a range can be expressed as follows:
+在 SQL 中，范围查询可以表示为：
 
 [source,sql]
 --------------------------------------------------
@@ -13,8 +12,8 @@ FROM   products
 WHERE  price BETWEEN 20 AND 40
 --------------------------------------------------
 
-Elasticsearch has a `range` query, ((("range query", "using on numbers")))which, unsurprisingly,
-can be used to find documents falling inside a range:
+Elasticsearch 有 `range` 查询，((("range query", "using on numbers")))不出所料地，可以用它来查找处于某个范围内的文档：
+
 
 [source,js]
 --------------------------------------------------
@@ -26,16 +25,15 @@ can be used to find documents falling inside a range:
 }
 --------------------------------------------------
 
-The `range` query supports both inclusive and exclusive ranges, through
-combinations of the following options:
+`range` 查询可同时提供包含（inclusive）和不包含（exclusive）这两种范围表达式，可供组合的选项如下：
 
-* `gt`: `>` greater than
-* `lt`: `<` less than
-* `gte`: `>=` greater than or equal to
-* `lte`: `<=` less than or equal to
+* `gt`: `>` 大于（greater than）
+* `lt`: `<` 小于（less than）
+* `gte`: `>=` 大于或等于（greater than or equal to）
+* `lte`: `<=` 小于或等于（less than or equal to）
 
 
-.Here is an example range query:
+.下面是一个范围查询的例子：
 [source,js]
 --------------------------------------------------
 GET /my_store/products/_search
@@ -56,8 +54,7 @@ GET /my_store/products/_search
 --------------------------------------------------
 // SENSE: 080_Structured_Search/25_Range_filter.json
 
-If you need ((("unbounded ranges")))an unbounded range (for example, just >20), omit one of the
-boundaries:
+如果想要((("unbounded ranges")))范围无界（比方说 >20 ），只须省略其中一边的限制：
 
 [source,js]
 --------------------------------------------------
@@ -69,9 +66,9 @@ boundaries:
 --------------------------------------------------
 // SENSE: 080_Structured_Search/25_Range_filter.json
 
-==== Ranges on Dates
+==== 日期范围
 
-The `range` query can be used on date ((("date ranges")))((("range query", "using on dates")))fields too:
+`range` 查询同样可以应用在日期字段上：((("date ranges")))((("range query", "using on dates")))
 
 [source,js]
 --------------------------------------------------
@@ -83,9 +80,7 @@ The `range` query can be used on date ((("date ranges")))((("range query", "usin
 }
 --------------------------------------------------
 
-When used on date fields, the `range` query ((("date math operations")))supports _date math_ operations.
-For example, if we want to find all documents that have a timestamp sometime
-in the last hour:
+当使用它处理日期字段时， `range` 查询((("date math operations")))支持对  _日期计算（date math）_  进行操作，比方说，如果我们想查找时间戳在过去一小时内的所有文档：
 
 [source,js]
 --------------------------------------------------
@@ -96,13 +91,9 @@ in the last hour:
 }
 --------------------------------------------------
 
-This filter will now constantly find all documents with a timestamp greater
-than the current time minus 1 hour, making the filter a _sliding window_
-across your documents.
+这个过滤器会一直查找时间戳在过去一个小时内的所有文档，让过滤器作为一个时间  _滑动窗口（sliding window）_ 来过滤文档。
 
-Date math can also be applied to actual dates, rather than a placeholder like
-now. Just add a double pipe (`||`) after the date and follow it with a date
-math expression:
+日期计算还可以被应用到某个具体的时间，并非只能是一个像 now 这样的占位符。只要在某个日期后加上一个双管符号 (`||`) 并紧跟一个日期数学表达式就能做到：
 
 [source,js]
 --------------------------------------------------
@@ -113,29 +104,24 @@ math expression:
     }
 }
 --------------------------------------------------
-<1> Less than January 1, 2014 plus one month
+<1> 早于 2014 年 1 月 1 日加 1 月（2014 年 2 月 1 日 零时）
 
-Date math is _calendar aware_, so it knows the number of days in each month,
-days in a year, and so forth.  More details about working with dates can be found in
-the {ref}/mapping-date-format.html[date format reference documentation].
+日期计算是 _日历相关（calendar aware）_ 的，所以它不仅知道每月的具体天数，还知道某年的总天数（闰年）等信息。更详细的内容可以参考：
+ {ref}/mapping-date-format.html[时间格式参考文档] 。
 
-==== Ranges on Strings
+==== 字符串范围
 
-The `range` query can also operate on string fields.((("range query", "using on strings")))
-((("strings", "using range query on")))((("lexicographical order, string ranges")))  String ranges are
-calculated _lexicographically_  or alphabetically.  For example, these values
-are sorted in lexicographic order:
+`range` 查询同样可以处理字符串字段，((("range query", "using on strings")))((("strings", "using range query on")))((("lexicographical order, string ranges")))字符串范围可采用 _字典顺序（lexicographically）_ 或字母顺序（alphabetically）。例如，下面这些字符串是采用字典序（lexicographically）排序的：
+
 
 * 5, 50, 6, B, C, a, ab, abb, abc, b
 
 [NOTE]
 ====
-Terms in the inverted index are sorted in lexicographical order, which is why
-string ranges use this order.
+在倒排索引中的词项就是采取字典顺序（lexicographically）排列的，这也是字符串范围可以使用这个顺序来确定的原因。
 ====
 
-If we want a range from `a` up to but not including `b`, we can use the same
-`range` query syntax:
+如果我们想查找从 `a` 到 `b` （不包含）的字符串，同样可以使用 `range` 查询语法：
 
 [source,js]
 --------------------------------------------------
@@ -147,16 +133,10 @@ If we want a range from `a` up to but not including `b`, we can use the same
 }
 --------------------------------------------------
 
-.Be Careful of Cardinality
+.注意基数
 ****
-Numeric and date fields are indexed in such a way that ranges are efficient
-to calculate.((("cardinality", "string ranges and")))  This is not the case for string fields, however.  To perform
-a range on a string field, Elasticsearch is effectively performing a `term`
-filter for every term that falls in the range.  This is much slower than
-a date or numeric range.
+数字和日期字段的索引方式使高效地范围计算成为可能。((("cardinality", "string ranges and")))但字符串却并非如此，要想对其使用范围过滤，Elasticsearch 实际上是在为范围内的每个词项都执行 `term` 过滤器，这会比日期或数字的范围过滤慢许多。
 
-String ranges are fine on a field with _low cardinality_&#x2014;a small number of
-unique terms.  But the more unique terms you have, the slower the string range
-will be.
 
+字符串范围在过滤 _低基数（low cardinality）_ 字段（即只有少量唯一词项）时可以正常工作，但是唯一词项越多，字符串范围的计算会越慢。
 ****
