@@ -1,63 +1,46 @@
 [[synonyms-analysis-chain]]
-=== Synonyms and The Analysis Chain
+=== 同义词和分析链
 
-The example we ((("synonyms", "and the analysis chain")))showed in <<synonym-formats>>,  used `u s a` as a synonym. Why
-did we use that instead of `U.S.A.`?  The reason is that the `synonym` token
-filter sees only the terms that the previous token filter or tokenizer has
-emitted.((("analysis", "synonyms and the analysis chain")))
+在 ((("synonyms", "and the analysis chain"))) <<synonym-formats>> 一章中，我们使用 `u s a` 来举例阐述一些同义词相关的知识。那么为什么
+我们使用的不是 `U.S.A.` 呢？原因是， 这个 `同义词` 的语汇单元过滤器只能接收到在它前面的语汇单元过滤器或者分词器的输出结果（这里看不到原始文本）。((("analysis", "synonyms and the analysis chain")))
 
-Imagine that we have an analyzer that consists of the `standard` tokenizer,
-with the `lowercase` token filter followed by a `synonym` token filter. The
-analysis process for the text `U.S.A.` would look like this:
+假设我们有一个分析器，它由 `standard` 分词器、 `lowercase` 的语汇单元过滤器、 `synonym` 的语汇单元过滤器组成。文本 `U.S.A.` 的分析过程，看起来像这样的：
 
 [source,text]
-------------------------------------------------
-original string                  → "U.S.A."
-standard           tokenizer     → (U),(S),(A)
-lowercase          token filter  → (u),(s),(a)
-synonym            token filter  → (usa)
-------------------------------------------------
+-------------------------------------------------------------
+original string（原始文本）                       → "U.S.A."
+standard           tokenizer（分词器）            → (U),(S),(A)
+lowercase          token filter（语汇单元过滤器）  → (u),(s),(a)
+synonym            token filter（语汇单元过滤器）  → (usa)
+-------------------------------------------------------------
 
-If we had specified the synonym as `U.S.A.`, it would never match anything
-because, by the time `my_synonym_filter` sees the terms, the periods have been
-removed and the letters have been lowercased.
+如果我们有指定的同义词 `U.S.A.` ，它永远不会匹配任何东西。因为， `my_synonym_filter` 看到词项的时候，句号已经被移除了，并且字母已经被小写了。
 
-This is an important point to consider.  What if we want to combine synonyms
-with stemming, so that `jumps`, `jumped`, `jump`, `leaps`, `leaped`, and
-`leap` are all indexed as the single term `jump`?  We ((("stemming words", "combining synonyms with")))could place the synonyms
-filter before the stemmer and list all inflections:
+这其实是一个非常需要注意的地方。如果我们想同时使用同义词特性与词根提取特性，那么 `jumps` 、 `jumped` 、 `jump` 、 `leaps` 、 `leaped` 和 `leap` 这些词是否都会被索引成一个 `jump` ？
+我们 ((("stemming words", "combining synonyms with"))) 可以把同义词过滤器放置在词根提取之前，然后把所有同义词以及词形变化都列举出来：
 
     "jumps,jumped,leap,leaps,leaped => jump"
 
-But the more concise way would be to place the synonyms filter after the
-stemmer, and to list just the root words that would be emitted by the stemmer:
+但更简洁的方式将同义词过滤器放置在词根过滤器之后，然后把词根形式的同义词列举出来：
 
     "leap => jump"
 
-==== Case-Sensitive Synonyms
+==== 大小写敏感的同义词
 
-Normally, synonym filters are placed after the `lowercase` token filter and so
-all synonyms are ((("synonyms", "and the analysis chain", "case-sensitive synonyms")))((("case-sensitive synonyms")))written in lowercase, but sometimes that can lead to odd
-conflations. For instance, a `CAT` scan and a `cat` are quite different, as
-are `PET` (positron emission tomography) and a `pet`. For that matter, the
-surname `Little` is distinct from the adjective `little` (although if a
-sentence starts with the adjective, it will be uppercased anyway).
+通常，我们把同义词过滤器放置在 `lowercase` 语汇单元过滤器之后，因此，所有的同义词 ((("synonyms", "and the analysis chain", "case-sensitive synonyms")))((("case-sensitive synonyms"))) 都是小写。
+但有时会导致奇怪的合并。例如， `CAT` 扫描和一只 `cat` 有很大的不同，或者 `PET` （正电子发射断层扫描）和 `pet` 。
+就此而言，姓 `Little` 也是不同于形容词 `little` 的 (尽管当一个句子以它开头时，首字母会被大写)。
 
-If you need use case to distinguish between word senses, you will need to
-place your synonym filter before the `lowercase` filter. Of course, that means
-that your synonym rules would need to list all of the case variations that you
-want to match (for example, `Little,LITTLE,little`).
+如果根据使用情况来区分词义，则需要将同义词过滤器放置在 `lowercase` 筛选器之前。当然，这意味着同义词规则需要列出所有想匹配的变化（例如， `Little、LITTLE、little` ）。
 
-Instead of that, you could have two synonym filters: one to catch the case-sensitive
-synonyms and one for all the case-insensitive synonyms.  For instance, the
-case-sensitive rules could look like this:
+相反,可以有两个同义词过滤器：一个匹配大小写敏感的同义词，一个匹配大小写不敏感的同义词。例如，大小写敏感的同义词规则可以是这个样子：
 
     "CAT,CAT scan           => cat_scan"
     "PET,PET scan           => pet_scan"
     "Johnny Little,J Little => johnny_little"
     "Johnny Small,J Small   => johnny_small"
 
-And the case-insensitive rules could look like this:
+大小不敏感的同义词规则可以是这个样子：
 
     "cat                    => cat,pet"
     "dog                    => dog,pet"
@@ -65,12 +48,6 @@ And the case-insensitive rules could look like this:
     "pet scan,pet_scan scan => pet_scan"
     "little,small"
 
-The case-sensitive rules would `CAT scan` but would match only the
-`CAT` in `CAT scan`. For this reason, we have the odd-looking rule `cat_scan
-scan` in the case-insensitive list to catch bad replacements.
+大小写敏感的同义词规则不仅会处理 `CAT scan` ，而且有时候也可能会匹配到 `CAT scan` 中的 `CAT` （注：从而导致 `CAT scan` 被转化成了同义词 `cat_scan scan` ）。出于这个原因，在大小写敏感的同义词列表中会有一个针对较坏替换情况的特异规则 `cat_scan scan` 。
 
-TIP: You can see how quickly it can get complicated. As always, the `analyze` API
-is your friend--use it to check that your analyzers are configured
-correctly.  See <<analyze-api>>.
-
-
+提示： 可以看到它们可以多么轻易地变得复杂。同平时一样， `analyze` API 是帮手，用它来检查分析器是否正确配置。参阅 <<analyze-api>>。
