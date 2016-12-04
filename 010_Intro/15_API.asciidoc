@@ -1,68 +1,55 @@
-=== Talking to Elasticsearch
+[[_talking_to_elasticsearch]]
+=== 和 Elasticsearch 交互
 
-How you talk to Elasticsearch depends on((("Elasticsearch", "talking to"))) whether you are using Java or not.
+和 Elasticsearch 的交互方式取决于((("Elasticsearch", "talking to")))你是否使用 Java
 
 ==== Java API
 
-If you are using ((("Java", "clients for Elasticsearch")))Java, Elasticsearch comes with two built-in clients
-that you can use in your code:
+如果你正在使用((("Java", "clients for Elasticsearch"))) Java，在代码中你可以使用 Elasticsearch 内置的两个客户端：
 
-Node client::
-    The node client ((("node client")))joins a local cluster as a _non data node_. In other
-    words, it doesn't hold any data itself, but it knows what data lives
-    on which node in the cluster, and can forward requests directly
-    to the correct node.
+节点客户端（Node client）::
+    节点客户端((("node client")))作为一个非数据节点加入到本地集群中。换句话说，它本身不保存任何数据，但是它知道数据在集群中的哪个节点中，并且可以把请求转发到正确的节点。
 
-Transport client::
-    The lighter-weight ((("transport client")))transport client can be used to send requests to
-    a remote cluster. It doesn't join the cluster itself, but simply
-    forwards requests to a node in the cluster.
+传输客户端（Transport client）::
+    轻量级的((("transport client")))传输客户端可以可以将请求发送到远程集群。它本身不加入集群，但是它可以将请求转发到集群中的一个节点上。
+ 
 
-Both Java clients talk to the cluster over port _9300_, using((("port 9300 for Java clients"))) the native
-Elasticsearch _transport_ protocol.  The nodes in the cluster also communicate
-with each other over port 9300. If this port is not open, your nodes will
-not be able to form a cluster.
+两个 Java 客户端都是通过 _9300_ 端口并使用((("port 9300 for Java clients")))本地 Elasticsearch _传输_ 协议和集群交互。集群中的节点通过端口 9300 彼此通信。如果这个端口没有打开，节点将无法形成一个集群。
 
 [TIP]
 ====
-The Java client must be from the same _major_ version of Elasticsearch as the nodes;
-otherwise, they may not be able to understand each other.
+Java 客户端作为节点必须和 Elasticsearch 有相同的 _主要_ 版本；否则，它们之前将无法互相理解。
 ====
 
-More information about the Java clients can be found in  https://www.elastic.co/guide/en/elasticsearch/client/index.html[Elasticsearch Clients].
+更多的 Java 客户端信息可以在 https://www.elastic.co/guide/en/elasticsearch/client/index.html[Elasticsearch Clients] 中找到。
 
 ==== RESTful API with JSON over HTTP
+==== 基于 HTTP 协议，以 JSON 为数据交互格式的 RESTful API
 
-All other languages can communicate with Elasticsearch((("port 9200 for non-Java clients"))) over port _9200_ using
-a ((("RESTful API, communicating with Elasticseach")))RESTful API, accessible with your favorite web client. In fact, as you have
-seen, you can even talk to Elasticsearch from the command line by using the
-`curl` command.((("curl command", "talking to Elasticsearch with")))
+所有其他语言可以使用((("RESTful API, communicating with Elasticseach"))) RESTful API 通过端口((("port 9200 for non-Java clients"))) _9200_ 和 Elasticsearch 进行通信，你可以用你最喜爱的 web 客户端访问 Elasticsearch 。事实上，正如你所看到的，你甚至可以使用 `curl` 命令来和 Elasticsearch 交互。((("curl command", "talking to Elasticsearch with")))
 
-NOTE: Elasticsearch provides official clients((("clients", "other than Java"))) for several languages--Groovy,
-JavaScript, .NET, PHP, Perl, Python, and Ruby--and there are numerous
-community-provided clients and integrations, all of which can be found in 
-https://www.elastic.co/guide/en/elasticsearch/client/index.html[Elasticsearch Clients].
+NOTE: Elasticsearch 为以下语言提供了官方客户端((("clients", "other than Java")))--Groovy、JavaScript、.NET、 PHP、 Perl、 Python 和 Ruby--还有很多社区提供的客户端和插件，所有这些都可以在 https://www.elastic.co/guide/en/elasticsearch/client/index.html[Elasticsearch Clients] 中找到。
 
-A request to Elasticsearch consists of the same parts as any HTTP request:((("HTTP requests")))((("requests to Elasticsearch")))
+一个 Elasticsearch 请求和任何 HTTP 请求一样由若干相同的部件组成：((("HTTP requests")))((("requests to Elasticsearch")))
 
 [source,js]
 --------------------------------------------------
 curl -X<VERB> '<PROTOCOL>://<HOST>:<PORT>/<PATH>?<QUERY_STRING>' -d '<BODY>'
 --------------------------------------------------
 
-The parts marked with `< >` above are:
+被 `< >` 标记的部件：
 
 [horizontal]
-`VERB`::            The appropriate HTTP _method_ or _verb_: `GET`, `POST`, `PUT`, `HEAD`, or `DELETE`.
-`PROTOCOL`::        Either `http` or `https` (if you have an `https` proxy in front of Elasticsearch.)
-`HOST`::            The hostname of any node in your Elasticsearch cluster, or +localhost+ for a node on your local machine.
-`PORT`::            The port running the Elasticsearch HTTP service, which defaults to `9200`.
-`PATH`::            API Endpoint (for example `_count` will return the number of documents in the cluster). Path may contain multiple components, such as `_cluster/stats` or `_nodes/stats/jvm`
-`QUERY_STRING`::    Any optional query-string parameters (for example `?pretty` will _pretty-print_  the JSON response to make it easier to read.)
-`BODY`::            A JSON-encoded request body (if the request needs one.)
+`VERB`::            适当的 HTTP _方法_ 或 _谓词_ : `GET`、 `POST`、 `PUT`、 `HEAD` 或者 `DELETE`。
+`PROTOCOL`::        `http` 或者 `https`（如果你在 Elasticsearch 前面有一个 `https` 代理）
+`HOST`::            Elasticsearch 集群中任意节点的主机名，或者用 +localhost+ 代表本地机器上的节点。
+`PORT`::            运行 Elasticsearch HTTP 服务的端口号，默认是 `9200` 。
+`PATH`::            API 的终端路径（例如 `_count` 将返回集群中文档数量）。Path 可能包含多个组件，例如：`_cluster/stats` 和 `_nodes/stats/jvm` 。
+`QUERY_STRING`::    任意可选的查询字符串参数 (例如 `?pretty` 将格式化地输出 JSON 返回值，使其更容易阅读)
+`BODY`::            一个 JSON 格式的请求体 (如果请求需要的话)
 
 
-For instance, to count the number of documents in the cluster, we could use this:
+例如，计算集群中文档的数量，我们可以用这个:
 
 [source,js]
 --------------------------------------------------
@@ -75,9 +62,7 @@ curl -XGET 'http://localhost:9200/_count?pretty' -d '
 '
 --------------------------------------------------
 
-Elasticsearch returns an HTTP status code like `200 OK` and (except for `HEAD`
-requests) a JSON-encoded response body. The preceding `curl` request would respond
-with a JSON body like the following:
+Elasticsearch 返回一个 HTTP 状态码（例如：`200 OK`）和（除`HEAD`请求）一个 JSON 格式的返回值。前面的 `curl` 请求将返回一个像下面一样的 JSON 体：
 
 [source,js]
 --------------------------------------------------
@@ -91,19 +76,14 @@ with a JSON body like the following:
 }
 --------------------------------------------------
 
-We don't see the HTTP headers in the response because we didn't ask `curl` to
-display them. To see the headers, use the `curl` command with the `-i`
-switch:
+在返回结果中没有看到 HTTP 头信息是因为我们没有要求`curl`显示它们。想要看到头信息，需要结合 `-i` 参数来使用 `curl` 命令：
 
 [source,js]
 --------------------------------------------------
 curl -i -XGET 'localhost:9200/'
 --------------------------------------------------
 
-For the rest of the book, we will show these `curl` examples using a shorthand
-format that leaves out all the bits that are the same in every request,
-like the hostname and port, and the `curl` command itself. Instead of showing
-a full request like
+在书中剩余的部分，我们将用缩写格式来展示这些 `curl` 示例，所谓的缩写格式就是省略请求中所有相同的部分，例如主机名、端口号以及 `curl` 命令本身。而不是像下面显示的那样用一个完整的请求：
 
 [source,js]
 --------------------------------------------------
@@ -115,7 +95,7 @@ curl -XGET 'localhost:9200/_count?pretty' -d '
 }'
 --------------------------------------------------
 
-we will show it in this shorthand format:
+我们将用缩写格式显示：
 
 [source,js]
 --------------------------------------------------
@@ -128,4 +108,4 @@ GET /_count
 --------------------------------------------------
 // SENSE: 010_Intro/15_Count.json
 
-In fact, this is the same format that is used by the ((( "Sense console")))((("Sense console (Kibana app)", "curl requests in"))) <<sense, Sense console>>. If you're viewing the online version of this book, you can open and run this code example in Sense by clicking the View in Sense link above.
+事实上， ((( "Sense console")))((("Sense console (Kibana app)", "curl requests in")))<<sense, Sense 控制台>> 也使用这样相同的格式。如果你正在阅读这本书的在线版本,可以通过点击 Sense 链接视图在 Sense 上打开和运行示例代码。
