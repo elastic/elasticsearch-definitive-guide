@@ -24,7 +24,6 @@ Java 客户端作为节点必须和 Elasticsearch 有相同的 _主要_ 版本�
 更多的 Java 客户端信息可以在 https://www.elastic.co/guide/en/elasticsearch/client/index.html[Elasticsearch Clients] 中找到。
 
 ==== RESTful API with JSON over HTTP
-==== 基于 HTTP 协议，以 JSON 为数据交互格式的 RESTful API
 
 所有其他语言可以使用((("RESTful API, communicating with Elasticseach"))) RESTful API 通过端口((("port 9200 for non-Java clients"))) _9200_ 和 Elasticsearch 进行通信，你可以用你最喜爱的 web 客户端访问 Elasticsearch 。事实上，正如你所看到的，你甚至可以使用 `curl` 命令来和 Elasticsearch 交互。((("curl command", "talking to Elasticsearch with")))
 
