@@ -1,9 +1,8 @@
 [[using-language-analyzers]]
-=== Using Language Analyzers
+=== 使用语言分析器
 
-The built-in language analyzers are available globally and don't need to be
-configured before being used.((("language analyzers", "using")))  They can be specified directly in the field
-mapping:
+
+Elasticsearch 的内置分析器都是全局可用的，不需要提前配置，((("language analyzers", "using")))它们也可以在字段映射中直接指定在某字段上：
 
 [source,js]
 --------------------------------------------------
@@ -21,28 +20,29 @@ PUT /my_index
   }
 }
 --------------------------------------------------
-<1> The `title` field will use the `english` analyzer instead of the default
-    `standard` analyzer.
 
-Of course, by passing ((("english analyzer", "information lost with")))text through the `english` analyzer, we lose
-information:
+<1> `title` 字段将会用 `english`（英语）分析器替换默认的 `standard`（标准）分析器
+
+
+当然，文本经过((("english analyzer", "information lost with"))) `english` 分析处理，我们会丢失源数据：
 
 [source,js]
 --------------------------------------------------
 GET /my_index/_analyze?field=title <1>
 I'm not happy about the foxes
 --------------------------------------------------
-<1> Emits token: `i'm`, `happi`, `about`, `fox`
 
-We can't tell if the document mentions one `fox` or many  `foxes`; the word
-`not` is a stopword and is removed, so we can't tell whether the document is
-happy about foxes or not. By using the `english` analyzer, we have increased
-recall as we can match more loosely, but we have reduced our ability to rank
-documents accurately.
+<1> 切词为: `i'm`，`happi`，`about`，`fox`
 
-To get the best of both worlds, we can use <<multi-fields,multifields>> to
-index the `title` field twice: once((("multifields", "using to index a field with two different analyzers"))) with the `english` analyzer and once with
-the `standard` analyzer:
+
+我们无法分辨源文档中是包含单数 `fox` 还是复数 `foxes` ；单词 `not` 因为是停用词所以被移除了，
+所以我们无法分辨源文档中是happy about foxes还是not happy about foxes，虽然通过使用 `english`
+（英语）分析器，使得匹配规则更加宽松，我们也因此提高了召回率，但却降低了精准匹配文档的能力。
+
+
+
+为了获得两方面的优势，我们可以使用<<multi-fields,multifields>>（多字段）对 `title` 字段建立两次索引：
+一次使用((("multifields", "using to index a field with two different analyzers"))) `english`（英语）分析器，另一次使用 `standard`（标准）分析器:
 
 [source,js]
 --------------------------------------------------
@@ -65,11 +65,11 @@ PUT /my_index
   }
 }
 --------------------------------------------------
-<1> The main `title` field uses the `standard` analyzer.
-<2> The `title.english` subfield uses the `english` analyzer.
+<1> 主 `title` 字段使用 `standard`（标准）分析器。
+<2> `title.english` 子字段使用 `english`（英语）分析器。
 
-With this mapping in place, we can index some test documents to demonstrate
-how to use both fields at query time:
+
+替换为该字段映射后，我们可以索引一些测试文档来展示怎么在搜索时使用两个字段：
 
 [source,js]
 --------------------------------------------------
@@ -90,12 +90,9 @@ GET /_search
   }
 }
 --------------------------------------------------
-<1> Use the <<most-fields,`most_fields`>> query type to match the
-    same text in as many fields as possible.
 
-Even ((("most fields queries")))though neither of our documents contain the word `foxes`,  both documents
-are returned as results thanks to the word stemming on the `title.english`
-field.  The second document is ranked as more relevant, because the word `not`
-matches on the `title` field.
+<1> 使用<<most-fields,`most_fields`>> query type（多字段搜索语法来）让我们可以用多个字段来匹配同一段文本。
 
 
+感谢 `title.english` 字段的切词，无论我们的文档中是否含有单词 `foxes` 都会被搜索到，第二份文档的相关性排行要比第一份高，
+因为在 `title` 字段中匹配到了单词 `not` 。
