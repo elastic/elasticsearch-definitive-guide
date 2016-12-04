@@ -1,23 +1,13 @@
 [[function-score-filters]]
-=== Boosting Filtered Subsets
+=== 过滤集提升权重
 
-Let's return to the problem that we were dealing with in <<ignoring-tfidf>>,
-where we wanted to score((("boosting", "filtered subsets")))((("relevance", "controlling", "boosting filtered subsets"))) vacation homes by the number of features that each
-home possesses.  We ended that section by wishing for a way to use cached
-filters to affect the score, and with the `function_score` query we can do
-just that.((("function_score query", "boosting filtered subsets")))
+回到 <<ignoring-tfidf,忽略 TF/IDF>> 里处理过的问题，我们希望根据每个度假屋的特性数量来评分，((("boosting", "filtered subsets")))((("relevance", "controlling", "boosting filtered subsets")))当时我们希望能用缓存的过滤器来影响评分，现在 `function_score` 查询正好可以完成这件事情。((("function_score query", "boosting filtered subsets")))
 
-The examples we have shown thus far have used a single function for all
-documents.  Now we want to divide the results into subsets by using filters (one
-filter per feature), and apply a different function to each subset.
+到目前为止，我们展现的都是为所有文档应用单个函数的使用方式，现在会用过滤器将结果划分为多个子集（每个特性一个过滤器），并为每个子集使用不同的函数。
 
-The function that we will use in this example is ((("weight function")))the `weight`, which is
-similar to the `boost` parameter accepted by any query.  The difference is
-that the `weight` is not normalized by Lucene into some obscure floating-point
-number; it is used as is.
+在下面例子中，我们会使用 `weight` 函数，((("weight function")))它与 `boost` 参数类似可以用于任何查询。有一点区别是 `weight` 没有被 Luence 归一化成难以理解的浮点数，而是直接被应用。
 
-The structure of the query has to change somewhat to incorporate multiple
-functions:
+查询的结构需要做相应变更以整合多个函数：
 
 [source,json]
 --------------------------------
@@ -48,59 +38,44 @@ GET /_search
 }
 --------------------------------
 
-<1> This `function_score` query has a `filter` instead of a `query`.
-<2> The `functions` key holds a list of functions that should be applied.
-<3> The function is applied only if the document matches the (optional) `filter`.
-<4> The `pool` feature is more important than the others so it has a higher `weight`.
-<5> The `score_mode` specifies how the values from each function should be combined.
+<1> `function_score` 查询有个 `filter` 过滤器而不是 `query` 查询。
+<2> `functions` 关键字存储着一个将被应用的函数列表。
+<3> 函数会被应用于和 `filter` 过滤器（可选的）匹配的文档。
+<4> `pool` 比其他特性更重要，所以它有更高 `weight` 。
+<5> `score_mode` 指定各个函数的值进行组合运算的方式。
 
-The new features to note in this example are explained in the following sections.
+这个新特性需要注意的地方会在以下小节介绍。
 
-==== filter Versus query
+==== 过滤 vs. 查询
 
-The first thing to note is that  we have specified a `filter` instead ((("filters", "in function_score query")))of a
-`query`. In this example, we do not need full-text search. We just want to
-return all documents that have `Barcelona` in the `city` field, logic that is
-better expressed as a filter instead of a query.  All documents returned by
-the filter will have a `_score` of `1`.  The `function_score` query accepts
-either a `query` or a `filter`. If neither is specified, it will default to
-using the `match_all` query.
+首先要注意的是 `filter` 过滤器代替了 `query` 查询，((("filters", "in function_score query")))在本例中，我们无须使用全文搜索，只想找到 `city` 字段中包含 `Barcelona` 的所有文档，逻辑用过滤比用查询表达更清晰。过滤器返回的所有文档的评分 `_score` 的值为 `1` 。 `function_score` 查询接受 `query` 或 `filter` ，如果没有特别指定，则默认使用 `match_all` 查询。
 
-==== functions
+==== 函数 functions
 
-The `functions` key holds an array of functions to apply.((("function_score query", "functions key")))  Each entry in the
-array may also optionally specify a `filter`, in which case the function will be applied only to documents that match that filter.  In this example, we
-apply a `weight` of `1` (or `2` in the case of `pool`) to any document
-that matches the filter.
+`functions` 关键字保持着一个将要被使用的函数列表。((("function_score query", "functions key")))可以为列表里的每个函数都指定一个 `filter` 过滤器，在这种情况下，函数只会被应用到那些与过滤器匹配的文档，例子中，我们为与过滤器匹配的文档指定权重值 `weight` 为 `1` （为与 `pool` 匹配的文档指定权重值为 `2` ）。
 
-==== score_mode
+==== 评分模式 score_mode
 
-Each function returns a result, and we need a way of reducing these multiple
-results to a single value that can be combined with the original `_score`.
-This is the role ((("function_score query", "score_mode parameter")))((("score_mode parameter")))of the `score_mode` parameter, which accepts the following
-values:
+每个函数返回一个结果，所以需要一种将多个结果缩减到单个值的方式，然后才能将其与原始评分 `_score` 合并。评分模式 `score_mode` 参数正好扮演这样的角色，((("function_score query", "score_mode parameter")))((("score_mode parameter")))它接受以下值：
 
-`multiply`::    
-      Function results are multiplied together (default).
-      
-`sum`::        
-      Function results are added up.
-      
-`avg`::         
-      The average of all the function results.
-      
-`max`::         
-      The highest function result is used.
-      
-`min`::         
-      The lowest function result is used.
-      
-`first`::       
-      Uses only the result from the first function that either doesn't have a filter or that has a filter matching the document.
+`multiply`::
+      函数结果求积（默认）。
 
-In this case, we want to add the `weight` results from each matching
-filter together to produce the final score, so we have used the `sum` score
-mode.
+`sum`::
+      函数结果求和。
 
-Documents that don't match any of the filters will keep their original
-`_score` of `1`.
+`avg`::
+      函数结果的平均值。
+
+`max`::
+      函数结果的最大值。
+
+`min`::
+      函数结果的最小值。
+
+`first`::
+      使用首个函数（可以有过滤器，也可能没有）的结果作为最终结果
+
+在本例中，我们将每个过滤器匹配结果的权重 `weight` 求和，并将其作为最终评分结果，所以会使用 `sum` 评分模式。
+
+不与任何过滤器匹配的文档会保有其原始评分， `_score` 值的为 `1` 。
