@@ -1,11 +1,8 @@
 
 
-=== One Final Modification
+=== 最后的修改（One Final Modification）
 
-Just to drive the point home, let's make one final modification to our example
-before moving on to new topics.((("aggregations", "basic example", "adding extra metrics")))((("metrics", "adding more to aggregation (example)")))  Let's add two metrics to calculate the min and
-max price for each make:
-
+让我们回到话题的原点，在进入新话题之前，对我们的示例做最后一个修改，((("aggregations", "basic example", "adding extra metrics")))((("metrics", "adding more to aggregation (example)"))) 为每个汽车生成商计算最低和最高的价格：
 
 [source,js]
 --------------------------------------------------
@@ -36,11 +33,11 @@ GET /cars/transactions/_search
 --------------------------------------------------
 // SENSE: 300_Aggregations/20_basic_example.json
 
-<1> We need to add another `aggs` level for nesting.
-<2> Then we include a `min` metric.
-<3> And a `max` metric.
+<1> 我们需要增加另外一个嵌套的 `aggs` 层级。
+<2> 然后包括 `min` 最小度量。
+<3> 以及 `max` 最大度量。
 
-Which gives ((("min and max metrics (aggregation example)")))us the following output (again, truncated):
+((("min and max metrics (aggregation example)"))) 得到以下输出（只显示部分结果）：
 
 [source,js]
 --------------------------------------------------
@@ -82,13 +79,12 @@ Which gives ((("min and max metrics (aggregation example)")))us the following ou
             },
 ...
 --------------------------------------------------
-<1> The `min` and `max` metrics that we added now appear under each `make`
+<1>  `min` 和 `max`  度量现在出现在每个汽车制造商（ `make` ）下面。
 
-With those two buckets, we've expanded the information derived from this query
-to include the following:
+有了这两个桶，我们可以对查询的结果进行扩展并得到以下信息：
 
-- There are four red cars.
-- The average price of a red car is $32,500.
-- Three of the red cars are made by Honda, and one is a BMW.
-- The cheapest red Honda is $10,000.
-- The most expensive red Honda is $20,000.
+- 有四辆红色车。
+- 红色车的平均售价是 $32，500 美元。
+- 其中三辆红色车是 Honda 本田制造，一辆是 BMW 宝马制造。
+- 最便宜的红色本田售价为 $10，000 美元。
+- 最贵的红色本田售价为 $20，000 美元。
