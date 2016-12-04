@@ -1,61 +1,43 @@
 [[relations]]
-== Handling Relationships
+== 关联关系处理
 
-In the real world, relationships((("relationships"))) matter: blog posts have comments, bank
-accounts have transactions, customers have bank accounts, orders have order
-lines, and directories have files and subdirectories.
+现实世界有很多重要的关联关系((("relationships")))：博客帖子有一些评论，银行账户有多次交易记录，客户有多个银行账户，订单有多个订单明细，文件目录有多个文件和子目录。
 
-Relational databases are specifically designed--and this will not come as a
-surprise to you--to manage((("relational databases", "managing relationships"))) relationships:
+关系型数据库被明确设计--毫不意外--用来进行关联关系管理((("relational databases", "managing relationships")))：
 
-*   Each entity (or _row_, in the relational world) can be uniquely identified
-    by a _primary key_.((("primary key")))
+*   每个实体（或 _行_ ，在关系世界中）可以被 _主键_ 唯一标识。((("primary key")))
 
-*   Entities are _normalized_. The data for a unique entity is stored only
-    once, and related entities store just its primary key. Changing the data of
-    an entity has to happen in only one place.((("joins", "in relational databases")))
+*    实体 _规范化_ （范式）。唯一实体的数据只存储一次，而相关实体只存储它的主键。只能在一个具体位置修改这个实体的数据。((("joins", "in relational databases")))
 
-*   Entities can be joined at query time, allowing for cross-entity search.
+*   实体可以进行关联查询，可以跨实体搜索。
 
-*   Changes to a single entity are _atomic_, _consistent_, _isolated_, and
-    _durable_.  (See http://en.wikipedia.org/wiki/ACID_transactions[_ACID Transactions_]
-    for more on this subject.)
+*   单个实体的变化是 _原子的_ ，  _一致的_ ， _隔离的_ ， 和
+    _持久的_ 。 （可以在 http://en.wikipedia.org/wiki/ACID_transactions[_ACID Transactions_]
+    中查看更多细节。）
 
-*   Most relational databases support ACID transactions across multiple
-    entities.
+*   大多数关系数据库支持跨多个实体的 ACID 事务。
 
-But relational ((("ACID transactions")))databases do have their limitations, besides their poor support
-for full-text search. Joining entities at query time is expensive--the more
-joins that are required, the more expensive the query.  Performing joins
-between entities that live on different hardware is so expensive that it is
-just not practical. This places a limit on the amount of data that can be
-stored on a single server.
+但是关系型数据库((("ACID transactions")))有其局限性，包括对全文检索有限的支持能力。
+实体关联查询时间消耗是很昂贵的，关联的越多，消耗就越昂贵。特别是跨服务器进行实体关联时成本极其昂贵，基本不可用。
+但单个的服务器上又存在数据量的限制。
 
-Elasticsearch, like((("NoSQL databases"))) most NoSQL databases, treats the world as though it were
-flat. An index is a flat collection of independent documents.((("indices"))) A single
-document should contain all of the information that is required to decide
-whether it matches a search request.
+Elasticsearch ，和大多数 NoSQL 数据库类似，是扁平化的。索引是独立文档的集合体。
+((("indices"))) 文档是否匹配搜索请求取决于它是否包含所有的所需信息。
 
-While changing the data of a single document in Elasticsearch is
-http://en.wikipedia.org/wiki/ACID_transactions[ACIDic], transactions
-involving multiple documents are not.  There is no way to roll back the index
-to its previous state if part of a transaction fails.
+Elasticsearch 中单个文档的数据变更是 http://en.wikipedia.org/wiki/ACID_transactions[ACIDic] 的，
+而涉及多个文档的事务则不是。当一个事务部分失败时，无法回滚索引数据到前一个状态。
 
-This FlatWorld has its advantages:
+扁平化有以下优势：
 
-*  Indexing is fast and lock-free.
-*  Searching is fast and lock-free.
-*  Massive amounts of data can be spread across multiple nodes, because each
-   document is independent of the others.
+*  索引过程是快速和无锁的。
+*  搜索过程是快速和无锁的。
+*  因为每个文档相互都是独立的，大规模数据可以在多个节点上进行分布。
 
-But relationships matter.  Somehow, we need to bridge the gap between
-FlatWorld and the real world.((("relationships", "techniques for managing relational data in Elasticsearch"))) Four common techniques are used to manage
-relational data in Elasticsearch:
+但关联关系仍然非常重要。某些时候，我们需要缩小扁平化和现实世界关系模型的差异。((("relationships", "techniques for managing relational data in Elasticsearch")))以下四种常用的方法，用来在 Elasticsearch 中进行关系型数据的管理：
 
 * <<application-joins,Application-side joins>>
 * <<denormalization,Data denormalization>>
 * <<nested-objects,Nested objects>>
 * <<parent-child,Parent/child relationships>>
 
-Often the final solution will require a mixture of a few of these techniques.
-
+通常都需要结合其中的某几个方法来得到最终的解决方案。
