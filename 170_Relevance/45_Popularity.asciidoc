@@ -1,10 +1,8 @@
 [[boosting-by-popularity]]
-=== Boosting by Popularity
+=== 按受欢迎度提升权重
 
-Imagine that we have a website that hosts blog posts and enables users to vote for the
-blog posts that they like.((("relevance", "controlling", "boosting by popularity")))((("popularity", "boosting by")))((("boosting", "by popularity"))) We would like more-popular posts to appear higher in the
-results list, but still have the full-text score as the main relevance driver.
-We can do this easily by storing the number of votes with each blog post:
+设想有个网站供用户发布博客并且可以让他们为自己喜欢的博客点赞，((("relevance", "controlling", "boosting by popularity")))((("popularity", "boosting by")))((("boosting", "by popularity")))我们希望将更受欢迎的博客放在搜索结果列表中相对较上的位置，同时全文搜索的评分仍然作为相关度的主要排序依据，可以简单的通过存储每个博客的点赞数来实现它：
+
 
 [role="pagebreak-before"]
 [source,json]
@@ -17,8 +15,7 @@ PUT /blogposts/post/1
 }
 -------------------------------
 
-At search time, we can use the `function_score` query ((("function_score query", "field_value_factor function")))((("field_value_factor function")))with the
-`field_value_factor` function to combine the number of votes with the full-text relevance score:
+在搜索时，可以将 `function_score` 查询与 `field_value_factor` 结合使用，((("function_score query", "field_value_factor function")))((("field_value_factor function")))即将点赞数与全文相关度评分结合：
 
 [source,json]
 -------------------------------
@@ -39,51 +36,38 @@ GET /blogposts/post/_search
   }
 }
 -------------------------------
-<1> The `function_score` query wraps the main query and the function we would
-    like to apply.
-<2> The main query is executed first.
-<3> The `field_value_factor` function is applied to every document matching
-    the main `query`.
-<4> Every document _must_ have a number in the `votes` field for
-    the `function_score` to work.  If every document does _not_ have a number in the `votes` field, then you _must_ use the
-    {ref}/query-dsl-function-score-query.html#function-field-value-factor[`missing` property] to provide a default value for the score calculation.
+<1> `function_score` 查询将主查询和函数包括在内。
+<2> 主查询优先执行。
+<3> `field_value_factor` 函数会被应用到每个与主 `query` 匹配的文档。
+<4> 每个文档的 `votes` 字段都 _必须_ 有值供 `function_score` 计算。如果 _没有_ 文档的 `votes` 字段有值，那么就 _必须_ 使用
+    {ref}/query-dsl-function-score-query.html#function-field-value-factor[`missing` 属性] 提供的默认值来进行评分计算。
 
-In the preceding example, the final `_score` for each document has been altered as
-follows:
+在前面示例中，每个文档的最终评分 `_score` 都做了如下修改：
 
     new_score = old_score * number_of_votes
 
-This will not give us great results.  The full-text `_score` range
-usually falls somewhere between 0 and 10. As can be seen in <<img-popularity-linear>>, a blog post with 10 votes will
-completely swamp the effect of the full-text score, and a blog post with 0
-votes will reset the score to zero.
+然而这并不会带来出人意料的好结果，全文评分 `_score` 通常处于 0 到 10 之间，如下图 <<img-popularity-linear>> 中，有 10 个赞的博客会掩盖掉全文评分，而 0 个赞的博客的评分会被置为 0 。
 
 [[img-popularity-linear]]
-.Linear popularity based on an original `_score` of `2.0`
+.受欢迎度的线性关系基于 `_score` 的原始值 `2.0`
 image::images/elas_1701.png[Linear popularity based on an original `_score` of `2.0`]
 
 
 ==== modifier
 
-A better way to incorporate popularity is to smooth out the `votes` value
-with some `modifier`.  ((("modifier parameter")))((("field_value_factor function", "modifier parameter")))In other words, we want the first few votes to count a
-lot, but for each subsequent vote to count less.  The difference between 0
-votes and 1 vote should be much bigger than the difference between 10 votes
-and 11 votes.
+一种融入受欢迎度更好方式是用 `modifier` 平滑 `votes` 的值。((("modifier parameter")))((("field_value_factor function", "modifier parameter")))换句话说，我们希望最开始的一些赞更重要，但是其重要性会随着数字的增加而降低。 0 个赞与 1 个赞的区别应该比 10 个赞与 11 个赞的区别大很多。
 
-A typical `modifier` for this use case is `log1p`, which changes the formula
-to the following:
+对于上述情况，典型的 `modifier` 应用是使用 `log1p` 参数值，公式如下：
 
     new_score = old_score * log(1 + number_of_votes)
 
-The `log` function smooths out the effect of the `votes` field to provide a
-curve like the one in <<img-popularity-log>>.
+`log` 对数函数使 `votes` 赞字段的评分曲线更平滑，如图 <<img-popularity-log>> ：
 
 [[img-popularity-log]]
-.Logarithmic popularity based on an original `_score` of `2.0`
+.受欢迎度的对数关系基于 `_score` 的原始值 `2.0`
 image::images/elas_1702.png[Logarithmic popularity based on an original `_score` of `2.0`]
 
-The request with the `modifier` parameter looks like the following:
+带 `modifier` 参数的请求如下：
 
 [source,json]
 -------------------------------
@@ -105,19 +89,15 @@ GET /blogposts/post/_search
   }
 }
 -------------------------------
-<1> Set the `modifier` to `log1p`.
+<1> `modifier` 为 `log1p` 。
 
 [role="pagebreak-before"]
-The available modifiers are `none` (the default), `log`, `log1p`, `log2p`,
-`ln`, `ln1p`, `ln2p`, `square`, `sqrt`,  and `reciprocal`.  You can read more
-about them in the
-{ref}/query-dsl-function-score-query.html#function-field-value-factor[`field_value_factor` documentation].
+修饰语 modifier 的值可以为： `none` （默认状态）、 `log` 、 `log1p` 、 `log2p` 、 `ln` 、 `ln1p` 、 `ln2p` 、 `square` 、 `sqrt` 以及 `reciprocal` 。想要了解更多信息请参照：
+{ref}/query-dsl-function-score-query.html#function-field-value-factor[`field_value_factor` 文档].
 
 ==== factor
 
-The strength of the popularity effect can be increased or decreased by
-multiplying the value((("factor (function_score)")))((("field_value_factor function", "factor parameter"))) in the `votes` field by some number, called the
-`factor`:
+可以通过将 `votes` 字段与 `factor` 的积来调节受欢迎程度效果的高低：((("factor (function_score)")))((("field_value_factor function", "factor parameter")))
 
 [source,json]
 -------------------------------
@@ -140,44 +120,39 @@ GET /blogposts/post/_search
   }
 }
 -------------------------------
-<1> Doubles the popularity effect
+<1> 双倍效果。
 
-Adding in a `factor` changes the formula to this:
+添加了 `factor` 会使公式变成这样：
 
     new_score = old_score * log(1 + factor * number_of_votes)
 
-A `factor` greater than `1` increases the effect, and a `factor` less than `1`
-decreases the effect, as shown in <<img-popularity-factor>>.
+`factor` 值大于 `1` 会提升效果， `factor` 值小于 `1` 会降低效果，如图 <<img-popularity-factor>> 。
 
 [[img-popularity-factor]]
-.Logarithmic popularity with different factors
+.受欢迎度的对数关系基于多个不同因子
 image::images/elas_1703.png[Logarithmic popularity with different factors]
 
 
 ==== boost_mode
 
-Perhaps multiplying the full-text score by the result of the
-`field_value_factor` function ((("function_score query", "boost_mode parameter")))((("boost_mode parameter")))still has too large an effect.  We can control
-how the result of a function is combined with the `_score` from the query by
-using the `boost_mode` parameter, which accepts the following values:
+或许将全文评分与 `field_value_factor` 函数值乘积的效果仍然可能太大，((("function_score query", "boost_mode parameter")))((("boost_mode parameter")))我们可以通过参数 `boost_mode` 来控制函数与查询评分 `_score` 合并后的结果，参数接受的值为：
 
 `multiply`::
-      Multiply the `_score` with the function result (default)
+      评分 `_score` 与函数值的积（默认）
 
 `sum`::
-      Add the function result to the `_score`
+      评分 `_score` 与函数值的和
 
 `min`::
-      The lower of the `_score` and the function result
+      评分 `_score` 与函数值间的较小值
 
 `max`::
-      The higher of the `_score` and the function result
+      评分 `_score` 与函数值间的较大值
 
 `replace`::
-      Replace the `_score` with the function result
+      函数值替代评分 `_score`
 
-If, instead of multiplying, we add the function result to the `_score`, we can
-achieve a much smaller effect, especially if we use a low `factor`:
+与使用乘积的方式相比，使用评分 `_score` 与函数值求和的方式可以弱化最终效果，特别是使用一个较小 `factor` 因子时：
 
 [source,json]
 -------------------------------
@@ -201,21 +176,20 @@ GET /blogposts/post/_search
   }
 }
 -------------------------------
-<1> Add the function result to the `_score`.
+<1> 评分 `_score` 与函数值的积。
 
-The formula for the preceding request now looks like this (see <<img-popularity-sum>>):
+之前请求的公式现在变成下面这样（参见 <<img-popularity-sum>> ）：
 
     new_score = old_score + log(1 + 0.1 * number_of_votes)
 
 [[img-popularity-sum]]
-.Combining popularity with `sum`
+.使用 `sum` 结合受欢迎程度
 image::images/elas_1704.png["Combining popularity with `sum`"]
 
 
 ==== max_boost
 
-Finally, we can cap the maximum effect((("function_score query", "max_boost parameter")))((("max_boost parameter"))) that the function can have by using the
-`max_boost` parameter:
+最后，可以使用 `max_boost` 参数限制一个函数的最大效果：((("function_score query", "max_boost parameter")))((("max_boost parameter")))
 
 [source,json]
 -------------------------------
@@ -240,9 +214,6 @@ GET /blogposts/post/_search
   }
 }
 -------------------------------
-<1> Whatever the result of the `field_value_factor` function, it will never be
-    greater than `1.5`.
+<1> 无论 `field_value_factor` 函数的结果如何，最终结果都不会大于 `1.5` 。
 
-NOTE: The `max_boost` applies a limit to the result of the function only, not
-to the final `_score`.
-
+NOTE: `max_boost` 只对函数的结果进行限制，不会对最终评分 `_score` 产生直接影响。
