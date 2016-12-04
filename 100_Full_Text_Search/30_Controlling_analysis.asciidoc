@@ -1,17 +1,11 @@
-=== Controlling Analysis
+[[_controlling_analysis]]
+=== 控制分析
 
-Queries can find only terms that actually ((("full text search", "controlling analysis")))((("analysis", "controlling")))exist in the inverted index, so it
-is important to ensure that the same analysis process is applied both to the
-document at index time, and to the query string at search time so that the
-terms in the query match the terms in the inverted index.
+查询只能查找倒排索引表中真实存在的项，((("full text search", "controlling analysis")))((("analysis", "controlling")))所以保证文档在索引时与查询字符串在搜索时应用相同的分析过程非常重要，这样查询的项才能够匹配倒排索引中的项。
 
-Although we say _document_, analyzers are determined per field.((("analyzers", "determined per-field"))) Each
-field can have a different analyzer, either by configuring a specific analyzer
-for that field or by falling back on the type, index, or node defaults.  At
-index time, a field's value is analyzed by using the configured or default
-analyzer for that field.
+尽管是在说 _文档_ ，不过分析器可以由每个字段决定。((("analyzers", "determined per-field")))每个字段都可以有不同的分析器，既可以通过配置为字段指定分析器，也可以使用更高层的类型（type）、索引（index）或节点（node）的默认配置。在索引时，一个字段值是根据配置或默认分析器分析的。
 
-For instance, let's add a new field to `my_index`:
+例如为 `my_index` 新增一个字段：
 
 [source,js]
 --------------------------------------------------
@@ -29,8 +23,7 @@ PUT /my_index/_mapping/my_type
 --------------------------------------------------
 // SENSE: 100_Full_Text_Search/30_Analysis.json
 
-Now we can compare how values in the `english_title` field and the `title` field are
-analyzed at index time by using the `analyze` API to analyze the word `Foxes`:
+现在我们就可以通过使用 `analyze` API 来分析单词 `Foxes` ，进而比较 `english_title` 字段和 `title` 字段在索引时的分析结果：
 
 [source,js]
 --------------------------------------------------
@@ -48,20 +41,13 @@ GET /my_index/_analyze
 --------------------------------------------------
 // SENSE: 100_Full_Text_Search/30_Analysis.json
 
-<1> Field `title`, which uses the default `standard` analyzer, will return the
-    term `foxes`.
+<1> 字段 `title` ，使用默认的 `standard` 标准分析器，返回词项 `foxes` 。
 
-<2> Field `english_title`, which uses the `english` analyzer, will return the term
-    `fox`.
+<2> 字段 `english_title` ，使用 `english` 英语分析器，返回词项 `fox` 。
 
-This means that, were we to run a low-level `term` query for the exact term
-`fox`, the `english_title` field would match but the `title` field would
-not.
+这意味着，如果使用底层 `term` 查询精确项 `fox` 时， `english_title` 字段会匹配但 `title` 字段不会。
 
-High-level queries like the `match` query understand field mappings and can
-apply the correct analyzer for each field being queried.((("match query", "applying appropriate analyzer to each field"))) We can see this
-in action with ((("validate query API")))the `validate-query` API:
-
+如同 `match` 查询这样的高层查询知道字段映射的关系，能为每个被查询的字段应用正确的分析器。((("match query", "applying appropriate analyzer to each field")))可以使用  `validate-query` API((("validate query API"))) 查看这个行为：
 
 [source,js]
 --------------------------------------------------
@@ -79,82 +65,57 @@ GET /my_index/my_type/_validate/query?explain
 --------------------------------------------------
 // SENSE: 100_Full_Text_Search/30_Analysis.json
 
-which returns this `explanation`:
+返回语句的 `explanation` 结果：
 
     (title:foxes english_title:fox)
 
-The `match` query uses the appropriate analyzer for each field to ensure
-that it looks for each term in the correct format for that field.
+`match` 查询为每个字段使用合适的分析器，以保证它在寻找每个项时都为该字段使用正确的格式。
 
-==== Default Analyzers
+==== 默认分析器
 
-While we can specify an analyzer at the field level,((("full text search", "controlling analysis", "default analyzers")))((("analyzers", "default"))) how do we determine which
-analyzer is used for a field if none is specified at the field level?
+虽然我们可以在字段层级指定分析器，((("full text search", "controlling analysis", "default analyzers")))((("analyzers", "default")))但是如果该层级没有指定任何的分析器，那么我们如何能确定这个字段使用的是哪个分析器呢？
 
-Analyzers can be specified at three levels: per-field, per-index or the global default.
-Elasticsearch works through each level until it finds an analyzer that it can use.
-At index time, the order ((("indexing", "applying analyzers")))is as follows:
+分析器可以从三个层面进行定义：按字段（per-field）、按索引（per-index）或全局缺省（global default）。Elasticsearch 会按照以下顺序依次处理，直到它找到能够使用的分析器。索引时的顺序如下：((("indexing", "applying analyzers")))
 
-* The `analyzer` defined in the field mapping, else
-* The analyzer named `default` in the index settings, which defaults to
-* The `standard` analyzer
+* 字段映射里定义的 `analyzer` ，否则
+* 索引设置中名为 `default` 的分析器，默认为
+* `standard` 标准分析器
 
-At search time, the ((("searching", "applying analyzers")))sequence is slightly different:
+在搜索时，顺序有些许不同：((("searching", "applying analyzers")))
 
-* The `analyzer` defined in the query itself, else
-* The `analyzer` defined in the field mapping, else
-* The analyzer named `default` in the index settings, which defaults to
-* The `standard` analyzer
+* 查询自己定义的  `analyzer` ，否则
+* 字段映射里定义的 `analyzer` ，否则
+* 索引设置中名为 `default` 的分析器，默认为
+* `standard` 标准分析器
 
-Occasionally, it makes sense to use a different analyzer at index and search
-time.((("analyzers", "using different analyzers at index and search time"))) For instance, at index time we may want to index synonyms (for example, for every
-occurrence of `quick`, we also index `fast`, `rapid`, and `speedy`). But at
-search time, we don't need to search for all of these synonyms.  Instead we
-can just look up the single word that the user has entered, be it `quick`,
-`fast`, `rapid`, or `speedy`.
+有时，在索引时和搜索时使用不同的分析器是合理的。((("analyzers", "using different analyzers at index and search time")))我们可能要想为同义词建索引（例如，所有 `quick` 出现的地方，同时也为 `fast` 、 `rapid` 和 `speedy` 创建索引）。但在搜索时，我们不需要搜索所有的同义词，取而代之的是寻找用户输入的单词是否是 `quick` 、 `fast` 、 `rapid` 或 `speedy` 。
 
-To enable this distinction, Elasticsearch also supports ((("search_analyzer parameter")))an
-optional `search_analyzer` mapping which will only be used at search-time (`analyzer`
-is still used for indexing). There is also an equivalent `default_search` mapping
-for configuring the default at the index-level.
+为了区分，Elasticsearch 也支持((("search_analyzer parameter")))一个可选的 `search_analyzer` 映射，它仅会应用于搜索时（ `analyzer` 还用于索引时）。还有一个等价的 `default_search` 映射，用以指定索引层的默认配置。
 
-Taking these extra parameters into account, the _full_ sequence at search time:
+如果考虑到这些额外参数，一个搜索时的 _完整_ 顺序会是下面这样：
 
-* The `analyzer` defined in the query itself, else
-* The `search_analyzer` defined in the field mapping, else
-* The `analyzer` defined in the field mapping, else
-* The analyzer named `default_search` in the index settings, which defaults to
-* The analyzer named `default` in the index settings, which defaults to
-* The `standard` analyzer
+* 查询自己定义的  `analyzer` ，否则
+* 字段映射里定义的 `search_analyzer` ，否则
+* 字段映射里定义的 `analyzer` ，否则
+* 索引设置中名为 `default_search` 的分析器，默认为
+* 索引设置中名为 `default` 的分析器，默认为
+* `standard` 标准分析器
 
-==== Configuring Analyzers in Practice
+==== 分析器配置实践
 
-The sheer number of places where you can specify an analyzer is quite
-overwhelming.((("full text search", "controlling analysis", "configuring analyzers in practice")))((("analyzers", "configuring in practice")))  In practice, though, it is pretty simple.
+就可以配置分析器地方的数量而言是十分惊人的，((("full text search", "controlling analysis", "configuring analyzers in practice")))((("analyzers", "configuring in practice")))但是实际非常简单。
 
-===== Keep it simple
+===== 保持简单
 
-Most of the time, you will know what fields your documents will contain ahead
-of time.  The simplest approach is to set the analyzer for each full-text
-field when you create your index or add type mappings.  While this approach is
-slightly more verbose, it enables you to easily see which analyzer is being applied
-to each field.
+多数情况下，会提前知道文档会包括哪些字段。最简单的途径就是在创建索引或者增加类型映射时，为每个全文字段设置分析器。这种方式尽管有点麻烦，但是它让我们可以清楚的看到每个字段每个分析器是如何设置的。
 
-Typically, most of your string fields will be exact-value `not_analyzed`
-fields such as tags or enums, plus a handful of full-text fields that will
-use some default analyzer like `standard` or `english` or some other language.
-Then you may have one or two fields that need custom analysis: perhaps the
-`title` field needs to be indexed in a way that supports _find-as-you-type_.
+通常，多数字符串字段都是 `not_analyzed` 精确值字段，比如标签（tag）或枚举（enum），而且更多的全文字段会使用默认的 `standard` 分析器或 `english` 或其他某种语言的分析器。这样只需要为少数一两个字段指定自定义分析：或许标题 `title` 字段需要以支持 _输入即查找（find-as-you-type）_ 的方式进行索引。
 
-You can set the `default` analyzer in the index to the analyzer you want to
-use for almost all full-text fields, and just configure the specialized
-analyzer on the one or two fields that need it.
+可以在索引级别设置中，为绝大部分的字段设置你想指定的 `default` 默认分析器。然后在字段级别设置中，对某一两个字段配置需要指定的分析器。
 
 [NOTE]
 ====
-A common work flow for time based data like logging is to create a new index
-per day on the fly by just indexing into it.  While this work flow prevents
-you from creating your index up front, you can still use
-{ref}/indices-templates.html[index templates]
-to specify the settings and mappings that a new index should have.
+对于和时间相关的日志数据，通常的做法是每天自行创建索引，由于这种方式不是从头创建的索引，仍然可以用
+{ref}/indices-templates.html[索引模板（Index Template）]
+为新建的索引指定配置和映射。
 ====
