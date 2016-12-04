@@ -1,25 +1,21 @@
+[[_significant_terms_demo]]
+=== significant_terms 演示
 
-=== significant_terms Demo
+因为 `significant_terms` 聚合((("significant_terms aggregation", "demonstration of")))((("aggregations", "significant_terms", "demonstration of"))) 是通过分析统计信息来工作的，
+需要为数据设置一个阀值让它们更有效。也就是说无法通过只索引少量示例数据来展示它。
 
-Because the `significant_terms` aggregation((("significant_terms aggregation", "demonstration of")))((("aggregations", "significant_terms", "demonstration of"))) works by analyzing
-statistics, you need to have a certain threshold of data for it to become effective.
-That means we won't be able to index a small amount of example data for the demo.
+正因如此，我们准备了一个大约 8000 个文档的数据集，并将它的快照保存在一个公共演示库中。可以通过以下步骤在集群中还原这些数据：
 
-Instead, we prepared a dataset that contains about 80,000 documents and saved it
-as a snapshot in our public demo repository.  To "restore"
-this dataset into your cluster:
-
-. Add the following setting to your `elasticsearch.yml` configuration file to 
-whitelist the Elastic demo repository:
+. 在 `elasticsearch.yml` 配置文件中增加以下配置，
+以便将演示库加入到白名单中：
 +
 [source,js]
 ----
 repositories.url.allowed_urls: ["http://download.elastic.co/*"]
 ----
-. Restart Elasticsearch.
+. 重启 Elasticsearch。
 
-. Run the following snapshot commands. (For more information about using 
-snapshots, see <<backing-up-your-cluster, Backing Up Your Cluster>>.)
+. 运行以下快照命令。（更多使用快照的信息，参见 <<backing-up-your-cluster,  备份集群（Backing Up Your Cluster）>>）。
 +
 [source,js]
 ----
@@ -38,23 +34,18 @@ POST /_snapshot/sigterms/snapshot/_restore <3>
 GET /mlmovies,mlratings/_recovery <4>
 ----
 // SENSE: 300_Aggregations/75_sigterms.json
-<1> Register a new read-only URL repository pointing at the demo snapshot
-<2> (Optional) Inspect the repository to learn details about available snapshots
-<3> Begin the Restore process.  This will download two indices into your cluster: `mlmovies`
-and `mlratings`
-<4> (Optional) Monitor the Restore process using the Recovery API
+<1> 注册一个新的只读地址库，并指向演示快照。
+<2> （可选）检查库内关于快照的详细信息。
+<3> 开始还原过程。会在集群中创建两个索引： `mlmovies` 和 `mlratings` 。
+<4> （可选）使用 Recovery API 监控还原过程。
 
 
-NOTE: The dataset is around 50 MB and may take some time to download.
+NOTE: 数据集有 50 MB 会需要一些时间下载。
 
-In this demo, we are going to look at movie ratings by users of MovieLens.  At
-MovieLens, users make movie recommendations so other users can find new
-movies to watch.  For this demo, we are going to recommend movies by using `significant_terms`
-based on an input movie.
+在本演示中，会看看 MovieLens 里面用户对电影的评分。在 MovieLens 里，用户可以推荐电影并评分，这样其他用户也可以找到新的电影。
+为了演示，会基于输入的电影采用 `significant_terms` 对电影进行推荐。
 
-Let's take a look at some sample data, to get a feel for what we are working with.
-There are two indices in this dataset, `mlmovies` and `mlratings`.  Let's look
-at `mlmovies` first:
+让我们看看示例中的数据，感受一下要处理的内容。本数据集有两个索引， `mlmovies` 和 `mlratings` 。首先查看 `mlmovies` ：
 
 [source,js]
 ----
@@ -82,14 +73,12 @@ GET mlmovies/_search <1>
          ....
 ----
 // SENSE: 300_Aggregations/75_sigterms.json
-<1> Execute a search without a query, so that we can see a random sampling of docs.
+<1> 执行一个不带查询条件的搜索，以便能看到一组随机演示文档。
 
-Each document in `mlmovies` represents a single movie.  The two important pieces
-of data are the `_id` of the movie and the `title` of the movie.  You can ignore
-`offset` and `bytes`; they are artifacts of the process used to extract this
-data from the original CSV files. There are 10,681 movies in this dataset.
+`mlmovies` 里的每个文档表示一个电影，数据有两个重要字段：电影ID `_id` 和电影名 `title` 。可以忽略
+`offset` 和 `bytes` 。它们是从原始 CSV 文件抽取数据的过程中产生的中间属性。数据集中有 10，681 部影片。
 
-Now let's look at `mlratings`:
+现在来看看 `mlratings` ：
 
 
 [source,js]
@@ -123,22 +112,17 @@ GET mlratings/_search
 ----
 // SENSE: 300_Aggregations/75_sigterms.json
 
-Here we can see the recommendations of individual users.  Each document represents
-a single user, denoted by the `user` ID field.  The `movie` field holds a list
-of movies that this user watched and recommended.
+这里可以看到每个用户的推荐信息。每个文档表示一个用户，用 ID 字段 `user` 来表示， `movie` 字段维护一个用户观看和推荐过的影片列表。
 
-==== Recommending Based on Popularity
+==== 基于流行程度推荐（Recommending Based on Popularity）
 
-The first strategy we could take is trying to recommend movies based on popularity.((("popularity", "movie recommendations based on")))
-Given a particular movie, we find all users who recommended that movie.  Then
-we aggregate all their recommendations and take the top five most popular.
+可以采取的首个策略就是基于流行程度向用户推荐影片。((("popularity", "movie recommendations based on")))
+对于某部影片，找到所有推荐过它的用户，然后将他们的推荐进行聚合并获得推荐中最流行的五部。
 
-We can express that easily with a `terms` aggregation ((("terms aggregation", "movie recommendations (example)")))and some filtering.  Let's
-look at _Talladega Nights_, a comedy about NASCAR racing starring
-Will Ferrell.  Ideally, our recommender should find other comedies in a similar
-style (and more than likely also starring Will Ferrell).
+我们可以很容易的通过一个 `terms` 聚合 ((("terms aggregation", "movie recommendations (example)")))以及一些过滤来表示它，看看 _Talladega Nights（塔拉迪加之夜）_ 这部影片，它是 Will Ferrell 主演的一部关于全国运动汽车竞赛（NASCAR racing）的喜剧。
+在理想情况下，我们的推荐应该找到类似风格的喜剧（很有可能也是 Will Ferrell 主演的）。
 
-First we need to find the _Talladega Nights_ ID:
+首先需要找到影片 _Talladega Nights_ 的 ID：
 
 [source,js]
 ----
@@ -167,10 +151,9 @@ GET mlmovies/_search
     ...
 ----
 // SENSE: 300_Aggregations/75_sigterms.json
-<1> _Talladega Nights_ is ID `46970`.
+<1> _Talladega Nights_ 的 ID 是 `46970` 。
 
-Armed with the ID, we can now filter the ratings and ((("filtering", "in aggregations")))apply our `terms` aggregation
-to find the most popular movies from people who also like _Talladega Nights_:
+有了 ID，可以过滤评分，再应用((("filtering", "in aggregations"))) `terms` 聚合从喜欢 _Talladega Nights_ 的用户中找到最流行的影片：
 
 [source,js]
 ----
@@ -197,20 +180,15 @@ GET mlratings/_search
 }
 ----
 // SENSE: 300_Aggregations/75_sigterms.json
-<1> We execute our query on `mlratings` this time, and set the `size` to 0
-since we are interested only in the aggregation results.
-<2> Apply a filter on the ID corresponding to _Talladega Nights_.
-<3> Finally, find the most popular movies by using a `terms` bucket.
+<1> 这次查询 `mlratings` ， 将结果内容 `大小设置` 为 0 因为我们只对聚合的结果感兴趣。
+<2> 对影片 _Talladega Nights_ 的 ID 使用过滤器。
+<3> 最后，使用 `terms` 桶找到最流行的影片。
 
-We perform the search on the `mlratings` index, and apply a filter for the ID of
-_Talladega Nights_.  Since aggregations operate on query scope, this will
-effectively filter the aggregation results to only the users who recommended
-_Talladega Nights_. Finally, we execute ((("terms aggregation", "movie recommendations (example)")))a `terms` aggregation to bucket the most
-popular movies.  We are requesting the top six results, since it is likely
-that _Talladega Nights_ itself will be returned as a hit (and we don't want
-to recommend the same movie).
+在 `mlratings`  索引下搜索，然后对影片 _Talladega Nights_ 的 ID 使用过滤器。由于聚合是针对查询范围进行操作的，它可以有效的过滤聚合结果从而得到那些只推荐 _Talladega Nights_ 的用户。
+最后，执行 ((("terms aggregation", "movie recommendations (example)"))) `terms` 聚合得到最流行的影片。
+请求排名最前的六个结果，因为 _Talladega Nights_ 本身很有可能就是其中一个结果（并不想重复推荐它）。
 
-The results come back like so:
+返回结果就像这样：
 
 [source,js]
 ----
@@ -255,8 +233,7 @@ The results come back like so:
 ...
 ----
 
-We need to correlate these back to their original titles, which can be done
-with a simple filtered query:
+通过一个简单的过滤查询，将得到的结果转换成原始影片名：
 
 [source,js]
 ----
@@ -275,22 +252,18 @@ GET mlmovies/_search
 ----
 // SENSE: 300_Aggregations/75_sigterms.json
 
-And finally, we end up with the following list:
+最后得到以下列表：
 
-1. Matrix, The
-2. Shawshank Redemption
-3. Pulp Fiction
-4. Fight Club
-5. Star Wars Episode IV: A New Hope
+1. Matrix, The（黑客帝国）
+2. Shawshank Redemption（肖申克的救赎）
+3. Pulp Fiction（低俗小说）
+4. Fight Club（搏击俱乐部）
+5. Star Wars Episode IV: A New Hope（星球大战 IV：曙光乍现）
 
-OK--well that is certainly a good list!  I like all of those movies.  But that's
-the problem: most _everyone_ likes that list.  Those movies are universally
-well-liked, which means they are popular on everyone's recommendations.  The
-list is basically a recommendation of popular movies, not recommendations related
-to _Talladega Nights_.
+好吧，这肯定不是一个好的列表！我喜欢所有这些影片。但问题是：几乎 _每个人_ 都喜欢它们。这些影片本来就受大众欢迎，也就是说它们出现在每个人的推荐中都会受欢迎。
+这其实是一个流行影片的推荐列表，而不是和影片 _Talladega Nights_ 相关的推荐。
 
-This is easily verified by running the aggregation again, but without the filter
-on _Talladega Nights_.  This will give a top-five most popular movie list:
+可以通过再次运行聚合轻松验证，而不需要对影片 _Talladega Nights_ 进行过滤。会提供最流行影片的前五名列表：
 
 [source,js]
 ----
@@ -309,30 +282,24 @@ GET mlratings/_search
 ----
 // SENSE: 300_Aggregations/75_sigterms.json
 
-This returns a list that is very similar:
+返回列表非常相似：
 
-1. Shawshank Redemption
-2. Silence of the Lambs, The
-3. Pulp Fiction
-4. Forrest Gump
-5. Star Wars Episode IV: A New Hope
+1. Shawshank Redemption（肖申克的救赎）
+2. Silence of the Lambs, The（沉默的羔羊）
+3. Pulp Fiction（低俗小说）
+4. Forrest Gump（阿甘正传）
+5. Star Wars Episode IV: A New Hope（星球大战 IV：曙光乍现）
 
-Clearly, just checking the most popular movies is not sufficient to build a good,
-discriminating recommender.
+显然，只是检查最流行的影片是不能足以创建一个良好而又具鉴别能力的推荐系统。
 
-==== Recommending Based on Statistics
+==== 基于统计的推荐（Recommending Based on Statistics）
 
-Now that the scene is set, let's try using `significant_terms`.  `significant_terms` will analyze
-the group of people who enjoy _Talladega Nights_ (the _foreground_ group) and
-determine what movies are most popular. ((("statistics, movie recommendations based on (example)"))) It will then construct a list of
-popular films for everyone (the _background_ group) and compare the two.
+现在场景已经设定好，使用 `significant_terms` 。 `significant_terms` 会分析喜欢影片 _Talladega Nights_ 的用户组（ _前端_ 用户组），并且确定最流行的电影。
+((("statistics, movie recommendations based on (example)"))) 然后为每个用户（ _后端_ 用户）构造一个流行影片列表，最后将两者进行比较。
 
-The statistical anomalies will be the movies that are _over-represented_ in the
-foreground compared to the background.  Theoretically, this should be a list
-of comedies, since people who enjoy Will Ferrell comedies will recommend them
-at a higher rate than the background population of people.
+统计异常就是与统计背景相比在前景特征组中过度展现的那些影片。理论上讲，它应该是一组喜剧，因为喜欢 Will Ferrell 喜剧的人给这些影片的评分会比一般人高。
 
-Let's give it a shot:
+让我们试一下：
 
 [source,js]
 ----
@@ -359,16 +326,12 @@ GET mlratings/_search
 }
 ----
 // SENSE: 300_Aggregations/75_sigterms.json
-<1> The setup is nearly identical -- we just use `significant_terms` instead of
-`terms`.
+<1> 设置几乎一模一样，只是用 `significant_terms` 替代了 `terms` 。
 
-As you can see, the query is nearly the same.  We filter for users who
-liked _Talladega Nights_; this forms the foreground group.  By default,
-`significant_terms` will use the entire index as the background, so we don't need to do
-anything special.
+正如所见，查询也几乎是一样的。过滤出喜欢影片 _Talladega Nights_ 的用户，他们组成了前景特征用户组。默认情况下，
+`significant_terms`  会使用整个索引里的数据作为统计背景，所以不需要特别的处理。
 
-The results come back as a list of buckets similar to `terms`, but with some
-extra ((("buckets", "returned by significant_terms aggregation")))metadata:
+与 `terms` 类似，结果返回了一组桶，不过有更多的元数据信息：((("buckets", "returned by significant_terms aggregation")))
 
 [source,js]
 ----
@@ -422,35 +385,25 @@ extra ((("buckets", "returned by significant_terms aggregation")))metadata:
          ]
  ...
 ----
-<1> The top-level `doc_count` shows the number of docs in the foreground group.
-<2> Each bucket lists the key (for example, movie ID) being aggregated.
-<3> A `doc_count` for that bucket.
-<4> And a background count, which shows the rate at which this value appears in
-the entire background.
+<1> 顶层 `doc_count` 展现了前景特征组里文档的数量。
+<2> 每个桶里面列出了聚合的键值（例如，影片的ID）。
+<3> 桶内文档的数量 `doc_count` 。
+<4> 背景文档的数量，表示该值在整个统计背景里出现的频度。
 
-You can see that the first bucket we get back is _Talladega Nights_.  It is
-found in all 271 documents, which is not surprising.  Let's look at the next bucket:
-key `52245`.
+可以看到，获得的第一个桶是 _Talladega Nights_ 。它可以在所有 271 个文档中找到，这并不意外。让我们看下一个桶：键值 `52245` 。
 
-This ID corresponds to _Blades of Glory_, a comedy about male figure skating
-that also stars Will Ferrell.  We can see that it was recommended 59 times by
-the people who also liked _Talladega Nights_.  This means that 21% of the foreground
-group recommended _Blades of Glory_ (`59 / 271 = 0.2177`).
+这个 ID 对应影片 _Blades of Glory（荣誉之刃）_ ，它是一部关于男子学习滑冰的喜剧，也是由 Will Ferrell 主演。可以看到喜欢 _Talladega Nights_ 的用户对它的推荐是 59 次。
+这也意味着 21% 的前景特征用户组推荐了影片 _Blades of Glory_ （ `59 / 271 = 0.2177` ）。
 
-In contrast, _Blades of Glory_ was recommended only 185 times in the entire dataset,
-which equates to a mere 0.26% (`185 / 69796 = 0.00265`).  _Blades of Glory_ is therefore
-a statistical anomaly: it is uncommonly common in the group of people who
-like _Talladega Nights_.  We just found a good recommendation!
+形成对比的是， _Blades of Glory_ 在整个数据集合中仅被推荐了 185 次，
+只占 0.26% （ `185 / 69796 = 0.00265` ）。因此 _Blades of Glory_ 是一个统计异常：它在喜欢 _Talladega Nights_ 的用户中是显著的共性（注：uncommonly common）。这样就找到了一个好的推荐！
 
-If we look at the entire list, they are all comedies that would fit as good
-recommendations (many of which also star Will Ferrell):
+如果看完整的列表，它们都是好的喜剧推荐（其中很多也是由 Will Ferrell 主演）：
 
-1. Blades of Glory
-2. Anchorman: The Legend of Ron Burgundy
-3. Semi-Pro
-4. Knocked Up
-5. 40-Year-Old Virgin, The
+1. Blades of Glory（荣誉之刃）
+2. Anchorman: The Legend of Ron Burgundy（王牌播音员）
+3. Semi-Pro（半职业选手）
+4. Knocked Up（一夜大肚）
+5. 40-Year-Old Virgin, The（四十岁的老处男）
 
-This is just one example of the power of `significant_terms`. Once you start using
-`significant_terms`, you find many situations where you don't want the most popular--you want the most uncommonly common.  This simple aggregation can uncover some
-surprisingly sophisticated trends in your data.
+这只是 `significant_terms` 它强大的一个示例，一旦开始使用 `significant_terms` ，可能碰到这样的情况，我们不想要最流行的，而想要显著的共性（注：uncommonly common）。这个简单的聚合可以揭示出一些数据里出人意料的复杂趋势。
