@@ -1,129 +1,101 @@
 [[synonyms-expand-or-contract]]
-=== Expand or contract
+=== 扩展或收缩
 
-In <<synonym-formats>>, we have seen that it is((("synonyms", "expanding or contracting"))) possible to replace synonyms by
-_simple expansion_, _simple contraction_, or _generic expansion_.  We will look
-at the trade-offs of each of these techniques in this section.
+在 <<synonym-formats>> 中，我们看到了((("synonyms", "expanding or contracting")))可以通过 _简单扩展_ 、 _简单收缩_ 、或_类型扩展_ 来指明同义词规则。
+本章节我们将在这三者间做个权衡比较。
 
-TIP: This section deals with single-word synonyms only.  Multiword
-synonyms add another layer of complexity and are discussed later in
-<<multi-word-synonyms>>.
+TIP: 本节仅处理单词同义词。多词同义词又增添了一层复杂性，在 <<multi-word-synonyms>> 中，我们将会讨论。
 
 [[synonyms-expansion]]
-==== Simple Expansion
+==== 简单扩展
 
-With _simple expansion_,((("synonyms", "expanding or contracting", "simple expansion")))((("simple expansion (synonyms)"))) any of the listed synonyms is expanded into _all_ of
-the listed synonyms:
+通过 _简单扩展_ ，((("synonyms", "expanding or contracting", "simple expansion")))((("simple expansion (synonyms)")))我们可以把同义词列表中的任意一个词扩展成同义词列表 _所有_ 的词：
 
     "jump,hop,leap"
 
-Expansion can be applied either at index time or at query time.  Each has advantages
-(⬆)︎ and disadvantages (⬇)︎. When to use which comes down to performance versus
-flexibility.
+扩展可以应用在索引阶段或查询阶段。两者都有优点
+(⬆)︎ 和缺点 (⬇)︎。到底要在哪个阶段使用，则取决于性能与灵活性：
 
 [options="header",cols="h,d,d"]
 |===================================================
-|                   | Index time             | Query time
+|                   | 索引             | 查询
 
-| Index size        |
-      ⬇︎ Bigger index because all synonyms must be indexed. |
-      ⬆︎ Normal.
+| 索引的大小        |
+      ⬇︎ 大索引。因为所有的同义词都会被索引，所以索引的大小相对会变大一些。|
+      ⬆︎ 正常大小。
 
-| Relevance         |
-      ⬇︎ All synonyms will have the same IDF (see <<relevance-intro>>), meaning
-      that more commonly used words will have the same weight as less commonly
-      used words. |
-      ⬆︎ The IDF for each synonym will be correct.
+| 关联         |
+      ⬇︎ 所有同义词都有相同的 IDF（至于什么是 IDF ，参见 <<relevance-intro>>），这意味着通用的词和较常用的词都拥有着相同的权重。|
+      ⬆︎ 每个同义词 IDF 都和原来一样。
 
-| Performance |
-      ⬆︎ A query needs to find only the single term specified in the query string. |
-      ⬇︎ A query for a single term is rewritten to look up all synonyms, which
-      decreases performance.
+| 性能 |
+      ⬆︎ 查询只需要找到查询字符串中指定单个词项。|
+      ⬇︎ 对一个词项的查询重写来查找所有的同义词，从而降低性能。
 
-| Flexibility       |
-      ⬇︎ The synonym rules can't be changed for existing documents. For the new rules
-      to have effect, existing documents have to be reindexed. |
-      ⬆︎ Synonym rules can be updated without reindexing documents.
+| 灵活性       |
+      ⬇︎ 同义词规则不能改变现有的文件。对于有影响的新规则，现有的文件都要重建（注：重新索引一次文档）。|
+      ⬆︎ 同义词规则可以更新不需要索引文件。
 |===================================================
 
 [[synonyms-contraction]]
-==== Simple Contraction
+==== 简单收缩
 
-_Simple contraction_ maps a group of ((("synonyms", "expanding or contracting", "simple contraction")))((("simple contraction (synonyms)")))synonyms on the left side to a single
-value on the right side:
+_简单收缩_ ，把 ((("synonyms", "expanding or contracting", "simple contraction")))((("simple contraction (synonyms)"))) 左边的多个同义词映射到了右边的单个词：
 
     "leap,hop => jump"
 
-It must be applied both at index time and at query time, to ensure that query
-terms are mapped to the same single value that exists in the index.
+它必须同时应用于索引和查询阶段，以确保查询词项映射到索引中存在的同一个值。
 
-This approach has some advantages and some disadvantages compared to the simple expansion approach:
+相对于简单扩展方法，这种方法也有一些优点和一些缺点：
 
-Index size::
+索引的大小::
 
-⬆︎ The index size is normal, as only a single term is indexed.
+⬆︎ 索引大小是正常的，因为只有单一词项被索引。
 
-Relevance::
+关联::
 
-⬇︎ The IDF for all terms is the same, so you can't distinguish between more
-commonly used words and less commonly used words.
+⬇︎ 所有词项的 IDF 是一样的，所以你不能区分比较常用的词、不常用的单词。
 
-Performance::
+性能::
 
-⬆︎ A query needs to find only the single term that appears in the index.
+⬆︎ 查询只需要在索引中找到单词的出现。
 
-Flexibility::
+灵活性::
 +
 --
 
-⬆︎ New synonyms can be added to the left side of the rule and applied at
-query time. For instance, imagine that we wanted to add the word `bound` to
-the rule specified previously. The following rule would work for queries that
-contain `bound` or for newly added documents that contain `bound`:
+⬆︎ 新同义词可以添加到规则的左侧并在查询阶段使用。例如，我们想添加 `bound` 到先前指定的同义词规则中。那么下面的规则将作用于包含 `bound` 的查询或包含 `bound` 的文档索引：
 
     "leap,hop,bound => jump"
 
-But we could expand the effect to also take into account _existing_ documents
-that contain `bound` by writing the rule as follows:
+似乎对旧有的文档不起作用是么？其实我们可以把上面这个同义词规则改写下，以便对旧有文档同样起作用：
 
     "leap,hop,bound => jump,bound"
 
-When you reindex your documents, you could revert to the previous rule to gain
-the performance benefit of querying only a single term.
+当你重建索引文件，你可以恢复到上面的规则（注： `leap,hop,bound => jump` ）来获得查询单个词项的性能优势（注：因为上面那个规则相比这个而言，查询阶段就只要查询一个词了）。
 
 --
 
 [[synonyms-genres]]
-==== Genre Expansion
+==== 类型扩展
 
-Genre expansion is quite different from simple((("synonyms", "expanding or contracting", "genre expansion")))((("genre expansion (synonyms)"))) contraction or expansion.
-Instead of treating all synonyms as equal, genre expansion widens the meaning
-of a term to be more generic. Take these rules, for example:
+类型扩展是完全不同于简单收缩 ((("synonyms", "expanding or contracting", "genre expansion")))((("genre expansion (synonyms)"))) 或扩张，
+并不是平等看待所有的同义词，而是扩大了词的意义，使被拓展的词更为通用。以这些规则为例：
 
     "cat    => cat,pet",
     "kitten => kitten,cat,pet",
     "dog    => dog,pet"
     "puppy  => puppy,dog,pet"
 
-By applying genre expansion at index time:
+通过在索引阶段使用类型扩展：
 
-* A query for `kitten` would find just documents about kittens.
-* A query for `cat` would find documents abouts kittens and cats.
-* A query for `pet` would find documents about kittens, cats, puppies, dogs,
-  or pets.
+* 一个关于 `kitten` 的查询会发现关于 kittens 的文档。
+* 查询一个 `cat` 会找到关于 kittens 和 cats 的文档。
+* 一个 `pet` 的查询将发现有关的 kittens、cats、puppies、dogs 或者 pets 的文档。
 
-Alternatively, by applying genre expansion at query time, a query for `kitten`
-would be expanded to return documents that mention kittens, cats, or pets
-specifically.
+或者在查询阶段使用类型扩展， `kitten` 的查询结果就会被拓展成涉及到 kittens、cats、dogs。
 
-You could also have the best of both worlds by applying expansion at index
-time to ensure that the genres are present in the index. Then, at query time,
-you can choose to not apply synonyms (so that a query for `kitten`
-returns only documents about kittens) or to apply synonyms in order to match
-kittens, cats and pets (including the canine variety).
+您也可以有两全其美的办法，通过在索引阶段应用类型扩展同义词规则，以确保类型在索引中存在。然后，在查询阶段，
+你可以选择不采用同义词（使 `kitten` 查询只返回 kittens 的文件）或采用同义词， `kitten` 的查询操作就会返回包括 kittens、cats、pets（也包括 dogs 和 puppies）的相关结果。
 
-With the preceding example rules above, the IDF for `kitten` will be correct, while the
-IDF for `cat` and `pet` will be artificially deflated.  However, this
-works in your favor--a genre-expanded query for `kitten OR cat OR pet` will
-rank documents with `kitten` highest, followed by documents with `cat`, and
-documents with `pet` would be right at the bottom.
+前面的示例规则，对 `kitten` 的 IDF 将是正确的，而 `cat` 和 `pet` 的 IDF 将会被 Elasticsearch 降权。然而, 这是对你有利的，当一个针对 `kitten` 的查询被拓展成了针对 `kitten OR cat OR pet` 的查询， 那么 `kitten` 相关的文档就应该排在最上方，其次是 `cat` 的文件， `pet` 的文件将被排在最底部。
