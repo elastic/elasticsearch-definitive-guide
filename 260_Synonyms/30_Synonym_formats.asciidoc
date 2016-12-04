@@ -1,47 +1,39 @@
 [[synonym-formats]]
-=== Formatting Synonyms
+=== 同义词格式
 
-In their simplest form, synonyms are((("synonyms", "formatting"))) listed as comma-separated values:
+同义词最简单的表达形式是 ((("synonyms", "formatting"))) 逗号分隔：
 
     "jump,leap,hop"
 
-If any of these terms is encountered, it is replaced by all of the listed
-synonyms.  For instance:
+如果遇到这些词项中的任何一项，则将其替换为所有列出的同义词。例如：
 
 [role="pagebreak-before"]
 [source,text]
 --------------------------
-Original terms:   Replaced by:
+原始词项:   取代:
 ────────────────────────────────
 jump            → (jump,leap,hop)
 leap            → (jump,leap,hop)
 hop             → (jump,leap,hop)
 --------------------------
 
-Alternatively, with the `=>` syntax, it is possible to specify a list of terms
-to match (on the left side), and a list of one or more replacements (on
-the right side):
+或者, 使用 `=>` 语法，可以指定一个词项列表（在左边），和一个或多个替换（右边）的列表：
 
     "u s a,united states,united states of america => usa"
     "g b,gb,great britain => britain,england,scotland,wales"
 
 [source,text]
 --------------------------
-Original terms:   Replaced by:
+原始词项:   取代:
 ────────────────────────────────
 u s a           → (usa)
 united states   → (usa)
 great britain   → (britain,england,scotland,wales)
 --------------------------
 
-If multiple rules for the same synonyms are specified, they are merged
-together.  The order of rules is not respected.  Instead, the longest matching
-rule wins.  Take the following rules as an example:
+如果多个规则指定同一个同义词，它们将被合并在一起，且顺序无关，否则使用最长匹配。以下面的规则为例：
 
     "united states            => usa",
     "united states of america => usa"
 
-If these rules conflicted, Elasticsearch would turn `United States of
-America` into the terms `(usa),(of),(america)`.  Instead, the longest
-sequence wins, and we end up with just the term `(usa)`.
-
+如果这些规则相互冲突，Elasticsearch 会将 `United States of America` 转换为词项 `(usa),(of),(america)` 。否则，会使用最长的序列，即最终得到词项 `(usa)` 。
