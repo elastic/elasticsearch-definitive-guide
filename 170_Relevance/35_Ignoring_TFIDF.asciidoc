@@ -1,22 +1,20 @@
 [[ignoring-tfidf]]
-=== Ignoring TF/IDF
+=== 忽略 TF/IDF
 
-Sometimes we just don't care about TF/IDF.((("relevance", "controlling", "ignoring  TF/IDF")))((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm", "ignoring")))  All we want to know is that a certain
-word appears in a field. Perhaps we are searching for a vacation home and we
-want to find houses that have as many of these features as possible:
+有时候我们根本不关心 TF/IDF ，((("relevance", "controlling", "ignoring  TF/IDF")))((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm", "ignoring")))只想知道一个词是否在某个字段中出现过。可能搜索一个度假屋并希望它能尽可能有以下设施：
 
 * WiFi
-* Garden
-* Pool
+* Garden（花园）
+* Pool（游泳池）
 
-The vacation home documents look something like this:
+这个度假屋的文档如下：
 
 [source,json]
 ------------------------------
 { "description": "A delightful four-bedroomed house with ... " }
 ------------------------------
 
-We could use a simple `match` query:
+可以用简单的 `match` 查询进行匹配：
 
 [source,json]
 ------------------------------
@@ -30,18 +28,13 @@ GET /_search
 }
 ------------------------------
 
-However, this isn't really _full-text search_. In this case, TF/IDF just gets
-in the way.  We don't care whether `wifi` is a common term, or how often it
-appears in the document.  All we care about is that it does appear.
-In fact, we just want to rank houses by the number of features they have--the more, the better. If a feature is present, it should score `1`, and if it
-isn't, `0`.
+但这并不是真正的 _全文搜索_ ，此种情况下，TF/IDF 并无用处。我们既不关心 `wifi` 是否为一个普通词，也不关心它在文档中出现是否频繁，关心的只是它是否曾出现过。实际上，我们希望根据房屋不同设施的数量对其排名——设施越多越好。如果设施出现，则记 `1` 分，不出现记 `0` 分。
 
 [[constant-score-query]]
-==== constant_score Query
+==== constant_score 查询
 
-Enter the {ref}/query-dsl-constant-score-query.html[`constant_score`] query.
-This ((("constant_score query")))query can wrap either a query or a filter, and assigns a score of
-`1` to any documents that match, regardless of TF/IDF:
+在 {ref}/query-dsl-constant-score-query.html[`constant_score`]
+查询中，((("constant_score query")))它可以包含查询或过滤，为任意一个匹配的文档指定评分 `1` ，忽略 TF/IDF 信息：
 
 [source,json]
 ------------------------------
@@ -65,9 +58,7 @@ GET /_search
 }
 ------------------------------
 
-Perhaps not all features are equally important--some have more value to
-the user than others. If the most important feature is the pool, we could
-boost that clause to make it count for more:
+或许不是所有的设施都同等重要——对某些用户来说有些设施更有价值。如果最重要的设施是游泳池，那我们可以为更重要的设施增加权重：
 
 [source,json]
 ------------------------------
@@ -91,28 +82,20 @@ GET /_search
   }
 }
 ------------------------------
-<1> A matching `pool` clause would add a score of `2`, while
-    the other clauses would add a score of only `1` each.
+<1> `pool` 语句的权重提升值为 `2` ，而其他的语句为 `1` 。
 
-NOTE: The final score for each result is not simply the sum of the scores of
-all matching clauses.  The <<coord,coordination factor>> and
-<<query-norm,query normalization factor>> are still taken into account.
+NOTE: 最终的评分并不是所有匹配语句的简单求和， <<coord,协调因子（coordination factor）>> 和 <<query-norm,查询归一化因子（query normalization factor）>> 仍然会被考虑在内。
 
-We could improve our vacation home documents by adding a `not_analyzed`
-`features` field to our vacation homes:
+我们可以给 `features` 字段加上 `not_analyzed` 类型来提升度假屋文档的匹配能力：
 
 [source,json]
 ------------------------------
 { "features": [ "wifi", "pool", "garden" ] }
 ------------------------------
 
-By default, a `not_analyzed` field has <<field-norm,field-length norms>>
-disabled ((("not_analyzed fields", "field length norms and index_options")))and has `index_options` set to `docs`, disabling
-<<tf,term frequencies>>, but the problem remains: the
-<<idf,inverse document frequency>> of each term is still taken into account.
+默认情况下，一个 `not_analyzed` 字段会禁用 <<field-norm,字段长度归一值（field-length norms）>> 的功能，((("not_analyzed fields", "field length norms and index_options")))并将 `index_options` 设为 `docs` 选项，禁用 <<tf,词频>> ，但还是存在问题：每个词的 <<idf,倒排文档频率>> 仍然会被考虑。
 
-We could use the same approach that we used previously, with the `constant_score`
-query:
+可以采用与之前相同的方法 `constant_score` 查询来解决这个问题：
 
 [source,json]
 ------------------------------
@@ -137,13 +120,6 @@ GET /_search
 }
 ------------------------------
 
-Really, though, each of these features should be treated like a filter.  A
-vacation home either has the feature or it doesn't--a filter seems like it
-would be a natural fit.  On top of that, if we use filters, we can
-benefit from filter caching.
+实际上，每个设施都应该看成一个过滤器，对于度假屋来说要么具有某个设施要么没有——过滤器因为其性质天然合适。而且，如果使用过滤器，我们还可以利用缓存。
 
-The problem is this: filters don't score. What we need is a way of bridging
-the gap between filters and queries. The `function_score` query does this
-and a whole lot more.
-
-
+这里的问题是：过滤器无法计算评分。这样就需要寻求一种方式将过滤器和查询间的差异抹平。 `function_score` 查询不仅正好可以扮演这个角色，而且有更强大的功能。
