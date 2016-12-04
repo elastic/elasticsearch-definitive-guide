@@ -1,13 +1,10 @@
 
-=== Buckets Inside Buckets
+=== 嵌套桶
 
-The true power of aggregations becomes apparent once you start playing with
-different nesting schemes.((("aggregations", "basic example", "buckets nested in other buckets")))((("buckets", "nested in other buckets")))  In the previous examples, we saw how you could nest
-a metric inside a bucket, which is already quite powerful.
+在我们使用不同的嵌套方案时，聚合的力量才能真正得以显现。((("aggregations", "basic example", "buckets nested in other buckets")))((("buckets", "nested in other buckets"))) 在前例中，我们以及看到如何将一个度量嵌入桶中，它的功能已经十分强大了。
 
-But the real exciting analytics come from nesting buckets inside _other buckets_.
-This time, we want to find out the distribution of car manufacturers for each
-color:
+但真正令人激动的分析来自于将桶嵌套进 _另外一个桶_ 所能得到的结果。
+现在，我们想知道每个颜色的汽车制造商的分布：
 
 
 [source,js]
@@ -37,28 +34,18 @@ GET /cars/transactions/_search
 }
 --------------------------------------------------
 // SENSE: 300_Aggregations/20_basic_example.json
-<1> Notice that we can leave the previous `avg_price` metric in place.
-<2> Another aggregation named `make` is added to the `color` bucket.
-<3> This aggregation is a `terms` bucket and will generate unique buckets for
-each car make.
+<1> 注意前例中的 `avg_price` 度量仍然保持原位。
+<2> 另一个聚合 `make` 被加入到了 `color` 颜色桶中。
+<3> 这个聚合是 `terms` 桶，它会为每个汽车制造商生成唯一的桶。
 
-A few interesting things happened here.((("metrics", "independent, on levels of an aggregation")))  First, you'll notice that the previous
-`avg_price` metric is left entirely intact.  Each _level_ of an aggregation can
-have many metrics or buckets.  The `avg_price` metric tells us the average price
-for each car color.  This is independent of other buckets and metrics that
-are also being built.
+这里发生了一些有趣的事。((("metrics", "independent, on levels of an aggregation")))  首先，我们可能会观察到之前例子中的 `avg_price` 度量完全没有变化，还在原来的位置。
+一个聚合的每个 _层级_ 都可以有多个度量或桶， `avg_price` 度量告诉我们每种颜色汽车的平均价格。它与其他的桶和度量相互独立。
 
-This is important for your application, since there are often many related,
-but entirely distinct, metrics that you need to collect.  Aggregations allow
-you to collect all of them in a single pass over the data.
+这对我们的应用非常重要，因为这里面有很多相互关联，但又完全不同的度量需要收集。聚合使我们能够用一次数据请求获得所有的这些信息。
 
-The other important thing to note is that the aggregation we added, `make`, is
-a `terms` bucket (nested inside the `colors` `terms` bucket).  This means we will((("terms bucket", "nested in another terms bucket")))
-generate a (`color`, `make`) tuple for every unique combination in your dataset.
+另外一件值得注意的重要事情是我们新增的这个 `make` 聚合，它是一个 `terms` 桶（嵌套在 `colors` 、 `terms` 桶内）。这意味着它((("terms bucket", "nested in another terms bucket")))会为数据集中的每个唯一组合生成（ `color` 、 `make` ）元组。
 
-Let's take a look at the response (truncated for brevity, since it is now
-growing quite long):
-
+让我们看看返回的响应（为了简单我们只显示部分结果）：
 
 [source,js]
 --------------------------------------------------
@@ -90,12 +77,12 @@ growing quite long):
 ...
 }
 --------------------------------------------------
-<1> Our new aggregation is nested under each color bucket, as expected.
-<2> We now see a breakdown of car makes for each color.
-<3> Finally, you can see that our previous `avg_price` metric is still intact.
+<1> 正如期望的那样，新的聚合嵌入在每个颜色桶中。
+<2> 现在我们看见按不同制造商分解的每种颜色下车辆信息。
+<3> 最终，我们看到前例中的 `avg_price` 度量仍然维持不变。
 
-The response tells us the following:
+响应结果告诉我们以下几点：
 
-- There are four red cars.
-- The average price of a red car is $32,500.
-- Three of the red cars are made by Honda, and one is a BMW.
+- 红色车有四辆。
+- 红色车的平均售价是 $32，500 美元。
+- 其中三辆是 Honda 本田制造，一辆是 BMW 宝马制造。
