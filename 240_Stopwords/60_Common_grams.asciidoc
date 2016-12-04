@@ -1,14 +1,9 @@
 [[common-grams]]
-=== common_grams Token Filter
+=== common_grams 过滤器
 
-The `common_grams` token filter is designed to make phrase queries with
-stopwords more efficient. ((("stopwords", "phrase queries and", "common_grams token filter")))((("common_grams token filter")))((("phrase matching", "stopwords and", "common_grams token filter")))It is similar to the `shingles` token ((("shingles", "shingles token filter")))filter (see
-<<shingles>>), which creates _bigrams_ out of every pair of adjacent words. It
-is most easily explained by example.((("bigrams")))
+`common_grams` 过滤器是针对短语查询能更高效的使用停用词而设计的。 ((("stopwords", "phrase queries and", "common_grams token filter")))((("common_grams token filter")))((("phrase matching", "stopwords and", "common_grams token filter")))它与 shingles 过滤器((("shingles", "shingles token filter")))类似（参见 查找相关词（<<shingles>>)), 为每个相邻词对生成 ((("bigrams")))，用示例解释更为容易。
 
-The `common_grams` token filter produces different output depending on whether
-`query_mode` is set to `false` (for indexing) or to `true` (for searching), so
-we have to create two separate analyzers:
+`common_grams` 过滤器根据 `query_mode` 设置的不同而生成不同输出结果：`false` （为索引使用） 或 `true` （为搜索使用），所以我们必须创建两个独立的分析器：
 
 [source,json]
 -------------------------------
@@ -42,21 +37,14 @@ PUT /my_index
 }
 -------------------------------
 
-<1> First we create two token filters based on the `common_grams` token
-    filter: `index_filter` for index time (with `query_mode` set to the
-    default `false`), and `search_filter` for query time (with `query_mode`
-    set to `true`).
+<1> 首先我们基于 `common_grams` 过滤器创建两个过滤器： 
+    `index_filter` 在索引时使用（此时 `query_mode`  的默认设置是 `false` ）， `search_filter` 在查询时使用（此时 `query_mode` 的默认设置是 `true` ）。
 
-<2> The `common_words` parameter accepts the same options as the `stopwords`
-    parameter (see <<specifying-stopwords>>).  The filter also
-    accepts a `common_words_path` parameter, which allows you to maintain the
-    common words list in a file.
+<2> `common_words` 参数可以接受与 `stopwords` 参数同样的选项（参见 指定停用词 <<specifying-stopwords>> ）。这个过滤器还可以接受参数 `common_words_path` ，使用存于文件里的常用词。
 
-<3> Then we use each filter to create an analyzer for index time and another
-    for query time.
+<3>  然后我们使用过滤器各创建一个索引时分析器和查询时分析器。
 
-With our custom analyzers in place, we can create a field that will use the
-`index_grams` analyzer at index time:
+有了自定义分析器，我们可以创建一个字段在索引时使用 `index_grams` 分析器：
 
 [source,json]
 -------------------------------
@@ -71,14 +59,11 @@ PUT /my_index/_mapping/my_type
   }
 }
 -------------------------------
-<1> The `text` field uses the `index_grams` analyzer at index time, but
-    defaults to using the `standard` analyzer at search time, for reasons we
-    will explain next.
+<1>  `text` 字段索引时使用 `index_grams` 分析器，但是在搜索时默认使用 `standard` 分析器，稍后我们会解释其原因。
 
-==== At Index Time
+==== 索引时（At Index Time）
 
-If we were to ((("common_grams token filter", "at index time")))analyze the phrase _The quick and brown fox_ with shingles, it
-would produce these terms:
+如果我们对((("common_grams token filter", "at index time")))短语  _The quick and brown fox_ 进行拆分，它生成如下词项：
 
 [source,text]
 -------------------------------
@@ -88,7 +73,7 @@ Pos 3: and_brown
 Pos 4: brown_fox
 -------------------------------
 
-Our new `index_grams` analyzer produces the following terms instead:
+新的 `index_grams` 分析器生成以下词项：
 
 [source,text]
 -------------------------------
@@ -99,14 +84,11 @@ Pos 4: brown
 Pos 5: fox
 -------------------------------
 
-All terms are output as unigrams&#x2014;`the`, `quick`, and so forth--but if a word is a
-common word or is followed by a common word, then it also outputs a bigram in
-the same position as the unigram&#x2014;`the_quick`, `quick_and`, `and_brown`.
+所有的词项都是以 `unigrams` 形式输出的（the、quick 等等），但是如果一个词本身是常用词或者跟随着常用词，那么它同时还会在 `unigram` 同样的位置以 `bigram` 形式输出：`the_quick` ， `quick_and` ， `and_brown` 。
 
-==== Unigram Queries
+==== 单字查询（Unigram Queries）
 
-Because the index contains unigrams,((("unigrams", "unigram phrase queries")))((("common_grams token filter", "unigram queries"))) the field can be queried using the same
-techniques that we have used for any other field, for example:
+因为索引包含 `unigrams` ((("unigrams", "unigram phrase queries")))((("common_grams token filter", "unigram queries")))，可以使用与其他字段相同的技术进行查询，例如：
 
 [source,json]
 -------------------------------
@@ -123,18 +105,13 @@ GET /my_index/_search
 }
 -------------------------------
 
-The preceding query string is analyzed by the `search_analyzer` configured for the
-`text` field--the `standard` analyzer in this example--to produce the
-terms  `the`, `quick`, `and`, `brown`, `fox`.
+上面这个查询字符串是通过为文本字段配置的 `search_analyzer`  分析器 --本例中使用的是 `standard` 分析器-- 进行分析的， 它生成的词项为： `the` ， `quick` ， `and` ， `brown` ， `fox` 。
 
-Because the index for the `text` field contains the same unigrams as produced
-by the `standard` analyzer, search functions as it would for any normal
-field.
+因为 `text` 字段的索引中包含与 `standard` 分析去生成的一样的 `unigrams` ，搜索对于任何普通字段都能正常工作。
 
-==== Bigram Phrase Queries
+==== 二元语法短语查询（Bigram Phrase Queries）
 
-However, when we come to do phrase queries,((("common_grams token filter", "bigram phrase queries")))((("bigrams", "bigram phrase queries"))) we can use the specialized
-`search_grams` analyzer to make the process much more efficient:
+但是，当我们进行短语查询时，((("common_grams token filter", "bigram phrase queries")))((("bigrams", "bigram phrase queries")))我们可以用专门的 `search_grams`  分析器让整个过程变得更高效：
 
 [source,json]
 -------------------------------
@@ -151,10 +128,9 @@ GET /my_index/_search
 }
 
 -------------------------------
-<1> For phrase queries, we override the default `search_analyzer` and use the
-    `search_grams` analyzer instead.
+<1>  对于短语查询，我们重写了默认的 `search_analyzer` 分析器，而使用 `search_grams` 分析器。
 
-The `search_grams` analyzer would produce the following terms:
+`search_grams` 分析器会生成以下词项：
 
 [source,text]
 -------------------------------
@@ -165,21 +141,15 @@ Pos 4: brown
 Pos 5: fox
 -------------------------------
 
-The analyzer has stripped out all of the common word unigrams, leaving the common word
-bigrams and the low-frequency unigrams.  Bigrams like `the_quick` are much
-less common than the single term `the`.  This has two advantages:
+分析器排除了所有常用词的 `unigrams`，只留下常用词的 `bigrams` 以及低频的 `unigrams`。如 `the_quick` 这样的 `bigrams` 比单个词项 `the` 更为少见，这样有两个好处：
 
-* The positions data for `the_quick` is much smaller than for `the`, so it is
-  faster to read from disk and has less of an impact on the filesystem cache.
+* `the_quick` 的位置信息要比 `the` 的小得多，所以它读取磁盘更快，对系统缓存的影响也更小。
 
-* The term `the_quick` is much less common than `the`, so it drastically
-  decreases the number of documents that have to be examined.
+* 词项 `the_quick` 没有 `the` 那么常见，所以它可以大量减少需要计算的文档。
 
-==== Two-Word Phrases
+==== 两词短语（Two-Word Phrases）
 
-There is one further optimization. ((("common_grams token filter", "two word phrases"))) By far the majority of phrase queries
-consist of only two words.  If one of those words happens to be a common word,
-such as
+我们的优化可以更进一步，((("common_grams token filter", "two word phrases")))因为大多数的短语查询只由两个词组成，如果其中一个恰好又是常用词，例如：
 
 [source,json]
 -------------------------------
@@ -196,6 +166,4 @@ GET /my_index/_search
 }
 -------------------------------
 
-then the `search_grams` analyzer outputs a single token: `the_quick`.  This
-transforms what originally could have been an expensive phrase query for `the`
-and `quick` into a very efficient single-term lookup.
+那么 `search_grams` 分析器会输出单个语汇单元：`the_quick` 。这将原来昂贵的查询（查询 `the` 和 `quick` ）转换成了对单个词项的高效查找。
