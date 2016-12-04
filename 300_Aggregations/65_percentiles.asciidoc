@@ -1,52 +1,37 @@
 [[percentiles]]
-=== Calculating Percentiles
+=== 百分位计算
 
-The other approximate metric offered by Elasticsearch is the `percentiles` metric.((("percentiles")))((("aggregations", "approximate", "percentiles")))((("approximate algorithms", "percentiles")))
-Percentiles show the point at which a certain percentage of observed values occur.
-For example, the 95th percentile is the value that is greater than 95% of the
-data.
+Elasticsearch 提供的另外一个近似度量就是 `percentiles` 百分位数度量。((("percentiles")))((("aggregations", "approximate", "percentiles")))((("approximate algorithms", "percentiles")))
+百分位数展现某以具体百分比下观察到的数值。例如，第95个百分位上的数值，是高于 95% 的数据总和。
 
-Percentiles are often used to find outliers. In (statistically) normal
-distributions, the 0.13th and 99.87th percentiles represent three standard
-deviations from the mean. Any data that falls outside three standard deviations
-is often considered an anomaly because it is so different from the average value.
+百分位数通常用来找出异常。在（统计学）的正态分布下，第 0.13 和 第 99.87 的百分位数代表与均值距离三倍标准差的值。任何处于三倍标准差之外的数据通常被认为是不寻常的，因为它与平均值相差太大。
 
-To be more concrete, imagine that you are running a large website and it is your
-job to guarantee fast response times to visitors.  You must therefore monitor
-your website latency to determine whether you are meeting your goal.
+更具体的说，假设我们正运行一个庞大的网站，一个很重要的工作是保证用户请求能得到快速响应，因此我们就需要监控网站的延时来判断响应是否能保证良好的用户体验。
 
-A common metric to use in this scenario is the average latency. ((("metrics", "for website latency monitoring")))((("average metric"))) But this is a poor choice (despite being common), because averages can easily hide outliers.
-A median metric also suffers the same problem.((("mean/median metric")))  You could try a maximum, but this
-metric is easily skewed by just a single outlier.
+在此场景下，一个常用的度量方法就是平均响应延时。((("metrics", "for website latency monitoring")))((("average metric"))) 但这并不是一个好的选择（尽管很常用），因为平均数通常会隐藏那些异常值，
+中位数有着同样的问题。((("mean/median metric"))) 我们可以尝试最大值，但这个度量会轻而易举的被单个异常值破坏。
 
-This graph in <<percentile-mean-median>> visualizes the problem.  If you rely on simple metrics like mean or median, you might see a graph that looks like <<percentile-mean-median>>.
+在图 <<percentile-mean-median>> 查看问题。如果我们依靠如平均值或中位数这样的简单度量，就会得到像这样一幅图 <<percentile-mean-median>> 。
 
 [[percentile-mean-median]]
 .Average request latency over time
 image::images/elas_33in01.png["Assessing website latency using mean/median"]
 
-Everything looks fine.  ((("percentiles", "assessing website latency with")))There is a slight bump, but nothing to be concerned about.
-But if we load up the 99th percentile (the value that accounts for the slowest 1%
-of latencies), we see an entirely different story, as shown in <<percentile-mean-median-percentile>>.
+一切正常。((("percentiles", "assessing website latency with"))) 图上有轻微的波动，但没有什么值得关注的。
+但如果我们加载 99 百分位数时（这个值代表最慢的 1% 的延时），我们看到了完全不同的一幅画面，如图 <<percentile-mean-median-percentile>> 。
 
 [[percentile-mean-median-percentile]]
 .Average request latency with 99th percentile over time
 image::images/elas_33in02.png["Assessing website latency using percentiles"]
 
-Whoa!  At 9:30 a.m., the mean is only 75ms.  As a system administrator, you wouldn't
-look at this value twice.  Everything normal!  But the 99th percentile is telling
-you that 1% of your customers are seeing latency in excess of 850ms--a very
-different story.  There is also a smaller spike at 4:48 a.m. that wasn't even
-noticeable in the mean/median.
+令人吃惊！在上午九点半时，均值只有 75ms。如果作为一个系统管理员，我们都不会看他第二眼。 一切正常！但 99 百分位告诉我们有 1% 的用户碰到的延时超过 850ms，这是另外一幅场景。
+在上午4点48时也有一个小波动，这甚至无法从平均值和中位数曲线上观察到。
 
-This is just one use-case for a percentile.  Percentiles can also be used to quickly
-eyeball the distribution of data, check for skew or bimodalities, and more.
+这只是百分位的一个应用场景，百分位还可以被用来快速用肉眼观察数据的分布，检查是否有数据倾斜或双峰甚至更多。
 
-==== Percentile Metric
+==== 百分位度量（Percentile Metric）
 
-Let's load a new dataset (the car data isn't going to work well for percentiles).
-We are going to index a bunch of website latencies and run a few percentiles over
-it:
+让我加载一个新的数据集（汽车的数据不太适用于百分位）。我们要索引一系列网站延时数据然后运行一些百分位操作进行查看：
 
 [source,js]
 ----
@@ -78,9 +63,7 @@ POST /website/logs/_bulk
 ----
 // SENSE: 300_Aggregations/65_percentiles.json
 
-This data contains three values: a latency, a data center zone, and a date
-timestamp.  Let's run +percentiles+ over the whole dataset to get a feel for
-the distribution:
+数据有三个值：延时、数据中心的区域以及时间戳。让我们对数据全集进行 _百分位_ 操作以获得数据分布情况的直观感受：
 
 [source,js]
 ----
@@ -102,15 +85,12 @@ GET /website/logs/_search
 }
 ----
 // SENSE: 300_Aggregations/65_percentiles.json
-<1> The `percentiles` metric is applied to the +latency+ field.
-<2> For comparison, we also execute an `avg` metric on the same field.
+<1> `percentiles` 度量被应用到 +latency+ 延时字段。
+<2> 为了比较，我们对相同字段使用 `avg` 度量。
 
-By default, the `percentiles` metric will return an array of predefined percentiles:
-`[1, 5, 25, 50, 75, 95, 99]`.  These represent common percentiles that people are
-interested in--the extreme percentiles at either end of the spectrum, and a
-few in the middle.  In the response, we see that the fastest latency is around 75ms,
-while the slowest is almost 600ms.  In contrast, the average is sitting near
-200ms, which ((("average metric", "for website latency")))is much less informative:
+默认情况下，`percentiles` 度量会返回一组预定义的百分位数值：
+`[1, 5, 25, 50, 75, 95, 99]` 。它们表示了人们感兴趣的常用百分位数值，极端的百分位数在范围的两边，其他的一些处于中部。在返回的响应中，我们可以看到最小延时在 75ms 左右，而最大延时差不多有 600ms。与之形成对比的是，平均延时在 200ms 左右，
+((("average metric", "for website latency"))) 信息并不是很多：
 
 [source,js]
 ----
@@ -133,8 +113,7 @@ while the slowest is almost 600ms.  In contrast, the average is sitting near
 }
 ----
 
-So there is clearly a wide distribution in latencies. Let's see whether it is
-correlated to the geographic zone of the data center:
+所以显然延时的分布很广，让我们看看它们是否与数据中心的地理区域有关：
 
 [source,js]
 ----
@@ -164,18 +143,13 @@ GET /website/logs/_search
 }
 ----
 // SENSE: 300_Aggregations/65_percentiles.json
-<1> First we separate our latencies into buckets, depending on their zone.
-<2> Then we calculate the percentiles per zone.
-<3> The +percents+ parameter accepts an array of percentiles that we want returned,
-since we are interested in only slow latencies.
+<1> 首先根据区域我们将延时分到不同的桶中。
+<2> 再计算每个区域的百分位数值。
+<3> +percents+ 参数接受了我们想返回的一组百分位数，因为我们只对长的延时感兴趣。
 
-From the response, we can see the EU zone is much slower than the US zone.  On the
-US side, the 50th percentile is very close to the 99th percentile--and both are
-close to the average.
+在响应结果中，我们发现欧洲区域（EU）要比美国区域（US）慢很多，在美国区域（US），50 百分位与 99 百分位十分接近，它们都接近均值。
 
-In contrast, the EU zone has a large difference between the 50th and 99th
-percentile.  It is now obvious that the EU zone is dragging down the latency
-statistics, and we know that 50% of the EU zone is seeing 300ms+ latencies.
+与之形成对比的是，欧洲区域（EU）在 50 和 99 百分位有较大区分。现在，显然可以发现是欧洲区域（EU）拉低了延时的统计信息，我们知道欧洲区域的 50% 延时都在 300ms+。
 
 [source,js]
 ----
@@ -217,20 +191,18 @@ statistics, and we know that 50% of the EU zone is seeing 300ms+ latencies.
 ...
 ----
 
-==== Percentile Ranks
+==== 百分位等级（Percentile Ranks）
 
-There is another, closely ((("approximate algorithms", "percentiles", "percentile ranks")))((("percentiles", "percentile ranks")))related metric called `percentile_ranks`.  The
-`percentiles` metric tells you the lowest value below which a given percentage of documents fall. For instance, if the 50th percentile is 119ms, then 50% of documents have values of no more than 119ms. The `percentile_ranks` tells you which percentile a specific value belongs to. The `percentile_ranks` of 119ms is the 50th percentile. It is basically a two-way relationship. For example:
+这里有另外一个紧密相关的度量叫 ((("approximate algorithms", "percentiles", "percentile ranks")))((("percentiles", "percentile ranks"))) `percentile_ranks` 。
+`percentiles` 度量告诉我们落在某个百分比以下的所有文档的最小值。例如，如果 50 百分位是 119ms，那么有 50% 的文档数值都不超过 119ms。 `percentile_ranks` 告诉我们某个具体值属于哪个百分位。119ms 的 `percentile_ranks` 是在 50 百分位。
+这基本是个双向关系，例如：
 
-- The 50th percentile is 119ms.
-- The 119ms percentile rank is the 50th percentile.
+- 50 百分位是 119ms。
+- 119ms 百分位等级是 50 百分位。
 
-So imagine that our website must maintain an SLA of 210ms response times or less.
-And, just for fun, your boss has threatened to fire you if response times
-creep over 800ms.  Understandably, you would like to know what percentage of
-requests are actually meeting that SLA (and hopefully at least under 800ms!).
+所以假设我们网站必须维持的服务等级协议（SLA）是响应时间低于 210ms。然后，开个玩笑，我们老板警告我们如果响应时间超过 800ms 会把我开除。可以理解的是，我们希望知道有多少百分比的请求可以满足 SLA 的要求（并期望至少在 800ms 以下！）。
 
-For this, you can apply the `percentile_ranks` metric instead of `percentiles`:
+为了做到这点，我们可以应用 `percentile_ranks` 度量而不是 `percentiles` 度量：
 
 [source,js]
 ----
@@ -255,9 +227,9 @@ GET /website/logs/_search
 }
 ----
 // SENSE: 300_Aggregations/65_percentiles.json
-<1> The `percentile_ranks` metric accepts an array of values that you want ranks for.
+<1> `percentile_ranks` 度量接受一组我们希望分级的数值。
 
-After running this aggregation, we get two values back:
+在聚合运行后，我们能得到两个值：
 
 [source,js]
 ----
@@ -289,58 +261,37 @@ After running this aggregation, we get two values back:
 }
 ----
 
-This tells us three important things:
+这告诉我们三点重要的信息：
 
-* In the EU zone, the percentile rank for 210ms is 31.94%.
-* In the US zone, the percentile rank for 210ms is 100%.
-* In both EU and US, the percentile rank for 800ms is 100%.
+* 在欧洲（EU），210ms 的百分位等级是 31.94% 。
+* 在美国（US），210ms 的百分位等级是 100% 。
+* 在欧洲（EU）和美国（US），800ms 的百分位等级是 100% 。
 
-In plain english, this means that the EU zone is meeting the SLA only 32% of the
-time, while the US zone is always meeting the SLA.  But luckily for you, both
-zones are under 800ms, so you won't be fired (yet!).
+通俗的说，在欧洲区域（EU）只有 32% 的响应时间满足服务等级协议（SLA），而美国区域（US）始终满足服务等级协议的。但幸运的是，两个区域所有响应时间都在 800ms 以下，所以我们还不会被炒鱿鱼（至少目前不会）。
 
-The `percentile_ranks` metric provides the same information as `percentiles`, but
-presented in a different format that may be more convenient if you are interested in specific value(s).
+`percentile_ranks` 度量提供了与  `percentiles` 相同的信息，但它以不同方式呈现，如果我们对某个具体数值更关心，使用它会更方便。
 
-==== Understanding the Trade-offs
+==== 学会权衡（Understanding the Trade-offs）
 
-Like cardinality, calculating percentiles requires an approximate algorithm.
-The naive((("percentiles", "understanding the tradeoffs")))((("approximate algorithms", "percentiles", "understanding the tradeoffs"))) implementation would maintain a sorted list of all values--but this
-clearly is not possible when you have billions of values distributed across
-dozens of nodes.
+和基数一样，计算百分位需要一个近似算法。
+朴素的 ((("percentiles", "understanding the tradeoffs")))((("approximate algorithms", "percentiles", "understanding the tradeoffs"))) 实现会维护一个所有值的有序列表，
+但当我们有几十亿数据分布在几十个节点时，这几乎是不可能的。
 
-Instead, `percentiles` uses an algorithm called((("TDigest algorithm"))) TDigest (introduced by Ted Dunning
-in https://github.com/tdunning/t-digest/blob/master/docs/t-digest-paper/histo.pdf[Computing Extremely Accurate Quantiles Using T-Digests]). As with HyperLogLog, it isn't
-necessary to understand the full technical details, but it is good to know
-the properties of the algorithm:
+取而代之的是 `percentiles` 使用一个 TDigest 算法((("TDigest algorithm")))，（由 Ted Dunning 在 https://github.com/tdunning/t-digest/blob/master/docs/t-digest-paper/histo.pdf[Computing Extremely Accurate Quantiles Using T-Digests] 里面提出的）。
+与 HyperLogLog 一样，不需要理解完整的技术细节，但有必要了解算法的特性：
 
-- Percentile accuracy is proportional to how _extreme_ the percentile is. This
-means that percentiles such as the 1st or 99th are more accurate than the 50th.
-This is just a property of how the data structure works, but
-it happens to be a nice property, because most people care about extreme percentiles.
+- 百分位的准确度与百分位的 _极端程度_ 相关，也就是说 1 或 99 的百分位要比 50 百分位要准确。这只是数据结构内部机制的一种特性，但这是一个好的特性，因为多数人只关心极端的百分位。
 
-- For small sets of values, percentiles are highly accurate.  If the dataset is
-small enough, the percentiles may be 100% exact.
+- 对于数值集合较小的情况，百分位非常准确。如果数据集足够小，百分位可能 100% 精确。
 
-- As the quantity of values in a bucket grows, the algorithm begins to
-approximate the percentiles. It is effectively trading accuracy for memory
-savings. The exact level of inaccuracy is difficult to generalize, since it
-depends on your((("compression parameter (percentiles)"))) data distribution and volume of data being aggregated.((("memory usage", "percentiles, controlling memory/accuracy ratio")))
+- 随着桶里数值的增长，算法会开始对百分位进行估算。它能有效在准确度和内存节省之间做出权衡。
+不准确的程度比较难以总结，因为它依赖于((("compression parameter (percentiles)"))) 聚合时数据的分布以及数据量的大小。((("memory usage", "percentiles, controlling memory/accuracy ratio")))
 
-Similar to `cardinality`, you can control the memory-to-accuracy ratio by changing
-a parameter: `compression`.
+与 `cardinality` 类似，我们可以通过修改参数 `compression` 来控制内存与准确度之间的比值。
 
-The TDigest algorithm uses nodes to approximate percentiles: the more nodes available, the higher the accuracy (and the larger the memory footprint)
-proportional to the volume of data. The compression parameter limits the maximum
-number of nodes to `20 * compression`.
+TDigest 算法用节点近似计算百分比：节点越多，准确度越高（同时内存消耗也越大），这都与数据量成正比。 `compression` 参数限制节点的最大数目为 `20 * compression` 。
 
-Therefore, by increasing the compression value, you can increase the accuracy of
-your percentiles at the cost of more memory. Larger compression values also
-make the algorithm slower since the underlying tree data structure grows in size, resulting in more expensive operations. The default compression value is `100`.
+因此，通过增加压缩比值，可以以消耗更多内存为代价提高百分位数准确性。更大的压缩比值会使算法运行更慢，因为底层的树形数据结构的存储也会增长，也导致操作的代价更高。默认的压缩比值是 `100` 。
 
-A node uses roughly 32 bytes of memory, so in a worst-case scenario (for example, a large
-amount of data that arrives sorted and in order), the default settings will
-produce a TDigest roughly 64KB in size. In practice, data tends to be more
-random, and the TDigest will use less memory.
-
-
+一个节点大约使用 32 字节的内存，所以在最坏的情况下（例如，大量数据有序存入），默认设置会生成一个大小约为 64KB 的 TDigest。
+在实际应用中，数据会更随机，所以 TDigest 使用的内存会更少。
