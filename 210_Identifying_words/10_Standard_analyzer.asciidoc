@@ -1,9 +1,9 @@
 [[standard-analyzer]]
-=== standard Analyzer
+=== 标准分析器
 
-The `standard` analyzer is used by default for any full-text `analyzed` string
-field. ((("standard analyzer"))) If we were to reimplement the  `standard` analyzer as a
-<<custom-analyzers,`custom` analyzer>>, it would be defined as follows:
+
+任何全文检索的字符串域都默认使用 `standard` 分析器。((("standard analyzer")))
+如果我们想要一个 <<custom-analyzers, `自定义` 分析器>> ，可以按照如下定义方式重新实现 `标准` 分析器：
 
 [role="pagebreak-before"]
 [source,js]
@@ -15,7 +15,5 @@ field. ((("standard analyzer"))) If we were to reimplement the  `standard` analy
 }
 --------------------------------------------------
 
-In <<token-normalization>> and <<stopwords>>, we talk about the
-`lowercase`, and `stop` _token filters_, but for the moment, let's focus on
-the `standard` _tokenizer_.
 
+在 <<token-normalization>> （标准化词汇单元）和 <<stopwords>> （停用词）中，我们讨论了 `lowercase` （小写字母）和 `stop` （停用词） _词汇单元过滤器_ ，但是现在，我们专注于 `standard` _tokenizer_ （标准分词器）。
