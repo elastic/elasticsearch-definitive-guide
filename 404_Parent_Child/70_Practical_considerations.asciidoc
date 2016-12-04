@@ -1,28 +1,15 @@
 [[parent-child-performance]]
-=== Practical Considerations
+=== 实际使用中的一些建议
 
-Parent-child joins can be a useful technique for managing relationships when
-index-time performance((("parent-child relationship", "performance and"))) is more important than search-time performance, but it
-comes at a significant cost.  Parent-child queries can be 5 to 10 times slower
-than the equivalent nested query!
+当文档索引性能远比查询性能重要((("parent-child relationship", "performance and")))的时候，父子关系是非常有用的，但是它也是有巨大代价的。其查询速度会比同等的嵌套查询慢5到10倍!
 
-==== Global Ordinals and Latency
+==== 全局序号和延迟
 
-Parent-child uses <<global-ordinals,global ordinals>> to speed((("global ordinals")))((("parent-child relationship", "global ordinals and latency"))) up joins.
-Regardless of whether the parent-child map uses an in-memory cache or on-disk
-doc values, global ordinals still need to be rebuilt after any change to the
-index.
+父子关系使用了<<global-ordinals,全局序数>> ((("global ordinals")))((("parent-child relationship", "global ordinals and latency"))) 来加速文档间的联合。不管父子关系映射是否使用了内存缓存或基于硬盘的 doc values，当索引变更时，全局序数要重建。
 
-The more parents in a shard, the longer global ordinals will take to build.
-Parent-child is best suited to situations where there are many children for
-each parent, rather than many parents and few children.
+一个分片中父文档越多，那么全局序数的重建就需要更多的时间。父子关系更适合于父文档少、子文档多的情况。
 
-Global ordinals, by default, are built lazily: the first parent-child query or
-aggregation after a refresh will trigger building of global ordinals.  This
-can introduce a significant latency spike for your users.  You can use
-<<eager-global-ordinals,`eager_global_ordinals`>> to((("eager global ordinals"))) shift the cost of
-building global ordinals from query time to refresh time, by mapping the
-`_parent` field as follows:
+全局序数默认情况下是延迟构建的：在refresh后的第一个父子查询会触发全局序数的构建。而这个构建会导致用户使用时感受到明显的迟缓。你可以使用<<eager-global-ordinals,全局序数预加载>> ((("eager global ordinals"))) 来将全局序数构建的开销由query阶段转移到refresh阶段，设置如下：
 
 [source,json]
 -------------------------
@@ -41,32 +28,22 @@ PUT /company
   }
 }
 -------------------------
-<1> Global ordinals for the `_parent` field will be built before a new segment
-    becomes visible to search.
+<1> 在一个新的段可搜索前，`_parent` 字段的全局序数会被构建。
 
-With many parents, global ordinals can take several seconds to build.  In this
-case, it makes sense to increase the `refresh_interval` so((("refresh_interval setting"))) that refreshes
-happen less often and global ordinals remain valid for longer. This will
-greatly reduce the CPU cost of rebuilding global ordinals every second.
+当父文档过多时，全局序数的构建会耗费很多时间。此时可以通过增加 `refresh_interval` ((("refresh_interval setting"))) 来减少 refresh 的次数，延长全局序数的有效时间，这也很大程度上减小了全局序数每秒重建的cpu消耗。
 
-==== Multigenerations and Concluding Thoughts
+==== 多代使用和结语
 
+多代文档的联合查询(查看 <<grandparents>>)虽然看起来很吸引人((("grandparents and grandchildren")))((("parent-child relationship", "multi-generations")))，但必须考虑如下的代价：
 
-The ability to join multiple generations (see <<grandparents>>) sounds
-attractive until ((("grandparents and grandchildren")))((("parent-child relationship", "multi-generations")))you think of the costs involved:
+* 联合越多，性能越差。
+* 每一代的父文档都要将其字符串类型的 `_id` 字段存储在内存中，这会占用大量内存。
 
-* The more joins you have, the worse performance will be.
-* Each generation of parents needs to have their string `_id` fields stored in
-  memory, which can consume a lot of RAM.
+当你考虑父子关系是否适合你现有关系模型时，请考虑下面这些建议((("parent-child relationship", "guidelines for using")))：
 
-As you consider your relationship schemes and whether parent-child is right for you,
-consider this advice ((("parent-child relationship", "guidelines for using")))about parent-child relationships:
+* 尽量少地使用父子关系，仅在子文档远多于父文档时使用。
+* 避免在一个查询中使用多个父子联合语句。
+* 在 has_child 查询中使用 filter 上下文，或者设置 score_mode 为 none 来避免计算文档得分。
+* 保证父 IDs 尽量短，以便在 doc values 中更好地压缩，被临时载入时占用更少的内存。
 
-* Use parent-child relationships sparingly, and only when there are many more children than parents.
-* Avoid using multiple parent-child joins in a single query.
-* Avoid scoring by using the `has_child` filter, or the `has_child` query with
-  `score_mode` set to `none`.
-* Keep the parent IDs short, so that they compress better in doc values, and use
-less memory when transiently loaded.
-
-_Above all:_ think about the other relationship techniques that we have discussed before reaching for parent-child.
+_最重要的是:_ 先考虑下我们之前讨论过的其他方式来达到父子关系的效果。
