@@ -1,8 +1,7 @@
 [[using-synonyms]]
-=== Using Synonyms
+=== 使用同义词
 
-Synonyms can replace existing tokens or((("synonyms", "using"))) be added to the token stream by using the((("synonym token filter")))
-{ref}/analysis-synonym-tokenfilter.html[`synonym` token filter]:
+同义词可以取代现有的语汇单元或 ((("synonyms", "using"))) 通过使用 ((("synonym token filter"))) {ref}/analysis-synonym-tokenfilter.html[ `同义词` 语汇单元过滤器]，添加到语汇单元流中：
 
 [source,json]
 -------------------------------------
@@ -32,23 +31,19 @@ PUT /my_index
   }
 }
 -------------------------------------
-<1> First, we define a token filter of type `synonym`.
-<2> We discuss synonym formats in <<synonym-formats>>.
-<3> Then we create a custom analyzer that uses the `my_synonym_filter`.
+<1> 首先，我们定义了一个 `同义词` 类型的语汇单元过滤器。
+<2> 我们在 <<synonym-formats>> 中讨论同义词格式。
+<3> 然后我们创建了一个使用 `my_synonym_filter` 的自定义分析器。
 
 [TIP]
 ==================================================
 
-Synonyms can be specified inline with the `synonyms` parameter, or in a
-synonyms file that must((("synonyms", "specifying inline or in a separate file"))) be present on every node in the cluster. The path to
-the synonyms file should be specified with the `synonyms_path` parameter, and
-should be either absolute or relative to the Elasticsearch `config` directory.
-See <<updating-stopwords>> for techniques that can be used to refresh the
-synonyms list.
+同义词可以使用 `synonym` 参数来内嵌指定，或者必须 ((("synonyms", "specifying inline or in a separate file"))) 存在于集群每一个节点上的同义词文件中。
+同义词文件路径由 `synonyms_path` 参数指定，应绝对或相对于 Elasticsearch `config` 目录。参照 <<updating-stopwords>> 的技巧，可以用来刷新的同义词列表。
 
 ==================================================
 
-Testing our analyzer with the `analyze` API shows the following:
+通过 `analyze` API 来测试我们的分析器，显示如下：
 
 [source,json]
 -------------------------------------
@@ -64,24 +59,17 @@ Pos 3: (the)
 Pos 4: (british,english) <1>
 Pos 5: (queen,monarch) <1>
 ------------------------------------
-<1> All synonyms occupy the same position as the original term.
+<1> 所有同义词与原始词项占有同一个位置。
 
-A document like this will match queries for any of the following: `English queen`,
-`British queen`, `English monarch`, or `British monarch`.
-Even a phrase query will work, because the position of
-each term has been preserved.
+这样的一个文件将匹配任何以下的查询： `English queen` 、`British queen` 、 `English monarch` 或 `British monarch` 。
+即使是一个短语查询也将会工作，因为每个词项的位置已被保存。
 
 [TIP]
 ======================================
 
-Using the same `synonym` token filter at both index time and search time is
-redundant.((("synonym token filter", "using at index time versus search time")))  If, at index time, we replace `English` with the two terms
-`english` and `british`, then at search time we need to search for only one of
-those terms.  Alternatively, if we don't use synonyms at index time, then at
-search time, we would need to convert a query for `English` into a query for
-`english OR british`.
+在索引和搜索中使用相同的同义词语汇单元过滤器是多余的。((("synonym token filter", "using at index time versus search time")))  如果在索引的时候，我们用 `english` 和 `british` 这两个术语代替 `English` ，
+然后在搜索的时候，我们只需要搜索这些词项中的一个。或者，如果在索引的时候我们不使用同义词，然后在搜索的时候，我们将需要把对 `English` 的查询转换为 `english` 或者 `british` 的查询。
 
-Whether to do synonym expansion at search or index time can be a difficult
-choice.  We will explore the options more in <<synonyms-expand-or-contract>>.
+是否在搜索或索引的时候做同义词扩展可能是一个困难的选择。我们将探索更多的选择 <<synonyms-expand-or-contract>>。
 
 ======================================
