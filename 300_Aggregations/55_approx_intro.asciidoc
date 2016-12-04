@@ -1,64 +1,34 @@
+[[_approximate_aggregations]]
+== 近似聚合
 
-== Approximate Aggregations
+如果所有的数据都在一台机器上，那么生活会容易许多。((("aggregations", "approximate"))) CS201 课上教的经典算法就足够应付这些问题。如果所有的数据都在一台机器上，那么也就不需要像 Elasticsearch 这样的分布式软件了。不过一旦我们开始分布式存储数据，就需要小心地选择算法。
 
-Life is easy if all your data fits on a single machine.((("aggregations", "approximate")))  Classic algorithms
-taught in CS201 will be sufficient for all your needs.  But if all your data fits
-on a single machine, there would be no need for distributed software
-like Elasticsearch at all.  But once you start distributing data, algorithm
-selection needs to be made carefully.
+有些算法可以分布执行，到目前为止讨论过的所有聚合都是单次请求获得精确结果的。这些类型的算法通常被认为是 _高度并行的_ ，因为它们无须任何额外代价，就能在多台机器上并行执行。比如当计算 `max` 度量时，以下的算法就非常简单：
 
-Some algorithms are amenable to distributed execution.  All of the aggregations
-discussed thus far execute in a single pass and give exact results. These types 
-of algorithms are often referred to as _embarrassingly parallel_, 
-because they parallelize to multiple machines with little effort.  When 
-performing a `max` metric, for example, the underlying algorithm is very simple:
+1. 把请求广播到所有分片。
+2. 查看每个文档的 +price+ 字段。如果 `price > current_max` ，将 `current_max` 替换成 `price` 。
+3. 返回所有分片的最大 +price+ 并传给协调节点。
+4. 找到从所有分片返回的最大 +price+ 。这是最终的最大值。
 
-1. Broadcast the request to all shards.
-2. Look at the +price+ field for each document.  If `price > current_max`, replace
-`current_max` with `price`.
-3. Return the maximum price from all shards to the coordinating node.
-4. Find the maximum price returned from all shards.  This is the true maximum.
+这个算法可以随着机器数的线性增长而横向扩展，无须任何协调操作（机器之间不需要讨论中间结果），而且内存消耗很小（一个整型就能代表最大值）。
 
-The algorithm scales linearly with machines because the algorithm requires no
-coordination (the machines don't need to discuss intermediate results), and the 
-memory footprint is very small (a single integer representing the maximum).
+不幸的是，不是所有的算法都像获取最大值这样简单。更加复杂的操作则需要在算法的性能和内存使用上做出权衡。对于这个问题，我们有个三角因子模型：大数据、精确性和实时性。
 
-Not all algorithms are as simple as taking the maximum value, unfortunately.
-More complex operations require algorithms that make conscious trade-offs in
-performance and memory utilization. There is a triangle of factors at play: 
-big data, exactness, and real-time latency.
+我们需要选择其中两项：
 
-You get to choose two from this triangle:
+精确 + 实时:: 数据可以存入单台机器的内存之中，我们可以随心所欲，使用任何想用的算法。结果会 100% 精确，响应会相对快速。
 
-Exact + real time:: Your data fits in the RAM of a single machine.  The world
-is your oyster; use any algorithm you want. Results will be 100% accurate and
-relatively fast.
+大数据 + 精确:: 传统的 Hadoop。可以处理 PB 级的数据并且为我们提供精确的答案，但它可能需要几周的时间才能为我们提供这个答案。
 
-Big data + exact::  A classic Hadoop installation.  Can handle petabytes of data
-and give you exact answers--but it may take a week to give you that answer.
+大数据 + 实时:: 近似算法为我们提供准确但不精确的结果。
 
-Big data + real time:: Approximate algorithms that give you accurate, but not
-exact, results.
+Elasticsearch 目前支持两种近似算法（ `cardinality` 和 `percentiles` ）。((("approximate algorithms")))((("cardinality")))((("percentiles"))) 它们会提供准确但不是 100% 精确的结果。
+以牺牲一点小小的估算错误为代价，这些算法可以为我们换来高速的执行效率和极小的内存消耗。
 
-Elasticsearch currently supports two approximate algorithms (`cardinality` and 
-`percentiles`). ((("approximate algorithms")))((("cardinality")))((("percentiles"))) These will give you accurate results, but not 100% exact.
-In exchange for a little bit of estimation error, these algorithms give you
-fast execution and a small memory footprint.
+对于 _大多数_ 应用领域，能够 _实时_ 返回高度准确的结果要比 100% 精确结果重要得多。乍一看这可能是天方夜谭。有人会叫 _“我们需要精确的答案！”_ 。但仔细考虑 0.5% 误差所带来的影响：
 
-For _most_ domains, highly accurate results that return _in real time_ across
-_all your data_ is more important than 100% exactness. At first blush, this may be an alien concept to you. _"We need exact answers!"_ 
-you may yell.  But consider the implications of a 0.5% error:
+- 99% 的网站延时都在 132ms 以下。
+- 0.5% 的误差对以上延时的影响在正负 0.66ms 。
+- 近似计算的结果会在毫秒内返回，而“完全正确”的结果就可能需要几秒，甚至无法返回。
 
-- The true 99th percentile of latency for your website is 132ms.
-- An approximation with 0.5% error will be within +/- 0.66ms of 132ms.
-- The approximation returns in milliseconds, while the "true" answer may take seconds, or
-be impossible.
-
-For simply checking on your website's latency, do you care if the approximate 
-answer is 132.66ms instead of 132ms?  Certainly, not all domains can tolerate
-approximations--but the vast majority will have no problem.  Accepting
-an approximate answer is more often a _cultural_ hurdle rather than a business
-or technical imperative.
-
-
-
+只要简单的查看网站的延时情况，难道我们会在意近似结果是 132.66ms 而不是 132ms 吗？当然，不是所有的领域都能容忍这种近似结果，但对于绝大多数来说是没有问题的。接受近似结果更多的是一种 _文化观念上_ 的壁垒而不是商业或技术上的需要。
