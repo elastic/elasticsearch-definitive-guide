@@ -1,45 +1,24 @@
 [[synonyms]]
-== Synonyms
+== 同义词
 
-While stemming helps to broaden the scope of search by simplifying inflected
-words to their root form, synonyms((("synonyms"))) broaden the scope by relating concepts and
-ideas. Perhaps no documents match a query for ``English queen,'' but documents
-that contain ``British monarch'' would probably be considered a good match.
+词干提取是通过简化他们的词根形式来扩大搜索的范围，同义词 ((("synonyms"))) 通过相关的观念和概念来扩大搜索范围。
+也许没有文档匹配查询 “英国女王“ ，但是包含 “英国君主” 的文档可能会被认为是很好的匹配。
 
-A user might search for ``the US'' and expect to find documents that contain
-_United States_, _USA_, _U.S.A._, _America_, or _the States_.
-However, they wouldn't expect to see results about `the states of matter` or
-`state machines`.
+用户搜索 “美国” 并且期望找到包含 _美利坚合众国_ 、 _美国_ 、 _美洲_ 、或者 _美国各州_ 的文档。
+然而，他们不希望搜索到关于 `国事` 或者 `政府机构` 的结果。
 
-This example provides a valuable lesson. It demonstrates how simple it is for
-a human to distinguish between separate concepts, and how tricky it can be for
-mere machines. The natural tendency is to try to provide synonyms for every
-word in the language, to ensure that any document is findable with even the
-most remotely related terms.
+这个例子提供了宝贵的经验，它向我们阐述了，区分不同的概念对于人类是多么简单而对于纯粹的机器是多么棘手的事情。通常我们会对语言中的每一个词去尝试提供同义词以确保任何一个文档都是可发现的，以保证不管文档之间有多么微小的关联性都能够被检索出来。
 
-This is a mistake.  In the same way that we prefer light or minimal stemming
-to aggressive stemming, synonyms should be used only where necessary. Users
-understand why their results are limited to the words in their search query.
-They are less understanding when their results seems almost random.
+这样做是不对的。就像我们更喜欢不用或少用词根而不是过分使用词根一样，同义词也应该只在必要的时候使用。
+这是因为用户可以理解他们的搜索结果受限于他们的搜索词，如果搜索结果看上去几乎是随机时，他们就会变得无法理解（注：大规模使用同义词会导致查询结果趋向于让人觉得是随机的）。
 
-Synonyms can be used to conflate words that have pretty much the same meaning,
-such as `jump`, `leap`, and `hop`, or `pamphlet`, `leaflet`, and `brochure`.
-Alternatively, they can be used to make a word more generic.  For instance,
-`bird` could be used as a more general synonym for `owl` or `pigeon`, and `adult`
-could be used for `man` or `woman`.
+同义词可以用来合并几乎相同含义的词，如 `跳` 、 `跳越` 或者 `单脚跳行` ，和 `小册子` 、 `传单` 或者 `资料手册` 。
+或者，它们可以用来让一个词变得更通用。例如， `鸟` 可以作为 `猫头鹰` 或 `鸽子` 的通用代名词，还有， `成人` 可以被用于 `男人` 或者 `女人` 。
 
-Synonyms appear to be a simple concept but they are quite tricky to get right.
-In this chapter, we explain the mechanics of using synonyms and discuss
-the limitations and gotchas.
+同义词似乎是一个简单的概念，但是正确的使用它们却是非常困难的。在这一章，我们会介绍使用同义词的技巧和讨论它的局限性和陷阱。
 
 [TIP]
 ====
-Synonyms are used to broaden the scope of what is considered a
-matching document.  Just as with <<stemming,stemming>> or
-<<partial-matching,partial matching>>, synonym fields should not be used
-alone but should be combined with a query on a main field that contains
-the original text in unadulterated form.  See <<most-fields>> for an
-explanation of how to maintain relevance when using synonyms.
+同义词扩大了一个匹配文件的范围。正如 <<stemming,词干提取>> 或者 <<partial-matching,部分匹配>> ，同义词的字段不应该被单独使用，而应该与一个针对主字段的查询操作一起使用，这个主字段应该包含纯净格式的原始文本。
+在使用同义词时，参阅 <<most-fields>> 的解释来维护相关性。
 ====
-
-
