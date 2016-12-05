@@ -1,22 +1,17 @@
+[[_aggregation_test_drive]]
+== 尝试聚合
 
-== Aggregation Test-Drive
+我们可以用以下几页定义不同的聚合和它们的语法，((("aggregations", "basic example", id="ix_basicex"))) 但学习聚合的最佳途径就是用实例来说明。
+一旦我们获得了聚合的思想，以及如何合理地嵌套使用它们，那么语法就变得不那么重要了。
 
-We could spend the next few pages defining the various aggregations
-and their syntax,((("aggregations", "basic example", id="ix_basicex"))) but aggregations are truly best learned by example.
-Once you learn how to think about aggregations, and how to nest them appropriately,
-the syntax is fairly trivial.
-
-[NOTE]
+[注意]
 =========================
-A complete list of aggregation buckets and metrics can be found at the {ref}/search-aggregations.html[Elasticsearch Reference].  We'll cover many of them in this chapter, but glance
-over it after finishing so you are familiar with the full range of capabilities.
+聚合的桶操作和度量的完整用法可以在 {ref}/search-aggregations.html[Elasticsearch 参考] 中找到。本章中会涵盖其中很多内容，但在阅读完本章后查看它会有助于我们对它的整体能力有所了解。
 =========================
 
-So let's just dive in and start with an example.  We are going to build some
-aggregations that might be useful to a car dealer.  Our data will be about car
-transactions: the car model, manufacturer, sale price, when it sold, and more.
+所以让我们先看一个例子。我们将会创建一些对汽车经销商有用的聚合，数据是关于汽车交易的信息：车型、制造商、售价、何时被出售等。
 
-First we will bulk-index some data to work with:
+首先我们批量索引一些数据：
 
 [source,js]
 --------------------------------------------------
@@ -40,9 +35,7 @@ POST /cars/transactions/_bulk
 --------------------------------------------------
 // SENSE: 300_Aggregations/20_basic_example.json
 
-Now that we have some data, let's construct our first aggregation.  A car dealer
-may want to know which color car sells the best.  This is easily accomplished
-using a simple aggregation.  We will do this using a `terms` bucket:
+有了数据，开始构建我们的第一个聚合。汽车经销商可能会想知道哪个颜色的汽车销量最好，用聚合可以轻易得到结果，用 `terms` 桶操作：
 
 [source,js]
 --------------------------------------------------
@@ -60,36 +53,25 @@ GET /cars/transactions/_search
 --------------------------------------------------
 // SENSE: 300_Aggregations/20_basic_example.json
 
-<1> Aggregations are placed under the ((("aggregations", "aggs parameter")))top-level `aggs` parameter (the longer `aggregations`
-will also work if you prefer that).
-<2> We then name the aggregation whatever we want: `popular_colors`, in this example
-<3> Finally, we define a single bucket of type `terms`.
+<1> 聚合操作被置于顶层参数 ((("aggregations", "aggs parameter"))) `aggs` 之下（如果你愿意，完整形式 `aggregations` 同样有效）。
+<2> 然后，可以为聚合指定一个我们想要名称，本例中是： `popular_colors` 。
+<3> 最后，定义单个桶的类型 `terms` 。
 
-Aggregations are executed in the context of search results,((("searching", "aggregations executed in context of search results"))) which means it is
-just another top-level parameter in a search request (for example, using the `/_search`
-endpoint).  Aggregations can be paired with queries, but we'll tackle that later
-in <<_scoping_aggregations>>.
+聚合是在特定搜索结果背景下执行的，((("searching", "aggregations executed in context of search results"))) 这也就是说它只是查询请求的另外一个顶层参数（例如，使用 `/_search` 端点）。
+聚合可以与查询结对，但我们会晚些在 <<_scoping_aggregations,限定聚合的范围（Scoping Aggregations）>> 中来解决这个问题。
 
 [NOTE]
 =========================
-You'll notice that we set the `size` to zero. We 
-don't care about the search results themselves and
-returning zero hits speeds up the query. Setting
-`size: 0` is the equivalent of using the `count` 
-search type in Elasticsearch 1.x.
+可能会注意到我们将 `size` 设置成 0 。我们并不关心搜索结果的具体内容，所以将返回记录数设置为 0 来提高查询速度。
+设置 `size: 0` 与 Elasticsearch 1.x 中使用 `count` 搜索类型等价。
 =========================
 
-Next we define a name for our aggregation.  Naming is up to you;
-the response will be labeled with the name you provide so that your application
-can parse the results later.
+然后我们为聚合定义一个名字，名字的选择取决于使用者，响应的结果会以我们定义的名字为标签，这样应用就可以解析得到的结果。
 
-Next we define the aggregation itself.  For this example, we are defining
-a single `terms` bucket.((("buckets", "terms bucket (example)")))((("terms bucket", "defining in example aggregation")))  The `terms` bucket will dynamically create a new
-bucket for every unique term it encounters.  Since we are telling it to use the
-`color` field, the `terms` bucket will dynamically create a new bucket for each color.
+随后我们定义聚合本身，在本例中，我们定义了一个单 `terms` 桶。((("buckets", "terms bucket (example)")))((("terms bucket", "defining in example aggregation")))  这个 `terms` 桶会为每个碰到的唯一词项动态创建新的桶。
+因为我们告诉它使用 `color` 字段，所以 `terms` 桶会为每个颜色动态创建新桶。
 
-
-Let's execute that aggregation and take a look at the results:
+让我们运行聚合并查看结果：
 
 [source,js]
 --------------------------------------------------
@@ -118,28 +100,15 @@ Let's execute that aggregation and take a look at the results:
    }
 }
 --------------------------------------------------
-<1> No search hits are returned because we set the `size` parameter
-<2> Our `popular_colors` aggregation is returned as part of the `aggregations` field.
-<3> The `key` to each bucket corresponds to a unique term found in the `color` field.
-It also always includes `doc_count`, which tells us the number of docs containing the term.
-<4> The count of each bucket represents the number of documents with this color.
+<1> 因为我们设置了 `size` 参数，所以不会有 hits 搜索结果返回。
+<2> `popular_colors` 聚合是作为 `aggregations` 字段的一部分被返回的。
+<3> 每个桶的 `key` 都与 `color` 字段里找到的唯一词对应。它总会包含 `doc_count` 字段，告诉我们包含该词项的文档数量。
+<4> 每个桶的数量代表该颜色的文档数量。
 
-The ((("doc_count")))response contains a list of buckets, each corresponding to a unique color
-(for example, red or green). Each bucket also includes a count of the number of documents
-that "fell into" that particular bucket.  For example, there are four red cars.
+响应((("doc_count")))包含多个桶，每个对应一个唯一颜色（例如：红 或 绿）。每个桶也包括 `聚合进` 该桶的所有文档的数量。例如，有四辆红色的车。
 
-The preceding example is operating entirely in real time: if the documents are searchable,
-they can be aggregated.  This means you can take the aggregation results and
-pipe them straight into a graphing library to generate real-time dashboards.
-As soon as you sell a silver car, your graphs would dynamically update to include
-statistics about silver cars.
+前面的这个例子完全是实时执行的：一旦文档可以被搜到，它就能被聚合。这也就意味着我们可以直接将聚合的结果源源不断的传入图形库，然后生成实时的仪表盘。
+不久，你又销售了一辆银色的车，我们的图形就会立即动态更新银色车的统计信息。
 
-Voila!  Your first aggregation!
+瞧！这就是我们的第一个聚合！
 ((("aggregations", "basic example", startref ="ix_basicex")))
-
-
-
-
-
-
-
