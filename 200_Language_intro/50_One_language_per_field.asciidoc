@@ -1,10 +1,9 @@
 [[one-lang-fields]]
-=== One Language per Field
+=== 每个域一种语言
 
-For documents that represent entities like products, movies, or legal notices, it is common((("fields", "one language per field")))((("languages", "one language per field")))
-for the same text to be translated into several languages.  Although each translation
-could be represented in a single document in an index per language, another
-reasonable approach is to keep all translations in the same document:
+
+对于一些实体类，例如:产品、电影、法律声明，((("fields", "one language per field")))((("languages", "one language per field")))
+通常这样的一份文本会被翻译成不同语言的文档。虽然这些不同语言的文档可以单独保存在各自的索引中。但另一种更合理的方式是同一份文本的所有翻译统一保存在一个索引中。。
 
 [source,js]
 --------------------------------------------------
@@ -18,8 +17,8 @@ reasonable approach is to keep all translations in the same document:
 }
 --------------------------------------------------
 
-Each translation is stored in a separate field, which is analyzed according
-to the language it contains:
+
+每份翻译存储在不同的域中，根据域的语言决定使用相应的分析器：
 
 [source,js]
 --------------------------------------------------
@@ -52,23 +51,16 @@ PUT /movies
   }
 }
 --------------------------------------------------
-<1> The `title` field contains the original title and uses the
-    `standard` analyzer.
-<2> Each of the other fields uses the appropriate analyzer for
-    that language.
 
-Like the _index-per-language_ approach, the _field-per-language_ approach
-maintains clean term frequencies. It is not quite as flexible as having
-separate indices.  Although it is easy to add a new field by using the <<updating-a-mapping,`update-mapping` API>>, those new fields may require new
-custom analyzers, which can only be set up at index creation time.  As a
-workaround, you can {ref}/indices-open-close.html[close] the index, add the new
-analyzers with the {ref}/indices-update-settings.html[`update-settings` API],
-then reopen the index, but closing the index means that it will require some
-downtime.
+<1> `title` 域含有title的原文，并使用 `standard` （标准）分析器。
 
-The documents of a((("boosting", "query-time", "boosting a field"))) single language can be queried independently, or queries
-can target multiple languages by querying multiple fields.  We can even
-specify a preference for particular languages by boosting that field:
+<2> 其他字段使用适合自己语言的分析器。
+
+
+
+在维持干净的词频方面，虽然 _index-per-language_ （一种语言一份索引的方法），不像 _field-per-language_ （一种语言一个域的方法）分开索引那么灵活。但是使用 <<updating-a-mapping,`update-mapping` API>> 添加一个新域也很简单，那些新域需要新的自定义分析器，这些新分析器只能在索引创建时被装配。有一个变通的方案，你可以先关闭这个索引  {ref}/indices-open-close.html[close] ，然后使用 {ref}/indices-update-settings.html[`update-settings` API] ，重新打开这个索引，但是关掉这个索引意味着得停止服务一段时间。
+
+文档的((("boosting", "query-time", "boosting a field")))一种语言可以单独查询，也可以通过查询多个域来查询多种语言。我们甚至可以通过对特定语言设置偏好来提高字段优先级：
 
 [source,js]
 --------------------------------------------------
@@ -83,7 +75,5 @@ GET /movies/movie/_search
     }
 }
 --------------------------------------------------
-<1> This search queries any field beginning with `title` but
-    boosts the `title_es` field by `2`.  All other fields have
-    a neutral boost of `1`.
 
+<1> 这个搜索查询所有以 `title` 为前缀的域，但是对 `title_es` 域加权重 `2` 。其他的所有域是中性权重 `1` 。
