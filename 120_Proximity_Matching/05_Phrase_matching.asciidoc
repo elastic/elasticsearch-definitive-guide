@@ -1,9 +1,7 @@
 [[phrase-matching]]
-=== Phrase Matching
+=== 短语匹配
 
-In the same way that the `match` query is the go-to query for standard
-full-text search, the `match_phrase` query((("proximity matching", "phrase matching")))((("phrase matching")))((("match_phrase query"))) is the one you should reach for
-when you want to find words that are near each other:
+就像 `match` 查询对于标准全文检索是一种最常用的查询一样，当你想找到彼此邻近搜索词的查询方法时，就会想到 `match_phrase` 查询((("proximity matching", "phrase matching")))((("phrase matching")))((("match_phrase query")))。
 
 [source,js]
 --------------------------------------------------
@@ -18,18 +16,13 @@ GET /my_index/my_type/_search
 --------------------------------------------------
 // SENSE: 120_Proximity_Matching/05_Match_phrase_query.json
 
-Like the `match` query, the `match_phrase` query first analyzes the query
-string to produce a list of terms. It then searches for all the terms, but
-keeps only documents that contain _all_ of the search terms, in the same
-_positions_ relative to each other.  A query for the phrase `quick fox`
-would not match any of our documents, because no document contains the word
-`quick` immediately followed by `fox`.
+类似 `match` 查询， `match_phrase` 查询首先将查询字符串解析成一个词项列表，然后对这些词项进行搜索，但只保留那些包含 _全部_ 搜索词项，且 _位置_ 与搜索词项相同的文档。
+比如对于 `quick fox` 的短语搜索可能不会匹配到任何文档，因为没有文档包含的 `quick` 词之后紧跟着 `fox` 。
 
 [TIP]
 ==================================================
 
-The `match_phrase` query can also be written as a `match` query with type
-`phrase`:
+`match_phrase` 查询同样可写成一种类型为 `phrase` 的 `match` 查询:
 
 [source,js]
 --------------------------------------------------
@@ -44,10 +37,10 @@ The `match_phrase` query can also be written as a `match` query with type
 
 ==================================================
 
-==== Term Positions
+==== 词项的位置
 
-When a string is analyzed, the analyzer returns not((("phrase matching", "term positions")))((("match_phrase query", "position of terms")))((("position-aware matching"))) only a list of terms, but
-also the _position_, or order, of each term in the original string:
+
+当一个字符串被分词后，这个分析器不但会((("phrase matching","term positions")))((("match_phrase query", "position of terms")))((("position-aware matching")))返回一个词项列表，而且还会返回各词项在原始字符串中的 _位置_ 或者顺序关系：
 
 [source,js]
 --------------------------------------------------
@@ -56,7 +49,7 @@ Quick brown fox
 --------------------------------------------------
 // SENSE: 120_Proximity_Matching/05_Term_positions.json
 
-This returns the following:
+返回信息如下：
 
 [role="pagebreak-before"]
 [source,js]
@@ -87,34 +80,32 @@ This returns the following:
    ]
 }
 --------------------------------------------------
-<1> The `position` of each term in the original string.
+<1> `position` 代表各词项在原始字符串中的位置。
 
-Positions can be stored in the inverted index, and position-aware queries like
-the `match_phrase` query can use them to match only documents that contain
-all the words in exactly the order specified, with no words in-between.
+位置信息可以被存储在倒排索引中，因此 `match_phrase` 查询这类对词语位置敏感的查询，
+就可以利用位置信息去匹配包含所有查询词项，且各词项顺序也与我们搜索指定一致的文档，中间不夹杂其他词项。
 
-==== What Is a Phrase
+==== 什么是短语
 
-For a document to be considered a((("match_phrase query", "documents matching a phrase")))((("phrase matching", "criteria for matching documents"))) match for the phrase ``quick brown fox'', the following must be true:
+一个被认定为和短语 `quick brown fox` ((("match_phrase query", "documents matching a phrase")))((("phrase matching", "criteria for matching documents")))匹配的文档，必须满足以下这些要求：
 
-* `quick`, `brown`, and `fox` must all appear in the field.
+* `quick` 、 `brown` 和 `fox` 需要全部出现在域中。
 
-* The position of `brown` must be `1` greater than the position of `quick`.
+* `brown` 的位置应该比 `quick` 的位置大 `1` 。
 
-* The position of `fox` must be `2` greater than the position of `quick`.
+* `fox` 的位置应该比 `quick` 的位置大 `2` 。
 
-If any of these conditions is not met, the document is not considered a match.
+如果以上任何一个选项不成立，则该文档不能认定为匹配。
 
 [TIP]
 ==================================================
 
-Internally, the `match_phrase` query uses the low-level `span` query family to
-do position-aware matching. ((("match_phrase query", "use of span queries for position-aware matching")))((("span queries")))Span queries are term-level queries, so they have
-no analysis phase; they search for the exact term specified.
+本质上来讲，`match_phrase` 查询是利用一种低级别的 `span` 查询族（query family）去做词语位置敏感的匹配。
+((("match_phrase query", "use of span queries for position-aware matching")))((("span queries")))
+Span 查询是一种词项级别的查询，所以它们没有分词阶段；它们只对指定的词项进行精确搜索。
 
-Thankfully, most people never need to use the `span` queries directly, as the
-`match_phrase` query is usually good enough. However, certain specialized
-fields, like patent searches, use these low-level queries to perform very
-specific, carefully constructed positional searches.
+
+值得庆幸的是，`match_phrase` 查询已经足够优秀，大多数人是不会直接使用 `span` 查询。
+然而，在一些专业领域，例如专利检索，还是会采用这种低级别查询去执行非常具体而又精心构造的位置搜索。
 
 ==================================================
