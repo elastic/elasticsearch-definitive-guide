@@ -1,36 +1,24 @@
+[[_cluster_stats]]
+=== 集群统计
 
-=== Cluster Stats
+`集群统计` API 提供了和 `节点统计` 相似的输出。((("clusters", "administration", "Cluster Stats API"))) 但有一个重要的区别：节点统计显示的是每个节点上的统计值，而 `集群统计` 展示的是对于单个指标，所有节点的总和值。
 
-The `cluster-stats` API provides similar output to the `node-stats`.((("clusters", "administration", "Cluster Stats API")))  There
-is one crucial difference: Node Stats shows you statistics per node, while
-`cluster-stats` shows you the sum total of all nodes in a single metric.
+这里面提供一些很值得一看的统计值。比如说你可以看到，整个集群用了 50% 的堆内存，或者说过滤器缓存的驱逐情况不严重。这个接口主要用途是提供一个比 `集群健康` 更详细、但又没有 `节点统计` 那么详细的快速概览。对于非常大的集群来说也很有用，因为那时候 `节点统计` 的输出已经非常难于阅读了。
 
-This provides some useful stats to glance at.  You can see for example, that your entire cluster
-is using 50% of the available heap or that filter cache is not evicting heavily.  Its
-main use is to provide a quick summary that is more extensive than
-the `cluster-health`, but less detailed than `node-stats`. It is also useful for
-clusters that are very large, which makes `node-stats` output difficult
-to read.
-
-The API may be invoked as follows:
+这个 API 可以像下面这样调用：
 
 [source,js]
 ----
 GET _cluster/stats
 ----
 
-=== Index Stats
+=== 索引统计
 
-So far, we have been looking at _node-centric_ statistics:((("indices", "index statistics")))((("clusters", "administration", "index stats")))  How much memory does 
-this node have?  How much CPU is being used?  How many searches is this node
-servicing?
+到目前为止，我们看到的都是以 _节点为中心_ 的统计值：((("indices", "index statistics")))((("clusters", "administration", "index stats"))) 节点有多少内存？用了多少 CPU ？正在服务多少个搜索？
 
-Sometimes it is useful to look at statistics from an _index-centric_ perspective:
-How many search requests is _this index_ receiving?  How much time is spent fetching
-docs in _that index_?
+有时候从 _索引为中心_ 的角度看统计值也很有用：_这个索引_ 收到了多少个搜索请求？_那个索引_ 获取文档耗费了多少时间？
 
-To do this, select the index (or indices) that you are interested in and 
-execute an Index `stats` API:
+要做到这点，选择你感兴趣的索引 （ 或者多个索引 ）然后执行一个索引级别的 `统计` API：
 
 [source,js]
 ----
@@ -40,47 +28,32 @@ GET my_index,another_index/_stats <2>
 
 GET _all/_stats <3>
 ----
-<1> Stats for `my_index`.
-<2> Stats for multiple indices can be requested by separating their names with a comma.
-<3> Stats for all indices can be requested using the special `_all` index name.
+<1> 统计 `my_index` 索引。
+<2> 使用逗号分隔索引名可以请求多个索引统计值。
+<3> 使用特定的 `_all` 可以请求全部索引的统计值
 
-The stats returned will be familar to the `node-stats` output: `search` `fetch` `get`
-`index` `bulk` `segment counts` and so forth
+返回的统计信息和 `节点统计` 的输出很相似：`search` 、 `fetch` 、 `get` 、 `index` 、 `bulk` 、 `segment counts` 等等。
 
-Index-centric stats can be useful for identifying or verifying _hot_ indices
-inside your cluster, or trying to determine why some indices are faster/slower
-than others.
+索引为中心的统计在有些时候很有用，比如辨别或验证集群中的 _热门_ 索引，或者试图找出某些索引比其他索引更快或者更慢的原因。
 
-In practice, however, node-centric statistics tend to be more useful.  Entire
-nodes tend to bottleneck, not individual indices.  And because indices
-are usually spread across multiple nodes, index-centric statistics
-are usually not very helpful because they aggregate data from different physical machines
-operating in different environments.
+实践中，节点为中心的统计还是显得更有用些。瓶颈往往是针对整个节点而言，而不是对于单个索引。因为索引一般是分布在多个节点上的，这导致以索引为中心的统计值通常不是很有用，因为它们是从不同环境的物理机器上汇聚的数据。
 
-Index-centric stats are a useful tool to keep in your repertoire, but are not usually
-the first tool to reach for.
+索引为中心的统计作为一个有用的工具可以保留在你的技能表里，但是通常它不会是第一个用的上的工具。
 
-=== Pending Tasks
+=== 等待中的任务
 
-There are certain tasks that only the master can perform, such as creating a new ((("clusters", "administration", "Pending Tasks API")))
-index or moving shards around the cluster.  Since a cluster can have only one
-master, only one node can ever process cluster-level metadata changes.  For 
-99.9999% of the time, this is never a problem.  The queue of metadata changes
-remains essentially zero.
+有一些任务只能由主节点去处理，比如创建一个新的((("clusters", "administration", "Pending Tasks API")))索引或者在集群中移动分片。由于一个集群中只能有一个主节点，所以只有这一节点可以处理集群级别的元数据变动。在 99.9999% 的时间里，这不会有什么问题。元数据变动的队列基本上保持为零。
 
-In some _rare_ clusters, the number of metadata changes occurs faster than
-the master can process them.  This leads to a buildup of pending actions that
-are queued.
+在一些 `罕见` 的集群里，元数据变动的次数比主节点能处理的还快。这会导致等待中的操作会累积成队列。
 
-The `pending-tasks` API ((("Pending Tasks API")))will show you what (if any) cluster-level metadata changes
-are pending in the queue:
+`等待中的任务` API ((("Pending Tasks API"))) 会给你展示队列中（如果有的话）等待的集群级别的元数据变更操作：
 
 [source,js]
 ----
 GET _cluster/pending_tasks
 ----
 
-Usually, the response will look like this:
+通常，响应都是像这样的：
 
 [source,js]
 ----
@@ -89,8 +62,7 @@ Usually, the response will look like this:
 }
 ----
 
-This means there are no pending tasks.  If you have one of the rare clusters that
-bottlenecks on the master node, your pending task list may look like this:
+这意味着没有等待中的任务。如果你有一个罕见的集群在主节点出现瓶颈了，等待中的任务列表可能会像这样：
 
 [source,js]
 ----
@@ -123,52 +95,32 @@ bottlenecks on the master node, your pending task list may look like this:
 }
 ----
 
-You can see that tasks are assigned a priority (`URGENT` is processed before `HIGH`,
-for example), the order it was inserted, how long the action has been queued and
-what the action is trying to perform.  In the preceding list, there is a `create-index`
-action and two `shard-started` actions pending.
+可以看到任务都被指派了优先级（ 比如说 `URGENT` 要比 `HIGH` 更早的处理 ），任务插入的次序、操作进入队列多久，以及打算处理什么。在上面的列表中，有一个 `创建索引(create-index)` 和两个 `启动分片(shard-started)` 的操作在等待。
 
-.When Should I Worry About Pending Tasks?
+.什么时候应该担心等待中的任务？
 ****
-As mentioned, the master node is rarely the bottleneck for clusters.  The only
-time it could bottleneck is if the cluster state is both very large 
-_and_ updated frequently.
+就像曾经提到过的，主节点很少会成为集群的瓶颈。唯一可能成为瓶颈的是集群状态非常大 _而且_ 更新频繁。
 
-For example, if you allow customers to create as many dynamic fields as they wish,
-and have a unique index for each customer every day, your cluster state will grow
-very large.  The cluster state includes (among other things) a list of all indices,
-their types, and the fields for each index.
+例如，如果你允许客户按照他们的意愿创建任意的动态字段，而且每个客户每天都有一个独立索引，那么你的集群状态会变得非常大。集群状态包括 ( 但不限于 ) 所有索引及其类型，以及每个索引的全部字段。
 
-So if you have 100,000 customers, and each customer averages 1,000 fields and 90
-days of retention--that's nine billion fields to keep in the cluster state.
-Whenever this changes, the nodes must be notified.  
+所以如果你有 100000 客户，然后每个客户平均有 1000 个字段，而且数据有 90 天的保留期—这就有九十亿个字段需要保存在集群状态中。不管它何时发生变更，所有的节点都需要被通知。
 
-The master must process these changes, which requires nontrivial CPU overhead,
-plus the network overhead of pushing the updated cluster state to all nodes.
+主节点必须处理这些变动，这需要不小的 CPU 开销，加上推送更新的集群状态到所有节点的网络开销。
 
-It is these clusters that may begin to see cluster-state actions queuing up.
-There is no easy solution to this problem, however.  You have three options:
+这就是那些可以看到集群状态操作队列上涨的集群。没有简单的办法可以解决这个问题，不过你有三个选择：
 
-- Obtain a beefier master node.  Vertical scaling just delays the inevitable, 
-unfortunately. 
-- Restrict the dynamic nature of the documents in some way, so as to limit the 
-cluster-state size.  
-- Spin up another cluster after a certain threshold has been crossed.
+- 使用一个更强大的主节点。不幸的是，这种垂直扩展只是延迟这种必然结果出现而已。
+- 通过某些方式限定文档的动态性质来限制集群状态的大小。
+- 到达某个阈值后组建另外一个集群。 
 ****
 
 === cat API
 
-If you work from the command line often, the `cat` APIs will be helpful
-to you.((("Cat API")))((("clusters", "administration", "Cat API")))  Named after the linux `cat` command, these APIs are designed to
-work like *nix command-line tools.
+如果经常在命令行环境下工作，`cat` API 对你会非常有用。((("Cat API")))((("clusters", "administration", "Cat API")))用 Linux 的 `cat` 命令命名，这些 API 也就设计成像 *nix 命令行工具一样工作了。
 
-They provide statistics that are identical to all the previously discussed APIs
-(Health, `node-stats`, and so forth), but present the output in tabular form instead of 
-JSON.  This is _very_ convenient for a system administrator, and you just want
-to glance over your cluster or find nodes with high memory usage.
+他们提供的统计和前面已经讨论过的 API ( 健康、`节点统计` 等等 ) 是一样的。但是输出以表格的形式提供，而不是 JSON。对于系统管理员来说这是 _非常_ 方便的，你仅仅想浏览一遍集群或者找出内存使用偏高的节点而已。
 
-Executing a plain `GET` against the `cat` endpoint will show you all available 
-APIs:
+通过 `GET` 请求发送 `cat` 命名可以列出所有可用的 API：
 
 [source,bash]
 ----
@@ -198,8 +150,7 @@ GET /_cat
 /_cat/fielddata/{fields}
 ----
 
-Many of these APIs should look familiar to you (and yes, that's a cat at the top 
-:) ).  Let's take a look at the Cat Health API:
+许多 API 看起来很熟悉了 ( 是的，顶上还有一只猫:) )。让我们看看 `cat` 的健康检查 API： 
 
 [source,bash]
 ----
@@ -208,13 +159,9 @@ GET /_cat/health
 1408723713 12:08:33 elasticsearch_zach yellow 1 1 114 114 0 0 114 
 ----
 
-The first thing you'll notice is that the response is plain text in tabular form,
-not JSON.  The second thing you'll notice is that there are no column headers
-enabled by default.  This is designed to emulate *nix tools, since it is assumed
-that once you become familiar with the output, you no longer want to see
-the headers.
+首先你会注意到的是响应是表格样式的纯文本，而不是 JSON。其次你会注意到各列默认是没有表头的。这都是模仿 *nix 工具设计的，因为它假设一旦你对输出熟悉了，你就再也不像看见表头了。
 
-To enable headers, add the `?v` parameter:
+要启用表头，添加 `?v` 参数即可：
 
 [source,bash]
 ----
@@ -225,11 +172,9 @@ epoch   time    cluster status node.total node.data shards pri relo init
 unassign
 ----
 
-Ah, much better.  We now see the timestamp, cluster name, status, the number of 
-nodes in the cluster, and more--all the same information as the `cluster-health`
-API.
+嗯，好多了。我们现在看到 时间戳、集群名称、状态、集群中节点的数量等等—所有信息和 `集群健康` API 返回的都一样。
 
-Let's look at `node-stats` in the `cat` API:
+让我们再看看 `cat` API 里面的 `节点统计` ：
 
 [source,bash]
 ----
@@ -239,12 +184,9 @@ host         ip            heap.percent ram.percent load node.role master name
 zacharys-air 192.168.1.131           45          72 1.85 d         *      Zach 
 ----
 
-We see some stats about the nodes in our cluster, but the output is basic compared
-to the full `node-stats` output. You can
-include many additional metrics, but rather than consulting the documentation, let's just ask the `cat`
-API what is available.
+我们看到集群里节点的一些统计，不过和完整的 `节点统计` 输出相比而言是非常基础的。你可以包含更多的指标，但是比起查阅文档，让我们直接问 `cat` API 有哪些可用的吧。
 
-You can do this by adding `?help` to any API:
+你可以过对任意 API 添加 `?help` 参数来做到这点：
 
 [source,bash]
 ----
@@ -270,12 +212,9 @@ master           | m                       | m:master-eligible, *:current master
 ...
 ...
 ----
-(Note that the output has been truncated for brevity).
+( 注意这个输出为了页面简洁而被截断了 )。
 
-The first column shows the full name, the second column shows the short name,
-and the third column offers a brief description about the parameter. Now that
-we know some column names, we can ask for those explicitly by using the `?h`
-parameter:
+第一列显示完整的名称，第二列显示缩写，第三列提供了关于这个参数的简介。现在我们知道了一些列名了，我们可以用 `?h` 参数来明确指定显示这些指标：
 
 [source,bash]
 ----
@@ -285,9 +224,7 @@ ip            port heapPercent heapMax
 192.168.1.131 9300          53 990.7mb 
 ----
 
-Because the `cat` API tries to behave like *nix utilities, you can pipe the output
-to other tools such as `sort` `grep` or `awk`.  For example, we can find the largest
-index in our cluster by using the following:
+因为 `cat` API 试图像 *nix 工具一样工作，你可以使用管道命令将结果传递给其他工具，比如 `sort` 、 `grep` 或者 `awk` 。例如，通过以下方式可以找到集群中最大的索引：
 
 [source,bash]
 ----
@@ -322,13 +259,9 @@ yellow cars               5 1       0 0      1249      1249
 yellow wavelet2           5 1       0 0       615       615 
 ----
 
-By adding `?bytes=b`, we disable the human-readable formatting on numbers and
-force them to be listed as bytes.  This output is then piped into `sort` so that
-our indices are ranked according to size (the eighth column).
+通过添加 `?bytes=b` ，我们关闭了人类可读的数字格式化，强制它们以字节数输出。随后通过管道命令将输出传递给 `sort` 让索引按大小（ 第八列 ）排序
 
-Unfortunately, you'll notice that the Marvel indices are clogging up the results,
-and we don't really care about those indices right now.  Let's pipe the output
-through `grep` and remove anything mentioning Marvel:
+不幸的是，你会注意到 Marval 索引也出现在结果中，但是我们目前并不真正在意这些索引。让我们把结果传递给 `grep` 命令来移除提到 Marval 的数据：
 
 [source,bash]
 ----
@@ -353,15 +286,9 @@ yellow cars               5 1       0 0      1249      1249
 yellow wavelet2           5 1       0 0       615       615 
 ----
 
-Voila!  After piping through `grep` (with `-v` to invert the matches), we get
-a sorted list of indices without Marvel cluttering it up.
+瞧！在传递给 `grep` ( 通过 `-v` 来过滤掉不需要匹配的数据 ) 之后，我们得到了一个没有 Marval 混杂的索引排序列表了。
 
-This is just a simple example of the flexibility of `cat` at the command line.
-Once you get used to using `cat`, you'll see it like any other *nix tool and start
-going crazy with piping, sorting, and grepping.  If you are a system admin and spend
-any time SSH'd into boxes, definitely spend some time getting familiar
-with the `cat` API.
-
+这只是命令行上 `cat` 的灵活性的一个简单示例。一旦你习惯了使用 `cat` ，你会发现它和其他所有 *nix 工具一样并且开始疯狂的使用管道、排序和过滤。如果你是一个系统管理员并且永远都是 SSH 登录到设备上，那么当然要花些时间来熟悉 `cat` API 了。
 
 
 
