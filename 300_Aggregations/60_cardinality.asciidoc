@@ -1,9 +1,9 @@
 [[cardinality]]
-=== Finding Distinct Counts
+=== 统计去重后的数量
 
-The first approximate aggregation provided by Elasticsearch is the `cardinality`
-metric.((("cardinality", "finding distinct counts")))((("aggregations", "approximate", "cardinality")))((("approximate algorithms", "cardinality")))((("distinct counts")))  This provides the cardinality of a field, also called a _distinct_ or
-_unique_ count. ((("unique counts"))) You may be familiar with the SQL version:
+Elasticsearch 提供的首个近似聚合是 `cardinality` （注：基数）度量。
+((("cardinality", "finding distinct counts")))((("aggregations", "approximate", "cardinality")))((("approximate algorithms", "cardinality")))((("distinct counts"))) 它提供一个字段的基数，即该字段的 _distinct_ 或者 _unique_ 值的数目。
+((("unique counts"))) 你可能会对 SQL 形式比较熟悉：
 
 [source, sql]
 --------
@@ -11,14 +11,13 @@ SELECT COUNT(DISTINCT color)
 FROM cars
 --------
 
-Distinct counts are a common operation, and answer many fundamental business questions:
+去重是一个很常见的操作，可以回答很多基本的业务问题：
 
-- How many unique visitors have come to my website?
-- How many unique cars have we sold?
-- How many distinct users purchased a product each month?
+- 网站独立访客是多少？
+- 卖了多少种汽车？
+- 每月有多少独立用户购买了商品？
 
-We can use the `cardinality` metric to determine the number of car colors being
-sold at our dealership:
+我们可以用 `cardinality` 度量确定经销商销售汽车颜色的数量：
 
 [source,js]
 --------------------------------------------------
@@ -36,8 +35,7 @@ GET /cars/transactions/_search
 --------------------------------------------------
 // SENSE: 300_Aggregations/60_cardinality.json
 
-This returns a minimal response showing that we have sold three different-colored
-cars:
+返回的结果表明已经售卖了三种不同颜色的汽车：
 
 [source,js]
 --------------------------------------------------
@@ -50,8 +48,7 @@ cars:
 ...
 --------------------------------------------------
 
-We can make our example more useful:  how many colors were sold each month?  For
-that metric, we just nest the `cardinality` metric under ((("date histograms, building")))a `date_histogram`:
+可以让我们的例子变得更有用：每月有多少颜色的车被售出？为了得到这个度量，我们只需要将一个 `cardinality` 度量嵌入一个 ((("date histograms, building"))) `date_histogram` ：
 
 [source,js]
 --------------------------------------------------
@@ -77,25 +74,19 @@ GET /cars/transactions/_search
 --------------------------------------------------
 // SENSE: 300_Aggregations/60_cardinality.json
 
-==== Understanding the Trade-offs
-As mentioned at the top of this chapter, the `cardinality` metric is an approximate
-algorithm. ((("cardinality", "understanding the tradeoffs"))) It is based on the http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/40671.pdf[HyperLogLog++] (HLL) algorithm.((("HLL (HyperLogLog) algorithm")))((("HyperLogLog (HLL) algorithm")))  HLL works by
-hashing your input and using the bits from the hash to make probabilistic estimations
-on the cardinality.
+==== 学会权衡（Understanding the Trade-offs）
+正如我们本章开头提到的， `cardinality` 度量是一个近似算法。
+((("cardinality", "understanding the tradeoffs"))) 它是基于 http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/40671.pdf[HyperLogLog++] （HLL）算法的。((("HLL (HyperLogLog) algorithm")))((("HyperLogLog (HLL) algorithm")))
+HLL 会先对我们的输入作哈希运算，然后根据哈希运算的结果中的 bits 做概率估算从而得到基数。
 
-You don't need to understand the technical details (although if you're interested,
-the paper is a great read!), but you ((("memory usage", "cardinality metric")))should be aware of the _properties_ of the
-algorithm:
+我们不需要理解技术细节（如果确实感兴趣，可以阅读这篇论文），((("memory usage", "cardinality metric"))) 但我们最好应该关注一下这个算法的 _特性_ ：
 
-- Configurable precision, which controls memory usage (more precise
-== more memory).
-- Excellent accuracy on low-cardinality sets.
-- Fixed memory usage. Whether there are thousands or billions of unique
-values, memory usage depends on only the configured precision.
+- 可配置的精度，用来控制内存的使用（更精确 ＝ 更多内存）。
+- 小的数据集精度是非常高的。
+- 我们可以通过配置参数，来设置去重需要的固定内存使用量。无论数千还是数十亿的唯一值，内存使用量只与你配置的精确度相关。
 
-To configure the precision, you must specify the `precision_threshold` parameter.((("precision_threshold parameter (cardinality metric)")))
-This threshold defines the point under which cardinalities are expected to be very
-close to accurate. Consider this example:
+要配置精度，我们必须指定 `precision_threshold` 参数的值。((("precision_threshold parameter (cardinality metric)")))
+这个阈值定义了在何种基数水平下我们希望得到一个近乎精确的结果。参考以下示例：
 
 [source,js]
 --------------------------------------------------
@@ -113,51 +104,32 @@ GET /cars/transactions/_search
 }
 --------------------------------------------------
 // SENSE: 300_Aggregations/60_cardinality.json
-<1> `precision_threshold` accepts a number from 0&#x2013;40,000.  Larger values
-are treated as equivalent to 40,000.
+<1> `precision_threshold` 接受 0–40,000 之间的数字，更大的值还是会被当作 40,000 来处理。
 
-This example will ensure that fields with 100 or fewer distinct values will be extremely accurate.
-Although not guaranteed by the algorithm, if a cardinality is under the threshold,
-it is almost always 100% accurate.  Cardinalities above this will begin to trade
-accuracy for memory savings, and a little error will creep into the metric.
+示例会确保当字段唯一值在 100 以内时会得到非常准确的结果。尽管算法是无法保证这点的，但如果基数在阈值以下，几乎总是 100% 正确的。高于阈值的基数会开始节省内存而牺牲准确度，同时也会对度量结果带入误差。
 
-For a given threshold, the HLL data-structure will use about
-`precision_threshold * 8` bytes of memory.  So you must balance how much memory
-you are willing to sacrifice for additional accuracy.
+对于指定的阈值，HLL 的数据结构会大概使用 `precision_threshold * 8` 字节的内存，所以就必须在牺牲内存和获得额外的准确度间做平衡。
 
-Practically speaking, a threshold of `100` maintains an error under 5% even when
-counting millions of unique values.
+在实际应用中， `100` 的阈值可以在唯一值为百万的情况下仍然将误差维持 5% 以内。
 
-==== Optimizing for Speed
-If you want a distinct count, you _usually_ want to query your entire dataset
-(or nearly all of it). ((("cardinality", "optimizing for speed")))((("distinct counts", "optimizing for speed"))) Any operation on all your data needs to execute quickly,
-for obvious reasons. HyperLogLog is very fast already--it simply
-hashes your data and does some bit-twiddling.((("HyperLogLog (HLL) algorithm")))((("HLL (HyperLogLog) algorithm")))
+==== 速度优化（Optimizing for Speed）
+如果想要获得唯一值的数目， _通常_ 需要查询整个数据集合（或几乎所有数据）。((("cardinality", "optimizing for speed")))((("distinct counts", "optimizing for speed"))) 所有基于所有数据的操作都必须迅速，原因是显然的。
+HyperLogLog 的速度已经很快了，它只是简单的对数据做哈希以及一些位操作。((("HyperLogLog (HLL) algorithm")))((("HLL (HyperLogLog) algorithm")))
 
-But if speed is important to you, we can optimize it a little bit further.
-Since HLL simply needs the hash of the field, we can precompute that hash at
-index time.((("hashes, pre-computing for cardinality metric")))  When the query executes, we can skip the hash computation and load
-the value directly out of fielddata.
+但如果速度对我们至关重要，可以做进一步的优化。
+因为 HLL 只需要字段内容的哈希值，我们可以在索引时就预先计算好。((("hashes, pre-computing for cardinality metric"))) 就能在查询时跳过哈希计算然后将哈希值从 fielddata 直接加载出来。
 
 [NOTE]
 =========================
-Precomputing hashes is useful only on very large and/or high-cardinality
-fields. Calculating the hash on these fields is non-negligible at query time.
+预先计算哈希值只对内容很长或者基数很高的字段有用，计算这些字段的哈希值的消耗在查询时是无法忽略的。
 
 
-However, numeric fields hash very quickly, and storing the original numeric often
-requires the same (or less) memory. This is also true on low-cardinality string
-fields; there are internal optimizations that guarantee that hashes are
-calculated only once per unique value.
+尽管数值字段的哈希计算是非常快速的，存储它们的原始值通常需要同样（或更少）的内存空间。这对低基数的字符串字段同样适用，Elasticsearch 的内部优化能够保证每个唯一值只计算一次哈希。
 
-Basically, precomputing hashes is not guaranteed to make all fields faster --
-only those that have high cardinality and/or large strings.  And remember,
-precomputing simply shifts the cost to index time.  You still pay the price;
-you just choose _when_ to pay it.
+基本上说，预先计算并不能保证所有的字段都更快，它只对那些具有高基数和/或者内容很长的字符串字段有作用。需要记住的是，预计算只是简单的将查询消耗的时间提前转移到索引时，并非没有任何代价，区别在于你可以选择在 _什么时候_ 做这件事，要么在索引时，要么在查询时。
 =========================
 
-To do this, we need to add a new multifield to our data.  We'll delete our index,
-add a new mapping that includes the hashed field, and then reindex:
+要想这么做，我们需要为数据增加一个新的多值字段。我们先删除索引，再增加一个包括哈希值字段的映射，然后重新索引：
 
 [source,js]
 ----
@@ -200,10 +172,9 @@ POST /cars/transactions/_bulk
 { "price" : 25000, "color" : "blue", "make" : "ford", "sold" : "2014-02-12" }
 ----
 // SENSE: 300_Aggregations/60_cardinality.json
-<1> This multifield is of type `murmur3`, which is a hashing function.
+<1> 多值字段的类型是 `murmur3` ，这是一个哈希函数。
 
-Now when we run an aggregation, we use the `color.hash` field instead of the
-`color` field:
+现在当我们执行聚合时，我们使用 `color.hash` 字段而不是 `color` 字段：
 
 [source,js]
 --------------------------------------------------
@@ -220,13 +191,8 @@ GET /cars/transactions/_search
 }
 --------------------------------------------------
 // SENSE: 300_Aggregations/60_cardinality.json
-<1> Notice that we specify the hashed multifield, rather than the original.
+<1> 注意我们指定的是哈希过的多值字段，而不是原始字段。
 
-Now the `cardinality` metric will load the values (the precomputed hashes)
-from `"color.hash"` and use those in place of dynamically hashing the original
-value.
+现在 `cardinality` 度量会读取 `"color.hash"` 里的值（预先计算的哈希值），取代动态计算原始值的哈希。
 
-The savings per document is small, but if hashing each field adds 10 nanoseconds and your aggregation touches 100 million documents, that adds 1 second per
-query.  If you find yourself using `cardinality` across many documents,
-perform some profiling to see if precomputing hashes makes sense for your
-deployment.
+单个文档节省的时间是非常少的，但是如果你聚合一亿数据，每个字段多花费 10 纳秒的时间，那么在每次查询时都会额外增加 1 秒，如果我们要在非常大量的数据里面使用 `cardinality` ，我们可以权衡使用预计算的意义，是否需要提前计算 hash，从而在查询时获得更好的性能，做一些性能测试来检验预计算哈希是否适用于你的应用场景。。
