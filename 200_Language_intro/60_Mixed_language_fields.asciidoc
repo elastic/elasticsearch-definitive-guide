@@ -1,39 +1,40 @@
 [[mixed-lang-fields]]
-=== Mixed-Language Fields
+=== 混合语言域
 
-Usually, documents that mix multiple languages in a single field come from
-sources beyond your control, such as((("languages", "mixed language fields")))((("fields", "mixed language"))) pages scraped from the Web:
+通常,那些从源数据中获得的多种语言混合在一个域中的文档会超出你的控制，
+例如((("languages", "mixed language fields")))((("fields", "mixed language")))从网上爬取的页面：
 
 [source,js]
 --------------------------------------------------
 { "body": "Page not found / Seite nicht gefunden / Page non trouvée" }
 --------------------------------------------------
 
-They are the most difficult type of multilingual document to handle correctly.
-Although you can simply use the `standard` analyzer on all fields, your documents
-will be less searchable than if you had used an appropriate stemmer. But of
-course, you can't choose just one stemmer--stemmers are language specific.
-Or rather, stemmers are language and script specific.  As discussed in
-<<different-scripts>>, if every language uses a different script, then
-stemmers can be combined.
 
-Assuming that your mix of languages uses the same script such as Latin, you have three choices available to you:
 
-* Split into separate fields
-* Analyze multiple times
-* Use n-grams
+正确的处理多语言类型文档是非常困难的。即使你简单对所有的域使用 `standard` （标准）分析器，
+但你的文档会变得不利于搜索，除非你使用了合适的词干提取器。当然，你不可能只选择一个词干提取器。
+词干提取器是由语言具体决定的。或者，词干提取器是由语言和脚本所具体决定的。像在 <<different-scripts>> 讨论中那样。
+如果每个语言都使用不同的脚本，那么词干提取器就可以合并了。
 
-==== Split into Separate Fields
 
-The Compact Language Detector ((("languages", "mixed language fields", "splitting into separate fields")))((("Compact Language Detector (CLD)")))mentioned in <<identifying-language>> can tell
-you which parts of the document are in which language.  You can split up the
-text based on language and use the same approach as was used in
-<<one-lang-fields>>.
+假设你的混合语言使用的是一样的脚本，例如拉丁文，你有三个可用的选择：
 
-==== Analyze Multiple Times
+* 切分到不同的域
+* 进行多次分析
+* 使用 n-grams
 
-If you primarily deal with a limited number of languages, ((("languages", "mixed language fields", "analyzing multiple times")))((("analyzers", "for mixed language fields")))((("multifields", "analying mixed language fields")))you could use
-multi-fields to analyze the text once per language:
+==== 切分到不同的域
+
+
+在 <<identifying-language>> 提到过的紧凑的语言检测((("languages", "mixed language fields", "splitting into separate fields")))((("Compact Language Detector (CLD)")))可以告诉你哪部分文档属于哪种语言。
+你可以用 <<one-lang-fields>> 中用过的一样的方法来根据语言切分文本。
+
+==== 进行多次分析
+
+
+
+如果你主要处理数量有限的语言，((("languages", "mixed language fields", "analyzing multiple times")))((("analyzers", "for mixed language fields")))((("multifields", "analying mixed language fields")))
+你可以使用多个域，每种语言都分析文本一次。
 
 [source,js]
 --------------------------------------------------
@@ -68,17 +69,19 @@ PUT /movies
   }
 }
 --------------------------------------------------
-<1> The main `title` field uses the `standard` analyzer.
-<2> Each subfield applies a different language analyzer
-    to the text in the `title` field.
 
-==== Use n-grams
+<1> 主域 `title` 使用 `standard` （标准）分析器
 
-You could index all words as n-grams, using the ((("n-grams", "for mixed language fields")))((("languages", "mixed language fields", "n-grams, indexing words as")))same approach as
-described in <<ngrams-compound-words>>.  Most inflections involve adding a
-suffix (or in some languages, a prefix) to a word, so by breaking each word into n-grams, you have a good chance of matching words that are similar
-but not exactly the same. This can be combined with the _analyze-multiple
-times_ approach to provide a catchall field for unsupported languages:
+<2> 每个子域提供不同的语言分析器来对  `title` 域文本进行分析。
+
+==== 使用 n-grams
+
+
+
+你可以使用 <<ngrams-compound-words>> 中描述的((("n-grams", "for mixed language fields")))((("languages", "mixed language fields", "n-grams, indexing words as")))方法索引所有的词汇为 n-grams。
+大多数语型变化包含给单词添加一个后缀（或在一些语言中添加前缀），所以通过将单词拆成 n-grams，你有很大的机会匹配到相似但不完全一样的单词。
+这个可以结合 _analyze-multiple times_ （多次分析）方法为不支持的语言提供全域抓取：
+
 
 [source,js]
 --------------------------------------------------
@@ -120,16 +123,15 @@ PUT /movies
   }
 }
 --------------------------------------------------
-<1> In the `analysis` section, we define the same `trigrams`
-    analyzer as described in <<ngrams-compound-words>>.
-<2> The `title.general` field uses the `trigrams` analyzer
-    to index any language.
 
-When querying the catchall `general` field, you can use
-`minimum_should_match` to reduce the number of low-quality matches.  It may
-also be necessary to boost the other fields slightly more than the `general`
-field, so that matches on the main language fields are given more weight
-than those on the `general` field:
+<1> 在 `analysis` 章节, 我们按照 <<ngrams-compound-words>> 中描述的定义了同样的 `trigrams` 分析器。
+
+<2> 在 `title.general` 域使用 `trigrams` 分析器索引所有的语言。
+
+
+
+当查询抓取所有 `general` 域时，你可以使用 `minimum_should_match` （最少应当匹配数）来减少低质量的匹配。
+或许也需要对其他字段进行稍微的加权，给与主语言域的权重要高于其他的在 `general` 上的域：
 
 [source,js]
 --------------------------------------------------
@@ -145,8 +147,7 @@ GET /movies/movie/_search
     }
 }
 --------------------------------------------------
-<1> All `title` or `title.*` fields are given a slight boost over the
-    `title.general` field.
-<2> The `minimum_should_match` parameter reduces the number of low-quality matches returned, especially important for the `title.general` field.
 
+<1> 所有 `title` 或 `title.*` 域给与了比 `title.general` 域稍微高的加权。
 
+<2>  `minimum_should_match`（最少应当匹配数） 参数减少了低质量匹配的返回数, 这对 `title.general` 域尤其重要。
