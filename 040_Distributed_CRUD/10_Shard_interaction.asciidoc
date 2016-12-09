@@ -1,20 +1,15 @@
-=== How Primary and Replica Shards Interact
+[[how-primary-and-replica-shards-interact]]
+=== 主分片和副本分片如何交互
 
-For explanation purposes, let's((("shards", "interaction of primary and replica shards")))((("primary shards", "interaction with replica shards")))((("replica shards", "interaction with primary shards"))) imagine that we have a cluster
-consisting of three nodes. It contains one index called `blogs` that has
-two primary shards. Each primary shard has two replicas. Copies of
-the same shard are never allocated to the same node, so our cluster
-looks something like <<img-distrib>>.
+为了说明目的, 我们((("shards", "interaction of primary and replica shards")))((("primary shards", "interaction with replica shards")))((("replica shards", "interaction with primary shards"))) 假设有一个集群由三个节点组成。
+它包含一个叫 `blogs` 的索引，有两个主分片，每个主分片有两个副本分片。相同分片的副本不会放在同一节点，所以我们的集群看起来像 <<img-distrib>>。
 
 [[img-distrib]]
-.A cluster with three nodes and one index
-image::images/elas_0401.png["A cluster with three nodes and one index"]
+.有三个节点和一个索引的集群
+image::images/elas_0401.png["有三个节点和一个索引的集群"]
 
-We can send our requests to any node in the cluster.((("nodes", "sending requests to"))) Every node is fully
-capable of serving any request.  Every node knows the location of every
-document in the cluster and so can forward requests directly to the required
-node. In the following examples, we will send all of our requests to `Node 1`,
-which we will refer to as  the _coordinating node_.
+我们可以发送请求到集群中的任一节点。((("nodes", "sending requests to"))) 每个节点都有能力处理任意请求。
+每个节点都知道集群中任一文档位置，所以可以直接将请求转发到需要的节点上。
+在下面的例子中，将所有的请求发送到 `Node 1` ，我们将其称为 _协调节点(coordinating node)_ 。
 
-TIP: When sending requests, it is good practice to round-robin through all the
-nodes in the cluster, in order to spread the load.
+TIP: 当发送请求的时候， 为了扩展负载，更好的做法是轮询集群中所有的节点。
