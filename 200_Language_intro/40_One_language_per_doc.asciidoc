@@ -1,10 +1,10 @@
 [[one-lang-docs]]
-=== One Language per Document
+=== 每份文档一种语言
 
-A single predominant language per document ((("languages", "one language per document")))((("indices", "documents in different languages")))requires a relatively simple setup.
-Documents from different languages can be stored in separate indices&#x2014;`blogs-en`,
-`blogs-fr`, and so forth&#x2014;that use the same type and the same fields for each index,
-just with different analyzers:
+每个主语言文档 ((("languages", "one language per document")))((("indices", "documents in different languages")))只需要相当简单的设置。 不同语言的文档被分别存放在不同的索引中 &#x2014; `blogs-en` 、
+`blogs-fr` ， 如此等等 &#x2014; 这样每个索引就可以使用相同的类型和相同的域，只是使用不同的分析器：
+
+
 
 [source,js]
 --------------------------------------------------
@@ -36,19 +36,19 @@ PUT /blogs-fr
             }
 }}}}}}
 --------------------------------------------------
-<1> Both `blogs-en` and `blogs-fr` have a type called `post` that contains
-    the field `title`.
-<2> The `title.stemmed` subfield uses a language-specific analyzer.
+
+<1> 索引 `blogs-en` 和 `blogs-fr` 的 `post` 类型都有一个包含 `title` 域。
+
+<2> `title.stemmed` 子域使用了具体语言的分析器。
 
 
-This approach is clean and flexible.  New languages are easy to add--just
-create a new index--and because each language is completely separate, we
-don't suffer from the term-frequency and stemming problems described in
-<<language-pitfalls>>.
+这个方法干净且灵活。新语言很容易被添加 -- 仅仅是创建一个新索引--因为每种语言都是彻底的被分开，
+我们不用遭受在 <<language-pitfalls>> 中描述的词频和词干提取的问题。
 
-The documents of a single language can be queried independently, or queries
-can target multiple languages by querying multiple indices.  We can even
-specify a preference((("indices_boost parameter", "specifying preference for a specific language"))) for particular languages with the `indices_boost` parameter:
+
+每一种语言的文档都可被独立查询，或者通过查询多种索引来查询多种语言。
+我们甚至可以使用 `indices_boost` 参数为特定的语言添加优先权((("indices_boost parameter", "specifying preference for a specific language")))：
+
 
 [source,js]
 --------------------------------------------------
@@ -67,38 +67,29 @@ GET /blogs-*/post/_search <1>
     }
 }
 --------------------------------------------------
-<1> This search is performed on any index beginning with `blogs-`.
-<2> The `title.stemmed` fields are queried using the analyzer
-    specified in each index.
-<3> Perhaps the user's `accept-language` headers showed a preference for
-    English, and then French, so we boost results from each index accordingly.
-    Any other languages will have a neutral boost of `1`.
 
-==== Foreign Words
+<1> 这个查询会在所有以 `blogs-` 开头的索引中执行。
 
-Of course, these documents may contain words or sentences in other languages,
-and these words are unlikely to be stemmed correctly.  With
-predominant-language documents, this is not usually a major problem.  The user will
-often search for the exact words--for instance, of a quotation from another
-language--rather than for inflections of a word. Recall can be improved
-by using techniques explained in <<token-normalization>>.
+<2>  `title.stemmed` 字段使用每个索引中指定的分析器查询。
 
-Perhaps some words like place names should be queryable in the predominant
-language and in the original language, such as _Munich_ and _München_.  These
-words are effectively synonyms, which we discuss in <<synonyms>>.
+<3> 也许用户接受语言标头表明，更倾向于英语，然后是法语，所以相应的，我们会为每个索引的结果添加权重。任何其他语言会有一个中性的权重 1 。
 
-.Don't Use Types for Languages
+==== 外语单词
+
+
+当然，有些文档含有一些其他语言的单词或句子，且不幸的是这些单词被切为了正确的词根。对于主语言文档，这通常并不是主要的问题。用户经常需要搜索很精确的单词--例如，一个其他语言的引用--而不是语型变化过的单词。召回率 (Recall)可以通过使用 <<token-normalization>> 中讲解的技术提升。
+
+
+
+假设有些单词例如地名应当能被主语言和原始语言都能检索，例如 _Munich_ 和 _München_ 。
+这些单词实际上是我们在 <<synonyms>> 解释过的同义词。
+
+
+.不要对语言使用类型
 *************************************************
+你也许很倾向于为每个语言使用分开的类型，((("types", "not using for languages")))((("languages", "not using types for")))来代替使用分开的索引。
+为了达到最佳效果，你应当避免使用类型。在 <<mapping>> 解释过，不同类型但有相同域名的域会被索引在 _相同的倒排索引_ 中。这意味着不同类型（和不同语言）的词频混合在了一起。
 
-You may be tempted to use a separate type for each language,((("types", "not using for languages")))((("languages", "not using types for"))) instead of a
-separate index. For best results, you should avoid using types for this
-purpose.  As explained in <<mapping>>, fields from different types but with
-the same field name are indexed into the _same inverted index_.  This means
-that the term frequencies from each type (and thus each language) are mixed
-together.
-
-To ensure that the term frequencies of one language don't pollute those of
-another, either use a separate index for each language, or a separate field,
-as explained in the next section.
+为了确保一种语言的词频不会污染其他语言的词频，在后面的章节中会介绍到，无论是为每个语言使用单独的索引，还是使用单独的域都可以。
 
 *************************************************
