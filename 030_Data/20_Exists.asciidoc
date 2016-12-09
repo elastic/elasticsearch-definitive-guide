@@ -1,16 +1,14 @@
 [[doc-exists]]
-=== Checking Whether a Document Exists
+=== 检查文档是否存在
 
-If all you want to do is to check whether a ((("documents", "checking whether a document exists")))document exists--you're not
-interested in the content at all--then use((("HEAD method")))((("HTTP methods", "HEAD"))) the `HEAD` method instead
-of the `GET` method. `HEAD` requests don't return a body, just HTTP headers:
+如果只想检查一个文档是否存在((("documents", "checking whether a document exists")))--根本不想关心内容--那么用((("HEAD method")))((("HTTP methods", "HEAD"))) `HEAD` 方法来代替 `GET` 方法。 `HEAD` 请求没有返回体，只返回一个 HTTP 请求报头：
 
 [source,js]
 --------------------------------------------------
 curl -i -XHEAD http://localhost:9200/website/blog/123
 --------------------------------------------------
 
-Elasticsearch will return a `200 OK` status code if the document exists:
+如果文档存在， Elasticsearch 将返回一个 `200 ok` 的状态码：
 
 [source,js]
 --------------------------------------------------
@@ -19,7 +17,7 @@ Content-Type: text/plain; charset=UTF-8
 Content-Length: 0
 --------------------------------------------------
 
-And a `404 Not Found` if it doesn't exist:
+若文档不存在， Elasticsearch 将返回一个 `404 Not Found` 的状态码：
 
 [source,js]
 --------------------------------------------------
@@ -33,6 +31,4 @@ Content-Type: text/plain; charset=UTF-8
 Content-Length: 0
 --------------------------------------------------
 
-Of course, just because a document didn't exist when you checked it, doesn't
-mean that it won't exist a millisecond later: another process might create the
-document in the meantime.
+当然，一个文档仅仅是在检查的时候不存在，并不意味着一毫秒之后它也不存在：也许同时正好另一个进程就创建了该文档。
