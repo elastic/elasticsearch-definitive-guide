@@ -1,11 +1,10 @@
 [[document]]
-=== What Is a Document?
+=== 什么是文档?
 
-Most entities or objects in most applications can be serialized into a JSON
-object, with keys and values.((("objects")))((("JSON", "objects")))((("keys and values"))) A _key_ is the name of a field or property,
-and a _value_ can ((("values")))be a string, a number, a Boolean, another object, an array
-of values, or some other specialized type such as a string representing a date
-or an object representing a geolocation:
+在大多数应用中，多数实体或对象可以被序列化为包含键值对的 JSON 对象。
+((("objects")))((("JSON", "objects")))((("keys and values")))
+一个 _键_ 可以是一个字段或字段的名称，一个 _值_ 可以((("values")))是一个字符串，一个数字，一个布尔值，
+另一个对象，一些数组值，或一些其它特殊类型诸如表示日期的字符串，或代表一个地理位置的对象：
 
 [source,js]
 --------------------------------------------------
@@ -32,82 +31,74 @@ or an object representing a geolocation:
 --------------------------------------------------
 
 
-Often, we use the terms _object_ and _document_ interchangeably. However,
-there is a distinction.((("objects", "documents versus")))((("documents", "objects versus")))  An object is just a JSON object--similar to what is
-known as a hash, hashmap, dictionary, or associative array. Objects may contain
-other objects. In Elasticsearch, the term _document_ has a specific meaning. It refers
-to the top-level, or root object that((("root object"))) is serialized into JSON and
-stored in Elasticsearch under a unique ID.
+通常情况下，我们使用的术语 _对象_ 和 _文档_ 是可以互相替换的。不过，有一个区别：((("objects", "documents versus")))((("documents", "objects versus")))
+一个对象仅仅是类似于 hash 、 hashmap 、字典或者关联数组的 JSON 对象，对象中也可以嵌套其他的对象。
+对象可能包含了另外一些对象。在 Elasticsearch 中，术语 _文档_ 有着特定的含义。它是指最顶层或者根对象((("root object"))),
+这个根对象被序列化成 JSON 并存储到 Elasticsearch 中，指定了唯一 ID。
 
-WARNING: Field names can be any valid string, but _may not_ include periods.
 
-=== Document Metadata
+WARNING: 字段的名字可以是任何合法的字符串，但不可以包含时间段。
 
-A document doesn't consist only of its data.((("documents", "metadata"))) It also has
-_metadata_&#x2014;information _about_ the document.((("metadata, document"))) The three required metadata
-elements are as follows:
+[[_Document_Metadata]]
+=== 文档元数据
+
+一个文档不仅仅包含它的数据((("documents", "metadata"))) ，也包含 _元数据_ &#x2014;&#x2014; _有关_ 文档的信息。
+((("metadata, document")))三个必须的元数据元素如下：
 
 
  `_index`::
-   Where the document lives
+   文档在哪存放
 
  `_type`::
-   The class of object that the document represents
+   文档表示的对象类别
 
  `_id`::
-   The unique identifier for the document
+   文档唯一标识
+
 
 ==== _index
 
-An _index_ is a collection of documents that should be grouped together for a
-common reason.  For example, you may store all your products in a `products` index,
-while all your sales transactions go in `sales`.  Although it is possible to store
-unrelated data together in a single index, it is often considered an anti-pattern.
+一个 _索引_ 应该是因共同的特性被分组到一起的文档集合。
+例如，你可能存储所有的产品在索引 `products` 中，而存储所有销售的交易到索引 `sales` 中。
+虽然也允许存储不相关的数据到一个索引中，但这通常看作是一个反模式的做法。
+
 
 [TIP]
 ====
-Actually, in Elasticsearch, our data is stored and indexed in _shards_,
-while an index is just a logical namespace that groups together one or more
-shards.((("shards", "grouped in indices"))) However, this is an internal detail; our application shouldn't care
-about shards at all.  As far as our application is concerned, our documents
-live in an _index_. Elasticsearch takes care of the details.
+实际上，在 Elasticsearch 中，我们的数据是被存储和索引在 _分片_ 中，而一个索引仅仅是逻辑上的命名空间，
+这个命名空间由一个或者多个分片组合在一起。((("shards", "grouped in indices")))
+然而，这是一个内部细节，我们的应用程序根本不应该关心分片，对于应用程序而言，只需知道文档位于一个 _索引_ 内。
+Elasticsearch 会处理所有的细节。
 ====
 
-We cover how to create and manage indices ourselves in <<index-management>>,
-but for now we will let Elasticsearch create the index for us.  All we have to
-do is choose an index name.  This name must be lowercase, cannot begin with an
-underscore, and cannot contain commas. Let's use `website` as our index name.
+我们将在 <<index-management>> 介绍如何自行创建和管理索引，但现在我们将让 Elasticsearch 帮我们创建索引。
+所有需要我们做的就是选择一个索引名，这个名字必须小写，不能以下划线开头，不能包含逗号。我们用 `website` 作为索引名举例。
+
 
 ==== _type
 
-Data may be grouped loosely together in an index, but often there are sub-partitions
-inside that data which may be useful to explicitly define.  For example, all your
-products may go inside a single index.  But you have different categories of products,
-such as "electronics", "kitchen" and "lawn-care".
+数据可能在索引中只是松散的组合在一起，但是通常明确定义一些数据中的子分区是很有用的。
+例如，所有的产品都放在一个索引中，但是你有许多不同的产品类别，比如 "electronics" 、 "kitchen" 和 "lawn-care"。
 
-The documents all share an identical (or very similar) schema: they have a title,
-description, product code, price.  They just happen to belong to sub-categories
-under the umbrella of "Products".
 
-Elasticsearch exposes a feature called _types_ which allows you to logically
-partition data inside of an index.  Documents in different types may have different
-fields, but it is best if they are highly similar.  We'll talk more about the restrictions
-and applications of types in <<mapping>>.
+这些文档共享一种相同的（或非常相似）的模式：他们有一个标题、描述、产品代码和价格。他们只是正好属于“产品”下的一些子类。
 
-A `_type` name can be lowercase or uppercase, but shouldn't begin with an
-underscore or period.  It also may not contain commas,((("types", "names of")))
-and is limited to a length of 256 characters. We will use `blog` for our type name.
+
+Elasticsearch 公开了一个成为 _types_ （类型）的特性，它允许您在索引中对数据进行逻辑分区。不同 types 的文档可能有不同的字段，但最好能够非常相似。
+我们将在 <<mapping>> 中更多的讨论关于 types 的一些应用和限制。
+
+
+一个  `_type` 命名可以是大写或者小写，但是不能以下划线或者句号开头，不应该包含逗号，((("types", "names of")))
+并且长度限制为256个字符. 我们使用 `blog` 作为类型名举例。
+
 
 ==== _id
 
-The _ID_ is a string that,((("id", "&#x5f;id, in document metadata"))) when combined with the `_index` and `_type`,
-uniquely identifies a document in Elasticsearch. When creating a new document,
-you can either provide your own `_id` or let Elasticsearch generate one for
-you.
+_ID_ 是一个字符串，((("id", "&#x5f;id, in document metadata")))当它和 `_index` 以及 `_type` 组合就可以唯一确定 Elasticsearch 中的一个文档。
+当你创建一个新的文档，要么提供自己的 `_id` ，要么让 Elasticsearch 帮你生成。
 
-==== Other Metadata
+[[_Other_Metadata]]
+==== 其他元数据
 
-There are several other metadata elements, which are presented in
-<<mapping>>. With the elements listed previously, we are already able to store a
-document in Elasticsearch and to retrieve it by ID--in other words, to use
-Elasticsearch as a document store.
+还有一些其他的元数据元素，他们在 <<mapping>> 进行了介绍。通过前面已经列出的元数据元素，
+我们已经能存储文档到 Elasticsearch 中并通过 ID 检索它--换句话说，使用 Elasticsearch 作为文档的存储介质。
