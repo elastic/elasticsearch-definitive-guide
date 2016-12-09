@@ -31,7 +31,7 @@ image::images/elas_1107.png["After a refresh, the buffer is cleared but the tran
 3. 这个进程继续工作，更多的文档被添加到内存缓冲区和追加到事务日志（见 <<img-xlog-pre-flush>> ）。
 +
 [[img-xlog-pre-flush]]
-. 事务日志不断积累文档
+.事务日志不断积累文档
 image::images/elas_1108.png["The transaction log keeps accumulating documents"]
 
 
