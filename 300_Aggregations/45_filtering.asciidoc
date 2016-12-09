@@ -1,15 +1,12 @@
+[[_filtering_queries_and_aggregations]]
+== 过滤和聚合
 
-== Filtering Queries and Aggregations
-
-A natural extension to aggregation scoping are filtering queries.  Because the aggregation
-operates in the context of the query scope, any filter applied to the query
-will also apply to the aggregation.
+聚合范围限定还有一个自然的扩展就是过滤。因为聚合是在查询结果范围内操作的，任何可以适用于查询的过滤器也可以应用在聚合上。
 
 [float="true"]
-=== Filtering Queries
-If we want to find all cars over $10,000 and also calculate the average price
-for those cars,((("filtering", "serch query results")))((("filtering query")))
-((("queries"))) we can use a `constant_score` query and its `filter` clause:
+=== 过滤
+如果我们想找到售价在 $10,000 美元之上的所有汽车同时也为这些车计算平均售价，((("filtering", "serch query results")))((("filtering query")))
+((("queries"))) 可以简单地使用一个 `constant_score` 查询和 `filter` 约束：
 
 [source,js]
 --------------------------------------------------
@@ -36,29 +33,19 @@ GET /cars/transactions/_search
 --------------------------------------------------
 // SENSE: 300_Aggregations/45_filtering.json
 
-Fundamentally, using a non-scoring query is no different from using a `match`
-query, as we discussed in the previous chapter.  The query returns a certain
-subset of documents, and the aggregation operates on those documents.  It just happens
-to omit scoring and may proactively cache bitsets, etc.
+这正如我们在前面章节中讨论过那样，从根本上讲，使用 `non-scoring` 查询和使用 `match` 查询没有任何区别。查询（包括了一个过滤器）返回一组文档的子集，聚合正是操作这些文档。使用 `filtering query` 会忽略评分，并有可能会缓存结果数据等等。
 
 [float="true"]
-=== Filter Bucket
+=== 过滤桶（Filter Bucket）
 
-But what if you would like to filter just the aggregation results?((("filtering", "aggregation results, not the query")))((("aggregations", "filtering just aggregations")))  Imagine we
-are building the search page for our car dealership.  We want to display
-search results according to what the user searches for.  But we also want
-to enrich the page by including the average price of cars (matching the search)
-that were sold in the last month.
+但是如果我们只想对聚合结果过滤怎么办？((("filtering", "aggregation results, not the query")))((("aggregations", "filtering just aggregations"))) 假设我们正在为汽车经销商创建一个搜索页面，
+我们希望显示用户搜索的结果，但是我们同时也想在页面上提供更丰富的信息，包括（与搜索匹配的）上个月度汽车的平均售价。
 
-We can't use simple scoping here, since there are two different criteria.  The
-search results must match +ford+, but the aggregation results must match +ford+
-AND +sold > now - 1M+.
+这里我们无法简单的做范围限定，因为有两个不同的条件。搜索结果必须是 +ford+ ，但是聚合结果必须满足 +ford+ AND +sold > now - 1M+ 。
 
-To solve this problem, we can use a special bucket called `filter`.((("filter bucket")))((("buckets", "filter")))  You specify
-a filter, and when documents match the filter's criteria, they are added to the
-bucket.
+为了解决这个问题，我们可以用一种特殊的桶，叫做 `filter` （注：过滤桶） 。((("filter bucket")))((("buckets", "filter"))) 我们可以指定一个过滤桶，当文档满足过滤桶的条件时，我们将其加入到桶内。
 
-Here is the resulting query:
+查询结果如下：
 
 [source,js]
 --------------------------------------------------
@@ -91,34 +78,22 @@ GET /cars/transactions/_search
 }
 --------------------------------------------------
 // SENSE: 300_Aggregations/45_filtering.json
-<1> Using the `filter` bucket to apply a filter in addition to the `query` scope.
-<2> This `avg` metric will therefore average only docs that are both +ford+ and sold in the last month.
+<1> 使用 `过滤` 桶在 `查询` 范围基础上应用过滤器。
+<2> `avg` 度量只会对 +ford+ 和上个月售出的文档计算平均售价。
 
-Since the `filter` bucket operates like any other bucket, you are free to nest
-other buckets and metrics inside.  All nested components will "inherit" the filter.
-This allows you to filter selective portions of the aggregation as required.
+因为 `filter` 桶和其他桶的操作方式一样，所以可以随意将其他桶和度量嵌入其中。所有嵌套的组件都会 "继承" 这个过滤，这使我们可以按需针对聚合过滤出选择部分。
 
 [float="true"]
-=== Post Filter
+=== 后过滤器
 
-So far, we have a way to filter both the search results and aggregations (a
-non-scoring `filter` query), as well as filtering individual portions of the aggregation
-(`filter` bucket).
+目前为止，我们可以同时对搜索结果和聚合结果进行过滤（不计算得分的 `filter` 查询），以及针对聚合结果的一部分进行过滤（ `filter` 桶）。
 
-You may be thinking to yourself, "hmm...is there a way to filter _just_ the search
-results but not the aggregation?"((("filtering", "search results, not the aggregation")))((("post filter")))  The answer is to use a `post_filter`.
+我们可能会想，"只过滤搜索结果，不过滤聚合结果呢？"((("filtering", "search results, not the aggregation")))((("post filter"))) 答案是使用 `post_filter` 。
 
-This is a top-level search-request element that accepts a filter.  The filter is
-applied _after_ the query has executed (hence the +post+ moniker: it runs
-_post query_ execution).  Because it operates after the query has executed,
-it does not affect the query scope--and thus does not affect the aggregations
-either.
+它是接收一个过滤器的顶层搜索请求元素。这个过滤器在查询 _之后_ 执行（这正是该过滤器的名字的由来：它在查询之后 +post+ 执行）。正因为它在查询之后执行，它对查询范围没有任何影响，所以对聚合也不会有任何影响。
 
-We can use this behavior to apply additional filters to our search
-criteria that don't affect things like categorical facets in your UI.  Let's
-design another search page for our car dealer.  This page will allow the user
-to search for a car and filter by color.  Color choices are populated via an
-aggregation:
+我们可以利用这个行为对查询条件应用更多的过滤器，而不会影响其他的操作，就如 UI 上的各个分类面。让我们为汽车经销商设计另外一个搜索页面，这个页面允许用户搜索汽车同时可以根据颜色来过滤。颜色的选项是通过聚合获得的：
+
 
 [source,js]
 --------------------------------------------------
@@ -143,43 +118,29 @@ GET /cars/transactions/_search
 }
 --------------------------------------------------
 // SENSE: 300_Aggregations/45_filtering.json
-<1> The `post_filter` element is a +top-level+ element and filters just the search hits.
+<1> `post_filter` 元素是 +top-level+ 而且仅对命中结果进行过滤。
 
-The `query` portion is finding all +ford+ cars.  We are then building a list of
-colors with a `terms` aggregation.  Because aggregations operate in the query
-scope, the list of colors will correspond with the colors that Ford cars are
-painted.
+`查询` 部分找到所有的 +ford+ 汽车，然后用 `terms` 聚合创建一个颜色列表。因为聚合对查询范围进行操作，颜色列表与福特汽车有的颜色相对应。
 
-Finally, the `post_filter` will filter the search results to show only green
-+ford+ cars.  This happens _after_ the query is executed, so the aggregations
-are unaffected.
+最后， `post_filter` 会过滤搜索结果，只展示绿色 +ford+ 汽车。这在查询执行过 _后_ 发生，所以聚合不受影响。
 
-This is often important for coherent UIs.  Imagine that a user clicks a category in
-your UI (for example, green).  The expectation is that the search results are filtered,
-but _not_ the UI options.  If you applied a Boolean `filter` query, the UI would
-instantly transform to show _only_ +green+ as an option--not what the user wants!
+这通常对 UI 的连贯一致性很重要，可以想象用户在界面商选择了一类颜色（比如：绿色），期望的是搜索结果已经被过滤了，而 _不是_ 过滤界面上的选项。如果我们应用 `filter` 查询，界面会马上变成 _只_ 显示 +绿色+ 作为选项，这不是用户想要的！
 
 [WARNING]
-.Performance consideration
+.性能考虑（Performance consideration）
 ====
-Use a `post_filter` _only_ if you need to differentially filter search results
-and aggregations. ((("post filter", "performance and")))Sometimes people will use `post_filter` for regular searches.
+当你需要对搜索结果和聚合结果做不同的过滤时，你才应该使用 `post_filter` ，((("post filter", "performance and"))) 有时用户会在普通搜索使用 `post_filter` 。
 
-Don't do this!  The nature of the `post_filter` means it runs _after_ the query,
-so any performance benefit of filtering (such as caches) is lost completely.
+不要这么做！ `post_filter` 的特性是在查询 _之后_ 执行，任何过滤对性能带来的好处（比如缓存）都会完全失去。
 
-The `post_filter` should be used only in combination with aggregations, and only
-when you need differential filtering.
+在我们需要不同过滤时， `post_filter` 只与聚合一起使用。
 ====
 
 [float="true"]
-=== Recap
+=== 小结（Recap）
 
-Choosing the appropriate type of filtering--search hits, aggregations, or
-both--often boils down to how you want your user interface to behave.  Choose
-the appropriate filter (or combinations) depending on how you want to display
-results to your user.
+选择合适类型的过滤（如：搜索命中、聚合或两者兼有）通常和我们期望如何表现用户交互有关。选择合适的过滤器（或组合）取决于我们期望如何将结果呈现给用户。
 
- - A non-scoring query inside a `filter` clause affects both search results and aggregations.
- - A `filter` bucket affects just aggregations.
- - A `post_filter` affects just search results.
+ - 在 `filter` 过滤中的 `non-scoring` 查询，同时影响搜索结果和聚合结果。
+ - `filter` 桶影响聚合。
+ - `post_filter` 只影响搜索结果。
