@@ -1,17 +1,12 @@
 
 [[_scoping_aggregations]]
-== Scoping Aggregations
+== 范围限定的聚合
 
-With all of the aggregation examples given so far, you may have noticed that we
-omitted a `query` from the search request. ((("queries", "in aggregations")))((("aggregations", "scoping"))) The entire request was
-simply an aggregation.
+所有聚合的例子到目前为止，你可能已经注意到，我们的搜索请求省略了一个 `query` 。((("queries", "in aggregations")))((("aggregations", "scoping"))) 整个请求只不过是一个聚合。
 
-Aggregations can be run at the same time as search requests, but you need to
-understand a new concept: _scope_. ((("scoping aggregations", id="ix_scopeaggs", range="startofrange"))) By default, aggregations operate in the same 
-scope as the query.  Put another way, aggregations are calculated on the set of 
-documents that match your query.
+聚合可以与搜索请求同时执行，但是我们需要理解一个新概念： _范围_ 。((("scoping aggregations", id="ix_scopeaggs", range="startofrange"))) 默认情况下，聚合与查询是对同一范围进行操作的，也就是说，聚合是基于我们查询匹配的文档集合进行计算的。
 
-Let's look at one of our first aggregation examples:
+让我们看看第一个聚合的示例：
 
 [source,js]
 --------------------------------------------------
@@ -29,9 +24,7 @@ GET /cars/transactions/_search
 --------------------------------------------------
 // SENSE: 300_Aggregations/40_scope.json
 
-You can see that the aggregation is in isolation.  In reality, Elasticsearch
-assumes "no query specified" is equivalent to "query all documents." The preceding
-query is internally translated as follows:
+我们可以看到聚合是隔离的。现实中，Elasticsearch 认为 "没有指定查询" 和 "查询所有文档" 是等价的。前面这个查询内部会转化成下面的这个请求：
 
 [source,js]
 --------------------------------------------------
@@ -52,18 +45,11 @@ GET /cars/transactions/_search
 --------------------------------------------------
 // SENSE: 300_Aggregations/40_scope.json
 
-The aggregation always operates in the scope of the query, so an isolated
-aggregation really operates in the scope of ((("match_all query", "isolated aggregations in scope of")))a `match_all` query--that is to say,
-all documents.
+因为聚合总是对查询范围内的结果进行操作的，所以一个隔离的聚合实际上是在对 ((("match_all query", "isolated aggregations in scope of"))) `match_all` 的结果范围操作，即所有的文档。
 
-Once armed with the knowledge of scoping, we can start to customize 
-aggregations even further.  All of our previous examples calculated statistics
-about _all_ of the data: top-selling cars, average price of all cars, most sales
-per month, and so forth.
+一旦有了范围的概念，我们就能更进一步对聚合进行自定义。我们前面所有的示例都是对 _所有_ 数据计算统计信息的：销量最高的汽车，所有汽车的平均售价，最佳销售月份等等。
 
-With scope, we can ask questions such as "How many colors are Ford cars
-available in?"  We do this by simply adding a query to the request (in this case
-a `match` query):
+利用范围，我们可以问“福特在售车有多少种颜色？”诸如此类的问题。可以简单的在请求中加上一个查询（本例中为 `match` 查询）：
 
 [source,js]
 --------------------------------------------------
@@ -85,8 +71,7 @@ GET /cars/transactions/_search
 --------------------------------------------------
 // SENSE: 300_Aggregations/40_scope.json
 
-Since we aren't specifying `"size" : 0`, both the search
-results and the aggregation results are returned:
+因为我们没有指定 `"size" : 0` ，所以搜索结果和聚合结果都被返回了：
 
 [source,js]
 --------------------------------------------------
@@ -132,27 +117,18 @@ results and the aggregation results are returned:
 --------------------------------------------------
 
 
-This may seem trivial, but it is the key to advanced and powerful dashboards.
-You can transform any static dashboard into a real-time data exploration device
-by adding a search bar.((("dashboards", "adding a search bar")))  This allows the user to search for terms and see all
-of the graphs (which are powered by aggregations, and thus scoped to the query)
-update in real time.  Try that with Hadoop!
+看上去这并没有什么，但却对高大上的仪表盘来说至关重要。
+加入一个搜索栏可以将任何静态的仪表板变成一个实时数据搜索设备。((("dashboards", "adding a search bar"))) 这让用户可以搜索数据，查看所有实时更新的图形（由于聚合的支持以及对查询范围的限定）。
+这是 Hadoop 无法做到的！
 
 [float]
-=== Global Bucket
+=== 全局桶（Global Bucket）
 
-You'll often want your aggregation to be scoped to your query.  But sometimes
-you'll want to search for a subset of data, but aggregate across _all_ of
-your data.((("aggregations", "scoping", "global bucket")))((("scoping aggregations", "using a global bucket")))
+通常我们希望聚合是在查询范围内的，但有时我们也想要搜索它的子集，而聚合的对象却是 _所有_ 数据。((("aggregations", "scoping", "global bucket")))((("scoping aggregations", "using a global bucket")))
 
-For example, say you want to know the average price of Ford cars compared to the
-average price of _all_ cars. We can use a regular aggregation (scoped to the query) 
-to get the first piece of information.  The second piece of information can be 
-obtained by using((("buckets", "global")))((("global bucket"))) a `global` bucket.
+例如，比方说我们想知道福特汽车与 _所有_ 汽车平均售价的比较。我们可以用普通的聚合（查询范围内的）得到第一个信息，然后用 `全局` ((("buckets", "global")))((("global bucket"))) 桶获得第二个信息。
 
-The +global+ bucket will contain _all_ of your documents, regardless of the query 
-scope; it bypasses the scope completely.  Because it is a bucket, you can nest
-aggregations inside it as usual:
++全局+ 桶包含 _所有_ 的文档，它无视查询的范围。因为它还是一个桶，我们可以像平常一样将聚合嵌套在内：
 
 [source,js]
 --------------------------------------------------
@@ -174,26 +150,18 @@ GET /cars/transactions/_search
                 "avg_price": {
                     "avg" : { "field" : "price" } <3>
                 }
-                
+
             }
         }
     }
 }
 --------------------------------------------------
 // SENSE: 300_Aggregations/40_scope.json
-<1> This aggregation operates in the query scope (for example, all docs matching +ford+)
-<2> The `global` bucket has no parameters.
-<3> This aggregation operates on the all documents, regardless of the make.
+<1> 聚合操作在查询范围内（例如：所有文档匹配 +ford+ ）
+<2> `global` 全局桶没有参数。
+<3> 聚合操作针对所有文档，忽略汽车品牌。
 
 
-The +single_avg_price+ metric calculation is based on all documents that fall under the
-query scope--all +ford+ cars.  The +avg_price+ metric is nested under a 
-`global` bucket, which means it ignores scoping entirely and calculates on 
-all the documents.  The average returned for that aggregation represents
-the average price of all cars.
++single_avg_price+ 度量计算是基于查询范围内所有文档，即所有 +福特+ 汽车。+avg_price+ 度量是嵌套在 `全局` 桶下的，这意味着它完全忽略了范围并对所有文档进行计算。聚合返回的平均值是所有汽车的平均售价。
 
-If you've made it this far in the book, you'll recognize the mantra: use a filter
-wherever you can.  The same applies to aggregations, and in the next chapter
-we show you how to filter an aggregation instead of just limiting the query
-scope.((("scoping aggregations", range="endofrange", startref="ix_scopeaggs")))
-
+如果能一直坚持读到这里，应该知道我们有个真言：尽可能的使用过滤器。它同样可以应用于聚合，在下一章中，我们会展示如何对聚合结果进行过滤而不是仅对查询范围做限定。((("scoping aggregations", range="endofrange", startref="ix_scopeaggs")))
