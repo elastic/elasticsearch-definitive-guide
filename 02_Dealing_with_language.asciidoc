@@ -1,7 +1,7 @@
 ifndef::es_build[= placeholder2]
 
 [[languages]]
-= Dealing with Human Language
+= 处理人类语言
 
 [partintro]
 --
@@ -9,58 +9,44 @@ ifndef::es_build[= placeholder2]
 ifdef::es_build[]
 [quote,Matt Groening]
 ____
-``I know all those words, but that sentence makes no sense to me.''
+``我认识这句话里的所有单词，但并不能理解全句。''
 ____
 endif::es_build[]
 
 ifndef::es_build[]
 ++++
 <blockquote data-type="epigraph">
-    <p>I know all those words, but that sentence makes no sense to me.</p>
+    <p>我认识这句话里的所有单词，但并不能理解全句。</p>
     <p data-type="attribution">Matt Groening</p>
 </blockquote>
 ++++
 endif::es_build[]
 
-Full-text search is a battle between _precision_&#x2014;returning as few
-irrelevant documents as possible--and _recall_&#x2014;returning as many relevant
-documents as possible.((("recall", "in full text search")))((("precision", "in full text search")))((("full text search", "battle between precision and recall"))) While matching only the exact words that the user has
-queried would be precise, it is not enough. We would miss out on many
-documents that the user would consider to be relevant. Instead, we need to
-spread the net wider, to also search for words that are not exactly the same
-as the original but are related.
+全文搜索是一场 _查准率_ 与 _查全率_ 之间的较量&#x2014;查准率即尽量返回较少的无关文档，而查全率则尽量返回较多的相关文档。
+((("recall", "in full text search")))((("precision", "in full text search")))((("full text search", "battle between precision and recall")))
+尽管能够精准匹配用户查询的单词，但这仍然不够，我们会错过很多被用户认为是相关的文档。
+因此，我们需要把网撒得更广一些，去搜索那些和原文不是完全匹配但却相关的单词。
 
-Wouldn't you expect a search for ``quick brown fox'' to match a document
-containing ``fast brown foxes,'' ``Johnny Walker'' to match ``Johnnie
-Walker,'' or ``Arnolt Schwarzenneger'' to match ``Arnold Schwarzenegger''?
+难道你不期待在搜索“quick brown fox“时匹配到包含“fast brown foxed“的文档，或是搜索“Johnny Walker“时匹配到“Johnnie Walker“， 又或是搜索“Arnolt Schwarzenneger“时匹配到“Arnold Schwarzenegger“吗？
 
-If documents exist that _do_ contain exactly what the user has queried,
-those documents should appear at the top of the result set, but weaker matches
-can be included further down the list.  If no documents match
-exactly, at least we can show the user potential matches; they may even
-be what the user originally intended!
+如果文档 _确实_ 包含用户查询的内容，那么这些文档应当出现在返回结果的最前面，而匹配程度较低的文档将会排在靠后的位置。
+如果没有任何完全匹配的文档，我们至少可以给用户展示一些潜在的匹配结果；它们甚至可能就是用户最初想要的结果。
 
-There are several((("full text search", "finding inexact matches"))) lines of attack:
+以下列出了一些可优化的地方：((("full text search", "finding inexact matches")))
 
-*   Remove diacritics like +´+, `^`, and `¨` so that a search for `rôle` will
-    also match `role`, and vice versa. See <<token-normalization>>.
+*   清除类似 +´+ ， `^` ， `¨` 的变音符号，这样在搜索 `rôle` 的时候也会匹配 `role` ，反之亦然。请见 <<token-normalization>>。
 
-*   Remove the distinction between singular and plural&#x2014;`fox` versus `foxes`&#x2014;or between tenses&#x2014;`jumping` versus `jumped` versus `jumps`&#x2014;by _stemming_ each word to its root form. See <<stemming>>.
+*   通过提取单词的词干，清除单数和复数之间的差异&#x2014;`fox` 与 `foxes`&#x2014;以及时态上的差异&#x2014;`jumping` 、 `jumped` 与 `jumps` 。请见 <<stemming>>。
 
-*   Remove commonly used words or _stopwords_ like `the`, `and`, and `or`
-    to improve search performance.  See <<stopwords>>.
+*   清除常用词或者 _停用词_ ，如 `the` ， `and` ， 和 `or` ，从而提升搜索性能。请见 <<stopwords>>。
 
-*   Including synonyms so that a query for `quick` could also match `fast`,
-    or `UK` could match `United Kingdom`. See <<synonyms>>.
+*   包含同义词，这样在搜索 `quick` 时也可以匹配 `fast` ，或者在搜索 `UK` 时匹配 `United Kingdom` 。 请见 <<synonyms>>。
 
-*   Check for misspellings or alternate spellings, or match on _homophones_&#x2014;words that sound the same, like `their` versus `there`, `meat` versus
-    `meet`  versus `mete`. See <<fuzzy-matching>>.
+*   检查拼写错误和替代拼写方式，或者 _同音异型词_ &#x2014;发音一致的不同单词，例如 `their` 与 `there` ， `meat` 、 `meet` 与 `mete` 。 请见 <<fuzzy-matching>>。
 
-Before we can manipulate individual words, we need to divide text into
-words, ((("words", "dividing text into")))which means that we need to know what constitutes a _word_. We will
-tackle this in <<identifying-words>>.
+在我们可以操控单个单词之前，需要先将文本切分成单词，((("words", "dividing text into")))这也意味着我们需要知道 _单词_ 是由什么组成的。我们将在 <<identifying-words>> 章节阐释这个问题。
 
-But first, let's take a look at how to get started quickly and easily.
+在这之前，让我们看看如何更快更简单地开始。
 --
 
 include::200_Language_intro.asciidoc[]
