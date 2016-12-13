@@ -10,11 +10,13 @@ The `cluster-update` API operates((("Cluster Update API"))) in two modes:
 
 Transient:: 
     These changes are in effect until the cluster restarts.  Once
-a full cluster restart takes place, these settings are erased.
+a full cluster restart takes place, these settings are erased. They override
+persistent settings and settings in the static configuration files.
 
 Persistent::
     These changes are permanently in place unless explicitly changed.
-They will survive full cluster restarts and override the static configuration files.
+They will survive full cluster restarts. They override the static configuration files
+and can be overridden by transient settings.
 
 Transient versus persistent settings are supplied in the JSON body:
 
