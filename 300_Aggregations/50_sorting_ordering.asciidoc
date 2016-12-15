@@ -1,21 +1,16 @@
+[[_sorting_multivalue_buckets]]
+== 多桶排序
 
-== Sorting Multivalue Buckets
+多值桶（ `terms` 、 `histogram` 和 +date_histogram+ ）动态生成很多桶。((("sorting", "of multivalue buckets")))((("buckets", "multivalue, sorting")))((("aggregations", "sorting multivalue buckets"))) Elasticsearch 是如何决定这些桶展示给用户的顺序呢？
 
-Multivalue buckets--the `terms`, `histogram`, and ++date_histogram++&#x2014;dynamically produce many buckets.((("sorting", "of multivalue buckets")))((("buckets", "multivalue, sorting")))((("aggregations", "sorting multivalue buckets")))  How does Elasticsearch decide the order that
-these buckets are presented to the user?
+默认的，桶会根据 `doc_count` ((("doc_count", "buckets ordered by"))) 降序排列。这是一个好的默认行为，因为通常我们想要找到文档中与查询条件相关的最大值：售价、人口数量、频率。但有些时候我们希望能修改这个顺序，不同的桶有着不同的处理方式。
 
-By default, buckets are ordered by `doc_count` in((("doc_count", "buckets ordered by"))) descending order.  This is a
-good default because often we want to find the documents that maximize some
-criteria: price, population, frequency. But sometimes you'll want to modify this sort order, and there are a few ways to
-do it, depending on the bucket.
+=== 内置排序（Intrinsic Sorts）
 
-=== Intrinsic Sorts
+这些排序模式是桶 _固有的_ 能力：它们操作桶生成的数据 ((("sorting", "of multivalue buckets", "intrinsic sorts")))，比如 `doc_count` 。
+((("buckets", "multivalue, sorting", "intrinsic sorts"))) 它们共享相同的语法，但是根据使用桶的不同会有些细微差别。
 
-These sort modes are _intrinsic_ to the bucket: they operate on data that bucket((("sorting", "of multivalue buckets", "intrinsic sorts")))
-generates, such as `doc_count`.((("buckets", "multivalue, sorting", "intrinsic sorts")))  They share the same syntax but differ slightly
-depending on the bucket being used.
-
-Let's perform a `terms` aggregation but sort by `doc_count`, in ascending order:
+让我们做一个 `terms` 聚合但是按 `doc_count` 值的升序排序：
 
 [source,js]
 --------------------------------------------------
@@ -35,29 +30,26 @@ GET /cars/transactions/_search
 }
 --------------------------------------------------
 // SENSE: 300_Aggregations/50_sorting_ordering.json
-<1> Using the `_count` keyword, we can sort by `doc_count`, in ascending order.
+<1> 用关键字 `_count` ，我们可以按 `doc_count` 值的升序排序。
 
-We introduce an +order+ object((("order parameter (aggregations)"))) into the aggregation, which allows us to sort on
-one of several values:
+我们为聚合引入了一个 +order+ 对象，((("order parameter (aggregations)"))) 它允许我们可以根据以下几个值中的一个值进行排序：
 
 `_count`::
-Sort by document count.  Works with `terms`, `histogram`, `date_histogram`.
+按文档数排序。对 `terms` 、 `histogram` 、 `date_histogram` 有效。
 
 `_term`::
-Sort by the string value of a term alphabetically.  Works only with `terms`.
+按词项的字符串值的字母顺序排序。只在 `terms` 内使用。
 
 `_key`::
-Sort by the numeric value of each bucket's key (conceptually similar to `_term`).
-Works only with `histogram` and `date_histogram`.
+按每个桶的键值数值排序（理论上与 `_term` 类似）。
+只在 `histogram` 和 `date_histogram` 内使用。
 
-=== Sorting by a Metric
+=== 按度量排序（Sorting by a Metric）
 
-Often, you'll find yourself wanting to sort based on a metric's calculated value.((("buckets", "multivalue, sorting", "by a metric")))((("metrics", "sorting multivalue buckets by")))((("sorting", "of multivalue buckets", "sorting by a metric")))
-For our car sales analytics dashboard, we may want to build a bar chart of
-sales by car color, but order the bars by the average price, ascending.
+有时，我们会想基于度量计算的结果值进行排序。((("buckets", "multivalue, sorting", "by a metric")))((("metrics", "sorting multivalue buckets by")))((("sorting", "of multivalue buckets", "sorting by a metric")))
+在我们的汽车销售分析仪表盘中，我们可能想按照汽车颜色创建一个销售条状图表，但按照汽车平均售价的升序进行排序。
 
-We can do this by adding a metric to our bucket, and then referencing that
-metric from the +order+ parameter:
+我们可以增加一个度量，再指定 +order+ 参数引用这个度量即可：
 
 [source,js]
 --------------------------------------------------
@@ -82,16 +74,12 @@ GET /cars/transactions/_search
 }
 --------------------------------------------------
 // SENSE: 300_Aggregations/50_sorting_ordering.json
-<1> The average price is calculated for each bucket.
-<2> Then the buckets are ordered by the calculated average in ascending order.
+<1> 计算每个桶的平均售价。
+<2> 桶按照计算平均值的升序排序。
 
-This lets you override the sort order with any metric, simply by referencing
-the name of the metric.  Some metrics, however, emit multiple values.  The
-`extended_stats` metric is a good example: it provides half a dozen individual
-metrics.
+我们可以采用这种方式用任何度量排序，只需简单的引用度量的名字。不过有些度量会输出多个值。 `extended_stats` 度量是一个很好的例子：它输出好几个度量值。
 
-If you want to sort on a multivalue metric,((("metrics", "sorting multivalue buckets by", "multivalue metric"))) you just need to use the
-dot-path to the metric of interest:
+如果我们想使用多值度量进行排序，((("metrics", "sorting multivalue buckets by", "multivalue metric"))) 我们只需以关心的度量为关键词使用点式路径：
 
 [source,js]
 --------------------------------------------------
@@ -116,28 +104,21 @@ GET /cars/transactions/_search
 }
 --------------------------------------------------
 // SENSE: 300_Aggregations/50_sorting_ordering.json
-<1> Using dot notation, we can sort on the metric we are interested in.
+<1> 使用 `.` 符号，根据感兴趣的度量进行排序。
 
-In this example we are sorting on the variance of each bucket, so that colors
-with the least variance in price will appear before those that have more variance.
+在上面这个例子中，我们按每个桶的方差来排序，所以这种颜色售价方差最小的会排在结果集最前面。
 
-=== Sorting Based on "Deep" Metrics
+=== 基于“深度”度量排序（Sorting Based on "Deep" Metrics）
 
-In the prior examples, the metric was a direct child of the bucket.  An average
-price was calculated for each term.((("buckets", "multivalue, sorting", "on deeper, nested metrics")))((("metrics", "sorting multivalue buckets by", "deeper, nested metrics")))  It is possible to sort on _deeper_ metrics,
-which are grandchildren or great-grandchildren of the bucket--with some limitations.
+在前面的示例中，度量是桶的直接子节点。平均售价是根据每个 `term` 来计算的。
+((("buckets", "multivalue, sorting", "on deeper, nested metrics")))((("metrics", "sorting multivalue buckets by", "deeper, nested metrics"))) 在一定条件下，我们也有可能对 _更深_ 的度量进行排序，比如孙子桶或从孙桶。
 
-You can define a path to a deeper, nested metric by using angle brackets (`>`), like
-so: `my_bucket>another_bucket>metric`.
+我们可以定义更深的路径，将度量用尖括号（ `>` ）嵌套起来，像这样： `my_bucket>another_bucket>metric` 。
 
-The caveat is that each nested bucket in the path must be a _single-value_ bucket.
-A `filter` bucket produces((("filter bucket"))) a single bucket:  all documents that match the
-filtering criteria.  Multivalue buckets (such as `terms`) generate many
-dynamic buckets, which makes it impossible to specify a deterministic path.
+需要提醒的是嵌套路径上的每个桶都必须是 _单值_ 的。 `filter` 桶生成 ((("filter bucket"))) 一个单值桶：所有与过滤条件匹配的文档都在桶中。
+多值桶（如：`terms` ）动态生成许多桶，无法通过指定一个确定路径来识别。
 
-Currently, there are only three single-value buckets: `filter`, `global`((("global bucket"))), and `reverse_nested`.  As
-a quick example, let's build a histogram of car prices, but order the buckets
-by the variance in price of red and green (but not blue) cars in each price range:((("histograms", "buckets generated by, sorting on  a deep metric")))
+目前，只有三个单值桶： `filter` 、 `global` ((("global bucket"))) 和 `reverse_nested` 。让我们快速用示例说明，创建一个汽车售价的直方图，但是按照红色和绿色（不包括蓝色）车各自的方差来排序：((("histograms", "buckets generated by, sorting on  a deep metric")))
 
 [source,js]
 --------------------------------------------------
@@ -166,14 +147,9 @@ GET /cars/transactions/_search
 }
 --------------------------------------------------
 // SENSE: 300_Aggregations/50_sorting_ordering.json
-<1> Sort the buckets generated by the histogram according to the variance of a nested metric.
-<2> Because we are using a single-value `filter`, we can use nested sorting.
-<3> Sort on the stats generated by this metric.
+<1> 按照嵌套度量的方差对桶的直方图进行排序。
+<2> 因为我们使用单值过滤器 `filter` ，我们可以使用嵌套排序。
+<3> 按照生成的度量对统计结果进行排序。
 
-In this example, you can see that we are accessing a nested metric.  The `stats`
-metric is a child of `red_green_cars`, which is in turn a child of `colors`.  To
-sort on that metric, we define the path as `red_green_cars>stats.variance`.
-This is allowed because the `filter` bucket is a single-value bucket.
-
-
-
+本例中，可以看到我们如何访问一个嵌套的度量。 `stats` 度量是 `red_green_cars` 聚合的子节点，而 `red_green_cars` 又是 `colors` 聚合的子节点。
+为了根据这个度量排序，我们定义了路径 `red_green_cars>stats.variance` 。我们可以这么做，因为 `filter` 桶是个单值桶。
