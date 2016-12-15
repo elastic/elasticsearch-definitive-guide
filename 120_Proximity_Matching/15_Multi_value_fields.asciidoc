@@ -1,7 +1,6 @@
-=== Multivalue Fields
+=== 多值字段
 
-A curious thing can happen when you try to use phrase matching on multivalue
-fields. ((("proximity matching", "on multivalue fields")))((("match_phrase query", "on multivalue fields"))) Imagine that you index this document:
+对多值字段使用短语匹配时会发生奇怪的事。 ((("proximity matching", "on multivalue fields")))((("match_phrase query", "on multivalue fields"))) 想象一下你索引这个文档:
 
 [source,js]
 --------------------------------------------------
@@ -12,7 +11,7 @@ PUT /my_index/groups/1
 --------------------------------------------------
 // SENSE: 120_Proximity_Matching/15_Multi_value_fields.json
 
-Then run a phrase query for `Abraham Lincoln`:
+然后运行一个对 `Abraham Lincoln` 的短语查询:
 
 [source,js]
 --------------------------------------------------
@@ -27,27 +26,22 @@ GET /my_index/groups/_search
 --------------------------------------------------
 // SENSE: 120_Proximity_Matching/15_Multi_value_fields.json
 
-Surprisingly, our document matches, even though `Abraham` and `Lincoln`
-belong to two different people in the `names` array. The reason for this comes
-down to the way arrays are indexed in Elasticsearch.
+令人惊讶的是， 即使 `Abraham` 和 `Lincoln` 在 `names` 数组里属于两个不同的人名， 我们的文档也匹配了查询。 这一切的原因在Elasticsearch数组的索引方式。
 
-When `John Abraham` is analyzed, it produces this:
+在分析 `John Abraham` 的时候， 产生了如下信息：
 
 * Position 1: `john`
 * Position 2: `abraham`
 
-Then when `Lincoln Smith` is analyzed, it produces this:
+然后在分析 `Lincoln Smith` 的时候， 产生了：
 
 * Position 3: `lincoln`
 * Position 4: `smith`
 
-In other words, Elasticsearch produces exactly the same list of tokens as it would have
-for the single string `John Abraham Lincoln Smith`. Our example query
-looks for `abraham` directly followed by `lincoln`, and these two terms do
-indeed exist, and they are right next to each other, so the query matches.
+换句话说， Elasticsearch对以上数组分析生成了与分析单个字符串 `John Abraham Lincoln Smith` 一样几乎完全相同的语汇单元。 我们的查询示例寻找相邻的 `lincoln` 和 `abraham` ，
+而且这两个词条确实存在，并且它们俩正好相邻， 所以这个查询匹配了。
 
-Fortunately, there is a simple workaround for cases like these, called the
-`position_increment_gap`, which((("mapping (types)", "position_increment_gap")))((("position_increment_gap"))) we need to configure in the field mapping:
+幸运的是， 在这样的情况下有一种叫做 `position_increment_gap` 的简单的解决方案， 它在字段映射中配置((("mapping (types)", "position_increment_gap")))((("position_increment_gap")))。
 
 [source,js]
 --------------------------------------------------
@@ -65,19 +59,14 @@ PUT /my_index/_mapping/groups <2>
 --------------------------------------------------
 // SENSE: 120_Proximity_Matching/15_Multi_value_fields.json
 
-<1> First delete the `groups` mapping and all documents of that type.
-<2> Then create a new `groups` mapping with the correct values.
+<1> 首先删除映射 `groups` 以及这个类型内的所有文档。
+<2> 然后创建一个有正确值的新的映射 `groups` 。
 
-The `position_increment_gap` setting tells Elasticsearch that it should increase
-the current term `position` by the specified value for every new array
-element.  So now, when we index the array of names, the terms are emitted with
-the following positions:
+`position_increment_gap` 设置告诉 Elasticsearch 应该为数组中每个新元素增加当前词条 `position` 的指定值。 所以现在当我们再索引 names 数组时，会产生如下的结果：
 
 * Position 1: `john`
 * Position 2: `abraham`
 * Position 103: `lincoln`
 * Position 104: `smith`
 
-Our phrase query would no longer match a document like this because `abraham`
-and `lincoln` are now 100 positions apart. You would have to add a `slop`
-value of 100 in order for this document to match.
+现在我们的短语查询可能无法匹配该文档因为 `abraham` 和 `lincoln` 之间的距离为 100 。 为了匹配这个文档你必须添加值为 100 的 `slop` 。
