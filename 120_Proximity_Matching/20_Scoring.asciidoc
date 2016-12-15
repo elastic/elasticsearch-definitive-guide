@@ -1,15 +1,9 @@
-=== Closer Is Better
+=== 越近越好
 
-Whereas a phrase query simply excludes documents that don't contain the exact
-query phrase, a _proximity query_&#x2014;a ((("proximity matching", "proximity queries")))((("slop parameter", "proximity queries and")))phrase query where `slop` is greater
-than `0`&#x2014;incorporates the proximity of the query terms into the final
-relevance `_score`. By setting a high `slop` value like `50` or `100`, you can
-exclude documents in which the words are really too far apart, but give a higher
-score to documents in which the words are closer together.
+鉴于一个短语查询仅仅排除了不包含确切查询短语的文档， 而 _邻近查询_ &#x2014; 一个 ((("proximity matching", "proximity queries")))((("slop parameter", "proximity queries and")))
+`slop` 大于 `0`&#x2014; 的短语查询将查询词条的邻近度考虑到最终相关度 `_score` 中。 通过设置一个像 `50` 或者 `100` 这样的高 `slop` 值, 你能够排除单词距离太远的文档， 但是也给予了那些单词临近的的文档更高的分数。
 
-The following proximity query for `quick dog` matches both documents that
-contain the words `quick` and `dog`, but gives a higher score to the
-document((("relevance scores", "for proximity queries"))) in which the words are nearer to each other:
+下列对 `quick dog` 的邻近查询匹配了同时包含 `quick` 和 `dog` 的文档， 但是也给了与 quick 和 dog 更加临近的文档更高的分数((("relevance scores", "for proximity queries"))) ：
 
 [source,js]
 --------------------------------------------------
@@ -27,7 +21,7 @@ POST /my_index/my_type/_search
 --------------------------------------------------
 // SENSE: 120_Proximity_Matching/20_Scoring.json
 
-<1> Note the high `slop` value.
+<1> 注意高 `slop` 值。
 
 [source,js]
 --------------------------------------------------
@@ -50,5 +44,5 @@ POST /my_index/my_type/_search
   ]
 }
 --------------------------------------------------
-<1> Higher score because `quick` and `dog` are close together
-<2> Lower score because `quick` and `dog` are further apart
+<1> 分数较高因为 `quick` 和 `dog` 很接近
+<2> 分数较低因为 `quick` 和 `dog` 分开较远
