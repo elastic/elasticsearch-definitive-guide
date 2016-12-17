@@ -1,10 +1,7 @@
 [[post_deploy]]
-== Post-Deployment
+== 部署后
 
-Once you have deployed your cluster in production, there are some tools and
-best practices to keep your cluster running in top shape.  In this short
-chapter, we talk about configuring settings dynamically, tweaking
-logging levels, improving indexing performance, and backing up your cluster.
+一旦将集群部署到生产环境后，就需要有一些工具及最佳实践经验来保证集群运行在最佳状态。本章将探讨动态配置、日志调优、索引性能优化以及集群备份。
 
 include::520_Post_Deployment/10_dynamic_settings.asciidoc[]
 
