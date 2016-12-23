@@ -1,21 +1,20 @@
 [[sorting]]
-== Sorting and Relevance
+== 排序与相关性
 
-By default, results are returned sorted by _relevance_&#x2014;with the most
-relevant docs first.((("sorting", "by relevance")))((("relevance", "sorting results by"))) Later in this chapter, we explain what we mean by
-_relevance_ and how it is calculated, but let's start by looking at the `sort`
-parameter and how to use it.
+默认情况下，返回的结果是按照 _相关性_ 进行排序的&#x2014;&#x2014;最相关的文档排在最前。((("sorting", "by relevance")))((("relevance", "sorting results by")))
+在本章的后面部分，我们会解释 _相关性_ 意味着什么以及它是如何计算的，
+不过让我们首先看看 `sort` 参数以及如何使用它。
 
-=== Sorting
+[[_Sorting]]
+=== 排序
 
-In order to sort by relevance, we need to represent relevance as a value. In
-Elasticsearch,  the _relevance score_ is represented by the floating-point
-number returned in the search results as the `_score`, ((("relevance scores", "returned in search results score")))((("score", "relevance score of search results")))so the default sort
-order is `_score` descending.
+为了按照相关性来排序，需要将相关性表示为一个数值。在 Elasticsearch 中， _相关性得分_ 由一个浮点数进行表示，并在搜索结果中通过  `_score` 参数返回，
+((("relevance scores", "returned in search results score")))((("score", "relevance score of search results")))
+默认排序是 `_score` 降序。
 
-Sometimes, though, you don't have a meaningful relevance score. For instance,
-the following query just returns all tweets whose `user_id` field has the
-value `1`:
+
+有时，相关性评分对你来说并没有意义。例如，下面的查询返回所有 `user_id` 字段包含 `1` 的结果：
+
 
 [source,js]
 --------------------------------------------------
@@ -33,15 +32,13 @@ GET /_search
 }
 --------------------------------------------------
 
-There isn't a meaningful score here: because we are using a filter, we are indicating
-that we just want the documents that match `user_id: 1` with no attempt to determine
-relevance.  Documents will be returned in effectively random order, and each document
-will have a score of zero.
+这里没有一个有意义的分数：因为我们使用的是 filter （过滤），这表明我们只希望获取匹配 `user_id: 1` 的文档，并没有试图确定这些文档的相关性。
+实际上文档将按照随机顺序返回，并且每个文档都会评为零分。
+
 
 [NOTE]
 ====
-If a score of zero makes your life difficult for logistical reasons, you can use
-a `constant_score` query instead:
+如果评分为零对你造成了困扰，你可以使用 `constant_score` 查询进行替代：
 
 [source,js]
 --------------------------------------------------
@@ -59,15 +56,16 @@ GET /_search
 }
 --------------------------------------------------
 
-This will apply a constant score (default of `1`) to all documents.  It will
-perform the same as the above query, and all documents will be returned randomly
-like before, they'll just have a score of one instead of zero.
+这将让所有文档应用一个恒定分数（默认为 `1` ）。它将执行与前述查询相同的查询，并且所有的文档将像之前一样随机返回，这些文档只是有了一个分数而不是零分。
 ====
 
-==== Sorting by Field Values
+[[_Sorting_by_Field_Values]]
+==== 按照字段的值排序
 
-In this case, it probably makes sense to sort tweets by recency, with the most
-recent tweets first.((("sorting", "by field values")))((("fields", "sorting search results by field values")))((("sort parameter")))  We can do this with the `sort` parameter:
+在这个案例中，通过时间来对 tweets 进行排序是有意义的，最新的 tweets 排在最前。
+((("sorting", "by field values")))((("fields", "sorting search results by field values")))((("sort parameter")))
+我们可以使用 `sort` 参数进行实现：
+
 
 [source,js]
 --------------------------------------------------
@@ -83,7 +81,7 @@ GET /_search
 --------------------------------------------------
 // SENSE: 056_Sorting/85_Sort_by_date.json
 
-You will notice two differences in the results:
+你会注意到结果中的两个不同点：
 
 [source,js]
 --------------------------------------------------
@@ -104,39 +102,35 @@ You will notice two differences in the results:
     ...
 }
 --------------------------------------------------
-<1> The `_score` is not calculated, because it is not being used for sorting.
-<2> The value of the `date` field, expressed as milliseconds since the epoch,
-    is returned in the `sort` values.
+<1> `_score` 不被计算, 因为它并没有用于排序。
+<2> `date` 字段的值表示为自 epoch (January 1, 1970 00:00:00 UTC)以来的毫秒数，通过 `sort` 字段的值进行返回。
 
-The first is that we have ((("date field, sorting search results by")))a new element in each result called `sort`, which
-contains the value(s) that was used for sorting.  In this case, we sorted on
-`date`, which internally is((("milliseconds-since-the-epoch (date)"))) indexed as _milliseconds since the epoch_. The long
-number `1411516800000` is equivalent to the date string `2014-09-24 00:00:00
-UTC`.
+首先我们在每个结果中有((("date field, sorting search results by")))一个新的名为 `sort` 的元素，它包含了我们用于排序的值。
+在这个案例中，我们按照 `date` 进行排序，在内部((("milliseconds-since-the-epoch (date)")))被索引为 _自 epoch 以来的毫秒数_ 。
+long 类型数 `1411516800000` 等价于日期字符串 `2014-09-24 00:00:00 UTC` 。
 
-The second is that the `_score` and `max_score` are both `null`. ((("score", "not calculating"))) Calculating
-the `_score` can be quite expensive, and usually its only purpose is for
-sorting; we're not sorting by relevance, so it doesn't make sense to keep
-track of the `_score`.  If you want the `_score` to be calculated regardless,
-you can set((("track_scores parameter"))) the `track_scores` parameter to `true`.
+其次 `_score` 和 `max_score` 字段都是 `null` 。((("score", "not calculating")))计算 `_score` 的花销巨大，通常仅用于排序；
+我们并不根据相关性排序，所以记录 `_score` 是没有意义的。如果无论如何你都要计算 `_score` ，
+你可以将((("track_scores parameter"))) `track_scores` 参数设置为 `true` 。
+
 
 [TIP]
 ====
-As a shortcut, you can ((("sorting", "specifying just the field name to sort on")))specify just the name of the field to sort on:
+一个简便方法是, 你可以((("sorting", "specifying just the field name to sort on")))指定一个字段用来排序：
+
 
 [source,js]
 --------------------------------------------------
     "sort": "number_of_children"
 --------------------------------------------------
 
-Fields will be sorted in ((("sorting", "default ordering")))ascending order by default, and
-the `_score` value in descending order.
+字段将会默认升序排序((("sorting", "default ordering")))，而按照 `_score` 的值进行降序排序。
 ====
 
-==== Multilevel Sorting
+[[_Multilevel_Sorting]]
+==== 多级排序
 
-Perhaps we want to combine the `_score` from a((("sorting", "multilevel")))((("multilevel sorting"))) query with the `date`, and
-show all matching results sorted first by date, then by relevance:
+假定我们想要结合使用 `date` 和 `_score` 进行查询，并且匹配的结果首先按照日期排序，然后按照相关性排序：
 
 [source,js]
 --------------------------------------------------
@@ -156,18 +150,15 @@ GET /_search
 --------------------------------------------------
 // SENSE: 056_Sorting/85_Multilevel_sort.json
 
-Order is important.  Results are sorted by the first criterion first. Only
-results whose first `sort` value is identical will then be sorted by the
-second criterion, and so on.
+排序条件的顺序是很重要的。结果首先按第一个条件排序，仅当结果集的第一个 `sort` 值完全相同时才会按照第二个条件进行排序，以此类推。
 
-Multilevel sorting doesn't have to involve the `_score`. You could sort
-by using several different fields,((("fields", "sorting by multiple fields"))) on geo-distance or on a custom value
-calculated in a script.
+多级排序并不一定包含 `_score` 。你可以根据一些不同的字段进行排序，((("fields", "sorting by multiple fields")))如地理距离或是脚本计算的特定值。
 
 [NOTE]
 ====
-Query-string search((("sorting", "in query string searches")))((("sort parameter", "using in query strings")))((("query strings", "sorting search results for"))) also supports custom sorting, using the `sort` parameter
-in the query string:
+Query-string 搜索((("sorting", "in query string searches")))((("sort parameter", "using in query strings")))((("query strings", "sorting search results for")))
+也支持自定义排序，可以在查询字符串中使用 `sort` 参数：
+
 
 [source,js]
 --------------------------------------------------
@@ -175,15 +166,17 @@ GET /_search?sort=date:desc&sort=_score&q=search
 --------------------------------------------------
 ====
 
-==== Sorting on Multivalue Fields
+[[_Sorting_on_Multivalue_Fields]]
+==== 字段多值的排序
 
-When sorting on fields with more than one value,((("sorting", "on multivalue fields")))((("fields", "multivalue", "sorting on"))) remember that the values do
-not have any intrinsic order; a multivalue field is just a bag of values.
-Which one do you choose to sort on?
+一种情形是字段有多个值的排序，((("sorting", "on multivalue fields")))((("fields", "multivalue", "sorting on")))
+需要记住这些值并没有固有的顺序；一个多值的字段仅仅是多个值的包装，这时应该选择哪个进行排序呢？
 
-For numbers and dates, you can reduce a multivalue field to a single value
-by using the `min`, `max`, `avg`, or `sum` _sort modes_. ((("sum sort mode")))((("avg sort mode")))((("max sort mode")))((("min sort mode")))((("sort modes")))((("dates field, sorting on earliest value")))For instance, you
-could sort on the earliest date in each `dates` field by using the following:
+
+对于数字或日期，你可以将多值字段减为单值，这可以通过使用 `min` 、 `max` 、 `avg` 或是 `sum` _排序模式_ 。
+((("sum sort mode")))((("avg sort mode")))((("max sort mode")))((("min sort mode")))((("sort modes")))((("dates field, sorting on earliest value")))
+例如你可以按照每个 `date` 字段中的最早日期进行排序，通过以下方法：
+
 
 [role="pagebreak-before"]
 [source,js]
