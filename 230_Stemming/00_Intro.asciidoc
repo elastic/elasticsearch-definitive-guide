@@ -1,71 +1,56 @@
 [[stemming]]
-== Reducing Words to Their Root Form
+== 将单词还原为词根
 
-Most languages of the world are _inflected_, meaning ((("languages", "inflection in")))((("words", "stemming", see="stemming words")))((("stemming words")))that words can change
-their form to express differences in the following:
+大多数语言的单词都可以 _词形变化_ ，意味着((("languages", "inflection in")))((("words", "stemming", see="stemming words")))((("stemming words")))下列单词可以改变它们的形态用来表达不同的意思：
 
-* _Number_:      fox, foxes
-* _Tense_:       pay, paid, paying
-* _Gender_:      waiter, waitress
-* _Person_:      hear, hears
-* _Case_:        I, me, my
-* _Aspect_:      ate, eaten
-* _Mood_:        so be it, were it so
 
-While inflection aids expressivity, it interferes((("inflection"))) with retrievability, as a
-single root _word sense_ (or meaning) may be represented by many different
-sequences of letters.((("English", "inflection in"))) English is a weakly inflected language (you could
-ignore inflections and still get reasonable search results), but some other
-languages are highly inflected and need extra work in order to achieve
-high-quality search results.
 
-_Stemming_ attempts to remove the differences between inflected forms of a
-word, in order to reduce each word to its root form. For instance `foxes` may
-be reduced to the root `fox`, to remove the difference between singular and
-plural in the same way that we removed the difference between lowercase and
-uppercase.
+* _单复数变化_ ：      fox 、foxes
+* _时态变化_ ：       pay 、 paid 、 paying
+* _性别变化_ ：      waiter 、 waitress
+* _动词人称变化_ ：      hear 、 hears
+* _代词变化_ ：        I 、 me 、 my
+* _不规则变化_ ：      ate 、 eaten
+* _情景变化_ ：        so be it 、 were it so
 
-The root form of a word may not even be a real word. The words `jumping` and
-`jumpiness` may both be stemmed to `jumpi`. It doesn't matter--as long as
-the same terms are produced at index time and at search time, search will just
-work.
+虽然词形变化有助于表达，但它干扰了((("inflection")))检索，一个单一的词根 _词义_ （或意义）可能被很多不同的字母序列表达。((("English", "inflection in")))
+英语是一种弱词形变化语言（你可以忽略词形变化并且能得到合理的搜索结果），但是一些其他语言是高度词形变化的并且需要额外的工作来保证高质量的搜索结果。
 
-If stemming were easy, there would be only one implementation. Unfortunately,
-stemming is an inexact science that ((("stemming words", "understemming and overstemming")))suffers from two issues: understemming
-and overstemming.
 
-_Understemming_ is the failure to reduce words with the same meaning to the same
-root. For example, `jumped` and `jumps` may be reduced to `jump`, while
-`jumping` may be reduced to `jumpi`.  Understemming reduces retrieval;
-relevant documents are not returned.
+_词干提取_ 试图移除单词的变化形式之间的差别，从而达到将每个词都提取为它的词根形式。
+例如 `foxes` 可能被提取为词根 `fox` ，移除单数和复数之间的区别跟我们移除大小写之间的区别的方式是一样的。
 
-_Overstemming_ is the failure to keep two words with distinct meanings separate.
-For instance, `general` and `generate` may both be stemmed to `gener`.
-Overstemming reduces precision: irrelevant documents are returned when they
-shouldn't be.
 
-.Lemmatization
+单词的词根形式甚至有可能不是一个真的单词，单词 `jumping` 和 `jumpiness` 或许都会被提取词干为 `jumpi` 。
+这并没有什么问题--只要在索引时和搜索时产生相同的词项，搜索会正常的工作。
+
+
+如果词干提取很容易的话，那只要一个插件就够了。不幸的是，词干提取((("stemming words", "understemming and overstemming")))是一种遭受两种困扰的模糊的技术：词干弱提取和词干过度提取。
+
+_词干弱提取_ 就是无法将同样意思的单词缩减为同一个词根。例如， `jumped` 和 `jumps` 可能被提取为 `jump` ，
+但是 `jumping` 可能被提取为 `jumpi` 。弱词干提取会导致搜索时无法返回相关文档。
+
+
+
+_词干过度提取_ 就是无法将不同含义的单词分开。例如， `general` 和 `generate`  可能都被提取为 `gener` 。
+词干过度提取会降低精准度：不相干的文档会在不需要他们返回的时候返回。
+
+
+.词形还原
 **********************************************
 
-A _lemma_ is the canonical, or dictionary, form ((("lemma")))of a set of related words--the
-lemma of `paying`, `paid`, and `pays` is `pay`.  Usually the lemma resembles
-the words it is related to but sometimes it doesn't -- the lemma of `is`,
-`was`, `am`, and `being` is `be`.
+原词是一组相关词的规范形式，或词典形式((("lemma"))) -- `paying` 、 `paid` 和 `pays` 的原词是 `pay` 。
+通常原词很像与其相关的词，但有时也不像 -- `is` 、 `was` 、 `am` 和 `being` 的原词是 `be` 。
 
-Lemmatization, like stemming, tries to group related words,((("lemmatisation"))) but it goes one
-step further than stemming in that it tries to group words by their _word
-sense_, or meaning.  The same word may represent two  meanings&#x2014;for example,_wake_ can mean _to wake up_ or _a funeral_.  While lemmatization would
-try to distinguish these two word senses, stemming would incorrectly conflate
-them.
 
-Lemmatization is a much more complicated and expensive process that needs to
-understand the context in which words appear in order to make decisions
-about what they mean. In practice, stemming appears to be just as effective
-as lemmatization, but with a much lower cost.
+词形还原，很像词干提取，试图归类相关单词，((("lemmatisation")))但是它比词干提取先进一步的是它企图按单词的 _词义_ ，或意义归类。
+同样的单词可能表现出两种意思&#x2014;例如， _wake_ 可以表现为 _to wake up_ 或 _a funeral_ 。然而词形还原试图区分两个词的词义，词干提取却会将其混为一谈。
+
+
+词形还原是一种更复杂和高资源消耗的过程，它需要理解单词出现的上下文来决定词的意思。实践中，词干提取似乎比词形还原更高效，且代价更低。
+
 
 **********************************************
 
-First we will discuss the two classes of stemmers available in Elasticsearch&#x2014;<<algorithmic-stemmers>> and <<dictionary-stemmers>>&#x2014;and then look at how to
-choose the right stemmer for your needs in <<choosing-a-stemmer>>.  Finally,
-we will discuss options for tailoring stemming in <<controlling-stemming>> and
-<<stemming-in-situ>>.
+首先我们会讨论下两个 Elasticsearch 使用的经典词干提取器 &#x2014; <<algorithmic-stemmers>> 和 <<dictionary-stemmers>> &#x2014; 并且在 <<choosing-a-stemmer>> 讨论了怎么根据你的需要选择合适的词干提取器。
+最后将在 <<controlling-stemming>> 和 <<stemming-in-situ>> 中讨论如何裁剪词干提取。
