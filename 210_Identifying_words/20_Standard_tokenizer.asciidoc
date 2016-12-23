@@ -1,14 +1,10 @@
 [[standard-tokenizer]]
-=== standard Tokenizer
+=== 标准分词器
 
-A _tokenizer_ accepts a string as input, processes((("words", "identifying", "using standard tokenizer")))((("standard tokenizer")))((("tokenizers"))) the string to break it
-into individual words, or _tokens_ (perhaps discarding some characters like
-punctuation), and emits a _token stream_ as output.
+_分词器_ 接受一个字符串作为输入，将((("words","identifying","using standard tokenizer")))((("standard tokenizer")))((("tokenizers")))这个字符串拆分成独立的词或 _语汇单元（token）_
+（可能会丢弃一些标点符号等字符），然后输出一个 _语汇单元流（token stream）_ 。
 
-What is interesting is the algorithm that is used to _identify_ words. The
-`whitespace` tokenizer ((("whitespace tokenizer")))simply breaks on whitespace--spaces, tabs, line
-feeds, and so forth--and assumes that contiguous nonwhitespace characters form a
-single token. For instance:
+有趣的是用于词汇 _识别_ 的算法。 `whitespace` （空白字符）分词器((("whitespace tokenizer")))按空白字符 —— 空格、tabs、换行符等等进行简单拆分 —— 然后假定连续的非空格字符组成了一个语汇单元。例如：
 
 [source,js]
 --------------------------------------------------
@@ -16,21 +12,19 @@ GET /_analyze?tokenizer=whitespace
 You're the 1st runner home!
 --------------------------------------------------
 
-This request would return the following terms:
-`You're`, `the`, `1st`, `runner`, `home!`
+这个请求会返回如下词项（terms）：
+`You're` 、 `the` 、 `1st` 、 `runner` 、 `home!`
 
-The `letter` tokenizer, on the other hand, breaks on any character that is
-not a letter, and so would ((("letter tokenizer")))return the following terms: `You`, `re`, `the`,
-`st`, `runner`, `home`.
+`letter` 分词器 ，采用另外一种策略，按照任何非字符进行拆分，
+这样((("letter tokenizer")))将会返回如下单词： `You` 、 `re` 、 `the` 、 `st` 、 `runner` 、 `home` 。
 
-The `standard` tokenizer((("Unicode Text Segmentation algorithm"))) uses the Unicode Text Segmentation algorithm (as
-defined in http://unicode.org/reports/tr29/[Unicode Standard Annex #29]) to
-find the boundaries _between_ words,((("word boundaries"))) and emits everything in-between. Its
-knowledge of Unicode allows it to successfully tokenize text containing a
-mixture of languages.
 
-Punctuation may((("punctuation", "in words"))) or may not be considered part of a word, depending on
-where it appears:
+`standard` 分词器((("Unicode Text Segmentation algorithm")))使用 Unicode 文本分割算法
+（定义来源于 http://unicode.org/reports/tr29/[Unicode Standard Annex #29]）来寻找单词 _之间_ 的界限，并且输出所有界限之间的内容。
+Unicode 内含的知识使其可以成功的对包含混合语言的文本进行分词。
+
+
+标点符号((("punctuation","in words")))可能是单词的一部分，也可能不是，这取决于它出现的位置：
 
 [source,js]
 --------------------------------------------------
@@ -38,24 +32,21 @@ GET /_analyze?tokenizer=standard
 You're my 'favorite'.
 --------------------------------------------------
 
-In this example, the apostrophe in `You're` is treated as part of the
-word, while the single quotes in `'favorite'` are not, resulting in the
-following terms: `You're`, `my`, `favorite`.
+在这个例子中，`You're` 中的撇号被视为单词的一部分，然而 `'favorite'` 中的单引号则不会被视为单词的一部分，
+所以分词结果如下： `You're` 、 `my` 、 `favorite` 。
+
 
 [TIP]
 ==================================================
 
-The `uax_url_email` tokenizer works((("uax_url_email tokenizer"))) in exactly the same way as the `standard`
-tokenizer, except that it recognizes((("email addresses and URLs, tokenizer for"))) email addresses and URLs and emits them as
-single tokens. The `standard` tokenizer, on the other hand, would try to
-break them into individual words. For instance, the email address
-`joe-bloggs@foo-bar.com` would result in the tokens `joe`, `bloggs`, `foo`,
-`bar.com`.
+`uax_url_email` 分词器((("uax_url_email tokenizer")))和 `standard` 分词器工作方式极其相同。
+区别只在于它能识别((("email addresses and URLs, tokenizer for"))) email 地址和 URLs 并输出为单个语汇单元。
+`standard` 分词器则不一样，会将 email 地址和 URLs 拆分成独立的单词。
+例如，email 地址 `joe-bloggs@foo-bar.com` 的分词结果为 `joe` 、 `bloggs` 、 `foo` 、 `bar.com` 。
+
 
 ==================================================
 
-The `standard` tokenizer is a reasonable starting point for tokenizing most
-languages, especially Western languages.  In fact, it forms the basis of most
-of the language-specific analyzers like the `english`, `french`, and `spanish`
-analyzers. Its support for Asian languages, however, is limited, and you should consider
-using the `icu_tokenizer` instead,((("icu_tokenizer"))) which is available in the ICU plug-in.
+`standard` 分词器是大多数语言分词的一个合理的起点，特别是西方语言。
+事实上，它构成了大多数特定语言分析器的基础，如 `english` 、`french` 和 `spanish` 分析器。
+它也支持亚洲语言，只是有些缺陷，你可以考虑通过 ICU 插件的方式使用 `icu_tokenizer` ((("icu_tokenizer")))进行替换。
