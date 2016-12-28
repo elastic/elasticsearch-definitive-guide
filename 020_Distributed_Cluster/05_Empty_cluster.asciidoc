@@ -6,7 +6,7 @@
 
 [[img-cluster]]
 .包含空内容节点的集群
-image::images/elas_0201.png["包含空内容节点的集群"]
+image::../images/elas_0201.png["包含空内容节点的集群"]
 
 一个运行中的 Elasticsearch 实例称为一个((("nodes", "in clusters")))节点，而集群是由一个或者多个拥有相同 `cluster.name` 配置的节点组成，
 它们共同承担数据和负载的压力。当有节点加入集群中或者从集群中移除节点时，集群将会重新平均分布所有的数据。
