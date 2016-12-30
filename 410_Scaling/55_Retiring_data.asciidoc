@@ -1,43 +1,34 @@
 [[retiring-data]]
-=== Retiring Data
+=== 数据过期
 
-As time-based data ages, it becomes less relevant.((("scaling", "retiring data")))  It's possible that we
-will want to see what happened last week, last month, or even last year, but
-for the most part, we're interested in only the here and now.
+随着时间推移，基于时间数据的相关度逐渐降低。((("scaling", "retiring data")))
+有可能我们会想要查看上周、上个月甚至上一年度发生了什么，但是大多数情况，我们只关心当前发生的。
 
-The nice thing about an index per time frame ((("indices", "index per-timeframe", "deleting old data and")))((("indices", "deleting")))is that it enables us to easily
-delete old data: just delete the indices that are no longer relevant:
+按时间范围索引带来的一个好处是可以方便地删除旧数据：只需要删除那些变得不重要的索引就可以了。((("indices", "index per-timeframe", "deleting old data and")))((("indices", "deleting")))
 
 [source,json]
 -------------------------
 DELETE /logs_2013*
 -------------------------
 
-Deleting a whole index is much more efficient than deleting individual
-documents: Elasticsearch just removes whole directories.
+删除整个索引比删除单个文档要更加高效：Elasticsearch 只需要删除整个文件夹。
 
-But deleting an index is very _final_.  There are a number of things we can
-do to help data age gracefully, before we decide to delete it completely.
+但是删除索引是 _终极手段_ 。在我们决定完全删除它之前还有一些事情可以做来帮助数据更加优雅地过期。
 
 [[migrate-indices]]
-==== Migrate Old Indices
+==== 迁移旧索引
 
-With logging data, there is likely to be one _hot_ index--the index for
-today.((("indices", "migrating old indices")))  All new documents will be added to that index, and almost all queries
-will target that index.  It should use your best hardware.
+随着数据被记录，很有可能存在一个 _热点_ 索引——今日的索引。((("indices", "migrating old indices")))
+所有新文档都会被加到那个索引，几乎所有查询都以它为目标。那个索引应当使用你最好的硬件。
 
-How does Elasticsearch know which servers are your best servers? You tell it,
-by assigning arbitrary tags to each server.  For instance, you could start a
-node as follows:
+Elasticsearch 是如何得知哪台是你最好的服务器呢？你可以通过给每台服务器指定任意的标签来告诉它。
+例如，你可以像这样启动一个节点：
 
     ./bin/elasticsearch --node.box_type strong
 
-The `box_type` parameter is completely arbitrary--you could have named it
-whatever you like--but you can use these arbitrary values to tell
-Elasticsearch where to allocate an index.
+`box_type` 参数是完全随意的——你可以将它随意命名只要你喜欢——但你可以用这些任意的值来告诉 Elasticsearch 将一个索引分配至何处。
 
-We can ensure that today's index is on our strongest boxes by creating it with
-the following settings:
+我们可以通过按以下配置创建今日的索引来确保它被分配到我们最好的服务器上：
 
 [source,json]
 -------------------------
@@ -49,8 +40,7 @@ PUT /logs_2014-10-01
 }
 -------------------------
 
-Yesterday's index no longer needs to be on our strongest boxes, so we can move
-it to the nodes tagged as `medium` by updating its index settings:
+昨日的索引不再需要我们最好的服务器了，我们可以通过更新索引设置将它移动到标记为 `medium` 的节点上：
 
 [source,json]
 -------------------------
@@ -61,22 +51,17 @@ POST /logs_2014-09-30/_settings
 -------------------------
 
 [[optimize-indices]]
-==== Optimize Indices
+==== 索引优化（Optimize）
 
-Yesterday's index is unlikely to change.((("indices", "optimizing")))  Log events are static: what
-happened in the past stays in the past.  If we merge each shard down to just a
-single segment, it'll use fewer resources and will be quicker to query. We
-can do this with the <<optimize-api>>.
+昨日的索引不大可能会改变。((("indices", "optimizing")))
+日志事件是静态的：已经发生的过往不会再改变了。如果我们将每个分片合并至一个段（Segment），它会占用更少的资源更快地响应查询。
+我们可以通过<<optimize-api>>来做到。
 
-It would be a bad idea to optimize the index while it was still allocated to
-the `strong` boxes, as the optimization process could swamp the I/O on those
-nodes and impact the indexing of today's logs.  But the `medium` boxes aren't
-doing very much at all, so we are safe to optimize.
+对还分配在 `strong` 主机上的索引进行优化（Optimize）操作将会是一个糟糕的想法，
+因为优化操作将消耗节点上大量 I/O 并对索引今日日志造成冲击。但是 `medium` 的节点没有做太多类似的工作，我们可以安全地在上面进行优化。
 
-Yesterday's index may have replica shards.((("replica shards", "index optimization and"))) If we issue an optimize request, it
-will optimize the primary shard and the replica shards, which is a waste.
-Instead, we can remove the replicas temporarily, optimize, and then restore the
-replicas:
+昨日的索引有可能拥有副本分片。((("replica shards", "index optimization and")))如果我们下发一个优化（Optimize）请求，
+它会优化主分片和副本分片，这有些浪费。然而，我们可以临时移除副本分片，进行优化，然后再恢复副本分片：
 
 [source,json]
 -------------------------
@@ -89,24 +74,17 @@ POST /logs_2014-09-30/_settings
 { "number_of_replicas": 1 }
 -------------------------
 
-Of course, without replicas, we run the risk of losing data if a disk suffers
-catastrophic failure.  You may((("snapshot-restore API"))) want to back up the data first, with the
-{ref}/modules-snapshots.html[`snapshot-restore` API].
+当然，没有副本我们将面临磁盘故障而导致丢失数据的风险。你可能想要先通过((("snapshot-restore API"))){ref}/modules-snapshots.html[`snapshot-restore` API]备份数据。
 
 [[close-indices]]
-==== Closing Old Indices
+==== 关闭旧索引
 
-As indices get even older, they reach a point where they are almost never
-accessed.((("indices", "closing old indices")))  We could delete them at this stage, but perhaps you want to keep
-them around just in case somebody asks for them in six months.
+当索引变得更“老”，它们到达一个几乎不会再被访问的时间点。((("indices", "closing old indices")))
+我们可以在这个阶段删除它们，但也许你想将它们留在这里以防万一有人在半年后还想要访问它们。
 
-These indices can be closed. They will still exist in the cluster, but they
-won't consume resources other than disk space.  Reopening an index is much
-quicker than restoring it from backup.
+这些索引可以被关闭。它们还会存在于集群中，但它们不会消耗磁盘空间以外的资源。重新打开一个索引要比从备份中恢复快得多。
 
-Before closing, it is worth flushing the index to make sure that there are no
-transactions left in the transaction log.  An empty transaction log will make
-index recovery faster when it is reopened:
+在关闭之前，值得我们去刷写索引来确保没有事务残留在事务日志中。一个空白的事务日志会使得索引在重新打开时恢复得更快：
 
 [source,json]
 -------------------------
@@ -114,16 +92,12 @@ POST /logs_2014-01-*/_flush <1>
 POST /logs_2014-01-*/_close <2>
 POST /logs_2014-01-*/_open <3>
 -------------------------
-<1> Flush all indices from January to empty the transaction logs.
-<2> Close all indices from January.
-<3> When you need access to them again, reopen them with the `open` API.
+<1> 刷写（Flush）所有一月的索引来清空事务日志。
+<2> 关闭所有一月的索引.
+<3> 当你需要再次访问它们时，使用 `open` API 来重新打开它们。
 
 [[archive-indices]]
-==== Archiving Old Indices
+==== 归档旧索引
 
-Finally, very old indices ((("indices", "archiving old indices")))can be archived off to some long-term storage like a
-shared disk or Amazon's S3 using the
-{ref}/modules-snapshots.html[`snapshot-restore` API], just in case you may need
-to access them in the future.  Once a backup exists, the index can be deleted
-from the cluster.
-
+最后，非常旧的索引((("indices", "archiving old indices")))可以通过{ref}/modules-snapshots.html[`snapshot-restore` API]归档至长期存储例如共享磁盘或者 Amazon S3，以防日后你可能需要访问它们。
+当存在备份时我们就可以将索引从集群中删除了。
