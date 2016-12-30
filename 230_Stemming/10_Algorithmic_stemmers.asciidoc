@@ -1,50 +1,24 @@
 [[algorithmic-stemmers]]
-=== Algorithmic Stemmers
+=== 词干提取算法
 
-Most of the stemmers available in Elasticsearch are algorithmic((("stemming words", "algorithmic stemmers"))) in that they
-apply a series of rules to a word in order to reduce it to its root form, such
-as stripping the final `s` or `es` from plurals.   They don't have to know
-anything about individual words in order to stem them.
+Elasticsearch 中的大部分 stemmers （词干提取器）是基于算法的，它们提供了一系列规则用于将一个词提取为它的词根形式，例如剥离复数词末尾的 `s` 或 `es` 。提取单词词干时并不需要知道该词的任何信息。
 
-These algorithmic stemmers have the advantage that they are available out of
-the box, are fast, use little memory, and work well for regular words.  The
-downside is that they don't cope well with irregular words like `be`, `are`,
-and `am`, or `mice` and `mouse`.
+这些基于算法的 stemmers 优点是：可以作为插件使用，速度快，占用内存少，有规律的单词处理效果好。缺点是：没规律的单词例如 `be` 、 `are` 、和 `am` ，或 `mice` 和 `mouse` 效果不好。
 
-One of the earliest stemming algorithms((("English", "stemmers for")))((("Porter stemmer for English"))) is the Porter stemmer for English,
-which is still the recommended English stemmer today.  Martin Porter
-subsequently went on to create the
-http://snowball.tartarus.org/[Snowball language] for creating stemming
-algorithms, and a number((("Snowball langauge (stemmers)"))) of the stemmers available in Elasticsearch are
-written in Snowball.
+最早的一个基于算法((("English", "stemmers for")))((("Porter stemmer for English")))的英文词干提取器是 Porter stemmer ，该英文词干提取器现在依然推荐使用。 Martin Porter 后来为了开发词干提取算法创建了 http://snowball.tartarus.org/[Snowball language] 网站， 很多((("Snowball langauge (stemmers)"))) Elasticsearch 中使用的词干提取器就是用 Snowball 语言写的。
 
 [TIP]
 ==================================================
 
-The {ref}/analysis-kstem-tokenfilter.html[`kstem` token filter] is a stemmer
-for English which((("kstem token filter"))) combines the algorithmic approach with a built-in
-dictionary. The dictionary contains a list of root words and exceptions in
-order to avoid conflating words incorrectly. `kstem` tends to stem less
-aggressively than the Porter stemmer.
+{ref}/analysis-kstem-tokenfilter.html[`kstem` token filter] 是一款合并了词干提取算法和内置词典的英语分词过滤器。为了避免模糊词不正确提取，这个词典包含一系列根词单词和特例单词。 `kstem` 分词过滤器相较于 Porter 词干提取器而言不那么激进。
 
 ==================================================
 
-==== Using an Algorithmic Stemmer
+==== 使用基于算法的词干提取器
 
-While you ((("stemming words", "algorithmic stemmers", "using")))can use the
-{ref}/analysis-porterstem-tokenfilter.html[`porter_stem`] or
-{ref}/analysis-kstem-tokenfilter.html[`kstem`] token filter directly, or
-create a language-specific Snowball stemmer with the
-{ref}/analysis-snowball-tokenfilter.html[`snowball`] token filter, all of the
-algorithmic stemmers are exposed via a single unified interface:
-the {ref}/analysis-stemmer-tokenfilter.html[`stemmer` token filter], which
-accepts the `language` parameter.
+你((("stemming words", "algorithmic stemmers", "using")))可以使用 {ref}/analysis-porterstem-tokenfilter.html[`porter_stem`] 词干提取器或直接使用 {ref}/analysis-kstem-tokenfilter.html[`kstem`] 分词过滤器，或使用 {ref}/analysis-snowball-tokenfilter.html[`snowball`] 分词过滤器创建一个具体语言的 Snowball 词干提取器。所有基于算法的词干提取器都暴露了用来接受 `语言` 参数的统一接口： {ref}/analysis-stemmer-tokenfilter.html[`stemmer` token filter] 。
 
-For instance, perhaps you find the default stemmer used by the `english`
-analyzer to be too aggressive and ((("english analyzer", "default stemmer, examining")))you want to make it less aggressive.
-The first step is to look up the configuration for the `english` analyzer
-in the {ref}/analysis-lang-analyzer.html[language analyzers]
-documentation, which shows the following:
+例如，假设你发现 `英语` 分析器使用的默认词干提取器太激进并且((("english analyzer", "default stemmer, examining")))你想使它不那么激进。首先应在 {ref}/analysis-lang-analyzer.html[language analyzers] 查看 `英语` 分析器配置文件，配置文件展示如下：
 
 [source,js]
 --------------------------------------------------
@@ -85,28 +59,18 @@ documentation, which shows the following:
   }
 }
 --------------------------------------------------
-<1> The `keyword_marker` token filter lists words that should not be
-    stemmed.((("keyword_marker token filter")))  This defaults to the empty list.
-<2> The `english` analyzer uses two stemmers: the `possessive_english`
-    and the `english` stemmer. The ((("english stemmer")))((("possessive_english stemmer")))possessive stemmer removes `'s`
-    from any words before passing them on to the `english_stop`,
-    `english_keywords`, and `english_stemmer`.
+<1> `keyword_marker` 分词过滤器列出那些不用被词干提取的单词。这个过滤器默认情况下是一个空的列表。
+<2> `english` 分析器使用了两个词干提取器： `possessive_english` 词干提取器和 `english` 词干提取器。  ((("english stemmer")))((("possessive_english stemmer"))) 所有格词干提取器会在任何词传递到  `english_stop` 、 `english_keywords` 和 `english_stemmer` 之前去除 `'s` 。
 
-Having reviewed the current configuration, we can use it as the basis for
-a new analyzer, with((("english analyzer", "customizing the stemmer"))) the following changes:
+重新审视下现在的配置，添加上以下修改，我们可以把这份配置当作新分析器的基本配置：
 
-*   Change the `english_stemmer` from `english` (which maps to the
-    {ref}/analysis-porterstem-tokenfilter.html[`porter_stem`] token filter)
-    to `light_english` (which maps to the less aggressive
-    {ref}/analysis-kstem-tokenfilter.html[`kstem`] token filter).
+*  修改 `english_stemmer` ，将  `english` （{ref}/analysis-porterstem-tokenfilter.html[`porter_stem`] 分词过滤器的映射）替换为 `light_english` （非激进的 {ref}/analysis-kstem-tokenfilter.html[`kstem`] 分词过滤器的映射）。
 
-*   Add the <<asciifolding-token-filter,`asciifolding`>> token filter to
-    remove any diacritics from foreign words.((("asciifolding token filter")))
+*  添加 <<asciifolding-token-filter,`asciifolding`>> 分词过滤器用以移除外语的附加符号。((("asciifolding token filter")))
 
-*   Remove the `keyword_marker` token filter, as we don't need it.
-    (We discuss this in more detail in <<controlling-stemming>>.)
+*  移除 `keyword_marker` 分词过滤器，因为我们不需要它。（我们会在 <<controlling-stemming>> 中详细讨论它）
 
-Our new custom analyzer would look like this:
+新定义的分析器会像下面这样:
 
 [source,js]
 --------------------------------------------------
@@ -144,7 +108,5 @@ PUT /my_index
   }
 }
 --------------------------------------------------
-<1> Replaced the `english` stemmer with the less aggressive
-    `light_english` stemmer
-<2> Added the `asciifolding` token filter
-
+<1> 将 `english` 词干提取器替换为非激进的 `light_english` 词干提取器
+<2> 添加 `asciifolding` 分词过滤器
