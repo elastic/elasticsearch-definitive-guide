@@ -1,24 +1,14 @@
 [[proximity-relevance]]
-=== Proximity for Relevance
+=== 使用邻近度提高相关度
 
-Although proximity queries are useful, the fact that they require all terms to be
-present can make them overly strict.((("proximity matching", "using for relevance")))((("relevance", "proximity queries for"))) It's the same issue that we discussed in
-<<match-precision>> in <<full-text-search>>: if six out of seven terms match,
-a document is probably relevant enough to be worth showing to the user, but
-the `match_phrase` query would exclude it.
+虽然邻近查询很有用， 但是所有词条都出现在文档的要求过于严格了。((("proximity matching", "using for relevance")))((("relevance", "proximity queries for")))
+我们讨论 <<full-text-search>> 一章的 <<match-precision>> 也是同样的问题： 如果七个词条中有六个匹配， 那么这个文档对用户而言就已经足够相关了， 但是 `match_phrase` 查询可能会将它排除在外。
 
-Instead of using proximity matching as an absolute requirement, we can
-use it as a _signal_&#x2014;as one of potentially many queries, each of which
-contributes to the overall score for each document (see <<most-fields>>).
+相比将使用邻近匹配作为绝对要求， 我们可以将它作为  _信号_&#x2014; 使用， 作为许多潜在查询中的一个， 会对每个文档的最终分值做出贡献 (参考 <<most-fields>>)。
 
-The fact that we want to add together the scores from multiple queries implies
-that we should combine them by using the `bool` query.((("bool query", "proximity query for relevance in")))
+实际上我们想将多个查询的分数累计起来意味着我们应该用 `bool` 查询将它们合并。((("bool query", "proximity query for relevance in")))
 
-We can use a simple `match` query as a `must` clause. This is the query that
-will determine which documents are included in our result set.  We can trim
-the long tail with the `minimum_should_match` parameter.  Then we can add other,
-more specific queries as `should` clauses. Every one that matches will
-increase the relevance of the matching docs.
+我们可以将一个简单的 `match` 查询作为一个 `must` 子句。 这个查询将决定哪些文档需要被包含到结果集中。 我们可以用 `minimum_should_match` 参数去除长尾。 然后我们可以以 `should` 子句的形式添加更多特定查询。 每一个匹配成功的都会增加匹配文档的相关度。
 
 [source,js]
 --------------------------------------------------
@@ -48,9 +38,7 @@ GET /my_index/my_type/_search
 --------------------------------------------------
 // SENSE: 120_Proximity_Matching/25_Relevance.json
 
-<1> The `must` clause includes or excludes documents from the result set.
-<2> The `should` clause increases the relevance score of those documents that
-    match.
+<1> `must` 子句从结果集中包含或者排除文档。
+<2> `should` 子句增加了匹配到文档的相关度评分。
 
-We could, of course, include other queries in the `should` clause, where each
-query targets a specific aspect of relevance.
+我们当然可以在 `should` 子句里面添加其它的查询， 其中每一个查询只针对某一特定方面的相关度。
