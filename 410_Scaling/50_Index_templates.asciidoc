@@ -1,20 +1,15 @@
 [[index-templates]]
-=== Index Templates
+=== 索引模板
 
-Elasticsearch doesn't require you to create an index before using it.((("indices", "templates")))((("scaling", "index templates and")))((("templates", "index")))  With
-logging, it is often more convenient to rely on index autocreation than to
-have to create indices manually.
+Elasticsearch 不要求你在使用一个索引前创建它。((("indices", "templates")))((("scaling", "index templates and")))((("templates", "index")))
+对于日志记录类应用，依赖于自动创建索引比手动创建要更加方便。
 
-Logstash uses the timestamp((("Logstash")))((("timestamps, use by Logstash to create index names"))) from an event to derive the index name.  By
-default, it indexes into a different index every day, so an event with a
-`@timestamp` of `2014-10-01 00:00:01` will be sent to the index
-`logstash-2014.10.01`.  If that index doesn't already exist, it will be
-created for us.
+Logstash 使用事件中的时间戳((("Logstash")))((("timestamps, use by Logstash to create index names")))来生成索引名。
+默认每天被索引至不同的索引中，因此一个 `@timestamp` 为 `2014-10-01 00:00:01` 的事件将被发送至索引 `logstash-2014.10.01` 中。
+如果那个索引不存在，它将被自动创建。
 
-Usually we want some control over the settings and mappings of the new index.
-Perhaps we want to limit the number of shards to `1`, and we want to disable the
-`_all` field.  Index templates can be used to control which settings should be
-applied to newly created indices:
+通常我们想要控制一些新建索引的设置（settings）和映射（mappings）。也许我们想要限制分片数为 `1` ，并且禁用 `_all` 域。
+索引模板可以用于控制何种设置（settings）应当被应用于新创建的索引：
 
 [source,json]
 -------------------------
@@ -37,18 +32,14 @@ PUT /_template/my_logs <1>
   }
 }
 -------------------------
-<1> Create a template called `my_logs`.
-<2> Apply this template to all indices beginning with `logstash-`.
-<3> This template should override the default `logstash` template that has
-    a lower `order`.
-<4> Limit the number of primary shards to `1`.
-<5> Disable the `_all` field for all types.
-<6> Add this index to the `last_3_months` alias.
+<1> 创建一个名为 `my_logs` 的模板。
+<2> 将这个模板应用于所有以 `logstash-` 为起始的索引。
+<3> 这个模板将会覆盖默认的 `logstash` 模板，因为默认模板的 `order` 更低。
+<4> 限制主分片数量为 `1` 。
+<5> 为所有类型禁用 `_all` 域。
+<6> 添加这个索引至 `last_3_months` 别名中。
 
-This template specifies the default settings that will be applied to any index
-whose name begins with `logstash-`, whether it is created manually or
-automatically. If we think the index for tomorrow will need more capacity than
-today, we can update the index to use a higher number of shards.
+这个模板指定了所有名字以 `logstash-` 为起始的索引的默认设置，不论它是手动还是自动创建的。
+如果我们认为明天的索引需要比今天更大的容量，我们可以更新这个索引以使用更多的分片。
 
-The template even adds the newly created index into the `last_3_months` alias, although
-removing the old indices from that alias will have to be done manually.
+这个模板还将新建索引添加至了 `last_3_months` 别名中，然而从那个别名中删除旧的索引则需要手动执行。
