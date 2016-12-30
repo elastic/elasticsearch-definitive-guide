@@ -1,16 +1,13 @@
 [[one-big-user]]
-=== One Big User
+=== 一个大的用户
 
-Big, popular forums start out as small forums.((("forums, resource allocation for", "one big user")))  One day we will find that one
-shard in our shared index is doing a lot more work than the other shards,
-because it holds the documents for a forum that has become very popular. That
-forum now needs its own index.
+大规模流行论坛都是从小论坛起步的。((("forums, resource allocation for", "one big user")))
+有一天我们会发现我们共享索引中的一个分片要比其它分片更加繁忙，因为这个分片中一个论坛的文档变得更加热门。
+这时，那个论坛需要属于它自己的索引。
 
-The index aliases that we're using to fake an index per user give us a clean
-migration path for the big forum.((("indices", "shared", "migrating data to dedicated index")))
+我们用来提供一个用户一个索引的索引别名给了我们一个简洁的迁移论坛方式。((("indices", "shared", "migrating data to dedicated index")))
 
-The first step is to create a new index dedicated to the forum, and with the
-appropriate number of shards to allow for expected growth:
+第一步就是为那个论坛创建一个新的索引，并为其分配合理的分片数，可以满足一定预期的数据增长：
 
 [source,json]
 ------------------------------
@@ -22,10 +19,8 @@ PUT /baking_v1
 }
 ------------------------------
 
-The next step is to migrate the data from the shared index into the dedicated
-index, which can be done using a <<scroll, `scroll`>> query and the
-<<bulk,`bulk` API>>.  As soon as the migration is finished, the index alias
-can be updated to point to the new index:
+第二步就是将共享的索引中的数据迁移到专用的索引中，可以通过<<scroll, `scroll`>>查询和<<bulk,`bulk` API>>来实现。
+当迁移完成时，可以更新索引别名指向那个新的索引：
 
 [source,json]
 ------------------------------
@@ -38,18 +33,10 @@ POST /_aliases
 }
 ------------------------------
 
-Updating the alias is atomic; it's like throwing a switch.  Your application
-continues talking to the `baking` API and is completely unaware that it now
-points to a new dedicated index.
+更新索引别名的操作是原子性的；就像在拨动一个开关。你的应用程序还是在与 `baking` API 交互并且对于它已经指向一个专用的索引毫无感知。
 
-The dedicated index no longer needs the filter or the routing values. We can
-just rely on the default sharding that Elasticsearch does using each
-document's `_id` field.
+专用的索引不再需要过滤器或者自定义的路由值了。我们可以依赖于 Elasticsearch 默认使用的 `_id` 字段来做分区。
 
-The last step is to remove the old documents from the shared index, which can
-be done by searching using the original routing value and forum ID and performing
-a bulk delete.
+最后一步是从共享的索引中删除旧的文档，可以通过搜索之前的路由值以及论坛 ID 然后进行批量删除操作来实现。
 
-The beauty of this index-per-user model is that it allows you to reduce
-resources, keeping costs low, while still giving you the flexibility to scale
-out when necessary, and with zero downtime.
+一个用户一个索引模型的优雅之处在于它允许你减少资源消耗，保持快速的响应时间，同时拥有在需要时零宕机时间扩容的能力。
