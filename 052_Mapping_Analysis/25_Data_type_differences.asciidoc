@@ -1,10 +1,7 @@
 [[mapping-analysis]]
-== Mapping and Analysis
+== 映射和分析
 
-While playing around with the data in our index, we notice something odd.
-Something seems to be broken: we have 12 tweets in our indices, and only one
-of them contains the date `2014-09-15`, but have a look at the `total` hits
-for the following queries:
+当摆弄索引里面的数据时，我们发现一些奇怪的事情。一些事情看起来被打乱了：在我们的索引中有12条推文，其中只有一条包含日期 `2014-09-15` ，但是看一看下面查询命中的 `总数` （total）：
 
 [source,js]
 --------------------------------------------------
@@ -15,16 +12,9 @@ GET /_search?q=date:2014         # 0  results !
 --------------------------------------------------
 // SENSE: 052_Mapping_Analysis/25_Data_type_differences.json
 
-Why does querying the <<all-field-intro,`_all` field>> for the full date
-return all tweets, and querying the `date` field for just the year return no
-results? Why do our results differ when searching within the `_all` field or
-the `date` field?
+为什么在 <<all-field-intro,`_all` >> 字段查询日期返回所有推文，而在 `date` 字段只查询年份却没有返回结果？为什么我们在 `_all` 字段和 `date` 字段的查询结果有差别？
 
-Presumably, it is because the way our data has been indexed in the `_all`
-field is different from how it has been indexed in the `date` field.
-So let's take a look at how Elasticsearch has interpreted our document
-structure, by requesting((("mapping (types)"))) the _mapping_ (or schema definition)
-for the `tweet` type in the `gb` index:
+推测起来，这是因为数据在 `_all` 字段与 `data` 字段的索引方式不同。所以，通过请求 `gb` 索引中 `tweet` 类型的((("mapping (types)")))_映射_（或模式定义），让我们看一看 Elasticsearch 是如何解释我们文档结构的：
 
 [source,js]
 --------------------------------------------------
@@ -33,7 +23,7 @@ GET /gb/_mapping/tweet
 // SENSE: 052_Mapping_Analysis/25_Data_type_differences.json
 
 
-This gives us the following:
+这将得到如下结果：
 
 [source,js]
 --------------------------------------------------
@@ -63,20 +53,8 @@ This gives us the following:
 --------------------------------------------------
 
 
-Elasticsearch has dynamically generated a mapping for us, based on what it
-could guess about our field types. The response shows us that the `date` field
-has been recognized as a field of type `date`. ((("_all field", sortas="all field")))The `_all` field isn't
-mentioned because it is a default field, but we know that the `_all` field is
-of type `string`.((("string fields")))
+基于对字段类型的猜测， Elasticsearch 动态为我们产生了一个映射。这个响应告诉我们 `date` 字段被认为是 `date` 类型的。由于((("_all field", sortas="all field"))) `_all` 是默认字段，所以没有提及它。但是我们知道 `_all` 字段是 `string` 类型的。((("string fields")))
 
-So fields of type `date` and fields of type `string` are((("indexing", "differences in, for different core types"))) indexed differently,
-and can thus be searched differently.  That's not entirely surprising.
-You might expect that each of the ((("data types", "core, different indexing of")))core data types--strings, numbers, Booleans,
-and dates--might be indexed slightly differently. And this is true:
-there are slight differences.
+所以 `date` 字段和 `string` 字段((("indexing", "differences in, for different core types")))索引方式不同，因此搜索结果也不一样。这完全不令人吃惊。你可能会认为((("data types", "core, different indexing of")))核心数据类型 strings、numbers、Booleans 和 dates 的索引方式有稍许不同。没错，他们确实稍有不同。
 
-But by far the biggest difference is between fields((("exact values", "fields representing")))((("full text", "fields representing"))) that represent
-_exact values_ (which can include `string` fields) and fields that
-represent _full text_. This distinction is really important--it's the thing
-that separates a search engine from all other databases.
-
+但是，到目前为止，最大的差异在于((("exact values", "fields representing")))((("full text", "fields representing")))代表 _精确值_ （它包括 `string` 字段）的字段和代表 _全文_ 的字段。这个区别非常重要——它将搜索引擎和所有其他数据库区别开来。
