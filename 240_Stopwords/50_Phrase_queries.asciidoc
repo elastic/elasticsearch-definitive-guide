@@ -1,109 +1,73 @@
 [[stopwords-phrases]]
-=== Stopwords and Phrase Queries
+=== 停用词和短语查询
 
-About 5% of all queries are ((("stopwords", "phrase queries and")))((("phrase matching", "stopwords and")))phrase queries (see <<phrase-matching>>), but they
-often account for the majority of slow queries. Phrase queries can perform
-poorly, especially if the phrase includes very common words; a phrase like
-``To be, or not to be'' could be considered pathological. The reason for this
-has to do with the amount of data that is necessary to support proximity
-matching.
+所有查询中 ((("stopwords", "phrase queries and")))((("phrase matching", "stopwords and")))短语查询(查看 <<phrase-matching>>)大约占到5%，但是在慢查询里面它们又占大部分。
+短语查询性能相对较差，特别是当短语中包括常用词的时候，如``To be, or not to be''短语全部由停用词组成，这是一种极端情况。原因在于几乎需要匹配全量的数据。
 
-In <<pros-cons-stopwords>>, we said that removing stopwords saves only a small
-amount of space in the inverted index.((("indices", "typical, data contained in")))  That was only partially true.  A
-typical index may contain, among other data, some or all of the following:
+在 停用词的两面 <<pros-cons-stopwords>>,中，我们提到移除停用词只能节省倒排索引中的一小部分空间。这句话只部分正确，一个典型的索引会可能包含部分或所有以下数据：
 
-Terms dictionary::
+词项字典（Terms dictionary）::
 
-    A sorted list of all terms that appear in the documents in the index,
-    and a count of the number of documents that contain each term.
+    索引中所有文档内所有词项的有序列表，以及包含该词的文档数量。
 
-Postings list::
+倒排表（Postings list）::
 
-    A list of which documents contain each term.
+    包含每个词项的文档（ID）列表。
 
-Term frequency::
+词频（Term frequency）::
 
-    How often each term appears in each document.
+    每个词项在每个文档里出现的频率。
 
-Positions::
+位置（Positions）::
 
-    The position of each term within each document, for phrase and proximity
-    queries.
+    每个词项在每个文档里出现的位置，供短语查询或近似查询使用。
 
-Offsets::
+偏移（Offsets）::
 
-    The start and end character offsets of each term in each document, for
-    snippet highlighting. Disabled by default.
+    每个词项在每个文档里开始与结束字符的偏移，供词语高亮使用，默认是禁用的。
 
-Norms::
+规范因子（Norms）::
 
-    A factor used to normalize fields of different lengths, to give shorter
-    fields more weight.
+    用来对字段长度进行规范化处理的因子，给较短字段予以更多权重。
 
-Removing stopwords from the index may save a small amount of space in the
-_terms dictionary_ and the _postings list_, but _positions_ and _offsets_ are
-another matter. Positions and offsets data can easily double, triple, or
-quadruple index size.
+将停用词从索引中移除会节省 _词项字典_ 和 _倒排表_ 里的少量空间，但 _位置_ 和 _偏移_ 是另一码事。位置和偏移数据很容易变成索引大小的两倍、三倍、甚至四倍。
 
-==== Positions Data
+==== 位置信息（Positions Data）
 
-Positions are enabled on `analyzed` string fields by default,((("stopwords", "phrase queries and", "positions data")))((("phrase matching", "stopwords and", "positions data"))) so that phrase
-queries will work out of the box. The more often that a term appears, the more
-space is needed to store its position data. Very common words, by
-definition, appear very commonly, and their positions data can run to megabytes
-or gigabytes on large collections.
+`analyzed` 字符串字段的位置信息默认是开启的，((("stopwords", "phrase queries and", "positions data")))((("phrase matching", "stopwords and", "positions data"))) 所以短语查询能随时使用到它。
+词项出现的越频繁，用来存储它位置信息的空间就越多。在一个大的文档集合中，对于那些非常常见的词，它们的位置信息可能占用成百上千兆的空间。
 
-Running a phrase query on a high-frequency word like `the` might result in
-gigabytes of data being read from disk. That data will be stored in the kernel
-filesystem cache to speed up later access, which seems like a good thing, but
-it might cause other data to be evicted from the cache, which will slow
-subsequent queries.
+运行一个针对高频词 `the` 的短语查询可能会导致从磁盘读取好几G的数据。这些数据会被存储到内核文件系统的缓存中，以提高后续访问的速度，这看似是件好事，但这可能会导致其他数据从缓存中被剔除，进一步使后续查询变慢。
 
-This is clearly a problem that needs solving.
+这显然是我们需要解决的问题。
 
 [[index-options]]
-==== Index Options
+==== 索引选项（Index Options）
 
-The first question you should ((("stopwords", "phrase queries and", "index options")))((("phrase matching", "stopwords and", "index options")))ask yourself is: _Do you need phrase or
-proximity queries?_
+我们首先应该问自己：是否真的需要使用短语查询((("stopwords", "phrase queries and", "index options")))或 近似查询((("phrase matching", "stopwords and", "index options")))？
 
-Often, the answer is no.  For many use cases, such as logging, you need to
-know _whether_ a term appears in a document -- information that is provided
-by the postings list--but not _where_ it appears. Or perhaps you need to use
-phrase queries on one or two fields, but you can disable positions data on all
-of the other analyzed `string` fields.
 
-The `index_options` parameter ((("index_options parameter")))allows you to control what information is stored
-in the index for each field.((("fields", "index options")))  Valid values are as follows:
+答案通常是：不需要。在很多应用场景下，比如说日志，我们需要知道一个词 _是否_ 在文档中（这个信息由倒排表提供）而不是关心词的位置在哪里。或许我们要对一两个字段使用短语查询，但是我们完全可以在其他 `analyzed` 字符串字段上禁用位置信息。
+
+`index_options` 参数 ((("index_options parameter"))) 允许我们控制索引里为每个字段存储的信息。((("fields", "index options"))) 可选值如下:
 
 `docs`::
 
-    Only store which documents contain which terms. This is the default for
-    `not_analyzed` string fields.
+    只存储文档及其包含词项的信息。这对 `not_analyzed` 字符串字段是默认的。
 
 `freqs`::
 
-    Store `docs` information, plus how often each term appears in each
-    document. Term frequencies are needed for complete <<relevance-intro,TF/IDF>>
-    relevance calculations, but they are not required if you just need to know
-    whether a document contains a particular term.
+    存储 `docs` 信息，以及每个词在每个文档里出现的频次。词频是完成<<relevance-intro,TF/IDF>> 相关度计算的必要条件，但如果只想知道一个文档是否包含某个特定词项，则无需使用它。
 
 `positions`::
 
-    Store `docs` and `freqs`, plus the position of each term in each document.
-    This is the default for `analyzed` string fields, but can be disabled if
-    phrase/proximity matching is not needed.
+    存储 `docs`、`freqs`、`analyzed`，以及每个词项在每个文档里出现的位置。 这对 `analyzed` 字符串字段是默认的，但当不需使用短语或近似匹配时，可以将其禁用。
 
 `offsets`::
+    
+    存储 `docs`,`freqs`,`positions`, 以及每个词在原始字符串中开始与结束字符的偏移信息( http://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-highlighting.html#postings-highlighter[`postings` highlighter] )。这个信息被用以高亮搜索结果，但它默认是禁用的。
 
-    Store `docs`, `freqs`, `positions`, and the start and end character offsets
-    of each term in the original string.  This information is used by the
-    http://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-highlighting.html#postings-highlighter[`postings` highlighter]
-    but is disabled by default.
-
-You can set `index_options` on fields added at index creation time, or when
-adding new fields by using((("put-mapping API"))) the `put-mapping` API. This setting can't be changed
-on existing fields:
+我们可以在索引创建的时候为字段设置 `index_options` 选项，或者在使用 ((("put-mapping API"))) `put-mapping` API新增字段映射的时候设置。我们无法修改已有字段的这个设置：
 
 [source,json]
 ---------------------------------
@@ -123,19 +87,13 @@ PUT /my_index
   }
 }
 ---------------------------------
-<1> The `title` field uses the default setting of `positions`, so
-    it is suitable for phrase/proximity queries.
-<2> The `content` field has positions disabled and so cannot be used
-    for phrase/proximity queries.
+<1> `title` 字段使用默认的 `positions` 设置，所以它适于短语或近似查询。
 
-==== Stopwords
+<2> `content` 字段的位置设置是禁用的，所以它无法用于短语或近似查询。
 
-Removing stopwords is one way of reducing the size of the positions data quite
-dramatically.((("stopwords", "phrase queries and", "removing stopwords")))   An index with stopwords removed can still be used for phrase
-queries because the original positions of the remaining terms are maintained,
-as we saw in <<maintaining-positions>>. But of course, excluding terms from
-the index reduces searchability. We wouldn't be able to differentiate between
-the two phrases _Man in the moon_ and _Man on the moon_.
+==== 停用词（Stopwords）
+  
+删除停用词是能显著降低位置信息所占空间的一种方式。 ((("stopwords", "phrase queries and", "removing stopwords")))   一个被删除停用词的索引仍然可以使用短语查询，因为剩下的词的原始位置仍然被保存着，这正如 <<maintaining-positions>> 中看到的那样。 尽管如此，将词项从索引中排除终究会降低搜索能力，这使我们难以区分  _Man in the moon_ 与  _Man on the moon_ 这两个短语。
 
-Fortunately, there is a way to have our cake and eat it: the
-<<common-grams,`common_grams` token filter>>.
+幸运的是，鱼与熊掌是可以兼得的：请查看 <<common-grams,`common_grams` 过滤器>>。
+
