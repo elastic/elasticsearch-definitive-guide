@@ -1,36 +1,24 @@
 [[bulk-format]]
 [role="pagebreak-before"]
-==== Why the Funny Format?
+==== 为什么是有趣的格式？
 
-When we learned about bulk requests ((("bulk API", "format of requests")))earlier in <<bulk>>, you may have asked
-yourself, ``Why does the `bulk` API require the funny format with the newline
-characters, instead of just sending the requests wrapped in a JSON array, like
-the `mget` API?''
+当我们早些时候在<<bulk>>章节了解批量请求时，((("bulk API", "format of requests")))您可能会问自己，
+ ``为什么 `bulk` API 需要有换行符的有趣格式，而不是发送包装在 JSON 数组中的请求，例如 `mget` API？''。
 
-To answer this, we need to explain a little background: Each document referenced in a bulk request may belong to a different primary
-shard, each of which may be allocated to any of the nodes in the cluster. This
-means that ((("action, in bulk requests")))every _action_ inside a `bulk` request needs to be forwarded to the
-correct shard on the correct node.
+为了回答这一点，我们需要解释一点背景：在批量请求中引用的每个文档可能属于不同的主分片，
+每个文档可能被分配给集群中的任何节点。这意味着批量请求 `bulk` 中的((("action, in bulk requests")))每个 _操作_ 都需要被转发到正确节点上的正确分片。
 
-If the individual requests were wrapped up in a JSON array, that would mean
-that we would need to do the following:
+如果单个请求被包装在 JSON 数组中，那就意味着我们需要执行以下操作：
 
- * Parse the JSON into an array (including the document data, which
-   can be very large)
- * Look at each request to determine which shard it should go to
- * Create an array of requests for each shard
- * Serialize these arrays into the internal transport format
- * Send the requests to each shard
+ * 将 JSON 解析为数组（包括文档数据，可以非常大）
+ * 查看每个请求以确定应该去哪个分片
+ * 为每个分片创建一个请求数组
+ * 将这些数组序列化为内部传输格式
+ * 将请求发送到每个分片
 
-It would work, but would need a lot of RAM to hold copies of essentially
-the same data, and would create many more data structures that the Java Virtual Machine (JVM) would have to spend time garbage collecting.
+这是可行的，但需要大量的 RAM 来存储原本相同的数据的副本，并将创建更多的数据结构，Java虚拟机（JVM）将不得不花费时间进行垃圾回收。
 
-Instead, Elasticsearch reaches up into the networking buffer, where the raw
-request has been received, and reads the data directly. It uses the newline
-characters to identify and parse just the small +action/metadata+ lines in
-order to decide which shard should handle each request.
+相反，Elasticsearch可以直接读取被网络缓冲区接收的原始数据。
+它使用换行符字符来识别和解析小的 +action/metadata+ 行来决定哪个分片应该处理每个请求。
 
-These raw requests are forwarded directly to the correct shard. There
-is no redundant copying of data, no wasted data structures. The entire
-request process is handled in the smallest amount of memory possible.
-
+这些原始请求会被直接转发到正确的分片。没有冗余的数据复制，没有浪费的数据结构。整个请求尽可能在最小的内存中处理。
