@@ -1,8 +1,8 @@
 [[shared-index]]
-=== Shared Index
+=== 共享索引
 
-We can use a large shared index for the many smaller ((("scaling", "shared index")))((("indices", "shared")))forums by indexing
-the forum identifier in a field and using it as a filter:
+我们可以为许多的小论坛使用一个大的共享的索引，((("scaling", "shared index")))((("indices", "shared")))
+将论坛标识索引进一个字段并且将它用作一个过滤器：
 
 [source,json]
 ------------------------------
@@ -30,13 +30,10 @@ PUT /forums/post/1
   ...
 }
 ------------------------------
-<1> Create an index large enough to hold thousands of smaller forums.
-<2> Each post must include a `forum_id` to identify which forum it belongs
-    to.
+<1> 创建一个足够大的索引来存储数千个小论坛的数据。
+<2> 每个帖子都必须包含一个 `forum_id` 来标识它属于哪个论坛。
 
-We can use the `forum_id` as a filter to search within a single forum.  The
-filter will exclude most of the documents in the index (those from other
-forums), and caching will ensure that responses are fast:
+我们可以把 `forum_id` 用作一个过滤器来针对单个论坛进行搜索。这个过滤器可以排除索引中绝大部分的数据（属于其它论坛的数据），缓存会保证快速的响应：
 
 [source,json]
 ------------------------------
@@ -61,20 +58,17 @@ GET /forums/post/_search
 }
 ------------------------------
 
-This approach works, but we can do better. ((("shards", "routing a document to"))) The posts from a single forum
-would fit easily onto one shard, but currently they are scattered across all ten
-shards in the index. This means that every search request has to be forwarded
-to a primary or replica of all ten shards. What would be ideal is to ensure
-that all the posts from a single forum are stored on the same shard.
+这个办法行得通，但我们可以做得更好。((("shards", "routing a document to")))
+来自于同一个论坛的帖子可以简单地容纳于单个分片，但它们现在被打散到了这个索引的所有十个分片中。
+这意味着每个搜索请求都必须被转发至所有十个分片的一个主分片或者副本分片。
+如果能够保证所有来自于同一个论坛的所有帖子都被存储于同一个分片可能会是个好想法。
 
-In <<routing-value>>, we explained((("routing a document to a shard"))) that a document is allocated to a
-particular shard by using this formula:
+在 <<routing-value>>((("routing a document to a shard")))，我们说过一个文档将通过使用如下公式来分配到一个指定分片：
 
     shard = hash(routing) % number_of_primary_shards
 
-The `routing` value defaults to the document's `_id`, but we can override that
-and provide our own custom routing value, such as `forum_id`.  All
-documents with the same `routing` value will be stored on the same shard:
+`routing` 的值默认为文档的 `_id` ，但我们可以覆盖它并且提供我们自己自定义的路由值，例如 `forum_id` 。
+所有有着相同 `routing` 值的文档都将被存储于相同的分片：
 
 [source,json]
 ------------------------------
@@ -85,12 +79,9 @@ PUT /forums/post/1?routing=baking <1>
   ...
 }
 ------------------------------
-<1> Using `forum_id` as the routing value ensures that all posts from the
-    same forum are stored on the same shard.
+<1> 将 `forum_id` 用于路由值保证所有来自相同论坛的帖子都存储于相同的分片。
 
-When we search for posts in a particular forum, we can pass the same `routing`
-value to ensure that the search request is run on only the single shard that
-holds our documents:
+当我们搜索一个指定论坛的帖子时，我们可以传递相同的 `routing` 值来保证搜索请求仅在存有我们文档的分片上执行：
 
 [source,json]
 ------------------------------
@@ -114,11 +105,10 @@ GET /forums/post/_search?routing=baking <1>
   }
 }
 ------------------------------
-<1> The query is run on only the shard that corresponds to this `routing` value.
-<2> We still need the filtering query, as a single shard can hold posts from many forums.
+<1> 查询请求仅在对应于 `routing` 值的分片上执行。
+<2> 我们还是需要过滤（Filter）查询，因为一个分片可以存储来自于很多论坛的帖子。
 
-Multiple forums can be queried by passing a comma-separated list of `routing`
-values, and including each `forum_id` in a `terms` query:
+多个论坛可以通过传递一个逗号分隔的列表来指定 `routing` 值，然后将每个 `forum_id` 包含于一个 `terms` 查询：
 
 [source,json]
 ------------------------------
@@ -143,6 +133,5 @@ GET /forums/post/_search?routing=baking,cooking,recipes
 }
 ------------------------------
 
-While this approach is technically efficient, it looks a bit clumsy because of
-the need to specify `routing` values and `terms` queries on every query or
-indexing request.  Index aliases to the rescue!
+这种方式从技术上来说比较高效，由于要为每一个查询或者索引请求指定 `routing` 和 `terms` 的值看起来有一点的笨拙。
+索引别名可以帮你解决这些！
