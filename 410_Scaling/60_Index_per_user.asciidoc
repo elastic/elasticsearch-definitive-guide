@@ -1,39 +1,21 @@
 [[user-based]]
-=== User-Based Data
+=== 基于用户的数据
 
-Often, users start using Elasticsearch because they need to add full-text
-search or analytics to an existing application.((("scaling", "user-based data")))((("user-based data")))  They create a single index
-that holds all of their documents.  Gradually, others in the company realize
-how much benefit Elasticsearch brings, and they want to add their data to
-Elasticsearch as well.
+通常来说，用户使用 Elasticsearch 的原因是他们需要添加全文检索或者需要分析一个已经存在的应用。((("scaling", "user-based data")))((("user-based data")))
+他们创建一个索引来存储所有文档。公司里的其他人也逐渐发现了 Elasticsearch 带来的好处，也想把他们的数据添加到 Elasticsearch 中去。
 
-Fortunately, Elasticsearch supports
-http://en.wikipedia.org/wiki/Multitenancy[multitenancy] so each new user can
-have her own index in the same cluster.((("mulltitenancy")))  Occasionally, somebody will want to
-search across the documents for all users, which they can do by searching
-across all indices, but most of the time, users are interested in only their
-own documents.
+幸运的是，Elasticsearch 支持http://en.wikipedia.org/wiki/Multitenancy[多租户]((("multitenancy")))所以每个用户可以在相同的集群中拥有自己的索引。
+有人偶尔会想要搜索所有用户的文档，这种情况可以通过搜索所有索引实现，但大多数情况下用户只关心它们自己的文档。
 
-Some users have more documents than others, and some users will have heavier
-search loads than others, so the ability to specify the number of primary shards
-and replica shards that each index should have fits well with the index-per-user
-model.((("indices", "index-per-user model")))((("primary shards", "number per-index"))) Similarly, busier indices can be allocated to stronger boxes with shard
-allocation filtering. (See <<migrate-indices>>.)
+一些用户有着比其他人更多的文档，一些用户可能有比其他人更多的搜索次数，
+所以这种对指定每个索引主分片和副本分片数量能力的需要应该很适合使用“一个用户一个索引”的模式。((("indices", "index-per-user model")))((("primary shards", "number per-index")))
+类似地，较为繁忙的索引可以通过分片分配过滤指定到高配的节点。（参见 <<migrate-indices>>。）
 
-TIP: Don't just use the default number of primary shards for every index.
-Think about how much data that index needs to hold.  It may be that all you
-need is one shard--any more is a waste of resources.
+TIP: 不要为每个索引都使用默认的主分片数。想想看它需要存储多少数据。有可能你仅需要一个分片——再多的都只是浪费资源。
 
-Most users of Elasticsearch can stop here.  A simple index-per-user approach
-is sufficient for the majority of cases.
+大多数 Elasticsearch 的用户读到这里就已经够了。简单的“一个用户一个索引”对大多数场景都可以满足了。
 
-In exceptional cases, you may find that you need to support a large number of
-users, all with similar needs.  An example might be hosting a search engine
-for thousands of email forums. ((("forums, resource allocation for"))) Some forums may have a huge amount of traffic,
-but the majority of forums are quite small.  Dedicating an index with a single
-shard to a small forum is overkill--a single shard could hold the data for
-many forums.
+对于例外的场景，你可能会发现需要支持很大数量的用户，都是相似的需求。一个例子可能是为一个拥有几千个邮箱账户的论坛提供搜索服务。((("forums, resource allocation for")))
+一些论坛可能有巨大的流量，但大多数都很小。将一个有着单个分片的索引用于一个小规模论坛已经是足够的了——一个分片可以承载很多个论坛的数据。
 
-What we need is a way to share resources across users, to give the impression
-that each user has his own index without wasting resources on small users.
-
+我们需要的是一种可以在用户间共享资源的方法，给每个用户他们拥有自己的索引这种印象，而不在小用户上浪费资源。
