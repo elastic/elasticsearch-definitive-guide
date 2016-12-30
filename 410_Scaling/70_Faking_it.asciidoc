@@ -1,14 +1,10 @@
 [[faking-it]]
-=== Faking Index per User with Aliases
+=== 利用别名实现一个用户一个索引
 
-To keep our design simple and clean, we would((("scaling", "faking index-per-user with aliases")))((("aliases, index")))((("index aliases"))) like our application to believe that
-we have a dedicated index per user--or per forum in our example--even if
-the reality is that we are using one big <<shared-index,shared index>>. To do
-that, we need some way to hide the `routing` value and the filter on
-`forum_id`.
+为了保持设计的简洁，我们想让我们的应用认为我们为每个用户都有一个专门的索引——或者按照我们的例子每个论坛一个——尽管实际上我们用的是一个大的<<shared-index,shared index>>。
+因此，我们需要一种方式将 `routing` 值及过滤器隐含于 `forum_id` 中。
 
-Index aliases allow us to do just that. When you associate an alias with an
-index, you can also specify a filter and routing values:
+索引别名可以帮你做到这些。当你将一个别名与一个索引关联起来，你可以指定一个过滤器和一个路由值：
 
 [source,json]
 ------------------------------
@@ -23,9 +19,7 @@ PUT /forums/_alias/baking
 }
 ------------------------------
 
-Now, we can treat the `baking` alias as if it were its own index.  Documents
-indexed into the `baking` alias automatically get the custom routing value
-applied:
+现在我们可以将 `baking` 别名视为一个单独的索引。索引至 `baking` 别名的文档会自动地应用我们自定义的路由值：
 
 [source,json]
 ------------------------------
@@ -36,12 +30,9 @@ PUT /baking/post/1 <1>
   ...
 }
 ------------------------------
-<1> We still need the `forum_id` field for the filter to work, but
-    the custom routing value is now implicit.
+<1> 我们还是需要为过滤器指定 `forumn_id` 字段，但自定义路由值已经是隐含的了。
 
-Queries run against the `baking` alias are run just on the shard associated
-with the custom routing value, and the results are automatically filtered by
-the filter we specified:
+对 `baking` 别名上的查询只会在自定义路由值关联的分片上运行，并且结果也自动按照我们指定的过滤器进行了过滤：
 
 [source,json]
 ------------------------------
@@ -55,7 +46,7 @@ GET /baking/post/_search
 }
 ------------------------------
 
-Multiple aliases can be specified when searching across multiple forums:
+当对多个论坛进行搜索时可以指定多个别名：
 
 [source,json]
 ------------------------------
@@ -68,5 +59,4 @@ GET /baking,recipes/post/_search <1>
   }
 }
 ------------------------------
-<1> Both `routing` values are applied, and results can match either filter.
-
+<1> 两个 `routing` 的值都会应用，返回对结果会匹配任意一个过滤器。
