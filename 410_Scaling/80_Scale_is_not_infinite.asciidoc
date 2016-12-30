@@ -1,50 +1,37 @@
 [[finite-scale]]
-=== Scale Is Not Infinite
+=== 扩容并不是无限的
 
-Throughout this chapter we have spoken about many of the ways that
-Elasticsearch can scale. ((("scaling", "scale is not infinite")))Most scaling problems can be solved by adding more
-nodes. But one resource is finite and should be treated with
-respect: the cluster state.((("cluster state")))
+贯彻整个章节我们讨论了多种 Elasticsearch 可以做到的扩容方式。((("scaling", "scale is not infinite")))
+大多数的扩容问题可以通过添加节点来解决。但有一种资源是有限制的，因此值得我们认真对待：集群状态。((("cluster state")))
 
-The _cluster state_ is a data structure that holds the following cluster-level information:
+_集群状态_ 是一种数据结构，贮存下列集群级别的信息：
 
-* Cluster-level settings
-* Nodes that are part of the cluster
-* Indices, plus their settings, mappings, analyzers, warmers, and aliases
-* The shards associated with each index, plus the node on which they are
-  allocated
+* 集群级别的设置
+* 集群中的节点
+* 索引以及它们的设置、映射、分析器、预热器（Warmers）和别名
+* 与每个索引关联的分片以及它们分配到的节点
 
-You can view the current cluster state with this request:
+你可以通过如下请求查看当前的集群状态：
 
 [source,json]
 ------------------------------
 GET /_cluster/state
 ------------------------------
 
-The cluster state exists on every node in the cluster,((("nodes", "cluster state"))) including client nodes.
-This is how any node can forward a request directly to the node that holds the
-requested data--every node knows where every document lives.
+集群状态存在于集群中的每个节点，((("nodes", "cluster state")))包括客户端节点。
+这就是为什么任何一个节点都可以将请求直接转发至被请求数据的节点——每个节点都知道每个文档应该在哪里。
 
-Only the master node is allowed to update the cluster state.  Imagine that an
-indexing request introduces a previously unknown field.  The node holding the
-primary shard for the document must forward the new mapping to the master
-node.  The master node incorporates the changes in the cluster state, and
-publishes a new version to all of the nodes in the cluster.
+只有主节点被允许更新集群状态。想象一下一个索引请求引入了一个之前未知的字段。持有那个文档的主分片所在的节点必须将新的映射转发到主节点上。
+主节点把更改合并到集群状态中，然后向所有集群中的所有节点发布一个新的版本。
 
-Search requests _use_ the cluster state, but they don't change it.  The same
-applies to document-level CRUD requests unless, of course, they introduce a
-new field that requires a mapping update. By and large, the cluster state is
-static and is not a bottleneck.
+搜索请求 _使用_ 集群状态，但它们不会产生修改。同样，文档级别的增删改查请求也不会对集群状态产生修改。当然，除非它们引入了一个需要更新映射的新的字段了。
+总的来说，集群状态是静态的不会成为瓶颈。
 
-However, remember that this same data structure has to exist in memory on
-every node, and must be published to every node whenever it is updated.  The
-bigger it is, the longer that process will take.
+然而，需要记住的是相同的数据结构需要在每个节点的内存中保存，并且当它发生更改时必须发布到每一个节点。
+集群状态的数据量越大，这个操作就会越久。
 
-The most common problem that we see with the cluster state is the introduction
-of too many fields. A user might decide to use a separate field for every IP
-address, or every referer URL.  The following example keeps track of the number of
-times a page has been visited by using a different field name for every unique
-referer:
+我们见过最常见的集群状态问题就是引入了太多的字段。一个用户可能会决定为每一个 IP 地址或者每个 referer URL 使用一个单独的字段。
+下面这个例子通过为每一个唯一的 referer 使用一个不同的字段名来保持对页面浏览量的计数：
 
 [role="pagebreak-before"]
 [source,json]
@@ -58,14 +45,11 @@ POST /counters/pageview/home_page/_update
 }
 ------------------------------
 
-This approach is catastrophically bad! It will result in millions of fields,
-all of which have to be stored in the cluster state.  Every time a new referer
-is seen, a new field is added to the already bloated cluster state, which then
-has to be published to every node in the cluster.
+这种方式十分的糟糕！它会生成数百万个字段，这些都需要被存储在集群状态中。
+每当见到一个新的 referer ，都有一个新的字段需要加入那个已经膨胀的集群状态中，这都需要被发布到集群的每个节点中去。
 
-A much better approach ((("nested objects")))((("objects", "nested")))is to use <<nested-objects,nested objects>>, with one
-field for the parameter name&#x2014;`referer`&#x2014; and another field for its
-associated value&#x2014;`count`:
+更好的方式是使用((("nested objects")))((("objects", "nested")))<<nested-objects,nested objects>>，
+它使用一个字段作为参数名&#x2014;`referer`&#x2014;另一个字段作为关联的值&#x2014;`count` ：
 
 [source,json]
 ------------------------------
@@ -76,12 +60,8 @@ associated value&#x2014;`count`:
     ]
 ------------------------------
 
-The nested approach may increase the number of documents, but Elasticsearch is
-built to handle that.  The important thing is that it keeps the cluster state
-small and agile.
+这种嵌套的方式有可能会增加文档数量，但 Elasticsearch 生来就是为了解决它的。重要的是保持集群状态小而敏捷。
 
-Eventually, despite your best intentions, you may find that the number of
-nodes and indices and mappings that you have is just too much for one cluster.
-At this stage, it is probably worth dividing the problem into multiple
-clusters.  Thanks to {ref}/modules-tribe.html[`tribe` nodes], you can even run
-searches across multiple clusters, as if they were one big cluster.
+最终，不管你的初衷有多好，你可能会发现集群节点数量、索引、映射对于一个集群来说还是太大了。
+此时，可能有必要将这个问题拆分到多个集群中了。感谢{ref}/modules-tribe.html[`tribe` nodes]，
+你甚至可以向多个集群发出搜索请求，就好像我们有一个巨大的集群那样。
