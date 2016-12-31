@@ -1,14 +1,11 @@
 [[complex-core-fields]]
-=== Complex Core Field Types
+=== 复杂核心域类型
 
-Besides the simple scalar datatypes that we have mentioned,((("data types", "complex core field types")))((("JSON", "datatypes", "complex"))) JSON also
-has `null` values, arrays, and objects, all of which are supported by
-Elasticsearch.
+除了我们提到的简单标量数据类型，((("data types", "complex core field types")))((("JSON", "datatypes", "complex"))) JSON还有 `null` 值，数组，和对象，这些Elasticsearch都是支持的。
 
-==== Multivalue Fields
+==== 多值域
 
-It is quite possible that we want our `tag` field ((("fields", "multi-value")))to contain more
-than one tag. Instead of a single string, we could index an array of tags:
+很有可能，我们希望 `tag` 域((("fields", "multi-value")))包含多个标签。我们可以以数组的形式索引标签：
 
 [source,js]
 --------------------------------------------------
@@ -16,38 +13,24 @@ than one tag. Instead of a single string, we could index an array of tags:
 --------------------------------------------------
 
 
-There is no special mapping required for arrays.((("arrays"))) Any field can contain zero,
-one, or more values, in the same way as a full-text field is analyzed to
-produce multiple terms.
+对于数组，没有特殊的映射需求。((("arrays")))任何域都可以包含0，1或者多个值，就像全文域分析得到多个词条。
 
-By implication, this means that _all the values of an array must be
-of the same datatype_.  You can't mix dates with strings. If you create
-a new field by indexing an array, Elasticsearch will use the
-datatype of the first value in the array to determine the `type` of the
-new field.
+这暗示 _数组中所有的值必须是相同数据类型的_ 。你不能将日期和字符串混在一起。如果你通过索引数组来创建新的域，Elasticsearch会用数组中第一个值的数据类型作为这个域的 `类型` 。
 
 [NOTE]
 ====
-When you get a document back from Elasticsearch, any arrays will be in the
-same order as when you indexed the document.  The `_source` field that you get
-back contains exactly the same JSON document that you indexed.
+当你从Elasticsearch得到一个文档，每个数组的顺序和你当初索引文档时一样。你得到的 `_source` 域，包含与你索引的一模一样的JSON文档。
 
-However, arrays are _indexed_&#x2014;made searchable--as multivalue fields,
-which are unordered. ((("indexing", "of arrays")))((("arrays", "indexed as multi-value fields"))) At search time, you can't refer to ``the first element''
-or ``the last element.''  Rather, think of an array as a _bag of values_.
+但是，数组是以多值域 _索引的_&#x2014;可以搜索，但是无序的。 ((("indexing", "of arrays")))((("arrays", "indexed as multi-value fields"))) 在搜索的时候，你不能指定“第一个”或者“最后一个。”更确切的说，把数组想象成 _装在袋子里的值_ 。
 ((("arrays", "empty")))
 ====
 
-==== Empty Fields
+==== 空域
 
-Arrays can, of course, be empty. ((("fields", "empty")))This is the equivalent of having zero
-values. In fact, there is no way of storing a `null` value in Lucene, so
-a field with a `null` value is also considered to be an empty
-field.((("null values", "empty fields as")))
+当然，数组可以为空。((("fields", "empty")))这相当于存在零值。
+事实上，在Lucene中是不能存储 `null` 值的，所以我们认为存在 `null` 值的域为空域。((("null values", "empty fields as")))
 
-These three fields would all be considered to be empty, and would not be
-indexed:
-
+下面三种域被认为是空的，它们将不会被索引：
 [source,js]
 --------------------------------------------------
 "null_value":               null,
@@ -56,15 +39,11 @@ indexed:
 --------------------------------------------------
 
 [[inner-objects]]
-==== Multilevel Objects
+==== 多层级对象
 
-The last native JSON datatype that we need to ((("objects")))discuss is the _object_
--- known in other languages as a hash, hashmap, dictionary or
-associative array.
+我们讨论的最后一个JSON原生数据类是 _对象_ ((("objects")))-- 在其他语言中称为哈希，哈希map，字典或者关联数组。
 
-_Inner objects_ are often used((("objects", "inner objects")))((("inner objects"))) to embed one entity or object inside
-another. For instance, instead of having fields called `user_name`
-and `user_id` inside our `tweet` document, we could write it as follows:
+_内部对象_ 经常用于((("objects", "inner objects")))((("inner objects")))嵌入一个实体或对象到其它对象中。例如，与其在 `tweet` 文档中包含 `user_name` 和 `user_id` 域，我们也可以这样写：
 
 [source,js]
 --------------------------------------------------
@@ -84,10 +63,9 @@ and `user_id` inside our `tweet` document, we could write it as follows:
 --------------------------------------------------
 
 
-==== Mapping for Inner Objects
+==== 内部对象的映射
 
-Elasticsearch will detect new object fields((("mapping (types)", "inner objects")))((("inner objects", "mapping for"))) dynamically and map them as
-type `object`, with each inner field listed under `properties`:
+Elasticsearch会动态((("mapping (types)", "inner objects")))((("inner objects", "mapping for")))监测新的对象域并映射它们为 `对象` ，在  `properties` 属性下列出内部域：
 
 [source,js]
 --------------------------------------------------
@@ -117,21 +95,14 @@ type `object`, with each inner field listed under `properties`:
   }
 }
 --------------------------------------------------
-<1> Root object
-<2> Inner objects
+<1> 根对象
+<2> 内部对象
 
-The mapping for the `user` and `name` fields has a similar structure
-to the mapping for the `tweet` type itself.  In fact, the `type` mapping
-is just a special type of `object` mapping, which we refer to as the
-_root object_.  ((("root object")))It is just the same as any other object, except that it has
-some special top-level fields for document metadata, such as `_source`,
-and the `_all` field.
+`user` 和 `name` 域的映射结构与 `tweet` 类型的相同。事实上， `type` 映射只是一种特殊的 `对象` 映射，我们称之为 _根对象_。除了它有一些文档元数据的特殊顶级域，例如 `_source` 和 `_all` 域，((("root object")))它和其他对象一样。
 
-==== How Inner Objects are Indexed
+==== 内部对象是如何索引的
 
-Lucene doesn't understand inner objects.((("indexing", "of inner objects")))((("inner objects", "indexing of"))) A Lucene document consists of a flat
-list of key-value pairs.  In order for Elasticsearch to index inner objects
-usefully, it converts our document into something like this:
+Lucene不理解内部对象。((("indexing", "of inner objects")))((("inner objects", "indexing of"))) Lucene文档是由一组键值对列表组成的。为了能让Elasticsearch有效地索引内部类，它把我们的文档转化成这样：
 
 [source,js]
 --------------------------------------------------
@@ -147,19 +118,16 @@ usefully, it converts our document into something like this:
 --------------------------------------------------
 
 
-_Inner fields_ can be referred to by((("inner fields"))) name (for example, `first`). To distinguish
-between two fields that have the same name, we can use the full _path_ (for example, `user.name.first`) or even the `type` name plus
-the path (`tweet.user.name.first`).
+_内部域_ 可以通过((("inner fields")))名称引用（例如， `first`）。为了区分同名的两个域，我们可以使用全 _路径_ （例如， `user.name.first`） 或 `type` 名加路径（ `tweet.user.name.first` ）。
 
-NOTE: In the preceding simple flattened document, there is no field called `user`
-and no field called `user.name`.  Lucene indexes only scalar or simple values,
-not complex data structures.
+NOTE: 在前面简单扁平的文档中，没有 `user`
+和 `user.name` 域。Lucene索引只有标量和简单值，没有复杂数据结构。
 
 [[object-arrays]]
-==== Arrays of Inner Objects
+==== 内部对象数组
 
-Finally, consider how an array containing((("arrays", "of inner objects")))((("inner objects", "arrays of"))) inner objects would be indexed.
-Let's say we have a `followers` array that looks like this:
+最后，考虑包含((("arrays", "of inner objects")))((("inner objects", "arrays of")))内部对象的数组是如何被索引的。
+假设我们有个 `followers` 数组：
 
 [source,js]
 --------------------------------------------------
@@ -173,8 +141,7 @@ Let's say we have a `followers` array that looks like this:
 --------------------------------------------------
 
 
-This document will be flattened as we described previously, but the result will
-look like this:
+这个文档会像我们之前描述的那样被扁平化处理，结果如下所示：
 
 [source,js]
 --------------------------------------------------
@@ -185,13 +152,8 @@ look like this:
 --------------------------------------------------
 
 
-The correlation between `{age: 35}` and `{name: Mary White}` has been lost as
-each multivalue field is just a bag of values, not an ordered array.  This is
-sufficient for us to ask, "Is there a follower who is 26 years old?"
+`{age: 35}` 和 `{name: Mary White}` 之间的相关性已经丢失了，因为每个多值域只是一包无序的值，而不是有序数组。这足以让我们问，“有一个26岁的追随者？”
 
-But we can't get an accurate answer to this: "Is there a follower who is 26 years old _and who is called Alex Jones_?"
+但是我们不能得到一个准确的答案：“是否有一个26岁 _名字叫 Alex Jones_ 的追随者？”
 
-Correlated inner objects, which are able to answer queries like these,
-are called _nested_ objects, and we cover them later, in
-<<nested-objects>>.
-
+相关内部对象被称为_nested_ 对象，可以回答上面的查询，我们稍后会在<<nested-objects>>中介绍它。
