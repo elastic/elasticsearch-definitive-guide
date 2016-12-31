@@ -1,56 +1,43 @@
 [role="pagebreak-before"]
-=== Improving Performance
+[[_Improving_Performance]]
+=== 性能优化
 
-Phrase and proximity queries are more ((("proximity matching", "improving performance")))((("phrase matching", "improving performance")))expensive than simple `match` queries.
-Whereas a `match` query just has to look up terms in the inverted index, a
-`match_phrase` query has to calculate and compare the positions of multiple
-possibly repeated terms.
+短语查询和邻近查询都比简单的 `query` 查询代价更高((("proximity matching", "improving performance")))((("phrase matching", "improving performance")))。
+一个 `match` 查询仅仅是看词条是否存在于倒排索引中，而一个 `match_phrase` 查询是必须计算并比较多个可能重复词项的位置。
 
-The http://people.apache.org/~mikemccand/lucenebench/[Lucene nightly
-benchmarks] show that a simple `term` query is about 10 times as fast as a
-phrase query, and about 20 times as fast as a proximity query (a phrase query
-with `slop`). And of course, this cost is paid at search time instead of at index time.
+
+http://people.apache.org/~mikemccand/lucenebench/[Lucene nightly benchmarks] 表明一个简单的 `term` 查询比一个短语查询大约快 10 倍，比邻近查询(有 `slop` 的短语
+查询)大约快 20 倍。当然，这个代价指的是在搜索时而不是索引时。
 
 [TIP]
 ==================================================
 
-Usually the extra cost of phrase queries is not as scary as these numbers
-suggest. Really, the difference in performance is a testimony to just how fast
-a simple `term` query is.  Phrase queries on typical full-text data usually
-complete within a few milliseconds, and are perfectly usable in practice, even
-on a busy cluster.
+通常，短语查询的额外成本并不像这些数字所暗示的那么吓人。事实上，性能上的差距只是证明一个简单的 `term` 查询有多快。标准全文数据的短语查询通常在几毫秒内完成，因此实际上都是完全可用，即使是在一个繁忙的集群上。
 
-In certain pathological cases, phrase queries can be costly, but this is
-unusual.  An example of a pathological case is DNA sequencing, where there are
-many many identical terms repeated in many positions. Using higher `slop`
-values in this case results in a huge growth in the number of position
-calculations.
+
+在某些特定病理案例下，短语查询可能成本太高了，但比较少见。一个典型例子就是DNA序列，在序列里很多同样的词项在很多位置重复出现。在这里使用高 `slop` 值会到导致位置计算大量增加。
+
 
 ==================================================
 
-So what can we do to limit the performance cost of phrase and proximity
-queries? One useful approach is to reduce the total number of documents that
-need to be examined by the phrase query.
+那么我们应该如何限制短语查询和邻近近查询的性能消耗呢？一种有用的方法是减少需要通过短语查询检查的文档总数。
+
 
 [[rescore-api]]
-==== Rescoring Results
+==== 结果集重新评分
 
-In <<proximity-relevance,the preceding section>>, we discussed using proximity
-queries just for relevance purposes, not to include or exclude results from
-the result set. ((("relevance scores", "rescoring results for top-N documents with proximity query"))) A query may match millions of results, but chances are that
-our users are interested in only the first few pages of results.
+在 <<proximity-relevance,the preceding section>> ，我们讨论了而使用邻近查询来调整相关度，而不是使用它将文档从结果列表中添加或者排除。((("relevance scores", "rescoring results for top-N documents
+with proximity query")))一个查询可能会匹配成千上万的结果，但我们的用户很可能只对结果的前几页感兴趣。
 
-A simple `match` query will already have ranked documents that contain all
-search terms near the top of the list. Really, we just want to rerank the _top
-results_ to give an extra relevance bump to those documents that also match the
-phrase query.
 
-The `search` API supports exactly this functionality via _rescoring_.((("rescoring"))) The
-rescore phase allows you to apply a more expensive scoring algorithm--like a
-`phrase` query--to just the top `K` results from each shard. These top
-results are then resorted according to their new scores.
+一个简单的 `match` 查询已经通过排序把包含所有含有搜索词条的文档放在结果列表的前面了。事实上，我们只想对这些 _顶部文档_ 重新排序，来给同时匹配了短语查询的文档一个额外的相关度升级。
 
-The request looks like this:
+
+`search` API 通过 _重新评分_ 明确支持该功能。((("rescoring")))重新评分阶段支持一个代价更高的评分算法--比如 `phrase` 查询--只是为了从每个分片中获得前 `K` 个结果。 然后会根据它们的最新评分
+重新排序。
+
+
+该请求如下所示：
 
 [source,js]
 --------------------------------------------------
@@ -81,13 +68,6 @@ GET /my_index/my_type/_search
 --------------------------------------------------
 // SENSE: 120_Proximity_Matching/30_Performance.json
 
-<1> The `match` query decides which results will be included in the final
-    result set and ranks results according to TF/IDF.((("window_size parameter")))
-<2> The `window_size` is the number of top results to rescore, per shard.
-<3> The only rescoring algorithm currently supported is another query, but
-    there are plans to add more algorithms later.
-
-
-
-
-
+<1> `match` 查询决定哪些文档将包含在最终结果集中，并通过 TF/IDF 排序。((("window_size parameter")))
+<2> `window_size` 是每一分片进行重新评分的顶部文档数量。
+<3> 目前唯一支持的重新打分算法就是另一个查询，但是以后会有计划增加更多的算法。
