@@ -1,21 +1,14 @@
 [[inverted-index]]
-=== Inverted Index
+=== 倒排索引
 
-Elasticsearch uses a structure called((("inverted index", id="ix_invertidx", range="startofrange"))) an _inverted index_, which is designed
-to allow very fast full-text searches. An inverted index consists of a list
-of all the unique words that appear in any document, and for each word, a list
-of the documents in which it appears.
+Elasticsearch 使用一种称为 ((("inverted index", id="ix_invertidx", range="startofrange"))) _倒排索引_ 的结构，它适用于快速的全文搜索。一个倒排索引由文档中所有不重复词的列表构成，对于其中每个词，有一个包含它的文档列表。
 
-For example, let's say we have two documents, each with a `content` field
-containing the following:
+例如，假设我们有两个文档，每个文档的 `content` 域包含如下内容：
 
 1. The quick brown fox jumped over the lazy dog
 2. Quick brown foxes leap over lazy dogs in summer
 
-To create an inverted index, we first split the `content` field of each
-document into separate ((("tokenization")))((("terms")))((("tokens")))words (which we call _terms_, or _tokens_), create a
-sorted list of all the unique terms, and then list in which document each term
-appears. The result looks something like this:
+为了创建倒排索引，我们首先将每个文档的 `content` 域拆分成单独的 ((("tokenization")))((("terms")))((("tokens"))) 词（我们称它为 `词条` 或 `tokens` ），创建一个包含所有不重复词条的排序列表，然后列出每个词条出现在哪个文档。结果如下所示：
 
     Term      Doc_1  Doc_2
     -------------------------
@@ -36,8 +29,7 @@ appears. The result looks something like this:
     the     |   X   |
     ------------------------
 
-Now, if we want to search for `quick brown`, we just need to find the
-documents in which each term appears:
+现在，如果我们想搜索 `quick brown` ，我们只需要查找包含每个词条的文档：
 
 
     Term      Doc_1  Doc_2
@@ -47,43 +39,29 @@ documents in which each term appears:
     ------------------------
     Total   |   2   |  1
 
-Both documents match, but the first document has more matches than the second.
-If we apply a naive _similarity algorithm_ that((("similarity algorithms"))) just counts the number of
-matching terms, then we can say that the first document is a better match--is _more relevant_ to our query--than the second document.
+两个文档都匹配，但是第一个文档比第二个匹配度更高。如果我们使用仅计算匹配词条数量的简单 _相似性算法_ ((("similarity algorithms"))) ，那么，我们可以说，对于我们查询的相关性来讲，第一个文档比第二个文档更佳。
 
-But there are a few problems with our current inverted index:
+但是，我们目前的倒排索引有一些问题：
 
-* `Quick` and `quick` appear as separate terms, while the user probably
-   thinks of them as the same word.
+* `Quick` 和 `quick` 以独立的词条出现，然而用户可能认为它们是相同的词。
 
-* `fox` and `foxes` are pretty similar, as are `dog` and `dogs`;
-   They share the same root word.
+* `fox` 和 `foxes` 非常相似, 就像 `dog` 和 `dogs` ；他们有相同的词根。
 
-* `jumped` and `leap`, while not from the same root word, are similar
-   in meaning. They are synonyms.
+* `jumped` 和 `leap`, 尽管没有相同的词根，但他们的意思很相近。他们是同义词。
 
-With the preceding index, a search for `+Quick +fox` wouldn't match any
-documents. (Remember, a preceding `+` means that the word must be present.)
-Both the term `Quick` and the term `fox` have to be in the same document
-in order to satisfy the query, but the first doc contains `quick fox` and
-the second doc contains `Quick foxes`.
+使用前面的索引搜索 `+Quick +fox` 不会得到任何匹配文档。（记住，`+` 前缀表明这个词必须存在。）只有同时出现 `Quick` 和 `fox` 的文档才满足这个查询条件，但是第一个文档包含 `quick fox` ，第二个文档包含 `Quick foxes`。
 
-Our user could reasonably expect both documents to match the query. We can do
-better.
+我们的用户可以合理的期望两个文档与查询匹配。我们可以做的更好。
 
-If we normalize the terms into a standard ((("normalization")))format, then we can find documents
-that contain terms that are not exactly the same as the user requested, but
-are similar enough to still be relevant. For instance:
+如果我们将词条规范为标准模式，那么我们可以找到与用户搜索的词条不完全一致，但具有足够相关性的文档。例如：
 
-* `Quick` can be lowercased to become `quick`.
+* `Quick` 可以小写化为 `quick` 。
 
-* `foxes` can be _stemmed_--reduced to its root form--to
-   become `fox`. Similarly, `dogs` could be stemmed to `dog`.
+* `foxes` 可以 _词干提取_ --变为词根的格式-- 为 `fox` 。类似的， `dogs` 可以为提取为 `dog` 。
 
-* `jumped` and `leap` are synonyms and can be indexed as just the
-   single term `jump`.
+* `jumped` 和 `leap` 是同义词，可以索引为相同的单词 `jump` 。
 
-Now the index looks like this:
+现在索引看上去像这样：
 
     Term      Doc_1  Doc_2
     -------------------------
@@ -99,16 +77,8 @@ Now the index looks like this:
     the     |   X   |  X
     ------------------------
 
-But we're not there yet. Our search for `+Quick +fox` would _still_ fail,
-because we no longer have the exact term `Quick` in our index. However, if
-we apply the same normalization rules that we used on the `content` field to
-our query string, it would become a query for `+quick +fox`, which would
-match both documents!
+这还远远不够。我们搜索 `+Quick +fox` _仍然_ 会失败，因为在我们的索引中，已经没有 `Quick` 了。但是，如果我们对搜索的字符串使用与 `content` 域相同的标准化规则，会变成查询 `+quick +fox`，这样两个文档都会匹配！
 
-NOTE: This is very important. You can find only terms that exist in your
-index, so _both the indexed text and the query string must be normalized
-into the same form_.
+NOTE: 这非常重要。你只能搜索在索引中出现的词条，所以索引文本和查询字符串必须标准化为相同的格式。
 
-This process of tokenization and normalization is called _analysis_, which we
-discuss in the next section.((("inverted index", range="endofrange", startref="ix_invertidx")))
-
+分词和标准化的过程称为 _分析_ ， 我们会在下个章节讨论。 ((("inverted index", range="endofrange", startref="ix_invertidx")))
