@@ -1,52 +1,36 @@
 [[distrib-multi-doc]]
-=== Multidocument Patterns
+=== 多文档模式
 
-The patterns for the `mget` and `bulk` APIs((("mget (multi-get) API", "retrieving multiple documents, process of")))((("documents", "retrieving multiple with mget"))) are similar to those for
-individual documents. The difference is that the coordinating node knows in
-which shard each document lives. It breaks up the multidocument request into
-a multidocument request _per shard_, and forwards these in parallel to each
-participating node.
+`mget` 和 `bulk` API 的((("mget (multi-get) API", "retrieving multiple documents, process of")))((("documents", "retrieving multiple with mget")))模式类似于单文档模式。区别在于协调节点知道每个文档存在于哪个分片中。
+它将整个多文档请求分解成 _每个分片_ 的多文档请求，并且将这些请求并行转发到每个参与节点。
 
-Once it receives answers from each node, it collates their responses
-into a single response, which it returns to the client, as shown in <<img-distrib-mget>>.
+协调节点一旦收到来自每个节点的应答，就将每个节点的响应收集整理成单个响应，返回给客户端，如 <<img-distrib-mget>> 所示。
 
 [[img-distrib-mget]]
-.Retrieving multiple documents with `mget`
-image::images/elas_0405.png["Retrieving multiple documents with mget"]
+.使用 `mget` 取回多个文档
+image::images/elas_0405.png[“使用 `mget` 取回多个文档”]
 
-Here is the sequence of steps necessary to retrieve multiple documents
-with a single `mget` request:
+以下是使用单个 `mget` 请求取回多个文档所需的步骤顺序：
 
-1. The client sends an `mget` request to `Node 1`.
+1. 客户端向 `Node 1` 发送 `mget` 请求。
 
-2. `Node 1` builds a multi-get request per shard, and forwards these
-   requests in parallel to the nodes hosting each required primary or replica
-   shard. Once all replies have been received, `Node 1` builds the response
-   and returns it to the client.
+2. `Node 1` 为每个分片构建多文档获取请求，然后并行转发这些请求到托管在每个所需的主分片或者副本分片的节点上。一旦收到所有答复， `Node 1` 构建响应并将其返回给客户端。
 
-A `routing` parameter can ((("routing parameter")))be set for each document in the `docs` array.
+可以对 `docs` 数组中每个文档设置 `routing` ((("routing parameter")))参数。
 
-The bulk API, as depicted in <<img-distrib-bulk>>, allows the execution of multiple create, index, delete, and update requests within a single bulk request.
+bulk API， 如 <<img-distrib-bulk>> 所示， 允许在单个批量请求中执行多个创建、索引、删除和更新请求。
 
 [[img-distrib-bulk]]
-.Multiple document changes with `bulk`
-image::images/elas_0406.png["Multiple document changes with bulk"]
+.使用 `bulk` 修改多个文档
+image::images/elas_0406.png[“使用 `bulk` 修改多个文档”]
 
-The sequence of steps((("bulk API", "multiple document changes with")))((("documents", "multiple changes with bulk"))) followed by the
-`bulk` API are as follows:
+`bulk` API((("bulk API", "multiple document changes with")))((("documents", "multiple changes with bulk"))) 按如下步骤顺序执行：
 
-1. The client sends a `bulk` request to `Node 1`.
+1. 客户端向 `Node 1` 发送 `bulk` 请求。
 
-2. `Node 1` builds a bulk request per shard, and forwards these requests in
-    parallel to the nodes hosting each involved primary shard.
+2. `Node 1` 为每个节点创建一个批量请求，并将这些请求并行转发到每个包含主分片的节点主机。
 
-3. The primary shard executes each action serially, one after another. As each
-   action succeeds, the primary forwards the new document (or deletion) to its
-   replica shards in parallel, and then moves on to the next action. Once all
-   replica shards report success for all actions, the node reports success to
-   the coordinating node, which collates the responses and returns them to the
-   client.
+3. 主分片一个接一个按顺序执行每个操作。当每个操作成功时，主分片并行转发新文档（或删除）到副本分片，然后执行下一个操作。
+      一旦所有的副本分片报告所有操作成功，该节点将向协调节点报告成功，协调节点将这些响应收集整理并返回给客户端。
 
-The `bulk` API also accepts ((("consistency request parameter", "in bulk requests"))) the `consistency` parameter
-at the top level for the whole `bulk` request, and the `routing` parameter
-in the metadata for each request.
+`bulk` API 还可以在整个批量请求的最顶层使用 `consistency` 参数，以及在每个请求中的元数据中使用 `routing` 参数。
