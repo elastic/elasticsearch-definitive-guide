@@ -1,54 +1,46 @@
 [[data-in-data-out]]
-== Data In, Data Out
+== 数据输入和输出
 
-Whatever program we write, the intention is the same: to organize data in a
-way that serves our purposes.  But data doesn't consist of just random bits
-and bytes.  We build relationships between data elements in order to represent
-entities, or _things_ that exist in the real world.  A name and an email
-address have more meaning if we know that they belong to the same person.
+无论我们写什么样的程序，目的都是一样的：以某种方式组织数据服务我们的目的。
+但是数据不仅仅由随机位和字节组成。我们建立数据元素之间的关系以便于表示实体，或者现实世界中存在的 _事物_ 。
+如果我们知道一个名字和电子邮件地址属于同一个人，那么它们将会更有意义。
 
-In the real world, though, not all entities of the same type look the same.
-One person might have a home telephone number, while another person has only a
-cell-phone number, and another might have both.  One person might have three
-email addresses, while another has none. A Spanish person will probably have
-two last names, while an English person will probably have only one.
 
-One of the reasons that object-oriented programming languages are so popular
-is that objects help us represent and manipulate real-world entities with
-potentially complex data structures. So far, so good.
+尽管在现实世界中，不是所有的类型相同的实体看起来都是一样的。
+一个人可能有一个家庭电话号码，而另一个人只有一个手机号码，再一个人可能两者兼有。
+一个人可能有三个电子邮件地址，而另一个人却一个都没有。一位西班牙人可能有两个姓，而讲英语的人可能只有一个姓。
 
-The problem comes when we need to store these entities. Traditionally, we have
-stored our data in columns and rows in a relational database, the equivalent
-of using a spreadsheet.  All the flexibility gained from using objects is lost
-because of the inflexibility of our storage medium.
 
-But what if we could store our objects as objects?((("objects", "storing as objects")))  Instead of modeling our
-application around the limitations of spreadsheets, we can instead focus on _using_ the data. The flexibility of objects is returned to us.
+面向对象编程语言如此流行的原因之一是对象帮我们表示和处理现实世界具有潜在的复杂的数据结构的实体，到目前为止，一切都很完美！
 
-An _object_ is a language-specific, in-memory data structure.((("objects", "defined"))) To send it across
-the network or store it, we need to be able to represent it in some standard
-format. http://en.wikipedia.org/wiki/Json[JSON]
-is a way of representing objects in human-readable text.((("objects", "represented by JSON")))((("JSON", "representing objects in human-readable text")))((("JavaScript Object Notation", see="JSON")))  It has become the
-de facto standard for exchanging data in the NoSQL world. When an object has
-been serialized into JSON, it is known as a _JSON document_.((("JSON documents")))
+但是当我们需要存储这些实体时问题来了，传统上，我们以行和列的形式存储数据到关系型数据库中，相当于使用电子表格。
+正因为我们使用了这种不灵活的存储媒介导致所有我们使用对象的灵活性都丢失了。
 
-Elasticsearch is a distributed _document_ store.((("document store, Elasticsearch as"))) It can store and retrieve
-complex data structures--serialized as JSON documents--in _real time_. In
-other words, as soon as a document has been stored in Elasticsearch, it can be
-retrieved from any node in the cluster.
 
-Of course, we don't need to only store data; we must also query it, en masse
-and at speed. While NoSQL solutions exist that allow us to store
-objects as documents, they still require us to think about how we want to
-query our data, and which fields require an index in order to make data
-retrieval fast.
+但是否我们可以将我们的对象按对象的方式来存储？((("objects", "storing as objects")))这样我们就能更加专注于 _使用_ 数据，而不是在电子表格的局限性下对我们的应用建模。
+我们可以重新利用对象的灵活性。
 
-In Elasticsearch, _all data in every field_ is _indexed by default_.((("indexing", "in Elasticsearch"))) That is,
-every field has a dedicated inverted index for fast retrieval. And, unlike
-most other databases, it can use all of those inverted indices _in the same
-query_, to return results at breathtaking speed.
 
-In this chapter, we present the APIs that we use to create, retrieve,
-update, and delete documents. For the moment, we don't care about the data
-inside our documents or how to query them. All we care about is how to store our
-documents safely in Elasticsearch and how to get them back again.
+
+一个 _对象_ 是基于特定语言的内存的数据结构。((("objects", "defined")))为了通过网络发送或者存储它，我们需要将它表示成某种标准的格式。
+http://en.wikipedia.org/wiki/Json[JSON] 是一种以人可读的文本表示对象的方法。
+((("objects", "represented by JSON")))((("JSON", "representing objects in human-readable text")))((("JavaScript Object Notation", see="JSON")))
+它已经变成 NoSQL 世界交换数据的事实标准。当一个对象被序列化成为 JSON，它被称为一个 _JSON 文档_ ((("JSON documents")))。
+
+
+
+Elastcisearch 是分布式的 _文档_ 存储。((("document store, Elasticsearch as")))它能存储和检索复杂的数据结构--序列化成为JSON文档--以 _实时_ 的方式。
+换句话说，一旦一个文档被存储在 Elasticsearch 中，它就是可以被集群中的任意节点检索到。
+
+
+
+当然，我们不仅要存储数据，我们一定还需要查询它，成批且快速的查询它们。
+尽管现存的 NoSQL 解决方案允许我们以文档的形式存储对象，但是他们仍旧需要我们思考如何查询我们的数据，以及确定哪些字段需要被索引以加快数据检索。
+
+
+在 Elasticsearch 中， _每个字段的所有数据_ 都是 _默认被索引的_ 。((("indexing", "in Elasticsearch")))
+即每个字段都有为了快速检索设置的专用倒排索引。而且，不像其他多数的数据库，它能在 _相同的查询中_ 使用所有这些倒排索引，并以惊人的速度返回结果。
+
+
+在本章中，我们展示了用来创建，检索，更新和删除文档的 API。就目前而言，我们不关心文档中的数据或者怎样查询它们。
+所有我们关心的就是在 Elasticsearch 中怎样安全的存储文档，以及如何将文档再次返回。
