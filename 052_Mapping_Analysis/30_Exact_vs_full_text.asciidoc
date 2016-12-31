@@ -1,30 +1,22 @@
-=== Exact Values Versus Full Text
+=== 精确值 VS 全文
 
-Data in Elasticsearch can be broadly divided into two types:
-exact values and full text.
+Elasticsearch 中的数据可以概括的分为两类：精确值和全文。
 
-_Exact values_ are exactly what they sound like.((("exact values")))  Examples are a date or a
-user ID, but can also include exact strings such as a username or an email
-address. The exact value `Foo` is not the same as the exact value `foo`.
-The exact value `2014` is not the same as the exact value `2014-09-15`.
+_精确值_ 如它们听起来那样精确。((("exact values")))例如日期或者用户 ID，但字符串也可以表示精确值，例如用户名或邮箱地址。对于精确值来讲，`Foo` 和 `foo` 是不同的，`2014` 和 `2014-09-15` 也是不同的。
 
-_Full text_, on the other hand, refers ((("full text")))to textual data--usually written in
-some human language -- like the text of a tweet or the body of an email.
+另一方面，_全文_ 是指文本数据（通常以人类容易识别的语言书写），例如一个推文的内容或一封邮件的内容。
 
 [NOTE]
+
 ====
-Full text is often referred to as _unstructured data_, which is a misnomer--natural language is highly structured. The problem is that the rules of
-natural languages are complex, which makes them difficult for computers to
-parse correctly. For instance, consider this sentence:
+全文通常是指非结构化的数据，但这里有一个误解：自然语言是高度结构化的。问题在于自然语言的规则是复杂的，导致计算机难以正确解析。例如，考虑这条语句：
 
     May is fun but June bores me.
 
-Does it refer to months or to people?
+它指的是月份还是人？
 ====
 
-Exact values are easy to query. The decision is binary; a value either
-matches the query, or it doesn't. This kind of query is easy to express with
-SQL:
+精确值很容易查询。结果是二进制的：要么匹配查询，要么不匹配。这种查询很容易用 SQL 表示：
 
 [source,js]
 --------------------------------------------------
@@ -34,33 +26,16 @@ WHERE name    = "John Smith"
 --------------------------------------------------
 
 
-Querying full-text data is much more subtle. We are not just asking, ``Does
-this document match the query'' but ``How _well_ does this document match the
-query?'' In other words, how _relevant_ is this document to the given query?
+查询全文数据要微妙的多。我们问的不只是“这个文档匹配查询吗”，而是“该文档匹配查询的程度有多大？”换句话说，该文档与给定查询的相关性如何？
 
-We seldom want to match the whole full-text field exactly.  Instead, we want
-to search _within_ text fields. Not only that, but we expect search to
-understand our _intent_:
+我们很少对全文类型的域做精确匹配。相反，我们希望在文本类型的域中搜索。不仅如此，我们还希望搜索能够理解我们的 _意图_ ：
 
-* A search for `UK` should also return documents mentioning the `United Kingdom`.
+* 搜索 `UK`，会返回包含 `United Kindom` 的文档。
 
-* A search for `jump` should also match `jumped`, `jumps`, `jumping`,
-  and perhaps even `leap`.
+* 搜索 `jump` ，会匹配 `jumped` ， `jumps` ， `jumping` ，甚至是 `leap` 。
 
-* `johnny walker` should match `Johnnie Walker`, and `johnnie depp`
-  should match `Johnny Depp`.
+* 搜索 `johnny walker` 会匹配 `Johnnie Walker` ， `johnnie depp` 应该匹配 `Johnny Depp` 。
 
-* `fox news hunting` should return stories about hunting on Fox News,
-  while `fox hunting news` should return news stories about fox hunting.
+* `fox news hunting` 应该返回福克斯新闻（ Foxs News ）中关于狩猎的故事，同时， `fox hunting news` 应该返回关于猎狐的故事。
 
-To facilitate these types of queries on full-text fields,
-Elasticsearch first _analyzes_ the text, and then uses the results to build
-an _inverted index_. We will discuss the inverted index and the
-analysis process in the next two sections.
-
-
-
-
-
-
-
+为了促进这类在全文域中的查询，Elasticsearch 首先_分析_文档，之后根据结果创建_倒排索引_。在接下来的两节，我们会讨论倒排索引和分析过程。
