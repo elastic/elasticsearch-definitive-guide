@@ -30,7 +30,7 @@ WHERE name    = "John Smith"
 
 我们很少对全文类型的域做精确匹配。相反，我们希望在文本类型的域中搜索。不仅如此，我们还希望搜索能够理解我们的 _意图_ ：
 
-* 搜索 `UK`，会返回包含 `United Kindom` 的文档。
+* 搜索 `UK` ，会返回包含 `United Kindom` 的文档。
 
 * 搜索 `jump` ，会匹配 `jumped` ， `jumps` ， `jumping` ，甚至是 `leap` 。
 
@@ -38,4 +38,4 @@ WHERE name    = "John Smith"
 
 * `fox news hunting` 应该返回福克斯新闻（ Foxs News ）中关于狩猎的故事，同时， `fox hunting news` 应该返回关于猎狐的故事。
 
-为了促进这类在全文域中的查询，Elasticsearch 首先_分析_文档，之后根据结果创建_倒排索引_。在接下来的两节，我们会讨论倒排索引和分析过程。
+为了促进这类在全文域中的查询，Elasticsearch 首先 _分析_ 文档，之后根据结果创建 _倒排索引_ 。在接下来的两节，我们会讨论倒排索引和分析过程。
