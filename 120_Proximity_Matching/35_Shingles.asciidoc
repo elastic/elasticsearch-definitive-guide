@@ -1,66 +1,50 @@
 [[shingles]]
-=== Finding Associated Words
+=== 寻找相关词
 
-As useful as phrase and proximity queries can be, they still have a downside.
-They are overly strict: all terms must be present for a phrase query to match,
-even when using `slop`.((("proximity matching", "finding associated words", range="startofrange", id="ix_proxmatchassoc")))
+短语查询和邻近查询都很好用，但仍有一个缺点。它们过于严格了：为了匹配短语查询，所有词项都必须存在，即使使用了 `slop` 。
+((("proximity matching", "finding associated words", range="startofrange", id="ix_proxmatchassoc")))
 
-The flexibility in word ordering that you gain with `slop` also comes at a
-price, because you lose the association between word pairs.  While you can
-identify documents in which `sue`, `alligator`, and `ate` occur close together,
-you can't tell whether _Sue ate_ or the _alligator ate_.
 
-When words are used in conjunction with each other, they express an idea that
-is bigger or more meaningful than each word in isolation. The two clauses
-_I'm not happy I'm working_ and _I'm happy I'm not working_ contain the same words, in
-close proximity, but have quite different meanings.
+用 `slop` 得到的单词顺序的灵活性也需要付出代价，因为失去了单词对之间的联系。即使可以识别 `sue` 、 `alligator` 和 `ate`
+相邻出现的文档，但无法分辨是 _Sue ate_ 还是  _alligator ate_ 。
 
-If, instead of indexing each word independently, we were to index pairs of
-words, then we could retain more of the context in which the words were used.
+当单词相互结合使用的时候，表达的含义比单独使用更丰富。两个子句 _I'm not happy I'm working_ 和 _I'm happy I'm not working_ 包含相同
+的单词，也拥有相同的邻近度，但含义截然不同。
 
-For the sentence `Sue ate the alligator`, we would not only index each word
-(or _unigram_) as((("unigrams"))) a term
+如果索引单词对而不是索引独立的单词，就能对这些单词的上下文尽可能多的保留。
+
+对句子 `Sue ate the alligator` ，不仅要将每一个单词（或者 _unigram_ ）作为词项索引((("unigrams")))
 
     ["sue", "ate", "the", "alligator"]
 
-but also each word _and its neighbor_ as single terms:
+也要将每个单词 _以及它的邻近词_ 作为单个词项索引：
 
     ["sue ate", "ate the", "the alligator"]
 
-These word ((("bigrams")))pairs (or _bigrams_) are ((("shingles")))known as _shingles_.
+这些单词对((("bigrams")))（或者 _bigrams_ ）被称为((("shingles"))) _shingles_ 。
 
 [TIP]
 ==================================================
 
-Shingles are not restricted to being pairs of words; you could index word
-triplets (_trigrams_) as ((("trigrams")))well:
+Shingles 不限于单词对；你也可以索引三个单词（ _trigrams_ ）：
 
     ["sue ate the", "ate the alligator"]
 
-Trigrams give you a higher degree of precision, but greatly increase the
-number of unique terms in the index. Bigrams are sufficient for most use
-cases.
+Trigrams 提供了更高的精度，但是也大大增加了索引中唯一词项的数量。在大多数情况下，Bigrams 就够了。
 
 ==================================================
 
-Of course, shingles are useful only if the user enters the query in the same
-order as in the original document; a query for `sue alligator` would match
-the individual words but none of our shingles.
+当然，只有当用户输入的查询内容和在原始文档中顺序相同时，shingles 才是有用的；对 `sue alligator` 的查询可能会匹配到单个单词，但是不会匹配任何 shingles 。
 
-Fortunately, users tend to express themselves using constructs similar to
-those that appear in the data they are searching. But this point is an
-important one: it is not enough to index just bigrams; we still need unigrams,
-but we can use matching bigrams as a signal to increase the relevance score.
+幸运的是，用户倾向于使用和搜索数据相似的构造来表达搜索意图。但这一点很重要：只是索引 bigrams 是不够的；我们仍然需要 unigrams ，但可以将匹配 bigrams 作为增加相关度评分的信号。
 
-==== Producing Shingles
+==== 生成 Shingles
 
-Shingles need to be created at index time as part of the analysis process.((("shingles", "producing at index time"))) We
-could index both unigrams and bigrams into a single field, but it is cleaner
-to keep unigrams and bigrams in separate fields that can be queried
-independently.  The unigram field would form the basis of our search, with the
-bigram field being used to boost relevance.
+Shingles 需要在索引时作为分析过程的一部分被创建。((("shingles", "producing at index time")))我们可以将 unigrams 和 bigrams 都索引到单个字段中，
+但将它们分开保存在能被独立查询的字段会更清晰。unigrams 字段将构成我们搜索的基础部分，而 bigrams 字段用来提高相关度。
 
-First, we need to create an analyzer that uses the `shingle` token filter:
+
+首先，我们需要在创建分析器时使用 `shingle` 语汇单元过滤器：
 
 [source,js]
 --------------------------------------------------
@@ -95,16 +79,12 @@ PUT /my_index
 --------------------------------------------------
 // SENSE: 120_Proximity_Matching/35_Shingles.json
 
-<1> See <<relevance-is-broken>>.
-<2> The default min/max shingle size is `2` so we don't really need to set
-    these.
-<3> The `shingle` token filter outputs unigrams by default, but we want to
-    keep unigrams and bigrams separate.
-<4> The `my_shingle_analyzer` uses our custom `my_shingles_filter` token
-    filter.
+<1> 参考 <<relevance-is-broken>> 。
+<2> 默认最小/最大的 shingle 大小是 `2` ，所以实际上不需要设置。
+<3> `shingle` 语汇单元过滤器默认输出 unigrams ，但是我们想让 unigrams 和 bigrams 分开。
+<4> `my_shingle_analyzer` 使用我们常规的 `my_shingles_filter` 语汇单元过滤器。
 
-First, let's test that our analyzer is working as expected with the `analyze`
-API:
+首先，用 `analyze` API 测试下分析器：
 
 [source,js]
 --------------------------------------------------
@@ -112,18 +92,17 @@ GET /my_index/_analyze?analyzer=my_shingle_analyzer
 Sue ate the alligator
 --------------------------------------------------
 
-Sure enough, we get back three terms:
+果然， 我们得到了 3 个词项：
 
 * `sue ate`
 * `ate the`
 * `the alligator`
 
-Now we can proceed to setting up a field to use the new analyzer.
+现在我们可以继续创建一个使用新的分析器的字段。
 
-==== Multifields
+==== 多字段
 
-We said that it is cleaner to index unigrams and bigrams separately, so we
-will create the `title` field ((("multifields")))as a multifield (see <<multi-fields>>):
+我们曾谈到将 unigrams 和 bigrams 分开索引更清晰，所以 `title` 字段((("multifields")))将创建成一个多字段（参考 <<multi-fields>> ）：
 
 [source,js]
 --------------------------------------------------
@@ -145,11 +124,10 @@ PUT /my_index/_mapping/my_type
 }
 --------------------------------------------------
 
-With this mapping, values from  our JSON document in the field `title` will be
-indexed both as unigrams (`title`) and as bigrams (`title.shingles`), meaning
-that we can query these fields independently.
+通过这个映射， JSON 文档中的 `title` 字段将会被以 unigrams (`title`)和 bigrams (`title.shingles`)被索引，这意味着可以独立地查询这些字段。
 
-And finally, we can index our example documents:
+
+最后，我们可以索引以下示例文档:
 
 [source,js]
 --------------------------------------------------
@@ -162,10 +140,9 @@ POST /my_index/my_type/_bulk
 { "title": "Sue never goes anywhere without her alligator skin purse" }
 --------------------------------------------------
 
-==== Searching for Shingles
+==== 搜索 Shingles
 
-To understand the benefit ((("shingles", "searching for")))that the `shingles` field adds, let's first look at
-the results from a simple `match` query for ``The hungry alligator ate Sue'':
+为了理解添加 `shingles` 字段的好处((("shingles", "searching for")))，让我们首先来看 `The hungry alligator ate Sue` 进行简单 `match` 查询的结果：
 
 [source,js]
 --------------------------------------------------
@@ -179,8 +156,7 @@ GET /my_index/my_type/_search
 }
 --------------------------------------------------
 
-This query returns all three documents, but note that documents 1 and 2
-have the same relevance score because they contain the same words:
+这个查询返回了所有的三个文档， 但是注意文档 1 和 2 有相同的相关度评分因为他们包含了相同的单词：
 
 [source,js]
 --------------------------------------------------
@@ -210,15 +186,11 @@ have the same relevance score because they contain the same words:
   ]
 }
 --------------------------------------------------
-<1> Both documents contain `the`, `alligator`, and `ate` and so have the
-    same score.
-<2> We could have excluded document 3 by setting the `minimum_should_match`
-    parameter. See <<match-precision>>.
+<1> 两个文档都包含 `the` 、 `alligator` 和 `ate` ，所以获得相同的评分。
+<2> 我们可以通过设置 `minimum_should_match` 参数排除文档 3 ，参考 <<match-precision>> 。
 
-Now let's add the `shingles` field into the query.  Remember that we want
-matches on the `shingles` field to act as a signal--to increase the
-relevance score--so we still need to include the query on the main `title`
-field:
+现在在查询里添加 `shingles` 字段。不要忘了在 `shingles` 字段上的匹配是充当一
+种信号--为了提高相关度评分--所以我们仍然需要将基本 `title` 字段包含到查询中：
 
 [source,js]
 --------------------------------------------------
@@ -241,8 +213,7 @@ GET /my_index/my_type/_search
 }
 --------------------------------------------------
 
-We still match all three documents, but document 2 has now been bumped into
-first place because it matched the shingled term `ate sue`.
+仍然匹配到了所有的 3 个文档， 但是文档 2 现在排到了第一名因为它匹配了 shingled 词项 `ate sue`.
 
 [source,js]
 --------------------------------------------------
@@ -273,20 +244,16 @@ first place because it matched the shingled term `ate sue`.
 }
 --------------------------------------------------
 
-Even though our query included the word `hungry`, which doesn't appear in
-any of our documents, we still managed to use word proximity to return the
-most relevant document first.
+即使查询包含的单词 `hungry` 没有在任何文档中出现，我们仍然使用单词邻近度返回了最相关的文档。
 
-==== Performance
+==== Performance性能
 
-Not only are shingles more flexible than phrase queries,((("shingles", "better performance than phrase queries"))) but they perform better
-as well.  Instead of paying the price of a phrase query every time you search,
-queries for shingles are just as efficient as a simple `match` query. A small price is paid at index time, because more terms need to
-be indexed, which also means that fields with shingles use more disk space.
-However, most applications write once and read many times, so it makes sense
-to optimize for fast queries.
+shingles 不仅比短语查询更灵活，((("shingles","better performance than phrase queries")))而且性能也更好。
+shingles 查询跟一个简单的 `match` 查询一样高效，而不用每次搜索花费短语查询的代价。只是在索引期间因为更多词项需要被索引会付出一些小的代价，
+这也意味着有 shingles 的字段会占用更多的磁盘空间。
+然而，大多数应用写入一次而读取多次，所以在索引期间优化我们的查询速度是有意义的。
 
-This is a theme that you will encounter frequently in Elasticsearch: enables you to achieve a lot at search time, without requiring any up-front
-setup. Once you understand your requirements more clearly, you can achieve better results with better performance by modeling your data correctly at index time.
+
+这是一个在 Elasticsearch 里会经常碰到的话题：不需要任何前期进行过多的设置，就能够在搜索的时候有很好的效果。
+一旦更清晰的理解了自己的需求，就能在索引时通过正确的为你的数据建模获得更好结果和性能。
 ((("proximity matching", "finding associated words", range="endofrange", startref ="ix_proxmatchassoc")))
-
