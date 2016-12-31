@@ -1,116 +1,79 @@
 [[language-pitfalls]]
-=== Pitfalls of Mixing Languages
+=== 混合语言的陷阱
 
-If you have to deal with only a single language,((("languages", "mixing, pitfalls of"))) count yourself lucky.
-Finding the right strategy for handling documents written in several languages
-can be challenging.((("indexing", "mixed languages, pitfalls of")))
+如果你只需要处理一种语言，那么你很幸运。找到一个正确的策略用于处理多语言文档是一项巨大的挑战。((("indexing", "mixed languages, pitfalls of")))
 
-==== At Index Time
+==== 在索引的时候
 
-Multilingual documents come in three main varieties:
+多语言文档主要有以下三个类型：
 
- * One predominant language per _document_, which may contain snippets from
-   other languages (See <<one-lang-docs>>.)
- * One predominant language per _field_, which may contain snippets from
-   other languages (See <<one-lang-fields>>.)
- * A mixture of languages per field (See <<mixed-lang-fields>>.)
+ * 一种是每份 _document_ （文档）有自己的主语言，并包含一些其他语言的片段（参考 <<one-lang-docs>>。）
+ * 一种是每个 _field_ （域）有自己的主语言, 并包含一些其他语言的片段（参考 <<one-lang-fields>>。）
+ * 一种是每个 _field_ （域）都是混合语言（参考 <<mixed-lang-fields>>。）
 
-The goal, although not always achievable, should be to keep languages
-separate.  Mixing languages in the same inverted index can be problematic.
+（分词）目标不总是可以实现，我们应当保持将不同语言分隔开。在同一份倒排索引内混合多种语言可能造成一些问题。
 
-===== Incorrect stemming
+===== 不合理的词干提取
 
-The stemming rules for German are different from those for English, French,
-Swedish, and so on.((("stemming words", "incorrect stemming in multilingual documents"))) Applying the same stemming rules to different languages
-will result in some words being stemmed correctly, some  incorrectly, and some
-not being stemmed at all. It may even result in words from different languages with different meanings
-being stemmed to the same root word, conflating their meanings and producing
-confusing search results for the user.
+德语的词干提取规则跟英语，法语，瑞典语等是不一样的。 ((("stemming words", "incorrect stemming in multilingual documents"))) 为不同的语言提供同样的词干提规则
+将会导致有的词的词根找的正确，有的词的词根找的不正确，有的词根本找不到词根。 甚至是将不同语言的不同含义的词切为同一个词根，合并这些词根的搜索结果会给用户带来困恼。
 
-Applying multiple stemmers in turn to the same text is likely to result in
-rubbish, as the next stemmer may try to stem an already stemmed word,
-compounding the problem.
+提供多种的词干提取器轮流切分同一份文档的结果很有可能得到一堆垃圾，因为下一个词干提取器会尝试切分一个已经被缩减为词干的单词，这加剧了上面提到的问题。
 
 [[different-scripts]]
-.Stemmer per Script
+
+.每种书写方式一种词干提取器
 ************************************************
-The one exception to the _only-one-stemmer_ rule occurs when each language
-is written in a different script.  For instance, in Israel it is quite
-possible that a single document may contain Hebrew, Arabic, Russian (Cyrillic),
-and English:
+
+只有一种情况, _only-one-stemmer_ （唯一词干提取器）会发生，就是每种语言都有自己的书写方式。例如，在以色列就有很大的可能一个文档包含希伯来语，
+阿拉伯语，俄语（古代斯拉夫语），和英语。
 
     אזהרה - Предупреждение - تحذير - Warning
 
-Each language uses a different script, so the stemmer for one language will not
-interfere with another, allowing multiple stemmers to be applied to the same
-text.
+每种语言使用不同的书写方式，所以一种语言的词干提取器就不会干扰其他语言的，允许为同一份文本提供多种词干提取器。
+
 ************************************************
 
-===== Incorrect inverse document frequencies
+===== 不正确的倒排文档频率
 
-In <<relevance-intro>>, we explained that the more frequently a term appears
-in a collection of documents, the less weight that term has.((("inverse document frequency", "incorrect, in multilingual documents")))  For accurate
-relevance calculations, you need accurate term-frequency statistics.
+在 <<relevance-intro>> （相关性教程）中，一个 term （词）在一份文档中出现的频率约高，该term（词）的权重就越低。
+为了精确的计算相关性，你需要精确的统计 term-frequency （词频）。
 
-A short snippet of German appearing in predominantly English text would give
-more weight to the German words, given that they are relatively uncommon. But
-mix those with documents that are predominantly German, and the short German
-snippets now have much less weight.
+一段德文出现在英语为主的文本中会给与德语单词更高的权重，给那么高权重是因为德语单词相对来说更稀有。
+但是如果这份文档跟以德语为主的文档混合在一起，那么这段德文就会有很低的权重。
 
-==== At Query Time
+==== 在搜索的时候
 
-It is not sufficient just to think about your documents, though.((("queries", "mixed languages and")))  You also need
-to think about how your users will query those documents.  Often you will be able
-to identify the main language of the user either from the language of that user's chosen
-interface (for example, `mysite.de` versus `mysite.fr`) or from the
-http://www.w3.org/International/questions/qa-lang-priorities.en.php[`accept-language`]
-HTTP header from the user's browser.
+然而仅仅考虑你的文档是不够的 ((("queries", "mixed languages and"))) 。你也需要考虑你的用户会怎么搜索这些文档。
+通常你能从用户选择的语言界面来确定用户的主语言，（例如， `mysite.de` 和  `mysite.fr` ） 或者从用户的浏览器的HTTP header（HTTP头文件）
+http://www.w3.org/International/questions/qa-lang-priorities.en.php[`accept-language`] 确定。
 
-User searches also come in three main varieties:
+用户的搜索也注意有三个方面:
 
-* Users search for words in their main language.
-* Users search for words in a different language, but expect results in
-  their main language.
-* Users search for words in a different language, and expect results in
-  that language (for example, a bilingual person, or a foreign visitor in a web cafe).
+* 用户使用他的主语言搜索。
+* 用户使用其他的语言搜索，但希望获取主语言的搜索结果。
+* 用户使用其他语言搜索，并希望获取该语言的搜索结果。（例如，精通双语的人，或者网络咖啡馆的外国访问者）。
 
-Depending on the type of data that you are searching, it may be appropriate to
-return results in a single language (for example, a user searching for products on
-the Spanish version of the website) or to combine results in the identified
-main language of the user with results from other languages.
+根据你搜索数据的类型，或许会返回单语言的合适结果（例如，一个用户在西班牙网站搜索商品），也可能是用户主语言的搜索结果和其他语言的搜索结果混合。
 
-Usually, it makes sense to give preference to the user's language.  An English-speaking
-user searching the Web for ``deja vu'' would probably prefer to see
-the English Wikipedia page rather than the French Wikipedia page.
+
+通常来说，给与用户语言偏好的搜索很有意义。一个使用英语的用户搜索时更希望看到英语 Wikipedia 页面而不是法语 Wikipedia 页面。
 
 [[identifying-language]]
-==== Identifying Language
+==== 语言识别
 
-You may already know the language of your documents.  Perhaps your documents
-are created within your organization and translated into a list of predefined
-languages.  Human pre-identification is probably the most reliable method of
-classifying language correctly.
 
-Perhaps, though, your documents come from an external source without any
-language classification, or possibly with incorrect classification. In these
-cases, you need to use a heuristic to identify the predominant language.
-Fortunately, libraries are available in several languages to help with this problem.
+你很可能已经知道你的文档所选用的语言，或者你的文档只是在你自己的组织内编写并被翻译成确定的一系列语言。人类的预识别可能是最可靠的将语言正确归类的方法。
 
-Of particular note is the
+然而，或许你的文档来自第三方资源且没经过语言归类，或者是不正确的归类。这种情况下，你需要一个学习算法来归类你文档的主语言。幸运的是，一些语言有现成的工具包可以帮你解决这个问题。
+
+详细内容是来自
+http://blog.mikemccandless.com/2013/08/a-new-version-of-compact-language.html[Mike McCandless] 的
 https://github.com/mikemccand/chromium-compact-language-detector[chromium-compact-language-detector]
-library from
-http://blog.mikemccandless.com/2013/08/a-new-version-of-compact-language.html[Mike McCandless],
-which uses the open source (http://www.apache.org/licenses/LICENSE-2.0[Apache License 2.0])
-https://code.google.com/p/cld2/[Compact Language Detector] (CLD) from Google.  It is
-small, fast, ((("Compact Language Detector (CLD)")))and accurate, and can detect 160+ languages from as little as two
-sentences. It can even detect multiple languages within a single block of
-text. Bindings exist for several languages including Python, Perl, JavaScript,
-PHP, C#/.NET, and R.
+工具包，使用的是google开发的基于 (http://www.apache.org/licenses/LICENSE-2.0[Apache License 2.0])的开源工具包
+https://code.google.com/p/cld2/[Compact Language Detector] (CLD) 。
+它小巧，快速，((("Compact Language Detector (CLD)")))且精确，并能根据短短的两句话就可以检测 160+ 的语言。
+它甚至能对单块文本检测多种语言。支持多种开发语言包括 Python，Perl，JavaScript，PHP，C#/.NET，和 R 。
 
-Identifying the language of the user's search request is not quite as simple.
-The CLD is designed for text that is at least 200 characters in length.
-Shorter amounts of text, such as search keywords, produce much less accurate
-results. In these cases, it may be preferable to take simple heuristics into
-account such as the country of origin, the user's selected language, and the
-HTTP `accept-language` headers.
-
+确定用户搜索请求的语言并不是那么简单。 CLD 是为了至少 200 字符长的文本设计的。字符短的文本，例如搜索关键字，会产生不精确的结果。
+这种情况下，或许采取一些简单的启发式算法会更好些，例如该国家的官方语言，用户选择的语言，和 HTTP `accept-language` headers （HTTP头文件）。
