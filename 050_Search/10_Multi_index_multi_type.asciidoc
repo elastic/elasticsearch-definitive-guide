@@ -1,54 +1,42 @@
 [[multi-index-multi-type]]
-=== Multi-index, Multitype
+=== 多索引，多类型
 
-Did you notice that the results from the preceding <<empty-search,empty search>> 
-contained documents ((("searching", "multi-index, multi-type search")))of different types&#x2014;`user` and `tweet`&#x2014;from two
-different indices&#x2014;`us` and `gb`?
+你有没有注意到之前的 <<empty-search,empty search>> 的结果，不同类型的文档((("searching", "multi-index, multi-type search")))&#x2014; `user` 和 `tweet` 来自不同的索引&#x2014; `us` 和 `gb` ？ 
 
-By not limiting our search to a particular index or type, we have searched
-across _all_ documents in the cluster. Elasticsearch forwarded the search
-request in parallel to a primary or replica of every shard in the cluster,
-gathered the results to select the overall top 10, and returned them to us.
+如果不对某一特殊的索引或者类型做限制，就会搜索集群中的所有文档。Elasticsearch 转发搜索请求到每一个主分片或者副本分片，汇集查询出的前10个结果，并且返回给我们。
 
-Usually, however, you will((("types", "specifying in search requests")))((("indices", "specifying in search requests"))) want to search within one or more specific indices,
-and probably one or more specific types. We can do this by specifying the
-index and type in the URL, as follows:
+然而，经常的情况下，你((("types", "specifying in search requests")))((("    indices", "specifying in search requests")))想在一个或多个特殊的索引并且在一个或者多个特殊的类型中进行搜索。我们可以通过在URL中指定特殊的索引和类型达到这种效果，如下所示：
 
 
 `/_search`::     
-    Search all types in all indices
+    在所有的索引中搜索所有的类型
 
 `/gb/_search`:: 
-    Search all types in the `gb` index
+    在 `gb` 索引中搜索所有的类型
 
 `/gb,us/_search`::            
-    Search all types in the `gb` and `us` indices
+    在 `gb` 和 `us` 索引中搜索所有的文档
 
 `/g*,u*/_search`::            
-    Search all types in any indices beginning with `g` or beginning with `u`
+    在任何以 `g` 或者 `u` 开头的索引中搜索所有的类型
 
 `/gb/user/_search`::          
-    Search type `user` in the `gb` index
+    在 `gb` 索引中搜索 `user` 类型
 
 `/gb,us/user,tweet/_search`::
-    Search types `user` and `tweet` in the `gb` and `us` indices
+    在 `gb` 和 `us` 索引中搜索 `user` 和 `tweet` 类型
 
 `/_all/user,tweet/_search`::  
-    Search types `user` and `tweet` in all indices
+    在所有的索引中搜索 `user` 和 `tweet` 类型
 
 
-When you search within a single index, Elasticsearch forwards the search
-request to a primary or replica of every shard in that index, and then gathers the
-results from each shard. Searching within multiple indices works in exactly
-the same way--there are just more shards involved.
+当在单一的索引下进行搜索的时候，Elasticsearch 转发请求到索引的每个分片中，可以是主分片也可以是副本分片，然后从每个分片中收集结果。多索引搜索恰好也是用相同的方式工作的--只是会涉及到更多的分片。
 
 [TIP]
 ================================================
 
-Searching one index that has five primary shards is _exactly equivalent_ to
-searching five indices that have one primary shard each.
+搜索一个索引有五个主分片和搜索五个索引各有一个分片准确来所说是等价的。
 
 ================================================
 
-Later, you will see how this simple fact makes it easy to scale flexibly
-as your requirements change.
+接下来，你将明白这种简单的方式如何弹性的把请求的变化变得简单化。
