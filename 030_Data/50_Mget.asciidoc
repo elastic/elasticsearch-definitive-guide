@@ -1,15 +1,15 @@
-=== Retrieving Multiple Documents
+[[_Retrieving_Multiple_Documents]]
+=== 取回多个文档
 
-As fast as Elasticsearch is, it can be faster still.((("documents", "retrieving multiple"))) Combining multiple
-requests into one avoids the network overhead of processing each request
-individually. If you know that you need to retrieve multiple documents from
-Elasticsearch, it is faster to retrieve them all in a single request by using the
-_multi-get_, or `mget`, API, ((("mget (multi-get) API")))instead of document by document.
+Elasticsearch 的速度已经很快了，但甚至能更快。((("documents", "retrieving multiple")))
+将多个请求合并成一个，避免单独处理每个请求花费的网络时延和开销。
+如果你需要从 Elasticsearch 检索很多文档，那么使用 _multi-get_ 或者 `mget` API((("mget (multi-get) API")))
+来将这些检索请求放在一个请求中，将比逐个文档请求更快地检索到全部文档。
 
-The `mget` API expects a `docs` array, each ((("docs array", "in request")))element of which specifies the
-`_index`, `_type`, and `_id` metadata of the document you wish to retrieve. You
-can also specify a `_source` parameter if you just want to retrieve one or
-more specific fields:
+
+`mget` API 要求有一个 `docs` 数组作为参数，每个((("docs array", "in request")))元素包含需要检索文档的元数据，
+包括 `_index` 、 `_type` 和 `_id` 。如果你想检索一个或者多个特定的字段，那么你可以通过 `_source` 参数来指定这些字段的名字：
+
 
 [source,js]
 --------------------------------------------------
@@ -32,10 +32,10 @@ GET /_mget
 --------------------------------------------------
 // SENSE: 030_Data/50_Mget.json
 
-The response body also contains a `docs` array((("docs array", "in response body"))) that contains a response
-per document, in the same order as specified in the request. Each of these
-responses is the same response body that we would expect from an individual
-<<get-doc,`get` request>>:
+该响应体也包含一个 `docs` 数组((("docs array", "in response body")))，
+对于每一个在请求中指定的文档，这个数组中都包含有一个对应的响应，且顺序与请求中的顺序相同。
+其中的每一个响应都和使用单个 <<get-doc,`get` request>> 请求所得到的响应体相同：
+
 
 [source,js]
 --------------------------------------------------
@@ -67,11 +67,10 @@ responses is the same response body that we would expect from an individual
 --------------------------------------------------
 // SENSE: 030_Data/50_Mget.json
 
-If the documents you wish to retrieve are all in the same `_index` (and maybe
-even of the same `_type`), you can specify a default `/_index` or a
-default `/_index/_type` in the URL.
+如果想检索的数据都在相同的 `_index` 中（甚至相同的 `_type` 中），则可以在 URL 中指定默认的 `/_index` 或者默认的  `/_index/_type` 。
 
-You can still override these values in the individual requests:
+
+你仍然可以通过单独请求覆盖这些值：
 
 [source,js]
 --------------------------------------------------
@@ -85,8 +84,7 @@ GET /website/blog/_mget
 --------------------------------------------------
 // SENSE: 030_Data/50_Mget.json
 
-In fact, if all the documents have the same `_index` and `_type`, you
-can just pass an array of `ids` instead of the full `docs` array:
+事实上，如果所有文档的 `_index` 和 `_type` 都是相同的，你可以只传一个 `ids` 数组，而不是整个 `docs` 数组：
 
 [source,js]
 --------------------------------------------------
@@ -96,9 +94,7 @@ GET /website/blog/_mget
 }
 --------------------------------------------------
 
-Note that the second document that we requested doesn't exist. We specified
-type `blog`, but the document with ID `1` is of type `pageviews`. This
-nonexistence is reported in the response body:
+注意，我们请求的第二个文档是不存在的。我们指定类型为 `blog` ，但是文档 ID `1` 的类型是 `pageviews` ，这个不存在的情况将在响应体中被报告：
 
 [source,js]
 --------------------------------------------------
@@ -125,16 +121,13 @@ nonexistence is reported in the response body:
 }
 --------------------------------------------------
 // SENSE: 030_Data/50_Mget.json
-<1> This document was not found.
+<1> 未找到该文档。
 
-The fact that the second document wasn't found didn't affect the retrieval of
-the first document. Each doc is retrieved and reported on individually.
+事实上第二个文档未能找到并不妨碍第一个文档被检索到。每个文档都是单独检索和报告的。
 
 [NOTE]
 ====
-The HTTP status code for the preceding request is `200`, even though one
-document wasn't found. In fact, it would still be `200` if _none_ of the
-requested documents were found--because the `mget`
-request itself completed successfully. To determine the success or failure of
-the individual documents, you need to check ((("found flag")))the `found` flag.
+即使有某个文档没有找到，上述请求的 HTTP 状态码仍然是 `200` 。事实上，即使请求 _没有_ 找到任何文档，它的状态码依然是 `200`
+--因为 `mget` 请求本身已经成功执行。
+为了确定某个文档查找是成功或者失败，你需要检查 `found` 标记((("found flag")))。
 ====
