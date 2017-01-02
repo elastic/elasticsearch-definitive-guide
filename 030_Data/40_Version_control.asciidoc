@@ -1,81 +1,60 @@
 [[version-control]]
-=== Dealing with Conflicts
+=== 处理冲突
 
-When updating a document with ((("conflicts", "dealing with")))the `index` API, we read the original document,
-make our changes, and then reindex the _whole document_ in one go. The most recent
-indexing request wins: whichever document was indexed last is the one stored
-in Elasticsearch. If somebody else had changed the document in the meantime,
-their changes would be lost.
+当我们使用 `index` API 更新文档 ((("conflicts", "dealing with")))，可以一次性读取原始文档，做我们的修改，然后重新索引 _整个文档_ 。
+最近的索引请求将获胜：无论最后哪一个文档被索引，都将被唯一存储在 Elasticsearch 中。如果其他人同时更改这个文档，他们的更改将丢失。
 
-Many times, this is not a problem.  Perhaps our main data store is a
-relational database, and we just copy the data into Elasticsearch to make it
-searchable. Perhaps there is little chance of two people changing the same
-document at the same time. Or perhaps it doesn't really matter to our business
-if we lose changes occasionally.
 
-But sometimes losing a change is _very important_.  Imagine that we're using
-Elasticsearch to store the number of widgets that we have in stock in our
-online store. Every time that we sell a widget, we decrement the stock count
-in Elasticsearch.
+很多时候这是没有问题的。也许我们的主数据存储是一个关系型数据库，我们只是将数据复制到 Elasticsearch 中并使其可被搜索。
+也许两个人同时更改相同的文档的几率很小。或者对于我们的业务来说偶尔丢失更改并不是很严重的问题。
 
-One day, management decides to have a sale. Suddenly, we are selling several
-widgets every second. Imagine two web processes, running in parallel, both
-processing the sale of one widget each, as shown in <<img-data-lww>>.
+
+但有时丢失了一个变更就是 _非常严重的_ 。试想我们使用 Elasticsearch 存储我们网上商城商品库存的数量，
+每次我们卖一个商品的时候，我们在 Elasticsearch 中将库存数量减少。
+
+有一天，管理层决定做一次促销。突然地，我们一秒要卖好几个商品。
+假设有两个 web 程序并行运行，每一个都同时处理所有商品的销售，如图 <<img-data-lww>> 所示。
+
 
 [[img-data-lww]]
 .Consequence of no concurrency control
 image::images/elas_0301.png["Consequence of no concurrency control",width="50%",align="center"]
 
-The change that `web_1` made to the `stock_count` has been lost because
-`web_2` is unaware that its copy of the `stock_count` is out-of-date. The
-result is that we think we have more widgets than we actually do, and we're
-going to disappoint customers by selling them stock that doesn't exist.
+`web_1` 对 `stock_count` 所做的更改已经丢失，因为 `web_2` 不知道它的 `stock_count` 的拷贝已经过期。
+结果我们会认为有超过商品的实际数量的库存，因为卖给顾客的库存商品并不存在，我们将让他们非常失望。
 
-The more frequently that changes are made, or the longer the gap between
-reading data and updating it, the more likely it is that we will lose changes.
 
-In the database world, two approaches are commonly used to ensure that
-changes are not lost when making ((("pessimistic concurrency control")))((("concurrency control")))concurrent updates:
+变更越频繁，读数据和更新数据的间隙越长，也就越可能丢失变更。
 
-_Pessimistic concurrency control_::
+在数据库领域中，有两种方法通常被用来确保并发更新((("pessimistic concurrency control")))((("concurrency control")))时变更不会丢失：
 
-Widely used by relational databases, this approach assumes that conflicting changes are
-likely to happen and so blocks access to a resource in order to prevent
-conflicts. A typical example is locking a row before reading its data,
-ensuring that only the thread that placed the lock is able to make changes to
-the data in that row.
+_悲观并发控制_ ::
 
-_Optimistic concurrency control_::
+这种方法被关系型数据库广泛使用，它假定有变更冲突可能发生，因此阻塞访问资源以防止冲突。
+一个典型的例子是读取一行数据之前先将其锁住，确保只有放置锁的线程能够对这行数据进行修改。
 
-Used by Elasticsearch, ((("optimistic concurrency control"))) this approach assumes that conflicts are unlikely to happen and
-doesn't block operations from being attempted. However, if the underlying data
-has been modified between reading and writing, the update will fail. It is
-then up to the application to decide how it should resolve the conflict. For
-instance, it could reattempt the update, using the fresh data, or it could
-report the situation to the user.
+
+_乐观并发控制_ ::
+
+Elasticsearch 中使用的((("optimistic concurrency control")))这种方法假定冲突是不可能发生的，并且不会阻塞正在尝试的操作。
+然而，如果源数据在读写当中被修改，更新将会失败。应用程序接下来将决定该如何解决冲突。
+例如，可以重试更新、使用新的数据、或者将相关情况报告给用户。
 
 [[optimistic-concurrency-control]]
-=== Optimistic Concurrency Control
+=== 乐观并发控制
 
-Elasticsearch is distributed.  When documents((("concurrency control", "optimistic"))) are created, updated, or deleted,
-the new version of the document has to be replicated to other nodes in the
-cluster.  Elasticsearch is also asynchronous and  concurrent, meaning that
-these replication requests are sent in parallel, and may arrive at their
-destination _out of sequence_. Elasticsearch needs a way of ensuring that an older
-version of a document never overwrites a newer version.
+Elasticsearch 是分布式的。当文档创建、更新或删除时，((("concurrency control","optimistic")))
+新版本的文档必须复制到集群中的其他节点。Elasticsearch 也是异步和并发的，这意味着这些复制请求被并行发送，并且到达目的地时也许 _顺序是乱的_ 。
+Elasticsearch 需要一种方法确保文档的旧版本不会覆盖新的版本。
 
-When we discussed `index`, `get`, and `delete` requests previously, we pointed out
-that every document has a `_version` number that is incremented whenever a
-document is changed. Elasticsearch uses this `_version` number to ensure that
-changes are applied in the correct order. If an older version of a document
-arrives after a new version, it can simply be ignored.
+当我们之前讨论 `index` ， `GET` 和 `delete` 请求时，我们指出每个文档都有一个 `_version` （版本）号，当文档被修改时版本号递增。
+Elasticsearch 使用这个 `_version` 号来确保变更以正确顺序得到执行。如果旧版本的文档在新版本之后到达，它可以被简单的忽略。
 
-We can take advantage of the `_version` number to ensure ((("version number (documents)", "using to avoid conflicts")))that conflicting
-changes made by our application do not result in data loss. We do this by
-specifying the `version` number of the document that we wish to change.  If that
-version is no longer current, our request fails.
+我们可以利用 `_version` 号来确保((("version number (documents)", "using to avoid conflicts")))
+应用中相互冲突的变更不会导致数据丢失。我们通过指定想要修改文档的 `version` 号来达到这个目的。
+如果该版本不是当前版本号，我们的请求将会失败。
 
-Let's create a new blog post:
+让我们创建一个新的博客文章：
 
 [source,js]
 --------------------------------------------------
@@ -87,11 +66,11 @@ PUT /website/blog/1/_create
 --------------------------------------------------
 // SENSE: 030_Data/40_Concurrency.json
 
-The response body tells us that this newly created document has `_version`
-number `1`.  Now imagine that we want to edit the document: we load its data
-into a web form, make our changes, and then save the new version.
+响应体告诉我们，这个新创建的文档 `_version` 版本号是 `1` 。现在假设我们想编辑这个文档：我们加载其数据到 web 表单中，
+做一些修改，然后保存新的版本。
 
-First we retrieve the document:
+
+首先我们检索文档:
 
 [source,js]
 --------------------------------------------------
@@ -100,7 +79,7 @@ GET /website/blog/1
 // SENSE: 030_Data/40_Concurrency.json
 
 
-The response body includes the same `_version` number of `1`:
+响应体包含相同的 `_version` 版本号 `1` ：
 
 [source,js]
 --------------------------------------------------
@@ -117,8 +96,8 @@ The response body includes the same `_version` number of `1`:
 }
 --------------------------------------------------
 
-Now, when we try to save our changes by reindexing the document, we specify
-the `version` to which our changes should be applied:
+现在，当我们尝试通过重建文档的索引来保存修改，我们指定 `version` 为我们的修改会被应用的版本：
+
 
 [source,js]
 --------------------------------------------------
@@ -129,11 +108,9 @@ PUT /website/blog/1?version=1 <1>
 }
 --------------------------------------------------
 // SENSE: 030_Data/40_Concurrency.json
-<1> We want this update to succeed only if the current `_version` of this
-    document in our index is version `1`.
+<1> 我们想这个在我们索引中的文档只有现在的 `_version` 为 `1` 时，本次更新才能成功。
 
-This request succeeds, and the response body tells us that the `_version`
-has been incremented to `2`:
+此请求成功，并且响应体告诉我们 `_version` 已经递增到 `2` ：
 
 [source,js]
 --------------------------------------------------
@@ -147,9 +124,8 @@ has been incremented to `2`:
 --------------------------------------------------
 // SENSE: 030_Data/40_Concurrency.json
 
-However, if we were to rerun the same index request, still specifying
-`version=1`, Elasticsearch would respond with a `409 Conflict` HTTP response
-code, and a body like the following:
+然而，如果我们重新运行相同的索引请求，仍然指定 `version=1` ，
+Elasticsearch 返回 `409 Conflict` HTTP 响应码，和一个如下所示的响应体：
 
 [source,js]
 --------------------------------------------------
@@ -174,44 +150,36 @@ code, and a body like the following:
 // SENSE: 030_Data/40_Concurrency.json
 
 
-This tells us that the current `_version` number of the document in
-Elasticsearch is `2`, but that we specified that we were updating version `1`.
+这告诉我们在 Elasticsearch 中这个文档的当前 `_version` 号是 `2` ，但我们指定的更新版本号为 `1` 。
 
-What we do now depends on our application requirements.  We could tell the
-user that somebody else has already made changes to the document, and to review the changes before trying to save them again.
-Alternatively, as in the case of the widget `stock_count` previously, we could
-retrieve the latest document and try to reapply the change.
+我们现在怎么做取决于我们的应用需求。我们可以告诉用户说其他人已经修改了文档，并且在再次保存之前检查这些修改内容。
+或者，在之前的商品 `stock_count` 场景，我们可以获取到最新的文档并尝试重新应用这些修改。
 
-All APIs that update or delete a document accept a `version` parameter, which
-allows you to apply optimistic concurrency control to just the parts of your
-code where it makes sense.
+所有文档的更新或删除 API，都可以接受 `version` 参数，这允许你在代码中使用乐观的并发控制，这是一种明智的做法。
 
-==== Using Versions from an External System
+[[_Using_Versions_from_an_External_System]]
+==== 通过外部系统使用版本控制
 
-A common setup is to use some other database as the primary data store and
-Elasticsearch to make the data searchable,((("version number (documents)", "using an external version number")))((("external version numbers"))) which means that all changes to the
-primary database need to be copied across to Elasticsearch as they happen.  If
-multiple processes are responsible for this data synchronization, you may
-run into concurrency problems similar to those described previously.
+一个常见的设置是使用其它数据库作为主要的数据存储，使用 Elasticsearch 做数据检索，
+((("version number (documents)", "using an external version number")))((("external version numbers")))
+这意味着主数据库的所有更改发生时都需要被复制到 Elasticsearch ，如果多个进程负责这一数据同步，你可能遇到类似于之前描述的并发问题。
 
-If your main database already has version numbers--or a value such as
-`timestamp` that can be used as a version number--then  you can reuse these
-same version numbers in Elasticsearch by adding `version_type=external` to the
-query string.((("query strings", "version_type=external"))) Version numbers must be integers greater than zero and less than
-about `9.2e+18`--a positive `long` value in Java.
 
-The way external version numbers are handled is a bit different from the
-internal version numbers  we discussed previously.  Instead of checking that the
-current `_version` is _the same_ as the one specified in the request,
-Elasticsearch checks that the current `_version` is _less than_ the specified
-version. If the request succeeds, the external version number is stored as the
-document's new `_version`.
+如果你的主数据库已经有了版本号 -- 或一个能作为版本号的字段值比如 `timestamp` --
+那么你就可以在 Elasticsearch 中通过增加 `version_type=external` 到查询字符串的方式重用这些相同的版本号，
+((("query strings", "version_type=external")))版本号必须是大于零的整数，
+且小于 `9.2E+18` -- 一个 Java 中 `long` 类型的正值。
 
-External version numbers can be specified not only on
-index and delete requests, but also when _creating_ new documents.
 
-For instance, to create a new blog post with an external version number
-of `5`, we can do the following:
+外部版本号的处理方式和我们之前讨论的内部版本号的处理方式有些不同，
+Elasticsearch 不是检查当前 `_version` 和请求中指定的版本号是否相同，
+而是检查当前 `_version` 是否 _小于_ 指定的版本号。
+如果请求成功，外部的版本号作为文档的新 `_version` 进行存储。
+
+
+外部版本号不仅在索引和删除请求是可以指定，而且在 _创建_ 新文档时也可以指定。
+
+例如，要创建一个新的具有外部版本号 `5` 的博客文章，我们可以按以下方法进行：
 
 [source,js]
 --------------------------------------------------
@@ -223,7 +191,7 @@ PUT /website/blog/2?version=5&version_type=external
 --------------------------------------------------
 // SENSE: 030_Data/40_External_versions.json
 
-In the response, we can see that the current `_version` number is `5`:
+在响应中，我们能看到当前的 `_version` 版本号是 `5` ：
 
 [source,js]
 --------------------------------------------------
@@ -236,7 +204,7 @@ In the response, we can see that the current `_version` number is `5`:
 }
 --------------------------------------------------
 
-Now we update this document, specifying a new `version` number of `10`:
+现在我们更新这个文档，指定一个新的 `version` 号是 `10` ：
 
 [source,js]
 --------------------------------------------------
@@ -248,7 +216,7 @@ PUT /website/blog/2?version=10&version_type=external
 --------------------------------------------------
 // SENSE: 030_Data/40_External_versions.json
 
-The request succeeds and sets the current `_version` to `10`:
+请求成功并将当前 `_version` 设为 `10` ：
 
 [source,js]
 --------------------------------------------------
@@ -261,6 +229,5 @@ The request succeeds and sets the current `_version` to `10`:
 }
 --------------------------------------------------
 
-If you were to rerun this request, it would fail with the same conflict error
-we saw before, because the specified external version number is not higher
-than the current version in Elasticsearch.
+如果你要重新运行此请求时，它将会失败，并返回像我们之前看到的同样的冲突错误，
+因为指定的外部版本号不大于 Elasticsearch 的当前版本号。
