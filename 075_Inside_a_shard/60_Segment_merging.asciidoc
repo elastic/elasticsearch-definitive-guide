@@ -1,90 +1,64 @@
 [[merge-process]]
-=== Segment Merging
+=== 段合并
 
-With the automatic refresh process creating a new segment((("segments", "merging"))) every second, it
-doesn't take long for the number of segments to explode. Having too many
-segments is a problem. Each segment consumes file handles, memory, and CPU
-cycles.  More important, every search request has to check every segment in
-turn; the more segments there are, the slower the search will be.
+由于自动刷新流程每秒会创建一个新的段 ((("segments", "merging"))) ，这样会导致短时间内的段数量暴增。而段数目太多会带来较大的麻烦。
+每一个段都会消耗文件句柄、内存和cpu运行周期。更重要的是，每个搜索请求都必须轮流检查每个段；所以段越多，搜索也就越慢。
 
-Elasticsearch solves this problem by merging segments in the background.((("merging segments"))) Small
-segments are merged into bigger segments, which, in turn, are merged into even
-bigger segments.
+Elasticsearch通过在后台进行段合并来解决这个问题。((("merging segments")))小的段被合并到大的段，然后这些大的段再被合并到更大的段。
 
-This is the moment when those old deleted documents((("deleted documents", "purging of"))) are purged from the filesystem.  Deleted documents (or old versions of updated documents) are not
-copied over to the new bigger segment.
+段合并的时候会将那些旧的已删除文档((("deleted documents", "purging of")))从文件系统中清除。((("deleted documents", "purging of")))被删除的文档（或被更新文档的旧版本）不会被拷贝到新的大段中。
 
-There is nothing you need to do to enable merging. It happens automatically
-while you are indexing and searching. The process works like as depicted in <<img-merge>>:
+启动段合并不需要你做任何事。进行索引和搜索时会自动进行。这个流程像在 <<img-merge>> 中提到的一样工作：
 
-1. While indexing, the refresh process creates new segments and opens them for
-   search.
+1、 当索引的时候，刷新（refresh）操作会创建新的段并将段打开以供搜索使用。
 
-2. The merge process selects a few segments of similar size and merges them
-   into a new bigger segment in the background. This does not interrupt
-   indexing and searching.
-+
+2、 合并进程选择一小部分大小相似的段，并且在后台将它们合并到更大的段中。这并不会中断索引和搜索。
+
 [[img-merge]]
-.Two commited segments and one uncommited segment in the process of being merged into a bigger segment
+.两个提交了的段和一个未提交的段正在被合并到一个更大的段
 image::images/elas_1110.png["Two commited segments and one uncommited segment in the process of being merged into a bigger segment"]
 
-3. <<img-post-merge>> illustrates activity as the merge completes:
-+
+3、 <<img-post-merge>> 说明合并完成是的活动：
+
 --
-    ** The new segment is flushed to disk.
-    ** A new commit point is written that includes the new segment and
-       excludes the old, smaller segments.
-    ** The new segment is opened for search.
-    ** The old segments are deleted.
+    ** 新的段被刷新（flush）到了磁盘。
+    ** 写入一个包含新段且排除旧的和较小的段的新提交点。
+    ** 新的段被打开用来搜索。
+    ** 老的段被删除。
 
 [[img-post-merge]]
-.Once merging has finished, the old segments are deleted
-image::images/elas_1111.png["Once merging has finished, the old segments are deleted"]
+.一旦合并结束，老的段被删除
+image::images/elas_1111.png["一旦合并结束，老的段被删除"]
 --
 
-The merging of big segments can use a lot of I/O and CPU, which can hurt
-search performance if left unchecked.  By default, Elasticsearch throttles the
-merge process so that search still has enough resources available to perform
-well.
+合并大的段需要消耗大量的I/O和CPU资源，如果任其发展会影响搜索性能。Elasticsearch在默认情况下会对合并流程进行资源限制，所以搜索仍然
+有足够的资源很好地执行。
 
-TIP: See <<segments-and-merging>> for advice about tuning merging for your use
-case.
+TIP: 查看 <<segments-and-merging>> 来为你的实例获取关于合并调整的建议。
 
 [[optimize-api]]
 ==== optimize API
 
-The `optimize` API is best ((("merging segments", "optimize API and")))((("optimize API")))((("segments", "merging", "optimize API")))described as the _forced merge_ API. It forces a
-shard to be merged down to the number of segments specified in the
-`max_num_segments` parameter. The intention is to reduce the number of
-segments (usually to one) in order to speed up search performance.
+`optimize` API大可看做是 _强制合并_ API((("merging segments", "optimize API and")))((("optimize API")))((("segments", "merging", "optimize API")))。它会将一个分片强制合并到 `max_num_segments` 参数指定大小的段数目。
+这样做的意图是减少段的数量（通常减少到一个），来提升搜索性能。
 
-WARNING: The `optimize` API should _not_ be used on a dynamic index--an
-index that is being actively updated.  The background merge process does a
-very good job, and optimizing will hinder the process. Don't interfere!
+WARNING: `optimize` API _不应该_ 被用在一个动态索引————一个正在被活跃更新的索引。后台合并流程已经可以很好地完成工作。
+optimizing 会阻碍这个进程。不要干扰它！
 
-In certain specific circumstances, the `optimize` API can be beneficial.
-The typical use case is for logging, where logs are stored in an index per
-day, week, or month.  Older indices are essentially read-only; they are
-unlikely to change.
+在特定情况下，使用 `optimize` API 颇有益处。例如在日志这种用例下，每天、每周、每月的日志被存储在一个索引中。
+老的索引实质上是只读的；它们也并不太可能会发生变化。
 
-In this case, it can be useful to optimize the shards of an old index down to
-a single segment each; it will use fewer resources and searches will be
-quicker:
+
+在这种情况下，使用optimize优化老的索引，将每一个分片合并为一个单独的段就很有用了；这样既可以节省资源，也可以使搜索更加快速：
 
 [source,json]
 ---------------------------
 POST /logstash-2014-10/_optimize?max_num_segments=1 <1>
 ---------------------------
-<1> Merges each shard in the index down to a single segment
+<1> 合并索引中的每个分片为一个单独的段
 
 [WARNING]
 ====
-Be aware that merges triggered by the `optimize` API are not
-throttled at all. They can consume all of the I/O on your nodes, leaving
-nothing for search and potentially making your cluster unresponsive. If you
-plan on optimizing an index, you should use shard allocation (see
-<<migrate-indices>>) to first move the index to a node where it is safe to
-run.
+请注意，使用 `optimize` API 触发段合并的操作一点也不会受到任何资源上的限制。这可能会消耗掉你节点上全部的I/O资源, 使其没有余裕来处理搜索请求，从而有可能使集群失去响应。
+如果你想要对索引执行 `optimize`，你需要先使用分片分配（查看 <<migrate-indices>>）把索引移到一个安全的节点，再执行。
 ====
-
-
