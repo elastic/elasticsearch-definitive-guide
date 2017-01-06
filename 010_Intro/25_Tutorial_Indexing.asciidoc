@@ -1,87 +1,59 @@
-=== Finding Your Feet
+[[_finding_your_feet]]
+=== 适应新环境
 
-To give you a feel for what is possible in Elasticsearch and how easy
-it is to use, let's start by walking through a simple tutorial that covers
-basic concepts such as indexing, search, and aggregations.
+为了对 Elasticsearch 能实现什么及其上手容易程度有一个基本印象，让我们从一个简单的教程开始并介绍索引、搜索及聚合等基础概念。
 
-We'll introduce some new terminology and basic concepts along the way, but it
-is OK if you don't understand everything immediately.  We'll cover all the
-concepts introduced here in _much_ greater depth throughout the rest of the
-book.
+我们将一并介绍一些新的技术术语和基础概念，因此即使无法立即全盘理解也无妨。在本书后续内容中，我们将深入介绍这里提到的所有概念。
 
-So, sit back and enjoy a whirlwind tour of what Elasticsearch is capable of.
+接下来尽情享受 Elasticsearch 探索之旅。
 
-==== Let's Build an Employee Directory
+==== 创建一个雇员目录 
 
-We happen((("employee directory, building (example)"))) to work for _Megacorp_, and as part of HR's new _"We love our
-drones!"_ initiative, we have been tasked with creating an employee directory.
-The directory is supposed to foster employer empathy and
-real-time, synergistic, dynamic collaboration, so it has a few
-business requirements:
+我们受雇于 ((("employee directory, building (example)"))) _Megacorp_ 公司，作为 HR 部门新的 _“热爱无人机”_ （_"We love our
+drones!"_）激励项目的一部分，我们的任务是为此创建一个雇员目录。该目录应当能培养雇员认同感及支持实时、高效、动态协作，因此有一些业务需求：
 
-* Enable data to contain multi value tags, numbers, and full text.
-* Retrieve the full details of any employee.
-* Allow structured search, such as finding employees over the age of 30.
-* Allow simple full-text search and more-complex _phrase_ searches.
-* Return highlighted search _snippets_ from the text in the
-  matching documents.
-* Enable management to build analytic dashboards over the data.
+* 支持包含多值标签、数值、以及全文本的数据
+* 检索任一雇员的完整信息
+* 允许结构化搜索，比如查询 30 岁以上的员工
+* 允许简单的全文搜索以及较复杂的短语搜索
+* 支持在匹配文档内容中高亮显示搜索片段 
+* 支持基于数据创建和管理分析仪表盘
 
-=== Indexing Employee Documents
+=== 索引雇员文档
 
-The first order of business is storing employee data.((("documents", "indexing")))((("indexing")))  This will take the form
-of an _employee document_: a single document represents a single
-employee.  The act of storing data in Elasticsearch is called _indexing_, but
-before we can index a document, we need to decide _where_ to store it.
+第一个业务需求就是存储雇员数据。((("documents", "indexing")))((("indexing"))) 这将会以 _雇员文档_ 的形式存储：一个文档代表一个雇员。存储数据到 Elasticsearch 的行为叫做 _索引_ ，但在索引一个文档之前，需要确定将文档存储在哪里。
 
-
-An Elasticsearch cluster can((("clusters", "indices in")))(((in clusters"))) contain multiple _indices_, which in
-turn contain multiple _types_.((("tables"))) These types hold multiple _documents_,
-and each document has((("fields"))) multiple _fields_.
+一个 Elasticsearch 集群可以 ((("clusters", "indices in")))(((in clusters"))) 包含多个 _索引_ ，相应的每个索引可以包含多个 _类型_ 。((("tables"))) 这些不同的类型存储着多个 _文档_ ，每个文档又有 ((("fields"))) 多个 _属性_ 。
 
 .Index Versus Index Versus Index
 **************************************************
 
-You may already have noticed that the word _index_ is overloaded with
-several meanings in the context of Elasticsearch.((("index, meanings in Elasticsearch"))) A little
-clarification is necessary:
+你也许已经注意到 _索引_ 这个词在 Elasticsearch 语境中包含多重意思， ((("index, meanings in Elasticsearch"))) 所以有必要做一点儿说明：
 
-Index (noun)::
+索引（名词）：
 
-As explained previously, an _index_ is like a _database_ in a traditional
-relational database. It is the place to store related documents. The plural of
-_index_ is _indices_ or _indexes_.
+如前所述，一个 _索引_ 类似于传统关系数据库中的一个 _数据库_ ，是一个存储关系型文档的地方。 _索引_ (_index_) 的复数词为 _indices_ 或 _indexes_ 。
 
-Index (verb)::
+索引（动词）：
 
-_To index a document_ is to store a document in an _index (noun)_ so
-that it can be retrieved and queried. It is much like the `INSERT` keyword in
-SQL except that, if the document already exists, the new document would
-replace the old.
+_索引一个文档_ 就是存储一个文档到一个 _索引_ （名词）中以便它可以被检索和查询到。这非常类似于 SQL 语句中的 `INSERT` 关键词，除了文档已存在时新文档会替换就文档情况之外。
 
-Inverted index::
+倒排索引：
 
-Relational databases add an _index_, such as a B-tree index,((("relational databases", "indices"))) to specific
-columns in order to improve the speed of data retrieval.  Elasticsearch and
-Lucene use a structure called((("inverted index"))) an _inverted index_ for exactly the same
-purpose.
+关系型数据库通过增加一个 _索引_ 比如一个 B树（B-tree）索引 ((("relational databases", "indices"))) 到指定的列上，以便提升数据检索速度。Elasticsearch 和 Lucene 使用了一个叫做 ((("inverted index"))) _倒排索引_ 的结构来达到相同的目的。
 +
-By default, every field in a document is _indexed_ (has an inverted index)
-and thus is searchable. A field without an inverted index is not searchable.
-We discuss inverted indexes in more detail in <<inverted-index>>.
+默认的，一个文档中的每一个属性都是 _被索引_ 的（有一个倒排索引）和可搜索的。一个没有倒排索引的属性是不能被搜索到的。我们将在 <<inverted-index>> 讨论倒排索引的更多细节。
 
 **************************************************
 
-So for our employee directory, we are going to do the following:
+对于雇员目录，我们将做如下操作：
 
-*  Index a _document_ per employee, which contains all the details of a single
-   employee.
-*  Each document will be((("types", "in employee directory (example)"))) of _type_ `employee`.
-* That type will live in the `megacorp` _index_.
-* That index will reside within our Elasticsearch cluster.
+* 每个雇员索引一个文档，包含该雇员的所有信息。
+* 每个文档都将是((("types", "in employee directory (example)"))) `employee` _类型_ 。
+* 该类型位于 _索引_ `megacorp` 内。
+* 该索引保存在我们的 Elasticsearch 集群中。
 
-In practice, this is easy (even though it looks like a lot of steps).  We
-can perform all of those actions in a single command:
+实践中这非常简单（尽管看起来有很多步骤），我们可以通过一条命令完成所有这些动作：
 
 [source,js]
 --------------------------------------------------
@@ -96,28 +68,22 @@ PUT /megacorp/employee/1
 --------------------------------------------------
 // SENSE: 010_Intro/25_Index.json
 
-Notice that the path `/megacorp/employee/1` contains three pieces of
-information:
+注意，路径 `/megacorp/employee/1` 包含了三部分的信息：
 
 +megacorp+::
-      The index name
+      索引名称
 
 +employee+::
-      The type name
+      类型名称
 
 +1+::
-      The ID of this particular employee
+      特定雇员的ID 
 
-The request body--the JSON document--contains all the information about
-this employee.  His name is John Smith, he's 25, and enjoys rock climbing.
+请求体 —— JSON 文档 —— 包含了这位员工的所有详细信息，他的名字叫 John Smith ，今年 25 岁，喜欢攀岩。
 
-Simple!  There was no need to perform any administrative tasks first, like
-creating an index or specifying the type of data that each field contains. We
-could just index a document directly.  Elasticsearch ships with defaults for
-everything, so all the necessary administration tasks were taken care of in
-the background, using default values.
+很简单！无需进行执行管理任务，如创建一个索引或指定每个属性的数据类型之类的，可以直接只索引一个文档。Elasticsearch 默认地完成其他一切，因此所有必需的管理任务都在后台使用默认设置完成。
 
-Before moving on, let's add a few more employees to the directory:
+进行下一步前，让我们增加更多的员工信息到目录中：
 
 [source,js]
 --------------------------------------------------
