@@ -1,24 +1,16 @@
+[[_restoring_from_a_snapshot]]
+=== 从快照恢复
 
-=== Restoring from a Snapshot
-
-Once you've backed up some data, restoring it is easy: simply add `_restore`
-to the ID of((("post-deployment", "restoring from a snapshot")))((("restoring from a snapshot"))) the snapshot you wish to restore into your cluster:
+一旦你备份过了数据，恢复它就简单了：只要在你希望恢复回集群的快照 ID((("post-deployment", "restoring from a snapshot")))((("restoring from a snapshot")))后面加上 `_restore` 即可：
 
 [source,js]
 ----
 POST _snapshot/my_backup/snapshot_1/_restore
 ----
 
-The default behavior is to restore all indices that exist in that snapshot.
-If `snapshot_1` contains five indices, all five will be restored into
-our cluster. ((("indices", "restoring from a snapshot"))) As with the `snapshot` API, it is possible to select which indices
-we want to restore.
+默认行为是把这个快照里存有的所有索引都恢复。如果 `snapshot_1` 包括五个索引，这五个都会被恢复到我们集群里。((("indices", "restoring from a snapshot")))和 `snapshot` API 一样，我们也可以选择希望恢复具体哪个索引。
 
-There are also additional options for renaming indices.  This allows you to
-match index names with a pattern, and then provide a new name during the restore process.
-This is useful if you want to restore old data to verify its contents, or perform
-some other processing, without replacing existing data.  Let's restore
-a single index from the snapshot and provide a replacement name:
+还有附加的选项用来重命名索引。这个选项允许你通过模式匹配索引名称，然后通过恢复进程提供一个新名称。如果你想在不替换现有数据的前提下，恢复老数据来验证内容，或者做其他处理，这个选项很有用。让我们从快照里恢复单个索引并提供一个替换的名称：
 
 [source,js]
 ----
@@ -29,20 +21,16 @@ POST /_snapshot/my_backup/snapshot_1/_restore
     "rename_replacement": "restored_index_$1" <3>
 }
 ----
-<1> Restore only the `index_1` index, ignoring the rest that are present in the
-snapshot.
-<2> Find any indices being restored that match the provided pattern.
-<3> Then rename them with the replacement pattern.
+<1> 只恢复 `index_1` 索引，忽略快照中存在的其余索引。
+<2> 查找所提供的模式能匹配上的正在恢复的索引。
+<3> 然后把它们重命名成替代的模式。
 
-This will restore `index_1` into your cluster, but rename it to `restored_index_1`.
+这个会恢复 `index_1` 到你及群里，但是重命名成了 `restored_index_1` 。
 
 [TIP]
 ==================================================
 
-Similar to snapshotting, the `restore` command will return immediately, and the
-restoration process will happen in the background.  If you would prefer your HTTP
-call to block until the restore is finished, simply add the `wait_for_completion`
-flag:
+和快照类似， `restore` 命令也会立刻返回，恢复进程会在后台进行。如果你更希望你的 HTTP 调用阻塞直到恢复完成，添加 `wait_for_completion` 标记：
 
 [source,js]
 ----
@@ -52,33 +40,27 @@ POST _snapshot/my_backup/snapshot_1/_restore?wait_for_completion=true
 ==================================================
 
 
-==== Monitoring Restore Operations
+==== 监控恢复操作
 
-The restoration of data from a repository piggybacks on the existing recovery
-mechanisms already in place in Elasticsearch.((("restoring from a snapshot", "monitoring restore operations")))  Internally, recovering shards
-from a repository is identical to recovering from another node.
+从仓库恢复数据借鉴了 Elasticsearch 里已有的现行恢复机制。((("restoring from a snapshot", "monitoring restore operations")))在内部实现上，从仓库恢复分片和从另一个节点恢复是等价的。
 
-If you wish to monitor the progress of a restore, you can use the `recovery`
-API.  This is a general-purpose API that shows the status of shards moving around
-your cluster.
+如果你想监控恢复的进度，你可以使用 `recovery` API。这是一个通用目的的 API，用来展示你集群中移动着的分片状态。
 
-The API can be invoked for the specific indices that you are recovering:
+这个 API 可以为你在恢复的指定索引单独调用：
 
 [source,js]
 ----
 GET restored_index_3/_recovery
 ----
 
-Or for all indices in your cluster, which may include other shards moving around,
-unrelated to your restore process:
+或者查看你集群里所有索引，可能包括跟你的恢复进程无关的其他分片移动：
 
 [source,js]
 ----
 GET /_recovery/
 ----
 
-The output will look similar to this (and note, it can become very verbose
-depending on the activity of your cluster!):
+输出会跟这个类似（注意，根据你集群的活跃度，输出可能会变得非常啰嗦！）：
 
 [source,js]
 ----
@@ -130,31 +112,22 @@ depending on the activity of your cluster!):
   }
 }
 ----
-<1> The `type` field tells you the nature of the recovery; this shard is being
-recovered from a snapshot.
-<2> The `source` hash describes the particular snapshot and repository that is
-being recovered from.
-<3> The `percent` field gives you an idea about the status of the recovery.
-This particular shard has recovered 94% of the files so far; it is almost complete.
+<1> `type` 字段告诉你恢复的本质；这个分片是在从一个快照恢复。
+<2> `source` 哈希描述了作为恢复来源的特定快照和仓库。
+<3> `percent` 字段让你对恢复的状态有个概念。这个特定分片目前已经恢复了 94% 的文件；它就快完成了。
 
-The output will list all indices currently undergoing a recovery, and then
-list all shards in each of those indices.  Each shard will have stats
-about start/stop time, duration, recover percentage, bytes transferred, and more.
+输出会列出所有目前正在经历恢复的索引，然后列出这些索引里的所有分片。每个分片里会有启动/停止时间、持续时间、恢复百分比、传输字节数等统计值。
 
-==== Canceling a Restore
+==== 取消一个恢复
 
-To cancel a restore, you need to delete the indices being restored.((("restoring from a snapshot", "canceling a restore")))  Because
-a restore process is really just shard recovery, issuing a `delete-index` API
-alters the cluster state, which will in turn halt recovery.  For example:
+要取消一个恢复，你需要删除正在恢复的索引。((("restoring from a snapshot", "canceling a restore")))因为恢复进程其实就是分片恢复，发送一个 `删除索引` API 修改集群状态，就可以停止恢复进程。比如：
 
 [source,js]
 ----
 DELETE /restored_index_3
 ----
 
-If `restored_index_3` was actively being restored, this delete command would
-halt the restoration as well as deleting any data that had already been restored
-into the cluster.
+如果 `restored_index_3` 正在恢复中，这个删除命令会停止恢复，同时删除所有已经恢复到集群里的数据。
 
 
 
