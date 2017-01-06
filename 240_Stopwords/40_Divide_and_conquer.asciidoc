@@ -1,31 +1,19 @@
 [[common-terms]]
-=== Divide and Conquer
+=== 词项的分别管理（Divide and Conquer）
 
-The terms in a query string can be divided into more-important (low-frequency)
-and less-important (high-frequency) terms.((("stopwords", "low and high frequency terms"))) Documents that match only the less
-important terms are probably of very little interest.  Really, we want
-documents that match as many of the more important terms as possible.
+在查询字符串中的词项可以分为更重要（低频词）和次重要（高频词）这两类。((("stopwords", "low and high frequency terms"))) 只与次重要词项匹配的文档很有可能不太相关。实际上，我们想要文档能尽可能多的匹配那些更重要的词项。
 
-The `match` query accepts ((("cutoff_frequency parameter")))((("match query", "cutoff_frequency parameter")))a `cutoff_frequency` parameter, which allows it to
-divide the terms in the query string into a low-frequency and high-frequency
-group.((("term frequency", "cutoff_frequency parameter in match query"))) The low-frequency group (more-important terms) form the bulk of the
-query, while the high-frequency group (less-important terms) is used only for
-scoring, not for matching. By treating these two groups differently, we can
-gain a real boost of speed on previously slow queries.
 
-.Domain-Specific Stopwords
+`match` 查询接受一个参数  ((("cutoff_frequency parameter")))((("match query", "cutoff_frequency parameter")))`cutoff_frequency` ，从而可以让它将查询字符串里的词项分为低频和高频两组。((("term frequency", "cutoff_frequency parameter in match query")))低频组（更重要的词项）组成 `bulk` 大量查询条件，而高频组（次重要的词项）只会用来评分，而不参与匹配过程。通过对这两组词的区分处理，我们可以在之前慢查询的基础上获得巨大的速度提升。
+
+领域相关的停用词（Domain-Specific Stopwords）
 *********************************************
 
-One of the benefits of `cutoff_frequency` is that you get _domain-specific_
-stopwords for free.((("domain specific stopwords")))((("stopwords", "domain specific"))) For instance, a website about movies may use the words
-_movie_, _color_, _black_, and _white_ so often that they could be
-considered almost meaningless.  With the `stop` token filter, these domain-specific terms would have to be added to the stopwords list manually. However,
-because the `cutoff_frequency` looks at the actual frequency of terms in the
-index,  these words would be classified as _high frequency_ automatically.
+`cutoff_frequency` 配置的好处是，你在 _特定领域_ 使用停用词不受约束。((("domain specific stopwords")))((("stopwords", "domain specific")))例如，关于电影网站使用的词 _movie_ 、 _color_ 、 _black_ 和 _white_ ，这些词我们往往认为几乎没有任何意义。使用 `stop` 词汇单元过滤器，这些特定领域的词必须手动添加到停用词列表中。然而 `cutoff_frequency` 会查看索引里词项的具体频率，这些词会被自动归类为 _高频词汇_ 。
 
 *********************************************
 
-Take this query as an example:
+以下面查询为例：
 
 [source,json]
 ---------------------------------
@@ -37,13 +25,9 @@ Take this query as an example:
     }
 }
 ---------------------------------
-<1> Any term that occurs in more than 1% of documents is considered to be high
-    frequency. The `cutoff_frequency` can be specified as a fraction (`0.01`)
-    or as an absolute number (`5`).
+<1> 任何词项出现在文档中超过1%，被认为是高频词。`cutoff_frequency` 配置可以指定为一个分数（ `0.01` ）或者一个正整数（ `5` ）。
 
-This query uses the `cutoff_frequency` to first divide the query terms into a
-low-frequency group (`quick`, `dead`) and a high-frequency group (`and`,
-`the`). Then, the query is rewritten to produce the following `bool` query:
+此查询通过 `cutoff_frequency` 配置，将查询条件划分为低频组（ `quick` , `dead` ）和高频组（ `and` , `the` ）。然后，此查询会被重写为以下的 `bool` 查询：
 
 [source,json]
 ---------------------------------
@@ -68,32 +52,21 @@ low-frequency group (`quick`, `dead`) and a high-frequency group (`and`,
   }
 }
 ---------------------------------
-<1> At least one low-frequency/high-importance term _must_ match.
-<2> High-frequency/low-importance terms are entirely optional.
+<1> 必须匹配至少一个低频／更重要的词项。
+<2> 高频/次重要性词项是非必须的。
 
-The `must` clause means that at least one of the low-frequency terms&#x2014;`quick` or `dead`&#x2014;_must_ be present for a document to be considered a
-match. All other documents are excluded.  The `should` clause then looks for
-the high-frequency terms `and` and `the`,  but only in the documents collected
-by the `must` clause. The sole job of the `should` clause is to score a
-document like ``Quick _and the_ dead'' higher than ``_The_ quick but
-dead''.  This approach greatly reduces the number of documents that need to be
-examined and scored.
+`must` 意味着至少有一个低频词&#x2014; `quick` 或者 `dead` &#x2014;必须出现在被匹配文档中。所有其他的文档被排除在外。 `should` 语句查找高频词 `and` 和 `the` ，但也只是在 `must` 语句查询的结果集文档中查询。
+ `should` 语句的唯一的工作就是在对如 `Quick _and the_ dead` 和 `_The_ quick but　dead` 语句进行评分时，前者得分比后者高。这种方式可以大大减少需要进行评分计算的文档数量。
 
 [TIP]
 ==================================================
 
-Setting the operator parameter to `and` would make _all_ low-frequency terms
-required, and score documents that contain _all_ high-frequency terms higher.
-However, matching documents would not be required to contain all high-frequency terms.  If you would prefer all low- and high-frequency terms to be
-required, you should use a `bool` query instead.   As we saw in
-<<stopwords-and>>, this is already an efficient query.
+将操作符参数设置成 `and` 会要求所有低频词都必须匹配，同时对包含所有高频词的文档给予更高评分。但是，在匹配文档时，并不要求文档必须包含所有高频词。如果希望文档包含所有的低频和高频词，我们应该使用一个 `bool` 来替代。正如我们在<<stopwords-and>>中看到的，它的查询效率已经很高了。
 
 ==================================================
 
-==== Controlling Precision
-
-The `minimum_should_match` parameter can be combined with `cutoff_frequency`
-but it applies to only the low-frequency terms.((("stopwords", "low and high frequency terms", "controlling precision")))((("minimum_should_match parameter", "controlling precision")))  This query:
+==== 控制精度
+`minimum_should_match` 参数可以与 `cutoff_frequency` 组合使用，但是此参数仅适用与低频词。((("stopwords", "low and high frequency terms", "controlling precision")))((("minimum_should_match parameter", "controlling precision")))如以下查询：
 
 [source,json]
 ---------------------------------
@@ -107,7 +80,7 @@ but it applies to only the low-frequency terms.((("stopwords", "low and high fre
 }
 ---------------------------------
 
-would be rewritten as follows:
+将被重写为如下所示:
 
 [source,json]
 ---------------------------------
@@ -133,18 +106,12 @@ would be rewritten as follows:
   }
 }
 ---------------------------------
-<1> Because there are only two terms, the original 75% is rounded down
-    to `1`, that is: _one out of two low-terms must match_.
-<2> The high-frequency terms are still optional and used only for scoring.
+<1>　因为只有两个词，原来的75%向下取整为 `1` ，意思是：必须匹配低频词的两者之一。
+<2>　高频词仍可选的，并且仅用于评分使用。
 
-==== Only High-Frequency Terms
+==== 高频词
 
-An `or` query for high-frequency((("stopwords", "low and high frequency terms", "only high frequency terms"))) terms only&#x2014;``To be, or not to be''&#x2014;is
-the worst case for performance. It is pointless to score _all_ the
-documents that contain only one of these terms in order to return just the top
-10 matches. We are really interested only in documents in which the terms all occur
-together, so in the case where there are no low-frequency terms, the query is
-rewritten to make all high-frequency terms required:
+当使用 `or` 查询高频词条((("stopwords", "low and high frequency terms", "only high frequency terms")))，如&#x2014; `To be, or not to be` &#x2014;进行查询时性能最差。只是为了返回最匹配的前十个结果就对只是包含这些词的所有文档进行评分是盲目的。我们真正的意图是查询整个词条出现的文档，所以在这种情况下，不存低频所言，这个查询需要重写为所有高频词条都必须：
 
 [source,json]
 ---------------------------------
@@ -162,15 +129,11 @@ rewritten to make all high-frequency terms required:
 }
 ---------------------------------
 
-==== More Control with Common Terms
+==== 对常用词使用更多控制（More Control with Common Terms）
 
-While the high/low frequency functionality in the `match` query is useful,
-sometimes you want more control((("stopwords", "low and high frequency terms", "more control over common terms"))) over how the high- and low-frequency groups
-should be handled.  The `match` query exposes a subset of the
-functionality available in the `common` terms query.((("common terms query")))
+尽管高频/低频的功能在 `match` 查询中是有用的，有时我们还希望能对它((("stopwords", "low and high frequency terms", "more control over common terms")))有更多的控制，想控制它对高频和低频词分组的行为。　`match` 查询针对 ((("common terms query"))) `common` 词项查询提供了一组功能。
 
-For instance, we could make all low-frequency terms required, and score only
-documents that have 75% of all high-frequency terms with a query like this:
+例如，我们可以让所有低频词都必须匹配，而只对那些包括超过 75% 的高频词文档进行评分：
 
 [source,json]
 ---------------------------------
@@ -188,5 +151,5 @@ documents that have 75% of all high-frequency terms with a query like this:
 }
 ---------------------------------
 
-See the {ref}/query-dsl-common-terms-query.html[`common` terms query] reference page for more options.
+更多配置项参见　{ref}/query-dsl-common-terms-query.html[`common` terms query]。
 
