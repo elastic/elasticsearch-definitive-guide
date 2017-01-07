@@ -7,7 +7,7 @@
 
 偏好这个参数 `preference` 允许 ((("preference parameter")))((("search options", "preference"))) 用来控制由哪些分片或节点来处理搜索请求。 它接受像 `_primary`,
 `_primary_first`, `_local`, `_only_node:xyz`, `_prefer_node:xyz`, 和 
-`_shards:2,3` 这样的值, 这些值的在
+`_shards:2,3` 这样的值, 这些值在
 {ref}/search-request-preference.html[search `preference`]
 文档页面被详细解释。
 
@@ -22,7 +22,7 @@
 而副本分片处理请求又是另一种顺序。
 
 这就是所谓的 _bouncing results_ 问题: 每次用户刷新页面，搜索结果表现是不同的顺序。 
-这种问题可以通过让同一个用户一直使用同样的节点处理来避免，
+让同一个用户始终使用同一个分片，这样可以避免这种问题，
 可以设置 `preference` 参数为一个特定的任意值比如用户会话ID来解决。
 
 ****
