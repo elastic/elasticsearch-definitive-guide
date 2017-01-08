@@ -46,4 +46,4 @@ GET /my_index/my_type/_search
     Slop 2:     quick      ↳  fox
     Slop 3:     quick                 ↳     fox
 
-<1> 注意 `fox` 和 `quick` 在这步中占据同样的位置。 因此将 `fox quick` 转换顺序成 `quick fox` 需要两步， 或者值为 `2` 的 `slop`。
+<1> 注意 `fox` 和 `quick` 在这步中占据同样的位置。 因此将 `fox quick` 转换顺序成 `quick fox` 需要两步， 或者值为 `2` 的 `slop` 。
