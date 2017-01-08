@@ -1,12 +1,9 @@
-=== Retrieving a Document
+[[_retrieving_a_document]]
+=== 检索文档
 
-Now that we have some data stored in Elasticsearch,((("documents", "retrieving"))) we can get to work on the
-business requirements for this application.  The first requirement is the
-ability to retrieve individual employee data.
+目前我们已经在 Elasticsearch 中存储了一些数据，((("documents", "retrieving"))) 接下来就能专注于实现应用的业务需求了。第一个需求是可以检索到单个雇员的数据。
 
-This is easy in Elasticsearch.  We simply execute((("HTTP requests", "retrieving a document with GET"))) an HTTP +GET+ request and
-specify the _address_ of the document--the index, type, and ID.((("id", "specifying in a request")))((("indices", "specifying index in a request")))((("types", "specifying type in a request")))  Using
-those three pieces of information, we can return the original JSON document:
+这在 Elasticsearch 中很简单。简单地执行((("HTTP requests", "retrieving a document with GET"))) 一个 HTTP +GET+ 请求并指定文档的地址——索引库、类型和ID。((("id", "specifying in a request")))((("indices", "specifying index in a request")))((("types", "specifying type in a request"))) 使用这三个信息可以返回原始的 JSON 文档：
 
 [source,js]
 --------------------------------------------------
@@ -14,8 +11,7 @@ GET /megacorp/employee/1
 --------------------------------------------------
 // SENSE: 010_Intro/30_Get.json
 
-And the response contains some metadata about the document, and John Smith's
-original JSON document ((("_source field", sortas="source field")))as the `_source` field:
+返回结果包含了文档的一些元数据，以及 `_source` 属性，内容是 John Smith 雇员的原始 JSON 文档((("_source field", sortas="source field")))：
 
 [source,js]
 --------------------------------------------------
@@ -37,19 +33,14 @@ original JSON document ((("_source field", sortas="source field")))as the `_sour
 
 [TIP]
 ====
-In the same way that we changed ((("HTTP methods")))the HTTP verb from `PUT` to `GET` in order to
-retrieve the document, we could use the `DELETE` verb to delete the  document,
-and the `HEAD` verb to check whether the document exists. To replace an
-existing document with an updated version, we just `PUT` it again.
+将 HTTP 命令由 `PUT` 改为 `GET` 可以用来检索文档，同样的，可以使用 `DELETE` 命令来删除文档，以及使用 `HEAD` 指令来检查文档是否存在。如果想更新已存在的文档，只需再次 `PUT` 。
 ====
 
-=== Search Lite
+=== 轻量搜索
 
-A `GET` is fairly simple--you get back the document that you ask for.((("GET method")))((("searches", "simple search")))  Let's
-try something a little more advanced, like a simple search!
+一个 `GET` 是相当简单的，可以直接得到指定的文档。((("GET method")))((("searches", "simple search"))) 现在尝试点儿稍微高级的功能，比如一个简单的搜索！
 
-The first search we will try is the simplest search possible.  We will search
-for all employees, with this request:
+第一个尝试的几乎是最简单的搜索了。我们使用下列请求来搜索所有雇员：
 
 [source,js]
 --------------------------------------------------
@@ -57,10 +48,7 @@ GET /megacorp/employee/_search
 --------------------------------------------------
 // SENSE: 010_Intro/30_Simple_search.json
 
-You can see that we're still using index `megacorp` and type `employee`, but
-instead of specifying a document ID, we now use the `_search` endpoint. The
-response includes all three of our documents in the `hits` array. By default,
-a search will return the top 10 results.
+可以看到，我们仍然使用索引库 `megacorp` 以及类型 `employee`，但与指定一个文档 ID 不同，这次使用 `_search` 。返回结果包括了所有三个文档，放在数组 `hits` 中。一个搜索默认返回十条结果。
 
 [source,js]
 --------------------------------------------------
@@ -116,14 +104,9 @@ a search will return the top 10 results.
 }
 --------------------------------------------------
 
-NOTE: The response not only tells us which documents matched, but also
-includes the whole document itself: all the information that we need in order to
-display the search results to the user.
+注意：返回结果不仅告知匹配了哪些文档，还包含了整个文档本身：显示搜索结果给最终用户所需的全部信息。
 
-Next, let's try searching for employees who have ``Smith'' in their last name.
-To do this, we'll use a _lightweight_ search method that is easy to use
-from the command line. This method is often referred to as ((("query strings")))a _query-string_
-search, since we pass the search as a URL query-string parameter:
+接下来，尝试下搜索姓氏为 ``Smith`` 的雇员。为此，我们将使用一个 _高亮_ 搜索，很容易通过命令行完成。这个方法一般涉及到一个((("query strings"))) _查询字符串_ （_query-string_） 搜索，因为我们通过一个URL参数来传递查询信息给搜索接口：
 
 [source,js]
 --------------------------------------------------
@@ -131,8 +114,7 @@ GET /megacorp/employee/_search?q=last_name:Smith
 --------------------------------------------------
 // SENSE: 010_Intro/30_Simple_search.json
 
-We use the same `_search` endpoint in the path, and we add the query itself in
-the `q=` parameter. The results that come back show all Smiths:
+我们仍然在请求路径中使用 `_search` 端点，并将查询本身赋值给参数 `q=` 。返回结果给出了所有的 Smith：
 
 [source,js]
 --------------------------------------------------
@@ -167,15 +149,11 @@ the `q=` parameter. The results that come back show all Smiths:
 }
 --------------------------------------------------
 
-=== Search with Query DSL
+=== 使用查询表达式(query DSL)搜索
 
-Query-string search is handy for ad hoc searches((("ad hoc searches"))) from the command line, but
-it has its limitations (see <<search-lite>>). Elasticsearch provides a rich,
-flexible, query language called the _query DSL_, which((("Query DSL"))) allows us to build
-much more complicated, robust queries.
+Query-string 搜索通过命令非常方便地进行临时性的即席搜索 ((("ad hoc searches"))) ，但它有自身的局限性（参见 <<search-lite>> ）。Elasticsearch 提供一个丰富灵活的查询语言叫做 _查询表达式_ ，((("Query DSL"))) 它支持构建更加复杂和健壮的查询。
 
-The _domain-specific language_ (DSL) is((("DSL (Domain Specific Language)"))) specified using a JSON request body.
-We can represent the previous search for all Smiths like so:
+_领域特定语言_ （DSL），((("DSL (Domain Specific Language)"))) 指定了使用一个 JSON 请求。我们可以像这样重写之前的查询所有 Smith 的搜索 ：
 
 
 [source,js]
@@ -191,18 +169,11 @@ GET /megacorp/employee/_search
 --------------------------------------------------
 // SENSE: 010_Intro/30_Simple_search.json
 
-This will return the same results as the previous query.  You can see that a
-number of things have changed.  For one, we are no longer using _query-string_
-parameters, but instead a request body.  This request body is built with JSON,
-and uses a `match` query (one of several types of queries, which we will learn
-about later).
+返回结果与之前的查询一样，但还是可以看到有一些变化。其中之一是，不再使用 _query-string_ 参数，而是一个请求体替代。这个请求使用 JSON 构造，并使用了一个 `match` 查询（属于查询类型之一，后续将会了解）。
 
-=== More-Complicated Searches
+=== 更复杂的搜索
 
-Let's make the search a little more complicated.((("searches", "more complicated")))((("filters")))  We still want to find all
-employees with a last name of Smith, but  we want only employees who are
-older than 30.  Our query will change a little to accommodate a _filter_,
-which allows us to execute structured searches efficiently:
+现在尝试下更复杂的搜索。((("searches", "more complicated")))((("filters"))) 同样搜索姓氏为 Smith 的雇员，但这次我们只需要年龄大于 30 的。查询需要稍作调整，使用过滤器 _filter_ ，它支持高效地执行一个结构化查询。
 
 [source,js]
 --------------------------------------------------
@@ -226,15 +197,10 @@ GET /megacorp/employee/_search
 --------------------------------------------------
 // SENSE: 010_Intro/30_Query_DSL.json
 
-<1> This portion of the query is the((("match queries"))) same `match` _query_ that we used before.
-<2> This portion of the query is a `range` _filter_, which((("range filters"))) will find all ages
-    older than 30&#x2014;`gt` stands for _greater than_.
+<1> 这部分与我们之前使用的((("match queries")))  `match` _查询_ 一样。
+<2> 这部分是一个 `range` _过滤器_ ，((("range filters"))) 它能找到年龄大于 30 的文档，其中 `gt` 表示_大于_(_great than_)。
 
-
-Don't worry about the syntax too much for now; we will cover it in great
-detail later.  Just recognize that we've added a _filter_ that performs a
-range search, and reused the same `match` query as before.  Now our results show
-only one employee who happens to be 32 and is named Jane Smith:
+目前无需太多担心语法问题，后续会更详细地介绍。只需明确我们添加了一个 _过滤器_ 用于执行一个范围查询，并复用之前的 `match` 查询。现在结果只返回了一个雇员，叫 Jane Smith，32 岁。
 
 [source,js]
 --------------------------------------------------
@@ -259,13 +225,11 @@ only one employee who happens to be 32 and is named Jane Smith:
 }
 --------------------------------------------------
 
-=== Full-Text Search
+=== 全文搜索
 
-The searches so far have been simple:  single names, filtered by age. Let's
-try a more advanced, full-text search--a ((("full text search")))task that traditional databases
-would really struggle with.
+截止目前的搜索相对都很简单：单个姓名，通过年龄过滤。现在尝试下稍微高级点儿的全文搜索——一项((("full text search"))) 传统数据库确实很难搞定的任务。
 
-We are going to search for all employees who enjoy rock climbing:
+搜索下所有喜欢攀岩（rock climbing）的雇员：
 
 [source,js]
 --------------------------------------------------
@@ -280,8 +244,7 @@ GET /megacorp/employee/_search
 --------------------------------------------------
 // SENSE: 010_Intro/30_Query_DSL.json
 
-You can see that we use the same `match` query as before to search the `about`
-field for ``rock climbing''. We get back two matching documents:
+显然我们依旧使用之前的 `match` 查询在`about` 属性上搜索 ``rock climbing'' 。得到两个匹配的文档：
 
 [source,js]
 --------------------------------------------------
@@ -317,32 +280,20 @@ field for ``rock climbing''. We get back two matching documents:
    }
 }
 --------------------------------------------------
-<1> The relevance scores
+<1> 相关性得分
 
-By default, Elasticsearch sorts((("relevance scores"))) matching results by their relevance score,
-that is, by how well each document matches the query.  The first and highest-scoring result is obvious: John Smith's `about` field clearly says ``rock
-climbing'' in it.
+Elasticsearch ((("relevance scores"))) 默认按照相关性得分排序，即每个文档跟查询的匹配程度。第一个最高得分的结果很明显：John Smith 的 `about` 属性清楚地写着 ``rock
+climbing'' 。
 
-But why did Jane Smith come back as a result?  The reason her document was
-returned is because the word ``rock'' was mentioned in her `about` field.
-Because only ``rock'' was mentioned, and not ``climbing,'' her `_score` is
-lower than John's.
+但为什么 Jane Smith 也作为结果返回了呢？原因是她的 `about` 属性里提到了 ``rock'' 。因为只有 ``rock'' 而没有 ``climbing'' ，所以她的相关性得分低于 John 的。
 
-This is a good example of how Elasticsearch can search _within_ full-text
-fields and return the most relevant results first. This ((("relevance", "importance to Elasticsearch")))concept of _relevance_
-is important to Elasticsearch, and is a concept that is completely foreign to
-traditional relational databases, in which a record either matches or it doesn't.
+这是一个很好的案例，阐明了 Elasticsearch 如何 _在_ 全文属性上搜索并返回相关性最强的结果。Elasticsearch中的 _相关性_ ((("relevance", "importance to Elasticsearch"))) 概念非常重要，也是完全区别于传统关系型数据库的一个概念，数据库中的一条记录要么匹配要么不匹配。
 
-=== Phrase Search
+=== 短语搜索
 
-Finding individual words in a field is all well and good, but sometimes you
-want to match exact sequences of words or _phrases_.((("phrase matching"))) For instance, we could
-perform a query that will match only employee records that contain both  ``rock''
-_and_ ``climbing'' _and_ that display the words next to each other in the phrase
-``rock climbing.''
+找出一个属性中的独立单词是没有问题的，但有时候想要精确匹配一系列单词或者_短语_ 。((("phrase matching"))) 比如， 我们想执行这样一个查询，仅匹配同时包含 ``rock'' _和_ ``climbing'' ，_并且_  二者以短语 ``rock climbing'' 的形式紧挨着的雇员记录。
 
-To do this, we use a slight variation of the `match` query called the
-`match_phrase` query:
+为此对 `match` 查询稍作调整，使用一个叫做 `match_phrase` 的查询：
 
 [source,js]
 --------------------------------------------------
@@ -357,7 +308,7 @@ GET /megacorp/employee/_search
 --------------------------------------------------
 // SENSE: 010_Intro/30_Query_DSL.json
 
-This, to no surprise, returns only John Smith's document:
+毫无悬念，返回结果仅有 John Smith 的文档。
 
 [source,js]
 --------------------------------------------------
@@ -384,13 +335,11 @@ This, to no surprise, returns only John Smith's document:
 --------------------------------------------------
 
 [[highlighting-intro]]
-=== Highlighting Our Searches
+=== 高亮搜索
 
-Many applications like to _highlight_ snippets((("searches", "highlighting search results")))((("highlighting searches"))) of text from each search result
-so the user can see _why_ the document matched the query.  Retrieving
-highlighted fragments is easy in Elasticsearch.
+许多应用都倾向于在每个搜索结果中 _高亮_ ((("searches", "highlighting search results")))((("highlighting searches"))) 部分文本片段，以便让用户知道为何该文档符合查询条件。在 Elasticsearch 中检索出高亮片段也很容易。
 
-Let's rerun our previous query, but add a new `highlight` parameter:
+再次执行前面的查询，并增加一个新的 `highlight` 参数：
 
 [source,js]
 --------------------------------------------------
@@ -410,10 +359,7 @@ GET /megacorp/employee/_search
 --------------------------------------------------
 // SENSE: 010_Intro/30_Query_DSL.json
 
-When we run this query, the same hit is returned as before, but now we get a
-new section in the response called `highlight`.  This contains a snippet of
-text from the `about` field with the matching words wrapped in `<em></em>`
-HTML tags:
+当执行该查询时，返回结果与之前一样，与此同时结果中还多了一个叫做 `highlight` 的部分。这个部分包含了 `about` 属性匹配的文本片段，并以 HTML 标签 `<em></em>` 封装：
 
 [source,js]
 --------------------------------------------------
@@ -444,7 +390,6 @@ HTML tags:
 }
 --------------------------------------------------
 
-<1> The highlighted fragment from the original text
+<1> 原始文本中的高亮片段
 
-You can read more about the highlighting of search snippets in the
-{ref}/search-request-highlighting.html[highlighting reference documentation].
+关于高亮搜索片段，可以在 {ref}/search-request-highlighting.html[highlighting reference documentation] 了解更多信息。
