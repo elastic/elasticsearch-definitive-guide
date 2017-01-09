@@ -1,5 +1,5 @@
 [[common-terms]]
-=== 词项的分别管理（Divide and Conquer）
+=== 词项的分别管理
 
 在查询字符串中的词项可以分为更重要（低频词）和次重要（高频词）这两类。((("stopwords", "low and high frequency terms"))) 只与次重要词项匹配的文档很有可能不太相关。实际上，我们想要文档能尽可能多的匹配那些更重要的词项。
 
@@ -152,4 +152,3 @@
 ---------------------------------
 
 更多配置项参见　{ref}/query-dsl-common-terms-query.html[`common` terms query]。
-

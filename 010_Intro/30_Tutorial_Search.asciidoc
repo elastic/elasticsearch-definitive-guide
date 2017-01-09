@@ -36,6 +36,7 @@ GET /megacorp/employee/1
 将 HTTP 命令由 `PUT` 改为 `GET` 可以用来检索文档，同样的，可以使用 `DELETE` 命令来删除文档，以及使用 `HEAD` 指令来检查文档是否存在。如果想更新已存在的文档，只需再次 `PUT` 。
 ====
 
+[[_search_lite]]
 === 轻量搜索
 
 一个 `GET` 是相当简单的，可以直接得到指定的文档。((("GET method")))((("searches", "simple search"))) 现在尝试点儿稍微高级的功能，比如一个简单的搜索！
@@ -149,7 +150,8 @@ GET /megacorp/employee/_search?q=last_name:Smith
 }
 --------------------------------------------------
 
-=== 使用查询表达式(query DSL)搜索
+[[_search_with_query_dsl]]
+=== 使用查询表达式搜索
 
 Query-string 搜索通过命令非常方便地进行临时性的即席搜索 ((("ad hoc searches"))) ，但它有自身的局限性（参见 <<search-lite>> ）。Elasticsearch 提供一个丰富灵活的查询语言叫做 _查询表达式_ ，((("Query DSL"))) 它支持构建更加复杂和健壮的查询。
 
@@ -171,6 +173,7 @@ GET /megacorp/employee/_search
 
 返回结果与之前的查询一样，但还是可以看到有一些变化。其中之一是，不再使用 _query-string_ 参数，而是一个请求体替代。这个请求使用 JSON 构造，并使用了一个 `match` 查询（属于查询类型之一，后续将会了解）。
 
+[[_more_complicated_searches]]
 === 更复杂的搜索
 
 现在尝试下更复杂的搜索。((("searches", "more complicated")))((("filters"))) 同样搜索姓氏为 Smith 的雇员，但这次我们只需要年龄大于 30 的。查询需要稍作调整，使用过滤器 _filter_ ，它支持高效地执行一个结构化查询。
@@ -225,6 +228,7 @@ GET /megacorp/employee/_search
 }
 --------------------------------------------------
 
+[[_full_text_search]]
 === 全文搜索
 
 截止目前的搜索相对都很简单：单个姓名，通过年龄过滤。现在尝试下稍微高级点儿的全文搜索——一项((("full text search"))) 传统数据库确实很难搞定的任务。
@@ -289,6 +293,7 @@ climbing'' 。
 
 这是一个很好的案例，阐明了 Elasticsearch 如何 _在_ 全文属性上搜索并返回相关性最强的结果。Elasticsearch中的 _相关性_ ((("relevance", "importance to Elasticsearch"))) 概念非常重要，也是完全区别于传统关系型数据库的一个概念，数据库中的一条记录要么匹配要么不匹配。
 
+[[_phrase_search]]
 === 短语搜索
 
 找出一个属性中的独立单词是没有问题的，但有时候想要精确匹配一系列单词或者_短语_ 。((("phrase matching"))) 比如， 我们想执行这样一个查询，仅匹配同时包含 ``rock'' _和_ ``climbing'' ，_并且_  二者以短语 ``rock climbing'' 的形式紧挨着的雇员记录。

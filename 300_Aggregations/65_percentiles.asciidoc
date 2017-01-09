@@ -29,7 +29,7 @@ image::images/elas_33in02.png["Assessing website latency using percentiles"]
 
 这只是百分位的一个应用场景，百分位还可以被用来快速用肉眼观察数据的分布，检查是否有数据倾斜或双峰甚至更多。
 
-==== 百分位度量（Percentile Metric）
+==== 百分位度量
 
 让我加载一个新的数据集（汽车的数据不太适用于百分位）。我们要索引一系列网站延时数据然后运行一些百分位操作进行查看：
 
@@ -191,7 +191,7 @@ GET /website/logs/_search
 ...
 ----
 
-==== 百分位等级（Percentile Ranks）
+==== 百分位等级
 
 这里有另外一个紧密相关的度量叫 ((("approximate algorithms", "percentiles", "percentile ranks")))((("percentiles", "percentile ranks"))) `percentile_ranks` 。
 `percentiles` 度量告诉我们落在某个百分比以下的所有文档的最小值。例如，如果 50 百分位是 119ms，那么有 50% 的文档数值都不超过 119ms。 `percentile_ranks` 告诉我们某个具体值属于哪个百分位。119ms 的 `percentile_ranks` 是在 50 百分位。
@@ -271,7 +271,7 @@ GET /website/logs/_search
 
 `percentile_ranks` 度量提供了与  `percentiles` 相同的信息，但它以不同方式呈现，如果我们对某个具体数值更关心，使用它会更方便。
 
-==== 学会权衡（Understanding the Trade-offs）
+==== 学会权衡
 
 和基数一样，计算百分位需要一个近似算法。
 朴素的 ((("percentiles", "understanding the tradeoffs")))((("approximate algorithms", "percentiles", "understanding the tradeoffs"))) 实现会维护一个所有值的有序列表，

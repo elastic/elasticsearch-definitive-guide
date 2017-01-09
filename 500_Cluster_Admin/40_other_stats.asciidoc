@@ -12,6 +12,7 @@
 GET _cluster/stats
 ----
 
+[[_index_stats]]
 === 索引统计
 
 到目前为止，我们看到的都是以 _节点为中心_ 的统计值：((("indices", "index statistics")))((("clusters", "administration", "index stats"))) 节点有多少内存？用了多少 CPU ？正在服务多少个搜索？
@@ -40,6 +41,7 @@ GET _all/_stats <3>
 
 索引为中心的统计作为一个有用的工具可以保留在你的技能表里，但是通常它不会是第一个用的上的工具。
 
+[[_pending_tasks]]
 === 等待中的任务
 
 有一些任务只能由主节点去处理，比如创建一个新的((("clusters", "administration", "Pending Tasks API")))索引或者在集群中移动分片。由于一个集群中只能有一个主节点，所以只有这一节点可以处理集群级别的元数据变动。在 99.9999% 的时间里，这不会有什么问题。元数据变动的队列基本上保持为零。
@@ -78,7 +80,7 @@ GET _cluster/pending_tasks
       {
          "insert_order": 46,
          "priority": "HIGH",
-         "source": "shard-started ([foo_2][1], node[tMTocMvQQgGCkj7QDHl3OA], [P], 
+         "source": "shard-started ([foo_2][1], node[tMTocMvQQgGCkj7QDHl3OA], [P],
          s[INITIALIZING]), reason [after recovery from gateway]",
          "time_in_queue_millis": 842,
          "time_in_queue": "842ms"
@@ -86,7 +88,7 @@ GET _cluster/pending_tasks
       {
          "insert_order": 45,
          "priority": "HIGH",
-         "source": "shard-started ([foo_2][0], node[tMTocMvQQgGCkj7QDHl3OA], [P], 
+         "source": "shard-started ([foo_2][0], node[tMTocMvQQgGCkj7QDHl3OA], [P],
          s[INITIALIZING]), reason [after recovery from gateway]",
          "time_in_queue_millis": 858,
          "time_in_queue": "858ms"
@@ -111,9 +113,10 @@ GET _cluster/pending_tasks
 
 - 使用一个更强大的主节点。不幸的是，这种垂直扩展只是延迟这种必然结果出现而已。
 - 通过某些方式限定文档的动态性质来限制集群状态的大小。
-- 到达某个阈值后组建另外一个集群。 
+- 到达某个阈值后组建另外一个集群。
 ****
 
+[[_cat_api]]
 === cat API
 
 如果经常在命令行环境下工作，`cat` API 对你会非常有用。((("Cat API")))((("clusters", "administration", "Cat API")))用 Linux 的 `cat` 命令命名，这些 API 也就设计成像 *nix 命令行工具一样工作了。
@@ -150,13 +153,13 @@ GET /_cat
 /_cat/fielddata/{fields}
 ----
 
-许多 API 看起来很熟悉了 ( 是的，顶上还有一只猫:) )。让我们看看 `cat` 的健康检查 API： 
+许多 API 看起来很熟悉了 ( 是的，顶上还有一只猫:) )。让我们看看 `cat` 的健康检查 API：
 
 [source,bash]
 ----
 GET /_cat/health
 
-1408723713 12:08:33 elasticsearch_zach yellow 1 1 114 114 0 0 114 
+1408723713 12:08:33 elasticsearch_zach yellow 1 1 114 114 0 0 114
 ----
 
 首先你会注意到的是响应是表格样式的纯文本，而不是 JSON。其次你会注意到各列默认是没有表头的。这都是模仿 *nix 工具设计的，因为它假设一旦你对输出熟悉了，你就再也不像看见表头了。
@@ -167,8 +170,8 @@ GET /_cat/health
 ----
 GET /_cat/health?v
 
-epoch   time    cluster status node.total node.data shards pri relo init  
-1408[..] 12[..] el[..]  1         1         114 114    0    0     114 
+epoch   time    cluster status node.total node.data shards pri relo init
+1408[..] 12[..] el[..]  1         1         114 114    0    0     114
 unassign
 ----
 
@@ -180,8 +183,8 @@ unassign
 ----
 GET /_cat/nodes?v
 
-host         ip            heap.percent ram.percent load node.role master name 
-zacharys-air 192.168.1.131           45          72 1.85 d         *      Zach 
+host         ip            heap.percent ram.percent load node.role master name
+zacharys-air 192.168.1.131           45          72 1.85 d         *      Zach
 ----
 
 我们看到集群里节点的一些统计，不过和完整的 `节点统计` 输出相比而言是非常基础的。你可以包含更多的指标，但是比起查阅文档，让我们直接问 `cat` API 有哪些可用的吧。
@@ -192,23 +195,23 @@ zacharys-air 192.168.1.131           45          72 1.85 d         *      Zach
 ----
 GET /_cat/nodes?help
 
-id               | id,nodeId               | unique node id                          
-pid              | p                       | process id                              
-host             | h                       | host name                               
-ip               | i                       | ip address                              
-port             | po                      | bound transport port                    
-version          | v                       | es version                              
-build            | b                       | es build hash                           
-jdk              | j                       | jdk version                             
-disk.avail       | d,disk,diskAvail        | available disk space                    
-heap.percent     | hp,heapPercent          | used heap ratio                         
-heap.max         | hm,heapMax              | max configured heap                     
-ram.percent      | rp,ramPercent           | used machine memory ratio               
-ram.max          | rm,ramMax               | total machine memory                    
-load             | l                       | most recent load avg                    
-uptime           | u                       | node uptime                             
-node.role        | r,role,dc,nodeRole      | d:data node, c:client node              
-master           | m                       | m:master-eligible, *:current master  
+id               | id,nodeId               | unique node id
+pid              | p                       | process id
+host             | h                       | host name
+ip               | i                       | ip address
+port             | po                      | bound transport port
+version          | v                       | es version
+build            | b                       | es build hash
+jdk              | j                       | jdk version
+disk.avail       | d,disk,diskAvail        | available disk space
+heap.percent     | hp,heapPercent          | used heap ratio
+heap.max         | hm,heapMax              | max configured heap
+ram.percent      | rp,ramPercent           | used machine memory ratio
+ram.max          | rm,ramMax               | total machine memory
+load             | l                       | most recent load avg
+uptime           | u                       | node uptime
+node.role        | r,role,dc,nodeRole      | d:data node, c:client node
+master           | m                       | m:master-eligible, *:current master
 ...
 ...
 ----
@@ -220,8 +223,8 @@ master           | m                       | m:master-eligible, *:current master
 ----
 GET /_cat/nodes?v&h=ip,port,heapPercent,heapMax
 
-ip            port heapPercent heapMax 
-192.168.1.131 9300          53 990.7mb 
+ip            port heapPercent heapMax
+192.168.1.131 9300          53 990.7mb
 ----
 
 因为 `cat` API 试图像 *nix 工具一样工作，你可以使用管道命令将结果传递给其他工具，比如 `sort` 、 `grep` 或者 `awk` 。例如，通过以下方式可以找到集群中最大的索引：
@@ -230,33 +233,33 @@ ip            port heapPercent heapMax
 ----
 % curl 'localhost:9200/_cat/indices?bytes=b' | sort -rnk8
 
-yellow test_names         5 1 3476004 0 376324705 376324705 
-yellow .marvel-2014.08.19 1 1  263878 0 160777194 160777194 
-yellow .marvel-2014.08.15 1 1  234482 0 143020770 143020770 
-yellow .marvel-2014.08.09 1 1  222532 0 138177271 138177271 
-yellow .marvel-2014.08.18 1 1  225921 0 138116185 138116185 
-yellow .marvel-2014.07.26 1 1  173423 0 132031505 132031505 
-yellow .marvel-2014.08.21 1 1  219857 0 128414798 128414798 
-yellow .marvel-2014.07.27 1 1   75202 0  56320862  56320862 
-yellow wavelet            5 1    5979 0  54815185  54815185 
-yellow .marvel-2014.07.28 1 1   57483 0  43006141  43006141 
-yellow .marvel-2014.07.21 1 1   31134 0  27558507  27558507 
-yellow .marvel-2014.08.01 1 1   41100 0  27000476  27000476 
-yellow kibana-int         5 1       2 0     17791     17791 
-yellow t                  5 1       7 0     15280     15280 
-yellow website            5 1      12 0     12631     12631 
-yellow agg_analysis       5 1       5 0      5804      5804 
-yellow v2                 5 1       2 0      5410      5410 
-yellow v1                 5 1       2 0      5367      5367 
-yellow bank               1 1      16 0      4303      4303 
-yellow v                  5 1       1 0      2954      2954 
-yellow p                  5 1       2 0      2939      2939 
-yellow b0001_072320141238 5 1       1 0      2923      2923 
-yellow ipaddr             5 1       1 0      2917      2917 
-yellow v2a                5 1       1 0      2895      2895 
-yellow movies             5 1       1 0      2738      2738 
-yellow cars               5 1       0 0      1249      1249 
-yellow wavelet2           5 1       0 0       615       615 
+yellow test_names         5 1 3476004 0 376324705 376324705
+yellow .marvel-2014.08.19 1 1  263878 0 160777194 160777194
+yellow .marvel-2014.08.15 1 1  234482 0 143020770 143020770
+yellow .marvel-2014.08.09 1 1  222532 0 138177271 138177271
+yellow .marvel-2014.08.18 1 1  225921 0 138116185 138116185
+yellow .marvel-2014.07.26 1 1  173423 0 132031505 132031505
+yellow .marvel-2014.08.21 1 1  219857 0 128414798 128414798
+yellow .marvel-2014.07.27 1 1   75202 0  56320862  56320862
+yellow wavelet            5 1    5979 0  54815185  54815185
+yellow .marvel-2014.07.28 1 1   57483 0  43006141  43006141
+yellow .marvel-2014.07.21 1 1   31134 0  27558507  27558507
+yellow .marvel-2014.08.01 1 1   41100 0  27000476  27000476
+yellow kibana-int         5 1       2 0     17791     17791
+yellow t                  5 1       7 0     15280     15280
+yellow website            5 1      12 0     12631     12631
+yellow agg_analysis       5 1       5 0      5804      5804
+yellow v2                 5 1       2 0      5410      5410
+yellow v1                 5 1       2 0      5367      5367
+yellow bank               1 1      16 0      4303      4303
+yellow v                  5 1       1 0      2954      2954
+yellow p                  5 1       2 0      2939      2939
+yellow b0001_072320141238 5 1       1 0      2923      2923
+yellow ipaddr             5 1       1 0      2917      2917
+yellow v2a                5 1       1 0      2895      2895
+yellow movies             5 1       1 0      2738      2738
+yellow cars               5 1       0 0      1249      1249
+yellow wavelet2           5 1       0 0       615       615
 ----
 
 通过添加 `?bytes=b` ，我们关闭了人类可读的数字格式化，强制它们以字节数输出。随后通过管道命令将输出传递给 `sort` 让索引按大小（ 第八列 ）排序
@@ -267,28 +270,25 @@ yellow wavelet2           5 1       0 0       615       615
 ----
 % curl 'localhost:9200/_cat/indices?bytes=b' | sort -rnk8 | grep -v marvel
 
-yellow test_names         5 1 3476004 0 376324705 376324705 
-yellow wavelet            5 1    5979 0  54815185  54815185 
-yellow kibana-int         5 1       2 0     17791     17791 
-yellow t                  5 1       7 0     15280     15280 
-yellow website            5 1      12 0     12631     12631 
-yellow agg_analysis       5 1       5 0      5804      5804 
-yellow v2                 5 1       2 0      5410      5410 
-yellow v1                 5 1       2 0      5367      5367 
-yellow bank               1 1      16 0      4303      4303 
-yellow v                  5 1       1 0      2954      2954 
-yellow p                  5 1       2 0      2939      2939 
-yellow b0001_072320141238 5 1       1 0      2923      2923 
-yellow ipaddr             5 1       1 0      2917      2917 
-yellow v2a                5 1       1 0      2895      2895 
-yellow movies             5 1       1 0      2738      2738 
-yellow cars               5 1       0 0      1249      1249 
-yellow wavelet2           5 1       0 0       615       615 
+yellow test_names         5 1 3476004 0 376324705 376324705
+yellow wavelet            5 1    5979 0  54815185  54815185
+yellow kibana-int         5 1       2 0     17791     17791
+yellow t                  5 1       7 0     15280     15280
+yellow website            5 1      12 0     12631     12631
+yellow agg_analysis       5 1       5 0      5804      5804
+yellow v2                 5 1       2 0      5410      5410
+yellow v1                 5 1       2 0      5367      5367
+yellow bank               1 1      16 0      4303      4303
+yellow v                  5 1       1 0      2954      2954
+yellow p                  5 1       2 0      2939      2939
+yellow b0001_072320141238 5 1       1 0      2923      2923
+yellow ipaddr             5 1       1 0      2917      2917
+yellow v2a                5 1       1 0      2895      2895
+yellow movies             5 1       1 0      2738      2738
+yellow cars               5 1       0 0      1249      1249
+yellow wavelet2           5 1       0 0       615       615
 ----
 
 瞧！在传递给 `grep` ( 通过 `-v` 来过滤掉不需要匹配的数据 ) 之后，我们得到了一个没有 Marval 混杂的索引排序列表了。
 
 这只是命令行上 `cat` 的灵活性的一个简单示例。一旦你习惯了使用 `cat` ，你会发现它和其他所有 *nix 工具一样并且开始疯狂的使用管道、排序和过滤。如果你是一个系统管理员并且永远都是 SSH 登录到设备上，那么当然要花些时间来熟悉 `cat` API 了。
-
-
-

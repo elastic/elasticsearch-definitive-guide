@@ -1,11 +1,12 @@
 [[full-body-search]]
-== 请求体查询（Full-Body Search）
+== 请求体查询
 
-_简易_  查询 &#x2014;<<search-lite,query-string search>>&#x2014; 对于用命令行进行点对点（ad-hoc）查询是非常有用的。((("searching", "request body search", id="ix_reqbodysearch")))然而，为了充分利用查询的强大功能，你应该使用 _请求体_ `search` API， 之所以称之为请求体查询，((("request body search")))因为大部分参数是通过 Http 请求体而非查询字符串来传递的。
+_简易_  查询 &#x2014;<<search-lite,query-string search>>&#x2014; 对于用命令行进行点对点（ad-hoc）查询是非常有用的。((("searching", "request body search", id="ix_reqbodysearch")))然而，为了充分利用查询的强大功能，你应该使用 _请求体_ `search` API， 之所以称之为请求体查询(Full-Body Search)，((("request body search")))因为大部分参数是通过 Http 请求体而非查询字符串来传递的。
 
 请求体查询 &#x2014;下文简称 _查询_&#x2014;不仅可以处理自身的查询请求，还允许你对结果进行片段强调（高亮）、对所有或部分结果进行聚合分析，同时还可以给出 _你是不是想找_ 的建议，这些建议可以引导使用者快速找到他想要的结果。
 
-=== 空查询（Empty search）
+[[_empty_search]]
+=== 空查询
 
 让我们以((("request body search", "empty search")))((("empty search")))最简单的 `search` API 的形式开启我们的旅程，空查询将返回所有索引库（indices)中的所有文档：
 
@@ -46,7 +47,7 @@ GET /_search
 而事实是这个RFC文档 http://tools.ietf.org/html/rfc7231#page-24[RFC 7231]&#x2014; 一个专门负责处理 HTTP 语义和内容的文档 -- 并没有规定一个带有请求体的 `GET` 请求应该如何处理！结果是，一些 HTTP 服务器允许这样子，而有一些 -- 特别是一些用于缓存和代理的服务器 -- 则不允许。
 
 对于一个查询请求，Elasticsearch 的工程师偏向于使用 `GET` 方式，因为他们觉得它比 `POST` 能更好的描述信息检索（retrieving information）的行为。然而，因为带请求体的 `GET` 请求并不被广泛支持，所以 `search` API((("POST method", "use for search requests")))同时支持 `POST` 请求：
- 
+
 [source,js]
 --------------------------------------------------
 POST /_search

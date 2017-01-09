@@ -4,6 +4,7 @@
 聚合范围限定还有一个自然的扩展就是过滤。因为聚合是在查询结果范围内操作的，任何可以适用于查询的过滤器也可以应用在聚合上。
 
 [float="true"]
+[[_filtering_queries]]
 === 过滤
 如果我们想找到售价在 $10,000 美元之上的所有汽车同时也为这些车计算平均售价，((("filtering", "serch query results")))((("filtering query")))
 ((("queries"))) 可以简单地使用一个 `constant_score` 查询和 `filter` 约束：
@@ -36,7 +37,8 @@ GET /cars/transactions/_search
 这正如我们在前面章节中讨论过那样，从根本上讲，使用 `non-scoring` 查询和使用 `match` 查询没有任何区别。查询（包括了一个过滤器）返回一组文档的子集，聚合正是操作这些文档。使用 `filtering query` 会忽略评分，并有可能会缓存结果数据等等。
 
 [float="true"]
-=== 过滤桶（Filter Bucket）
+[[_filter_bucket]]
+=== 过滤桶
 
 但是如果我们只想对聚合结果过滤怎么办？((("filtering", "aggregation results, not the query")))((("aggregations", "filtering just aggregations"))) 假设我们正在为汽车经销商创建一个搜索页面，
 我们希望显示用户搜索的结果，但是我们同时也想在页面上提供更丰富的信息，包括（与搜索匹配的）上个月度汽车的平均售价。
@@ -84,6 +86,7 @@ GET /cars/transactions/_search
 因为 `filter` 桶和其他桶的操作方式一样，所以可以随意将其他桶和度量嵌入其中。所有嵌套的组件都会 "继承" 这个过滤，这使我们可以按需针对聚合过滤出选择部分。
 
 [float="true"]
+[[_post_filter]]
 === 后过滤器
 
 目前为止，我们可以同时对搜索结果和聚合结果进行过滤（不计算得分的 `filter` 查询），以及针对聚合结果的一部分进行过滤（ `filter` 桶）。
@@ -137,7 +140,8 @@ GET /cars/transactions/_search
 ====
 
 [float="true"]
-=== 小结（Recap）
+[[_recap]]
+=== 小结
 
 选择合适类型的过滤（如：搜索命中、聚合或两者兼有）通常和我们期望如何表现用户交互有关。选择合适的过滤器（或组合）取决于我们期望如何将结果呈现给用户。
 

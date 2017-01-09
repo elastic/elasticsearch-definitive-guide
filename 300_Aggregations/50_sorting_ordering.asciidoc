@@ -5,7 +5,8 @@
 
 默认的，桶会根据 `doc_count` ((("doc_count", "buckets ordered by"))) 降序排列。这是一个好的默认行为，因为通常我们想要找到文档中与查询条件相关的最大值：售价、人口数量、频率。但有些时候我们希望能修改这个顺序，不同的桶有着不同的处理方式。
 
-=== 内置排序（Intrinsic Sorts）
+[[_intrinsic_sorts]]
+=== 内置排序
 
 这些排序模式是桶 _固有的_ 能力：它们操作桶生成的数据 ((("sorting", "of multivalue buckets", "intrinsic sorts")))，比如 `doc_count` 。
 ((("buckets", "multivalue, sorting", "intrinsic sorts"))) 它们共享相同的语法，但是根据使用桶的不同会有些细微差别。
@@ -44,7 +45,8 @@ GET /cars/transactions/_search
 按每个桶的键值数值排序（理论上与 `_term` 类似）。
 只在 `histogram` 和 `date_histogram` 内使用。
 
-=== 按度量排序（Sorting by a Metric）
+[[_sorting_by_a_metric]]
+=== 按度量排序
 
 有时，我们会想基于度量计算的结果值进行排序。((("buckets", "multivalue, sorting", "by a metric")))((("metrics", "sorting multivalue buckets by")))((("sorting", "of multivalue buckets", "sorting by a metric")))
 在我们的汽车销售分析仪表盘中，我们可能想按照汽车颜色创建一个销售条状图表，但按照汽车平均售价的升序进行排序。
@@ -108,7 +110,8 @@ GET /cars/transactions/_search
 
 在上面这个例子中，我们按每个桶的方差来排序，所以这种颜色售价方差最小的会排在结果集最前面。
 
-=== 基于“深度”度量排序（Sorting Based on "Deep" Metrics）
+[[_sorting_based_on_deep_metrics]]
+=== 基于“深度”度量排序
 
 在前面的示例中，度量是桶的直接子节点。平均售价是根据每个 `term` 来计算的。
 ((("buckets", "multivalue, sorting", "on deeper, nested metrics")))((("metrics", "sorting multivalue buckets by", "deeper, nested metrics"))) 在一定条件下，我们也有可能对 _更深_ 的度量进行排序，比如孙子桶或从孙桶。

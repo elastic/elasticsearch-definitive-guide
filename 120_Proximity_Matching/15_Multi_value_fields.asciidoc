@@ -1,3 +1,4 @@
+[[_multivalue_fields_2]]
 === 多值字段
 
 对多值字段使用短语匹配时会发生奇怪的事。 ((("proximity matching", "on multivalue fields")))((("match_phrase query", "on multivalue fields"))) 想象一下你索引这个文档:

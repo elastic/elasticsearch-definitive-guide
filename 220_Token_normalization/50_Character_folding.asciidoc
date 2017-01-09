@@ -1,5 +1,5 @@
 [[character-folding]]
-=== Unicode 字符折叠 (Character Folding)
+=== Unicode 字符折叠
 
  在多语言((("Unicode", "character folding")))((("tokens", "normalizing", "Unicode character folding")))处理中，`lowercase` 语汇单元过滤器(token filters)是一个很好的开始。但是作为对比的话，也只是对于整个巴别塔的惊鸿一瞥。所以 <<asciifolding-token-filter,`asciifolding` token filter>> 需要更有效的Unicode _字符折叠_ (_character-folding_)工具来处理全世界的各种语言。((("asciifolding token filter")))
 
@@ -54,4 +54,4 @@ PUT /my_index
 }
 --------------------------------------------------
 <1>  `swedish_folding`语汇单元过滤器(token filters) 定制了 `icu_folding`语汇单元过滤器(token filters)来不处理那些大写和小写的瑞典单词。
-<2>  `swedish` 分析器首先分词，然后用`swedish_folding`语汇单元过滤器来折叠单词，最后把他们走转换为小写，除了被排除在外的单词： ++Å++, `Ä`, 或者 `Ö`。 
+<2>  `swedish` 分析器首先分词，然后用`swedish_folding`语汇单元过滤器来折叠单词，最后把他们走转换为小写，除了被排除在外的单词： ++Å++, `Ä`, 或者 `Ö`。

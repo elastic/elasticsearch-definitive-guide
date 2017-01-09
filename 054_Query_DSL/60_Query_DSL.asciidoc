@@ -1,5 +1,5 @@
 [[query-dsl-intro]]
-=== 查询表达式(Query DSL)
+=== 查询表达式
 
 查询表达式(Query DSL)是一种非常灵活又富有表现力的 ((("Query DSL"))) 查询语言。 Elasticsearch 使用它可以以简单的 JSON 接口来展现 Lucene 功能的绝大部分。在你的应用中，你应该用它来编写你的查询语句。它可以使你的查询语句更灵活、更精确、易读和易调试。
 
@@ -87,7 +87,7 @@ _查询语句(Query clauses)_ 就像一些简单的组合块((("Query DSL", "com
 * _叶子语句（Leaf clauses）_ (就像 `match` 语句) ((("leaf clauses"))) 被用于将查询字符串和一个字段（或者多个字段）对比。
 
 * _复合(Compound)_ 语句 主要用于 ((("compound query clauses"))) 合并其它查询语句。
-  比如，一个 `bool` 语句((("bool clause"))) 允许在你需要的时候组合其它语句，无论是  `must` 匹配、 `must_not` 匹配还是 `should` 匹配，同时它可以包含不评分的过滤器（filters）： 
+  比如，一个 `bool` 语句((("bool clause"))) 允许在你需要的时候组合其它语句，无论是  `must` 匹配、 `must_not` 匹配还是 `should` 匹配，同时它可以包含不评分的过滤器（filters）：
 
 [source,js]
 --------------------------------------------------

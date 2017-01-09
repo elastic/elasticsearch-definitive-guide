@@ -149,6 +149,7 @@ GET /cars/transactions/_search
 .汽车销售时间图
 image::images/elas_29in01.png["汽车销售时间图"]
 
+[[_extended_example]]
 === 扩展例子
 
 正如我们已经见过很多次，buckets 可以嵌套进 buckets 中从而得到更复杂的分析。((("buckets", "nested in other buckets", "extended example")))((("aggregations", "extended example")))
@@ -241,6 +242,7 @@ GET /cars/transactions/_search
 .按品牌分布的每季度销售额
 image::images/elas_29in02.png["按品牌分布的每季度销售额"]
 
+[[_the_sky_8217_s_the_limit]]
 === 潜力无穷
 
 这些很明显都是简单例子，但图表聚合其实是潜力无穷的。((("dashboards", "building from aggregations")))((("Kibana", "dashboard in"))) 如 <<kibana-img>> 展示了 Kibana 中用各种聚合构建的面板。

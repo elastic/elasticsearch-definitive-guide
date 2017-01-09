@@ -122,7 +122,7 @@ GET /cars/transactions/_search
 这是 Hadoop 无法做到的！
 
 [float]
-=== 全局桶（Global Bucket）
+=== 全局桶
 
 通常我们希望聚合是在查询范围内的，但有时我们也想要搜索它的子集，而聚合的对象却是 _所有_ 数据。((("aggregations", "scoping", "global bucket")))((("scoping aggregations", "using a global bucket")))
 

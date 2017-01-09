@@ -1,5 +1,5 @@
 [[case-folding]]
-=== Unicode 大小写折叠(Case Folding)
+=== Unicode 大小写折叠
 
 人类没有创造力的话就不会是人类，((("tokens", "normalizing", "Unicode case folding")))((("Unicode", "case folding"))) 而人类的语言就恰恰反映了这一点。
 
@@ -54,4 +54,3 @@ Weißkopfseeadler WEISSKOPFSEEADLER
 <2> 得到的词元(token)是 `weisskopfseeadler`, `weisskopfseeadler`
 
  `standard`分析器得到了两个不同且不可比较的词元(token)，而我们定制化的分析器得到了两个相同但是不符合原意的词元(token)。
-

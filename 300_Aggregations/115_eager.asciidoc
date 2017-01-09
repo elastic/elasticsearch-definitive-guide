@@ -1,5 +1,5 @@
 [[preload-fielddata]]
-=== 预加载 fielddata（Preloading Fielddata）
+=== 预加载 fielddata
 
 Elasticsearch 加载内存 fielddata 的默认行为是 _延迟_ 加载 ((("fielddata", "pre-loading")))。
 当 Elasticsearch 第一次查询某个字段时，它将会完整加载这个字段所有 Segment 中的倒排索引到内存中，以便于以后的查询能够获取更好的性能。

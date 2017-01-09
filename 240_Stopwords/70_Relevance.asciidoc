@@ -1,5 +1,5 @@
 [[stopwords-relavance]]
-=== 停用词与相关性（Stopwords and Relevance）
+=== 停用词与相关性
 
 在结束停用词((("stopwords", "relevance and")))((("relevance", "stopwords and")))相关内容之前，最后一个话题是关于相关性的。在索引中保留停用词会降低相关度计算的准确性，特别是当我们的文档非常长时。
 
@@ -8,4 +8,3 @@
 
 
 可以考虑对包含停用词的较长字段使用 <<bm25,Okapi BM25>> 相似度算法，而不是默认的 Lucene 相似度。
-

@@ -1,7 +1,6 @@
 [[token-normalization]]
-== 归一化词元(Normalizing Tokens)
+== 归一化词元
 
 把文本切割成词元(token)只是这项工作((("normalization", "of tokens")))((("tokens", "normalizing")))的一半。为了让这些词元(token)更容易搜索, 这些词元(token)需要被 _归一化_(_normalization_)--这个过程会去除同一个词元(token)的无意义差别，例如大写和小写的差别。可能我们还需要去掉有意义的差别, 让 `esta`、`ésta` 和 `está` 都能用同一个词元(token)来搜索。你会用 `déjà vu` 来搜索，还是 `deja vu`?
 
 这些都是语汇单元过滤器((("token filters")))的工作。语汇单元过滤器((("token filters")))接收来自分词器(tokenizer)的词元(token)流。还可以一起使用多个语汇单元过滤器，每一个都有自己特定的处理工作。每一个语汇单元过滤器都可以处理来自另一个语汇单元过滤器输出的单词流。
-

@@ -1,5 +1,5 @@
 [[asciifolding-token-filter]]
-=== 如果有口音 You Have an Accent
+=== 如果有口音
 
 英语用变音符号(例如 `´`, `^`, 和 `¨`) 来强调单词—​例如 `rôle`, ++déjà++, 和 `däis` —​但是是否使用他们通常是可选的. ((("diacritics")))((("tokens", "normalizing", "diacritics"))) 其他语言则通过变音符号来区分单词。当然，只是因为在你的索引中拼写正确的单词并不意味着用户将搜索正确的拼写。
 去掉变音符号通常是有用的，让 `rôle` 对应 `role`, 或者反过来。 对于西方语言，可以用 `asciifolding` 字符过滤器来实现这个功能。((("asciifolding character filter")))  实际上，它不仅仅能去掉变音符号。它会把Unicode字符转化为ASCII来表示:
@@ -40,21 +40,21 @@ My œsophagus caused a débâcle <1>
 理所当然的，去掉变音符号会丢失原意。
 例如, 参考((("diacritics", "stripping, meaning loss from"))) 这三个 ((("Spanish", "stripping diacritics, meaning loss from")))西班牙单词:
 
-`esta`::    
+`esta`::
       形容词 _this_ 的阴性形式, 例如 _esta silla_ (this chair) 和 _esta_ (this one).
 
-`ésta`::    
+`ésta`::
       `esta` 的古代用法.
 
-`está`::    
+`está`::
       动词 _estar_ (to be) 的第三人称形式, 例如 _está feliz_ (he is happy).
 
 通常我们会合并前两个形式的单词，而去区分和他们不相同的第三个形式的单词。类似的:
 
-`sé`::      
+`sé`::
       动词 _saber_ (to know) 的第一人称形式 例如 _Yo sé_  (I know).
 
-`se`::      
+`se`::
       与许多动词使用的第三人称反身代词, 例如 _se sabe_ (it is known).
 
 不幸的是，没有简单的方法，去区分哪些词应该保留变音符号和哪些词应该去掉变音符号。而且很有可能，你的用户也不知道.
@@ -163,5 +163,3 @@ GET /my_index/_validate/query?explain
 所以，正如我们这一章做的，把每个字段的不同形式分开到不同的字段会让索引更清晰。
 
 =================================================
-
-

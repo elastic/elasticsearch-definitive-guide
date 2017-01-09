@@ -1,5 +1,5 @@
 [[_fetch_phase]]
-=== 取回阶段（Fetch Phase）
+=== 取回阶段
 
 查询阶段标识哪些文档满足((("distributed search execution", "fetch phase")))((("fetch phase of distributed search")))搜索请求，但是我们仍然需要取回这些文档。这是取回阶段的任务, 正如 <<img-distrib-fetch>> 所展示的。
 

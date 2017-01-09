@@ -74,7 +74,7 @@ GET /cars/transactions/_search
 --------------------------------------------------
 // SENSE: 300_Aggregations/60_cardinality.json
 
-==== 学会权衡（Understanding the Trade-offs）
+==== 学会权衡
 正如我们本章开头提到的， `cardinality` 度量是一个近似算法。
 ((("cardinality", "understanding the tradeoffs"))) 它是基于 http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/40671.pdf[HyperLogLog++] （HLL）算法的。((("HLL (HyperLogLog) algorithm")))((("HyperLogLog (HLL) algorithm")))
 HLL 会先对我们的输入作哈希运算，然后根据哈希运算的结果中的 bits 做概率估算从而得到基数。
@@ -112,7 +112,7 @@ GET /cars/transactions/_search
 
 在实际应用中， `100` 的阈值可以在唯一值为百万的情况下仍然将误差维持 5% 以内。
 
-==== 速度优化（Optimizing for Speed）
+==== 速度优化
 如果想要获得唯一值的数目， _通常_ 需要查询整个数据集合（或几乎所有数据）。((("cardinality", "optimizing for speed")))((("distinct counts", "optimizing for speed"))) 所有基于所有数据的操作都必须迅速，原因是显然的。
 HyperLogLog 的速度已经很快了，它只是简单的对数据做哈希以及一些位操作。((("HyperLogLog (HLL) algorithm")))((("HLL (HyperLogLog) algorithm")))
 

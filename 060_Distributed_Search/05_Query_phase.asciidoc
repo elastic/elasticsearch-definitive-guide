@@ -1,5 +1,5 @@
 [[_query_phase]]
-=== 查询阶段（Query Phase）
+=== 查询阶段
 
 在初始 _查询阶段_ 时，((("distributed search execution", "query phase"))) ((("query phase of distributed search")))查询会广播到索引中每一个分片拷贝（主分片或者副本分片）。
 每个分片在本地执行搜索并构建一个匹配文档的 _优先队列_。
