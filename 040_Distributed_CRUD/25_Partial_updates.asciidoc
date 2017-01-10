@@ -1,41 +1,31 @@
-=== Partial Updates to a Document
+[[_partial_updates_to_a_document]]
+=== 局部更新文档
 
-The `update` API , as shown in <<img-distrib-update>>, combines the read and((("updating documents", "partial updates")))((("documents", "partial updates"))) write patterns explained previously.
+如 <<img-distrib-update>> 所示，`update` API 结合了先前说明的读取和写入模式((("updating documents", "partial updates")))((("documents", "partial updates")))。
 
 [[img-distrib-update]]
-.Partial updates to a document
-image::images/elas_0404.png["Partial updates to a document"]
+.局部更新文档
+image::images/elas_0404.png["局部更新文档"]
 
-Here is the sequence of steps used to perform a partial update on  a
-document:
+以下是部分更新一个文档的步骤：
 
-1. The client sends an update request to `Node 1`.
+1. 客户端向 `Node 1` 发送更新请求。
 
-2. It forwards the request to `Node 3`, where the primary shard is allocated.
+2. 它将请求转发到主分片所在的 `Node 3` 。
 
-3. `Node 3` retrieves the document from the primary shard, changes the JSON
-   in the `_source` field, and tries to reindex the document on the primary
-   shard. If the document has already been changed by another process, it
-   retries step 3 up to `retry_on_conflict` times, before giving up.
+3. `Node 3` 从主分片检索文档，修改 `_source` 字段中的 JSON ，并且尝试重新索引主分片的文档。
+   如果文档已经被另一个进程修改，它会重试步骤 3 ，超过 `retry_on_conflict` 次后放弃。
 
-4. If `Node 3` has managed to update the document successfully, it forwards
-   the new version of the document in parallel to the replica shards on `Node 1` 
-   and `Node 2` to be reindexed. Once all replica shards report success,
-   `Node 3` reports success to the coordinating node,  which reports success to
-   the client.
+4. 如果 `Node 3` 成功地更新文档，它将新版本的文档并行转发到 `Node 1` 和 `Node 2` 上的副本分片，重新建立索引。
+   一旦所有副本分片都返回成功， `Node 3` 向协调节点也返回成功，协调节点向客户端返回成功。
 
-The `update` API also accepts the `routing`, `replication`, `consistency`, and
-`timeout` parameters that are explained in <<distrib-write>>.
+`update` API 还接受在 <<distrib-write>> 章节中介绍的 `routing` 、 `replication` 、 `consistency` 和 `timeout` 参数。
 
-.Document-Based Replication
+.基于文档的复制
 ****
 
-When a primary shard forwards changes to its replica shards,((("primary shards", "forwarding changes to replica shards"))) it doesn't
-forward the update request. Instead it forwards the new version of the full
-document. Remember that these changes are forwarded to the replica shards
-asynchronously, and there is no guarantee that they will arrive in the same
-order that they were sent. If Elasticsearch forwarded just the change, it is
-possible that changes would be applied in the wrong order, resulting in a
-corrupt document.
+当主分片把更改转发到副本分片时，((("primary shards", "forwarding changes to replica shards"))) 它不会转发更新请求。
+相反，它转发完整文档的新版本。请记住，这些更改将会异步转发到副本分片，并且不能保证它们以发送它们相同的顺序到达。
+如果Elasticsearch仅转发更改请求，则可能以错误的顺序应用更改，导致得到损坏的文档。
 
 ****
