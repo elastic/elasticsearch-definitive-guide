@@ -1,12 +1,9 @@
 [[index-management]]
-== Index Management
+== 索引管理
 
-We have seen how Elasticsearch makes it easy to start developing a new
-application without requiring any advance planning or setup.  However, it
-doesn't take long before you start wanting to fine-tune the indexing and
-search process to better suit your particular use case. Almost all of these customizations relate to the index, and the types
-that it contains.  In this chapter, we introduce the APIs
-for managing indices and type mappings, and the most important settings.
+我们已经看到 Elasticsearch 让开发一个新的应用变得简单，不需要任何预先计划或设置。
+不过，要不了多久你就会开始想要优化索引和搜索过程，以便更好地适合您的特定用例。
+这些定制几乎围绕着索引和类型的方方面面，在本章，我们将介绍管理索引和类型映射的 API 以及一些最重要的设置。
 
 include::070_Index_Mgmt/05_Create_Delete.asciidoc[]
 
