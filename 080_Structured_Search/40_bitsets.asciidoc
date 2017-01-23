@@ -1,7 +1,7 @@
 [[filter-caching]]
 === 关于缓存
 
-在本章前面（<<_internal_filter_operation, 过滤器的内部操作>>）中，我们已经简单介绍滤器是如何计算的。((("structured search", "caching of filter results")))((("caching", "bitsets representing documents matching filters")))((("bitsets, caching of")))((("filters", "bitsets representing documents matching, caching of")))其核心实际是采用一个 bitset 记录与过滤器匹配的文档。Elasticsearch 积极地把这些 bitset 缓存起来以备随后使用。一旦缓存成功，bitset 可以复用 _任何_ 已使用过的相同过滤器，而无需再次计算整个过滤器。
+在本章前面（<<_internal_filter_operation, 过滤器的内部操作>>）中，我们已经简单介绍了过滤器是如何计算的。((("structured search", "caching of filter results")))((("caching", "bitsets representing documents matching filters")))((("bitsets, caching of")))((("filters", "bitsets representing documents matching, caching of")))其核心实际是采用一个 bitset 记录与过滤器匹配的文档。Elasticsearch 积极地把这些 bitset 缓存起来以备随后使用。一旦缓存成功，bitset 可以复用 _任何_ 已使用过的相同过滤器，而无需再次计算整个过滤器。
 
 这些 bitsets 缓存是“智能”的：它们以增量方式更新。当我们索引新文档时，只需将那些新文档加入已有 bitset，而不是对整个缓存一遍又一遍的重复计算。和系统其他部分一样，过滤器是实时的，我们无需担心缓存过期问题。
 
