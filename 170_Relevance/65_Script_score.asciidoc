@@ -89,7 +89,7 @@ GET /_search
 
 * 尽可能多的提前计算各种信息并将结果存入每个文档中。
 * Groovy 很快，但没 Java 快。((("Java", "scripting in")))可以将脚本用原生的 Java 脚本重新实现。（参见
-  {ref}/modules-scripting.html#native-java-scripts[原生 Java 脚本]）。
+  {ref}/modules-scripting-native.html[原生 Java 脚本]）。
 * 仅对那些最佳评分的文档应用脚本，使用 <<rescore-api,重新评分>> 中提到的 `rescore` 功能。((("rescoring")))
 
 ========================================
