@@ -1,10 +1,7 @@
 [[stemming-in-situ]]
-=== Stemming in situ
+=== 原形词干提取
 
-For the sake of completeness, we will ((("stemming words", "stemming in situ")))finish this chapter by explaining how to
-index stemmed words into the same field as unstemmed words. As an example,
-analyzing the sentence _The quick foxes jumped_ would produce the following
-terms:
+为了完整地 ((("stemming words", "stemming in situ")))完成本章的内容，我们将讲解如何将已提取词干的词和原词索引到同一个字段中。举个例子，分析句子 _The quick foxes jumped_ 将会得到以下词项：
 
 [source,text]
 ------------------------------------
@@ -14,18 +11,14 @@ Pos 3: (foxes,fox) <1>
 Pos 4: (jumped,jump) <1>
 ------------------------------------
 
-<1> The stemmed and unstemmed forms occupy the same position.
+<1> 已提取词干的形式和未提取词干的形式位于相同的位置。
 
-WARNING: Read <<stemming-in-situ-good-idea>> before using this approach.
+Warning：使用此方法前请先阅读 <<stemming-in-situ-good-idea>> 。
 
-To achieve stemming _in situ_, we will use the
-http://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-keyword-repeat-tokenfilter.html[`keyword_repeat`]
-token filter,((("keyword_repeat token filter"))) which, like the `keyword_marker` token filter (see
-<<preventing-stemming>>), marks each term as a keyword to prevent the subsequent
-stemmer from touching it.  However, it also repeats the term in the same
-position, and this repeated term *is* stemmed.
+为了归档词干提取出的 _原形_ ，我们将使用 http://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-keyword-repeat-tokenfilter.html[`keyword_repeat`] 过滤器，((("keyword_repeat token filter")))跟 `keyword_marker` 过滤器 ( see <<preventing-stemming>> ) 一样，它把每一个词项都标记为关键词，以防止后续词干提取器对其修改。但是，它依然会在相同位置上重复词项，并且这个重复的词项 *是* 提取的词干。
 
-Using the `keyword_repeat` token filter alone would result in the following:
+
+单独使用 `keyword_repeat` token 过滤器将得到以下结果：
 
 [source,text]
 ------------------------------------
@@ -34,12 +27,9 @@ Pos 2: (quick,quick) <1>
 Pos 3: (foxes,fox)
 Pos 4: (jumped,jump)
 ------------------------------------
-<1> The stemmed and unstemmed forms are the same, and so are repeated
-    needlessly.
+<1> 提取词干前后的形式一样，所以只是不必要的重复。
 
-To prevent the useless repetition of terms that are the same in their stemmed
-and unstemmed forms, we add the
-{ref}/analysis-unique-tokenfilter.html[`unique`] token filter((("unique token filter"))) into the mix:
+为了防止提取和未提取词干形式相同的词项中的无意义重复，我们增加了组合的 {ref}/analysis-unique-tokenfilter.html[`unique`] 语汇单元过滤器 ((("unique token filter"))) ：
 
 [source,json]
 ------------------------------------
@@ -68,37 +58,20 @@ PUT /my_index
   }
 }
 ------------------------------------
-<1> The `unique` token filter is set to remove duplicate tokens
-    only when they occur in the same position.
-<2> The `keyword_repeat` token filter must appear before the
-    stemmer.
-<3> The `unique_stem` filter removes duplicate terms after the
-    stemmer has done its work.
+<1> 设置 `unique` 类型语汇单元过滤器，是为了只有当重复语汇单元出现在相同位置时，移除它们。
+<2> 语汇单元过滤器必须出现在词干提取器之前。
+<3> `unique_stem` 过滤器是在词干提取器完成之后移除重复词项。
 
 [[stemming-in-situ-good-idea]]
-==== Is Stemming in situ a Good Idea
+==== 原形词干提取是个好主意吗
 
-People like the ((("stemming words", "stemming in situ", "good idea, or not")))idea of stemming _in situ_: ``Why use an unstemmed field
-_and_ a stemmed field if I can just use one combined field?'' But is it a
-good idea? The answer is almost always no.  There are two problems.
+用户喜欢 _原形_ 词干提取这个主意：``如果我可以只用一个组合字段，为什么还要分别存一个未提取词干和已提取词干的字段呢？'' 但这是一个好主意吗？答案一直都是否定的。因为有两个问题：
 
-The first is the inability to separate exact matches from inexact matches.  In
-this chapter, we have seen that words with different meanings are often
-conflated to the same stem word: `organs` and `organization` both stem to
-`organ`.
+第一个问题是无法区分精准匹配和非精准匹配。本章中，我们看到了多义词经常会被展开成相同的词干词：`organs` 和 `organization` 都会被提取为 `organ` 。
 
-In <<using-language-analyzers>>, we demonstrated how to combine a query on a
-stemmed field (to increase recall) with a query on an unstemmed field (to
-improve relevance).((("language analyzers", "combining query on stemmed and unstemmed field")))  When the stemmed and unstemmed fields are separate, the
-contribution of each field can be tuned by boosting one field over another
-(see <<prioritising-clauses>>).  If, instead, the stemmed and unstemmed forms
-appear in the same field, there is no way to tune your search results.
+在 <<using-language-analyzers>> 我们展示了如何整合一个已提取词干属性的查询(为了增加召回率)和一个未提取词干属性的查询（为了提升相关度）。((("language analyzers", "combining query on stemmed and unstemmed field"))) 当提取和未提取词干的属性相互独立时，单个属性的贡献可以通过给其中一个属性增加boost值来优化(参见 <<prioritising-clauses>> )。相反地，如果已提取和未提取词干的形式置于同一个属性，就没有办法来优化搜索结果了。
 
-The second issue has to do with how the ((("relevance scores", "stemming in situ and")))relevance score is calculated.  In
-<<relevance-intro>>, we explained that part of the calculation depends on the
-_inverse document frequency_ -- how often a word appears in all the documents
-in our index.((("inverse document frequency", "stemming in situ and")))  Using in situ stemming for a document that contains  the text
-`jump jumped jumps` would result in these terms:
+第二个问题是，必须搞清楚  ((("relevance scores", "stemming in situ and")))相关度分值是否如何计算的。在 <<relevance-intro>> 我们解释了部分计算依赖于逆文档频率（IDF）—— 即一个词在索引库的所有文档中出现的频繁程度。((("inverse document frequency", "stemming in situ and"))) 在一个包含文本 `jump jumped jumps` 的文档上使用原形词干提取，将得到下列词项：
 
 [source,text]
 ------------------------------------
@@ -107,8 +80,6 @@ Pos 2: (jumped,jump)
 Pos 3: (jumps,jump)
 ------------------------------------
 
-While `jumped` and `jumps` appear once each and so would have the correct IDF,
-`jump` appears three times, greatly reducing its value as a search term in
-comparison with the unstemmed forms.
+`jumped` 和 `jumps` 各出现一次，所以有正确的IDF值；`jump` 出现了3次，作为一个搜索词项，与其他未提取词干的形式相比，这明显降低了它的IDF值。
 
-For these reasons, we recommend against using stemming in situ.
+基于这些原因，我们不推荐使用原形词干提取。
