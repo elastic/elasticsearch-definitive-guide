@@ -1,51 +1,30 @@
+[[_delaying_shard_allocation]]
+=== 推迟分片分配
 
-=== Delaying Shard Allocation
+正如我们在 <<_scale_horizontally>> 讨论过， Elasticsearch 将自动在可用节点间进行分片均衡，包括新节点的加入和现有节点的离线。
 
-As discussed way back in <<_scale_horizontally>>, Elasticsearch will automatically
-balance shards between your available nodes, both when new nodes are added and
-when existing nodes leave.
+理论上来说，这个是理想的行为，我们想要提拔副本分片来尽快恢复丢失的主分片。
+我们同时也希望保证资源在整个集群的均衡，用以避免热点。
 
-Theoretically, this is the best thing to do.  We want to recover missing primaries
-by promoting replicas as soon as possible.  We also want to make sure resources
-are balanced evenly across the cluster to prevent hotspots.
+然而，在实践中，立即的再均衡所造成的问题会比其解决的更多。举例来说，考虑到以下情形：
 
-In practice, however, immediately re-balancing can cause more problems than it solves.
-For example, consider this situation:
+1. Node（节点） 19 在网络中失联了（某个家伙踢到了电源线)
+2. Master 立即注意到了这个节点的离线，它决定在集群内提拔其他拥有 Node 19 上面的主分片对应的副本分片为主分片
+3. 在副本被提拔为主分片以后，master 节点开始执行恢复操作来重建缺失的副本。集群中的节点之间互相拷贝分片数据，网卡压力剧增，集群状态尝试变绿。
+4. 由于目前集群处于非平衡状态，这个过程还有可能会触发小规模的分片移动。其他不相关的分片将在节点间迁移来达到一个最佳的平衡状态
 
-1. Node 19 loses connectivity to your network (someone tripped on the power cable)
-2. Immediately, the master notices the node departure.  It determines
-what primary shards were on Node 19 and promotes the corresponding replicas around
-the cluster
-3. After replicas have been promoted to primary, the master begins issuing recovery
-commands to rebuild the now-missing replicas.  Nodes around the cluster fire up
-their NICs and start pumping shard data to each other in an attempt to get back
-to green health status
-4. This process will likely trigger a small cascade of shard movement, since the
-cluster is now unbalanced.  Unrelated shards will be moved between hosts to accomplish
-better balancing
+与此同时，那个踢到电源线的倒霉管理员，把服务器插好电源线进行了重启，现在节点 Node 19 又重新加入到了集群。不幸的是，这个节点被告知当前的数据已经没有用了，
+数据已经在其他节点上重新分配了。所以 Node 19 把本地的数据进行删除，然后重新开始恢复集群的其他分片（然后这又导致了一个新的再平衡）
 
-Meanwhile, the hapless admin who kicked out the power cable plugs it back in.
-Node 19 reboots and rejoins the cluster.  Unfortunately, the node is informed that
-its existing data is now useless; the data being re-allocated elsewhere.
-So Node 19 deletes its local data and begins recovering a different
-set of shards from the cluster (which then causes a new minor re-balancing dance).
+如果这一切听起来是不必要的且开销极大，那就对了。是的，不过前提是你知道这个节点会很快回来。如果节点 Node 19 真的丢了，上面的流程确实正是我们想要发生的。
 
-If this all sounds needless and expensive, you're right.  It is, but _only when
-you know the node will be back soon_.  If Node 19 was truly gone, the above procedure
-is exactly what we want to happen.
+为了解决这种瞬时中断的问题，Elasticsearch 可以推迟分片的分配。这可以让你的集群在重新分配之前有时间去检测这个节点是否会再次重新加入。
 
-To help address these transient outages, Elasticsearch has the ability to delay
-shard allocation.  This gives your cluster time to see if nodes will rejoin before
-starting the re-balancing dance.
+==== 修改默认延时
 
-==== Changing the default delay
+默认情况，集群会等待一分钟来查看节点是否会重新加入，如果这个节点在此期间重新加入，重新加入的节点会保持其现有的分片数据，不会触发新的分片分配。
 
-By default, the cluster will wait one minute to see if the node will rejoin.  If
-the node rejoins before the timer expires, the rejoining node will use its existing
-shards and no shard allocation occurs.
-
-This default time can be changed either globally, or on a per-index basis, by
-configuring the `delayed_timeout` setting:
+通过修改参数 `delayed_timeout` ，默认等待时间可以全局设置也可以在索引级别进行修改:
 
 [source,js]
 ----
@@ -56,31 +35,19 @@ PUT /_all/_settings <1>
   }
 }
 ----
-<1> By using the `_all` index name, we can apply this setting to all indices
-in the cluster
-<2> The default time is changed to 5 minutes
+<1> 通过使用 `_all` 索引名，我们可以为集群里面的所有的索引使用这个参数
+<2> 默认时间被修改成了 5 分钟
 
-The setting is dynamic and can be changed at runtime.  If you would like shards to
-allocate immediately instead of waiting, you can set `delayed_timeout: 0`.
+这个配置是动态的，可以在运行时进行修改。如果你希望分片立即分配而不想等待，你可以设置参数： `delayed_timeout: 0`.
 
-NOTE: Delayed allocation won't prevent replicas from being promoted to primaries.
-The cluster will still perform promotions as necessary to get the cluster back to
-`yellow` status.  The allocation of the now-missing replicas will be the only process
-that is delayed
+NOTE: 延迟分配不会阻止副本被提拔为主分片。集群还是会进行必要的提拔来让集群回到 `yellow` 状态。缺失副本的重建是唯一被延迟的过程。
 
-==== Auto-cancellation of shard relocation
+==== 自动取消分片迁移
 
-What happens if the node comes back _after_ the timeout expires, but before
-the cluster has finished moving shards around?  In this case, Elasticsearch will
-check to see if the on-disk data matches the current "live" data in the primary shard.
-If the two shards are identical -- meaning there have been no new documents, updates
-or deletes -- the master will cancel the on-going rebalancing and restore the
-on-disk data.
+如果节点在超时之后再回来，且集群还没有完成分片的移动，会发生什么事情呢？在这种情形下，
+Elasticsearch 会检查该机器磁盘上的分片数据和当前集群中的活跃主分片的数据是不是一样 -- 如果两者匹配，
+说明没有进来新的文档，包括删除和修改 -- 那么 master 将会取消正在进行的再平衡并恢复该机器磁盘上的数据。
 
-This is done since recovery of on-disk data will always be faster
-than transferring over the network, and since we can guarantee the shards are identical,
-the process is a win-win.
+之所以这样做是因为本地磁盘的恢复永远要比网络间传输要快，并且我们保证了他们的分片数据是一样的，这个过程可以说是双赢。
 
-If the shards have diverged (e.g. new documents have been indexed since the node
-went down), the recovery process will continue as normal.  The rejoining node
-will delete it's local, out-dated shards and obtain a new set.
+如果分片已经产生了分歧（比如：节点离线之后又索引了新的文档），那么恢复进程会继续按照正常流程进行。重新加入的节点会删除本地的、过时的数据，然后重新获取一份新的。
