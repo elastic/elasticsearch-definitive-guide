@@ -1,40 +1,33 @@
 [[hunspell]]
-=== Hunspell Stemmer
+=== Hunspell 词干提取器
 
-Elasticsearch provides ((("dictionary stemmers", "Hunspell stemmer")))((("stemming words", "dictionary stemmers", "Hunspell stemmer")))dictionary-based stemming via the
-{ref}/analysis-hunspell-tokenfilter.html[`hunspell` token filter].
-Hunspell http://hunspell.github.io/[_hunspell.github.io_] is the
-spell checker used by Open Office, LibreOffice, Chrome, Firefox, Thunderbird, and many
-other open and closed source projects.
+Elasticsearch 提供了基于词典提取词干的
+((("dictionary stemmers", "Hunspell stemmer")))((("stemming words", "dictionary stemmers", "Hunspell stemmer")))
+{ref}/analysis-hunspell-tokenfilter.html[`hunspell` 语汇单元过滤器（token filter）].
+Hunspell http://hunspell.github.io/[_hunspell.github.io_] 是一个 Open Office、LibreOffice、Chrome、Firefox、Thunderbird 等众多其它开源项目都在使用的拼写检查器。
 
-Hunspell dictionaries((("Hunspell stemmer", "obtaining a Hunspell dictionary"))) can be obtained from the following:
+可以从这里获取 Hunspell 词典((("Hunspell stemmer", "obtaining a Hunspell dictionary"))) ：
 
-* http://extensions.openoffice.org/[_extensions.openoffice.org_]: Download and
-  unzip the `.oxt` extension file.
-* http://mzl.la/157UORf[_addons.mozilla.org_]:
-  Download and unzip the `.xpi` addon file.
-* http://download.services.openoffice.org/contrib/dictionaries/[OpenOffice archive]: Download and unzip the `.zip` file.
+* http://extensions.openoffice.org/[_extensions.openoffice.org_]: 下载解压 `.oxt` 后缀的文件。
+* http://mzl.la/157UORf[_addons.mozilla.org_]: 下载解压 `.xpi` 扩展文件。
+* http://download.services.openoffice.org/contrib/dictionaries/[OpenOffice archive]: 下载解压 `.zip` 文件。
 
-A Hunspell dictionary consists of two files with the same base name--such as
-`en_US`&#x2014;but with one of two extensions:
+一个 Hunspell 词典由两个文件组成 -- 具有相同的文件名和两个不同的后缀 -- 如
+`en_US`&#x2014;和下面的两个后缀的其中一个：
 
 `.dic`::
 
-    Contains all the root words, in alphabetical order, plus a code representing
-    all possible suffixes and prefixes (which collectively are known as _affixes_)
+    包含所有词根，采用字母顺序，再加上一个代表所有可能前缀和后缀的代码表 【集体称之为词缀( _affixes_ 】
 
 `.aff`::
 
-    Contains the actual prefix or suffix transformation for each code listed
-    in the `.dic` file
+    包含实际 `.dic` 文件每一行代码表对应的前缀和后缀转换
 
-==== Installing a Dictionary
+==== 安装一个词典
 
-The Hunspell token ((("Hunspell stemmer", "installing a dictionary")))filter looks for dictionaries within a dedicated Hunspell
-directory, which defaults to  `./config/hunspell/`. The `.dic` and `.aff`
-files should be placed in a subdirectory whose name represents the language
-or locale of the dictionaries.  For instance, we could create a Hunspell
-stemmer for American English with the following layout:
+Hunspell 语汇单元过滤器((("Hunspell stemmer", "installing a dictionary")))在特定的 Hunspell 目录里寻找词典，
+默认目录是 `./config/hunspell/` 。 `.dic` 文件和 `.aff` 文件应该要以子目录且按语言/区域的方式来命名。
+例如，我们可以为美式英语创建一个 Hunspell 词干提取器，目录结构如下：
 
 [source,text]
 ------------------------------------------------
@@ -45,17 +38,14 @@ config/
           ├ en_US.aff
           └ settings.yml <3>
 ------------------------------------------------
-<1> The location of the Hunspell directory can be changed by setting
-    `indices.analysis.hunspell.dictionary.location` in the
-    `config/elasticsearch.yml` file.
-<2> `en_US` will be the name of the locale or `language` that we pass to the
-    `hunspell` token filter.
-<3> Per-language settings file, described in the following section.
+<1> Hunspell 目录位置可以通过编辑 `config/elasticsearch.yml` 文件的：
+    `indices.analysis.hunspell.dictionary.location` 设置来修改。
+<2> `en_US` 是这个区域的名字，也是我们传给 `hunspell` 语汇单元过滤器参数 `language` 值。
+<3> 一个语言一个设置文件，下面的章节会具体介绍。
 
-==== Per-Language Settings
+==== 按语言设置
 
-The `settings.yml` file contains settings((("Hunspell stemmer", "per-language settings"))) that apply to all of the
-dictionaries within the language directory, such as these:
+在语言的目录设置文件 `settings.yml` 包含适用于所有字典内的语言目录的设置选项。((("Hunspell stemmer", "per-language settings")))
 
 [source,yaml]
 -------------------------
@@ -65,41 +55,33 @@ strict_affix_parsing: true
 
 -------------------------
 
-The meaning of these settings is as follows:
+这些选项的意思如下：
 
 `ignore_case`::
 +
 --
 
-Hunspell dictionaries are case sensitive by default: the surname `Booker` is a
-different word from the noun `booker`, and so should be stemmed differently.  It
-may seem like a good idea to use the `hunspell` stemmer in case-sensitive
-mode,((("Hunspell stemmer", "using in case insensitive mode"))) but that can complicate things:
+Hunspell 目录默认是区分大小写的，如，姓氏 `Booker` 和名词 `booker` 是不同的词，所以应该分别进行词干提取。
+也许让 `hunspell` 提取器区分大小写是一个好主意，不过也可能让事情变得复杂：((("Hunspell stemmer", "using in case insensitive mode")))
 
-* A word at the beginning of a sentence will be capitalized, and thus appear
-  to be a proper noun.
-* The input text may be all uppercase, in which case almost no words will be
-  found.
-* The user may search for names in all lowercase, in which case no capitalized
-  words will be found.
+* 一个句子的第一个词可能会被大写，因此感觉上会像是一个名词。
+* 输入的文本可能全是大写，如果这样那几乎一个词都找不到。
+* 用户也许会用小写来搜索名字，在这种情况下，大写开头的词将找不到。
 
-As a general rule, it is a good idea to set `ignore_case` to `true`.
+一般来说，设置参数 `ignore_case` 为 `true` 是一个好主意。
 
 --
 
 `strict_affix_parsing`::
 
-The quality of dictionaries varies greatly.((("Hunspell stemmer", "strict_affix_parsing"))) Some dictionaries that are
-available online have malformed rules in the `.aff` file.  By default, Lucene
-will throw an exception if it can't parse an affix rule. If you need to deal
-with a broken affix file, you can set `strict_affix_parsing` to `false` to tell
-Lucene to ignore the broken rules.((("strict_affix_parsing")))
+词典的质量千差万别。((("Hunspell stemmer", "strict_affix_parsing"))) 一些网上的词典的 `.aff` 文件有很多畸形的规则。
+默认情况下，如果 Lucene 不能正常解析一个词缀(affix)规则， 它会抛出一个异常。
+你可以通过设置 `strict_affix_parsing` 为 `false` 来告诉 Lucene 忽略错误的规则。((("strict_affix_parsing")))
 
-.Custom Dictionaries
+.自定义词典
 ***********************************************
-If multiple dictionaries (`.dic` files) are placed in the same
-directory, ((("Hunspell stemmer", "custom dictionaries")))they will be merged together at load time. This allows you to
-tailor the downloaded dictionaries with your own custom word lists:
+如果一个目录放置了多个词典 (`.dic` 文件)， ((("Hunspell stemmer", "custom dictionaries")))
+他们会在加载时合并到一起。这可以让你以自定义的词典的方式对下载的词典进行定制：
 
 [source,text]
 ------------------------------------------------
@@ -111,19 +93,17 @@ config/
           ├ custom.dic
           └ settings.yml
 ------------------------------------------------
-<1> The `custom` and `en_US` dictionaries will be merged.
-<2> Multiple `.aff` files are not allowed, as they could use
-    conflicting rules.
+<1> `custom` 词典和 `en_US` 词典将合并到一起。
+<2> 多个 `.aff` 文件是不允许的，因为会产生规则冲突。
 
-The format of the `.dic` and `.aff` files is discussed in
-<<hunspell-dictionary-format>>.
+`.dic` 文件和 `.aff` 文件的格式在这里讨论：
+<<hunspell-dictionary-format>> 。
 
 ***********************************************
 
-==== Creating a Hunspell Token Filter
+==== 创建一个 Hunspell 语汇单元过滤器
 
-Once your dictionaries are installed on all nodes, you can define a `hunspell`
-token filter((("Hunspell stemmer", "creating a hunspell token filter"))) that uses them:
+一旦你在所有节点上安装好了词典，你就能像这样定义一个 `hunspell` 语汇单元过滤器((("Hunspell stemmer", "creating a hunspell token filter")))：
 
 [source,json]
 ------------------------------------------------
@@ -147,11 +127,10 @@ PUT /my_index
   }
 }
 ------------------------------------------------
-<1> The `language` has the same name as the directory where
-    the dictionary lives.
+<1> 参数 `language` 和目录下对应的名称相同。
 
-You can test the new analyzer with the `analyze` API,
-and compare its output to that of the `english` analyzer:
+你可以通过 `analyze` API 来测试这个新的分析器，
+然后和 `english` 分析器比较一下它们的输出：
 
 [source,json]
 ------------------------------------------------
@@ -161,57 +140,49 @@ reorganizes
 GET /_analyze?analyzer=english <2>
 reorganizes
 ------------------------------------------------
-<1> Returns `organize`
-<2> Returns `reorgan`
+<1> 返回 `organize`
+<2> 返回 `reorgan`
 
-An interesting property of the `hunspell` stemmer, as can be seen in the
-preceding example, is that it can remove prefixes as well as as suffixes. Most
-algorithmic stemmers remove suffixes only.
+在前面的例子中，`hunspell` 提取器有一个有意思的事情，它不仅能移除前缀还能移除后缀。大多数算法词干提取仅能移除后缀。
 
 [TIP]
 ==================================================
 
-Hunspell dictionaries can consume a few megabytes of RAM.  Fortunately,
-Elasticsearch creates only a single instance of a dictionary per node.  All
-shards that use the same Hunspell analyzer share the same instance.
+Hunspell 词典会占用几兆的内存。幸运的是，Elasticsearch 每个节点只会创建一个词典的单例。
+所有的分片都会使用这个相同的 Hunspell 分析器。
 
 ==================================================
 
 [[hunspell-dictionary-format]]
-==== Hunspell Dictionary Format
+==== Hunspell 词典格式
 
-While it is not necessary to understand the((("Hunspell stemmer", "Hunspell dictionary format"))) format of a Hunspell dictionary in
-order to use the `hunspell` tokenizer, understanding the format will help you
-write your own custom dictionaries.  It is quite simple.
+尽管使用 `hunspell` 不必了解 Hunspell 词典的格式， ((("Hunspell stemmer", "Hunspell dictionary format")))
+不过了解格式可以帮助我们编写自己的自定义的词典。其实很简单。
 
-For instance, in the US English dictionary, the `en_US.dic` file contains an entry for
-the word `analyze`, which looks like this:
+例如，在美式英语词典（US English dictionary），`en_US.dic` 文件包含了一个包含词 `analyze` 的实体，看起来如下：
 
 [source,text]
 -----------------------------------
 analyze/ADSG
 -----------------------------------
 
-The `en_US.aff` file contains the prefix or suffix rules for the `A`, `G`,
-`D`, and `S` flags.  Each flag consists of a number of rules, only one of
-which should match. Each rule has the following format:
+`en_US.aff` 文件包含了一个针对标记 `A` 、 `G` 、`D` 和 `S` 的前后缀的规则。
+其中应该只有一个能匹配，每一个规则的格式如下：
 
 [source,text]
 -----------------------------------
 [type] [flag] [letters to remove] [letters to add] [condition]
 -----------------------------------
 
-For instance, the following is suffix (`SFX`) rule `D`.  It says that,  when a
-word ends in a consonant (anything but `a`, `e`, `i`, `o`, or `u`) followed by
-a `y`, it can have the `y` removed and `ied` added (for example, `ready` ->
-`readied`).
+例如，下面的后缀 (`SFX`) 规则 `D` 。它是说，当一个词由一个辅音 (除了 `a` 、`e` 、`i` 、`o` 或 `u` 外的任意音节)
+ 后接一个 `y` ，那么它可以移除 `y` 和添加 `ied` 结尾 （如，`ready` -> `readied` ）。
 
 [source,text]
 -----------------------------------
 SFX    D      y   ied  [^aeiou]y
 -----------------------------------
 
-The rules for the `A`, `G`, `D`, and `S` flags mentioned previously are as follows:
+前面提到的 `A` 、 `G` 、`D` 和 `S` 标记对应规则如下：
 
 [source,text]
 -----------------------------------
@@ -234,15 +205,11 @@ SFX G   0     ing        [^e]
 PFX A Y 1
 PFX A   0     re         . <4>
 -----------------------------------
-<1> `analyze` ends in an `e`, so it can become `analyzed` by adding a `d`.
-<2> `analyze` does not end in `s`, `x`, `z`, `h`, or `y`, so it can become
-    `analyzes` by adding an `s`.
+<1> `analyze` 以一个 `e` 结尾，所以它可以添加一个 `d` 变成 `analyzed` 。
+<2> `analyze` 不是由 `s` 、`x` 、`z` 、`h` 或 `y` 结尾，所以，它可以添加一个 `s` 变成 `analyzes` 。
+<3> `analyze` 以一个 `e` 结尾，所以，它可以移除 `e` 和添加 `ing` 然后变成 `analyzing` 。
 
-<3> `analyze` ends in an `e`, so it can become `analyzing` by removing the `e`
-    and adding `ing`.
+<4> 可以添加前缀 `re` 来形成 `reanalyze` 。这个规则可以组合后缀规则一起形成： `reanalyzes` 、`reanalyzed` 、
+    `reanalyzing` 。
 
-<4> The prefix `re` can be added to form `reanalyze`. This rule can be
-    combined with the suffix rules to form `reanalyzes`, `reanalyzed`,
-    `reanalyzing`.
-
-More information about the Hunspell syntax can be found on the http://sourceforge.net/projects/hunspell/files/Hunspell/Documentation/[Hunspell documentation site].
+了解更多关于 Hunspell 的语法，可以前往 http://sourceforge.net/projects/hunspell/files/Hunspell/Documentation/[Hunspell 文档] 。
