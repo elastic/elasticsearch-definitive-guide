@@ -1,30 +1,26 @@
 [[controlling-stemming]]
-=== Controlling Stemming
+=== 控制词干提取
 
-Out-of-the-box stemming solutions are never perfect.((("stemming words", "controlling stemming")))  Algorithmic stemmers,
-especially, will blithely apply their rules to any words they encounter,
-perhaps conflating words that you would prefer to keep separate.  Maybe, for
-your use case, it is important to keep `skies` and `skiing` as distinct words
-rather than stemming them both down to `ski` (as would happen with the
-`english` analyzer).
+开箱即用的词干提取方案永远也不可能完美。((("stemming words", "controlling stemming")))
+尤其是算法提取器，他们可以愉快的将规则应用于任何他们遇到的词，包含那些你希望保持独立的词。
+也许，在你的场景，保持独立的 `skies` 和 `skiing` 是重要的，你不希望把他们提取为 `ski` （正如 `english` 分析器那样）。
 
-The {ref}/analysis-keyword-marker-tokenfilter.html[`keyword_marker`] and
-{ref}/analysis-stemmer-override-tokenfilter.html[`stemmer_override`] token filters((("stemmer_override token filter")))((("keyword_marker token filter")))
-allow us to customize the stemming process.
+语汇单元过滤器 {ref}/analysis-keyword-marker-tokenfilter.html[`keyword_marker`] 和
+{ref}/analysis-stemmer-override-tokenfilter.html[`stemmer_override`] ((("stemmer_override token filter")))((("keyword_marker token filter")))
+能让我们自定义词干提取过程。
 
 [[preventing-stemming]]
-==== Preventing Stemming
+==== 阻止词干提取
 
-The <<stem-exclusion,`stem_exclusion`>> parameter for language analyzers (see
-<<configuring-language-analyzers>>) allowed ((("stemming words", "controlling stemming", "preventing stemming")))us to specify a list of words that
-should not be stemmed.  Internally, these language analyzers use the
-{ref}/analysis-keyword-marker-tokenfilter.html[`keyword_marker` token filter]
-to mark the listed words as _keywords_, which prevents subsequent stemming
-token filters from touching those words.((("keyword_marker token filter", "preventing stemming of certain words")))
+语言分析器（查看 <<configuring-language-analyzers>>）的参数 <<stem-exclusion,`stem_exclusion`>>
+允许我们指定一个词语列表，让他们不被词干提取。((("stemming words", "controlling stemming", "preventing stemming")))
 
-For instance, we can create a simple custom analyzer that uses the
-{ref}/analysis-porterstem-tokenfilter.html[`porter_stem`] token filter,
-but prevents the word `skies` from((("porter_stem token filter"))) being stemmed:
+在内部，这些语言分析器使用
+{ref}/analysis-keyword-marker-tokenfilter.html[`keyword_marker` 语汇单元过滤器]
+来标记这些词语列表为 _keywords_ ，用来阻止后续的词干提取过滤器来触碰这些词语。((("keyword_marker token filter", "preventing stemming of certain words")))
+
+例如，我们创建一个简单自定义分析器，使用
+{ref}/analysis-porterstem-tokenfilter.html[`porter_stem`] 语汇单元过滤器，同时阻止 `skies` 的词干提取：((("porter_stem token filter")))
 
 [source,json]
 ------------------------------------------
@@ -52,41 +48,34 @@ PUT /my_index
   }
 }
 ------------------------------------------
-<1> They `keywords` parameter could accept multiple words.
+<1> 参数 `keywords` 可以允许接收多个词语。
 
-Testing it with the `analyze` API shows that just the word `skies` has
-been excluded from stemming:
+使用 `analyze` API 来测试，可以看到词 `skies` 没有被提取：
 
 [source,json]
 ------------------------------------------
 GET /my_index/_analyze?analyzer=my_english
 sky skies skiing skis <1>
 ------------------------------------------
-<1> Returns: `sky`, `skies`, `ski`, `ski`
+<1> 返回: `sky`, `skies`, `ski`, `ski`
 
 [[keyword-path]]
 
 [TIP]
 ==========================================
 
-While the language analyzers allow ((("language analyzers", "stem_exclusion parameter")))us only to specify an array of words in the
-`stem_exclusion` parameter, the `keyword_marker` token filter also accepts a
-`keywords_path` parameter that allows us to store all of our keywords in a
-file. ((("keyword_marker token filter", "keywords_path parameter")))The file should contain one word per line, and must be present on every
-node in the cluster. See <<updating-stopwords>> for tips on how to update this
-file.
+虽然语言分析器只允许我们通过参数 `stem_exclusion` 指定一个词语列表来排除词干提取，((("language analyzers", "stem_exclusion parameter")))
+不过 `keyword_marker` 语汇单元过滤器同样还接收一个 `keywords_path` 参数允许我们将所有的关键字存在一个文件。
+这个文件应该是每行一个字，并且存在于集群的每个节点。查看 <<updating-stopwords>> 了解更新这些文件的提示。
 
 ==========================================
 
 [[customizing-stemming]]
-==== Customizing Stemming
+==== 自定义提取
 
-In the preceding example, we prevented `skies` from being stemmed, but perhaps we
-would prefer it to be stemmed to `sky` instead.((("stemming words", "controlling stemming", "customizing stemming")))  The
-{ref}/analysis-stemmer-override-tokenfilter.html[`stemmer_override`] token
-filter allows us ((("stemmer_override token filter")))to specify our own custom stemming rules. At the same time,
-we can handle some irregular forms like stemming `mice` to `mouse` and `feet`
-to `foot`:
+在上面的例子中，我们阻止了 `skies` 被词干提取，但是也许我们希望他能被提干为 `sky` 。((("stemming words", "controlling stemming", "customizing stemming")))  The
+{ref}/analysis-stemmer-override-tokenfilter.html[`stemmer_override`] 语汇单元过滤器允许我们指定自定义的提取规则。((("stemmer_override token filter")))
+与此同时，我们可以处理一些不规则的形式，如：`mice` 提取为 `mouse` 和 `feet` 到 `foot` ：
 
 [source,json]
 ------------------------------------------
@@ -121,11 +110,9 @@ PUT /my_index
 GET /my_index/_analyze?analyzer=my_english
 The mice came down from the skies and ran over my feet <3>
 ------------------------------------------
-<1> Rules take the form `original=>stem`.
-<2> The `stemmer_override` filter must be placed before the stemmer.
-<3> Returns `the`, `mouse`, `came`, `down`, `from`, `the`, `sky`,
-    `and`, `ran`, `over`, `my`, `foot`.
+<1> 规则来自 `original=>stem` 。
+<2> `stemmer_override` 过滤器必须放置在词干提取器之前。
+<3> 返回 `the`, `mouse`, `came`, `down`, `from`, `the`, `sky`,
+    `and`, `ran`, `over`, `my`, `foot` 。
 
-TIP: Just as for the `keyword_marker` token filter, rules can be stored
-in a file whose location should be specified with the `rules_path`
-parameter.
+TIP: 正如 `keyword_marker` 语汇单元过滤器，规则可以被存放在一个文件中，通过参数 `rules_path` 来指定位置。
