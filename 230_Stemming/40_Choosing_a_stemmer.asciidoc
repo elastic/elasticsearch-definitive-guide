@@ -1,121 +1,94 @@
 [[choosing-a-stemmer]]
-=== Choosing a Stemmer
+=== 选择一个词干提取器
 
-The documentation for the
+在文档
 {ref}/analysis-stemmer-tokenfilter.html[`stemmer`] token filter
-lists multiple stemmers for some languages.((("stemming words", "choosing a stemmer")))((("English", "stemmers for")))  For English we have the following:
+里面列出了一些针对语言的若干词干提取器。((("stemming words", "choosing a stemmer")))((("English", "stemmers for")))
+就英语来说我们有如下提取器：
 
 `english`::
 
-    The {ref}/analysis-porterstem-tokenfilter.html[`porter_stem`] token filter.
+    {ref}/analysis-porterstem-tokenfilter.html[`porter_stem`] 语汇单元过滤器（token filter）。
 
 `light_english`::
 
-    The {ref}/analysis-kstem-tokenfilter.html[`kstem`] token filter.
+    {ref}/analysis-kstem-tokenfilter.html[`kstem`] 语汇单元过滤器（token filter）。
 
 `minimal_english`::
 
-    The `EnglishMinimalStemmer` in Lucene, which removes plurals
+    Lucene 里面的 `EnglishMinimalStemmer` ，用来移除复数。
 
 `lovins`::
 
-    The {ref}/analysis-snowball-tokenfilter.html[Snowball] based
+    基于 {ref}/analysis-snowball-tokenfilter.html[Snowball] 的
     http://snowball.tartarus.org/algorithms/lovins/stemmer.html[Lovins]
-    stemmer, the first stemmer ever produced.
+    提取器, 第一个词干提取器。
 
 `porter`::
 
-    The {ref}/analysis-snowball-tokenfilter.html[Snowball] based
-    http://snowball.tartarus.org/algorithms/porter/stemmer.html[Porter] stemmer
+    基于 {ref}/analysis-snowball-tokenfilter.html[Snowball] 的
+    http://snowball.tartarus.org/algorithms/porter/stemmer.html[Porter] 提取器。
 
 `porter2`::
 
-    The {ref}/analysis-snowball-tokenfilter.html[Snowball] based
-    http://snowball.tartarus.org/algorithms/english/stemmer.html[Porter2] stemmer
+    基于 {ref}/analysis-snowball-tokenfilter.html[Snowball] 的
+    http://snowball.tartarus.org/algorithms/english/stemmer.html[Porter2] 提取器。
 
 `possessive_english`::
 
-    The `EnglishPossessiveFilter` in Lucene which removes `'s`
+    Lucene 里面的 `EnglishPossessiveFilter` ，移除 `'s`
 
-Add to that list the Hunspell stemmer with the various English dictionaries
-that are available.
+Hunspell 词干提取器也要纳入到上面的列表中，还有多种英文的词典可用。
 
-One thing is for sure: whenever more than one solution exists for a problem,
-it means that none of the solutions solves the problem adequately. This
-certainly applies to stemming -- each stemmer uses a different approach that
-overstems and understems words to a different degree.
+有一点是可以肯定的：当一个问题存在多个解决方案的时候，这意味着没有一个解决方案充分解决这个问题。
+这一点同样体现在词干提取上 -- 每个提取器使用不同的方法不同程度的对单词进行了弱提取或是过度提取。
 
-The `stemmer` documentation page ((("languages", "stemmers for")))highlights the recommended stemmer for
-each language in bold, usually because it offers a reasonable compromise
-between performance and quality. That said, the recommended stemmer may not be
-appropriate for all use cases. There is no single right answer to the question
-of which is the best stemmer -- it depends very much on your requirements.
-There are three factors to take into account when making a choice:
-performance, quality, and degree.
+在 `stemmer` 文档 ((("languages", "stemmers for")))中，使用粗体高亮了每一个语言的推荐的词干提取器，
+通常是因为它提供了一个在性能和质量之间合理的妥协。也就是说，推荐的词干提取器也许不适用所有场景。
+关于哪个是最好的词干提取器，不存在一个唯一的正确答案 -- 它要看你具体的需求。
+这里有3个方面的因素需要考虑在内：
+性能、质量、程度。
 
 [[stemmer-performance]]
-==== Stemmer Performance
+==== 提取性能
 
-Algorithmic stemmers are typically four or ((("stemming words", "choosing a stemmer", "stemmer performance")))((("Hunspell stemmer", "performance")))five times faster than Hunspell
-stemmers. ``Handcrafted'' algorithmic stemmers are usually, but not always,
-faster than their Snowball equivalents.  For instance, the `porter_stem` token
-filter is significantly faster than the Snowball implementation of the Porter
-stemmer.
+算法提取器一般来说比 Hunspell 提取器快4到5倍。((("stemming words", "choosing a stemmer", "stemmer performance")))((("Hunspell stemmer", "performance")))
+``Handcrafted'' 算法提取器通常（不是永远） 要比 Snowball 快或是差不多。
+比如，`porter_stem` 语汇单元过滤器（token filter）就明显要比基于 Snowball 实现的 Porter 提取器要快的多。
 
-Hunspell stemmers have to load all words, prefixes, and suffixes into memory,
-which can consume a few megabytes of RAM.  Algorithmic stemmers, on the other
-hand, consist of a small amount of code and consume very little memory.
+Hunspell 提取器需要加载所有的词典、前缀和后缀表到内存，可能需要消耗几兆的内存。而算法提取器，由一点点代码组成，只需要使用很少内存。
 
 [[stemmer-quality]]
-==== Stemmer Quality
+==== 提取质量
 
-All languages, except Esperanto, are irregular.((("stemming words", "choosing a stemmer", "stemmer quality"))) While more-formal words tend
-to follow a regular pattern, the most commonly used words often have irregular rules. Some stemming algorithms have been developed over years of
-research and produce reasonably high-quality results. Others have been
-assembled more quickly with less research and deal only with the most common
-cases.
+所有的语言，除了世界语（Esperanto）都是不规范的。((("stemming words", "choosing a stemmer", "stemmer quality")))
+最日常用语使用的词往往不规则，而更正式的书面用语则往往遵循规律。
+一些提取算法经过多年的开发和研究已经能够产生合理的高质量的结果了，其他人只需快速组装做很少的研究就能解决大部分的问题了。
 
-While Hunspell offers the promise of dealing precisely with irregular words,
-it often falls short in practice. A dictionary stemmer is only as good as its
-dictionary.   If Hunspell comes across a word that isn't in its dictionary, it
-can do nothing with it. Hunspell requires an extensive, high-quality, up-to-date dictionary in order to produce good results; dictionaries of this
-caliber are few and far between. An algorithmic stemmer, on the other hand,
-will happily deal with new words that didn't exist when the designer created
-the algorithm.
+虽然 Hunspell 提供了精确地处理不规则词语的承诺，但在实践中往往不足。
+一个基于词典的提取器往往取决于词典的好坏。如果 Hunspell 碰到的这个词不在词典里，那它什么也不能做。
+Hunspell 需要一个广泛的、高质量的、最新的词典以产生好的结果；这样级别的词典可谓少之又少。
+另一方面，一个算法提取器，将愉快的处理新词而不用为新词重新设计算法。
 
-If a good algorithmic stemmer is available for your language, it makes sense
-to use it rather than Hunspell.  It will be faster, will consume less memory, and
-will generally be as good or better than the Hunspell equivalent.
+如果一个好的算法词干提取器可用于你的语言，那明智的使用它而不是 Hunspell。它会更快并且消耗更少内存，并且会产生和通常一样好或者比 Hunspell 等价的结果.
 
-If accuracy and customizability is important to you, and you need (and
-have the resources) to maintain a custom dictionary, then Hunspell gives you
-greater flexibility than the algorithmic stemmers. (See
-<<controlling-stemming>> for customization techniques that can be used with
-any stemmer.)
+如果精度和可定制性对你很重要，那么你需要（和有精力）来维护一个自定义的词典，那么 Hunspell 会给你比算法提取器更大的灵活性。 (查看
+<<controlling-stemming>> 来了解可用于任何词干提取器的自定义技术。)
 
 [[stemmer-degree]]
-==== Stemmer Degree
+==== 提取程度
 
-Different stemmers overstem and understem((("stemming words", "choosing a stemmer", "stemmer degree"))) to a different degree.  The `light_`
-stemmers stem less aggressively than the standard stemmers, and the `minimal_`
-stemmers less aggressively still.  Hunspell stems aggressively.
+不同的词干提取器会将词弱提取或过度提取到一定的程度((("stemming words", "choosing a stemmer", "stemmer degree")))。  `light_`
+提取器提干力度不及标准的提取器。 `minimal_` 提取器同样也不那么积极。Hunspell 提取力度要激进一些。
 
-Whether you want aggressive or light stemming depends on your use case.  If
-your search results are being consumed by a clustering algorithm, you may
-prefer to match more widely (and, thus, stem more aggressively).  If your
-search results are intended for human consumption, lighter stemming usually
-produces better results.  Stemming nouns and adjectives is more important for
-search than stemming verbs, but this also depends on the language.
+是否想要积极提取还是轻量提取取决于你的场景。如果你的搜索结果是要用于聚类算法，你可能会希望匹配的更广泛一点（因此，提取力度要更大一点）。
+如果你的搜索结果是面向最终用户，轻量的提取一般会产生更好的结果。对搜索来说，将名称和形容词提干比动词提干更重要，当然这也取决于语言。
 
-The other factor to take into account is the size of your document collection.
-With a small collection such as a catalog of 10,000 products, you probably want to
-stem more aggressively to ensure that you match at least some documents.  If
-your collection is large, you likely will get good matches with lighter
-stemming.
+另外一个要考虑的因素就是你的文档集的大小。
+一个只有 10,000 个产品的小集合，你可能要更激进的提干来确保至少匹配到一些文档。
+如果你的文档集很大，使用轻量的弱提取可能会得到更好的匹配结果。
 
-==== Making a Choice
+==== 做一个选择
 
-Start out with a recommended stemmer.  If it works well enough, there is
-no need to change it.  If it doesn't, you will need to spend some time
-investigating and comparing the stemmers available for language in order to
-find the one that best suits your purposes.
+从推荐的一个词干提取器出发，如果它工作的很好，那没有什么需要调整的。如果不是，你将需要花点时间来调查和比较该语言可用的各种不同提取器，
+来找到最适合你目的的那一个。
