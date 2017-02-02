@@ -24,7 +24,7 @@ search requests.  It is not dependent on the "context" of the surrounding query.
 This allows caching to accelerate the most frequently used portions of your queries,
 without wasting overhead on the less frequent / more volatile portions.
 
-Similarly, if a single search request reuses the same non-scoring query, it's
+Similarly, if a single search request reuses the same non-scoring query, its
 cached bitset can be reused for all instances inside the single search request.
 
 Let's look at this example query, which looks for emails that are either of the following:
