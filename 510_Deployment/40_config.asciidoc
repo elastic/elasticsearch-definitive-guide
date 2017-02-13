@@ -158,7 +158,7 @@ PUT /_cluster/settings
 gateway.recover_after_nodes: 8
 ----
 
-这将防止 Elasticsearch 从一开始就进行数据恢复，在存在 8 个节点（数据节点或者 master 节点）之前。
+这将阻止 Elasticsearch 在存在至少 8 个节点（数据节点或者 master 节点）之前进行数据恢复。
 这个值的设定取决于个人喜好：整个集群提供服务之前你希望有多少个节点在线？这种情况下，我们设置为 8，这意味着至少要有 8 个节点，该集群才可用。
 
 现在我们要告诉 Elasticsearch 集群中 _应该_ 有多少个节点，以及我们愿意为这些节点等待多长时间：
