@@ -180,7 +180,7 @@ We can represent the previous search for all Smiths like so:
 
 [source,js]
 --------------------------------------------------
-GET /megacorp/employee/_search
+POST /megacorp/employee/_search
 {
     "query" : {
         "match" : {
@@ -206,7 +206,7 @@ which allows us to execute structured searches efficiently:
 
 [source,js]
 --------------------------------------------------
-GET /megacorp/employee/_search
+POST /megacorp/employee/_search
 {
     "query" : {
         "bool": {
@@ -269,7 +269,7 @@ We are going to search for all employees who enjoy rock climbing:
 
 [source,js]
 --------------------------------------------------
-GET /megacorp/employee/_search
+POST /megacorp/employee/_search
 {
     "query" : {
         "match" : {
@@ -346,7 +346,7 @@ To do this, we use a slight variation of the `match` query called the
 
 [source,js]
 --------------------------------------------------
-GET /megacorp/employee/_search
+POST /megacorp/employee/_search
 {
     "query" : {
         "match_phrase" : {
@@ -394,7 +394,7 @@ Let's rerun our previous query, but add a new `highlight` parameter:
 
 [source,js]
 --------------------------------------------------
-GET /megacorp/employee/_search
+POST /megacorp/employee/_search
 {
     "query" : {
         "match_phrase" : {
