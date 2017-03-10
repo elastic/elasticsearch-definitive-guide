@@ -22,7 +22,7 @@ JVM 堆 ((("JVM (Java Virtual Machine)", "heap usage, fielddata and"))) 是有�
 在设置 Elasticsearch 堆大小时需要通过 ((("heap", rules for setting size of"))) `$ES_HEAP_SIZE` 环境变量应用两个规则：
 
 不要超过可用 RAM 的 50% ::
-Lucene 能很好利用文件系统的缓存，它是通过系统内核管理的。如果没有足够的文件系统缓存空间，性能会收到影响。
+Lucene 能很好利用文件系统的缓存，它是通过系统内核管理的。如果没有足够的文件系统缓存空间，性能会受到影响。
 此外，专用于堆的内存越多意味着其他所有使用 doc values 的字段内存越少。
 
 不要超过 32 GB ::
