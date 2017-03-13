@@ -43,7 +43,7 @@ GET /my_index/_analyze
 GET /my_index/_analyze
 {
   "field": "english_title",   <2>
-  "text": "Foxes"
+  "text": "Fox"
 }
 --------------------------------------------------
 // SENSE: 100_Full_Text_Search/30_Analysis.json
