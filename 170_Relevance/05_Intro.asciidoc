@@ -10,7 +10,7 @@ are not enough by themselves. Instead, we also  need to know how relevant each
 document is to the query.  Full-text search engines have to not only find the
 matching documents, but also sort them by relevance.
 
-Full-text relevance ((("similarity algorithms")))formulae, or _similarity algorithms_,  combine several
+Full-text relevance ((("similarity algorithms")))formulas, or _similarity algorithms_,  combine several
 factors to produce a single relevance `_score` for each document.  In this
 chapter, we examine the various moving parts and discuss how they can be
 controlled.
