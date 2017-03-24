@@ -262,12 +262,10 @@ with a simple filtered query:
 ----
 GET mlmovies/_search
 {
-  "query": {
-    "filtered": {
-      "filter": {
-        "ids": {
-          "values": [2571,318,296,2959,260]
-        }
+  "bool": {
+    "filter": {
+      "ids": {
+        "values": [2571,318,296,2959,260]
       }
     }
   }
