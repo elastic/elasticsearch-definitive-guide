@@ -302,7 +302,7 @@ bitset is iterated on first (since it excludes the largest number of documents).
 
 4. _Increment the usage counter_.
 +
-Elasticsearch can cache non-scoring queries for faster access, but its silly to
+Elasticsearch can cache non-scoring queries for faster access, but it's silly to
 cache something that is used only rarely.  Non-scoring queries are already quite fast
 due to the inverted index, so we only want to cache queries we _know_ will be used
 again in the future to prevent resource wastage.
