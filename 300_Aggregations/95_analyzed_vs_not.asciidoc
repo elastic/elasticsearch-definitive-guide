@@ -3,7 +3,7 @@
 === Aggregations and Analysis
 
 Some aggregations, such as the `terms` bucket, operate((("analysis", "aggregations and")))((("aggregations", "and analysis"))) on string fields.  And
-string fields may be either `analyzed` or `not_analyzed`, which begs the question:
+string fields may be either `analyzed` or `not_analyzed`, which raises the question:
 how does analysis affect aggregations?((("strings", "analyzed or not_analyzed string fields")))((("not_analyzed fields")))((("analyzed fields")))
 
 The answer is "a lot," for two reasons: analysis affects the tokens used in the aggregation,
