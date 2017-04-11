@@ -3,9 +3,12 @@
 ### Contributing documentation changes
 
 If you have a change that you would like to contribute, please find or open an
-issue about it first. Talk about what you would like to do. It may be that 
+issue about it first. Talk about what you would like to do. It might be that 
 somebody is already working on it, or that there are particular issues that 
-you should know about before doing the change.
+you should know about before making the change.
+
+Where possible, stick to an 80 character line length in the asciidoc source
+files. Do not exceed 120 characters. Use 2 space indents in code examples.
 
 The process for contributing to any of the [Elastic repositories](https://github.com/elastic/) 
 is similar. Details can be found below.
