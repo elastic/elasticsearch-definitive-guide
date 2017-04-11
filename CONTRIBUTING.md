@@ -22,7 +22,7 @@ Once your changes and tests are ready to submit for review:
 
 1. Test your changes
 
-    [Build the complete book locally](https://github.com/elastic/elasticsearch-definitive-guide) 
+    [Build the complete book locally](https://github.com/elastic/elasticsearch-definitive-guide#building-the-definitive-guide) 
     and check and correct any errors that you encounter.
 
 2. Sign the Contributor License Agreement
