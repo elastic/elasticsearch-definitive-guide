@@ -2,14 +2,7 @@
 === Finding Distinct Counts
 
 The first approximate aggregation provided by Elasticsearch is the `cardinality`
-metric.((("cardinality", "finding distinct counts")))((("aggregations", "approximate", "cardinality")))((("approximate algorithms", "cardinality")))((("distinct counts")))  This provides the cardinality of a field, also called a _distinct_ or
-_unique_ count. ((("unique counts"))) You may be familiar with the SQL version:
-
-[source, sql]
---------
-SELECT COUNT(DISTINCT color)
-FROM cars
---------
+metric.((("cardinality", "finding distinct counts")))((("aggregations", "approximate", "cardinality")))((("approximate algorithms", "cardinality")))((("distinct counts")))
 
 Distinct counts are a common operation, and answer many fundamental business questions:
 
