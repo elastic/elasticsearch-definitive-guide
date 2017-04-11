@@ -18,7 +18,7 @@ cd elasticsearch-definitive-guide
 ../docs/build_docs.pl --doc book.asciidoc --open
 ```
 
-This assumes that you have all necessary prerequisites installed. For a more complete reference, please see refer to the [README in the docs repo](https://github.com/elastic/docs).
+This assumes that you have all necessary prerequisites installed. For a more complete reference, please refer to the [README in the docs repo](https://github.com/elastic/docs).
 
 The Definitive Guide is written in Asciidoc and the docs repo also contains a [short Asciidoc guide](https://github.com/elastic/docs#asciidoc-guide).
 
