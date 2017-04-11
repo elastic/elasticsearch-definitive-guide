@@ -137,7 +137,7 @@ Once you start accumulating snapshots in your repository, you may forget the det
 relating to each--particularly when the snapshots are named based on time
 demarcations (for example, `backup_2014_10_28`).
 
-To obtain information about a single snapshot, simply issue a `GET` reguest against
+To obtain information about a single snapshot, simply issue a `GET` request against
 the repo and snapshot name:
 
 [source,js]
