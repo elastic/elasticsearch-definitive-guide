@@ -52,7 +52,7 @@ GET /cars/transactions/_search
     "aggs" : { <1>
         "popular_colors" : { <2>
             "terms" : { <3>
-              "field" : "color"
+              "field" : "color.keyword"
             }
         }
     }
@@ -96,10 +96,12 @@ Let's execute that aggregation and take a look at the results:
 {
 ...
    "hits": {
+      ...
       "hits": [] <1>
    },
    "aggregations": {
       "popular_colors": { <2>
+         ...
          "buckets": [
             {
                "key": "red", <3>
