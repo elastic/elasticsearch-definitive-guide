@@ -1,7 +1,7 @@
 === Analytics
 
 Finally, we come to our last business requirement: allow managers to run
-analytics over the employee directory.((("analytics")))  Elasticsearch has functionality called
+analytics over the employee directory.((("analytics")))  Elasticsearch has a functionality called
 _aggregations_, which ((("aggregations")))allow you to generate sophisticated analytics over your
 data. It is similar to `GROUP BY` in SQL, but much more powerful.
 
