@@ -74,9 +74,7 @@ in <<_scoping_aggregations>>.
 =========================
 You'll notice that we set the `size` to zero. We 
 don't care about the search results themselves and
-returning zero hits speeds up the query. Setting
-`size: 0` is the equivalent of using the `count` 
-search type in Elasticsearch 1.x.
+returning zero hits speeds up the query.
 =========================
 
 Next we define a name for our aggregation.  Naming is up to you;
