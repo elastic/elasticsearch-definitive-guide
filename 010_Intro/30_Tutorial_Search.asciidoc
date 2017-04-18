@@ -10,7 +10,7 @@ those three pieces of information, we can return the original JSON document:
 
 [source,js]
 --------------------------------------------------
-GET /megacorp/employee/1
+curl -GET 'localhost:9200/megacorp/employee/1?pretty'
 --------------------------------------------------
 // SENSE: 010_Intro/30_Get.json
 
@@ -53,7 +53,7 @@ for all employees, with this request:
 
 [source,js]
 --------------------------------------------------
-GET /megacorp/employee/_search
+curl -GET 'localhost:9200//megacorp/employee/_search?pretty'
 --------------------------------------------------
 // SENSE: 010_Intro/30_Simple_search.json
 
