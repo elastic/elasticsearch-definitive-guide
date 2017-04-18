@@ -1,17 +1,8 @@
 [[multi-field-search]]
-== Multifield Search
+== 多字段搜索
 
-Queries are seldom simple one-clause `match` queries. ((("multifield search"))) We frequently need to
-search for the same or different query strings in one or more fields, which
-means that we need to be able to combine multiple query clauses and their
-relevance scores in a way that makes sense.
+查询很少是简单一句话的  `match`  匹配查询。((("multifield search")))通常我们需要用相同或不同的字符串查询一个或多个字段，也就是说，需要对多个查询语句以及它们相关度评分进行合理的合并。
 
-Perhaps we're looking for a book called _War and Peace_ by an author called
-Leo Tolstoy. Perhaps we're searching the Elasticsearch documentation
-for ``minimum should match,'' which might be in the title or the body of a
-page. Or perhaps we're searching for users with first name John and last
-name Smith.
+有时候或许我们正查找作者 Leo Tolstoy 写的一本名为 _War and Peace_（战争与和平）的书。或许我们正用 “minimum should match” （最少应该匹配）的方式在文档中对标题或页面内容进行搜索，或许我们正在搜索所有名字为 John Smith 的用户。
 
-In this chapter, we present the available tools for constructing multiclause
-searches and how to figure out which solution you should apply to your
-particular use case.
+在本章，我们会介绍构造多语句搜索的工具及在特定场景下应该采用的解决方案。

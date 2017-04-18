@@ -1,30 +1,14 @@
 [[controlling-relevance]]
-== Controlling Relevance
+== 控制相关度
 
-Databases that deal purely in structured data (such as dates, numbers, and
-string enums) have it easy: they((("relevance", "controlling"))) just have to check whether a document (or a
-row, in a relational database) matches the query.
+处理结构化数据（比如：时间、数字、字符串、枚举）的数据库，((("relevance", "controlling")))只需检查文档（或关系数据库里的行）是否与查询匹配。
 
-While Boolean yes/no matches are an essential part of full-text search, they
-are not enough by themselves. Instead, we also  need to know how relevant each
-document is to the query.  Full-text search engines have to not only find the
-matching documents, but also sort them by relevance.
+布尔的是/非匹配是全文搜索的基础，但不止如此，我们还要知道每个文档与查询的相关度，在全文搜索引擎中不仅需要找到匹配的文档，还需根据它们相关度的高低进行排序。
 
-Full-text relevance ((("similarity algorithms")))formulae, or _similarity algorithms_,  combine several
-factors to produce a single relevance `_score` for each document.  In this
-chapter, we examine the various moving parts and discuss how they can be
-controlled.
+全文相关的公式或 _相似算法（similarity algorithms）_ ((("similarity algorithms")))会将多个因素合并起来，为每个文档生成一个相关度评分 `_score` 。本章中，我们会验证各种可变部分，然后讨论如何来控制它们。
 
-Of course, relevance is not just about full-text queries; it may need to
-take structured data into account as well. Perhaps we are looking for a
-vacation home with particular features (air-conditioning, sea view, free
-WiFi).  The more features that a property has, the more relevant it is. Or
-perhaps we want to factor in sliding scales like recency, price, popularity, or
-distance, while still taking the relevance of a full-text query into account.
+当然，相关度不只与全文查询有关，也需要将结构化的数据考虑其中。可能我们正在找一个度假屋，需要一些的详细特征（空调、海景、免费 WiFi ），匹配的特征越多相关度越高。可能我们还希望有一些其他的考虑因素，如回头率、价格、受欢迎度或距离，当然也同时考虑全文查询的相关度。
 
-All of this is possible thanks to the powerful scoring infrastructure
-available in Elasticsearch.
+所有的这些都可以通过 Elasticsearch 强大的评分基础来实现。
 
-We will start by looking at the theoretical side of how Lucene calculates
-relevance, and then move on to practical examples of how you can control the
-process.
+本章会先从理论上介绍 Lucene 是如何计算相关度的，然后通过实际例子说明如何控制相关度的计算过程。

@@ -1,29 +1,17 @@
 [[scale]]
-== Designing for Scale
+== 扩容设计
 
-Elasticsearch is used by some companies to index ((("scaling", "designing for scale")))and search petabytes of data
-every day, but most of us start out with something a little more humble in
-size. Even if we aspire to be the next Facebook, it is unlikely that our bank
-balance matches our aspirations.  We need to build for what we have today, but
-in a way that will allow us to scale out flexibly and rapidly.
+一些公司每天使用 Elasticsearch((("scaling", "designing for scale"))) 索引检索 PB 级数据，
+但我们中的大多数都起步于规模稍逊的项目。即使我们立志成为下一个 Facebook，我们的银行卡余额却也跟不上梦想的脚步。
+我们需要为今日所需而构建，但也要允许我们可以灵活而又快速地进行水平扩展。
 
-Elasticsearch is built to scale.  It will run very happily on your laptop or
-in a cluster containing hundreds of nodes, and the experience is almost
-identical. Growing from a small cluster to a large cluster is almost entirely
-automatic and painless. Growing from a large cluster to a very large cluster
-requires a bit more planning and design, but it is still relatively painless.
+Elasticsearch 为了可扩展性而生。它可以良好地运行于你的笔记本电脑又或者一个拥有数百节点的集群，同时用户体验基本相同。
+由小规模集群增长为大规模集群的过程几乎完全自动化并且无痛。由大规模集群增长为超大规模集群需要一些规划和设计，但还是相对地无痛。
 
-Of course, it is not magic.  Elasticsearch has its limitations too.  If you
-are aware of those limitations and work with them, the growing process will be
-pleasant.  If you treat Elasticsearch badly, you could be in for a world of
-pain.
+当然这一切并不是魔法。Elasticsearch 也有它的局限性。如果你了解这些局限性并能够与之相处，集群扩容的过程将会是愉快的。
+如果你对 Elasticsearch 处理不当，那么你将处于一个充满痛苦的世界。
 
-The default settings in Elasticsearch will take you a long way, but to get the
-most bang for your buck, you need to think about how data flows through your
-system.  We will talk about two common data flows: time-based data (such as log
-events or social network streams, where relevance is driven by recency), and
-user-based data (where a large document collection can be subdivided by user or
-customer).
+Elasticsearch 的默认设置会伴你走过很长的一段路，但为了发挥它最大的效用，你需要考虑数据是如何流经你的系统的。
+我们将讨论两种常见的数据流：时序数据（时间驱动相关性，例如日志或社交网络数据流），以及基于用户的数据（拥有很大的文档集但可以按用户或客户细分）。
 
-This chapter will help you make the right decisions up front, to avoid
-nasty surprises later.
+这一章将帮助你在遇到不愉快之前做出正确的选择。
