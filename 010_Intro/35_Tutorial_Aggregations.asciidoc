@@ -13,7 +13,7 @@ GET /megacorp/employee/_search
 {
   "aggs": {
     "all_interests": {
-      "terms": { "field": "interests" }
+      "terms": { "field": "interests.keyword" }
     }
   }
 }
@@ -29,17 +29,18 @@ Ignore the syntax for now and just look at the results:
    "hits": { ... },
    "aggregations": {
       "all_interests": {
+         ...
          "buckets": [
             {
-               "key":       "music",
+               "key": "music",
                "doc_count": 2
             },
             {
-               "key":       "forestry",
+               "key": "forestry",
                "doc_count": 1
             },
             {
-               "key":       "sports",
+               "key": "sports",
                "doc_count": 1
             }
          ]
@@ -66,7 +67,7 @@ GET /megacorp/employee/_search
   "aggs": {
     "all_interests": {
       "terms": {
-        "field": "interests"
+        "field": "interests.keyword"
       }
     }
   }
@@ -80,6 +81,7 @@ The `all_interests` aggregation has changed to include only documents matching o
 --------------------------------------------------
   ...
   "all_interests": {
+     ...
      "buckets": [
         {
            "key": "music",
@@ -102,7 +104,9 @@ GET /megacorp/employee/_search
 {
     "aggs" : {
         "all_interests" : {
-            "terms" : { "field" : "interests" },
+            "terms" : {
+                "field" : "interests.keyword"
+            },
             "aggs" : {
                 "avg_age" : {
                     "avg" : { "field" : "age" }
@@ -121,6 +125,7 @@ easy to understand:
 --------------------------------------------------
   ...
   "all_interests": {
+     ...
      "buckets": [
         {
            "key": "music",
