@@ -1,0 +1,46 @@
+{
+  "rides": {
+    "properties": {
+      "vendor": {
+        "type": "keyword"
+      },
+      "pickup_datetime": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss"
+      },
+      "dropoff_datetime": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss"
+      },
+      "passenger_count": {
+        "type": "integer"
+      },
+      "trip_distance": {
+        "scaling_factor": 100,
+        "type": "scaled_float"
+      },
+      "pickup_zone": {
+        "type": "keyword"
+      },
+      "dropoff_zone": {
+        "type": "keyword"
+      },
+      "payment_type": {
+        "type": "keyword"
+      },
+      "fare_amount": {
+        "scaling_factor": 100,
+        "type": "scaled_float"
+      },
+      "tip_amount": {
+        "scaling_factor": 100,
+        "type": "scaled_float"
+      },
+      "total_amount": {
+        "scaling_factor": 100,
+        "type": "scaled_float"
+      }
+    },
+    "dynamic": "strict"
+  }
+}
