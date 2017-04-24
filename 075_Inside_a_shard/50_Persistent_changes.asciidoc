@@ -19,6 +19,7 @@ image::images/elas_1106.png["New documents are added to the in-memory buffer and
 +
 --
    ** 这些在内存缓冲区的文档被写入到一个新的段中，且没有进行 `fsync` 操作。
+   
    ** 这个段被打开，使其可被搜索。
 
    ** 内存缓冲区被清空。
@@ -75,7 +76,7 @@ POST /_flush?wait_for_ongoing <2>
 <1> 刷新（flush） `blogs` 索引。
 <2> 刷新（flush）所有的索引并且并且等待所有刷新在返回前完成。
 
-你很少需要自己执行一个手工的 `flush`；通常情况下，自动刷新就足够了。
+你很少需要自己手动执行一个的 `flush` 操作；通常情况下，自动刷新就足够了。
 
 这就是说，在重启节点或关闭索引之前执行 <<flush-api,flush>> 有益于你的索引。当 Elasticsearch 尝试恢复或重新打开一个索引，
 它需要重放 translog 中所有的操作，所以如果日志越短，恢复越快。
@@ -86,8 +87,8 @@ POST /_flush?wait_for_ongoing <2>
 
 translog 的目的是保证操作不会丢失。这引出了这个问题： Translog 有多安全((("translog (transaction log)", "safety of")))？
 
-在文件被+fsync+到磁盘前，被写入的文件在重启之后就会丢失。默认 translog 是每 5 秒被 +fsync+' 刷新到硬盘，
-_并且_ 是在写请求完成之后(e.g. index, delete, update, bulk)。这个过程在主分片和复制分片都会发生。最终，
+在文件被 +fsync+ 到磁盘前，被写入的文件在重启之后就会丢失。默认 translog 是每 5 秒被 +fsync+ 刷新到硬盘，
+_或者_ 在每次写请求完成之后执行(e.g. index, delete, update, bulk)。这个过程在主分片和复制分片都会发生。最终，
 基本上，这意味着在整个请求被+fsync+到主分片和复制分片的translog之前，你的客户端不会得到一个 200 OK 响应。
 
 在每次请求后都执行一个 fsync 会带来一些性能损失，尽管实践表明这种损失相对较小（特别是bulk导入，它在一次请求中平摊了大量文档的开销）。
