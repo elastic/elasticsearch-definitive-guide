@@ -1,16 +1,16 @@
 
 === Cluster Stats
 
-The `cluster-stats` API provides similar output to the `node-stats`.((("clusters", "administration", "Cluster Stats API")))  There
-is one crucial difference: Node Stats shows you statistics per node, while
+The `cluster-stats` API provides similar output to the `node-stats`. There is
+one crucial difference: Node Stats shows you statistics per node, while
 `cluster-stats` shows you the sum total of all nodes in a single metric.
 
-This provides some useful stats to glance at.  You can see for example, that your entire cluster
-is using 50% of the available heap or that filter cache is not evicting heavily.  Its
-main use is to provide a quick summary that is more extensive than
-the `cluster-health`, but less detailed than `node-stats`. It is also useful for
-clusters that are very large, which makes `node-stats` output difficult
-to read.
+This provides some useful stats to glance at. You can see for example, that your
+entire cluster is using 50% of the available heap or that filter cache is not
+evicting heavily. Its main use is to provide a quick summary that is more
+extensive than the `cluster-health`, but less detailed than `node-stats`. It is
+also useful for clusters that are very large, which makes `node-stats` output
+difficult to read.
 
 The API may be invoked as follows:
 
@@ -21,16 +21,16 @@ GET _cluster/stats
 
 === Index Stats
 
-So far, we have been looking at _node-centric_ statistics:((("indices", "index statistics")))((("clusters", "administration", "index stats")))  How much memory does 
-this node have?  How much CPU is being used?  How many searches is this node
+So far, we have been looking at _node-centric_ statistics: How much memory does
+this node have? How much CPU is being used? How many searches is this node
 servicing?
 
 Sometimes it is useful to look at statistics from an _index-centric_ perspective:
 How many search requests is _this index_ receiving?  How much time is spent fetching
 docs in _that index_?
 
-To do this, select the index (or indices) that you are interested in and 
-execute an Index `stats` API:
+To do this, select the index (or indices) that you are interested in and execute
+an Index `stats` API:
 
 [source,js]
 ----
@@ -44,36 +44,36 @@ GET _all/_stats <3>
 <2> Stats for multiple indices can be requested by separating their names with a comma.
 <3> Stats for all indices can be requested using the special `_all` index name.
 
-The stats returned will be familar to the `node-stats` output: `search` `fetch` `get`
-`index` `bulk` `segment counts` and so forth
+The stats returned will be familar to the `node-stats` output: `search` `fetch`
+`get` `index` `bulk` `segment counts` and so forth
 
 Index-centric stats can be useful for identifying or verifying _hot_ indices
 inside your cluster, or trying to determine why some indices are faster/slower
 than others.
 
-In practice, however, node-centric statistics tend to be more useful.  Entire
-nodes tend to bottleneck, not individual indices.  And because indices
-are usually spread across multiple nodes, index-centric statistics
-are usually not very helpful because they aggregate data from different physical machines
+In practice, however, node-centric statistics tend to be more useful. Entire
+nodes tend to bottleneck, not individual indices. And because indices are
+usually spread across multiple nodes, index-centric statistics are usually not
+very helpful because they aggregate data from different physical machines
 operating in different environments.
 
-Index-centric stats are a useful tool to keep in your repertoire, but are not usually
-the first tool to reach for.
+Index-centric stats are a useful tool to keep in your repertoire, but are not
+usually the first tool to reach for.
 
 === Pending Tasks
 
-There are certain tasks that only the master can perform, such as creating a new ((("clusters", "administration", "Pending Tasks API")))
-index or moving shards around the cluster.  Since a cluster can have only one
-master, only one node can ever process cluster-level metadata changes.  For 
-99.9999% of the time, this is never a problem.  The queue of metadata changes
+There are certain tasks that only the master can perform, such as creating a new
+index or moving shards around the cluster. Since a cluster can have only one
+master, only one node can ever process cluster-level metadata changes. For
+99.9999% of the time, this is never a problem. The queue of metadata changes
 remains essentially zero.
 
-In some _rare_ clusters, the number of metadata changes occurs faster than
-the master can process them.  This leads to a buildup of pending actions that
-are queued.
+In some _rare_ clusters, the number of metadata changes occurs faster than the
+master can process them. This leads to a buildup of pending actions that are
+queued.
 
-The `pending-tasks` API ((("Pending Tasks API")))will show you what (if any) cluster-level metadata changes
-are pending in the queue:
+The `pending-tasks` API will show you what (if any) cluster-level metadata
+changes are pending in the queue:
 
 [source,js]
 ----
@@ -89,7 +89,7 @@ Usually, the response will look like this:
 }
 ----
 
-This means there are no pending tasks.  If you have one of the rare clusters that
+This means there are no pending tasks. If you have one of the rare clusters that
 bottlenecks on the master node, your pending task list may look like this:
 
 [source,js]
@@ -106,7 +106,7 @@ bottlenecks on the master node, your pending task list may look like this:
       {
          "insert_order": 46,
          "priority": "HIGH",
-         "source": "shard-started ([foo_2][1], node[tMTocMvQQgGCkj7QDHl3OA], [P], 
+         "source": "shard-started ([foo_2][1], node[tMTocMvQQgGCkj7QDHl3OA], [P],
          s[INITIALIZING]), reason [after recovery from gateway]",
          "time_in_queue_millis": 842,
          "time_in_queue": "842ms"
@@ -114,7 +114,7 @@ bottlenecks on the master node, your pending task list may look like this:
       {
          "insert_order": 45,
          "priority": "HIGH",
-         "source": "shard-started ([foo_2][0], node[tMTocMvQQgGCkj7QDHl3OA], [P], 
+         "source": "shard-started ([foo_2][0], node[tMTocMvQQgGCkj7QDHl3OA], [P],
          s[INITIALIZING]), reason [after recovery from gateway]",
          "time_in_queue_millis": 858,
          "time_in_queue": "858ms"
@@ -123,51 +123,51 @@ bottlenecks on the master node, your pending task list may look like this:
 }
 ----
 
-You can see that tasks are assigned a priority (`URGENT` is processed before `HIGH`,
-for example), the order it was inserted, how long the action has been queued and
-what the action is trying to perform.  In the preceding list, there is a `create-index`
-action and two `shard-started` actions pending.
+You can see that tasks are assigned a priority (`URGENT` is processed before
+`HIGH`, for example), the order it was inserted, how long the action has been
+queued and what the action is trying to perform. In the preceding list, there is
+a `create-index` action and two `shard-started` actions pending.
 
 .When Should I Worry About Pending Tasks?
 ****
-As mentioned, the master node is rarely the bottleneck for clusters.  The only
-time it could bottleneck is if the cluster state is both very large 
-_and_ updated frequently.
+As mentioned, the master node is rarely the bottleneck for clusters. The only
+time it could bottleneck is if the cluster state is both very large _and_
+updated frequently.
 
-For example, if you allow customers to create as many dynamic fields as they wish,
-and have a unique index for each customer every day, your cluster state will grow
-very large.  The cluster state includes (among other things) a list of all indices,
-their types, and the fields for each index.
+For example, if you allow customers to create as many dynamic fields as they
+wish, and have a unique index for each customer every day, your cluster state
+will grow very large. The cluster state includes (among other things) a list of
+all indices, their types, and the fields for each index.
 
 So if you have 100,000 customers, and each customer averages 1,000 fields and 90
 days of retention--that's nine billion fields to keep in the cluster state.
-Whenever this changes, the nodes must be notified.  
+Whenever this changes, the nodes must be notified.
 
 The master must process these changes, which requires nontrivial CPU overhead,
 plus the network overhead of pushing the updated cluster state to all nodes.
 
 It is these clusters that may begin to see cluster-state actions queuing up.
-There is no easy solution to this problem, however.  You have three options:
+There is no easy solution to this problem, however. You have three options:
 
-- Obtain a beefier master node.  Vertical scaling just delays the inevitable, 
-unfortunately. 
-- Restrict the dynamic nature of the documents in some way, so as to limit the 
-cluster-state size.  
+- Obtain a beefier master node.  Vertical scaling just delays the inevitable,
+unfortunately.
+- Restrict the dynamic nature of the documents in some way, so as to limit the
+cluster-state size.
 - Spin up another cluster after a certain threshold has been crossed.
 ****
 
 === cat API
 
-If you work from the command line often, the `cat` APIs will be helpful
-to you.((("Cat API")))((("clusters", "administration", "Cat API")))  Named after the linux `cat` command, these APIs are designed to
-work like *nix command-line tools.
+If you work from the command line often, the `cat` APIs will be helpful to
+you. Named after the linux `cat` command, these APIs are designed to work like
+*nix command-line tools.
 
 They provide statistics that are identical to all the previously discussed APIs
-(Health, `node-stats`, and so forth), but present the output in tabular form instead of 
-JSON.  This is _very_ convenient for a system administrator, and you just want
-to glance over your cluster or find nodes with high memory usage.
+(Health, `node-stats`, and so forth), but present the output in tabular form
+instead of JSON. This is _very_ convenient for a system administrator, and you
+just want to glance over your cluster or find nodes with high memory usage.
 
-Executing a plain `GET` against the `cat` endpoint will show you all available 
+Executing a plain `GET` against the `cat` endpoint will show you all available
 APIs:
 
 [source,bash]
@@ -198,20 +198,20 @@ GET /_cat
 /_cat/fielddata/{fields}
 ----
 
-Many of these APIs should look familiar to you (and yes, that's a cat at the top 
-:) ).  Let's take a look at the Cat Health API:
+Many of these APIs should look familiar to you (and yes, that's a cat at the top
+:) ). Let's take a look at the Cat Health API:
 
 [source,bash]
 ----
 GET /_cat/health
 
-1408723713 12:08:33 elasticsearch_zach yellow 1 1 114 114 0 0 114 
+1408723713 12:08:33 elasticsearch_zach yellow 1 1 114 114 0 0 114
 ----
 
-The first thing you'll notice is that the response is plain text in tabular form,
-not JSON.  The second thing you'll notice is that there are no column headers
-enabled by default.  This is designed to emulate *nix tools, since it is assumed
-that once you become familiar with the output, you no longer want to see
+The first thing you'll notice is that the response is plain text in tabular
+form, not JSON. The second thing you'll notice is that there are no column
+headers enabled by default. This is designed to emulate *nix tools, since it is
+assumed that once you become familiar with the output, you no longer want to see
 the headers.
 
 To enable headers, add the `?v` parameter:
@@ -220,12 +220,12 @@ To enable headers, add the `?v` parameter:
 ----
 GET /_cat/health?v
 
-epoch   time    cluster status node.total node.data shards pri relo init  
-1408[..] 12[..] el[..]  1         1         114 114    0    0     114 
+epoch   time    cluster status node.total node.data shards pri relo init
+1408[..] 12[..] el[..]  1         1         114 114    0    0     114
 unassign
 ----
 
-Ah, much better.  We now see the timestamp, cluster name, status, the number of 
+Ah, much better. We now see the timestamp, cluster name, status, the number of
 nodes in the cluster, and more--all the same information as the `cluster-health`
 API.
 
@@ -235,13 +235,13 @@ Let's look at `node-stats` in the `cat` API:
 ----
 GET /_cat/nodes?v
 
-host         ip            heap.percent ram.percent load node.role master name 
-zacharys-air 192.168.1.131           45          72 1.85 d         *      Zach 
+host         ip            heap.percent ram.percent load node.role master name
+zacharys-air 192.168.1.131           45          72 1.85 d         *      Zach
 ----
 
-We see some stats about the nodes in our cluster, but the output is basic compared
-to the full `node-stats` output. You can
-include many additional metrics, but rather than consulting the documentation, let's just ask the `cat`
+We see some stats about the nodes in our cluster, but the output is basic
+compared to the full `node-stats` output. You can include many additional
+metrics, but rather than consulting the documentation, let's just ask the `cat`
 API what is available.
 
 You can do this by adding `?help` to any API:
@@ -250,118 +250,114 @@ You can do this by adding `?help` to any API:
 ----
 GET /_cat/nodes?help
 
-id               | id,nodeId               | unique node id                          
-pid              | p                       | process id                              
-host             | h                       | host name                               
-ip               | i                       | ip address                              
-port             | po                      | bound transport port                    
-version          | v                       | es version                              
-build            | b                       | es build hash                           
-jdk              | j                       | jdk version                             
-disk.avail       | d,disk,diskAvail        | available disk space                    
-heap.percent     | hp,heapPercent          | used heap ratio                         
-heap.max         | hm,heapMax              | max configured heap                     
-ram.percent      | rp,ramPercent           | used machine memory ratio               
-ram.max          | rm,ramMax               | total machine memory                    
-load             | l                       | most recent load avg                    
-uptime           | u                       | node uptime                             
-node.role        | r,role,dc,nodeRole      | d:data node, c:client node              
-master           | m                       | m:master-eligible, *:current master  
+id               | id,nodeId               | unique node id
+pid              | p                       | process id
+host             | h                       | host name
+ip               | i                       | ip address
+port             | po                      | bound transport port
+version          | v                       | es version
+build            | b                       | es build hash
+jdk              | j                       | jdk version
+disk.avail       | d,disk,diskAvail        | available disk space
+heap.percent     | hp,heapPercent          | used heap ratio
+heap.max         | hm,heapMax              | max configured heap
+ram.percent      | rp,ramPercent           | used machine memory ratio
+ram.max          | rm,ramMax               | total machine memory
+load             | l                       | most recent load avg
+uptime           | u                       | node uptime
+node.role        | r,role,dc,nodeRole      | d:data node, c:client node
+master           | m                       | m:master-eligible, *:current master
 ...
 ...
 ----
 (Note that the output has been truncated for brevity).
 
 The first column shows the full name, the second column shows the short name,
-and the third column offers a brief description about the parameter. Now that
-we know some column names, we can ask for those explicitly by using the `?h`
+and the third column offers a brief description about the parameter. Now that we
+know some column names, we can ask for those explicitly by using the `?h`
 parameter:
 
 [source,bash]
 ----
 GET /_cat/nodes?v&h=ip,port,heapPercent,heapMax
 
-ip            port heapPercent heapMax 
-192.168.1.131 9300          53 990.7mb 
+ip            port heapPercent heapMax
+192.168.1.131 9300          53 990.7mb
 ----
 
-Because the `cat` API tries to behave like *nix utilities, you can pipe the output
-to other tools such as `sort` `grep` or `awk`.  For example, we can find the largest
-index in our cluster by using the following:
+Because the `cat` API tries to behave like *nix utilities, you can pipe the
+output to other tools such as `sort` `grep` or `awk`. For example, we can find
+the largest index in our cluster by using the following:
 
 [source,bash]
 ----
 % curl 'localhost:9200/_cat/indices?bytes=b' | sort -rnk8
 
-yellow test_names         5 1 3476004 0 376324705 376324705 
-yellow .marvel-2014.08.19 1 1  263878 0 160777194 160777194 
-yellow .marvel-2014.08.15 1 1  234482 0 143020770 143020770 
-yellow .marvel-2014.08.09 1 1  222532 0 138177271 138177271 
-yellow .marvel-2014.08.18 1 1  225921 0 138116185 138116185 
-yellow .marvel-2014.07.26 1 1  173423 0 132031505 132031505 
-yellow .marvel-2014.08.21 1 1  219857 0 128414798 128414798 
-yellow .marvel-2014.07.27 1 1   75202 0  56320862  56320862 
-yellow wavelet            5 1    5979 0  54815185  54815185 
-yellow .marvel-2014.07.28 1 1   57483 0  43006141  43006141 
-yellow .marvel-2014.07.21 1 1   31134 0  27558507  27558507 
-yellow .marvel-2014.08.01 1 1   41100 0  27000476  27000476 
-yellow kibana-int         5 1       2 0     17791     17791 
-yellow t                  5 1       7 0     15280     15280 
-yellow website            5 1      12 0     12631     12631 
-yellow agg_analysis       5 1       5 0      5804      5804 
-yellow v2                 5 1       2 0      5410      5410 
-yellow v1                 5 1       2 0      5367      5367 
-yellow bank               1 1      16 0      4303      4303 
-yellow v                  5 1       1 0      2954      2954 
-yellow p                  5 1       2 0      2939      2939 
-yellow b0001_072320141238 5 1       1 0      2923      2923 
-yellow ipaddr             5 1       1 0      2917      2917 
-yellow v2a                5 1       1 0      2895      2895 
-yellow movies             5 1       1 0      2738      2738 
-yellow cars               5 1       0 0      1249      1249 
-yellow wavelet2           5 1       0 0       615       615 
+yellow test_names         5 1 3476004 0 376324705 376324705
+yellow .marvel-2014.08.19 1 1  263878 0 160777194 160777194
+yellow .marvel-2014.08.15 1 1  234482 0 143020770 143020770
+yellow .marvel-2014.08.09 1 1  222532 0 138177271 138177271
+yellow .marvel-2014.08.18 1 1  225921 0 138116185 138116185
+yellow .marvel-2014.07.26 1 1  173423 0 132031505 132031505
+yellow .marvel-2014.08.21 1 1  219857 0 128414798 128414798
+yellow .marvel-2014.07.27 1 1   75202 0  56320862  56320862
+yellow wavelet            5 1    5979 0  54815185  54815185
+yellow .marvel-2014.07.28 1 1   57483 0  43006141  43006141
+yellow .marvel-2014.07.21 1 1   31134 0  27558507  27558507
+yellow .marvel-2014.08.01 1 1   41100 0  27000476  27000476
+yellow kibana-int         5 1       2 0     17791     17791
+yellow t                  5 1       7 0     15280     15280
+yellow website            5 1      12 0     12631     12631
+yellow agg_analysis       5 1       5 0      5804      5804
+yellow v2                 5 1       2 0      5410      5410
+yellow v1                 5 1       2 0      5367      5367
+yellow bank               1 1      16 0      4303      4303
+yellow v                  5 1       1 0      2954      2954
+yellow p                  5 1       2 0      2939      2939
+yellow b0001_072320141238 5 1       1 0      2923      2923
+yellow ipaddr             5 1       1 0      2917      2917
+yellow v2a                5 1       1 0      2895      2895
+yellow movies             5 1       1 0      2738      2738
+yellow cars               5 1       0 0      1249      1249
+yellow wavelet2           5 1       0 0       615       615
 ----
 
 By adding `?bytes=b`, we disable the human-readable formatting on numbers and
-force them to be listed as bytes.  This output is then piped into `sort` so that
+force them to be listed as bytes. This output is then piped into `sort` so that
 our indices are ranked according to size (the eighth column).
 
-Unfortunately, you'll notice that the Marvel indices are clogging up the results,
-and we don't really care about those indices right now.  Let's pipe the output
-through `grep` and remove anything mentioning Marvel:
+Unfortunately, you'll notice that the Marvel indices are clogging up the
+results, and we don't really care about those indices right now. Let's pipe the
+output through `grep` and remove anything mentioning Marvel:
 
 [source,bash]
 ----
 % curl 'localhost:9200/_cat/indices?bytes=b' | sort -rnk8 | grep -v marvel
 
-yellow test_names         5 1 3476004 0 376324705 376324705 
-yellow wavelet            5 1    5979 0  54815185  54815185 
-yellow kibana-int         5 1       2 0     17791     17791 
-yellow t                  5 1       7 0     15280     15280 
-yellow website            5 1      12 0     12631     12631 
-yellow agg_analysis       5 1       5 0      5804      5804 
-yellow v2                 5 1       2 0      5410      5410 
-yellow v1                 5 1       2 0      5367      5367 
-yellow bank               1 1      16 0      4303      4303 
-yellow v                  5 1       1 0      2954      2954 
-yellow p                  5 1       2 0      2939      2939 
-yellow b0001_072320141238 5 1       1 0      2923      2923 
-yellow ipaddr             5 1       1 0      2917      2917 
-yellow v2a                5 1       1 0      2895      2895 
-yellow movies             5 1       1 0      2738      2738 
-yellow cars               5 1       0 0      1249      1249 
-yellow wavelet2           5 1       0 0       615       615 
+yellow test_names         5 1 3476004 0 376324705 376324705
+yellow wavelet            5 1    5979 0  54815185  54815185
+yellow kibana-int         5 1       2 0     17791     17791
+yellow t                  5 1       7 0     15280     15280
+yellow website            5 1      12 0     12631     12631
+yellow agg_analysis       5 1       5 0      5804      5804
+yellow v2                 5 1       2 0      5410      5410
+yellow v1                 5 1       2 0      5367      5367
+yellow bank               1 1      16 0      4303      4303
+yellow v                  5 1       1 0      2954      2954
+yellow p                  5 1       2 0      2939      2939
+yellow b0001_072320141238 5 1       1 0      2923      2923
+yellow ipaddr             5 1       1 0      2917      2917
+yellow v2a                5 1       1 0      2895      2895
+yellow movies             5 1       1 0      2738      2738
+yellow cars               5 1       0 0      1249      1249
+yellow wavelet2           5 1       0 0       615       615
 ----
 
-Voila!  After piping through `grep` (with `-v` to invert the matches), we get
-a sorted list of indices without Marvel cluttering it up.
+Voila! After piping through `grep` (with `-v` to invert the matches), we get a
+sorted list of indices without Marvel cluttering it up.
 
 This is just a simple example of the flexibility of `cat` at the command line.
-Once you get used to using `cat`, you'll see it like any other *nix tool and start
-going crazy with piping, sorting, and grepping.  If you are a system admin and spend
-any time SSH'd into boxes, definitely spend some time getting familiar
+Once you get used to using `cat`, you'll see it like any other *nix tool and
+start going crazy with piping, sorting, and grepping. If you are a system admin
+and spend any time SSH'd into boxes, definitely spend some time getting familiar
 with the `cat` API.
-
-
-
-

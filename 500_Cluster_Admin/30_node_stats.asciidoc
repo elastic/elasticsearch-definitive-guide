@@ -2,14 +2,14 @@
 === Monitoring Individual Nodes
 
 `Cluster-health` is at one end of the spectrum--a very high-level overview of
-everything in your cluster. ((("clusters", "administration", "monitoring individual nodes")))((("nodes", "monitoring individual nodes"))) The `node-stats` API is at the other end. ((("Node Stats API", id="ix_NodeStats", range="startofrange"))) It provides
-a bewildering array of statistics about each node in your cluster.
+everything in your cluster. The `node-stats` API is at the other end. It
+provides a bewildering array of statistics about each node in your cluster.
 
-`Node-stats` provides so many stats that, until you are accustomed to the output,
-you may be unsure which metrics are most important to keep an eye on.  We'll
-highlight the most important metrics to monitor (but we encourage you to
-log all the metrics provided--or use Marvel--because you'll never know when
-you need one stat or another).
+`Node-stats` provides so many stats that, until you are accustomed to the
+output, you may be unsure which metrics are most important to keep an eye on.
+We'll highlight the most important metrics to monitor (but we encourage you to
+log all the metrics provided--or use Marvel--because you'll never know when you
+need one stat or another.)
 
 The `node-stats` API can be executed with the following:
 
@@ -37,15 +37,15 @@ Starting at the top of the output, we see the cluster name and our first node:
 ...
 ----
 
-The nodes are listed in a hash, with the key being the UUID of the node.  Some
-information about the node's network properties are displayed (such as transport address,
-and host). These values are useful for debugging discovery problems, where
-nodes won't join the cluster. Often you'll see that the port being used is wrong,
-or the node is binding to the wrong IP address/interface.
+The nodes are listed in a hash, with the key being the UUID of the node. Some
+information about the node's network properties are displayed (such as transport
+address, and host). These values are useful for debugging discovery problems,
+where nodes won't join the cluster. Often you'll see that the port being used is
+wrong, or the node is binding to the wrong IP address/interface.
 
 ==== indices Section
 
-The `indices` section lists aggregate statistics((("indices", "indices section in Node Stats API"))) for all the indices that reside
+The `indices` section lists aggregate statistics for all the indices that reside
 on this particular node:
 
 [source,js]
@@ -63,13 +63,12 @@ on this particular node:
 
 The returned statistics are grouped into the following sections:
 
-- `docs` shows how many documents reside on
-this node, as well as the number of deleted docs that haven't been purged
-from segments yet.
+- `docs` shows how many documents reside on this node, as well as the number of
+deleted docs that haven't been purged from segments yet.
 
-- The `store` portion indicates how much physical storage is consumed by the node.
-This metric includes both primary and replica shards.  If the throttle time is
-large, it may be an indicator that your disk throttling is set too low
+- The `store` portion indicates how much physical storage is consumed by the
+node. This metric includes both primary and replica shards. If the throttle time
+is large, it may be an indicator that your disk throttling is set too low
 (discussed in <<segments-and-merging>>).
 
 [source,js]
@@ -111,35 +110,37 @@ large, it may be an indicator that your disk throttling is set too low
         },
 ----
 
-- `indexing` shows the number of docs that have been indexed.  This value is a monotonically
-increasing counter; it doesn't decrease when docs are deleted.  Also note that it
-is incremented anytime an _index_ operation happens internally, which includes
-things like updates.
+- `indexing` shows the number of docs that have been indexed. This value is a
+monotonically increasing counter; it doesn't decrease when docs are deleted.
+Also note that it is incremented anytime an _index_ operation happens
+internally, which includes things like updates.
 +
 Also listed are times for indexing, the number of docs currently being indexed,
 and similar statistics for deletes.
 
-- `get` shows statistics about get-by-ID statistics.  This includes `GET` and
+- `get` shows statistics about get-by-ID statistics. This includes `GET` and
 `HEAD` requests for a single document.
 
 - `search` describes the number of active searches (`open_contexts`), number of
 queries total, and the amount of time spent on queries since the node was
-started.  The ratio between `query_time_in_millis / query_total` can be used as a
-rough indicator for how efficient your queries are.  The larger the ratio,
-the more time each query is taking, and you should consider tuning or optimization.
+started. The ratio between `query_time_in_millis / query_total` can be used as a
+rough indicator for how efficient your queries are. The larger the ratio, the
+more time each query is taking, and you should consider tuning or optimization.
 +
 The fetch statistics detail the second half of the query process (the _fetch_ in
-query-then-fetch).  If more time is spent in fetch than query, this can be an
-indicator of slow disks or very large documents being fetched, or
-potentially search requests with paginations that are too large (for example, `size: 10000`).
+query-then-fetch). If more time is spent in fetch than query, this can be an
+indicator of slow disks or very large documents being fetched, or potentially
+search requests with paginations that are too large (for example, `size:
+10000`).
 
-- `merges` contains information about Lucene segment merges.  It will tell you
-the number of merges that are currently active, the number of docs involved, the cumulative
-size of segments being merged, and the amount of time spent on merges in total.
+- `merges` contains information about Lucene segment merges. It will tell you
+the number of merges that are currently active, the number of docs involved, the
+cumulative size of segments being merged, and the amount of time spent on merges
+in total.
 +
-Merge statistics can be important if your cluster is write heavy.  Merging consumes
-a large amount of disk I/O and CPU resources.  If your index is write heavy and
-you see large merge numbers, be sure to read <<indexing-performance>>.
+Merge statistics can be important if your cluster is write heavy. Merging
+consumes a large amount of disk I/O and CPU resources. If your index is write
+heavy and you see large merge numbers, be sure to read <<indexing-performance>>.
 +
 Note: updates and deletes will contribute to large merge numbers too, since they
 cause segment _fragmentation_ that needs to be merged out eventually.
@@ -161,50 +162,53 @@ cause segment _fragmentation_ that needs to be merged out eventually.
         ...
 ----
 
-- `filter_cache` indicates the amount of memory used by the cached filter bitsets,
-and the number of times a filter has been evicted.  A large number of evictions
-_could_ indicate that you need to increase the filter cache size, or that
-your filters are not caching well (for example, they are churning heavily because of high cardinality,
-such as caching `now` date expressions).
+- `filter_cache` indicates the amount of memory used by the cached filter
+bitsets, and the number of times a filter has been evicted. A large number of
+evictions _could_ indicate that you need to increase the filter cache size, or
+that your filters are not caching well (for example, they are churning heavily
+because of high cardinality, such as caching `now` date expressions).
 +
-However, evictions are a difficult metric to evaluate.  Filters are cached on a
+However, evictions are a difficult metric to evaluate. Filters are cached on a
 per-segment basis, and evicting a filter from a small segment is much less
-expensive than evicting a filter from a large segment.  It's possible that you have many evictions, but they all occur on small segments, which means they have
+expensive than evicting a filter from a large segment. It's possible that you
+have many evictions, but they all occur on small segments, which means they have
 little impact on query performance.
 +
-Use the eviction metric as a rough guideline.  If you see a large number, investigate
-your filters to make sure they are caching well.  Filters that constantly evict,
-even on small segments, will be much less effective than properly cached filters.
+Use the eviction metric as a rough guideline. If you see a large number,
+investigate your filters to make sure they are caching well. Filters that
+constantly evict, even on small segments, will be much less effective than
+properly cached filters.
 
-- `field_data` displays the memory used by fielddata,((("fielddata", "statistics on"))) which is used for aggregations,
-sorting, and more.  There is also an eviction count.  Unlike `filter_cache`, the eviction
-count here is useful:  it should be zero or very close.  Since field data
-is not a cache, any eviction is costly and should be avoided.  If you see
-evictions here, you need to reevaluate your memory situation, fielddata limits,
-queries, or all three.
+- `field_data` displays the memory used by fielddata, which is used for
+aggregations, sorting, and more. There is also an eviction count. Unlike
+`filter_cache`, the eviction count here is useful: it should be zero or very
+close. Since field data is not a cache, any eviction is costly and should be
+avoided. If you see evictions here, you need to reevaluate your memory
+situation, fielddata limits, queries, or all three.
 
-- `segments` will tell you the number of Lucene segments this node currently serves.((("segments", "number served by a node")))
-This can be an important number.  Most indices should have around 50&#x2013;150 segments,
-even if they are terabytes in size with billions of documents.  Large numbers
-of segments can indicate a problem with merging (for example, merging is not keeping up
-with segment creation).  Note that this statistic is the aggregate total of all
-indices on the node, so keep that in mind.
+- `segments` will tell you the number of Lucene segments this node currently
+serves. This can be an important number. Most indices should have around
+50&#x2013;150 segments, even if they are terabytes in size with billions of
+documents. Large numbers of segments can indicate a problem with merging (for
+example, merging is not keeping up with segment creation). Note that this
+statistic is the aggregate total of all indices on the node, so keep that in
+mind.
 +
-The `memory` statistic gives you an idea of the amount of memory being used by the
-Lucene segments themselves.((("memory", "statistics on")))  This includes low-level data structures such as
-posting lists, dictionaries, and bloom filters.  A very large number of segments
-will increase the amount of overhead lost to these data structures, and the memory
-usage can be a handy metric to gauge that overhead.
+The `memory` statistic gives you an idea of the amount of memory being used by
+the Lucene segments themselves. This includes low-level data structures such as
+posting lists, dictionaries, and bloom filters. A very large number of segments
+will increase the amount of overhead lost to these data structures, and the
+memory usage can be a handy metric to gauge that overhead.
 
 ==== OS and Process Sections
 
 The `OS` and `Process` sections are fairly self-explanatory and won't be covered
-in great detail.((("operating system (OS), statistics on")))  They list basic resource statistics such as CPU and load.((("process (Elasticsearch JVM), statistics on")))  The
-`OS` section describes it for the entire `OS`, while the `Process` section shows just
-what the Elasticsearch JVM process is using.
+in great detail. They list basic resource statistics such as CPU and load. The
+`OS` section describes it for the entire `OS`, while the `Process` section shows
+just what the Elasticsearch JVM process is using.
 
-These are obviously useful metrics, but are often being measured elsewhere in your
-monitoring stack. Some stats include the following:
+These are obviously useful metrics, but are often being measured elsewhere in
+your monitoring stack. Some stats include the following:
 
 - CPU
 - Load
@@ -215,73 +219,75 @@ monitoring stack. Some stats include the following:
 ==== JVM Section
 
 The `jvm` section contains some critical information about the JVM process that
-is running Elasticsearch.((("JVM (Java Virtual Machine)", "statistics on")))  Most important, it contains garbage collection details,
-which have a large impact on the stability of your Elasticsearch cluster.
+is running Elasticsearch. Most important, it contains garbage collection
+details, which have a large impact on the stability of your Elasticsearch
+cluster.
 
 [[garbage_collector_primer]]
 .Garbage Collection Primer
 **********************************
 Before we describe the stats, it is useful to give a crash course in garbage
-collection and its impact on Elasticsearch.((("garbage collection")))  If you are familar with garbage
+collection and its impact on Elasticsearch. If you are familar with garbage
 collection in the JVM, feel free to skip down.
 
-Java is a _garbage-collected_ language, which means that the programmer does
-not manually manage memory allocation and deallocation.  The programmer simply
-writes code, and the Java Virtual Machine (JVM) manages the process of allocating
+Java is a _garbage-collected_ language, which means that the programmer does not
+manually manage memory allocation and deallocation. The programmer simply writes
+code, and the Java Virtual Machine (JVM) manages the process of allocating
 memory as needed, and then later cleaning up that memory when no longer needed.
 
 When memory is allocated to a JVM process, it is allocated in a big chunk called
-the _heap_.  The JVM then breaks the heap into two groups, referred to as
+the _heap_. The JVM then breaks the heap into two groups, referred to as
 _generations_:
 
 Young (or Eden)::
-    The space where newly instantiated objects are allocated. The
-young generation space is often quite small, usually 100 MB&#x2013;500 MB.  The young-gen
-also contains two _survivor_ spaces.
+    The space where newly instantiated objects are allocated. The young
+generation space is often quite small, usually 100 MB&#x2013;500 MB. The
+young-gen also contains two _survivor_ spaces.
 
 Old::
-    The space where older objects are stored.  These objects are expected to be long-lived
-and persist for a long time.  The old-gen is often much larger than the young-gen,
-and Elasticsearch nodes can see old-gens as large as 30 GB.
+    The space where older objects are stored. These objects are expected to be
+long-lived and persist for a long time. The old-gen is often much larger than
+the young-gen, and Elasticsearch nodes can see old-gens as large as 30 GB.
 
-When an object is instantiated, it is placed into young-gen.  When the young
-generation space is full, a young-gen garbage collection (GC) is started.  Objects that are still
-"alive" are moved into one of the survivor spaces, and "dead" objects are removed.
-If an object has survived several young-gen GCs, it will be "tenured" into the
-old generation.
+When an object is instantiated, it is placed into young-gen. When the young
+generation space is full, a young-gen garbage collection (GC) is started.
+Objects that are still "alive" are moved into one of the survivor spaces, and
+"dead" objects are removed. If an object has survived several young-gen GCs, it
+will be "tenured" into the old generation.
 
-A similar process happens in the old generation:  when the space becomes full, a
+A similar process happens in the old generation: when the space becomes full, a
 garbage collection is started and dead objects are removed.
 
-Nothing comes for free, however.  Both the young- and old-generation garbage collectors
-have phases that "stop the world."  During this time, the JVM literally halts
-execution of the program so it can trace the object graph and collect dead
-objects. During this stop-the-world phase, nothing happens.  Requests are not serviced,
-pings are not responded to, shards are not relocated.  The world quite literally
-stops.
+Nothing comes for free, however. Both the young- and old-generation garbage
+collectors have phases that "stop the world." During this time, the JVM
+literally halts execution of the program so it can trace the object graph and
+collect dead objects. During this stop-the-world phase, nothing happens.
+Requests are not serviced, pings are not responded to, shards are not relocated.
+The world quite literally stops.
 
 This isn't a big deal for the young generation; its small size means GCs execute
-quickly.  But the old-gen is quite a bit larger, and a slow GC here could mean
-1s or even 15s of pausing--which is unacceptable for server software.
+quickly. But the old-gen is quite a bit larger, and a slow GC here could mean 1s
+or even 15s of pausing--which is unacceptable for server software.
 
-The garbage collectors in the JVM are _very_ sophisticated algorithms and do
-a great job minimizing pauses.  And Elasticsearch tries very hard to be _garbage-collection friendly_, by intelligently reusing objects internally, reusing network
-buffers, and enabling <<docvalues>> by default.  But ultimately,
+The garbage collectors in the JVM are _very_ sophisticated algorithms and do a
+great job minimizing pauses. And Elasticsearch tries very hard to be
+_garbage-collection friendly_, by intelligently reusing objects internally,
+reusing network buffers, and enabling <<docvalues>> by default. But ultimately,
 GC frequency and duration is a metric that needs to be watched by you, since it
 is the number one culprit for cluster instability.
 
-A cluster that is frequently experiencing long GC will be a cluster that is under
-heavy load with not enough memory.  These long GCs will make nodes drop off the
-cluster for brief periods.  This instability causes shards to relocate frequently
-as Elasticsearch tries to keep the cluster balanced and enough replicas available.  This in
-turn increases network traffic and disk I/O, all while your cluster is attempting
-to service the normal indexing and query load.
+A cluster that is frequently experiencing long GC will be a cluster that is
+under heavy load with not enough memory. These long GCs will make nodes drop off
+the cluster for brief periods. This instability causes shards to relocate
+frequently as Elasticsearch tries to keep the cluster balanced and enough
+replicas available. This in turn increases network traffic and disk I/O, all
+while your cluster is attempting to service the normal indexing and query load.
 
 In short, long GCs are bad and need to be minimized as much as possible.
 **********************************
 
-Because garbage collection is so critical to Elasticsearch, you should become intimately
-familiar with this section of the `node-stats` API:
+Because garbage collection is so critical to Elasticsearch, you should become
+intimately familiar with this section of the `node-stats` API:
 
 [source,js]
 ----
@@ -298,21 +304,22 @@ familiar with this section of the `node-stats` API:
 
 ----
 
-- The `jvm` section first lists some general stats about heap memory usage.  You
-can see how much of the heap is being used, how much is committed (actually allocated
-to the process), and the max size the heap is allowed to grow to.  Ideally,
-`heap_committed_in_bytes` should be identical to `heap_max_in_bytes`.  If the
-committed size is smaller, the JVM will have to resize the heap eventually--and this is a very expensive process.  If your numbers are not identical, see
-<<heap-sizing>> for how to configure it correctly.
+- The `jvm` section first lists some general stats about heap memory usage. You
+can see how much of the heap is being used, how much is committed (actually
+allocated to the process), and the max size the heap is allowed to grow to.
+Ideally, `heap_committed_in_bytes` should be identical to `heap_max_in_bytes`.
+If the committed size is smaller, the JVM will have to resize the heap
+eventually--and this is a very expensive process. If your numbers are not
+identical, see <<heap-sizing>> for how to configure it correctly.
 +
-The `heap_used_percent` metric is a useful number to keep an eye on.  Elasticsearch
-is configured to initiate GCs when the heap reaches 75% full.  If your node is
-consistently >= 75%, your node is experiencing _memory pressure_.
+The `heap_used_percent` metric is a useful number to keep an eye on.
+Elasticsearch is configured to initiate GCs when the heap reaches 75% full. If
+your node is consistently >= 75%, your node is experiencing _memory pressure_.
 This is a warning sign that slow GCs may be in your near future.
 +
-If the heap usage is consistently >=85%, you are in trouble.  Heaps over 90&#x2013;95%
-are in risk of horrible performance with long 10&#x2013;30s GCs at best, and out-of-memory
-(OOM) exceptions at worst.
+If the heap usage is consistently >=85%, you are in trouble. Heaps over
+90&#x2013;95% are in risk of horrible performance with long 10&#x2013;30s GCs at
+best, and out-of-memory (OOM) exceptions at worst.
 
 [source,js]
 ----
@@ -339,9 +346,10 @@ are in risk of horrible performance with long 10&#x2013;30s GCs at best, and out
 },
 ----
 
-- The `young`, `survivor`, and `old` sections will give you a breakdown of memory
-usage of each generation in the GC.  These stats are handy for keeping an eye on
-relative sizes, but are often not overly important when debugging problems.
+- The `young`, `survivor`, and `old` sections will give you a breakdown of
+memory usage of each generation in the GC. These stats are handy for keeping an
+eye on relative sizes, but are often not overly important when debugging
+problems.
 
 [source,js]
 ----
@@ -360,33 +368,32 @@ relative sizes, but are often not overly important when debugging problems.
 ----
 
 - `gc` section shows the garbage collection counts and cumulative time for both
-young and old generations.  You can safely ignore the young generation counts
-for the most part:  this number will usually be large.  That is perfectly
-normal.
+young and old generations. You can safely ignore the young generation counts for
+the most part: this number will usually be large. That is perfectly normal.
 +
-In contrast, the old generation collection count should remain small, and
-have a small `collection_time_in_millis`.  These are cumulative counts, so it is
-hard to give an exact number when you should start worrying (for example, a node with a
-one-year uptime will have a large count even if it is healthy). This is one of the
-reasons that tools such as Marvel are so helpful.  GC counts _over time_ are the
-important consideration.
+In contrast, the old generation collection count should remain small, and have a
+small `collection_time_in_millis`. These are cumulative counts, so it is hard to
+give an exact number when you should start worrying (for example, a node with a
+one-year uptime will have a large count even if it is healthy). This is one of
+the reasons that tools such as Monitoring are so helpful. GC counts _over time_
+are the important consideration.
 +
-Time spent GC'ing is also important.  For example, a certain amount of garbage
-is generated while indexing documents.  This is normal and causes a GC every
-now and then. These GCs are almost always fast and have little effect on the
-node: young generation takes a millisecond or two, and old generation takes
-a few hundred milliseconds.  This is much different from 10-second GCs.
+Time spent GC'ing is also important. For example, a certain amount of garbage is
+generated while indexing documents. This is normal and causes a GC every now and
+then. These GCs are almost always fast and have little effect on the node: young
+generation takes a millisecond or two, and old generation takes a few hundred
+milliseconds. This is much different from 10-second GCs.
 +
-Our best advice is to collect collection counts and duration periodically (or use Marvel)
-and keep an eye out for frequent GCs.  You can also enable slow-GC logging,
-discussed in <<logging>>.
+Our best advice is to collect collection counts and duration periodically (or
+use Monitoring) and keep an eye out for frequent GCs. You can also enable
+slow-GC logging, discussed in <<logging>>.
 
 ==== Threadpool Section
 
-Elasticsearch maintains threadpools internally. ((("threadpools", "statistics on"))) These threadpools
-cooperate to get work done, passing work between each other as necessary. In
-general, you don't need to configure or tune the threadpools, but it is sometimes
-useful to see their stats so you can gain insight into how your cluster is behaving.
+Elasticsearch maintains threadpools internally. These threadpools cooperate to
+get work done, passing work between each other as necessary. In general, you
+don't need to configure or tune the threadpools, but it is sometimes useful to
+see their stats so you can gain insight into how your cluster is behaving.
 
 There are about a dozen threadpools, but they all share the same format:
 
@@ -402,45 +409,46 @@ There are about a dozen threadpools, but they all share the same format:
   }
 ----
 
-Each threadpool lists the number of threads that are configured (`threads`),
-how many of those threads are actively processing some work (`active`), and how
-many work units are sitting in a queue (`queue`).
+Each threadpool lists the number of threads that are configured (`threads`), how
+many of those threads are actively processing some work (`active`), and how many
+work units are sitting in a queue (`queue`).
 
-If the queue fills up to its limit, new work units will begin to be rejected, and
-you will see that reflected in the `rejected` statistic.  This is often a sign
-that your cluster is starting to bottleneck on some resources, since a full
+If the queue fills up to its limit, new work units will begin to be rejected,
+and you will see that reflected in the `rejected` statistic. This is often a
+sign that your cluster is starting to bottleneck on some resources, since a full
 queue means your node/cluster is processing at maximum speed but unable to keep
 up with the influx of work.
 
 .Bulk Rejections
 ****
-If you are going to encounter queue rejections, it will most likely be caused
-by bulk indexing requests.((("bulk API", "rejections of bulk requests")))  It is easy to send many bulk requests to Elasticsearch
-by using concurrent import processes.  More is better, right?
+If you are going to encounter queue rejections, it will most likely be caused by
+bulk indexing requests. It is easy to send many bulk requests to Elasticsearch
+by using concurrent import processes. More is better, right?
 
 In reality, each cluster has a certain limit at which it can not keep up with
-ingestion.  Once this threshold is crossed, the queue will quickly fill up, and
+ingestion. Once this threshold is crossed, the queue will quickly fill up, and
 new bulks will be rejected.
 
-This is a _good thing_.  Queue rejections are a useful form of back pressure.  They
-let you know that your cluster is at maximum capacity, which is much better than
-sticking data into an in-memory queue.  Increasing the queue size doesn't increase
-performance; it just hides the problem.  If your cluster can process only 10,000
-docs per second, it doesn't matter whether the queue is 100 or 10,000,000--your cluster can
-still process only 10,000 docs per second.
+This is a _good thing_. Queue rejections are a useful form of back pressure.
+They let you know that your cluster is at maximum capacity, which is much better
+than sticking data into an in-memory queue. Increasing the queue size doesn't
+increase performance; it just hides the problem. If your cluster can process
+only 10,000 docs per second, it doesn't matter whether the queue is 100 or
+10,000,000--your cluster can still process only 10,000 docs per second.
 
-The queue simply hides the performance problem and carries a real risk of data-loss.
-Anything sitting in a queue is by definition not processed yet.  If the node
-goes down, all those requests are lost forever.  Furthermore, the queue eats
-up a lot of memory, which is not ideal.
+The queue simply hides the performance problem and carries a real risk of
+data-loss. Anything sitting in a queue is by definition not processed yet. If
+the node goes down, all those requests are lost forever. Furthermore, the queue
+eats up a lot of memory, which is not ideal.
 
 It is much better to handle queuing in your application by gracefully handling
-the back pressure from a full queue.  When you receive bulk rejections, you should take these steps:
+the back pressure from a full queue. When you receive bulk rejections, you
+should take these steps:
 
 1. Pause the import thread for 3&#x2013;5 seconds.
-2. Extract the rejected actions from the bulk response, since it is probable that
-many of the actions were successful. The bulk response will tell you which succeeded
-and which were rejected.
+2. Extract the rejected actions from the bulk response, since it is probable
+that many of the actions were successful. The bulk response will tell you which
+succeeded and which were rejected.
 3. Send a new bulk request with just the rejected actions.
 4. Repeat from step 1 if rejections are encountered again.
 
@@ -450,8 +458,8 @@ naturally backs off.
 Rejections are not errors: they just mean you should try again later.
 ****
 
-There are a dozen threadpools.  Most you can safely ignore, but a few
-are good to keep an eye on:
+There are a dozen threadpools. Most you can safely ignore, but a few are good to
+keep an eye on:
 
 `indexing`::
     Threadpool for normal indexing requests
@@ -470,16 +478,16 @@ are good to keep an eye on:
 
 ==== FS and Network Sections
 
-Continuing down the `node-stats` API, you'll see a((("filesystem, statistics on"))) bunch of statistics about your
-filesystem:  free space, data directory paths, disk I/O stats, and more.  If you are
-not monitoring free disk space, you can get those stats here.  The disk I/O stats
-are also handy, but often more specialized command-line tools (`iostat`, for example)
-are more useful.
+Continuing down the `node-stats` API, you'll see a bunch of statistics about
+your filesystem: free space, data directory paths, disk I/O stats, and more. If
+you are not monitoring free disk space, you can get those stats here. The disk
+I/O stats are also handy, but often more specialized command-line tools
+(`iostat`, for example) are more useful.
 
 Obviously, Elasticsearch has a difficult time functioning if you run out of disk
 space--so make sure you don't.
 
-There are also two sections on ((("network", "statistics on")))network statistics:
+There are also two sections on network statistics:
 
 [source,js]
 ----
@@ -496,21 +504,21 @@ There are also two sections on ((("network", "statistics on")))network statistic
          },
 ----
 
-- `transport` shows some basic stats about the _transport address_.  This
-relates to inter-node communication (often on port 9300) and any transport client
-or node client connections.  Don't worry if you see many connections here;
+- `transport` shows some basic stats about the _transport address_. This relates
+to inter-node communication (often on port 9300) and any transport client or
+node client connections. Don't worry if you see many connections here;
 Elasticsearch maintains a large number of connections between nodes.
 
-- `http` represents stats about the HTTP port (often 9200).  If you see a very
+- `http` represents stats about the HTTP port (often 9200). If you see a very
 large `total_opened` number that is constantly increasing, that is a sure sign
-that one of your HTTP clients is not using keep-alive connections.  Persistent,
-keep-alive connections are important for performance, since building up and tearing
-down sockets is expensive (and wastes file descriptors).  Make sure your clients
-are configured appropriately.
+that one of your HTTP clients is not using keep-alive connections. Persistent,
+keep-alive connections are important for performance, since building up and
+tearing down sockets is expensive (and wastes file descriptors). Make sure your
+clients are configured appropriately.
 
 ==== Circuit Breaker
 
-Finally, we come to the last section: stats about the((("fielddata circuit breaker"))) fielddata circuit breaker
+Finally, we come to the last section: stats about the fielddata circuit breaker
 (introduced in <<circuit-breaker>>):
 
 [role="pagebreak-before"]
@@ -527,11 +535,12 @@ Finally, we come to the last section: stats about the((("fielddata circuit break
 ----
 
 Here, you can determine the maximum circuit-breaker size (for example, at what
-size the circuit breaker will trip if a query attempts to use more memory).  This section
-will also let you know the number of times the circuit breaker has been tripped, and
-the currently configured overhead.  The overhead is used to pad estimates, because some queries are more difficult to estimate than others.
+size the circuit breaker will trip if a query attempts to use more memory). This
+section will also let you know the number of times the circuit breaker has been
+tripped, and the currently configured overhead. The overhead is used to pad
+estimates, because some queries are more difficult to estimate than others.
 
-The main thing to watch is the `tripped` metric.  If this number is large or
+The main thing to watch is the `tripped` metric. If this number is large or
 consistently increasing, it's a sign that your queries may need to be optimized
 or that you may need to obtain more memory (either per box or by adding more
-nodes).((("Node Stats API", range="endofrange", startref="ix_NodeStats")))
+nodes).
