@@ -19,8 +19,8 @@ image::images/elas_1106.png["New documents are added to the in-memory buffer and
 +
 --
    ** 这些在内存缓冲区的文档被写入到一个新的段中，且没有进行 `fsync` 操作。
-   
-   ** 这个段被打开，使其可被搜索。
+
+   ** 这个段被打开，使其可被搜索。
 
    ** 内存缓冲区被清空。
 
@@ -82,18 +82,18 @@ POST /_flush?wait_for_ongoing <2>
 它需要重放 translog 中所有的操作，所以如果日志越短，恢复越快。
 
 [[how-safe-is-the-translog]]
-. Translog 有多安全?
+.Translog 有多安全?
 ****************************************
 
 translog 的目的是保证操作不会丢失。这引出了这个问题： Translog 有多安全((("translog (transaction log)", "safety of")))？
 
 在文件被 +fsync+ 到磁盘前，被写入的文件在重启之后就会丢失。默认 translog 是每 5 秒被 +fsync+ 刷新到硬盘，
-_或者_ 在每次写请求完成之后执行(e.g. index, delete, update, bulk)。这个过程在主分片和复制分片都会发生。最终，
-基本上，这意味着在整个请求被+fsync+到主分片和复制分片的translog之前，你的客户端不会得到一个 200 OK 响应。
+或者在每次写请求完成之后执行(e.g. index, delete, update, bulk)。这个过程在主分片和复制分片都会发生。最终，
+基本上，这意味着在整个请求被 +fsync+ 到主分片和复制分片的translog之前，你的客户端不会得到一个 200 OK 响应。
 
 在每次请求后都执行一个 fsync 会带来一些性能损失，尽管实践表明这种损失相对较小（特别是bulk导入，它在一次请求中平摊了大量文档的开销）。
 
-但是对于一些大容量的偶尔丢失几秒数据问题也并不严重的集群，使用异步的 fsync 还是比较有益的。比如，写入的数据被缓存到内存中，并且每5秒执行一次 +fsync+ 。
+但是对于一些大容量的偶尔丢失几秒数据问题也并不严重的集群，使用异步的 fsync 还是比较有益的。比如，写入的数据被缓存到内存中，再每5秒执行一次 +fsync+ 。
 
 这个行为可以通过设置 `durability` 参数为 `async` 来启用：
 
