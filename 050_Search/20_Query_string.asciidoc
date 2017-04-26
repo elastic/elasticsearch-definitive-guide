@@ -97,12 +97,12 @@ disable it, as explained in <<all-field>>.
 The next query searches for tweets, using the following criteria:
 
 * The `name` field contains `mary` or `john`
-* The `date` is greater than `2014-09-10`
+* The `date` is greater than `2014/09/10`
 * The +_all+ field contains either of the words `aggregations` or `geo`
 
 [source,js]
 --------------------------------------------------
-+name:(mary john) +date:>2014-09-10 +(aggregations geo)
++name:(mary john) +date:>2014/09/10 +(aggregations geo)
 --------------------------------------------------
 // SENSE: 050_Search/20_All_field.json
 
@@ -111,7 +111,7 @@ readable result:
 
 [source,js]
 --------------------------------------------------
-?q=%2Bname%3A(mary+john)+%2Bdate%3A%3E2014-09-10+%2B(aggregations+geo)
+?q=%2Bname%3A(mary+john)+%2Bdate%3A%3E2014%2F09%2F10+%2B(aggregations+geo)
 --------------------------------------------------
 
 As you can see from the preceding examples, this _lite_ query-string search is
