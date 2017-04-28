@@ -3,6 +3,8 @@
 import json
 import sys
 import random
+import datetime
+import math
 
 vendors = [
     "Yellow",
@@ -114,6 +116,11 @@ def distance(start, end):
     return base + 0.2 * random.randint(0, max(base, 1))
 
 
+def duration(dist_miles):
+    # 15 - 25 miles per hour on average
+    return datetime.timedelta(hours=dist_miles / random.randint(15, 25))
+
+
 def fare(trip_distance):
     # loosely based on https://www.sfmta.com/getting-around/taxi/taxi-rates
     # assume a random waiting time up to 10% of the distance
@@ -126,8 +133,42 @@ def tip(fare_amount):
     # up to 20% tip
     return 0.2 * random.randint(0, round(fare_amount))
 
+
 def round_f(v):
     return float("{0:.2f}".format(v))
+
+
+def generate_timestamp(current):
+    h = current.hour
+    week_day = current.isoweekday()
+
+    hours_per_day = 24
+
+    peak_hour = 12
+    max_difference_hours = hours_per_day - peak_hour
+
+    if week_day < 6:
+        max_rides_per_hour = 1000
+        min_rides_per_hour = 100
+    elif week_day == 6:
+        max_rides_per_hour = 800
+        min_rides_per_hour = 200
+    else:
+        max_rides_per_hour = 600
+        min_rides_per_hour = 50
+
+    diff_from_peak_hour = peak_hour - h if h <= peak_hour else h - peak_hour
+    # vary the targeted rides per hour between [min_rides_per_hour; max_rides_per_hour] depending on difference to peak hour according to
+    # a sine function to smooth it a bit.
+    traffic_scale_factor = math.sin(0.5 * math.pi * (max_difference_hours - diff_from_peak_hour) / max_difference_hours)
+    target_rides_this_hour = min_rides_per_hour + (max_rides_per_hour - min_rides_per_hour) * traffic_scale_factor
+
+    increment = random.expovariate(target_rides_this_hour) * 3600
+    return current + datetime.timedelta(seconds=increment)
+
+
+def format_ts(ts):
+    return ts.strftime("%Y-%m-%d %H:%M:%S")
 
 
 def main():
@@ -135,18 +176,19 @@ def main():
         print("usage: %s number_of_records_to_generate" % sys.argv[0])
         exit(1)
 
+    current = datetime.datetime(year=2017, month=4, day=1)
     num_records = int(sys.argv[1])
     for i in range(num_records):
         record = {}
+        current = generate_timestamp(current)
         record["vendor"] = vendor()
-        # TODO: Find a simple but somewhat realistic model for daily / weekly patterns
-        # record["pickup_datetime"] = pickup_datetime
-        # record["dropoff_datetime"] = dropoff_datetime
+        record["pickup_datetime"] = format_ts(current)
         record["passenger_count"] = passengers()
 
         start = random.choice(zones)
         end = random.choice(zones)
         trip_distance = distance(start, end)
+        record["dropoff_datetime"] = format_ts(current + duration(trip_distance))
 
         record["pickup_zone"] = start
         record["dropoff_zone"] = end
