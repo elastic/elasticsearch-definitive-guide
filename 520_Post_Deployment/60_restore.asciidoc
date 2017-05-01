@@ -1,23 +1,23 @@
 
 === Restoring from a Snapshot
 
-Once you've backed up some data, restoring it is easy: simply add `_restore`
-to the ID of((("post-deployment", "restoring from a snapshot")))((("restoring from a snapshot"))) the snapshot you wish to restore into your cluster:
+Once you've backed up some data, restoring it is easy: simply add `_restore` to
+the ID of the snapshot you wish to restore into your cluster:
 
 [source,js]
 ----
 POST _snapshot/my_backup/snapshot_1/_restore
 ----
 
-The default behavior is to restore all indices that exist in that snapshot.
-If `snapshot_1` contains five indices, all five will be restored into
-our cluster. ((("indices", "restoring from a snapshot"))) As with the `snapshot` API, it is possible to select which indices
-we want to restore.
+The default behavior is to restore all indices that exist in that snapshot. If
+`snapshot_1` contains five indices, all five will be restored into our cluster.
+As with the `snapshot` API, it is possible to select which indices we want to
+restore.
 
-There are also additional options for renaming indices.  This allows you to
-match index names with a pattern, and then provide a new name during the restore process.
-This is useful if you want to restore old data to verify its contents, or perform
-some other processing, without replacing existing data.  Let's restore
+There are also additional options for renaming indices. This allows you to match
+index names with a pattern, and then provide a new name during the restore
+process. This is useful if you want to restore old data to verify its contents,
+or perform some other processing, without replacing existing data. Let's restore
 a single index from the snapshot and provide a replacement name:
 
 [source,js]
@@ -34,15 +34,16 @@ snapshot.
 <2> Find any indices being restored that match the provided pattern.
 <3> Then rename them with the replacement pattern.
 
-This will restore `index_1` into your cluster, but rename it to `restored_index_1`.
+This will restore `index_1` into your cluster, but rename it to
+`restored_index_1`.
 
 [TIP]
 ==================================================
 
 Similar to snapshotting, the `restore` command will return immediately, and the
-restoration process will happen in the background.  If you would prefer your HTTP
-call to block until the restore is finished, simply add the `wait_for_completion`
-flag:
+restoration process will happen in the background. If you would prefer your HTTP
+call to block until the restore is finished, simply add the
+`wait_for_completion` flag:
 
 [source,js]
 ----
@@ -55,8 +56,8 @@ POST _snapshot/my_backup/snapshot_1/_restore?wait_for_completion=true
 ==== Monitoring Restore Operations
 
 The restoration of data from a repository piggybacks on the existing recovery
-mechanisms already in place in Elasticsearch.((("restoring from a snapshot", "monitoring restore operations")))  Internally, recovering shards
-from a repository is identical to recovering from another node.
+mechanisms already in place in Elasticsearch. Internally, recovering shards from
+a repository is identical to recovering from another node.
 
 If you wish to monitor the progress of a restore, you can use the `recovery`
 API.  This is a general-purpose API that shows the status of shards moving around
@@ -69,8 +70,8 @@ The API can be invoked for the specific indices that you are recovering:
 GET restored_index_3/_recovery
 ----
 
-Or for all indices in your cluster, which may include other shards moving around,
-unrelated to your restore process:
+Or for all indices in your cluster, which may include other shards moving
+around, unrelated to your restore process:
 
 [source,js]
 ----
@@ -134,18 +135,18 @@ depending on the activity of your cluster!):
 recovered from a snapshot.
 <2> The `source` hash describes the particular snapshot and repository that is
 being recovered from.
-<3> The `percent` field gives you an idea about the status of the recovery.
-This particular shard has recovered 94% of the files so far; it is almost complete.
+<3> The `percent` field gives you an idea about the status of the recovery. This
+particular shard has recovered 94% of the files so far; it is almost complete.
 
-The output will list all indices currently undergoing a recovery, and then
-list all shards in each of those indices.  Each shard will have stats
-about start/stop time, duration, recover percentage, bytes transferred, and more.
+The output will list all indices currently undergoing a recovery, and then list
+all shards in each of those indices. Each shard will have stats about start/stop
+time, duration, recover percentage, bytes transferred, and more.
 
 ==== Canceling a Restore
 
-To cancel a restore, you need to delete the indices being restored.((("restoring from a snapshot", "canceling a restore")))  Because
-a restore process is really just shard recovery, issuing a `delete-index` API
-alters the cluster state, which will in turn halt recovery.  For example:
+To cancel a restore, you need to delete the indices being restored. Because a
+restore process is really just shard recovery, issuing a `delete-index` API
+alters the cluster state, which will in turn halt recovery. For example:
 
 [source,js]
 ----
@@ -155,7 +156,3 @@ DELETE /restored_index_3
 If `restored_index_3` was actively being restored, this delete command would
 halt the restoration as well as deleting any data that had already been restored
 into the cluster.
-
-
-
-

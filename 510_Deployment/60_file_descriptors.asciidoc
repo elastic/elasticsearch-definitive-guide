@@ -1,21 +1,21 @@
 
-=== File Descriptors and MMap 
+=== File Descriptors and MMap
 
-Lucene uses a _very_ large number of files. ((("deployment", "file descriptors and MMap"))) At the same time, Elasticsearch
-uses a large number of sockets to communicate between nodes and HTTP clients.
-All of this requires available file descriptors.((("file descriptors")))
+Lucene uses a _very_ large number of files. At the same time, Elasticsearch uses
+a large number of sockets to communicate between nodes and HTTP clients. All of
+this requires available file descriptors.
 
 Sadly, many modern Linux distributions ship with a paltry 1,024 file descriptors
-allowed per process.  This is _far_ too low for even a small Elasticsearch
-node, let alone one that is handling hundreds of indices.
+allowed per process. This is _far_ too low for even a small Elasticsearch node,
+let alone one that is handling hundreds of indices.
 
 You should increase your file descriptor count to something very large, such as
-64,000.  This process is irritatingly difficult and highly dependent on your
-particular OS and distribution.  Consult the documentation for your OS to determine
-how best to change the allowed file descriptor count.
+64,000. This process is irritatingly difficult and highly dependent on your
+particular OS and distribution. Consult the documentation for your OS to
+determine how best to change the allowed file descriptor count.
 
-Once you think you've changed it, check Elasticsearch to make sure it really does
-have enough file descriptors:
+Once you think you've changed it, check Elasticsearch to make sure it really
+does have enough file descriptors:
 
 [source,js]
 ----
@@ -47,20 +47,17 @@ have enough file descriptors:
   }
 }
 ----
-<1> The `max_file_descriptors` field shows the number of available descriptors that
-the Elasticsearch process can access.
+<1> The `max_file_descriptors` field shows the number of available descriptors
+that the Elasticsearch process can access.
 
-Elasticsearch also uses a mix of NioFS and MMapFS ((("MMapFS")))for the various files.  Ensure
-that you configure the maximum map count so that there is ample virtual memory available for 
-mmapped files.  This can be set temporarily:
+Elasticsearch also uses a mix of NioFS and MMapFS ((("MMapFS")))for the various
+files. Ensure that you configure the maximum map count so that there is ample
+virtual memory available for mmapped files. This can be set temporarily:
 
 [source,js]
 ----
 sysctl -w vm.max_map_count=262144
 ----
 
-Or you can set it permanently by modifying `vm.max_map_count` setting in your `/etc/sysctl.conf`.
-
-
-
-
+Or you can set it permanently by modifying `vm.max_map_count` setting in your
+`/etc/sysctl.conf`.
