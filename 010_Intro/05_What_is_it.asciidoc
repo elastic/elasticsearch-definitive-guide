@@ -2,12 +2,12 @@
 == 你知道的, 为了搜索...
 
 Elasticsearch 是一个开源的搜索引擎，建立在一个全文搜索引擎库 https://lucene.apache.org/core/[Apache Lucene(TM)] 基础之上。
-((("Apache Lucene")))((("Lucene"))) Lucene 可能是目前存在的，不论开源还是私有的，拥有最先进，高性能和全功能搜索引擎功能的库。
+((("Apache Lucene")))((("Lucene"))) Lucene 可以说是当下最先进、高性能、全功能的搜索引擎库--无论是开源还是私有。
 
-但是 Lucene 仅仅只是一个库。为了利用它，你需要编写 java 程序，并在你的 java 程序里面直接集成 Lucene 包。
-更坏的情况是，你需要对信息检索有一定程度的理解才能明白 Lucene 是怎么工作的。Lucene 是 _很_ 复杂的。
+但是 Lucene 仅仅只是一个库。为了充分发挥其功能，你需要使用 Java 并将 Lucene 直接集成到应用程序中。
+更糟糕的是，您可能需要获得信息检索学位才能了解其工作原理。Lucene _非常_ 复杂。
 
-Elasticsearch 也是使用 Java 编写的，它的内部使用 Lucene 做索引与搜索，但是它的目标是使全文检索变得简单，
+Elasticsearch 也是使用 Java 编写的，它的内部使用 Lucene 做索引与搜索，但是它的目的是使全文检索变得简单，
 通过隐藏 Lucene 的复杂性，取而代之的提供一套简单一致的 RESTful API。
 
 然而，Elasticsearch 不仅仅是 Lucene，并且也不仅仅只是一个全文搜索引擎。((("Elasticsearch", "capabilities")))
@@ -17,8 +17,8 @@ Elasticsearch 也是使用 Java 编写的，它的内部使用 Lucene 做索引�
 * 一个分布式实时分析搜索引擎
 * 能胜任上百个服务节点的扩展，并支持 PB 级别的结构化或者非结构化数据
 
-Elasticsearch 将所有的功能打包成一个单独的服务，这样你可以通过程序去访问它提供的简单的 RESTful API 服务，
-不论你是使用自己喜欢的编程语言还是直接使用命令行（去充当这个客户端）。
+Elasticsearch 将所有的功能打包成一个单独的服务，这样你可以通过程序与它提供的简单的 RESTful API 进行通信，
+可以使用自己喜欢的编程语言充当 web 客户端，甚至可以使用命令行（去充当这个客户端）。
 
 就 Elasticsearch 而言，起步很简单。对于初学者来说，它预设了一些适当的默认值，并隐藏了复杂的搜索理论知识。
 它 _开箱即用_ 。只需最少的理解，你很快就能具有生产力。((("Elasticsearch", "installing")))
