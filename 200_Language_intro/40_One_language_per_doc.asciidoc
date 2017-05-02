@@ -2,8 +2,8 @@
 === One Language per Document
 
 A single predominant language per document requires a relatively simple setup.
-Documents from different languages can be stored in separate indices&#x2014;`blogs-en`,
-`blogs-fr`, and so forth&#x2014;that use the same fields for each index, just
+Documents from different languages can be stored in separate indices -- `blogs-en`,
+`blogs-fr`, and so forth -- that use the same fields for each index, just
 with different analyzers:
 
 [source,js]
