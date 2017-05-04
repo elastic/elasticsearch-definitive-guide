@@ -33,6 +33,13 @@ If you need to choose between faster CPUs or more cores, choose more cores.  The
 extra concurrency that multiple cores offers will far outweigh a slightly faster
 clock speed.
 
+If you are running in a container based environment, such as kubernetes, that would
+result in multiple elasticsearch instances running on a single host, make sure you set
+the `processors` settings appropriately. Each instance will report the full number of cores avaiable.
+A cluster with two instances running on a 32-core machine will think it has 64-cores total. This will
+result in over allocation of threadpools, causing the nodes to use more memory than the have
+the resources to garbage collect efficiently.
+
 ==== Disks
 
 Disks are important for all clusters,((("disks")))((("hardware", "disks"))) and doubly so for indexing-heavy clusters
