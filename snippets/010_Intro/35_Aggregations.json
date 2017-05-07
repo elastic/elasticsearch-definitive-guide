@@ -35,7 +35,7 @@ GET /megacorp/employee/_search
   "aggs": {
     "all_interests": {
       "terms": {
-        "field": "interests.keyword"
+        "field": "interests"
       }
     }
   }
@@ -53,7 +53,7 @@ GET /megacorp/employee/_search
   "aggs": {
     "all_interests": {
       "terms": {
-        "field": "interests.keyword"
+        "field": "interests"
       }
     }
   }
@@ -65,7 +65,7 @@ GET /megacorp/employee/_search
     "aggs" : {
         "all_interests" : {
             "terms" : {
-                "field" : "interests.keyword"
+                "field" : "interests"
             },
             "aggs" : {
                 "avg_age" : {
