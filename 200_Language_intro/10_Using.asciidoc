@@ -2,7 +2,7 @@
 === Using Language Analyzers
 
 The built-in language analyzers are available globally and don't need to be
-configured before being used.((("language analyzers", "using")))  They can be specified directly in the field
+configured before being used.  They can be specified directly in the field
 mapping:
 
 [source,js]
@@ -13,7 +13,7 @@ PUT /my_index
     "blog": {
       "properties": {
         "title": {
-          "type":     "string",
+          "type":     "text",
           "analyzer": "english" <1>
         }
       }
@@ -21,18 +21,25 @@ PUT /my_index
   }
 }
 --------------------------------------------------
+// CONSOLE
+
 <1> The `title` field will use the `english` analyzer instead of the default
     `standard` analyzer.
 
-Of course, by passing ((("english analyzer", "information lost with")))text through the `english` analyzer, we lose
-information:
+Of course, by passing text through the `english` analyzer, we lose information:
 
 [source,js]
 --------------------------------------------------
-GET /my_index/_analyze?field=title <1>
-I'm not happy about the foxes
+GET /my_index/_analyze
+{
+  "field": "title"
+  "text": "I'm not happy about the foxes" <1>
+}
 --------------------------------------------------
-<1> Emits token: `i'm`, `happi`, `about`, `fox`
+// CONSOLE
+// TEST[continued]
+
+<1> Emits the tokens: `i'm`, `happi`, `about`, `fox`
 
 We can't tell if the document mentions one `fox` or many  `foxes`; the word
 `not` is a stopword and is removed, so we can't tell whether the document is
@@ -41,7 +48,7 @@ recall as we can match more loosely, but we have reduced our ability to rank
 documents accurately.
 
 To get the best of both worlds, we can use <<multi-fields,multifields>> to
-index the `title` field twice: once((("multifields", "using to index a field with two different analyzers"))) with the `english` analyzer and once with
+index the `title` field twice: once with the `english` analyzer and once with
 the `standard` analyzer:
 
 [source,js]
@@ -52,10 +59,10 @@ PUT /my_index
     "blog": {
       "properties": {
         "title": { <1>
-          "type": "string",
+          "type": "text",
           "fields": {
             "english": { <2>
-              "type":     "string",
+              "type":     "text",
               "analyzer": "english"
             }
           }
@@ -65,6 +72,8 @@ PUT /my_index
   }
 }
 --------------------------------------------------
+// CONSOLE
+
 <1> The main `title` field uses the `standard` analyzer.
 <2> The `title.english` subfield uses the `english` analyzer.
 
@@ -90,12 +99,13 @@ GET /_search
   }
 }
 --------------------------------------------------
+// CONSOLE
+// TEST[continued]
+
 <1> Use the <<most-fields,`most_fields`>> query type to match the
     same text in as many fields as possible.
 
-Even ((("most fields queries")))though neither of our documents contain the word `foxes`,  both documents
-are returned as results thanks to the word stemming on the `title.english`
-field.  The second document is ranked as more relevant, because the word `not`
-matches on the `title` field.
-
-
+Even though neither of our documents contain the
+word `foxes`,  both documents are returned as results thanks to the word
+stemming on the `title.english` field.  The second document is ranked as more
+relevant, because the word `not` matches on the `title` field.

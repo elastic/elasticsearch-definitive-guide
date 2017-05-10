@@ -1,9 +1,9 @@
 [[language-pitfalls]]
 === Pitfalls of Mixing Languages
 
-If you have to deal with only a single language,((("languages", "mixing, pitfalls of"))) count yourself lucky.
+If you have to deal with only a single language, count yourself lucky.
 Finding the right strategy for handling documents written in several languages
-can be challenging.((("indexing", "mixed languages, pitfalls of")))
+can be challenging.
 
 ==== At Index Time
 
@@ -21,11 +21,11 @@ separate.  Mixing languages in the same inverted index can be problematic.
 ===== Incorrect stemming
 
 The stemming rules for German are different from those for English, French,
-Swedish, and so on.((("stemming words", "incorrect stemming in multilingual documents"))) Applying the same stemming rules to different languages
+Swedish, and so on. Applying the same stemming rules to different languages
 will result in some words being stemmed correctly, some  incorrectly, and some
-not being stemmed at all. It may even result in words from different languages with different meanings
-being stemmed to the same root word, conflating their meanings and producing
-confusing search results for the user.
+not being stemmed at all. It may even result in words from different languages
+with different meanings being stemmed to the same root word, conflating their
+meanings and producing confusing search results for the user.
 
 Applying multiple stemmers in turn to the same text is likely to result in
 rubbish, as the next stemmer may try to stem an already stemmed word,
@@ -49,7 +49,7 @@ text.
 ===== Incorrect inverse document frequencies
 
 In <<relevance-intro>>, we explained that the more frequently a term appears
-in a collection of documents, the less weight that term has.((("inverse document frequency", "incorrect, in multilingual documents")))  For accurate
+in a collection of documents, the less weight that term has.  For accurate
 relevance calculations, you need accurate term-frequency statistics.
 
 A short snippet of German appearing in predominantly English text would give
@@ -59,11 +59,11 @@ snippets now have much less weight.
 
 ==== At Query Time
 
-It is not sufficient just to think about your documents, though.((("queries", "mixed languages and")))  You also need
-to think about how your users will query those documents.  Often you will be able
-to identify the main language of the user either from the language of that user's chosen
-interface (for example, `mysite.de` versus `mysite.fr`) or from the
-http://www.w3.org/International/questions/qa-lang-priorities.en.php[`accept-language`]
+It is not sufficient just to think about your documents, though.  You also need
+to think about how your users will query those documents.  Often you will be
+able to identify the main language of the user either from the language of that
+user's chosen interface (for example, `mysite.de` versus `mysite.fr`) or from
+the http://www.w3.org/International/questions/qa-lang-priorities.en.php[`accept-language`]
 HTTP header from the user's browser.
 
 User searches also come in three main varieties:
@@ -72,7 +72,8 @@ User searches also come in three main varieties:
 * Users search for words in a different language, but expect results in
   their main language.
 * Users search for words in a different language, and expect results in
-  that language (for example, a bilingual person, or a foreign visitor in a web cafe).
+  that language (for example, a bilingual person, or a foreign visitor in a web
+  cafe).
 
 Depending on the type of data that you are searching, it may be appropriate to
 return results in a single language (for example, a user searching for products on
@@ -102,7 +103,7 @@ library from
 http://blog.mikemccandless.com/2013/08/a-new-version-of-compact-language.html[Mike McCandless],
 which uses the open source (http://www.apache.org/licenses/LICENSE-2.0[Apache License 2.0])
 https://code.google.com/p/cld2/[Compact Language Detector] (CLD) from Google.  It is
-small, fast, ((("Compact Language Detector (CLD)")))and accurate, and can detect 160+ languages from as little as two
+small, fast, and accurate, and can detect 160+ languages from as little as two
 sentences. It can even detect multiple languages within a single block of
 text. Bindings exist for several languages including Python, Perl, JavaScript,
 PHP, C#/.NET, and R.
@@ -113,4 +114,3 @@ Shorter amounts of text, such as search keywords, produce much less accurate
 results. In these cases, it may be preferable to take simple heuristics into
 account such as the country of origin, the user's selected language, and the
 HTTP `accept-language` headers.
-
