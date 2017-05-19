@@ -240,7 +240,8 @@ POST /website/pageviews/1/_update?retry_on_conflict=5 <1>
 }
 --------------------------------------------------
 // SENSE: 030_Data/45_Upsert.json
-<1> Retry this update five times before failing.
+
+\<1> Retry this update five times before failing.
 
 This works well for operations such as incrementing a counter, where the order of
 increments does not matter, but in other situations the order of
@@ -249,4 +250,3 @@ adopts a _last-write-wins_ approach by default, but it also accepts a
 `version` parameter that allows you to use
 <<optimistic-concurrency-control,optimistic concurrency control>> to specify
 which version of the document you intend to update.
-
