@@ -2,72 +2,139 @@
 == Aggregation Test-Drive
 
 We could spend the next few pages defining the various aggregations
-and their syntax,((("aggregations", "basic example", id="ix_basicex"))) but aggregations are truly best learned by example.
-Once you learn how to think about aggregations, and how to nest them appropriately,
-the syntax is fairly trivial.
+and their syntax, but aggregations are truly best learned by example.
+Once you learn how to think about aggregations, and how to nest them
+appropriately, the syntax is fairly trivial.
 
 [NOTE]
 =========================
-A complete list of aggregation buckets and metrics can be found at the {ref}/search-aggregations.html[Elasticsearch Reference].  We'll cover many of them in this chapter, but glance
-over it after finishing so you are familiar with the full range of capabilities.
+A complete list of aggregation buckets and metrics can be found at the
+{ref}/search-aggregations.html[Elasticsearch Reference].  We'll cover many of
+them in this chapter, but glance over it after finishing so you are familiar
+with the full range of capabilities.
 =========================
 
 So let's just dive in and start with an example.  We are going to build some
-aggregations that might be useful to a car dealer.  Our data will be about car
-transactions: the car model, manufacturer, sale price, when it sold, and more.
+aggregations that might be useful to a taxi company. Our data will be about
+taxi rides: the name of the vendor, distance, point in time at start and end, and more.
 
-First we will bulk-index some data to work with:
+To have something to play with for our aggregations, we have prepared an example
+data set instead of indexing just a handful of documents. The data set contains
+200,000 fictitious taxi rides within San Francisco that we have generated with
+a script and saved it as a snapshot in our public demo repository.  To "restore"
+this dataset into your cluster:
+
+. Add the following setting to your `elasticsearch.yml` configuration file to
+whitelist the Elastic demo repository:
++
+[source,js]
+----
+repositories.url.allowed_urls: ["http://download.elastic.co/*"]
+----
+. Restart Elasticsearch.
+
+. Run the following snapshot commands. (For more information about using
+snapshots, see <<backing-up-your-cluster, Backing Up Your Cluster>>.)
++
+[source,js]
+----
+PUT /_snapshot/taxis <1>
+{
+    "type": "url",
+    "settings": {
+        "url": "http://download.elastic.co/definitiveguide/taxis_demo/"
+    }
+}
+
+GET /_snapshot/taxis/_all <2>
+
+POST /_snapshot/taxis/snapshot/_restore <3>
+
+GET /taxis/_recovery <4>
+----
+// CONSOLE: 300_Aggregations/20_basic_example.json
+<1> Register a new read-only URL repository pointing at the demo snapshot
+<2> (Optional) Inspect the repository to learn details about available snapshots
+<3> Begin the Restore process.  This will download the `taxis` index into your cluster
+<4> (Optional) Monitor the Restore process using the Recovery API
+
+
+NOTE: The dataset is around 24 MB and may take some time to download.
+
+Let's take a look at some sample data, to get a feel for what we are working with.
+
+[source,js]
+----
+GET taxis/_search <1>
+
+{
+  "took": 13,
+  "timed_out": false,
+  "_shards": {
+    "total": 5,
+    "successful": 5,
+    "failed": 0
+  },
+  "hits": {
+    "total": 200000,
+    "max_score": 1,
+    "hits": [
+      {
+        "_index": "taxis",
+        "_type": "rides",
+        "_id": "AVwfj7ZUUUjfIbklSMXd",
+        "_score": 1,
+        "_source": {
+          "vendor": "Black",
+          "pickup_datetime": "2017-04-01 00:01:31",
+          "passenger_count": 2,
+          "dropoff_datetime": "2017-04-01 00:16:11",
+          "pickup_zone": "Haight-Ashbury",
+          "dropoff_zone": "Financial District",
+          "payment_type": "Credit card",
+          "trip_distance": 4.4,
+          "fare_amount": 22.2,
+          "tip_amount": 1.2,
+          "total_amount": 23.4
+        }
+      },
+      ...
+----
+// CONSOLE: 300_Aggregations/20_basic_example.json
+<1> Execute a search without a query, so that we can see a random sampling of documents.
+
+Each document in `taxis` represents a single taxi ride. We can see the `vendor`
+as well as how many passengers were on the ride and other details.
+
+Now that we have some data, let's construct our first aggregation.  A taxi
+company may want to know the number of rides per vendor to better understand
+the local taxi market. This is easily accomplished using a simple aggregation.
+We will do this using a `terms` bucket:
 
 [source,js]
 --------------------------------------------------
-POST /cars/transactions/_bulk
-{ "index": {}}
-{ "price" : 10000, "color" : "red", "make" : "honda", "sold" : "2014-10-28" }
-{ "index": {}}
-{ "price" : 20000, "color" : "red", "make" : "honda", "sold" : "2014-11-05" }
-{ "index": {}}
-{ "price" : 30000, "color" : "green", "make" : "ford", "sold" : "2014-05-18" }
-{ "index": {}}
-{ "price" : 15000, "color" : "blue", "make" : "toyota", "sold" : "2014-07-02" }
-{ "index": {}}
-{ "price" : 12000, "color" : "green", "make" : "toyota", "sold" : "2014-08-19" }
-{ "index": {}}
-{ "price" : 20000, "color" : "red", "make" : "honda", "sold" : "2014-11-05" }
-{ "index": {}}
-{ "price" : 80000, "color" : "red", "make" : "bmw", "sold" : "2014-01-01" }
-{ "index": {}}
-{ "price" : 25000, "color" : "blue", "make" : "ford", "sold" : "2014-02-12" }
---------------------------------------------------
-// SENSE: 300_Aggregations/20_basic_example.json
-
-Now that we have some data, let's construct our first aggregation.  A car dealer
-may want to know which color car sells the best.  This is easily accomplished
-using a simple aggregation.  We will do this using a `terms` bucket:
-
-[source,js]
---------------------------------------------------
-GET /cars/transactions/_search
+GET /taxis/_search
 {
     "size" : 0,
     "aggs" : { <1>
-        "popular_colors" : { <2>
+        "rides_per_vendor" : { <2>
             "terms" : { <3>
-              "field" : "color.keyword"
+              "field" : "vendor"
             }
         }
     }
 }
 --------------------------------------------------
-// SENSE: 300_Aggregations/20_basic_example.json
+// CONSOLE: 300_Aggregations/20_basic_example.json
 
-<1> Aggregations are placed under the ((("aggregations", "aggs parameter")))top-level `aggs` parameter (the longer `aggregations`
-will also work if you prefer that).
-<2> We then name the aggregation whatever we want: `popular_colors`, in this example
+<1> Aggregations are placed under the top-level `aggs` parameter (the longer
+`aggregations` will also work if you prefer that).
+<2> We then name the aggregation whatever we want: `rides_per_vendor`, in this example
 <3> Finally, we define a single bucket of type `terms`.
 
-Aggregations are executed in the context of search results,((("searching", "aggregations executed in context of search results"))) which means it is
+Aggregations are executed in the context of search results, which means it is
 just another top-level parameter in a search request (for example, using the `/_search`
-endpoint).  Aggregations can be paired with queries, but we'll tackle that later
+endpoint). Aggregations can be paired with queries, but we'll tackle that later
 in <<_scoping_aggregations>>.
 
 [NOTE]
@@ -77,14 +144,14 @@ don't care about the search results themselves and
 returning zero hits speeds up the query.
 =========================
 
-Next we define a name for our aggregation.  Naming is up to you;
-the response will be labeled with the name you provide so that your application
-can parse the results later.
+Next we define a name for our aggregation. Naming is up to you; the response
+will be labeled with the name you provide so that your application can parse
+the results later.
 
-Next we define the aggregation itself.  For this example, we are defining
-a single `terms` bucket.((("buckets", "terms bucket (example)")))((("terms bucket", "defining in example aggregation")))  The `terms` bucket will dynamically create a new
-bucket for every unique term it encounters.  Since we are telling it to use the
-`color` field, the `terms` bucket will dynamically create a new bucket for each color.
+Next we define the aggregation itself. For this example, we are defining a
+single `terms` bucket. The `terms` bucket will dynamically create a new
+bucket for every unique term it encounters. Since we are telling it to use the
+`vendor` field, the `terms` bucket will dynamically create a new bucket for each vendor.
 
 
 Let's execute that aggregation and take a look at the results:
@@ -93,49 +160,56 @@ Let's execute that aggregation and take a look at the results:
 --------------------------------------------------
 {
 ...
-   "hits": {
+  "hits": {
       ...
       "hits": [] <1>
-   },
-   "aggregations": {
-      "popular_colors": { <2>
-         ...
-         "buckets": [
-            {
-               "key": "red", <3>
-               "doc_count": 4 <4>
-            },
-            {
-               "key": "blue",
-               "doc_count": 2
-            },
-            {
-               "key": "green",
-               "doc_count": 2
-            }
-         ]
-      }
-   }
+  },
+  "aggregations": {
+    "rides_per_vendor": { <2>
+      ...
+      "buckets": [
+        {
+          "key": "Green", <3>
+          "doc_count": 40125 <4>
+        },
+        {
+          "key": "Black",
+          "doc_count": 40078
+        },
+        {
+          "key": "Blue",
+          "doc_count": 39997
+        },
+        {
+          "key": "Red",
+          "doc_count": 39929
+        },
+        {
+          "key": "Yellow",
+          "doc_count": 39871
+        }
+      ]
+    }
+  }
 }
 --------------------------------------------------
 <1> No search hits are returned because we set the `size` parameter to zero.
-<2> Our `popular_colors` aggregation is returned as part of the `aggregations` field.
-<3> The `key` to each bucket corresponds to a unique term found in the `color` field.
-It also always includes `doc_count`, which tells us the number of docs containing the term.
+<2> Our `rides_per_vendor` aggregation is returned as part of the `aggregations` field.
+<3> The `key` to each bucket corresponds to a unique term found in the `vendor` field.
+It also always includes `doc_count`, which tells us the number of documents containing the term.
 <4> The count of each bucket represents the number of documents with this color.
 
-The ((("doc_count")))response contains a list of buckets, each corresponding to a unique color
-(for example, red or green). Each bucket also includes a count of the number of documents
-that "fell into" that particular bucket.  For example, there are four red cars.
+The response contains a list of buckets, each corresponding to a vendor (for example, "Red" or "Green").
+Each bucket also includes a count of the number of documents that "fell into" that particular bucket.
+For example, we can see that the "Black" vendor has conducted 40,078 rides in total.
 
 The preceding example is operating entirely in real time: if the documents are searchable,
 they can be aggregated.  This means you can take the aggregation results and
 pipe them straight into a graphing library to generate real-time dashboards.
-As soon as you sell a silver car, your graphs would dynamically update to include
-statistics about silver cars.
+As soon as you drop-off a customer, your graphs would dynamically update to include
+statistics about the number of rides.
 
 Voila!  Your first aggregation!
-((("aggregations", "basic example", startref ="ix_basicex")))
 
 
 

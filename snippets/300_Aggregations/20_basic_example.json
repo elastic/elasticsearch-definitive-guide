@@ -1,52 +1,51 @@
-# Delete the `cars` index
-DELETE /cars
+# Register the taxis demo repository
+PUT /_snapshot/taxis
+{
+  "type": "url",
+  "settings": {
+    "url": "http://download.elastic.co/definitiveguide/taxis_demo/"
+  }
+}
 
-# Index example docs
-POST /cars/transactions/_bulk
-{ "index": {}}
-{ "price" : 10000, "color" : "red", "make" : "honda", "sold" : "2014-10-28" }
-{ "index": {}}
-{ "price" : 20000, "color" : "red", "make" : "honda", "sold" : "2014-11-05" }
-{ "index": {}}
-{ "price" : 30000, "color" : "green", "make" : "ford", "sold" : "2014-05-18" }
-{ "index": {}}
-{ "price" : 15000, "color" : "blue", "make" : "toyota", "sold" : "2014-07-02" }
-{ "index": {}}
-{ "price" : 12000, "color" : "green", "make" : "toyota", "sold" : "2014-08-19" }
-{ "index": {}}
-{ "price" : 20000, "color" : "red", "make" : "honda", "sold" : "2014-11-05" }
-{ "index": {}}
-{ "price" : 80000, "color" : "red", "make" : "bmw", "sold" : "2014-01-01" }
-{ "index": {}}
-{ "price" : 25000, "color" : "blue", "make" : "ford", "sold" : "2014-02-12" }
+# Inspect the repo to see what snapshots are available
+GET /_snapshot/taxis/_all
 
-# Basic aggregation - most popular car colors
-GET /cars/transactions/_search
+# Begin the Restore process
+POST /_snapshot/taxis/snapshot/_restore
+
+# Monitor the restore process as shards download
+GET /taxis/_recovery
+
+# Run a simple search to explore the data
+GET taxis/_search
+
+# Basic aggregation - rides per taxi vendor
+GET /taxis/_search
 {
     "size" : 0,
     "aggs" : {
-        "popular_colors" : {
+        "rides_per_vendor" : {
             "terms" : {
-              "field" : "color"
+              "field" : "vendor"
             }
         }
     }
 }
 
 
-# Find the average price of each car color
-GET /cars/transactions/_search
+# Find the average revenue per vendor
+GET /taxis/_search
 {
    "size" : 0,
    "aggs": {
-      "colors": {
+      "vendors": {
          "terms": {
-            "field": "color"
+            "field": "vendor"
          },
          "aggs": {
-            "avg_price": {
+            "avg_revenue": {
                "avg": {
-                  "field": "price"
+                  "field": "total_amount"
                }
             }
          }
@@ -55,54 +54,56 @@ GET /cars/transactions/_search
 }
 
 
-# Nest a second bucket to determine top makes per color
-GET /cars/transactions/_search
+# Nest a second bucket to determine passenger count per vendor
+GET /taxis/_search
 {
    "size" : 0,
    "aggs": {
-      "colors": {
+      "vendors": {
          "terms": {
-            "field": "color"
+            "field": "vendor"
          },
          "aggs": {
-            "avg_price": {
+            "avg_revenue": {
                "avg": {
-                  "field": "price"
+                  "field": "total_amount"
                }
             },
-            "make": {
-                "terms": {
-                    "field": "make"
-                }
+            "passengers": {
+              "terms": {
+                "field": "passenger_count"
+              }
             }
          }
       }
    }
 }
 
-
-# Finally, add some extra metrics to determine min/max price per-make, per-color
-GET /cars/transactions/_search
+# Finally, add some extra metrics to determine min/max tip per-vendor, per-passenger count
+GET /taxis/_search
 {
-   "size" : 0,
-   "aggs": {
-      "colors": {
-         "terms": {
-            "field": "color"
-         },
-         "aggs": {
-            "avg_price": { "avg": { "field": "price" }
-            },
-            "make" : {
-                "terms" : {
-                    "field" : "make"
-                },
-                "aggs" : {
-                    "min_price" : { "min": { "field": "price"} },
-                    "max_price" : { "max": { "field": "price"} } 
-                }
-            }
-         }
+  "size": 0,
+  "aggs": {
+    "vendors": {
+      "terms": {
+        "field": "vendor"
+      },
+      "aggs": {
+        "avg_revenue": {
+          "avg": {
+            "field": "total_amount"
+          }
+        },
+        "passengers": {
+          "terms": {
+            "field": "passenger_count"
+          },
+          "aggs": {
+            "min_tip": { "min": { "field": "tip_amount" } },
+            "max_tip": { "max": { "field": "tip_amount" } }
+          }
+        }
       }
-   }
+    }
+  }
 }

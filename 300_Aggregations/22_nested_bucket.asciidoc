@@ -2,59 +2,59 @@
 === Buckets Inside Buckets
 
 The true power of aggregations becomes apparent once you start playing with
-different nesting schemes.((("aggregations", "basic example", "buckets nested in other buckets")))((("buckets", "nested in other buckets")))  In the previous examples, we saw how you could nest
+different nesting schemes. In the previous examples, we saw how you could nest
 a metric inside a bucket, which is already quite powerful.
 
 But the real exciting analytics come from nesting buckets inside _other buckets_.
-This time, we want to find out the distribution of car manufacturers for each
-color:
+This time, we want to find out the distribution of passengers for each vendor:
 
 
 [source,js]
 --------------------------------------------------
-GET /cars/transactions/_search
+GET /taxis/_search
 {
    "size" : 0,
    "aggs": {
-      "colors": {
+      "vendors": {
          "terms": {
-            "field": "color"
+            "field": "vendor"
          },
          "aggs": {
-            "avg_price": { <1>
+            "avg_revenue": { <1>
                "avg": {
-                  "field": "price"
+                  "field": "total_amount"
                }
             },
-            "make": { <2>
-                "terms": {
-                    "field": "make" <3>
-                }
+            "passengers": { <2>
+              "terms": {
+                "field": "passenger_count" <3>
+              }
             }
          }
       }
    }
 }
 --------------------------------------------------
-// SENSE: 300_Aggregations/20_basic_example.json
-<1> Notice that we can leave the previous `avg_price` metric in place.
-<2> Another aggregation named `make` is added to the `color` bucket.
+// CONSOLE: 300_Aggregations/20_basic_example.json
+<1> Notice that we can leave the previous `avg_revenue` metric in place.
+<2> Another aggregation named `passengers` is added to the `vendors` bucket.
 <3> This aggregation is a `terms` bucket and will generate unique buckets for
-each car make.
+each passenger count.
 
-A few interesting things happened here.((("metrics", "independent, on levels of an aggregation")))  First, you'll notice that the previous
-`avg_price` metric is left entirely intact.  Each _level_ of an aggregation can
-have many metrics or buckets.  The `avg_price` metric tells us the average price
-for each car color.  This is independent of other buckets and metrics that
+A few interesting things happened here. First, you'll notice that the previous
+`avg_revenue` metric is left entirely intact. Each _level_ of an aggregation can
+have many metrics or buckets. The `avg_revenue` metric tells us the average revenue
+for each taxi vendor. This is independent of other buckets and metrics that
 are also being built.
 
 This is important for your application, since there are often many related,
 but entirely distinct, metrics that you need to collect.  Aggregations allow
 you to collect all of them in a single pass over the data.
 
-The other important thing to note is that the aggregation we added, `make`, is
-a `terms` bucket (nested inside the `colors` `terms` bucket).  This means we will((("terms bucket", "nested in another terms bucket")))
-generate a (`color`, `make`) tuple for every unique combination in your dataset.
+The other important thing to note is that the aggregation we added, `passengers`,
+is a `terms` bucket (nested inside the `vendors` `terms` bucket).  This means
+we will generate a (`vendors`, `passengers`) tuple for every unique combination
+in your dataset.
 
 Let's take a look at the response (truncated for brevity, since it is now
 growing quite long):
@@ -62,6 +62,54 @@ growing quite long):
 
 [source,js]
 --------------------------------------------------
+{
+  ...
+  "aggregations": {
+    "vendors": {
+      ...
+      "buckets": [
+        {
+          "key": "Black",
+          "doc_count": 40078,
+          "passengers": { <1>
+            ...
+            "buckets": [
+              {
+                "key": 1, <2>
+                "doc_count": 26299
+              },
+              {
+                "key": 2,
+                "doc_count": 6500
+              },
+              {
+                "key": 3,
+                "doc_count": 3045
+              },
+              {
+                "key": 6,
+                "doc_count": 1751
+              },
+              {
+                "key": 4,
+                "doc_count": 1574
+              },
+              {
+                "key": 5,
+                "doc_count": 909
+              }
+            ]
+          },
+          "avg_revenue": {
+            "value": 22.614081291481632 <3>
+          }
+        },
+        ...
+      ]
+    }
+  }
+}
+
 {
 ...
    "aggregations": {
@@ -90,12 +138,12 @@ growing quite long):
 ...
 }
 --------------------------------------------------
-<1> Our new aggregation is nested under each color bucket, as expected.
-<2> We now see a breakdown of car makes for each color.
-<3> Finally, you can see that our previous `avg_price` metric is still intact.
+<1> Our new aggregation is nested under each vendor bucket, as expected.
+<2> We now see a breakdown of passenger counts for each vendor.
+<3> Finally, you can see that our previous `avg_revenue` metric is still intact.
 
 The response tells us the following:
 
-- There are four red cars.
-- The average price of a red car is $32,500.
-- Three of the red cars are made by Honda, and one is a BMW.
+- There are five different taxi vendors.
+- The average revenue per ride of the "Black" vendor is $22.61.
+- Most of the time (26,299 out of a total 40,078) they have only one passenger.
