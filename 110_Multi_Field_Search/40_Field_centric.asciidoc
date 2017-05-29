@@ -85,7 +85,7 @@ GET /_validate/query?explain
 
 当搜索多个字段时，TF/IDF ((("Term Frequency/Inverse Document Frequency  (TF/IDF) similarity algorithm", "surprising results when searching against multiple fields")))会带来某些令人意外的结果。
 
-想想用字段 `first_name` 和 `last_name` 查询 “Peter Smith” 的例子，((("inverse document frequency", "field-centric queries and"))) Peter 是个平常的名 Smith 也是平常的姓，这两者都具有较低的 IDF 值。但当索引中有另外一个人的名字是 “Smith Williams” 时，姓 Smith 就会非常的不平常，以致它有一个较高的 IDF 值！
+想想用字段 `first_name` 和 `last_name` 查询 “Peter Smith” 的例子，((("inverse document frequency", "field-centric queries and"))) Peter 是个平常的名 Smith 也是平常的姓，这两者都具有较低的 IDF 值。但当索引中有另外一个人的名字是 “Smith Williams” 时， Smith 作为名来说很不平常，以致它有一个较高的 IDF 值！
 
 下面这个简单的查询可能会在结果中将 “Smith Williams” 置于 “Peter Smith” 之上，尽管事实上是第二个人比第一个人更为匹配。
 
