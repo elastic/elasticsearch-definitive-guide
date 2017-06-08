@@ -26,7 +26,7 @@ http://people.apache.org/~mikemccand/lucenebench/[Lucene nightly benchmarks] 表
 [[rescore-api]]
 ==== 结果集重新评分
 
-在 <<proximity-relevance,the preceding section>> ，我们讨论了而使用邻近查询来调整相关度，而不是使用它将文档从结果列表中添加或者排除。((("relevance scores", "rescoring results for top-N documents
+在<<proximity-relevance,先前的章节中>> ，我们讨论了而使用邻近查询来调整相关度，而不是使用它将文档从结果列表中添加或者排除。((("relevance scores", "rescoring results for top-N documents
 with proximity query")))一个查询可能会匹配成千上万的结果，但我们的用户很可能只对结果的前几页感兴趣。
 
 
