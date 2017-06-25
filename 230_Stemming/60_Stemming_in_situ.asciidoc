@@ -76,7 +76,7 @@ PUT /my_index
     stemmer has done its work.
 
 [[stemming-in-situ-good-idea]]
-==== Is Stemming in situ a Good Idea
+==== Is Stemming in situ a Good Idea?
 
 People like the ((("stemming words", "stemming in situ", "good idea, or not")))idea of stemming _in situ_: ``Why use an unstemmed field
 _and_ a stemmed field if I can just use one combined field?'' But is it a
