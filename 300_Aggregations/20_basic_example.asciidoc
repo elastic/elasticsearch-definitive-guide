@@ -59,7 +59,7 @@ GET /taxis/_recovery <4>
 <4> (Optional) Monitor the Restore process using the Recovery API
 
 
-NOTE: The dataset is around 24 MB and may take some time to download.
+NOTE: The dataset is around 25 MB and may take some time to download.
 
 Let's take a look at some sample data, to get a feel for what we are working with.
 
@@ -80,22 +80,22 @@ GET taxis/_search <1>
     "max_score": 1,
     "hits": [
       {
-        "_index": "taxis",
-        "_type": "rides",
-        "_id": "AVwfj7ZUUUjfIbklSMXd",
-        "_score": 1,
-        "_source": {
-          "vendor": "Black",
-          "pickup_datetime": "2017-04-01 00:01:31",
-          "passenger_count": 2,
-          "dropoff_datetime": "2017-04-01 00:16:11",
-          "pickup_zone": "Haight-Ashbury",
-          "dropoff_zone": "Financial District",
-          "payment_type": "Credit card",
-          "trip_distance": 4.4,
-          "fare_amount": 22.2,
-          "tip_amount": 1.2,
-          "total_amount": 23.4
+        "_index" : "taxis",
+        "_type" : "rides",
+        "_id" : "5HFoQV0BWEIjXA7uwI57",
+        "_score" : 1.0,
+        "_source" : {
+          "vendor" : "Blue",
+          "pickup_datetime" : "2017-06-01 00:01:16",
+          "passenger_count" : 1,
+          "dropoff_datetime" : "2017-06-01 00:30:25",
+          "pickup_zone" : "Sunset",
+          "dropoff_zone" : "Chinatown",
+          "payment_type" : "Credit card",
+          "trip_distance" : 10.2,
+          "fare_amount" : 48.38,
+          "tip_amount" : 4.03,
+          "total_amount" : 52.41
         }
       },
       ...
@@ -169,24 +169,24 @@ Let's execute that aggregation and take a look at the results:
       ...
       "buckets": [
         {
-          "key": "Green", <3>
-          "doc_count": 40125 <4>
+          "key" : "Green", <3>
+          "doc_count" : 50253 <4>
         },
         {
-          "key": "Black",
-          "doc_count": 40078
+          "key" : "Black",
+          "doc_count" : 49862
         },
         {
-          "key": "Blue",
-          "doc_count": 39997
+          "key" : "Red",
+          "doc_count" : 39800
         },
         {
-          "key": "Red",
-          "doc_count": 39929
+          "key" : "Yellow",
+          "doc_count" : 34062
         },
         {
-          "key": "Yellow",
-          "doc_count": 39871
+          "key" : "Blue",
+          "doc_count" : 26023
         }
       ]
     }
@@ -201,7 +201,7 @@ It also always includes `doc_count`, which tells us the number of documents cont
 
 The response contains a list of buckets, each corresponding to a vendor (for example, "Red" or "Green").
 Each bucket also includes a count of the number of documents that "fell into" that particular bucket.
-For example, we can see that the "Black" vendor has conducted 40,078 rides in total.
+For example, we can see that the "Black" vendor has conducted 49,862 rides in total.
 
 The preceding example is operating entirely in real time: if the documents are searchable,
 they can be aggregated.  This means you can take the aggregation results and

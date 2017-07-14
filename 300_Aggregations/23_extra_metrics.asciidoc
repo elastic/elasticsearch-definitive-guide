@@ -54,75 +54,65 @@ Which gives us the following output (again, truncated):
       ...
       "buckets": [
         {
-          "key": "Black",
-          "doc_count": 40078,
-          "passengers": {
+          "key" : "Black",
+          "doc_count" : 49862,
+          "passengers" : {
             ...
-            "buckets": [
+            "buckets" : [
               {
-                "key": 1,
-                "doc_count": 26299,
-                "min_tip": {
-                  "value": 0 <1>
+                "key" : 1,
+                "doc_count" : 32819,
+                "min_tip" : {
+                  "value" : 0.0 <1>
                 },
-                "max_tip": {
-                  "value": 10 <1>
+                "max_tip" : {
+                  "value" : 9.18 <1>
                 }
               },
               {
-                "key": 2,
-                "doc_count": 6500,
-                "min_tip": {
-                  "value": 0
+                "key" : 2,
+                "doc_count" : 8128,
+                "min_tip" : {
+                  "value" : 0.0
                 },
-                "max_tip": {
-                  "value": 10
+                "max_tip" : {
+                  "value" : 9.18
                 }
               },
               {
-                "key": 3,
-                "doc_count": 3045,
-                "min_tip": {
-                  "value": 0
+                "key" : 3,
+                "doc_count" : 3728,
+                "min_tip" : {
+                  "value" : 0.0
                 },
-                "max_tip": {
-                  "value": 10
+                "max_tip" : {
+                  "value" : 9.0
                 }
               },
               {
-                "key": 6,
-                "doc_count": 1751,
-                "min_tip": {
-                  "value": 0
+                "key" : 5,
+                "doc_count" : 3278,
+                "min_tip" : {
+                  "value" : 0.0
                 },
-                "max_tip": {
-                  "value": 10
+                "max_tip" : {
+                  "value" : 8.82
                 }
               },
               {
-                "key": 4,
-                "doc_count": 1574,
-                "min_tip": {
-                  "value": 0
+                "key" : 4,
+                "doc_count" : 1909,
+                "min_tip" : {
+                  "value" : 0.0
                 },
-                "max_tip": {
-                  "value": 9.6
-                }
-              },
-              {
-                "key": 5,
-                "doc_count": 909,
-                "min_tip": {
-                  "value": 0
-                },
-                "max_tip": {
-                  "value": 9.8
+                "max_tip" : {
+                  "value" : 9.0
                 }
               }
             ]
           },
-          "avg_revenue": {
-            "value": 22.614081291481632
+          "avg_revenue" : {
+            "value" : 22.613874092495085
           }
         },
         ...
@@ -131,12 +121,12 @@ Which gives us the following output (again, truncated):
   }
 }
 --------------------------------------------------
-<1> The `min` and `max` metrics that we added now appear under each `make`
+<1> The `min` and `max` metrics that we added now appear under each `passengers` count.
 
 With those two buckets, we've expanded the information derived from this query
 to include the following:
 
 - There are five different taxi vendors.
 - The average revenue per ride of the "Black" vendor is $22.61.
-- Most of the time (26,299 out of a total 40,078) they have only one passenger.
-- Single passengers give no tip or tip up to $10.
+- Most of the time (32,819 out of a total 49,862) they have only one passenger.
+- Single passengers give no tip or tip up to $9.18.

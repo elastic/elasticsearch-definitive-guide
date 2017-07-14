@@ -55,39 +55,39 @@ and what field we want the average to be calculated on (`total_amount`):
     "vendors": {
       ...
       "buckets": [
-        {
-          "key": "Green",
-          "doc_count": 40125,
-          "avg_revenue": { <1>
-            "value": 22.570584423675992
+{
+          "key" : "Green",
+          "doc_count" : 50253,
+          "avg_revenue" : { <1>
+            "value" : 22.447771675322958
           }
         },
         {
-          "key": "Black",
-          "doc_count": 40078,
-          "avg_revenue": {
-            "value": 22.614081291481632
+          "key" : "Black",
+          "doc_count" : 49862,
+          "avg_revenue" : {
+            "value" : 22.613874092495085
           }
         },
         {
-          "key": "Blue",
-          "doc_count": 39997,
-          "avg_revenue": {
-            "value": 22.59631597369808
+          "key" : "Red",
+          "doc_count" : 39800,
+          "avg_revenue" : {
+            "value" : 22.31519195979896
           }
         },
         {
-          "key": "Red",
-          "doc_count": 39929,
-          "avg_revenue": {
-            "value": 22.73482431315584
+          "key" : "Yellow",
+          "doc_count" : 34062,
+          "avg_revenue" : {
+            "value" : 22.063510950619435
           }
         },
         {
-          "key": "Yellow",
-          "doc_count": 39871,
-          "avg_revenue": {
-            "value": 22.601132401996455
+          "key" : "Blue",
+          "doc_count" : 26023,
+          "avg_revenue" : {
+            "value" : 22.01809399377478
           }
         }
       ]

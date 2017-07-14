@@ -69,73 +69,41 @@ growing quite long):
       ...
       "buckets": [
         {
-          "key": "Black",
-          "doc_count": 40078,
-          "passengers": { <1>
+          "key" : "Black",
+          "doc_count" : 49862,
+          "passengers" : { <1>
             ...
-            "buckets": [
+            "buckets" : [
               {
-                "key": 1, <2>
-                "doc_count": 26299
+                "key" : 1, <2>
+                "doc_count" : 32819
               },
               {
-                "key": 2,
-                "doc_count": 6500
+                "key" : 2,
+                "doc_count" : 8128
               },
               {
-                "key": 3,
-                "doc_count": 3045
+                "key" : 3,
+                "doc_count" : 3728
               },
               {
-                "key": 6,
-                "doc_count": 1751
+                "key" : 5,
+                "doc_count" : 3278
               },
               {
-                "key": 4,
-                "doc_count": 1574
-              },
-              {
-                "key": 5,
-                "doc_count": 909
+                "key" : 4,
+                "doc_count" : 1909
               }
             ]
           },
-          "avg_revenue": {
-            "value": 22.614081291481632 <3>
+          "avg_revenue" : {
+            "value" : 22.613874092495085 <3>
           }
         },
         ...
       ]
     }
   }
-}
-
-{
-...
-   "aggregations": {
-      "colors": {
-         "buckets": [
-            {
-               "key": "red",
-               "doc_count": 4,
-               "make": { <1>
-                  "buckets": [
-                     {
-                        "key": "honda", <2>
-                        "doc_count": 3
-                     },
-                     {
-                        "key": "bmw",
-                        "doc_count": 1
-                     }
-                  ]
-               },
-               "avg_price": {
-                  "value": 32500 <3>
-               }
-            },
-
-...
 }
 --------------------------------------------------
 <1> Our new aggregation is nested under each vendor bucket, as expected.
@@ -146,4 +114,4 @@ The response tells us the following:
 
 - There are five different taxi vendors.
 - The average revenue per ride of the "Black" vendor is $22.61.
-- Most of the time (26,299 out of a total 40,078) they have only one passenger.
+- Most of the time (32,819 out of a total 49,862) they have only one passenger.
