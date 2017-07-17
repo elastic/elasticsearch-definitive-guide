@@ -18,7 +18,7 @@ Elasticsearch通过在后台进行段合并来解决这个问题。((("merging s
 .两个提交了的段和一个未提交的段正在被合并到一个更大的段
 image::images/elas_1110.png["Two commited segments and one uncommited segment in the process of being merged into a bigger segment"]
 
-3、 <<img-post-merge>> 说明合并完成是的活动：
+3、 <<img-post-merge>> 说明合并完成时的活动：
 
 --
     ** 新的段被刷新（flush）到了磁盘。
