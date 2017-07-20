@@ -39,7 +39,6 @@ PUT /_cluster/settings
 ----
 +
 分片再平衡会花一些时间。一直等到集群变成 `绿色` 状态后再继续。
-to status `green` before continuing.
 
 7. 重复第 2 到 6 步操作剩余节点。
 
