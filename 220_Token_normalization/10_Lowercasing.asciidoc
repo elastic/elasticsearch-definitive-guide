@@ -1,5 +1,5 @@
 [[lowercase-token-filter]]
-=== 这个例子
+=== 举个例子
  
 用的最多的语汇单元过滤器(token filters)是 `lowercase` 过滤器，它的功能正和你期望的一样；它将每个词元(token)转换为小写形式：
 [source,js]
