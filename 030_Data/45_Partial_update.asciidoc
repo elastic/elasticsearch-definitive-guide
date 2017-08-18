@@ -133,7 +133,7 @@ another tag:
 
 [source,js]
 --------------------------------------------------
-POST website/blog/1/_update
+POST /website/blog/1/_update
 {
   "script": {
     "lang": "painless",
