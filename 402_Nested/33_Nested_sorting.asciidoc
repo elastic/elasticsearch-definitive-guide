@@ -56,7 +56,8 @@ GET /_search
     "comments.stars": { <2>
       "order": "asc",   <2>
       "mode":  "min",   <2>
-      "nested_filter": { <3>
+      "nested_path": "comments", <3>
+      "nested_filter": { <4>
         "range": {
           "comments.date": {
             "gte": "2014-10-01",
@@ -72,7 +73,8 @@ GET /_search
     comment in October.
 <2> Results are sorted in ascending (`asc`) order by the lowest value (`min`)
     in the `comment.stars` field in any matching comments.
-<3> The `nested_filter` in the sort clause is the same as the `nested` query in
+<3> The `nested_path` indicates where the nested document is.
+<4> The `nested_filter` in the sort clause is the same as the `nested` query in
     the main `query` clause. The reason is explained next.
 
 Why do we need to repeat the query conditions in the `nested_filter`?  The
