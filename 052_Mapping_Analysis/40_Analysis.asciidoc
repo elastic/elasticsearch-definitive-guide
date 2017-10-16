@@ -179,21 +179,21 @@ Each element in the result represents a single term:
          "start_offset": 0,
          "end_offset":   4,
          "type":         "<ALPHANUM>",
-         "position":     1
+         "position":     0
       },
       {
          "token":        "to",
          "start_offset": 5,
          "end_offset":   7,
          "type":         "<ALPHANUM>",
-         "position":     2
+         "position":     1
       },
       {
          "token":        "analyze",
          "start_offset": 8,
          "end_offset":   15,
          "type":         "<ALPHANUM>",
-         "position":     3
+         "position":     2
       }
    ]
 }
