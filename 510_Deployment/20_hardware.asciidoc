@@ -31,7 +31,7 @@ choose a modern processor with multiple cores.  Common clusters utilize two- to 
 
 If you need to choose between faster CPUs or more cores, choose more cores.  The
 extra concurrency that multiple cores offers will far outweigh a slightly faster
-clock speed.
+clock speed. Note that the number of processors is by default bounded to 32.
 
 ==== Disks
 
