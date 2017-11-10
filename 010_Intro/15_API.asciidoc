@@ -1,53 +1,25 @@
 === Talking to Elasticsearch
 
-How you talk to Elasticsearch depends on((("Elasticsearch", "talking to"))) whether you are using Java or not.
-
-==== Java API
-
-If you are using ((("Java", "clients for Elasticsearch")))Java, Elasticsearch comes with two built-in clients
-that you can use in your code:
-
-Node client::
-    The node client ((("node client")))joins a local cluster as a _non data node_. In other
-    words, it doesn't hold any data itself, but it knows what data lives
-    on which node in the cluster, and can forward requests directly
-    to the correct node.
-
-Transport client::
-    The lighter-weight ((("transport client")))transport client can be used to send requests to
-    a remote cluster. It doesn't join the cluster itself, but simply
-    forwards requests to a node in the cluster.
-
-Both Java clients talk to the cluster over port _9300_, using((("port 9300 for Java clients"))) the native
-Elasticsearch _transport_ protocol.  The nodes in the cluster also communicate
-with each other over port 9300. If this port is not open, your nodes will
-not be able to form a cluster.
-
-[TIP]
-====
-The Java client must be from the same _major_ version of Elasticsearch as the nodes;
-otherwise, they may not be able to understand each other.
-====
-
-More information about the Java clients can be found in  https://www.elastic.co/guide/en/elasticsearch/client/index.html[Elasticsearch Clients].
-
 ==== RESTful API with JSON over HTTP
+Older versions of Elasticsearch (pre-version 6.0) were able to use a Java API for communicating with Elasticsearch. This method is no longer recommended.
 
-All other languages can communicate with Elasticsearch((("port 9200 for non-Java clients"))) over port _9200_ using
+The preferred method for all languages is to communicate with Elasticsearch((("port 9200 for non-Java clients"))) over port _9200_ using
 a ((("RESTful API, communicating with Elasticseach")))RESTful API, accessible with your favorite web client. In fact, as you have
 seen, you can even talk to Elasticsearch from the command line by using the
 `curl` command.((("curl command", "talking to Elasticsearch with")))
 
 NOTE: Elasticsearch provides official clients((("clients", "other than Java"))) for several languages--Groovy,
 JavaScript, .NET, PHP, Perl, Python, and Ruby--and there are numerous
-community-provided clients and integrations, all of which can be found in 
+community-provided clients and integrations, all of which can be found in
 https://www.elastic.co/guide/en/elasticsearch/client/index.html[Elasticsearch Clients].
 
 A request to Elasticsearch consists of the same parts as any HTTP request:((("HTTP requests")))((("requests to Elasticsearch")))
 
+Please note that as of version 6.0 of Elasticsearch, any HTTP request must provide a `Content-Type` header if there is a body in the request.
+
 [source,js]
 --------------------------------------------------
-curl -X<VERB> '<PROTOCOL>://<HOST>:<PORT>/<PATH>?<QUERY_STRING>' -d '<BODY>'
+curl -X<VERB> '<PROTOCOL>://<HOST>:<PORT>/<PATH>?<QUERY_STRING>' -d '<BODY>' -H 'Content-Type: application/json'
 --------------------------------------------------
 
 The parts marked with `< >` above are:
@@ -66,7 +38,7 @@ For instance, to count the number of documents in the cluster, we could use this
 
 [source,js]
 --------------------------------------------------
-curl -XGET 'http://localhost:9200/_count?pretty' -d '
+curl -XGET 'http://localhost:9200/_count?pretty' -H 'Content-Type: application/json' -d '
 {
     "query": {
         "match_all": {}
@@ -82,12 +54,13 @@ with a JSON body like the following:
 [source,js]
 --------------------------------------------------
 {
-    "count" : 0,
-    "_shards" : {
-        "total" : 5,
-        "successful" : 5,
-        "failed" : 0
-    }
+  "count" : 1,
+  "_shards" : {
+    "total" : 1,
+    "successful" : 1,
+    "skipped" : 0,
+    "failed" : 0
+  }
 }
 --------------------------------------------------
 
@@ -107,12 +80,13 @@ a full request like
 
 [source,js]
 --------------------------------------------------
-curl -XGET 'localhost:9200/_count?pretty' -d '
+curl -XGET 'http://localhost:9200/_count?pretty' -H 'Content-Type: application/json' -d '
 {
     "query": {
         "match_all": {}
     }
-}'
+}
+'
 --------------------------------------------------
 
 we will show it in this shorthand format:
@@ -128,4 +102,4 @@ GET /_count
 --------------------------------------------------
 // SENSE: 010_Intro/15_Count.json
 
-In fact, this is the same format that is used by the ((( "Sense console")))((("Sense console (Kibana app)", "curl requests in"))) <<sense, Sense console>>. If you're viewing the online version of this book, you can open and run this code example in Sense by clicking the View in Sense link above.
+In fact, this is the same format that is used by the ((( "Console")))((("Console (Kibana app)", "curl requests in"))) <<sense, Console>>. If you're viewing the online version of this book, you can open and run this code example in Console by clicking the View in Console link above.
