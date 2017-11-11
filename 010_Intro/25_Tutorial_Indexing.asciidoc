@@ -80,6 +80,13 @@ So for our employee directory, we are going to do the following:
 * That type will live in the `megacorp` _index_.
 * That index will reside within our Elasticsearch cluster.
 
+.A word about types
+**************************************************
+In older versions of Elasticsearch, it was possible to create multiple `types`
+within one index. In version 6.0+, you may only create one `type` per index.
+In version 7.0+, types will no longer be supported.
+**************************************************
+
 In practice, this is easy (even though it looks like a lot of steps).  We
 can perform all of those actions in a single command:
 
