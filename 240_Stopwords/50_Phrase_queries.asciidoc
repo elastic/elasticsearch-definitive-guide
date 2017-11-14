@@ -65,7 +65,7 @@
 
 `offsets`::
 
-    存储 `docs`,`freqs`,`positions`, 以及每个词在原始字符串中开始与结束字符的偏移信息( http://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-highlighting.html#postings-highlighter[`postings` highlighter] )。这个信息被用以高亮搜索结果，但它默认是禁用的。
+    存储 `docs`,`freqs`,`positions`, 以及每个词在原始字符串中开始与结束字符的偏移信息( {ref}/search-request-highlighting.html#postings-highlighter[`postings` highlighter] )。这个信息被用以高亮搜索结果，但它默认是禁用的。
 
 我们可以在索引创建的时候为字段设置 `index_options` 选项，或者在使用 ((("put-mapping API"))) `put-mapping` API新增字段映射的时候设置。我们无法修改已有字段的这个设置：
 
