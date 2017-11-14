@@ -28,5 +28,5 @@ Geohashes 把整个世界分为 32 个单元的格子 —— 4 行 8 列 —— 
 |gcpuuz94kkp5   |12   | ~ 3.7cm x 1.8cm
 |=============================================
 
-{ref}/query-dsl-geohash-cell-query.html[`geohash单元` 过滤器] 可以使用这些 geohash 前缀((("geohash_cell filter")))((("filters", "geohash_cell")))来找出与指定坐标点（ `lat/lon` ）相邻的位置。
+https://www.elastic.co/guide/en/elasticsearch/reference/2.4/query-dsl-geohash-cell-query.html[`geohash单元` 过滤器] 可以使用这些 geohash 前缀((("geohash_cell filter")))((("filters", "geohash_cell")))来找出与指定坐标点（ `lat/lon` ）相邻的位置。
 
