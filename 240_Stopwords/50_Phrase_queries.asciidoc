@@ -98,7 +98,7 @@ in the index for each field.((("fields", "index options")))  Valid values are as
 
     Store `docs`, `freqs`, `positions`, and the start and end character offsets
     of each term in the original string.  This information is used by the
-    https://www.elastic.co/guide/en/elasticsearch/reference/1.7/search-request-highlighting.html#_unified_highlighter[`unified` highlighter]
+    https://www.elastic.co/guide/en/elasticsearch/reference/5.6/search-request-highlighting.html#_unified_highlighter[`unified` highlighter]
     but is disabled by default.
 
 You can set `index_options` on fields added at index creation time, or when
