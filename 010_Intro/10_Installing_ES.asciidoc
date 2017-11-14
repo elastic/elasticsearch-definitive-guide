@@ -71,7 +71,7 @@ TIP：看到下方的 View in Sense 的例子了么？<<sense, Install the Sense
 
 [[sense]]
 ==== 安装 Sense
-Sense 是一个 https://www.elastic.co/guide/en/kibana/current/index.html[Kibana] 应用 ((("Sense console", "Kibana app")))
+Sense 是一个 https://www.elastic.co/guide/en/kibana/4.6/index.html[Kibana] 应用 ((("Sense console", "Kibana app")))
 它提供交互式的控制台，通过你的浏览器直接向 Elasticsearch 提交请求。
 这本书的在线版本包含有一个 View in Sense 的链接，里面有许多代码示例。当点击的时候，它会打开一个代码示例的Sense控制台。
 你不必安装 Sense，但是它允许你在本地的 Elasticsearch 集群上测试示例代码，从而使本书更具有交互性。
