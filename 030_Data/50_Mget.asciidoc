@@ -2,7 +2,7 @@
 === 取回多个文档
 
 Elasticsearch 的速度已经很快了，但甚至能更快。((("documents", "retrieving multiple")))
-将多个请求合并成一个，避免单独处理每个请求花费的网络时延和开销。
+将多个请求合并成一个，避免单独处理每个请求花费的网络延时和开销。
 如果你需要从 Elasticsearch 检索很多文档，那么使用 _multi-get_ 或者 `mget` API((("mget (multi-get) API")))
 来将这些检索请求放在一个请求中，将比逐个文档请求更快地检索到全部文档。
 
