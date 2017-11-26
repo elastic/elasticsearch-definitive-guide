@@ -85,6 +85,8 @@ When Elasticsearch is running in the foreground, you can stop it by pressing Ctr
 
 [[sense]]
 ==== Installing Sense
+==== YOU MAY SKIP THIS STEP AS Sense has been renamed Console and is available in Kibana by default in version 5.x. Look under the Dev Tools menu item in the left menu bar.
+
 Sense is a https://www.elastic.co/guide/en/kibana/current/index.html[Kibana]
 app ((("Sense console", "Kibana app"))) that provides an interactive
 console for submitting requests to Elasticsearch directly from your browser.
