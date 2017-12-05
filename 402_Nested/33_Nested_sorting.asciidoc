@@ -54,6 +54,7 @@ GET /_search
   },
   "sort": {
     "comments.stars": { <2>
+      "nested_path": "comments"
       "order": "asc",   <2>
       "mode":  "min",   <2>
       "nested_filter": { <3>
