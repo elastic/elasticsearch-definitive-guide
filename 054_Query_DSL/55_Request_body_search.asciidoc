@@ -1,7 +1,7 @@
 [[full-body-search]]
 == 请求体查询
 
-_简易_  查询 &#x2014;<<search-lite,query-string search>>&#x2014; 对于用命令行进行点对点（ad-hoc）查询是非常有用的。((("searching", "request body search", id="ix_reqbodysearch")))然而，为了充分利用查询的强大功能，你应该使用 _请求体_ `search` API， 之所以称之为请求体查询(Full-Body Search)，((("request body search")))因为大部分参数是通过 Http 请求体而非查询字符串来传递的。
+_简易_  查询 &#x2014;<<search-lite,query-string search>>&#x2014; 对于用命令行进行即席查询（ad-hoc）是非常有用的。((("searching", "request body search", id="ix_reqbodysearch")))然而，为了充分利用查询的强大功能，你应该使用 _请求体_ `search` API， 之所以称之为请求体查询(Full-Body Search)，((("request body search")))因为大部分参数是通过 Http 请求体而非查询字符串来传递的。
 
 请求体查询 &#x2014;下文简称 _查询_&#x2014;不仅可以处理自身的查询请求，还允许你对结果进行片段强调（高亮）、对所有或部分结果进行聚合分析，同时还可以给出 _你是不是想找_ 的建议，这些建议可以引导使用者快速找到他想要的结果。
 
