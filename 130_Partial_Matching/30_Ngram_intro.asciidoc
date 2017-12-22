@@ -1,7 +1,7 @@
 === Ngrams for Partial Matching
 
 As we have said before, ``You can find only terms that exist in the inverted
-index.'' Although the `prefix`, `wildcard`, and `regexp` queries demonstrated that
+index.'' Although the `prefix`, `wildcard`, and `regexp` queries demonstrated
 that is not strictly true, it _is_ true that doing a single-term lookup is
 much faster than iterating through the terms list to find matching terms on
 the fly.((("partial matching", "index time optimizations", "n-grams"))) Preparing your data for partial matching ahead of time will increase
