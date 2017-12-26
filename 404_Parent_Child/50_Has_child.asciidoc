@@ -44,7 +44,7 @@ GET /company/branch/_search
 }
 -------------------------
 
-TIP: `score_mode` 为默认的 `none` 时，会显著地比其模式要快，这是因为Elasticsearch不需要计算每一个子文档的评分。只有当你真正需要关心评分结果时，才需要为 `source_mode` 设值，例如设成 `avg` 、 `min` 、 `max` 或 `sum` 。((("parent-child relationship", "finding parents by their children", "min_children and max_children")))
+TIP: `score_mode` 为默认的 `none` 时，会显著地比其模式要快，这是因为Elasticsearch不需要计算每一个子文档的评分。只有当你真正需要关心评分结果时，才需要为 `score_mode` 设值，例如设成 `avg` 、 `min` 、 `max` 或 `sum` 。((("parent-child relationship", "finding parents by their children", "min_children and max_children")))
 
 [[min-max-children]]
 ==== min_children 和 max_children
@@ -75,7 +75,7 @@ GET /company/branch/_search
 .has_child Filter
 **************************
 
-`has_child` 查询和过滤在运行机制上类似，((("has_child query and filter", "filter")))区别是 `has_child` 过滤不支持 `source_mode` 参数。`has_child` 过滤仅用于筛选内容--如内部的一个 `filtered` 查询--和其他过滤行为类似：包含或者排除，但没有进行评分。
+`has_child` 查询和过滤在运行机制上类似，((("has_child query and filter", "filter")))区别是 `has_child` 过滤不支持 `score_mode` 参数。`has_child` 过滤仅用于筛选内容--如内部的一个 `filtered` 查询--和其他过滤行为类似：包含或者排除，但没有进行评分。
 
 `has_child` 过滤的结果没有被缓存，但是 `has_child` 过滤内部的过滤方法适用于通常的缓存规则。
 **************************
