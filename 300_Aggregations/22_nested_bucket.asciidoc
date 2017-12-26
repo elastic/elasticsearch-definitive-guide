@@ -1,7 +1,7 @@
 [[_buckets_inside_buckets]]
 === 嵌套桶
 
-在我们使用不同的嵌套方案时，聚合的力量才能真正得以显现。((("aggregations", "basic example", "buckets nested in other buckets")))((("buckets", "nested in other buckets"))) 在前例中，我们以及看到如何将一个度量嵌入桶中，它的功能已经十分强大了。
+在我们使用不同的嵌套方案时，聚合的力量才能真正得以显现。((("aggregations", "basic example", "buckets nested in other buckets")))((("buckets", "nested in other buckets"))) 在前例中，我们已经看到如何将一个度量嵌入桶中，它的功能已经十分强大了。
 
 但真正令人激动的分析来自于将桶嵌套进 _另外一个桶_ 所能得到的结果。
 现在，我们想知道每个颜色的汽车制造商的分布：
