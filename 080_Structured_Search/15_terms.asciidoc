@@ -5,9 +5,9 @@ to search for multiple values.((("exact values", "finding multiple")))
 ((("structured search", "finding multiple exact values")))  What if you want to
 find documents that have a price of $20 or $30?
 
-Rather than using multiple `term` queries, you can instead use a single `terms`
-query (note the _s_ at the end).  The `terms` query((("terms query"))) is simply the plural
-version of the singular `term` query cousin.
+The `terms` query((("terms query"))) is useful to find documents which contain
+any of the exact terms specified. Whereas multiple `term` queries would find
+documents which contain all of them.
 
 It looks nearly identical to a vanilla `term` too.  Instead of
 specifying a single price, we are now specifying an array of values:
