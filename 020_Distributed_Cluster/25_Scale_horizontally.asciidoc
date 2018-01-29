@@ -1,8 +1,8 @@
 === Scale Horizontally
 
 What about scaling as the demand for our application grows?((("scaling", "horizontally")))((("clusters", "three-node cluster")))((("primary shards", "in three-node cluster"))) If we start a
-third node, our cluster reorganizes itself to look like
-<<cluster-three-nodes>>.
+third node, our cluster might reorganize itself to look like
+<<cluster-three-nodes>>. The actual lcoation of the shards may differ slightly.
 
 [[cluster-three-nodes]]
 .A three-node cluster--shards have been reallocated to spread the load
@@ -19,4 +19,3 @@ capable of using all of the resources of a single node.  With our
 total of six shards (three primaries and three replicas), our index is capable
 of scaling out to a maximum of six nodes, with one shard on each node
 and each shard having access to 100% of its node's resources.
-
