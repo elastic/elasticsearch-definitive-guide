@@ -43,14 +43,23 @@ Elasticsearch responds as follows:
 [source,js]
 --------------------------------------------------
 {
-   "_index":    "website",
-   "_type":     "blog",
-   "_id":       "123",
-   "_version":  1,
-   "created":   true
+  "_index": "website",
+  "_type": "blog",
+  "_id": "123",
+  "_version": 1,
+  "result": "created",
+  "_shards": { <1>
+    "total": 2,
+    "successful": 1,
+    "failed": 0
+  },
+  "_seq_no": 0, <2>
+  "_primary_term": 1 <3>
 }
 --------------------------------------------------
-
+<1> Number of shards (primary and replica) written in this request
+<2> Pertains to sequence IDs, which we will visit later
+<3> Pertains to sequence IDs, which we will visit later
 
 The response indicates that the document has been successfully created
 and includes the `_index`, `_type`, and `_id` metadata, and a new element:
@@ -87,11 +96,18 @@ field has been generated for us:
 [source,js]
 --------------------------------------------------
 {
-   "_index":    "website",
-   "_type":     "blog",
-   "_id":       "AVFgSgVHUP18jI2wRx0w",
-   "_version":  1,
-   "created":   true
+  "_index": "website",
+  "_type": "blog",
+  "_id": "xd0dRmEB9_TnAz_vX0Av",
+  "_version": 1,
+  "result": "created",
+  "_shards": {
+    "total": 2,
+    "successful": 1,
+    "failed": 0
+  },
+  "_seq_no": 0,
+  "_primary_term": 1
 }
 --------------------------------------------------
 
