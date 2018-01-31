@@ -23,15 +23,21 @@ number:
 [source,js]
 --------------------------------------------------
 {
-  "_index" :   "website",
-  "_type" :    "blog",
-  "_id" :      "123",
-  "_version" : 2,
-  "created":   false <1>
+  "_index": "website",
+  "_type": "blog",
+  "_id": "123",
+  "_version": 2,
+  "result": "updated", <1>
+  "_shards": {
+    "total": 2,
+    "successful": 1,
+    "failed": 0
+  },
+  "_seq_no": 1,
+  "_primary_term": 1
 }
 --------------------------------------------------
-<1> The `created` flag is((("created flag"))) set to `false` because a document with the same
-    index, type, and ID already existed.
+<1> The `result` flag returns the result of the operation.
 
 Internally, Elasticsearch has marked the old document as deleted and added an
 entirely new document.((("deleted documents"))) The old version of the document doesn't disappear
@@ -50,4 +56,3 @@ same process as described previously:
 
 The only difference is that the `update` API achieves this through a single
 client request, instead of requiring separate `get` and `index` requests.
-
