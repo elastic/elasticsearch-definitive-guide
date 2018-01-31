@@ -15,8 +15,8 @@ Elasticsearch will return a `200 OK` status code if the document exists:
 [source,js]
 --------------------------------------------------
 HTTP/1.1 200 OK
-Content-Type: text/plain; charset=UTF-8
-Content-Length: 0
+content-type: application/json; charset=UTF-8
+content-length: 110
 --------------------------------------------------
 
 And a `404 Not Found` if it doesn't exist:
@@ -29,8 +29,8 @@ curl -i -XHEAD http://localhost:9200/website/blog/124
 [source,js]
 --------------------------------------------------
 HTTP/1.1 404 Not Found
-Content-Type: text/plain; charset=UTF-8
-Content-Length: 0
+content-type: application/json; charset=UTF-8
+content-length: 61
 --------------------------------------------------
 
 Of course, just because a document didn't exist when you checked it, doesn't
