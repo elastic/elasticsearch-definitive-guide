@@ -25,7 +25,7 @@ there is no way to set a good default (because it depends on your cluster layout
 
 ==== Assign Names
 
-Elasticseach by default starts a cluster named `elasticsearch`. ((("configuration changes, important", "assigning names"))) It is wise
+Elasticsearch by default starts a cluster named `elasticsearch`. ((("configuration changes, important", "assigning names"))) It is wise
 to rename your production cluster to something else, simply to prevent accidents
 whereby someone's laptop joins the cluster.  A simple change to `elasticsearch_production`
 can save a lot of heartache.
