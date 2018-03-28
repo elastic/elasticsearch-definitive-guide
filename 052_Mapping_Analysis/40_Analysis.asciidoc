@@ -159,7 +159,7 @@ parameters,  and the text to analyze in the body:
 
 [source,js]
 --------------------------------------------------
-GET /_analyze
+POST /_analyze
 {
   "analyzer": "standard",
   "text": "Text to analyze"
