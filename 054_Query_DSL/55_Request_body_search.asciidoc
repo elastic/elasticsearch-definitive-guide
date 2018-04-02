@@ -26,7 +26,7 @@ GET /_search
 // SENSE: 054_Query_DSL/60_Empty_query.json
 <1> This is an empty request body.
 
-Just as with a query-string search, you can search on one, many, or `_all`
+Just as with a query-string search, you can search on one, many, or all
 indices, and one, many, or all types:
 
 [source,js]
