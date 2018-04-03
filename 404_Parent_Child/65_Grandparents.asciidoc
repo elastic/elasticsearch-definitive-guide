@@ -77,7 +77,7 @@ PUT /company/employee/1?parent=london&routing=uk <1>
 `parent` 参数的值仍然可以标识 employee 文档与其父文档的关系，但是 `routing` 参数保证该文档被存储到其父辈和祖辈的分片上。`routing` 值在所有的文档请求中都要添加。
 
 
-联合多代文档进行查询和聚合是可行的，只需要一代代的进行设定即可。例如，我们要找到喜欢远足的雇佣者的城市，此时需要联合 country 和 branch，以及 branch 和 employee：
+联合多代文档进行查询和聚合是可行的，只需要一代代的进行设定即可。例如，我们要找到哪些国家的雇员喜欢远足旅行，此时只需要联合 country 和 branch，以及 branch 和 employee：
 
 
 [source,json]
