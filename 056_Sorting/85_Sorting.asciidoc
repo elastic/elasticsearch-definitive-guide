@@ -167,7 +167,7 @@ GET /_search?sort=date:desc&sort=_score&q=search
 ====
 
 [[_Sorting_on_Multivalue_Fields]]
-==== 字段多值的排序
+==== 多值字段的排序
 
 一种情形是字段有多个值的排序，((("sorting", "on multivalue fields")))((("fields", "multivalue", "sorting on")))
 需要记住这些值并没有固有的顺序；一个多值的字段仅仅是多个值的包装，这时应该选择哪个进行排序呢？
