@@ -21,7 +21,7 @@ PUT /_cluster/settings
 }
 ----
 
-设置失效，Elasticsearch 将开始输出 `discovery` 模块的 `DEBUG` 级别的日志。
+设置生效，Elasticsearch 将开始输出 `discovery` 模块的 `DEBUG` 级别的日志。
 
 TIP: 避免使用 `TRACE` 。这个级别非常的详细，详细到日志反而不再有用了。
 
