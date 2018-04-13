@@ -52,7 +52,7 @@ Testing our analyzer with the `analyze` API shows the following:
 
 [source,json]
 -------------------------------------
-GET /my_index/_analyze
+POST /my_index/_analyze
 {
   "analyzer" : "my_synonyms",
   "text" : "Elizabeth is the English queen"
