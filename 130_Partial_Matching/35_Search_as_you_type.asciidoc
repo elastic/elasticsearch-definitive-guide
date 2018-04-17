@@ -92,7 +92,7 @@ the `analyze` API:
 
 [source,js]
 --------------------------------------------------
-GET /my_index/_analyze
+POST /my_index/_analyze
 {
   "analyzer": "autocomplete",
   "text": "quick brown"
