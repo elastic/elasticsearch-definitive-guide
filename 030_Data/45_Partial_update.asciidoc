@@ -133,12 +133,15 @@ another tag:
 
 [source,js]
 --------------------------------------------------
-POST /website/blog/1/_update
+POST website/blog/1/_update
 {
-   "script" : "ctx._source.tags+=new_tag",
-   "params" : {
-      "new_tag" : "search"
-   }
+  "script": {
+    "source": "ctx._source.tags.add(params.tag)",
+    "lang": "painless",
+    "params": {
+      "tag": "search"
+    }
+  }
 }
 --------------------------------------------------
 // SENSE: 030_Data/45_Partial_update.json
