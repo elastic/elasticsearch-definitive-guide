@@ -73,7 +73,7 @@ PUT /my_index
     "doc": {
       "properties": {
         "text": {
-          "type":          "string",
+          "type":          "text",
           "index_options": "docs" <1>
         }
       }
@@ -131,7 +131,7 @@ PUT /my_index
     "doc": {
       "properties": {
         "text": {
-          "type": "string",
+          "type": "text",
           "norms": { "enabled": false } <1>
         }
       }
