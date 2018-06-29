@@ -154,8 +154,7 @@ GET /_search?q=date:2014         # 0  results !
 Especially when you are new ((("analyzers", "testing")))to Elasticsearch, it is sometimes difficult to
 understand what is actually being tokenized and stored into your index.  To
 better understand what is going on, you can use the `analyze` API to see how
-text is analyzed. Specify which analyzer to use in the query-string
-parameters,  and the text to analyze in the body:
+text is analyzed. Specify which analyzer to use and the text to analyze in the body:
 
 [source,js]
 --------------------------------------------------
