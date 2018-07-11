@@ -216,8 +216,7 @@ PUT /my_store <2>
         "products" : {
             "properties" : {
                 "productID" : {
-                    "type" : "string",
-                    "index" : "not_analyzed" <3>
+                    "type" : "keyword" <3>
                 }
             }
         }
