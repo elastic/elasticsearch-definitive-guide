@@ -25,7 +25,7 @@ GET /_search
 As your application evolves and your search requirements become more exacting,
 you will find yourself using the `_all` field less and less. The `_all` field
 is a shotgun approach to search. By querying individual fields, you have more
-flexbility, power, and fine-grained control over which results are considered
+flexibility, power, and fine-grained control over which results are considered
 to be most relevant.
 
 [NOTE]
