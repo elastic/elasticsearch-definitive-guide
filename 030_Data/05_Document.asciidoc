@@ -79,7 +79,11 @@ do is choose an index name.  This name must be lowercase, cannot begin with an
 underscore, and cannot contain commas. Let's use `website` as our index name.
 
 ==== _type
-
+[WARNING]
+====
+`_type` is being removed in recent versions. Starting from 6.x, only a single type is
+allowed per index and will be totally removed in 7.x. https://www.elastic.co/guide/en/elasticsearch/reference/6.3/removal-of-types.html[Refer Here].
+====
 Data may be grouped loosely together in an index, but often there are sub-partitions
 inside that data which may be useful to explicitly define.  For example, all your
 products may go inside a single index.  But you have different categories of products,
