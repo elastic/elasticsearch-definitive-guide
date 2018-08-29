@@ -16,10 +16,10 @@ PUT /my_index/_mapping/blogpost
     "user": {
       "properties": {
         "name": { <1>
-          "type": "string",
+          "type": "text",
           "fields": {
             "raw": { <2>
-              "type":  "string",
+              "type":  "text",
               "index": "not_analyzed"
             }
           }
