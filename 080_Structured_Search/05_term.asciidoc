@@ -321,5 +321,7 @@ you can conceptually think of non-scoring queries as executing _before_ the scor
 queries.  The job of non-scoring queries is to reduce the number of documents that
 the more costly scoring queries need to evaluate, resulting in a faster search request.
 
+Note: Term queries are not cached as of version 5.x because they are already quite fast. See this link [https://github.com/elastic/elasticsearch/issues/16031]
+
 By conceptually thinking of non-scoring queries as executing first, you'll be
 equipped to write efficient and fast search requests.
