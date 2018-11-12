@@ -219,5 +219,5 @@ Finally, if neither approach is possible, you should enable `mlockall`. file.
 
 [source,yaml]
 ----
-bootstrap.mlockall: true
+bootstrap.memory_lock: true
 ----
