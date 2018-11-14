@@ -52,7 +52,7 @@ GET /cars/transactions/_search
     "aggs" : { <1>
         "popular_colors" : { <2>
             "terms" : { <3>
-              "field" : "color"
+              "field" : "color.keyword"
             }
         }
     }
