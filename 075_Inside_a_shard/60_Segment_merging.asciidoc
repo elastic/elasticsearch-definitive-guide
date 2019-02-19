@@ -42,7 +42,7 @@ TIP: 查看 <<segments-and-merging>> 来为你的实例获取关于合并调整�
 `optimize` API大可看做是 _强制合并_ API((("merging segments", "optimize API and")))((("optimize API")))((("segments", "merging", "optimize API")))。它会将一个分片强制合并到 `max_num_segments` 参数指定大小的段数目。
 这样做的意图是减少段的数量（通常减少到一个），来提升搜索性能。
 
-WARNING: `optimize` API _不应该_ 被用在一个动态索引————一个正在被活跃更新的索引。后台合并流程已经可以很好地完成工作。
+WARNING: `optimize` API _不应该_ 被用在一个活跃的索引————一个正积极更新的索引。后台合并流程已经可以很好地完成工作。
 optimizing 会阻碍这个进程。不要干扰它！
 
 在特定情况下，使用 `optimize` API 颇有益处。例如在日志这种用例下，每天、每周、每月的日志被存储在一个索引中。
@@ -59,6 +59,6 @@ POST /logstash-2014-10/_optimize?max_num_segments=1 <1>
 
 [WARNING]
 ====
-请注意，使用 `optimize` API 触发段合并的操作一点也不会受到任何资源上的限制。这可能会消耗掉你节点上全部的I/O资源, 使其没有余裕来处理搜索请求，从而有可能使集群失去响应。
+请注意，使用 `optimize` API 触发段合并的操作不会受到任何资源上的限制。这可能会消耗掉你节点上全部的I/O资源, 使其没有余裕来处理搜索请求，从而有可能使集群失去响应。
 如果你想要对索引执行 `optimize`，你需要先使用分片分配（查看 <<migrate-indices>>）把索引移到一个安全的节点，再执行。
 ====
