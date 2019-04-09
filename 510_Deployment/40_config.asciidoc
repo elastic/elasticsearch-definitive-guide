@@ -262,6 +262,6 @@ This setting is configured in `elasticsearch.yml`:
 discovery.zen.ping.unicast.hosts: ["host1", "host2:port"]
 ----
 
-For more information about how Elasticsearch nodes find eachother, see
-https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-discovery-zen.html[Zen Discovery]
+For more information about how Elasticsearch nodes find each other, see
+{ref}/modules-discovery.html[Discovery and cluster formation]
 in the Elasticsearch Reference.
