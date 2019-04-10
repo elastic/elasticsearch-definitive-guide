@@ -200,4 +200,4 @@ Elasticsearch 默认被配置为使用单播发现，以防止节点无意中加
 discovery.zen.ping.unicast.hosts: ["host1", "host2:port"]
 ----
 
-关于 Elasticsearch 节点发现的详细信息，请参阅 https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-discovery-zen.html[Zen Discovery] Elasticsearch 文献。
+关于 Elasticsearch 节点发现的详细信息，请参阅 https://www.elastic.co/guide/en/elasticsearch/reference/2.4/modules-discovery-zen.html[Zen Discovery] Elasticsearch 文献。
