@@ -32,43 +32,36 @@ this process, possibly increasing performance at the cost of data security.
 These options are seldom used because Elasticsearch is already fast, but they
 are explained here for the sake of completeness:
 
---
-
 `consistency`::
 +
---
 By default, the primary shard((("consistency request parameter")))((("quorum"))) requires a _quorum_, or majority, of shard copies
 (where a shard copy can be a primary or a replica shard) to be available
 before even attempting a write operation. This is to prevent writing data to the
 ``wrong side'' of a network partition.  A quorum is defined as follows:
-
++
     int( (primary + number_of_replicas) / 2 ) + 1
-
++
 The allowed values for `consistency` are `one` (just the primary shard), `all`
 (the primary and all replicas), or the default `quorum`, or majority, of shard
 copies.
-
++
 Note that the `number_of_replicas` is the number of replicas _specified_ in
 the index settings, not the number of replicas that are currently active.  If
 you have specified that an index should have three replicas, a quorum would
 be as follows:
-
++
     int( (primary + 3 replicas) / 2 ) + 1 = 3
-
++
 But if you start only two nodes, there will be insufficient active shard
 copies to satisfy the quorum, and you will be unable to index or delete any
 documents.
 
---
-
 `timeout`::
-
++
 What happens if insufficient shard copies are available? Elasticsearch waits,
 in the hope that more shards will appear.  By default, it will wait up to 1
 minute. If you need to, you can use the `timeout` parameter((("timeout parameter"))) to make it abort
 sooner: `100` is 100 milliseconds, and `30s` is 30 seconds.
-
--- 
 
 [NOTE]
 ===================================================
