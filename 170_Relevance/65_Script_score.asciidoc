@@ -115,7 +115,7 @@ scripts are not quite fast enough, you have three options:
   document.
 * Groovy is fast, but not quite as fast as Java.((("Java", "scripting in")))  You could reimplement your
   script as a native Java script. (See
-  {ref}/modules-scripting-native.html[Native Java Scripts]).
+  https://www.elastic.co/guide/en/elasticsearch/reference/5.6/modules-scripting-native.html[Native Java Scripts]).
 * Use the `rescore` functionality((("rescoring"))) described in <<rescore-api>> to apply
   your script to only the best-scoring documents.
 
