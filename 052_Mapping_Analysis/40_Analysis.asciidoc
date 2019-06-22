@@ -76,7 +76,7 @@ Language-specific analyzers ((("language analyzers")))are available for {ref}/an
 take the peculiarities of the specified language into account. For instance,
 the `english` analyzer comes with a set of English ((("stopwords")))stopwords (common words
 like `and` or `the` that don't have much impact on relevance), which it
-removes. This analyzer also is able to _stem_ English ((("stemming words")))words because it understands the
+removes. This analyzer is also able to _stem_ English ((("stemming words")))words because it understands the
 rules of English grammar.
 +
 The `english` analyzer would produce the following:
