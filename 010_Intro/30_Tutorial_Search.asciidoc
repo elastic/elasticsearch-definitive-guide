@@ -155,7 +155,7 @@ GET /megacorp/employee/_search?q=last_name:Smith
 
 Query-string 搜索通过命令非常方便地进行临时性的即席搜索 ((("ad hoc searches"))) ，但它有自身的局限性（参见 <<search-lite>> ）。Elasticsearch 提供一个丰富灵活的查询语言叫做 _查询表达式_ ，((("Query DSL"))) 它支持构建更加复杂和健壮的查询。
 
-_领域特定语言_ （DSL），((("DSL (Domain Specific Language)"))) 指定了使用一个 JSON 请求。我们可以像这样重写之前的查询所有 Smith 的搜索 ：
+_领域特定语言_ （DSL），((("DSL (Domain Specific Language)"))) 使用 JSON 构造了一个请求。我们可以像这样重写之前的查询所有名为 Smith 的搜索 ：
 
 
 [source,js]
@@ -171,12 +171,12 @@ GET /megacorp/employee/_search
 --------------------------------------------------
 // SENSE: 010_Intro/30_Simple_search.json
 
-返回结果与之前的查询一样，但还是可以看到有一些变化。其中之一是，不再使用 _query-string_ 参数，而是一个请求体替代。这个请求使用 JSON 构造，并使用了一个 `match` 查询（属于查询类型之一，后续将会了解）。
+返回结果与之前的查询一样，但还是可以看到有一些变化。其中之一是，不再使用 _query-string_ 参数，而是一个请求体替代。这个请求使用 JSON 构造，并使用了一个 `match` 查询（属于查询类型之一，后面将继续介绍）。
 
 [[_more_complicated_searches]]
 === 更复杂的搜索
 
-现在尝试下更复杂的搜索。((("searches", "more complicated")))((("filters"))) 同样搜索姓氏为 Smith 的雇员，但这次我们只需要年龄大于 30 的。查询需要稍作调整，使用过滤器 _filter_ ，它支持高效地执行一个结构化查询。
+现在尝试下更复杂的搜索。((("searches", "more complicated")))((("filters"))) 同样搜索姓氏为 Smith 的员工，但这次我们只需要年龄大于 30 的。查询需要稍作调整，使用过滤器 _filter_ ，它支持高效地执行一个结构化查询。
 
 [source,js]
 --------------------------------------------------
@@ -203,7 +203,7 @@ GET /megacorp/employee/_search
 <1> 这部分与我们之前使用的((("match queries")))  `match` _查询_ 一样。
 <2> 这部分是一个 `range` _过滤器_ ，((("range filters"))) 它能找到年龄大于 30 的文档，其中 `gt` 表示_大于_(_great than_)。
 
-目前无需太多担心语法问题，后续会更详细地介绍。只需明确我们添加了一个 _过滤器_ 用于执行一个范围查询，并复用之前的 `match` 查询。现在结果只返回了一个雇员，叫 Jane Smith，32 岁。
+目前无需太多担心语法问题，后续会更详细地介绍。只需明确我们添加了一个 _过滤器_ 用于执行一个范围查询，并复用之前的 `match` 查询。现在结果只返回了一名员工，叫 Jane Smith，32 岁。
 
 [source,js]
 --------------------------------------------------
@@ -233,7 +233,7 @@ GET /megacorp/employee/_search
 
 截止目前的搜索相对都很简单：单个姓名，通过年龄过滤。现在尝试下稍微高级点儿的全文搜索——一项((("full text search"))) 传统数据库确实很难搞定的任务。
 
-搜索下所有喜欢攀岩（rock climbing）的雇员：
+搜索下所有喜欢攀岩（rock climbing）的员工：
 
 [source,js]
 --------------------------------------------------
