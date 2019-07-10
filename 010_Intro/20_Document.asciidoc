@@ -3,17 +3,16 @@
 
 在应用程序中对象很少只是一个简单的键和值的列表。通常，它们拥有更复杂的数据结构，可能包括日期、地理信息、其他对象或者数组等。
 
-也许有一天你想把这些对象存储在数据库中。使用关系型数据库的行和列存储，这相当于是把一个表现力丰富的对象挤压到一个非常大的电子表格中：你必须将这个对象扁平化来适应表结构--通常一个字段>对应一列--而且又不得不在每次查询时重新构造对象。
+也许有一天你想把这些对象存储在数据库中。使用关系型数据库的行和列存储，这相当于是把一个表现力丰富的对象塞到一个非常大的电子表格中：为了适应表结构，你必须设法将这个对象扁平化--通常一个字段对应一列--而且每次查询时又需要将其重新构造为对象。
 
-Elasticsearch 是 _面向文档_ 的，意味着((("document oriented")))它存储整个对象或 _文档_。Elasticsearch 不仅存储文档，而且 _索引_ 每个文档的内容使之可以被检索。在 Elasticsearch 中，你
-对文档进行索引、检索、排序和过滤--而不是对行列数据。这是一种完全不同的思考数据的方式，也是 Elasticsearch 能支持复杂全文检索的原因。
+Elasticsearch 是 _面向文档_ 的，意味着((("document oriented")))它存储整个对象或 _文档_。Elasticsearch 不仅存储文档，而且 _索引_ 每个文档的内容，使之可以被检索。在 Elasticsearch 中，我们对文档进行索引、检索、排序和过滤--而不是对行列数据。这是一种完全不同的思考数据的方式，也是 Elasticsearch 能支持复杂全文检索的原因。
 
 ==== JSON
 
-Elasticsearch 使用 JavaScript Object Notation 或者 http://en.wikipedia.org/wiki/Json[_JSON_] 作为文档的序列化格式。JSON 序列化被大多数编程语言所支持，并且已经成为 NoSQL 领域的标准格式。
+Elasticsearch 使用 JavaScript Object Notation（或者 http://en.wikipedia.org/wiki/Json[_JSON_]）作为文档的序列化格式。JSON 序列化为大多数编程语言所支持，并且已经成为 NoSQL 领域的标准格式。
 它简单、简洁、易于阅读。
 
-考虑一下这个 JSON 文档，它代表了一个 user 对象：
+下面这个 JSON 文档代表了一个 user 对象：
 
 [source,js]
 --------------------------------------------------
@@ -30,10 +29,9 @@ Elasticsearch 使用 JavaScript Object Notation 或者 http://en.wikipedia.org/w
 }
 --------------------------------------------------
 
-虽然原始的 `user` 对象很复杂，但这个对象的结构和含义在 JSON 版本中都得到了体现和保留。在 Elasticsearch 中将对象转化为 JSON 并做索引要比在一个扁平的表结构中做相同的事情简单的多。
+虽然原始的 `user` 对象很复杂，但这个对象的结构和含义在 JSON 版本中都得到了体现和保留。在 Elasticsearch 中将对象转化为 JSON 后构建索引要比在一个扁平的表结构中要简单的多。
 
 [NOTE]
 ====
-几乎所有的语言都有相应的模块可以将任意的数据结构或对象((("JSON", "converting your data to")))转化成 JSON 格式，只是细节各不相同。具体请查看 _serialization_ 或者 _marshalling_ 这两个
-处理 JSON 的模块。官方 https://www.elastic.co/guide/en/elasticsearch/client/index.html[Elasticsearch 客户端] 自动为您提供 JSON 转化。
+几乎所有的语言都有可以将任意的数据结构或对象((("JSON", "converting your data to")))转化成 JSON 格式的模块，只是细节各不相同。具体请查看 _serialization_ 或者 _marshalling_ 这两个处理 JSON 的模块。官方 https://www.elastic.co/guide/en/elasticsearch/client/index.html[Elasticsearch 客户端] 自动为您提供 JSON 转化。
 ====
