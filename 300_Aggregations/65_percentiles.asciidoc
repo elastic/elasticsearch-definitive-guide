@@ -76,7 +76,7 @@ POST /website/logs/_bulk
 { "index": {}}
 { "latency" : 319, "zone" : "EU", "timestamp" : "2014-10-29" }
 ----
-// SENSE: 300_Aggregations/65_percentiles.json
+// AUTOSENSE
 
 This data contains three values: a latency, a data center zone, and a date
 timestamp.  Let's run +percentiles+ over the whole dataset to get a feel for
@@ -101,7 +101,7 @@ GET /website/logs/_search
     }
 }
 ----
-// SENSE: 300_Aggregations/65_percentiles.json
+// AUTOSENSE
 <1> The `percentiles` metric is applied to the +latency+ field.
 <2> For comparison, we also execute an `avg` metric on the same field.
 
@@ -163,7 +163,7 @@ GET /website/logs/_search
     }
 }
 ----
-// SENSE: 300_Aggregations/65_percentiles.json
+// AUTOSENSE
 <1> First we separate our latencies into buckets, depending on their zone.
 <2> Then we calculate the percentiles per zone.
 <3> The +percents+ parameter accepts an array of percentiles that we want returned,
@@ -254,7 +254,7 @@ GET /website/logs/_search
     }
 }
 ----
-// SENSE: 300_Aggregations/65_percentiles.json
+// AUTOSENSE
 <1> The `percentile_ranks` metric accepts an array of values that you want ranks for.
 
 After running this aggregation, we get two values back:
