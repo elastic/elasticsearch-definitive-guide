@@ -145,7 +145,7 @@ will be identical, but it may aid in query simplicity/clarity.
     }
 }
 --------------------------------------------------
-// SENSE: 054_Query_DSL/70_bool_query.json
+// SENSE: 054_Query_DSL/70_Bool_query.json
 
 <1> A `term` query is placed inside the `constant_score`, converting it to a
 non-scoring filter.  This method can be used in place of a `bool` query which only
