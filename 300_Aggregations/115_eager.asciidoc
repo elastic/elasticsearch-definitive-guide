@@ -207,7 +207,7 @@ also reduce CPU usage, as you will need to rebuild global ordinals less often.
 [[index-warmers]]
 ==== Index Warmers
 
-deprecated[2.3.0,Thanks to disk-based norms and doc values, warmers don't have use-cases anymore]
+deprecated[2.3.0, "Thanks to disk-based norms and doc values, warmers don't have use-cases anymore."]
 
 Finally, we come to _index warmers_.  Warmers((("index warmers"))) predate eager fielddata loading
 and eager global ordinals, but they still serve a purpose. An index warmer
