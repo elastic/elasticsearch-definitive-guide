@@ -61,7 +61,7 @@ POST /website/logs/_bulk
 { "index": {}}
 { "latency" : 319, "zone" : "EU", "timestamp" : "2014-10-29" }
 ----
-// SENSE: 300_Aggregations/65_percentiles.json
+// AUTOSENSE
 
 数据有三个值：延时、数据中心的区域以及时间戳。让我们对数据全集进行 _百分位_ 操作以获得数据分布情况的直观感受：
 
@@ -84,7 +84,7 @@ GET /website/logs/_search
     }
 }
 ----
-// SENSE: 300_Aggregations/65_percentiles.json
+// AUTOSENSE
 <1> `percentiles` 度量被应用到 +latency+ 延时字段。
 <2> 为了比较，我们对相同字段使用 `avg` 度量。
 
@@ -142,7 +142,7 @@ GET /website/logs/_search
     }
 }
 ----
-// SENSE: 300_Aggregations/65_percentiles.json
+// AUTOSENSE
 <1> 首先根据区域我们将延时分到不同的桶中。
 <2> 再计算每个区域的百分位数值。
 <3> +percents+ 参数接受了我们想返回的一组百分位数，因为我们只对长的延时感兴趣。
@@ -226,7 +226,7 @@ GET /website/logs/_search
     }
 }
 ----
-// SENSE: 300_Aggregations/65_percentiles.json
+// AUTOSENSE
 <1> `percentile_ranks` 度量接受一组我们希望分级的数值。
 
 在聚合运行后，我们能得到两个值：

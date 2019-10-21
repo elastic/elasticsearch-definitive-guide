@@ -114,6 +114,6 @@ TIP: 如果没有 `must` 语句，那么至少需要能够匹配其中的一条 
     }
 }
 --------------------------------------------------
-// SENSE: 054_Query_DSL/70_bool_query.json
+// SENSE: 054_Query_DSL/70_Bool_query.json
 
 <1>  `term` 查询被放置在 `constant_score` 中，转成不评分的 filter。这种方式可以用来取代只有 filter 语句的 `bool` 查询。
