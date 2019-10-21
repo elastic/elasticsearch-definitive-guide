@@ -1,7 +1,7 @@
 [[using-stopwords]]
 === 使用停用词
 
-移除停用词的工作是由 `stop` 停用词过滤器完成的，可以通过创建自定义的分析器来使用它（参见 使用停用词过滤器{ref}/analysis-stop-tokenfilter.html[`stop` 停用词过滤器])。但是，也有一些自带的分析器预置使用停用词过滤器：
+移除停用词的工作是由 `stop` 停用词过滤器完成的，可以通过创建自定义的分析器来使用它（参见 使用停用词过滤器&#8203;{ref}/analysis-stop-tokenfilter.html[`stop` 停用词过滤器]&#8203;)。但是，也有一些自带的分析器预置使用停用词过滤器：
 
 {ref}/analysis-lang-analyzer.html[语言分析器]::
 
@@ -95,7 +95,7 @@ The quick and the dead
 ---------------------------------
 
 TIP: 
-Elasticsearch 中预定义的与语言相关的停用词列表可以在文档(("languages", "predefined stopword lists for"))){ref}/analysis-stop-tokenfilter.html[`stop` 停用词过滤器] 中找到。
+Elasticsearch 中预定义的与语言相关的停用词列表可以在文档(("languages", "predefined stopword lists for")))&#8203;{ref}/analysis-stop-tokenfilter.html[`stop` 停用词过滤器]&#8203; 中找到。
 
 停用词可以通过指定一个特殊列表 `_none_` 来禁用。例如，使用 `_english_` 分析器而不使用停用词，可以通过以下方式做到：
 
@@ -141,7 +141,7 @@ PUT /my_index
 [[stop-token-filter]]
 ==== 使用停用词过滤器（Using the stop Token Filter）
 
-当你创建 `custom` 分析器时候，可以组合多个 {ref}/analysis-stop-tokenfilter.html[`stop` 停用词过滤器] 分词器((("stopwords", "using stop token filter")))((("stop token filter", "using in custom analyzer")))。例如：我们想要创建一个西班牙语((("Spanish", "custom analyzer for")))((("light_spanish stemmer")))的分析器:
+当你创建 `custom` 分析器时候，可以组合多个 &#8203;{ref}/analysis-stop-tokenfilter.html[`stop` 停用词过滤器]&#8203; 分词器((("stopwords", "using stop token filter")))((("stop token filter", "using in custom analyzer")))。例如：我们想要创建一个西班牙语((("Spanish", "custom analyzer for")))((("light_spanish stemmer")))的分析器:
 
 * 自定义停用词列表
 * `light_spanish` 词干提取器
@@ -192,7 +192,7 @@ PUT /my_index
 
 想要更新分析器的停用词列表有多种方式，((("analyzers", "stopwords list, updating")))((("stopwords", "updating list used by analyzers"))) 分析器在创建索引时，当集群节点重启时候，或者关闭的索引重新打开的时候。
 
-如果你使用 `stopwords` 参数以内联方式指定停用词，那么你只能通过关闭索引，更新分析器的配置{ref}/indices-update-settings.html#update-settings-analysis[update index settings API]，然后在重新打开索引才能更新停用词。
+如果你使用 `stopwords` 参数以内联方式指定停用词，那么你只能通过关闭索引，更新分析器的配置&#8203;{ref}/indices-update-settings.html#update-settings-analysis[update index settings API]&#8203;，然后在重新打开索引才能更新停用词。
 
 如果你使用 `stopwords_path` 参数指定停用词的文件路径((("stopwords_path parameter"))) ，那么更新停用词就简单了。你只需更新文件(在每一个集群节点上)，然后通过两者之中的任何一个操作来强制重新创建分析器:
 

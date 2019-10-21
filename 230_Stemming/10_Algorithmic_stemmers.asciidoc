@@ -16,7 +16,7 @@ Elasticsearch 中的大部分 stemmers （词干提取器）是基于算法的�
 
 ==== 使用基于算法的词干提取器
 
-你((("stemming words", "algorithmic stemmers", "using")))可以使用 {ref}/analysis-porterstem-tokenfilter.html[`porter_stem`] 词干提取器或直接使用 {ref}/analysis-kstem-tokenfilter.html[`kstem`] 分词过滤器，或使用 {ref}/analysis-snowball-tokenfilter.html[`snowball`] 分词过滤器创建一个具体语言的 Snowball 词干提取器。所有基于算法的词干提取器都暴露了用来接受 `语言` 参数的统一接口： {ref}/analysis-stemmer-tokenfilter.html[`stemmer` token filter] 。
+你((("stemming words", "algorithmic stemmers", "using")))可以使用 &#8203;{ref}/analysis-porterstem-tokenfilter.html[`porter_stem`]&#8203; 词干提取器或直接使用 {ref}/analysis-kstem-tokenfilter.html[`kstem`] 分词过滤器，或使用 {ref}/analysis-snowball-tokenfilter.html[`snowball`] 分词过滤器创建一个具体语言的 Snowball 词干提取器。所有基于算法的词干提取器都暴露了用来接受 `语言` 参数的统一接口： {ref}/analysis-stemmer-tokenfilter.html[`stemmer` token filter] 。
 
 例如，假设你发现 `英语` 分析器使用的默认词干提取器太激进并且((("english analyzer", "default stemmer, examining")))你想使它不那么激进。首先应在 {ref}/analysis-lang-analyzer.html[language analyzers] 查看 `英语` 分析器配置文件，配置文件展示如下：
 
@@ -64,7 +64,7 @@ Elasticsearch 中的大部分 stemmers （词干提取器）是基于算法的�
 
 重新审视下现在的配置，添加上以下修改，我们可以把这份配置当作新分析器的基本配置：
 
-*  修改 `english_stemmer` ，将  `english` （{ref}/analysis-porterstem-tokenfilter.html[`porter_stem`] 分词过滤器的映射）替换为 `light_english` （非激进的 {ref}/analysis-kstem-tokenfilter.html[`kstem`] 分词过滤器的映射）。
+*  修改 `english_stemmer` ，将  `english` （&#8203;{ref}/analysis-porterstem-tokenfilter.html[`porter_stem`]&#8203; 分词过滤器的映射）替换为 `light_english` （非激进的 {ref}/analysis-kstem-tokenfilter.html[`kstem`] 分词过滤器的映射）。
 
 *  添加 <<asciifolding-token-filter,`asciifolding`>> 分词过滤器用以移除外语的附加符号。((("asciifolding token filter")))
 

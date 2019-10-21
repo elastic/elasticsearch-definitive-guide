@@ -74,7 +74,7 @@ POST /logs_2014-09-30/_settings
 { "number_of_replicas": 1 }
 -------------------------
 
-当然，没有副本我们将面临磁盘故障而导致丢失数据的风险。你可能想要先通过((("snapshot-restore API"))){ref}/modules-snapshots.html[`snapshot-restore` API]备份数据。
+当然，没有副本我们将面临磁盘故障而导致丢失数据的风险。你可能想要先通过((("snapshot-restore API")))&#8203;{ref}/modules-snapshots.html[`snapshot-restore` API]&#8203;备份数据。
 
 [[close-indices]]
 ==== 关闭旧索引
@@ -99,5 +99,5 @@ POST /logs_2014-01-*/_open <3>
 [[archive-indices]]
 ==== 归档旧索引
 
-最后，非常旧的索引((("indices", "archiving old indices")))可以通过{ref}/modules-snapshots.html[`snapshot-restore` API]归档至长期存储例如共享磁盘或者 Amazon S3，以防日后你可能需要访问它们。
+最后，非常旧的索引((("indices", "archiving old indices")))可以通过&#8203;{ref}/modules-snapshots.html[`snapshot-restore` API]&#8203;归档至长期存储例如共享磁盘或者 Amazon S3，以防日后你可能需要访问它们。
 当存在备份时我们就可以将索引从集群中删除了。

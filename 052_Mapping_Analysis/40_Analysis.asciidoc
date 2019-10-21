@@ -155,7 +155,7 @@ GET /_analyze
 --------------------------------------------------
 `token` 是实际存储到索引中的词条。 `position` 指明词条在原始文本中出现的位置。 `start_offset` 和 `end_offset` 指明字符在原始字符串中的位置。
 
-TIP: ((("types", "type values returned by analyzers")))每个分析器的 `type` 值都不一样，可以忽略它们。它们在Elasticsearch中的唯一作用在于{ref}/analysis-keep-types-tokenfilter.html[`keep_types` token 过滤器]。
+TIP: ((("types", "type values returned by analyzers")))每个分析器的 `type` 值都不一样，可以忽略它们。它们在Elasticsearch中的唯一作用在于&#8203;{ref}/analysis-keep-types-tokenfilter.html[`keep_types` token 过滤器]&#8203;。
 
 `analyze` API 是一个有用的工具，它有助于我们理解Elasticsearch索引内部发生了什么，随着深入，我们会进一步讨论它。
 

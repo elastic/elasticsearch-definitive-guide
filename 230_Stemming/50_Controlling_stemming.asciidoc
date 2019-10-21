@@ -20,7 +20,7 @@
 来标记这些词语列表为 _keywords_ ，用来阻止后续的词干提取过滤器来触碰这些词语。((("keyword_marker token filter", "preventing stemming of certain words")))
 
 例如，我们创建一个简单自定义分析器，使用
-{ref}/analysis-porterstem-tokenfilter.html[`porter_stem`] 语汇单元过滤器，同时阻止 `skies` 的词干提取：((("porter_stem token filter")))
+{ref}/analysis-porterstem-tokenfilter.html[`porter_stem`]&#8203; 语汇单元过滤器，同时阻止 `skies` 的词干提取：((("porter_stem token filter")))
 
 [source,json]
 ------------------------------------------
