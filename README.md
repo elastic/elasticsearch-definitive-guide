@@ -39,7 +39,7 @@ This repository is no longer maintained. Pull requests and issues will not be
 addressed.
 
 To contribute to the current Elasticsearch docs, refer to the [Elasticsearch
-repo](https://github.com/elastic/elasticsearch/).
+repository](https://github.com/elastic/elasticsearch/).
 
 ## License
 
