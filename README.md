@@ -1,7 +1,6 @@
-# The Definitive Guide to Elasticsearch
+# Elasticsearch: The Definitive Guide
 
-This repository contains the source for the legacy [Definitive Guide to
-Elasticsearch](https://www.elastic.co/guide/en/elasticsearch/guide/current/index.html)
+This repository contains the source for the legacy [Elasticsearch: The Definitive Guide](https://www.elastic.co/guide/en/elasticsearch/guide/current/index.html)
 documentation and is no longer maintained. For the latest information, see the
 <a
 href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html">current
