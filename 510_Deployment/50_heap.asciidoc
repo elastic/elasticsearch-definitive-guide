@@ -74,7 +74,7 @@ is more wasted space simply because the pointer is larger.  And worse than waste
 space, the larger pointers eat up more bandwidth when moving values between
 main memory and various caches (LLC, L1, and so forth).
 
-Java uses a trick called https://wikis.oracle.com/display/HotSpotInternals/CompressedOops[compressed oops]((("compressed object pointers")))
+Java uses a trick called https://wiki.openjdk.java.net/display/HotSpot/CompressedOops[compressed oops]((("compressed object pointers")))
 to get around this problem.  Instead of pointing at exact byte locations in
 memory, the pointers reference _object offsets_.((("object offsets")))  This means a 32-bit pointer can
 reference four billion _objects_, rather than four billion bytes.  Ultimately, this
