@@ -102,7 +102,7 @@ Elasticsearch cluster.
 --------------------------------------------------
 ./bin/kibana-plugin install elastic/sense <1>
 --------------------------------------------------
-<1> Windows: `bin\kibana.bat plugin --install elastic/sense`.
+<1> Windows: `bin\kibana-plugin.bat install elastic/sense`.
 +
 NOTE: You can download Sense from https://download.elastic.co/elastic/sense/sense-latest.tar.gz
 to https://www.elastic.co/guide/en/sense/current/installing.html#manual_download[install it on an offline machine].
