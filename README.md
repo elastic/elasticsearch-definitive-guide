@@ -1,7 +1,11 @@
-# The Definitive Guide to Elasticsearch 
+# Elasticsearch: The Definitive Guide
 
-This repository contains the sources to the "Definitive Guide to Elasticsearch" which you can [read online](https://www.elastic.co/guide/en/elasticsearch/guide/current/index.html).
- 
+This repository contains the source for the legacy [Elasticsearch: The Definitive Guide](https://www.elastic.co/guide/en/elasticsearch/guide/current/index.html)
+documentation and is no longer maintained. For the latest information, see the
+<a
+href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html">current
+Elasticsearch documentation</a>.
+
 ## Building the Definitive Guide
 
 In order to build this project, we rely on our [docs infrastructure](https://github.com/elastic/docs).
@@ -26,13 +30,16 @@ The Definitive Guide is written in Asciidoc and the docs repo also contains a [s
 
 The Definitive Guide is available for multiple versions of Elasticsearch:
 
-* The [branch `1.x`](https://github.com/elastic/elasticsearch-definitive-guide/tree/1.x) applies to Elasticsearch 1.x
-* The [branch `2.x`](https://github.com/elastic/elasticsearch-definitive-guide/tree/2.x) applies to Elasticsearch 2.x
-* The [branch `master`](https://github.com/elastic/elasticsearch-definitive-guide/tree/2.x) applies to master branch of Elasticsearch (the current development version)
+* The [`1.x` branch](https://github.com/elastic/elasticsearch-definitive-guide/tree/1.x) applies to Elasticsearch 1.x
+* The [`2.x` and `master` branches](https://github.com/elastic/elasticsearch-definitive-guide/tree/2.x) apply to Elasticsearch 2.x
 
 ## Contributing
 
-Before contributing a change please read our [contribution guide](CONTRIBUTING.md).
+This repository is no longer maintained. Pull requests and issues will not be
+addressed.
+
+To contribute to the current Elasticsearch docs, refer to the [Elasticsearch
+repository](https://github.com/elastic/elasticsearch/).
 
 ## License
 
