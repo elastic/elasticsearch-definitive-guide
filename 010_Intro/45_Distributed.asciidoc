@@ -10,7 +10,7 @@ The distributed aspect of Elasticsearch is largely transparent.  Nothing in
 the tutorial required you to know about distributed systems, sharding, cluster
 discovery, or dozens of other distributed concepts.  It happily ran the
 tutorial on a single node living inside your laptop, but if you were to run
-the tutorial on a cluster containing 100 nodes, everything would work in
+the tutorial on a cluster containing 100+ nodes, everything would work in
 exactly the same way.
 
 Elasticsearch tries hard to hide the complexity of distributed systems. Here are some of
@@ -42,4 +42,3 @@ These chapters are not required reading--you can use Elasticsearch without
 understanding these internals--but they will provide insight that will make
 your knowledge of Elasticsearch more complete. Feel free to skim them and
 revisit at a later point when you need a more complete understanding.
-
