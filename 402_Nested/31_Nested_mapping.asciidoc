@@ -14,8 +14,8 @@ PUT /my_index
         "comments": {
           "type": "nested", <1>
           "properties": {
-            "name":    { "type": "string"  },
-            "comment": { "type": "string"  },
+            "name":    { "type": "text"  },
+            "comment": { "type": "text"  },
             "age":     { "type": "short"   },
             "stars":   { "type": "short"   },
             "date":    { "type": "date"    }
