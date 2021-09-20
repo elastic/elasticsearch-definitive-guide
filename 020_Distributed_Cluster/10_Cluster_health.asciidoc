@@ -16,16 +16,21 @@ On an empty cluster with no indices, this will return something like the followi
 [source,js]
 --------------------------------------------------
 {
-   "cluster_name":          "elasticsearch",
-   "status":                "green", <1>
-   "timed_out":             false,
-   "number_of_nodes":       1,
-   "number_of_data_nodes":  1,
-   "active_primary_shards": 0,
-   "active_shards":         0,
-   "relocating_shards":     0,
-   "initializing_shards":   0,
-   "unassigned_shards":     0
+  "cluster_name": "my_cluster",
+  "status": "green", <1>
+  "timed_out": false,
+  "number_of_nodes": 1,
+  "number_of_data_nodes": 1,
+  "active_primary_shards": 0,
+  "active_shards": 0,
+  "relocating_shards": 0,
+  "initializing_shards": 0,
+  "unassigned_shards": 0,
+  "delayed_unassigned_shards": 0,
+  "number_of_pending_tasks": 0,
+  "number_of_in_flight_fetch": 0,
+  "task_max_waiting_in_queue_millis": 0,
+  "active_shards_percent_as_number": 100
 }
 --------------------------------------------------
 <1> The `status` field is the one we're most interested in.
@@ -33,13 +38,13 @@ On an empty cluster with no indices, this will return something like the followi
 The `status` field provides ((("status field")))an overall indication of how the cluster is
 functioning. The meanings of the three colors are provided here for reference:
 
-`green`::   
+`green`::
    All primary and replica shards are active.
-   
- `yellow`::  
+
+ `yellow`::
    All primary shards are active, but not all replica shards are active.
-   
- `red`::     
+
+ `red`::
    Not all primary shards are active.
 
 In the rest of this chapter, we explain what _primary_ and _replica_ shards are

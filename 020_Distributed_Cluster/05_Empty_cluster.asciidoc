@@ -22,8 +22,7 @@ master role.
 
 As users, we can talk to _any node in the cluster_, including the master node.
 Every node knows where each document lives and can forward our request
-directly to the nodes that hold the data we are interested in. Whichever node
-we talk to manages the process of gathering the response from the node or
-nodes holding the data and returning the final response to the client. It is
-all managed transparently by Elasticsearch.
-
+directly to the nodes which hold the data we are interested in. Whichever node
+we interact with manages the process of gathering the response from the node or
+nodes responsible for performing the operation (read or write) and returning
+the final response(s) to the client. It is all managed transparently by Elasticsearch.
