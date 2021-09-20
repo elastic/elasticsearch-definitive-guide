@@ -62,7 +62,8 @@ GET /_search
             "gte": "2014-10-01",
             "lt":  "2014-11-01"
           }
-        }
+        },
+        "nested_path":"comments"
       }
     }
   }
