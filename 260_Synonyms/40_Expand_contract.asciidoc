@@ -108,7 +108,7 @@ of a term to be more generic. Take these rules, for example:
 By applying genre expansion at index time:
 
 * A query for `kitten` would find just documents about kittens.
-* A query for `cat` would find documents abouts kittens and cats.
+* A query for `cat` would find documents about kittens and cats.
 * A query for `pet` would find documents about kittens, cats, puppies, dogs,
   or pets.
 
