@@ -289,11 +289,11 @@ field for ``rock climbing''. We get back two matching documents:
    ...
    "hits": {
       "total":      2,
-      "max_score":  0.16273327,
+      "max_score":  0.5753642,
       "hits": [
          {
             ...
-            "_score":         0.16273327, <1>
+            "_score":         0.5753642, <1>
             "_source": {
                "first_name":  "John",
                "last_name":   "Smith",
@@ -304,7 +304,7 @@ field for ``rock climbing''. We get back two matching documents:
          },
          {
             ...
-            "_score":         0.016878016, <1>
+            "_score":         0.2876821, <1>
             "_source": {
                "first_name":  "Jane",
                "last_name":   "Smith",
@@ -365,11 +365,11 @@ This, to no surprise, returns only John Smith's document:
    ...
    "hits": {
       "total":      1,
-      "max_score":  0.23013961,
+      "max_score":  0.5753642,
       "hits": [
          {
             ...
-            "_score":         0.23013961,
+            "_score":         0.5753642,
             "_source": {
                "first_name":  "John",
                "last_name":   "Smith",
@@ -421,11 +421,11 @@ HTML tags:
    ...
    "hits": {
       "total":      1,
-      "max_score":  0.23013961,
+      "max_score":  0.5753642,
       "hits": [
          {
             ...
-            "_score":         0.23013961,
+            "_score":         0.5753642,
             "_source": {
                "first_name":  "John",
                "last_name":   "Smith",
@@ -444,7 +444,7 @@ HTML tags:
 }
 --------------------------------------------------
 
-<1> The highlighted fragment from the original text
+<1> The highlighted fragments from the original text
 
 You can read more about the highlighting of search snippets in the
 {ref}/search-request-highlighting.html[highlighting reference documentation].
