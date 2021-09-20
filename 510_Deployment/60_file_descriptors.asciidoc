@@ -15,7 +15,18 @@ particular OS and distribution. Consult the documentation for your OS to
 determine how best to change the allowed file descriptor count.
 
 Once you think you've changed it, check Elasticsearch to make sure it really
-does have enough file descriptors:
+does have enough file descriptors.
+
+You can check the `max_file_descriptors` configured for each node
+using the <<cluster-nodes-stats>> API, with:
+
+[source,js]
+--------------------------------------------------
+GET _nodes/stats/process?filter_path=**.max_file_descriptors
+--------------------------------------------------
+// CONSOLE
+
+Example output:
 
 [source,js]
 ----
