@@ -52,7 +52,7 @@ elements are as follows:
    Where the document lives
 
  `_type`::
-   The class of object that the document represents
+   The class of object that the document represents (deprecated)
 
  `_id`::
    The unique identifier for the document
@@ -80,23 +80,11 @@ underscore, and cannot contain commas. Let's use `website` as our index name.
 
 ==== _type
 
-Data may be grouped loosely together in an index, but often there are sub-partitions
-inside that data which may be useful to explicitly define.  For example, all your
-products may go inside a single index.  But you have different categories of products,
-such as "electronics", "kitchen" and "lawn-care".
+If you're just starting out with version 6.0+ of Elasticsearch, then suffice to say, you may only create one `_type` per index.
 
-The documents all share an identical (or very similar) schema: they have a title,
-description, product code, price.  They just happen to belong to sub-categories
-under the umbrella of "Products".
+For indices created in 5.x and before, there may be more than one `_type` per index.
 
-Elasticsearch exposes a feature called _types_ which allows you to logically
-partition data inside of an index.  Documents in different types may have different
-fields, but it is best if they are highly similar.  We'll talk more about the restrictions
-and applications of types in <<mapping>>.
-
-A `_type` name can be lowercase or uppercase, but shouldn't begin with an
-underscore or period.  It also may not contain commas,((("types", "names of")))
-and is limited to a length of 256 characters. We will use `blog` for our type name.
+In a future version of Elasticsearch, `_type` will be removed completely. For best results, plan to create your indices with exactly one `_type`, and consider calling it `doc`, which is the Elasticsearch default.
 
 ==== _id
 
