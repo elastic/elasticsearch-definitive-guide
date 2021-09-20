@@ -145,7 +145,7 @@ for exact matches (including differences in case, accents, spaces, etc).
 The `exists` and `missing` queries are ((("exists query")))((("missing query")))used to find documents in which the
 specified field either has one or more values (`exists`) or doesn't have any
 values (`missing`). It is similar in nature to `IS_NULL` (`missing`) and `NOT
-IS_NULL` (`exists`)in SQL:
+IS_NULL` (`exists`) in SQL:
 
 [source,js]
 --------------------------------------------------
