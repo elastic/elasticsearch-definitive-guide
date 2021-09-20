@@ -84,7 +84,7 @@ to run the examples in this book against your own Elasticsearch cluster and view
 When Elasticsearch is running in the foreground, you can stop it by pressing Ctrl-C.
 
 [[sense]]
-==== Installing Sense
+==== Installing Sense Before Kibana 5.0.0
 Sense is a https://www.elastic.co/guide/en/kibana/current/index.html[Kibana]
 app ((("Sense console", "Kibana app"))) that provides an interactive
 console for submitting requests to Elasticsearch directly from your browser.
@@ -116,3 +116,6 @@ to https://www.elastic.co/guide/en/sense/current/installing.html#manual_download
 <1> Windows: `bin\kibana.bat`.
 
 . Open Sense your web browser by going to `http://localhost:5601/app/sense`.
+
+==== Installing Sense After Kibana 5.0.0
+Sense is shipped with Kibana console dev tools and no need to install manually. The only thing need to notice is the version of Kibana have to match with elastic, you may refer to https://www.elastic.co/guide/en/kibana/current/install.html[kibana install page] for more information.
