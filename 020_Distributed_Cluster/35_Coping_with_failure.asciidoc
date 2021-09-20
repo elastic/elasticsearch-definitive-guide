@@ -28,7 +28,7 @@ shards, but we specified that we wanted two replicas of each primary, and
 currently only one replica is assigned. This prevents us from reaching
 `green`, but we're not too worried here: were we to kill `Node 2` as well, our
 application could _still_ keep running without data loss, because `Node 3`
-contains a copy of every shard.
+contains a copy of every shard. Now, we could set replicas back to `1`, and our cluster would become `green` again, but we would lose the scaled read capacity we had when `number_of_replicas` was `2`.
 
 If we restart `Node 1`, the cluster would be able to allocate the missing
 replica shards, resulting in a state similar to the one described in
