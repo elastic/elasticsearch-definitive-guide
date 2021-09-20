@@ -100,7 +100,7 @@ Elasticsearch cluster.
 +
 [source,sh]
 --------------------------------------------------
-./bin/kibana plugin --install elastic/sense <1>
+./bin/kibana-plugin --install elastic/sense <1>
 --------------------------------------------------
 <1> Windows: `bin\kibana.bat plugin --install elastic/sense`.
 +
