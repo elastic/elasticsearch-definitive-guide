@@ -18,7 +18,7 @@ the complexities of Lucene behind a simple, coherent, RESTful API.
 However, Elasticsearch is much more than just Lucene and much more than
 ``just'' full-text search.((("Elasticsearch", "capabilities"))) It can also be described as follows:
 
-* A distributed real-time document store where _every field_ is indexed and
+* A distributed real-time document store where _every field_ may be indexed and
   searchable
 * A distributed search engine with real-time analytics
 * Capable of scaling to hundreds of servers and petabytes of structured
@@ -37,16 +37,16 @@ As your knowledge grows, you can leverage more of Elasticsearch's advanced
 features. The entire engine is configurable and flexible. Pick and choose
 from the advanced features to tailor Elasticsearch to your problem domain.
 
-You can ((("Apache 2 license"))) download, use, and modify Elasticsearch free of charge. 
+You can ((("Apache 2 license"))) download, use, and modify Elasticsearch free of charge.
 It is available under the http://www.apache.org/licenses/LICENSE-2.0.html[Apache 2 license],
 one of the most flexible open source licenses available. The source is hosted on GitHub
 at https://github.com/elastic/elasticsearch[github.com/elastic/elasticsearch]. See
-https://github.com/elastic/elasticsearch/blob/master/CONTRIBUTING.md[Contributing to 
+https://github.com/elastic/elasticsearch/blob/master/CONTRIBUTING.md[Contributing to
 Elasticsearch] if you would like to join our amazing community of contributors!
 
-If you have any questions related to Elasticsearch, including specific features, 
-language clients and plugins, join the conversation at 
-https://discuss.elastic.co[discuss.elastic.co]. 
+If you have any questions related to Elasticsearch, including specific features,
+language clients and plugins, join the conversation at
+https://discuss.elastic.co[discuss.elastic.co].
 
 .The Mists of Time
 ***************************************
@@ -67,9 +67,8 @@ distributed search engine was obvious, and he decided to rewrite the Compass
 libraries as a standalone server called Elasticsearch.
 
 The first public release came out in February 2010.  Since then, Elasticsearch
-has become one of the most popular projects on GitHub with commits from over
-300 contributors.  A company has formed around Elasticsearch to provide
-commercial support and to develop new features, but Elasticsearch is, and
+has become one of the most popular projects on GitHub with commits from many contributors.  A company has formed around Elasticsearch to provide
+commercial support and to develop new features, but core Elasticsearch is, and
 forever will be, open source and available to all.
 
 Shay's wife is still waiting for the recipe search...
