@@ -109,7 +109,7 @@ The operators that it accepts are as follows:
 
 ==== term Query
 
-The `term` query is used to search by((("query", "important")))((("term query"))) exact values, be they numbers, dates,
+The `term` query is used to search by((("query", "important")))((("term query"))) exact values, be the numbers, dates,
 Booleans, or `not_analyzed` exact-value string fields:
 
 [source,js]
