@@ -11,9 +11,9 @@ DELETE /website/blog/123
 // SENSE: 030_Data/35_Delete_doc.json
 
 
-If the document is found, Elasticsearch will return an HTTP response code
+If we assume the document currently exists, Elasticsearch will return an HTTP response code
 of `200 OK` and a response body like the following. Note that the `_version`
-number has been incremented:
+number (initially "2") has been incremented:
 
 [source,js]
 --------------------------------------------------
@@ -26,8 +26,8 @@ number has been incremented:
 }
 --------------------------------------------------
 
-If the document isn't((("version number (documents)", "incremented for document not found"))) found, we get a `404 Not Found` response code and
-a body like this:
+If we repeat the `DELETE`, the document isn't((("version number (documents)", "incremented for document not found"))) found,
+we get a `404 Not Found` response code, and the body is as follows:
 
 [source,js]
 --------------------------------------------------
@@ -41,7 +41,7 @@ a body like this:
 --------------------------------------------------
 
 Even though the document doesn't exist (`found` is `false`), the
-`_version` number has still been incremented. This is part of the internal
+`_version` number has been incremented yet again. This is part of the internal
 bookkeeping, which ensures that changes are applied in the correct order
 across multiple nodes.
 
