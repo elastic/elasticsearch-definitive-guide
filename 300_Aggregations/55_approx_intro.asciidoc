@@ -40,8 +40,8 @@ and give you exact answers--but it may take a week to give you that answer.
 Big data + real time:: Approximate algorithms that give you accurate, but not
 exact, results.
 
-Elasticsearch currently supports two approximate algorithms (`cardinality` and 
-`percentiles`). ((("approximate algorithms")))((("cardinality")))((("percentiles"))) These will give you accurate results, but not 100% exact.
+Elasticsearch currently supports three approximate algorithms (`cardinality`, 
+`percentiles` and document counts in the `terms` aggregation). ((("approximate algorithms")))((("cardinality")))((("percentiles"))) These will give you accurate results, but not 100% exact.
 In exchange for a little bit of estimation error, these algorithms give you
 fast execution and a small memory footprint.
 
@@ -59,6 +59,19 @@ answer is 132.66ms instead of 132ms?  Certainly, not all domains can tolerate
 approximations--but the vast majority will have no problem.  Accepting
 an approximate answer is more often a _cultural_ hurdle rather than a business
 or technical imperative.
+
+In case you are still seeking very high levels of approximation, and are willing to
+potentially use much more resources to get the answer, this is a summary of the 
+steps you can take:
+
+- For `cardinality`, you can configure `precision_threshold` to make the algorithm 
+exact almost 100% of cases, for values with a cardinality lower than `precision_threshold`.
+- For `percentiles`, error rates are less predictable/generalizable, but you can 
+improve accuracy by setting `compression`. Also, the outer (1%, 99%) percentiles are more 
+accurate than the middle ones and tend to be more useful in analytics.
+- For `terms`, you could increase size and `shard_size` to get better accuracy. Also, the 
+error rates can be part of the result should the user want to optimize and/or determine 
+the accuracy worst-case.
 
 
 
