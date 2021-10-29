@@ -18,6 +18,8 @@ However, for nodes running on different machines
 to join the same cluster, you need to configure a list of unicast hosts the nodes can contact
 to join the cluster. For more information, see <<unicast, Prefer Unicast over Multicast>>.
 
+Running locally a second node is as easy as starting again elastic. You have though to increase the `node.max_local_storage_nodes: 2` in `elasticsearch-<VERSION>/config/elasticsearch.yml`
+
 ***************************************
 
 If we start a second node, our cluster would look like <<cluster-two-nodes>>.
