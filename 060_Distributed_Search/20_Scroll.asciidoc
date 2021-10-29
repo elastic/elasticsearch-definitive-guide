@@ -56,16 +56,13 @@ GET /_search/scroll
 <1> Note that we again set the scroll expiration to 1m.  
 
 The response to this scroll request includes the next batch of results.
-Although we specified a `size` of 1,000, we get back many more
-documents.((("size parameter", "in scanning")))  When scanning, the `size` is applied to each shard, so you will
-get back a maximum of `size * number_of_primary_shards` documents in each
-batch.
+By specifying a `size` of 1,000, we get a maximum of 1,000 results back 
+per scroll request. When no more hits are returned, we have processed 
+all matching documents.
 
 NOTE: The scroll request also returns  a _new_ `_scroll_id`.  Every time
 we make the next scroll request, we must pass the `_scroll_id` returned by the
 _previous_ scroll request.
-
-When no more hits are returned, we have processed all matching documents.
 
 TIP: Some of the official Elasticsearch clients such as 
 http://elasticsearch-py.readthedocs.org/en/master/helpers.html#scan[Python client] and 
