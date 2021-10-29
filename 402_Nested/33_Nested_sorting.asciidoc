@@ -53,10 +53,11 @@ GET /_search
     }
   },
   "sort": {
-    "comments.stars": { <2>
-      "order": "asc",   <2>
-      "mode":  "min",   <2>
-      "nested_filter": { <3>
+    "comments.stars": {          <2>
+      "order": "asc",            <2>
+      "mode":  "min",            <2>
+      "nested_path": "comments",
+      "nested_filter": {         <3>
         "range": {
           "comments.date": {
             "gte": "2014-10-01",
